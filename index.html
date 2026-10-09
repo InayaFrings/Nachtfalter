@@ -2417,10 +2417,10 @@ function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
   </div></div>`;
 }
 function asideHTML(){
-  const u = me(), others = Object.values(S.users).filter(x => x.id !== S.me).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
+  const u = me(), others = ['juliet', 'andy'].map(id => S.users[id]).filter(Boolean); // nur die Helfer, Freunde stehen auf dem Profil
   return `<aside class="aside">
     ${V.name === 'profile' && (V.arg || S.me) === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
-    <div class="card"><h2 class="card-h">Dein Zirkel</h2><div class="card-in"><ul class="zlist">
+    <div class="card"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
       ${others.map(f => `<li>${cameo(f)}<span>${ulink(f.id)}<small>${esc(f.mood) || '&nbsp;'}</small></span></li>`).join('')}
     </ul></div></div>
     ${fullCard()}
