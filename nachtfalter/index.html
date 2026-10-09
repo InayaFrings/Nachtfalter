@@ -516,6 +516,16 @@ footer.foot .lnk{color:var(--muted)}
 </style>
 
 <div id="app"></div>
+<script>
+// Wenn beim Start etwas schiefgeht: Fehler sichtbar machen statt schwarzem Bildschirm
+function crashBox(msg){
+  const app = document.getElementById('app'); if (!app || app.textContent.trim()) return;
+  app.innerHTML = '<div class="gate"><div class="card gate-card" style="text-align:center;display:grid;gap:14px"><h1 class="ob-h">Hoppla</h1><p class="note">Beim Laden ist etwas schiefgegangen. Mach bitte einen Screenshot und schick ihn an Inaya.</p><p style="font:13px monospace;word-break:break-word;margin:0">' + String(msg).replace(/[<>&]/g, '') + '</p><button class="btn" type="button" onclick="location.reload()">Neu laden</button></div></div>';
+}
+window.addEventListener('error', e => crashBox((e.message || 'Fehler') + (e.lineno ? ' (Zeile ' + e.lineno + ')' : '')));
+window.addEventListener('unhandledrejection', e => crashBox(e.reason && e.reason.message || e.reason));
+setTimeout(() => crashBox('Die Seite hat nach 12 Sekunden nichts angezeigt. ' + navigator.userAgent), 12000);
+</script>
 <div id="toast" class="toast" hidden></div>
 <div id="songdock" class="songdock" aria-hidden="true"></div>
 <div id="confirm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="confirm-h"><div class="card modal-card"><h2 id="confirm-h" class="ch-h">Willst du dich wirklich abmelden?</h2><div class="row"><button class="btn ghost" data-act="logout-no">Nein</button><span class="sp"></span><button class="btn" data-act="logout-yes">Ja, abmelden</button></div></div></div>
