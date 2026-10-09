@@ -365,6 +365,7 @@ footer.foot .lnk{color:var(--muted)}
 .clist{display:grid;text-align:left;gap:2px;background:transparent;border:1px solid var(--line);color:var(--fg);padding:9px 12px;font:inherit;cursor:pointer;width:100%}
 .clist:hover,.clist.on{border-color:var(--fg)}.clist small{color:var(--muted);font:italic 14px var(--f-ital);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chatmain{display:grid;gap:10px;min-width:0}
+.hpanel{border:1px solid #333}
 .chatpanel{padding:14px;display:grid;gap:10px;background-image:var(--p-pattern);background-color:var(--p-bg);color:var(--p-fg);font-family:var(--p-font)}
 .ch-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--p-line);padding-bottom:8px}
 .ch-head > div{display:grid}.ch-name{font-size:22px}.ch-h{margin:0 0 8px;font:400 20px var(--f-display)}
@@ -394,6 +395,111 @@ footer.foot .lnk{color:var(--muted)}
 .setinfo{display:grid;grid-template-columns:minmax(110px,170px) minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 4px}.setinfo .setedit{padding:4px 14px;font-size:14px}
 @media (max-width:520px){.setinfo{grid-template-columns:minmax(0,1fr)}.setinfo .setedit{justify-self:start}}
 .iname{display:block;font-size:15px;color:#f2f0eb;font-weight:600;margin-top:6px;letter-spacing:.03em;text-shadow:0 1px 2px #000}
+
+/* ---------- Handy (nur unter 760px; am PC ändert sich nichts) ---------- */
+.mobnav,.mback{display:none}
+@media (max-width:760px){
+  .shell{padding:0 12px calc(86px + env(safe-area-inset-bottom,0px));gap:16px}
+  /* kleine Kopfleiste oben statt großem Logo */
+  .rail{position:sticky;top:0;z-index:900;display:flex;align-items:center;gap:10px;margin:0 -12px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:var(--bg);border-bottom:1px solid var(--line-soft)}
+  .rail .logo-mark{width:44px;flex:none}
+  .rail .logo{font-size:22px}
+  .rail .logo small{display:none}
+  .rail nav{display:none}
+  /* „Mehr“: alle Bereiche als Liste über der unteren Leiste */
+  .rail.more nav{display:block;position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:1px solid var(--line);padding:8px 12px 12px;max-height:70vh;overflow:auto;box-shadow:0 -12px 40px #000c}
+  .rail.more ul{display:grid;grid-template-columns:1fr 1fr;gap:4px;overflow:visible}
+  .rail.more .nl{border:1px solid var(--line-soft);padding:12px;font-size:17px;white-space:normal;text-align:center;width:100%}
+  .rail.more .nl[aria-current="page"]{border:1px solid var(--fg)}
+  .mobnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--bg);border-top:1px solid var(--line);padding:4px 4px env(safe-area-inset-bottom,0px)}
+  .mb{position:relative;background:none;border:0;color:var(--muted);display:grid;justify-items:center;gap:2px;padding:7px 2px 6px;font:400 12.5px var(--f-display);letter-spacing:.04em;min-height:56px}
+  .mb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+  .mb.on{color:var(--fg)}
+  .mb.on::before{content:"";position:absolute;top:-5px;left:28%;right:28%;height:2px;background:var(--fg)}
+  .mb .dot{position:absolute;top:6px;left:calc(50% + 8px)}
+  .toast{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+  footer.foot{margin-top:0}
+  /* Karten etwas schlanker, Zimmer randlos über die ganze Breite */
+  .card-h{padding:14px 14px 0}
+  .card-in{padding:12px 14px 16px}
+  /* Zimmer wie bei Momio: größer als der Bildschirm, zur Seite wischen */
+  .rscroll{isolation:isolate;overflow-x:auto;overflow-y:hidden;margin-inline:-14px;scrollbar-width:none;overscroll-behavior-x:contain}
+  .rscroll::-webkit-scrollbar{display:none}
+  .rscroll > .room{width:max(150%,560px);border-inline:0}
+  /* Daumen-freundlich: größere Knöpfe, kein Zoomen beim Tippen auf iPhone */
+  .btn{min-height:42px}
+  input[type=text],input[type=email],input[type=password],input[type=date],input[type=url],input[type=search],textarea,select{font-size:16px}
+  /* Garderobe: Avatar bleibt oben stehen, Teile darunter in drei Spalten */
+  .wardrobe{gap:12px}
+  .mirror-card{position:sticky;top:calc(62px + env(safe-area-inset-top,0px));z-index:30;padding:10px;gap:6px;grid-template-columns:auto 1fr;justify-items:start;text-align:left;align-items:center;box-shadow:0 10px 24px #000a}
+  .mirror{width:96px}
+  .mirror-card .note{margin:0}
+  .shopgrid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+  .item{padding:6px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs > *,.ptabs > *{flex:none;white-space:nowrap}
+  .ptabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  /* Chats: Liste oder Gespräch, nicht beides untereinander */
+  .chatwrap.open .chatside{display:none}
+  .mback{display:inline-flex;margin-bottom:10px}
+  .chat.msgs{max-height:58vh}
+}
+
+.rhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-right:14px}
+.ricons{display:flex;gap:8px;padding-top:12px}
+.ricon{position:relative;width:42px;height:42px;display:grid;place-items:center;background:none;border:1px solid var(--line);color:var(--muted);cursor:pointer;padding:0}
+.ricon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.ricon:hover,.ricon:focus-visible{color:var(--fg);border-color:var(--fg)}
+.ricon.on{color:var(--ink);background:var(--fg);border-color:var(--fg)}
+.ricon .dot{position:absolute;top:4px;right:4px}
+.rdone{min-height:42px;padding-inline:16px}
+
+.fpbtn,.fpanel,.fpback{display:none}
+.wcoltog{display:none}.wcolors{display:contents}
+@media (max-width:760px){
+  .fpbtn{display:grid;place-items:center;position:fixed;left:0;top:58%;z-index:950;width:38px;height:54px;background:var(--paper);color:var(--fg);border:1px solid var(--line);border-left:0;box-shadow:4px 6px 18px #000b;padding:0}
+  .fpbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .fpbtn .dot{position:absolute;top:6px;right:6px}
+  .fpbtn.on{opacity:0;pointer-events:none}
+  .fpback{display:block;position:fixed;inset:0;z-index:960;background:#000a}
+  .fpanel{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));width:min(86vw,360px);z-index:970;background:var(--paper);border-right:1px solid var(--line);box-shadow:12px 0 40px #000c;padding-top:env(safe-area-inset-top,0px);animation:fpin .2s ease-out}
+  @keyframes fpin{from{transform:translateX(-100%)}to{transform:none}}
+  .fphead{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 6px}
+  .fphead b{font:400 22px var(--f-display)}
+  .fpx{background:none;border:0;color:var(--muted);font-size:20px;width:40px;height:40px}
+  .fptabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line-soft)}
+  .fptabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 16px var(--f-display);color:var(--muted)}
+  .fptabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+  .fpbody{overflow-y:auto;padding:10px 12px 16px;display:grid;gap:6px;align-content:start}
+  .fprow{display:flex;align-items:center;gap:6px;border:1px solid var(--line-soft);background:var(--paper-2)}
+  .fpmain{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:none;border:0;color:var(--fg);padding:6px 8px;text-align:left}
+  .fpmain .cameo{width:42px;height:42px;flex:none}
+  .fpinfo{display:grid;min-width:0}
+  .fpinfo b{font:400 17px var(--f-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fpinfo small{font:italic 14px var(--f-ital);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ondot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#6fbf73;margin-right:6px;vertical-align:middle}
+  .fpprof{background:none;border:0;border-left:1px solid var(--line-soft);color:var(--muted);padding:0 12px;align-self:stretch;font:400 14px var(--f-display)}
+  .fpgroup{display:grid;place-items:center;font-size:20px;color:var(--muted)}
+  .fpreq{width:100%;margin-bottom:4px}
+  .fpnew{display:grid;gap:6px;margin-bottom:6px}
+  .fpnewopts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .fpnewopts .btn{padding-inline:6px;font-size:15px}
+  .fplbl{margin:8px 0 0}
+  .fpico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+  /* Garderobe: Farben eingeklappt hinter einem Knopf, jede Farbreihe eine wischbare Zeile */
+  .wcoltog{display:flex;align-items:center;gap:10px;justify-content:center;width:100%}
+  .wcoldot{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:inline-block}
+  .wcolors{display:none}
+  .wcolors.open{display:grid;gap:10px;background:var(--paper-2);border:1px solid var(--line-soft);padding:10px}
+  .wcolors .opt{min-width:0;margin:0;padding:0;border:0}
+  .wcolors .swatches{flex-wrap:nowrap;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none;gap:10px}
+  .wcolors .swatches::-webkit-scrollbar{display:none}
+  .wcolors .sw,.wcolors .cpick{flex:none;width:36px;height:36px}
+  .mirror-card{grid-template-columns:auto;justify-items:center;justify-content:center;padding:8px;gap:6px}
+  .mirror-card > .note,.wardrobe .card-in > p.note:first-child{display:none}
+  .mirror{width:84px}
+}
 </style>
 
 <div id="app"></div>
@@ -402,6 +508,8 @@ footer.foot .lnk{color:var(--muted)}
 <div id="confirm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="confirm-h"><div class="card modal-card"><h2 id="confirm-h" class="ch-h">Willst du dich wirklich abmelden?</h2><div class="row"><button class="btn ghost" data-act="logout-no">Nein</button><span class="sp"></span><button class="btn" data-act="logout-yes">Ja, abmelden</button></div></div></div>
 
 <script>
+// Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
+const PUB = !!window.NF_AUTH;
 const CODE = 'NACHTSCHICHT';
 const KEY = 'nachtfalter-v2';
 const REACTIONS = ['🖤','💀','🦇','⛓️'];
@@ -1469,14 +1577,14 @@ function roomHTML(u, edit, live=edit){
   }).join('');
   const cols = [...new Set(r.items.map(it => it.c).filter(c => /^#[0-9a-f]{6}$/i.test(c || '')))];
   const z = 10 + Math.round(r.av.y + 45);
-  return `<div class="room ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}">
+  return `<div class="rscroll"><div class="room ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}">
     ${tintDefs(cols)}
     <div class="wall" style="background:${wallBG(r.wall)},linear-gradient(${r.wallC || '#232328'},${r.wallC ? shade(r.wallC, .7) : '#18181c'})"></div>
     <div class="floor" style="background:${floorBG(r.floor, r.floorC)}"></div>
     ${items}
     <div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} style="left:${r.av.x}%;top:${r.av.y}%;z-index:${z}">${avatar(u.outfit,'full')}</div>
     ${live ? '<div class="visitors" id="roomvis"></div><div class="says" id="roomsay" aria-hidden="true"></div>' : ''}
-  </div>`;
+  </div></div>`;
 }
 let roomSel = null, dragging = null;
 const FURN_TABS = [['alle','Alle'],['schlaf','Schlafzimmer'],['wohn','Wohnzimmer'],['poster','Poster'],['deko','Deko'],['lampe','Lampen'],['tier','Haustiere']];
@@ -1493,7 +1601,18 @@ function roomView(){
     return `<div class="item ${here ? 'on' : ''}"><div class="thumb fthumb">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>`;
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k].name : '';
-  return `<div class="card"><h2 class="card-h">Mein Zimmer</h2><div class="card-in">
+  const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
+  const head = `<div class="rhead"><h2 class="card-h">Mein Zimmer</h2><div class="ricons">
+      ${roomMode === 'edit' ? '<button class="btn rdone" data-act="rmode" data-v="edit">✓ Fertig</button>' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
+      ${ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
+    </div></div>`;
+  // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
+  if (roomMode !== 'edit') return `<div class="card">${head}<div class="card-in">
+      ${roomHTML(u, false, true)}
+      ${roomMode === 'chat' ? '' : `<p class="note">${u.roomOpen ? `Dein Raumchat <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b> ist offen. ` : ''}Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
+    </div></div>
+    ${roomMode === 'chat' ? roomChatHTML(true) : ''}`;
+  return `<div class="card">${head}<div class="card-in">
       <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
       ${roomHTML(u, true)}
       <div class="row">${selName ? `<span class="lbl">Ausgewählt: ${selName}</span>${roomSel !== 'av' ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}` : '<span class="note">Tipp: Tippe ein Möbelstück an, um es zu spiegeln oder wegzuräumen.</span>'}</div>
@@ -1502,11 +1621,12 @@ function roomView(){
       ${roomColorRow('Wandfarbe', 'wallC', r.wallC)}
       <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}</button>`).join('')}</div></fieldset>
       ${roomColorRow('Bodenfarbe', 'floorC', r.floorC)}
+      <div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div>
     </div></div>
-    ${roomChatHTML(true)}
     <div class="card"><h2 class="card-h">Möbelhaus</h2><div class="card-in">
       <div class="chips" role="tablist" aria-label="Kategorie" style="margin-bottom:14px">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}</button>`).join('')}</div>
-      <div class="shopgrid">${shop}</div></div></div>`;
+      <div class="shopgrid">${shop}</div>
+      <div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div></div></div>`;
 }
 document.addEventListener('pointerdown', e => {
   const el = e.target.closest('#room [data-drag]'); if (!el) return;
@@ -1546,6 +1666,11 @@ function swatches(key, label, pal, cur, act){
 }
 const pick = (k, cur, act) => `<input type="color" class="cpick avpick" data-act2="${act}" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen">`;
 const withPick = (html, k, cur, act) => html.replace(/<\/div><\/fieldset>$/, pick(k, cur, act) + '</div></fieldset>');
+let wColOpen = false; // Handy: Farbauswahl in der Garderobe auf- und zuklappen
+function curColor(cat, o){ // aktuelle Farbe für den kleinen Punkt am Knopf
+  const c = COLOR_KEYS[cat]; if (c) return o[c[0]] ?? c[3] ?? '#444';
+  const v = Object.values(asObj(o[cat] || {}))[0]; return /^#/.test(v || '') ? v : '#444';
+}
 function colorPanel(cat, o, act){
   if (cat === 'body') return `<fieldset class="opt"><legend class="lbl">Körper</legend><div class="chips">${[['w','Mädchen'],['m','Junge'],['a','Androgyn']].map(([v,l]) =>
       `<button type="button" data-act="${act}" data-k="body" data-v="${v}" aria-pressed="${(o.body || 'a') === v}">${l}</button>`).join('')}</div><p class="note" style="margin:6px 0 0">Danach richten sich Figur und die Auswahl in der Garderobe. Unter „Alles zeigen“ siehst du trotzdem jedes Teil.</p></fieldset>`
@@ -1602,14 +1727,14 @@ function regView(){
       <button role="tab" data-act="auth" data-v="login" aria-selected="${authMode==='login'}">Anmelden</button>
     </div>
     ${authMode === 'reg' ? `<form data-form="reg">
-      <label class="f" for="reg-contact"><span class="lbl">Handynummer oder E-Mail-Adresse</span><input id="reg-contact" type="text" autocomplete="username" value="${esc(S.pending?.contact || '')}" required></label>
+      <label class="f" for="reg-contact"><span class="lbl">${PUB ? 'E-Mail-Adresse' : 'Handynummer oder E-Mail-Adresse'}</span><input id="reg-contact" type="text" autocomplete="username" value="${esc(S.pending?.contact || '')}" required></label>
       ${birthInput('reg-birth', S.pending?.birth || '')}
       <label class="f" for="reg-pw"><span class="lbl">Passwort (mindestens 6 Zeichen)</span><input id="reg-pw" type="password" autocomplete="new-password" minlength="6" required></label>
       <span id="reg-err" class="err" hidden></span>
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Weiter</button></div>
-      <p class="note">Im Entwurf wird noch keine SMS und keine E-Mail verschickt. Die Bestätigung kommt dazu, sobald Nachtfalter online geht.</p>
+      ${PUB ? '' : '<p class="note">Im Entwurf wird noch keine SMS und keine E-Mail verschickt. Die Bestätigung kommt dazu, sobald Nachtfalter online geht.</p>'}
     </form>` : forgotPw ? forgotHTML() : `<form data-form="login">
-      <label class="f" for="li-contact"><span class="lbl">Handynummer oder E-Mail-Adresse</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <label class="f" for="li-contact"><span class="lbl">${PUB ? 'E-Mail-Adresse' : 'Handynummer oder E-Mail-Adresse'}</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
       <label class="f" for="li-pw"><span class="lbl">Passwort</span><input id="li-pw" type="password" autocomplete="current-password" required></label>
       <span id="li-err" class="err" hidden></span>
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Anmelden</button></div>
@@ -1617,8 +1742,16 @@ function regView(){
     </form>`}
   </div></div>`;
 }
-let forgotPw = false, forgotContact = '';
-function forgotHTML(){ // Passwort zurücksetzen: Konto liegt privat im eigenen Claude-Konto, Geburtsdatum als Kontrolle
+let forgotPw = false, forgotContact = '', forgotSent = '', recoverMode = false;
+if (PUB) NF_AUTH.onRecovery(() => { recoverMode = true; S.unlocked = false; gateMode = 'login'; render(); });
+function forgotHTML(){
+  if (PUB && forgotSent) return `<div class="f"><p style="margin:0">Wir haben dir eine Mail an <b>${esc(forgotSent)}</b> geschickt. Klick auf den Link darin, dann kannst du ein neues Passwort festlegen.</p><p class="note">Nichts bekommen? Schau auch im Spam-Ordner nach.</p><button class="lnk" type="button" data-act="forgot" data-v="">Zurück zum Anmelden</button></div>`;
+  if (PUB) return `<form data-form="forgot">
+      <p class="note" style="margin:0">Gib deine E-Mail-Adresse ein. Wir schicken dir einen Link, mit dem du ein neues Passwort festlegen kannst.</p>
+      <label class="f" for="fg-contact"><span class="lbl">E-Mail-Adresse</span><input id="fg-contact" type="email" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <span id="fg-err" class="err" hidden></span>
+      <div class="row"><button class="btn ghost" type="button" data-act="forgot" data-v="">Zurück</button><span class="sp"></span><button class="btn" type="submit">Link schicken</button></div>
+    </form>`; // Passwort zurücksetzen: Konto liegt privat im eigenen Claude-Konto, Geburtsdatum als Kontrolle
   return `<form data-form="forgot">
       <p class="note" style="margin:0">Gib deine Handynummer oder E-Mail-Adresse und dein Geburtsdatum ein. Dann kannst du dir ein neues Passwort geben.</p>
       <label class="f" for="fg-contact"><span class="lbl">Handynummer oder E-Mail-Adresse</span><input id="fg-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
@@ -1811,7 +1944,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, p = S.pending;
   if (a === 'auth') { authMode = b.dataset.v; forgotPw = false; render(); }
-  else if (a === 'forgot') { const lc = document.getElementById('li-contact')?.value.trim(); if (lc) forgotContact = lc; forgotPw = !!b.dataset.v; render(); if (forgotPw && forgotContact) { const fp = document.getElementById('fg-birth'); if (fp) { fp.focus(); return; } } document.querySelector('.gate input')?.focus(); }
+  else if (a === 'forgot') { forgotSent = ''; const lc = document.getElementById('li-contact')?.value.trim(); if (lc) forgotContact = lc; forgotPw = !!b.dataset.v; render(); if (forgotPw && forgotContact) { const fp = document.getElementById('fg-birth'); if (fp) { fp.focus(); return; } } document.querySelector('.gate input')?.focus(); }
   else if (a === 'gmode') { gateMode = b.dataset.v; render(); document.querySelector('.gate input')?.focus(); }
   else if (a === 'ob-cat') { obCat = b.dataset.c; render(); }
   else if (a === 'jsub') { jewelSub = b.dataset.c; render(); }
@@ -1960,8 +2093,6 @@ HELPERS.juliet.room = {wall:'damast',wallC:'#3a1a2a',floor:'teppich',floorC:'#2a
 HELPERS.andy.room = {wall:'stein',floor:'schach',av:{x:48,y:42},items:[{k:'spinnennetz',x:89,y:0},{k:'fenster',x:6,y:8},{k:'po_him',x:31,y:12},{k:'po_typeo',x:44,y:14},{k:'standuhr',x:1,y:42},{k:'stehlampe',x:19,y:40.8},{k:'sofa',x:28,y:54.2},{k:'regal',x:58,y:42},{k:'kraehe',x:62,y:32.4},{k:'sarg',x:74,y:41.6},{k:'amp',x:84,y:60.6},{k:'gitarre',x:93,y:47.2},{k:'t_fleder',x:28,y:78},{k:'couchtisch',x:35,y:80},{k:'tier_hund_schwarz',x:64,y:78},{k:'schaedel',x:4,y:66}]};
 for (const h of Object.values(HELPERS)) { h.deko = h.room.items.map(i => i.k); h.earned = 999; }
 const HELPER_POSTS = [
-  {id:'h-juliet',author:'juliet',type:'gedanke',pinned:true,text:'Willkommen bei Nachtfalter! Hier gelten nur fünf Hausregeln: Losungswort für dich behalten, lieb zueinander sein, Fotos von anderen nur mit Erlaubnis teilen, nichts nach draußen tragen und bei Ärger Andy oder mir schreiben. Die ganze Liste steht in meinem Steckbrief.',reactions:{},comments:[]},
-  {id:'h-andy',author:'andy',type:'gedanke',pinned:true,text:'In der Garderobe liegt alles für deinen Avatar, komplett gratis: Haare, Kleidung, Make-up und ganz viel Schmuck. Probier dich durch!',reactions:{},comments:[]},
 ];
 HELPER_POSTS.push(
   {id:'n-farben',author:'juliet',type:'neu',text:'Neu: Du kannst deinem Profil eigene Farben geben, für deinen Kasten und für den ganzen Hintergrund. Dazu Muster wie Tiger, Kreuze oder Engelsflügel. Hast du das schon gesehen? Unter „Profil gestalten“.',reactions:{},comments:[],age:20},
@@ -1993,14 +2124,30 @@ function ensureHelpers(st){
   }
   for (const u of Object.values(st.users)) if (!u.banner) u.banner = {pattern: u.theme.pattern === 'schlicht' ? 'damast' : u.theme.pattern, mode: u.theme.mode || (u.theme.box && isLight(u.theme.box) ? 'tag' : 'nacht'), font: u.theme.font, text: ''};
   for (const u of Object.values(st.users)) { normTheme(u.theme); if (!FONTS[u.banner.font]) u.banner.font = 'fell'; }
-  for (const p of HELPER_POSTS) { const old = st.posts.find(x => x.id === p.id); if (!old) st.posts.push({...p, ts: now - (p.age || 50*24)*H}); else old.text = p.text; }
+  st.posts = st.posts.filter(p => p.id !== 'h-juliet' && p.id !== 'h-andy'); // Willkommen kommt jetzt als Privatnachricht
+  for (const p of HELPER_POSTS) { const old = st.posts.find(x => x.id === p.id); if (!old) st.posts.push({...p, ts: now - (p.age || 50*24)*H}); else { old.text = p.text; delete old.pinned; } }
   for (const h of Object.values(HELPERS)) Object.assign(st.users[h.id], {about:h.about, headline:h.headline, hobbies:h.hobbies, music:h.music, films:h.films});
   return st;
 }
 
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || seed(); } catch { S = seed(); }
+const WELCOME = {
+  juliet: 'Willkommen bei Nachtfalter, schön dass du da bist! Bevor du loslegst: Schau dir auf meinem Profil unter „Regeln“ kurz die Hausregeln an. Und wenn dich irgendwann etwas stört, schreib mir einfach hier.',
+  andy: 'Hey, willkommen! Auf meinem Profil unter „So geht’s“ zeige ich dir, was du hier alles machen kannst. In der Garderobe liegt alles für deinen Avatar, komplett gratis. Frag mich jederzeit!'
+};
+function welcomeDMs(){
+  if (!S.me || !S.users[S.me]) return;
+  S.chats = S.chats || {}; S.hnew = S.hnew || {};
+  for (const h of ['juliet', 'andy']) {
+    const k = S.me + '>' + h, log = S.chats[k] = S.chats[k] || [];
+    if (!log.some(m => m.welcome)) { log.unshift({from:h, text:WELCOME[h], ts:Date.now(), welcome:true}); S.hnew[k] = true; }
+  }
+}
+const hNew = h => !!(S.hnew || {})[S.me + '>' + h];
+const hLast = h => { const log = ((S.chats || {})[S.me + '>' + h]) || [], m = log[log.length - 1]; return m ? (m.from === S.me ? 'Du: ' : '') + m.text : h === 'andy' ? 'Fragen zu Garderobe und Profil' : 'Regeln, Profil, wenn dich etwas stört'; };
 ensureHelpers(S);
+welcomeDMs();
 function save(){
   S.savedAt = Date.now();
   cloudQueue();
@@ -2028,6 +2175,7 @@ async function cloudWrite(){
     if (!cloud.ok) { cloud.ok = true; refreshFoot(); }
   } catch (e) { if (e?.code === 'resource_exhausted') toast('Speicher voll: Das Foto ist zu groß.'); }
 }
+async function cloudReinit(){ cloud = null; await cloudInit(); }
 async function cloudRead(col, n){
   let str = '';
   for (let i = 0; i < n; i++) { const d = await col.doc('nf-' + i).get(); str += d.exists ? d.data().s : ''; }
@@ -2089,7 +2237,7 @@ async function handleTaken(h){
 }
 async function claimHandle(h){ if (cloud?.handles) try { await cloud.handles.doc(cloud.uid).set({h}); } catch {} }
 function refreshFoot(){ const f = document.getElementById('savestate'); if (f) f.textContent = saveText(); }
-const saveText = () => cloud?.ok ? 'Dein Konto ist sicher in deinem Claude-Konto gespeichert.' : 'Dein Konto ist in diesem Browser gespeichert.';
+const saveText = () => PUB ? (cloud?.ok ? 'Dein Konto ist sicher gespeichert.' : 'Wird gespeichert …') : cloud?.ok ? 'Dein Konto ist sicher in deinem Claude-Konto gespeichert.' : 'Dein Konto ist in diesem Browser gespeichert.';
 
 let V = {name:'home', arg:null};
 let PROF_WALL = '';
@@ -2117,7 +2265,9 @@ function toast(msg){
 function earn(){} // Punkte gibt es nicht mehr
 const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
 function go(name, arg=null){
+  mobMore = false; fpOpen = false; if (name !== V.name) roomMode = '';
   if (name !== V.name || arg !== V.arg) { profTab = null; songOff = null; profEdit = false; }
+  if (name !== 'chats' && CH.mode === 'helper') { CH.mode = null; CH.helper = null; }
   if (name !== 'chats' && CH.unsub) { CH.unsub(); CH.unsub = null; CH.open = null; CH.mode = null; }
   roomSel = null;
   V = {name, arg}; trial = null; draft = null; mdraft = null; render(); window.scrollTo(0,0);
@@ -2136,10 +2286,18 @@ const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Film',neu:'Neuigkeit'};
 /* ---------- Ansichten ---------- */
 function gateView(){
   const head = `${logoSVG('big')}<p class="logo">Nachtfalter</p><div class="orn" style="width:100%">❦</div>`;
+  if (recoverMode) return `<div class="gate"><div class="card gate-card">${head}
+    <form data-form="recover">
+      <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Leg dein neues Passwort fest.</p>
+      <label class="f" for="rc-pw1"><span class="lbl">Neues Passwort (mindestens 6 Zeichen)</span><input id="rc-pw1" type="password" autocomplete="new-password" minlength="6" required></label>
+      <label class="f" for="rc-pw2"><span class="lbl">Neues Passwort wiederholen</span><input id="rc-pw2" type="password" autocomplete="new-password" minlength="6" required></label>
+      <span id="rc-err" class="err" hidden></span>
+      <button class="btn" type="submit">Passwort speichern</button>
+    </form></div></div>`;
   if (gateMode === 'login') return `<div class="gate"><div class="card gate-card">${head}
     <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Schön, dass du wieder da bist.</p>
     ${forgotPw ? forgotHTML() : `<form data-form="login">
-      <label class="f" for="li-contact"><span class="lbl">Handynummer oder E-Mail-Adresse</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <label class="f" for="li-contact"><span class="lbl">${PUB ? 'E-Mail-Adresse' : 'Handynummer oder E-Mail-Adresse'}</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
       <label class="f" for="li-pw"><span class="lbl">Passwort</span><input id="li-pw" type="password" autocomplete="current-password" required></label>
       <span id="li-err" class="err" hidden></span>
       <button class="btn" type="submit">Anmelden</button>
@@ -2166,16 +2324,86 @@ function gateView(){
   </div></div>`;
 }
 function rail(){
-  const nNew = CH.list.filter(unread).length;
+  const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet');
   const tabs = [['home','Salon'],['profile','Mein Profil'],['room','Mein Zimmer'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? ' <i class="dot" aria-label="neue Anfrage"></i>' : '')],['find','Freunde finden'],['chats','Chats' + (nNew ? ` <i class="dot" aria-label="${nNew} neu"></i>` : '')],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen']];
   const cur = V.name === 'design' ? 'profile' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
-  return `<header class="rail">
+  return `<header class="rail ${mobMore ? 'more' : ''}">
     ${logoSVG()}<p class="logo">Nachtfalter<small>ein Ort nur für den Zirkel</small></p>
     <nav aria-label="Hauptnavigation"><ul>
       ${tabs.map(([k,l]) => `<li><button class="nl" data-act="nav" data-v="${k}" ${cur===k?'aria-current="page"':''}>${l}</button></li>`).join('')}
       <li><button class="nl" data-act="logout">Abmelden</button></li>
     </ul></nav>
-  </header>`;
+  </header>
+  ${mobNav(cur, nNew)}`;
+}
+function centerRooms(){ // Handy: breites Zimmer so scrollen, dass der eigene Avatar in der Mitte steht
+  document.querySelectorAll('.rscroll').forEach(el => {
+    if (el.scrollWidth <= el.clientWidth + 2) return;
+    const av = el.querySelector('.ritem.av:not(.vis)'); if (!av) return;
+    el.scrollLeft = av.offsetLeft + av.offsetWidth / 2 - el.clientWidth / 2;
+  });
+}
+/* Handy: feste Leiste unten wie bei Momio/MSP, nur unter 760px sichtbar */
+let mobMore = false;
+const MOB_ICONS = {
+  home:'<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>',
+  profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.5-7 8-7s7 2.5 8 7"/>',
+  room:'<path d="M3 21V9l9-6 9 6v12"/><path d="M8 21v-6h8v6"/><path d="M10 10h4"/>',
+  chats:'<path d="M4 5h16v11H9l-5 4z"/>',
+  wardrobe:'<path d="M12 4a2 2 0 0 1 2 2c0 1-1 1.5-2 2.2V9l8 6v2H4v-2l8-6"/>',
+  friends:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19c.8-3.6 3.2-5.5 6-5.5s5.2 1.9 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 13.6c2.3.2 4 1.8 4.5 4.6"/>',
+  search:'<circle cx="11" cy="11" r="6"/><path d="M16 16l4.5 4.5"/>',
+  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'
+};
+let roomMode = ''; // '' = nur ansehen, 'edit' = einrichten, 'chat' = Raumchat
+function mobNav(cur, nNew){
+  const it = (k, l, act='nav') => `<button class="mb ${(k === 'more' ? mobMore : cur === k && !mobMore) ? 'on' : ''}" data-act="${k === 'more' ? 'mob-more' : act}" data-v="${k}" ${k === 'more' ? `aria-expanded="${mobMore}"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS[k]}</svg><span>${l}</span>${k === 'chats' && nNew ? '<i class="dot" aria-label="neu"></i>' : ''}</button>`;
+  const moreOn = !mobMore && !['home','profile','room','wardrobe'].includes(cur);
+  return `<nav class="mobnav" aria-label="Hauptnavigation am Handy">${it('home','Salon')}${it('profile','Profil')}${it('room','Zimmer')}${it('wardrobe','Garderobe')}${it('more','Mehr').replace('class="mb ', `class="mb ${moreOn ? 'on ' : ''}`)}</nav>
+  ${friendPanel(nNew)}`;
+}
+/* Handy: Freunde-Knopf links wie bei Momio – Freunde, Chats und Suche, von überall zu den Profilen */
+let fpOpen = false, fpTab = 'friends', fpNew = false;
+function fpRow(u, sub, act='profile', extra=''){
+  const on = onlineState(u)[0];
+  return `<div class="fprow"><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
+}
+function friendPanel(nNew){
+  const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
+  const badge = nNew + reqs.length;
+  const tab = (k, l) => `<button role="tab" data-act="fp-tab" data-v="${k}" aria-selected="${fpTab === k}">${l}</button>`;
+  let body = '';
+  if (fpTab === 'friends') {
+    const fr = Object.values(S.users).filter(u => u.helper || (u.remote && isFriend(u.id)));
+    fr.sort((a, b) => (a.helper ? 1 : 0) - (b.helper ? 1 : 0) || (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
+    body = (reqs.length ? `<button class="btn fpreq" data-act="nav" data-v="friends">${reqs.length === 1 ? '1 Freundschaftsanfrage' : reqs.length + ' Freundschaftsanfragen'}</button>` : '')
+      + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1])).join('')
+      + (fr.some(u => !u.helper) ? '' : '<p class="note">Noch keine Freunde. Such sie über „Suchen“.</p>');
+  } else if (fpTab === 'chats') {
+    const rc = Object.values(S.users).filter(u => u.remote && u.roomOpen && isFriend(u.id) && onlineState(u)[0]);
+    body = (social ? `<div class="fpnew"><button class="btn fpreq" data-act="fp-newmenu" aria-expanded="${fpNew}">＋ Neuer Chat</button>${fpNew ? `<div class="fpnewopts"><button class="btn ghost" data-act="fp-newchat">Neues Gespräch</button><button class="btn ghost" data-act="fp-newgroup">Gruppenchat erstellen</button></div>` : ''}</div>` : '')
+      + `<p class="lbl fplbl">Helfer</p>` + ['juliet', 'andy'].map(id => fpRow(S.users[id], etx(hLast(id)), 'helper-chat')).join('')
+      + `<p class="lbl fplbl">Freunde</p>`
+      + (CH.list.length || rc.length ? '' : `<p class="note">${social ? 'Noch keine Chats mit Freunden.' : 'Chats mit Freunden gehen, sobald du angemeldet bist.'}</p>`)
+      + rc.map(u => fpRow(u, '🕯 Raumchat „' + esc(u.roomOpen.title || 'Mein Zimmer') + '“', 'room-visit')).join('')
+      + CH.list.map(c => {
+        const other = c.group ? null : c.members.find(m => m !== social?.uid);
+        const ou = other ? (S.users[other] || (PROF[other] && remoteUser(other, PROF[other]))) : null;
+        const pic = ou ? `<span class="cameo">${avatar(ou.outfit, 'head')}</span>` : '<span class="cameo fpgroup">✦</span>';
+        return `<div class="fprow"><button class="fpmain" data-act="fp-chat" data-id="${esc(c.id)}">${pic}<span class="fpinfo"><b>${esc(chatName(c))}${unread(c) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${c.lastText ? etx(c.lastText) : c.group ? c.members.length + ' Leute' : 'Privat'}</small></span></button>${ou ? `<button class="fpprof" data-act="profile" data-id="${esc(other)}" aria-label="Profil von ${esc(ou.name)}">Profil</button>` : ''}</div>`;
+      }).join('')
+      ;
+  } else {
+    const res = FR.results == null ? '' : FR.results.length ? FR.results.map(id => { const p = PROF[id] || {}; const u = S.users[id] || remoteUser(id, p); return fpRow(u, '@' + esc(u.handle) + (isFriend(id) ? ' · befreundet' : '')); }).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
+    body = social ? `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${res}`
+      : '<p class="note">Suchen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>';
+  }
+  return `<button class="fpbtn ${fpOpen ? 'on' : ''}" data-act="fp-toggle" aria-expanded="${fpOpen}" aria-label="Freunde, Chats und Suche"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.friends}</svg>${badge ? `<i class="dot" aria-label="${badge} neu"></i>` : ''}</button>
+  ${fpOpen ? `<div class="fpback" data-act="fp-toggle"></div><aside class="fpanel" aria-label="Freunde">
+    <div class="fphead"><b>Freunde</b><button class="fpx" data-act="fp-toggle" aria-label="Schließen">✕</button></div>
+    <div class="fptabs" role="tablist">${tab('friends', 'Freunde')}${tab('chats', 'Chats' + (nNew ? ' <i class="dot"></i>' : ''))}${tab('search', 'Suchen')}</div>
+    <div class="fpbody">${body}</div>
+  </aside>` : ''}`;
 }
 function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
   const pid = V.name === 'profile' ? (V.arg || S.me) : S.me, u = S.users[pid];
@@ -2210,7 +2438,7 @@ function postHTML(p){
   }).join('');
   const cm = p.comments.map(c => `<div class="cmt">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span></div>`).join('');
   return `<article class="post">
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${p.pinned ? 'Angeheftet' : KIND[p.type] + ' · ' + ago(p.ts)}</span></div></header>
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}</span></div></header>
     ${body}
     ${p.remote ? '' : `<div class="reacts">${reacts}</div>`}
     ${cm ? `<div class="cmts">${cm}</div>` : ''}
@@ -2234,7 +2462,7 @@ function composeHTML(){
 `;
 }
 function homeView(){
-  const posts = [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || [])].sort((a,b) => (b.pinned|0) - (a.pinned|0) || b.ts - a.ts);
+  const posts = [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || [])].sort((a,b) => b.ts - a.ts);
   return `<div class="card"><h2 class="card-h">Etwas teilen</h2><div class="card-in">
 ${composeHTML()}
     </div></div>
@@ -2283,9 +2511,10 @@ function tileHTML(p){
 }
 function chatHTML(h){
   const log = ((S.chats || {})[S.me + '>' + h.id]) || [];
+  if (hNew(h.id)) { delete S.hnew[S.me + '>' + h.id]; setTimeout(save); }
   const first = h.id === 'andy' ? 'Hey! Frag mich alles zu Garderobe, Haaren, Zimmer oder deinem Profil.' : 'Hallo! Ich bin für dich da. Frag mich zu den Regeln, zum Profil, zu Freunden oder wenn dich etwas stört.';
   return `<div class="chat" id="chatlog">
-    <div class="bubble them">${esc(first)}</div>
+    ${log.some(m => m.welcome) ? '' : `<div class="bubble them">${esc(first)}</div>`}
     ${log.map(m => `<div class="bubble ${m.from === S.me ? 'me' : 'them'}">${etx(m.text)}</div>`).join('')}
     ${chatTyping === h.id ? `<div class="bubble them typing">${esc(h.name)} schreibt …</div>` : ''}
   </div>
@@ -2314,12 +2543,12 @@ function helperAnswer(h, q){
 function focusChat(){ const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; document.getElementById('hc-in')?.focus(); }
 function roomOpenHTML(u, own){ // „Raumchat offen“ auf dem Profil, nur solange die Person online ist
   if (!u.roomOpen) return '';
-  if (own) return `<div class="ropen pro"><span>🕯 Dein Raumchat <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b> ist offen.</span><button class="btn ghost" data-act="nav" data-v="room">Zum Zimmer</button></div>`;
+  if (own) return `<div class="ropen pro"><span>🕯 Dein Raumchat <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b> ist offen.</span><button class="btn ghost" data-act="nav" data-v="room" data-mode="chat">Zum Raumchat</button></div>`;
   if (!u.remote || !isFriend(u.id) || !onlineState(u)[0]) return '';
   return `<div class="ropen pro"><span>🕯 ${esc(u.name)} hat einen Raumchat offen: <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b></span><button class="btn" data-act="room-visit" data-id="${esc(u.id)}">Reingehen</button></div>`;
 }
 function profileView(id){
-  const u = S.users[id]; if (!u) return homeView();
+  const u = S.users[id] || (PROF[id] && remoteUser(id, PROF[id])); if (!u) return homeView();
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
   const posts = (u.remote ? [...(u.posts || [])] : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
@@ -2354,6 +2583,7 @@ function profileView(id){
     ${own ? `<div class="editbar"><span class="note">So sehen andere dein Profil.</span><button class="btn" data-act="nav" data-v="design">✎ Profil bearbeiten</button></div>` : ''}
     ${roomOpenHTML(u, own)}
     ${profileHead(u, u.theme, mine)}
+    ${u.remote && !isFriend(id) ? `<div class="row pfriend">${personRow(id).replace(/^.*<div class="pbtns">/, '').replace(/<\/div><\/div>$/, '')}</div>` : ''}
     ${steckHTML}
     <div class="pz">${others.map(f => `<div class="m">${cameo(f)}${ulink(f.id)}</div>`).join('')}</div>
     <div class="ptabs" role="tablist">${tabs.map(([k,l]) =>
@@ -2433,7 +2663,7 @@ function shopView(isShop){
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
       ${catTabs(shopCat, 'cat', !isShop, u.outfit)}
-      ${isShop ? '' : colorPanel(shopCat, u.outfit, 'color')}
+      ${isShop ? '' : shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : (() => { const cp = colorPanel(shopCat, u.outfit, 'color'); return cp ? `<button class="btn ghost wcoltog" data-act="wcol" aria-expanded="${wColOpen}"><i class="wcoldot" style="background:${esc(curColor(shopCat, u.outfit))}"></i>${wColOpen ? 'Farben schließen' : 'Farbe ändern'}</button><div class="wcolors ${wColOpen ? 'open' : ''}">${cp}</div>` : ''; })()}
       ${shopCat === 'body' ? '' : `<label class="allg"><input type="checkbox" data-act="allg" ${showAllG ? 'checked' : ''}> Alles zeigen, auch für andere Körper</label>`}
       ${items ? `<div class="shopgrid">${items}</div>` : empty}
     </div></div>
@@ -2565,12 +2795,19 @@ function roomChatsList(){ // offene Raumchats von Freunden (nur solange sie onli
   return `<p class="lbl" style="margin:10px 0 0">Raumchats von Freunden</p>` + open.map(u => `<button class="clist" data-act="room-visit" data-id="${esc(u.id)}"><b>🕯 ${esc(u.roomOpen.title || 'Mein Zimmer')}</b><small>bei ${esc(u.name)} · Reingehen</small></button>`).join('');
 }
 function chatsView(){
-  if (!social) return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in"><p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist. Andy und Juliet kannst du trotzdem schon auf ihrem Profil schreiben.</p></div></div>`;
   const friends = Object.values(S.users).filter(u => u.remote);
   const list = CH.list.map(c => `<button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst im Zirkel Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
+  if (CH.mode === 'helper' && S.users[CH.helper]) {
+    const h = S.users[CH.helper];
+    right = `<section class="chatpanel hpanel">
+      <header class="ch-head"><div><b class="ch-name">${esc(h.name)}${hmark(h)}</b><small class="muted">${esc(h.helper)} · immer für dich da</small></div>
+        <button class="btn ghost" data-act="profile" data-id="${h.id}">Profil</button></header>
+      ${chatHTML(h)}
+    </section>`;
+  }
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
@@ -2581,16 +2818,16 @@ function chatsView(){
     </section>`;
   }
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
-    <div class="chatwrap">
+    <div class="chatwrap ${CH.mode ? 'open' : ''}">
       <div class="chatside">
-        <div class="row"><button class="btn" data-act="chat-new">Neuer Chat</button><button class="btn ghost" data-act="chat-group">Neue Gruppe</button></div>
-        ${list || '<p class="note">Noch keine Chats.</p>'}
-        <div id="roomchats">${roomChatsList()}</div>
+        ${social ? `<div class="row"><button class="btn" data-act="chat-new">Neuer Chat</button><button class="btn ghost" data-act="chat-group">Neue Gruppe</button></div>` : ''}
         <p class="lbl" style="margin:10px 0 0">Helfer</p>
-        <button class="clist" data-act="helper-chat" data-id="andy"><b>Andy${hmark(S.users.andy)}</b><small>Fragen zu Garderobe und Profil</small></button>
-        <button class="clist" data-act="helper-chat" data-id="juliet"><b>Juliet${hmark(S.users.juliet)}</b><small>Regeln, Profil, wenn dich etwas stört</small></button>
+        ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}
+        <p class="lbl" style="margin:10px 0 0">Freunde</p>
+        ${social ? list || '<p class="note">Noch keine Chats mit Freunden.</p>' : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
+        <div id="roomchats">${social ? roomChatsList() : ''}</div>
       </div>
-      <div class="chatmain">${right}</div>
+      <div class="chatmain">${CH.mode ? '<button class="btn ghost mback" data-act="chat-back">← Alle Chats</button>' : ''}${right}</div>
     </div>
     <p class="note">Hinweis: Im Entwurf sind Chats noch nicht verschlüsselt.</p>
   </div></div>`;
@@ -3000,7 +3237,7 @@ document.addEventListener('click', async e => {
   else if (a === 'chat-new') { CH.mode = 'new'; render(); }
   else if (a === 'chat-group') { CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
-  else if (a === 'helper-chat') { go('profile', id); profTab = 'chat'; render(); focusChat(); }
+  else if (a === 'helper-chat') { go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
   else if (a === 'chat-edit') { const c = CH.list.find(x => x.id === CH.open); CH.gdraft = {id:c.id, name:c.name || '', members:c.members.filter(m => m !== social.uid), theme:{...BLANK_THEME(), ...(c.theme || {})}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-leave') {
     const c = CH.list.find(x => x.id === CH.gdraft?.id); if (!c) return;
@@ -3046,10 +3283,10 @@ function render(){
   app.innerHTML = `<div class="shell">${rail()}
     <main class="main${wide ? ' wide' : ''}">${body()}</main>
     ${wide ? '' : asideHTML()}
-    <footer class="foot"><span>Nachtfalter · Entwurf</span><span id="savestate">${saveText()}</span><button class="lnk" data-act="reset">Demo zurücksetzen</button></footer>
+    <footer class="foot"><span>Nachtfalter · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
-  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync();
+  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms();
   const mb = document.getElementById('msgs'); if (mb) mb.scrollTop = mb.scrollHeight;
 }
 
@@ -3160,7 +3397,17 @@ document.addEventListener('click', e => {
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id;
-  if (a === 'nav') go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null);
+  if (a === 'rmode') { roomMode = roomMode === b.dataset.v ? '' : b.dataset.v; roomSel = null; render(); return; }
+  if (a === 'fp-toggle') { fpOpen = !fpOpen; mobMore = false; render(); if (fpOpen && fpTab === 'search') document.getElementById('fp-q')?.focus(); return; }
+  if (a === 'fp-tab') { fpTab = b.dataset.v; render(); if (fpTab === 'search') document.getElementById('fp-q')?.focus(); return; }
+  if (a === 'fp-chat') { go('chats'); openChat(b.dataset.id); return; }
+  if (a === 'fp-newmenu') { fpNew = !fpNew; render(); return; }
+  if (a === 'fp-newchat') { fpNew = false; go('chats'); CH.mode = 'new'; render(); return; }
+  if (a === 'fp-newgroup') { fpNew = false; go('chats'); CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); return; }
+  if (a === 'wcol') { wColOpen = !wColOpen; render(); return; }
+  if (a === 'mob-more') { mobMore = !mobMore; render(); return; }
+  if (a === 'chat-back') { CH.open = null; CH.mode = null; render(); return; }
+  if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') go('profile', id);
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
   else if (a === 'rwall-del') { if (social && WL.uid) social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => toast('Löschen ging nicht.')); }
@@ -3173,6 +3420,7 @@ document.addEventListener('click', e => {
   else if (a === 'prof-edit') { profEdit = b.dataset.v === '1'; composeOpen = false; render(); }
   else if (a === 'logout') { const m = document.getElementById('confirm'); m.hidden = false; m.querySelector('[data-act=logout-no]').focus(); }
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
+  else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} location.reload(); }); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'copy-invite') { const l = inviteLink(); (navigator.clipboard?.writeText(l) || Promise.reject()).then(() => toast('Einladungslink kopiert'), () => { const x = document.getElementById('invite-link'); x.select(); toast('Link markiert, jetzt kopieren'); }); }
   else if (a === 'reset') {
@@ -3261,8 +3509,31 @@ document.addEventListener('submit', async e => {
     const birth = val('reg-birth'), bp = birthProblem(birth); if (bp) return fail(bp);
     if (pw.length < 6) return fail('Das Passwort braucht mindestens 6 Zeichen.');
     if (contactTaken(contact)) return fail('Dafür gibt es schon ein Konto. Melde dich stattdessen an.');
+    if (PUB) {
+      if (!isMail(contact)) return fail('Bitte gib deine E-Mail-Adresse ein. Damit kannst du dein Passwort später zurücksetzen.');
+      const r = await NF_AUTH.signUp(contact, pw); if (r.error) return fail(r.error);
+      if (r.needsConfirm) toast('Wir haben dir eine Mail geschickt. Bitte bestätige deine E-Mail-Adresse.');
+      else await cloudReinit();
+    }
     S.pending = {outfit:{...DEFAULT_OUTFIT, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:'name', contact, birth, pwh: await hashPw(pw)};
     save(); render();
+  } else if (t === 'forgot' && PUB) {
+    const err = document.getElementById('fg-err'), c = val('fg-contact');
+    if (!isMail(c)) { err.textContent = 'Bitte gib deine E-Mail-Adresse ein.'; err.hidden = false; return; }
+    const r = await NF_AUTH.resetPw(c);
+    if (r.error) { err.textContent = r.error; err.hidden = false; return; }
+    forgotSent = c; render();
+  } else if (t === 'recover') {
+    const err = document.getElementById('rc-err'), fail = m => { err.textContent = m; err.hidden = false; };
+    const p1 = document.getElementById('rc-pw1').value, p2 = document.getElementById('rc-pw2').value;
+    if (p1.length < 6) return fail('Das Passwort braucht mindestens 6 Zeichen.');
+    if (p1 !== p2) return fail('Die beiden Passwörter sind nicht gleich.');
+    const r = await NF_AUTH.updatePw(p1); if (r.error) return fail(r.error);
+    recoverMode = false; await cloudReinit();
+    const em = normContact(NF_AUTH.email() || '');
+    const u = Object.values(S.users).find(x => !x.helper && !x.remote && contactsOf(x).includes(em));
+    if (u) { u.pwh = await hashPw(p1); S.me = u.id; S.unlocked = true; welcomeDMs(); save(); go('home'); toast('Neues Passwort gespeichert. Willkommen zurück, ' + u.name); }
+    else { gateMode = 'login'; render(); toast('Neues Passwort gespeichert. Melde dich jetzt an.'); }
   } else if (t === 'forgot') {
     await cloudReady;
     const err = document.getElementById('fg-err'), fail = m => { err.textContent = m; err.hidden = false; };
@@ -3272,18 +3543,31 @@ document.addEventListener('submit', async e => {
     if (p1.length < 6) return fail('Das Passwort braucht mindestens 6 Zeichen.');
     if (p1 !== p2) return fail('Die beiden Passwörter sind nicht gleich.');
     u.pwh = await hashPw(p1); if (!u.birth && birth) u.birth = birth;
-    forgotPw = false; S.me = u.id; S.unlocked = true; S.pending = null; save(); go('home'); toast('Neues Passwort gespeichert. Willkommen zurück, ' + u.name);
+    forgotPw = false; S.me = u.id; S.unlocked = true; S.pending = null; welcomeDMs(); save(); go('home'); toast('Neues Passwort gespeichert. Willkommen zurück, ' + u.name);
   } else if (t === 'login') {
     const contact = val('li-contact'), pw = document.getElementById('li-pw').value, err = document.getElementById('li-err');
+    err.hidden = true;
     const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Einen Moment …'; }
-    const u = await findLogin(contact, pw);
+    let u;
+    if (PUB) {
+      if (!isMail(contact)) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = 'Bitte melde dich mit deiner E-Mail-Adresse an.'; err.hidden = false; return; }
+      const r = await NF_AUTH.signIn(contact, pw);
+      if (r.error) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = r.error; err.hidden = false; return; }
+      await cloudReinit();
+      u = Object.values(S.users).find(x => !x.helper && !x.remote && contactsOf(x).includes(normContact(contact)));
+      if (u) u.pwh = await hashPw(pw);
+      else { // Konto da, aber Profil noch nicht fertig: Einrichtung fortsetzen
+        S.pending = {outfit:{...DEFAULT_OUTFIT, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:S.pending?.step || 'name', contact, pwh: await hashPw(pw)};
+        S.unlocked = true; save(); render(); return;
+      }
+    } else u = await findLogin(contact, pw);
     if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; }
     if (!u) {
       const known = Object.values(S.users).some(x => !x.helper && !x.remote && contactsOf(x).includes(normContact(contact)));
       err.textContent = known ? 'Das Passwort stimmt nicht. Tipp aufs Auge, dann siehst du, was du eingibst.' : 'Zu dieser Handynummer oder E-Mail gibt es hier kein Konto. Bist du mit demselben Claude-Konto angemeldet wie bei der Registrierung?';
       err.hidden = false; return;
     }
-    S.me = u.id; S.unlocked = true; S.pending = null; save(); go('home'); toast('Willkommen zurück, ' + u.name);
+    S.me = u.id; S.unlocked = true; S.pending = null; welcomeDMs(); save(); go('home'); toast('Willkommen zurück, ' + u.name);
   } else if (t === 'uname') {
     const handle = normHandle(val('uhandle')), name = val('uname'), err = document.getElementById('uname-err');
     const fail = m => { err.textContent = m; err.hidden = false; };
@@ -3296,7 +3580,7 @@ document.addEventListener('submit', async e => {
     S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth, contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
       theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), mood:'neu hier', headline:val('ob-headline'), about:val('ob-about'), music:'', films:'', hobbies:'',
       wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen im Zirkel. Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
-    delete S.pending; S.me = id;
+    delete S.pending; S.me = id; welcomeDMs();
     claimHandle(p.handle);
     if (!save()) return;
     go('profile', id); toast('Willkommen bei Nachtfalter');
@@ -3325,7 +3609,7 @@ document.addEventListener('submit', async e => {
     const h = f.dataset.id, text = val('hc-in'); if (!text) return;
     S.chats = S.chats || {}; const k = S.me + '>' + h, log = S.chats[k] = S.chats[k] || [];
     log.push({from:S.me, text, ts:Date.now()}); chatTyping = h; save(); render(); focusChat();
-    setTimeout(() => { log.push({from:h, text:helperAnswer(h, text), ts:Date.now()}); chatTyping = null; save(); if (V.name === 'profile' && V.arg === h && profTab === 'chat') { render(); focusChat(); } }, 900);
+    setTimeout(() => { log.push({from:h, text:helperAnswer(h, text), ts:Date.now()}); chatTyping = null; save(); if ((V.name === 'profile' && V.arg === h && profTab === 'chat') || (V.name === 'chats' && CH.mode === 'helper' && CH.helper === h)) { render(); focusChat(); } }, 900);
   } else if (t === 'wall') {
     const id = f.dataset.id, text = val('w-' + id); if (!text) return;
     S.users[id].wall.push({author:S.me, text, ts:Date.now()});
@@ -3337,6 +3621,8 @@ document.addEventListener('submit', async e => {
     const su = val('m-url'), err = document.getElementById('m-err');
     if (!ytId(su)) { err.textContent = 'Das ist kein YouTube-Link. Kopier den Link in YouTube über „Teilen“ und „Link kopieren“.'; err.hidden = false; return; }
     me().songUrl = su; musicEdit = false; songOff = null; save(); render(); toast('Deine Musik läuft jetzt auf deinem Profil');
+  } else if (t === 'fp-search') {
+    await searchPeople(val('fp-q')); render(); document.getElementById('fp-q')?.focus();
   } else if (t === 'fsearch') {
     await searchPeople(val('fs-q')); render(); document.getElementById('fs-q')?.focus();
   } else if (t === 'cmsg') {
@@ -3370,13 +3656,16 @@ document.addEventListener('submit', async e => {
     if (k === 'email' ? !isMail(c) : !isPhone(c)) return fail(k === 'email' ? 'Bitte gib eine gültige E-Mail-Adresse ein.' : 'Bitte gib eine gültige Handynummer ein.');
     if (await hashPw(document.getElementById('s-pw1').value) !== u.pwh) return fail('Das Passwort stimmt nicht.');
     if (contactTaken(c, u.id)) return fail('Damit gibt es schon ein anderes Konto.');
+    if (PUB && k === 'email') { const r = await NF_AUTH.updateEmail(c); if (r.error) return fail(r.error); toast('Bestätige die neue E-Mail über den Link, den wir dir geschickt haben.'); }
     u[k] = c; u.contact = u.email || u.phone; setOpen = null; save(); render(); toast(k === 'email' ? 'E-Mail-Adresse gespeichert' : 'Handynummer gespeichert');
   } else if (t === 'set-pw') {
     const u = me(), err = document.getElementById('s-pw-err'), fail = m => { err.textContent = m; err.hidden = false; };
     const nw = document.getElementById('s-new').value;
-    if (await hashPw(document.getElementById('s-old').value) !== u.pwh) return fail('Das aktuelle Passwort stimmt nicht.');
+    if (PUB) { const r = await NF_AUTH.signIn(NF_AUTH.email() || u.email, document.getElementById('s-old').value); if (r.error) return fail('Das aktuelle Passwort stimmt nicht.'); }
+    else if (await hashPw(document.getElementById('s-old').value) !== u.pwh) return fail('Das aktuelle Passwort stimmt nicht.');
     if (nw.length < 6) return fail('Das neue Passwort braucht mindestens 6 Zeichen.');
     if (nw !== document.getElementById('s-new2').value) return fail('Die beiden neuen Passwörter sind nicht gleich.');
+    if (PUB) { const r = await NF_AUTH.updatePw(nw); if (r.error) return fail(r.error); }
     u.pwh = await hashPw(nw); setOpen = null; save(); render(); toast('Passwort geändert');
   } else if (t === 'set-handle') {
     const u = me(), nh = normHandle(val('s-handle')), err = document.getElementById('s-handle-err');
