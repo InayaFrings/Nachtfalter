@@ -372,7 +372,7 @@ footer.foot .lnk{color:var(--muted)}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fg);vertical-align:middle;margin-left:4px}
 .plist{display:grid;gap:8px;margin-top:10px}
 .prow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);padding:8px 12px;flex-wrap:wrap}
-.prow .cameo{width:46px;height:46px}.pgo{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit}.frq{display:grid;gap:8px}.pinfo{display:grid;flex:1;min-width:120px}.pbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prow .cameo{width:46px;height:46px}.pgo{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit}.frq{display:grid;gap:8px}.pinfo{display:grid;flex:1;min-width:120px}.pbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.pinfo .pstat{display:none;color:var(--muted);font-style:italic;font-size:14px}
 .chatwrap{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:18px;align-items:start}
 @media (max-width:760px){.chatwrap{grid-template-columns:minmax(0,1fr)}}
 .chatside{display:grid;gap:6px}.chatside .row{margin-bottom:6px}
@@ -539,6 +539,10 @@ footer.foot .lnk{color:var(--muted)}
   .shell:has(.room) .card:last-child{margin-bottom:12px}
   /* Anfragen: Knöpfe unter Name und Nutzername statt darüber */
   .prow .pgo{min-width:62%}
+  /* Handy: „Befreundet“ unter dem Nutzernamen statt neben dem Knopf */
+  .pinfo .pstat{display:block}
+  .pbtns > .muted{display:none}
+  .pbtns{flex:none}
   /* Profil kompakter */
   .phead{gap:14px}
   .phead .portrait{width:150px}
@@ -3099,7 +3103,7 @@ function personRow(id){
     : FR.mine.includes(id) ? `<span class="muted">Anfrage gesendet</span> <button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button>`
     : FR.inc.includes(id) ? `<button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button> <button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button>`
     : `<button class="btn" data-act="fr-add" data-id="${id}">Hinzufügen</button>`;
-  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span></div></button><div class="pbtns">${btn}</div></div>`;
+  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<small class="pstat">Befreundet</small>' : FR.mine.includes(id) ? '<small class="pstat">Anfrage gesendet</small>' : ''}</div></button><div class="pbtns">${btn}</div></div>`;
 }
 const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id)) ? `<span class="badge owner">✦ Owner · Gründerin von Nachtfalter</span>` : '';
 
