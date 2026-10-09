@@ -1,5 +1,7 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Nachtfalter</title>
+<link rel="manifest" href="pwa/manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#000000">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -615,6 +617,60 @@ footer.foot .lnk{color:var(--muted)}
   .mirror-card{grid-template-columns:auto;justify-items:center;justify-content:center;padding:8px;gap:6px}
   .mirror-card > .note,.wardrobe .card-in > p.note:first-child{display:none}
   .mirror{width:84px}
+}
+
+/* Handy wie Momio: kompakte Kopfzeile mit Freunde/Chats, Teile antippen statt Knöpfe, Zimmer oben fest */
+.mtop{display:none}
+@media (max-width:760px){
+  .mtop{display:flex;gap:6px;margin-left:auto}
+  .mti{position:relative;width:42px;height:42px;display:grid;place-items:center;background:none;border:1px solid var(--line-soft);color:var(--fg);padding:0}
+  .mti svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+  .mti .dot{position:absolute;top:5px;right:5px}
+  .fpbtn{display:none!important}
+  .fpanel{top:0}
+  footer.foot{display:none}
+  .mcompose{width:100%;min-height:48px;font-size:18px}
+  /* Garderobe: großer Avatar oben, Teile in vier Spalten, antippen zieht an */
+  .wardrobe .mirror{width:min(30vw,124px)}
+  .card-in > .chips[role=tablist]{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:8px!important}
+  .card-in > .chips[role=tablist] > *{flex:none}
+  .mfh{margin:14px 0 6px}
+  /* Profil kompakter */
+  .phead{gap:14px}
+  .phead .portrait{width:150px}
+  .pleft{gap:8px}
+  .pleft .pname{font-size:34px;margin-bottom:2px}
+  .pbanner{aspect-ratio:5/1}
+  .pbanner span{font-size:24px}
+  .wardrobe .mirror-card{padding:6px}
+  .wardrobe .mirror-card .btn,.wardrobe .mirror-card .note{display:none}
+  .wardrobe .shopgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .wardrobe .shopgrid .item{padding:4px;gap:0}
+  .wardrobe .shopgrid .item > .btn{display:none}
+  .wardrobe .shopgrid .item.on{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+  .wardrobe .cdot{width:22px;height:22px;top:4px;right:4px}
+  .wardrobe .card-h{display:none}
+  .wardrobe .card-in{padding-top:10px}
+  .allg{font-size:14px}
+  /* Zimmer: Posen als eine wischbare Reihe */
+  .rposes{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+  .rposes::-webkit-scrollbar{display:none}
+  .rposes > *{flex:none}
+  .rposes + .note,.card-in > .rposes ~ p.note{display:none}
+  /* Zimmer einrichten: Zimmer bleibt oben stehen, Möbel antippen stellt hin oder räumt weg */
+  .rstick{position:sticky;top:calc(61px + env(safe-area-inset-top,0px));z-index:25;background:var(--paper);margin:0 -14px;padding:0 0 6px;box-shadow:0 10px 20px #000a}
+  .rstick .rscroll{margin-inline:0}
+  .rstick .rscroll > .room{width:100%}
+  .rstick + .row .note,.rstick ~ p.note{display:none}
+  .card-in > p.note:has(+ .rstick){display:none}
+  .shopgrid .item > .fthumb{cursor:pointer}
+  .shopgrid .item:has(> .fthumb) > .btn,.shopgrid .item:has(> .fthumb) > .price{display:none}
+  .shopgrid:has(.fthumb){grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .shopgrid .item:has(> .fthumb){padding:4px;gap:2px}
+  .shopgrid .item:has(> .fthumb) .iname{font-size:12px;line-height:1.15}
+  .shopgrid .item.on:has(> .fthumb){border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+  .opt .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .opt .chips > *{flex:none}
 }
 </style>
 
@@ -1748,7 +1804,7 @@ function roomView(){
       : `<button class="btn" disabled>Noch ${f.price - u.points} Punkte</button>`;
     const fc = here ? r.items.find(x => x.k === k).c : null, open = here && colItem === 'f:' + k;
     const dot = here ? `<span class="cdot" role="button" tabindex="0" data-act="fcol" data-k="f:${k}" style="background:${esc(fc || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe von ${esc(f.name.replace(/\u00ad/g, ''))} ändern" aria-expanded="${open}"></span>` : '';
-    return `<div class="item ${here ? 'on' : ''}">${dot}<div class="thumb fthumb">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
+    return `<div class="item ${here ? 'on' : ''}">${dot}<div class="thumb fthumb" data-act="ftap" data-k="${k}">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k].name : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
@@ -1762,20 +1818,29 @@ function roomView(){
       ${roomMode === 'chat' ? '' : `<p class="note">${u.roomOpen ? `Dein Raumchat <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b> ist offen. ` : ''}Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
     </div></div>
     ${roomMode === 'chat' ? roomChatHTML(true) : ''}`;
-  return `<div class="card">${head}<div class="card-in">
-      <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
-      ${roomHTML(u, true)}
-      <div class="row">${selName ? `<span class="lbl">Ausgewählt: ${selName}</span>${roomSel !== 'av' ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}` : '<span class="note">Tipp: Tippe ein Möbelstück an, um es zu spiegeln oder wegzuräumen.</span>'}</div>
-      <fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}${r.wall===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="wallC" style="background:${esc(r.wallC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'wallC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
+  const selRow = `<div class="row">${selName ? `<span class="lbl">Ausgewählt: ${selName}</span>${roomSel !== 'av' ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}` : '<span class="note">Tipp: Tippe ein Möbelstück an, um es zu spiegeln oder wegzuräumen.</span>'}</div>`;
+  const wallFloor = `<fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}${r.wall===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="wallC" style="background:${esc(r.wallC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'wallC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
       ${colItem === 'wallC' ? `<div class="cpanel">${roomColorRow('Wandfarbe', 'wallC', r.wallC)}</div>` : ''}
       <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}${r.floor===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="floorC" style="background:${esc(r.floorC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'floorC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
-      ${colItem === 'floorC' ? `<div class="cpanel">${roomColorRow('Bodenfarbe', 'floorC', r.floorC)}</div>` : ''}
-      <div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div>
+      ${colItem === 'floorC' ? `<div class="cpanel">${roomColorRow('Bodenfarbe', 'floorC', r.floorC)}</div>` : ''}`;
+  const furnTabs = `<div class="chips" role="tablist" aria-label="Kategorie" style="margin-bottom:14px">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}</button>`).join('')}</div>`, grid = `<div class="shopgrid">${shop}</div>`;
+  const doneRow = `<div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div>`;
+  // Handy: alles in einer Karte, damit das Zimmer beim Möbel-Aussuchen oben stehen bleibt
+  if (isMob()) return `<div class="card">${head}<div class="card-in">
+      <div class="rstick">${roomHTML(u, true)}</div>
+      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${wallFloor}${doneRow}
+    </div></div>`;
+  return `<div class="card">${head}<div class="card-in">
+      <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
+      <div class="rstick">${roomHTML(u, true)}</div>
+      ${selRow}
+      ${wallFloor}
+      ${doneRow}
     </div></div>
     <div class="card"><h2 class="card-h">Möbelhaus</h2><div class="card-in">
-      <div class="chips" role="tablist" aria-label="Kategorie" style="margin-bottom:14px">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}</button>`).join('')}</div>
-      <div class="shopgrid">${shop}</div>
-      <div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div></div></div>`;
+      ${furnTabs}
+      ${grid}
+      ${doneRow}</div></div>`;
 }
 document.addEventListener('pointerdown', e => {
   const el = e.target.closest('#room [data-drag]'); if (!el) return;
@@ -2585,12 +2650,18 @@ function rail(){
   const cur = V.name === 'design' ? 'profile' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${logoSVG()}<p class="logo">Nachtfalter<small>ein Ort nur für den Zirkel</small></p>
+    ${mobTop(nNew)}
     <nav aria-label="Hauptnavigation"><ul>
       ${tabs.map(([k,l]) => `<li><button class="nl" data-act="nav" data-v="${k}" ${cur===k?'aria-current="page"':''}>${l}</button></li>`).join('')}
       <li><button class="nl" data-act="logout">Abmelden</button></li>
     </ul></nav>
   </header>
   ${mobNav(cur, nNew)}`;
+}
+function mobTop(nNew){ // Handy: Freunde und Chats oben rechts wie bei Momio
+  const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)).length;
+  const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
+  return `<div class="mtop">${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}</div>`;
 }
 function centerRooms(){ // Handy: breites Zimmer so scrollen, dass der eigene Avatar in der Mitte steht
   document.querySelectorAll('.rscroll').forEach(el => {
@@ -2600,7 +2671,8 @@ function centerRooms(){ // Handy: breites Zimmer so scrollen, dass der eigene Av
   });
 }
 /* Handy: feste Leiste unten wie bei Momio/MSP, nur unter 760px sichtbar */
-let mobMore = false;
+let mobMore = false, homeCompose = false;
+const isMob = () => window.matchMedia('(max-width:760px)').matches;
 const MOB_ICONS = {
   home:'<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>',
   profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.5-7 8-7s7 2.5 8 7"/>',
@@ -2768,9 +2840,10 @@ function composeHTML(){
 }
 function homeView(){
   const posts = [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || [])].sort((a,b) => b.ts - a.ts);
-  return `<div class="card"><h2 class="card-h">Etwas teilen</h2><div class="card-in">
-${composeHTML()}
-    </div></div>
+  const compose = isMob() && !homeCompose ? `<button class="btn mcompose" data-act="hcompose">＋ Etwas teilen</button>` : `<div class="card"><h2 class="card-h">Etwas teilen</h2><div class="card-in">
+${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
+    </div></div>`;
+  return `${compose}
     <section class="card"><h2 class="card-h">Salon</h2><div class="feed">${posts.length ? posts.map(postHTML).join('') : '<p class="card-in muted">Noch ist es still. Teil den ersten Gedanken.</p>'}</div></section>`;
 }
 let musicEdit = false;
@@ -3893,6 +3966,7 @@ document.addEventListener('click', async e => {
   else if (a === 'compose-close') { composeOpen = false; postCrop = null; render(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
+  else if (a === 'try' && isMob()) { const i = item(id); wearItem(me().outfit, i); trial = null; save(); render(); }
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
   else if (a === 'untry') { trial = null; render(); }
@@ -3939,6 +4013,10 @@ document.addEventListener('click', async e => {
     u.points -= f.price; u.deko.push(k); u.room.items.push({k, x:44, y:f.wall ? 10 : 46}); roomSel = u.room.items.length - 1;
     save(); render(); toast(`${f.name} gekauft und ins Zimmer gestellt`); document.getElementById('room')?.scrollIntoView({block:'center'});
   }
+  else if (a === 'ftap') { if (!isMob()) return; const r = me().room, k = b.dataset.k;
+    if (r.items.some(i => i.k === k)) { r.items = r.items.filter(i => i.k !== k); roomSel = null; } else { const f = FURN[k]; r.items.push({k, x:44, y:f.wall ? 10 : 46}); roomSel = r.items.length - 1; }
+    save(); render(); }
+  else if (a === 'hcompose') { homeCompose = !homeCompose; render(); if (homeCompose) document.getElementById('ptext')?.focus(); }
   else if (a === 'place') { const f = FURN[b.dataset.k]; me().room.items.push({k:b.dataset.k, x:44, y:f.wall ? 10 : 46}); roomSel = me().room.items.length - 1; save(); render(); document.getElementById('room')?.scrollIntoView({block:'center'}); }
   else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); roomSel = null; save(); render(); }
   else if (a === 'unplace-sel') { me().room.items.splice(roomSel, 1); roomSel = null; save(); render(); }
@@ -4108,7 +4186,7 @@ document.addEventListener('submit', async e => {
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
     earn(PTS[composeType], {gedanke:'Gedanke geteilt',foto:'Bild geteilt',video:'Film geteilt'}[composeType]);
-    composeOpen = false; postCrop = null; save(); render();
+    composeOpen = false; homeCompose = false; postCrop = null; save(); render();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
