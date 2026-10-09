@@ -383,9 +383,9 @@ footer.foot .lnk{color:var(--muted)}
 .say.gone{opacity:0}
 @keyframes sayin{from{opacity:0;transform:translate(-50%,-80%)}to{opacity:1;transform:translate(-50%,-100%)}}
 .ritem.vis{width:13%;pointer-events:none}.vname{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);font:italic 12px var(--f-ital);background:#0a0a0bcc;color:#ecebe7;padding:0 6px;white-space:nowrap}
-.songdock{position:fixed;right:14px;bottom:14px;z-index:60;background:#0e0e10;border:1px solid var(--line);padding:8px;display:grid;gap:6px;width:min(300px,calc(100vw - 32px))}
-.songdock iframe{width:100%;aspect-ratio:16/9;border:0;display:block}.songhead{display:flex;justify-content:space-between;gap:8px;font:italic 14px var(--f-ital)}
-.songdock[hidden]{display:none}.ytrow{display:flex;align-items:center;gap:10px}.ytbtn{min-width:44px;padding:6px 10px}.ytmsg{font:italic 14px var(--f-ital);color:var(--muted,#aaa)}.ytbox{height:0;overflow:hidden}.songdock.needtap .ytbox{height:auto}.songdock.yt iframe{aspect-ratio:16/9;height:auto}.songdock audio{width:100%;display:block;height:36px}
+.songdock{position:fixed;left:0;bottom:0;width:200px;height:113px;opacity:0;pointer-events:none;z-index:-1;overflow:hidden}
+.songdock iframe{width:200px;height:113px;border:0;display:block}
+
 .deldanger{margin-top:18px}
 .modal{position:fixed;inset:0;z-index:80;background:#000a;display:grid;place-items:center;padding:16px}.modal[hidden]{display:none}.modal-card{padding:24px;max-width:380px;width:100%;display:grid;gap:18px;text-align:center}
 .subtabs{margin-top:-6px}.subtabs button{font-size:15px}
@@ -414,7 +414,6 @@ footer.foot .lnk{color:var(--muted)}
   .rail.more ul{display:grid;grid-template-columns:1fr 1fr;gap:4px;overflow:visible}
   .rail.more .nl{border:1px solid var(--line-soft);padding:12px;font-size:17px;white-space:normal;text-align:center;width:100%}
   .rail.more .nl[aria-current="page"]{border:1px solid var(--fg)}
-  .songdock{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:12px}
   .mobnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--bg);border-top:1px solid var(--line);padding:4px 4px env(safe-area-inset-bottom,0px)}
   .mb{position:relative;background:none;border:0;color:var(--muted);display:grid;justify-items:center;gap:2px;padding:7px 2px 6px;font:400 12.5px var(--f-display);letter-spacing:.04em;min-height:56px}
   .mb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
@@ -508,7 +507,7 @@ footer.foot .lnk{color:var(--muted)}
 
 <div id="app"></div>
 <div id="toast" class="toast" hidden></div>
-<div id="songdock" class="songdock" hidden></div>
+<div id="songdock" class="songdock" aria-hidden="true"></div>
 <div id="confirm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="confirm-h"><div class="card modal-card"><h2 id="confirm-h" class="ch-h">Willst du dich wirklich abmelden?</h2><div class="row"><button class="btn ghost" data-act="logout-no">Nein</button><span class="sp"></span><button class="btn" data-act="logout-yes">Ja, abmelden</button></div></div></div>
 <div id="delacct" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="delacct-h"><form class="card modal-card" data-form="delacct"><h2 id="delacct-h" class="ch-h">Willst du dein Konto wirklich löschen?</h2><p class="note" style="margin:0">Dein Profil, dein Zimmer, deine Beiträge und deine Freundesliste werden für immer gelöscht. Das kann man nicht rückgängig machen.</p><label class="f" for="del-in"><span class="lbl">Tippe zur Bestätigung LÖSCHEN ein</span><input id="del-in" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"></label><label class="f" for="del-pw" id="del-pwl" style="display:none"><span class="lbl">Dein Passwort</span><input id="del-pw" type="password" autocomplete="current-password"></label><span id="del-err" class="err" hidden></span><div class="row"><button class="btn ghost" type="button" data-act="delacct-no">Abbrechen</button><span class="sp"></span><button class="btn" type="submit" id="del-go" disabled>Konto löschen</button></div></form></div>
 
@@ -2498,7 +2497,7 @@ ${composeHTML()}
 let musicEdit = false;
 function musicHTML(u, mine){
   if (!u.id) return '';
-  const vid = ytId(u.songUrl) || (u.songFile ? 'file' : ''), playing = vid && songOff !== u.id && V.name === 'profile';
+  const vid = ytId(u.songUrl) || (u.songFile ? 'file' : ''), playing = vid && songPlaying && V.name === 'profile';
   if (!mine) return vid ? `<div class="music"><button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button></div>` : '';
   const form = `<form class="music-form" data-form="music">
       <p class="note"><b>So kommt Musik auf dein Profil:</b> Öffne deinen Song auf YouTube, tippe auf „Teilen“, dann auf „Link kopieren“, und füge den Link hier ein. Der Song läuft dann, wenn jemand dein Profil öffnet.</p>
@@ -3181,8 +3180,9 @@ async function songURL(uid, f){
   const type = f.type || 'audio/mpeg';
   return SONGS[key] = {url:URL.createObjectURL(new Blob([arr], {type})), data:`data:${type};base64,${b64}`}; // data: als Ersatz, falls blob: blockiert ist
 }
-// YouTube-Song läuft unsichtbar im Hintergrund über die YouTube-Player-Schnittstelle, ohne Weiterleitung zu YouTube
-let YTP = null, ytApi = null, ytUserPaused = false;
+// Profilsong läuft unsichtbar im Hintergrund (YouTube-Player-Schnittstelle oder eigene Datei).
+// Bedient wird er nur über den Knopf „♪ Musik an / aus“ im Profil.
+let YTP = null, ytApi = null, songAudio = null, songErr = '', songPlaying = false;
 function ytLoad(){
   return ytApi || (ytApi = new Promise(res => {
     if (window.YT?.Player) return res(YT);
@@ -3193,60 +3193,63 @@ function ytLoad(){
     document.head.appendChild(sc);
   }));
 }
-function ytKill(){ if (YTP) { try { YTP.destroy(); } catch {} YTP = null; } }
-function ytUI(){
-  const dock = document.getElementById('songdock'); if (!dock || !YTP?.getPlayerState) return;
-  const st = YTP.getPlayerState(), b = dock.querySelector('.ytbtn'), m = dock.querySelector('.ytmsg');
-  if (st === 1) { dock.classList.remove('needtap'); if (b) { b.textContent = '❚❚'; b.setAttribute('aria-label', 'Pause'); } if (m) m.textContent = 'läuft'; }
-  else if (b) { b.textContent = '▶'; b.setAttribute('aria-label', 'Abspielen'); if (m && st === 2) m.textContent = 'pausiert'; }
+function songKill(){
+  if (YTP) { try { YTP.destroy(); } catch {} YTP = null; }
+  if (songAudio) { songAudio.pause(); songAudio = null; }
+  songPlaying = false;
 }
-function ytNeedTap(){
-  const dock = document.getElementById('songdock'); if (!dock || !YTP || ytUserPaused || YTP.getPlayerState?.() === 1) return;
-  dock.classList.add('needtap');
-  const m = dock.querySelector('.ytmsg'); if (m) m.textContent = 'Tippe auf ▶ oder einmal aufs Video, dann läuft der Song.';
+function songMark(p){
+  songPlaying = p;
+  document.querySelectorAll('[data-act=music-toggle]').forEach(b => { b.setAttribute('aria-pressed', p); b.textContent = '♪ Musik ' + (p ? 'aus' : 'an'); });
 }
-// Viele Browser spielen Ton erst nach dem ersten Tippen: dann einfach beim ersten Tippen auf die Seite starten
+function songPlay(){
+  songErr && toast(songErr);
+  if (YTP?.playVideo) { try { YTP.unMute(); YTP.setVolume(60); YTP.playVideo(); } catch {} }
+  else if (songAudio) songAudio.play().then(() => songMark(true)).catch(() => {});
+}
+function songPause(){
+  if (YTP?.pauseVideo) { try { YTP.pauseVideo(); } catch {} }
+  if (songAudio) songAudio.pause();
+  songMark(false);
+}
+// Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite
 document.addEventListener('pointerdown', e => {
-  if (!YTP?.getPlayerState || ytUserPaused || e.target.closest?.('.ytbtn, [data-act=song-stop]')) return;
-  const st = YTP.getPlayerState(); if (st !== 1 && st !== 3) { try { YTP.unMute(); YTP.playVideo(); } catch {} }
+  const u = V.name === 'profile' ? S.users[V.arg || S.me] : null;
+  if (!u || songOff === u.id || songPlaying || songErr || e.target.closest?.('[data-act=music-toggle]')) return;
+  songPlay();
 }, true);
 function syncSong(){
-  const u = V.name === 'profile' ? S.users[V.arg || S.me] : null, on = u && songOff !== u.id;
-  const file = on && u.songFile && social ? u.songFile : null, vid = on && !file ? ytId(u.songUrl) : '';
+  const u = V.name === 'profile' ? S.users[V.arg || S.me] : null;
+  const file = u && u.songFile && social ? u.songFile : null, vid = u && !file ? ytId(u.songUrl) : '';
   const dock = document.getElementById('songdock'); if (!dock) return;
-  if (!vid && !file) { if (dock.dataset.v) { ytKill(); dock.querySelector('audio')?.pause(); dock.innerHTML = ''; dock.dataset.v = ''; } dock.hidden = true; return; }
+  if (!vid && !file) { if (dock.dataset.v) { songKill(); dock.innerHTML = ''; dock.dataset.v = ''; } return; }
   const key = (file ? 'f' + file.v : vid) + u.id;
-  if (dock.dataset.v === key) return;
-  ytKill(); dock.querySelector('audio')?.pause();
-  dock.dataset.v = key; dock.hidden = false; dock.classList.remove('yt', 'needtap');
-  const head = `<div class="songhead"><span>♪ Profilsong von ${esc(u.name)}</span><button class="lnk" data-act="song-stop" data-id="${esc(u.id)}">Aus</button></div>`;
+  if (dock.dataset.v === key) { songMark(songPlaying); return; }
+  songKill(); songErr = ''; dock.dataset.v = key; dock.innerHTML = '';
+  const auto = () => dock.dataset.v === key && songOff !== u.id;
   if (!file) {
-    dock.classList.remove('audio'); dock.classList.add('yt'); ytUserPaused = false;
-    dock.innerHTML = head + `<div class="ytrow"><button type="button" class="btn ghost ytbtn" data-act="yt-play" aria-label="Abspielen">▶</button><span class="ytmsg">wird geladen …</span></div><div class="ytbox"><div id="ytp"></div></div>`;
-    const msg = t => { const m = dock.querySelector('.ytmsg'); if (m) m.textContent = t; };
+    dock.innerHTML = '<div id="ytp"></div>';
     ytLoad().then(Y => {
       if (dock.dataset.v !== key) return;
-      if (!Y) { msg('Der Song ließ sich gerade nicht laden.'); return; }
-      const pv = {autoplay:1, loop:1, playlist:vid, playsinline:1, controls:0, disablekb:1, rel:0, fs:0, iv_load_policy:3};
+      if (!Y) { songErr = 'Der Song ließ sich gerade nicht laden.'; return; }
+      const pv = {autoplay:auto() ? 1 : 0, loop:1, playlist:vid, playsinline:1, controls:0, disablekb:1, rel:0, fs:0, iv_load_policy:3};
       if (/^https?:/.test(location.origin)) pv.origin = location.origin;
-      YTP = new Y.Player('ytp', {width:240, height:135, videoId:vid, playerVars:pv, events:{
-        onReady: e => { if (dock.dataset.v !== key) return; try { e.target.setVolume(60); e.target.playVideo(); } catch {} setTimeout(ytNeedTap, 1800); },
-        onStateChange: () => ytUI(),
-        onError: e => { dock.classList.remove('needtap'); msg(e.data === 101 || e.data === 150 || e.data === 153 ? 'Dieses Video lässt YouTube nur auf YouTube selbst laufen. Nimm eine andere Version des Songs, zum Beispiel mit „Audio“ oder „Lyrics“ im Titel.' : 'Das Video ließ sich nicht abspielen. Prüf den Link.'); }
+      YTP = new Y.Player('ytp', {width:200, height:113, videoId:vid, playerVars:pv, events:{
+        onReady: e => { try { e.target.setVolume(60); if (auto()) e.target.playVideo(); } catch {} },
+        onStateChange: e => songMark(e.data === 1 || e.data === 3),
+        onError: e => { songMark(false); songErr = e.data === 101 || e.data === 150 || e.data === 153 ? 'Diesen Song lässt YouTube nur auf YouTube selbst laufen. Nimm im Profil einen anderen Link, zum Beispiel eine Version mit „Audio“ oder „Lyrics“ im Titel.' : 'Der Song ließ sich nicht abspielen. Prüf den YouTube-Link.'; }
       }});
     });
     return;
   }
-  dock.classList.add('audio');
-  dock.innerHTML = head + '<p class="note" style="margin:0">Song wird geladen …</p>';
   const owner = u.remote ? u.id : social.uid;
   songURL(owner, file).then(src => {
     if (dock.dataset.v !== key) return;
-    dock.innerHTML = head + `<audio src="${src.url}" loop controls preload="auto"></audio>`;
-    const a = dock.querySelector('audio'); a.volume = .6;
-    a.addEventListener('error', () => { if (a.src.startsWith('blob:')) { a.src = src.data; a.play().catch(() => {}); } });
-    a.play().catch(() => { dock.insertAdjacentHTML('beforeend', '<p class="note" style="margin:0">Tippe auf ▶, dann läuft der Song.</p>'); });
-  }).catch(() => { if (dock.dataset.v === key) dock.innerHTML = head + '<p class="note" style="margin:0">Der Song ließ sich gerade nicht laden.</p>'; });
+    const a = songAudio = new Audio(src.url); a.loop = true; a.volume = .6;
+    a.addEventListener('error', () => { if (a.src.startsWith('blob:')) { a.src = src.data; if (auto()) a.play().catch(() => {}); } });
+    a.addEventListener('play', () => songMark(true)); a.addEventListener('pause', () => songMark(false));
+    if (auto()) a.play().catch(() => {});
+  }).catch(() => { if (dock.dataset.v === key) songErr = 'Der Song ließ sich gerade nicht laden.'; });
 }
 
 /* ---------- Einstellungen ---------- */
@@ -3344,9 +3347,7 @@ document.addEventListener('click', async e => {
     if (!CH.list.some(c => c.id === cid)) try { await social.db.doc('chats/' + cid).set({group:false, members:[social.uid, id].sort(), ts:Date.now()}); } catch {}
     if (await sendMsg(cid, 'Komm in mein Zimmer! 🕯', {kind:'invite'})) toast('Einladung verschickt');
   }
-  else if (a === 'yt-play') { if (YTP?.getPlayerState) { if (YTP.getPlayerState() === 1) { ytUserPaused = true; YTP.pauseVideo(); } else { ytUserPaused = false; try { YTP.unMute(); YTP.playVideo(); } catch {} setTimeout(ytNeedTap, 1200); } } }
-  else if (a === 'song-stop') { songOff = id; syncSong(); if (V.name === 'profile') render(); }
-  else if (a === 'music-toggle') { songOff = songOff === id ? null : id; render(); }
+  else if (a === 'music-toggle') { if (songPlaying) { songOff = id; songPause(); } else { songOff = null; if (YTP || songAudio) songPlay(); else { syncSong(); songErr && toast(songErr); } } }
   else if (a === 'music-edit') { musicEdit = !musicEdit; render(); document.getElementById('m-url')?.focus(); }
   else if (a === 'music-remove') { me().songUrl = ''; musicEdit = false; save(); render(); toast('Musik entfernt'); }
   else if (a === 'settings') { setOpen = null; go('settings'); }
