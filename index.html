@@ -169,6 +169,8 @@ main.main.wide{grid-column:2/-1}
 .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
 .btn.ghost:hover{border-color:var(--fg)}
 .btn:disabled{background:transparent;color:var(--dim);border:1px dashed var(--line);cursor:not-allowed}
+.bdate{border:0;padding:0;margin:0;min-width:0}.bsels{display:grid;grid-template-columns:1fr 1.6fr 1.2fr;gap:8px}
+.bsel{width:100%;background:#0d0d0e;color:var(--fg);border:1px solid var(--line);padding:8px 10px;font:inherit;font-size:16px;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--fg) 50%),linear-gradient(135deg,var(--fg) 50%,transparent 50%);background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:26px}
 input[type=text],input[type=url],input[type=password],input[type=date],input[type=email],input[type=tel],textarea{width:100%;background:#0d0d0e;color:var(--fg);border:1px solid var(--line);padding:8px 10px;font:inherit;font-size:16px}
 input[type=date]{color-scheme:dark;min-height:42px}
 textarea{resize:vertical;min-height:80px}
@@ -3389,8 +3391,22 @@ document.addEventListener('click', async e => {
 
 const MIN_AGE = 16;
 function ageOf(iso){ if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null; const [y, m, d] = iso.split('-').map(Number), t = new Date(); let a = t.getFullYear() - y; if (t.getMonth() + 1 < m || (t.getMonth() + 1 === m && t.getDate() < d)) a--; return a; }
-function birthProblem(iso){ const a = ageOf(iso); if (a === null) return 'Bitte gib dein Geburtsdatum an.'; if (a > 110 || a < 0) return 'Bitte prüf dein Geburtsdatum.'; if (a < MIN_AGE) return 'Nachtfalter ist erst ab ' + MIN_AGE + ' Jahren. Komm gern wieder, wenn du ' + MIN_AGE + ' bist.'; return ''; }
-const birthInput = (id, v='') => `<label class="f" for="${id}"><span class="lbl">Geburtsdatum (Nachtfalter ist ab ${MIN_AGE})</span><input id="${id}" type="date" max="${new Date().toISOString().slice(0, 10)}" min="1910-01-01" value="${esc(v)}" required></label>`;
+function birthProblem(iso){ if (iso === 'ungueltig') return 'Diesen Tag gibt es in dem Monat nicht. Bitte prüf dein Geburtsdatum.'; const a = ageOf(iso); if (a === null) return 'Bitte gib dein Geburtsdatum an.'; if (a > 110 || a < 0) return 'Bitte prüf dein Geburtsdatum.'; if (a < MIN_AGE) return 'Nachtfalter ist erst ab ' + MIN_AGE + ' Jahren. Komm gern wieder, wenn du ' + MIN_AGE + ' bist.'; return ''; }
+const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const birthInput = (id, v='') => { // drei Auswahlfelder statt Kalender; das versteckte Feld hält das Datum als JJJJ-MM-TT
+  const [y, m, d] = (v || '').split('-'), now = new Date().getFullYear(), opt = (val, label, cur) => `<option value="${val}" ${val === cur ? 'selected' : ''}>${label}</option>`;
+  return `<fieldset class="f bdate" data-for="${id}"><legend class="lbl">Geburtsdatum (Nachtfalter ist ab ${MIN_AGE})</legend><input type="hidden" id="${id}" value="${esc(v)}"><div class="bsels">
+    <select class="bsel" data-k="d" aria-label="Tag"><option value="">Tag</option>${Array.from({length:31}, (_, i) => String(i + 1).padStart(2, '0')).map(x => opt(x, +x, d)).join('')}</select>
+    <select class="bsel" data-k="m" aria-label="Monat"><option value="">Monat</option>${MONTHS.map((n, i) => opt(String(i + 1).padStart(2, '0'), n, m)).join('')}</select>
+    <select class="bsel" data-k="y" aria-label="Jahr"><option value="">Jahr</option>${Array.from({length:now - 1915}, (_, i) => String(now - i)).map(x => opt(x, x, y)).join('')}</select>
+  </div></fieldset>`;
+};
+document.addEventListener('change', e => {
+  const fs = e.target.closest?.('.bdate'); if (!fs) return;
+  const g = k => fs.querySelector(`.bsel[data-k=${k}]`).value, d = g('d'), m = g('m'), y = g('y');
+  const ok = d && m && y && new Date(`${y}-${m}-${d}T12:00`).getDate() === +d;
+  document.getElementById(fs.dataset.for).value = ok ? `${y}-${m}-${d}` : (d && m && y ? 'ungueltig' : '');
+});
 function birthView(){
   return `<div class="gate"><div class="card gate-card">${logoSVG('big')}
     <form data-form="birth">
