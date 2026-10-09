@@ -208,7 +208,9 @@ label.f{display:grid;gap:4px}
 .meta{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .thought{margin:0;font:italic 24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
 .caption{margin:0;white-space:pre-wrap;word-break:break-word}
-.photo{width:100%;display:block;border:1px solid var(--line-soft);filter:grayscale(1) contrast(1.05)}
+.photo{width:100%;display:block;border:1px solid var(--line-soft);filter:grayscale(1) contrast(1.05);aspect-ratio:4/5;object-fit:cover;background:#0b0b0d}
+.vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
+.pdel{margin-left:auto;align-self:start}.pi .cmt .lnk{font-size:12px}
 .vid{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:12px;color:var(--fg);text-decoration:none;word-break:break-all;background:repeating-linear-gradient(90deg,transparent 0 14px,#ffffff08 14px 16px)}
 .vid:hover{border-color:var(--fg)}
 .vid .play{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--fg);display:grid;place-items:center;font-size:13px}
@@ -289,7 +291,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .tiles{columns:2 220px;column-gap:14px}
 .tile{break-inside:avoid;margin-bottom:14px;background:var(--p-panel);border:1px solid var(--p-line);padding:14px;display:grid;gap:8px}
 .tile .thought{font-size:20px;border-left-color:var(--p-line)}
-.tile img{width:100%;display:block;filter:grayscale(1)}
+.tile img{width:100%;display:block;filter:grayscale(1);aspect-ratio:4/5;object-fit:cover}
 .tile .meta{font-size:13px}
 .vid.p{color:var(--p-fg);border-color:var(--p-line)}
 .vid.p .play{border-color:var(--p-fg)}
@@ -2582,12 +2584,55 @@ function asideHTML(){
     ${V.name === 'profile' && PROF_WALL ? `<div class="card gbcard"><h2 class="card-h">Gästebuch</h2><div class="card-in">${PROF_WALL}</div></div>` : ''}
   </aside>`;
 }
+/* ---------- Beiträge: Reaktionen und Kommentare von Freunden (geteilt über die Datenbank) ---------- */
+const PI = {}, PIMG = {};
+let postDelAsk = null, postEdit = null;
+const postOwner = p => p.remote ? p.author : (social && p.author === S.me ? social.uid : null);
+function piKey(p){ const o = postOwner(p); return o && /^[\w-]+$/.test(p.id) ? o + '_' + p.id : null; }
+function piWatch(p){
+  const k = piKey(p); if (!k) return null;
+  if (!PI[k]) {
+    PI[k] = {list:[], p};
+    PI[k].unsub = social.db.collection('chats/pi_' + k + '/m').onSnapshot(snap => { PI[k].list = snap.docs.map(d => ({did:d.id, ...d.data()})); piDraw(k); }, () => {});
+  }
+  PI[k].p = p; return PI[k];
+}
+function piInner(p){
+  const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
+  const can = owner === uid || isFriend(owner);
+  const reacts = REACTIONS.map((r, i) => {
+    const n = list.filter(x => x.kind === 'r' && x.r === r).length, on = list.some(x => x.kind === 'r' && x.r === r && x.by === uid);
+    return can ? `<button data-act="preact" data-k="${k}" data-i="${i}" aria-pressed="${on}" aria-label="Reaktion ${r}">${r} ${n || ''}</button>` : n ? `<span class="muted">${r} ${n}</span>` : '';
+  }).join('');
+  const cm = list.filter(x => x.kind === 'c').sort((a, b) => a.ts - b.ts).map(c => `<div class="cmt"><b>${esc(c.name || 'Jemand')}</b> ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.by === uid || owner === uid ? ` <button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''}</div>`).join('');
+  return `<div class="reacts">${reacts}</div>${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}"><input type="text" id="pc-${k}" placeholder="Etwas dazu schreiben…" maxlength="300" aria-label="Kommentar"><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
+}
+function piDraw(k){
+  const w = PI[k]; if (!w) return;
+  document.querySelectorAll(`[data-pi="${k}"]`).forEach(el => {
+    const inp = el.querySelector('input'), val0 = inp?.value || '', foc = inp && document.activeElement === inp;
+    el.innerHTML = piInner(w.p);
+    const n = el.querySelector('input'); if (n) { n.value = val0; if (foc) n.focus(); }
+  });
+}
+// Große Bilder liegen für Freunde in einem eigenen Dokument und werden beim Anzeigen nachgeladen
+function loadPimgs(){
+  if (!social) return;
+  document.querySelectorAll('img[data-pimg]:not([src])').forEach(async im => {
+    const key = im.dataset.pimg; if (PIMG[key]) { im.src = PIMG[key]; return; }
+    const [o, id] = key.split('/');
+    try { const d = await social.db.doc('chats/pimg_' + o + '/m/' + id).get(); if (d.exists) { PIMG[key] = d.data().img; document.querySelectorAll(`img[data-pimg="${key}"]`).forEach(x => x.src = PIMG[key]); } } catch {}
+  });
+}
+const PIMG_UP = new Set();
 function postHTML(p){
   const a = S.users[p.author]; if (!a) return '';
   let body = '';
   if (p.type === 'gedanke' || p.type === 'neu') body = `<blockquote class="thought">${etx(p.text)}</blockquote>`;
   if (p.img) body += `<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`;
-  if (p.url) body += `<a class="vid" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>${esc(p.url)}</span></a>`;
+  else if (p.bigimg) body += `<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`;
+  if (p.url) { const v = ytId(p.url); body += v ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>`
+    : `<a class="vid" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>${esc(p.url)}</span></a>`; }
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body += `<p class="caption">${etx(p.text)}</p>`;
   const reacts = REACTIONS.map(r => {
     const who = p.reactions[r] || [], on = who.includes(S.me);
@@ -2595,14 +2640,19 @@ function postHTML(p){
   }).join('');
   const cm = p.comments.map(c => `<div class="cmt">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span></div>`).join('');
   return `<article class="post">
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}</span></div></header>
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : ''}</header>
+    ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
+      ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
+      <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
+      <div class="row"><button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" data-act="post-edit-no">Abbrechen</button></div></form>` : ''}
     ${body}
+    ${piKey(p) ? `<div class="pi" data-pi="${piKey(p)}">${piInner(p)}</div>` : `
     ${p.remote ? '' : `<div class="reacts">${reacts}</div>`}
     ${cm ? `<div class="cmts">${cm}</div>` : ''}
     ${p.remote ? '' : `<form class="cform" data-form="comment" data-id="${p.id}">
       <input type="text" id="c-${p.id}" placeholder="Etwas dazu schreiben…" maxlength="300" aria-label="Kommentar">
       <button class="btn ghost" type="submit">Senden</button>
-    </form>`}
+    </form>`}`}
   </article>`;
 }
 let composeOpen = false, profEdit = false;
@@ -2890,7 +2940,11 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me).sort((a,b) => b.ts - a.ts).slice(0, 15)
-      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:p.img && p.img.length < 60000 ? p.img : '', ts:p.ts}));
+      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, full:p.img}));
+    let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
+    for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
+      else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
+      delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
@@ -3549,7 +3603,7 @@ function render(){
     <footer class="foot"><span>Nachtfalter · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
-  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms();
+  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
   const mb = document.getElementById('msgs'); if (mb) mb.scrollTop = mb.scrollHeight;
 }
 
@@ -3657,7 +3711,7 @@ document.addEventListener('click', e => {
 });
 
 /* ---------- Aktionen ---------- */
-document.addEventListener('click', e => {
+document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id;
   if (a === 'rmode') { roomMode = roomMode === b.dataset.v ? '' : b.dataset.v; roomSel = null; render(); return; }
@@ -3707,6 +3761,23 @@ document.addEventListener('click', e => {
     u.points -= i.price; u.owned.push(id); wearItem(u.outfit, i); trial = null;
     save(); render(); toast(`${i.name} gekauft. Es liegt jetzt in deiner Garderobe.`);
   }
+  else if (a === 'post-del') { postDelAsk = b.dataset.id; postEdit = null; render(); }
+  else if (a === 'post-edit') { postEdit = b.dataset.id; postDelAsk = null; render(); document.getElementById('pe-' + postEdit)?.focus(); }
+  else if (a === 'post-edit-no') { postEdit = null; render(); }
+  else if (a === 'post-del-no') { postDelAsk = null; render(); }
+  else if (a === 'post-del-yes') {
+    const pid = b.dataset.id; postDelAsk = null;
+    S.posts = S.posts.filter(x => x.id !== pid); save(); render(); toast('Beitrag gelöscht');
+    if (social) social.db.doc('chats/pimg_' + social.uid + '/m/' + pid).delete().catch(() => {});
+  }
+  else if (a === 'vplay') { b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
+  else if (a === 'preact') {
+    const k = b.dataset.k, r = REACTIONS[+b.dataset.i], uid = social?.uid; if (!uid || !r) return;
+    const ref = social.db.doc('chats/pi_' + k + '/m/' + uid + '_r' + b.dataset.i);
+    const on = (PI[k]?.list || []).some(x => x.did === uid + '_r' + b.dataset.i);
+    try { if (on) await ref.delete(); else await ref.set({kind:'r', r, by:uid, ts:Date.now()}); } catch { toast('Das hat gerade nicht geklappt.'); }
+  }
+  else if (a === 'pc-del') { try { await social.db.doc('chats/pi_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch {} }
   else if (a === 'react') {
     const p = S.posts.find(x => x.id === id), r = b.dataset.r;
     const list = p.reactions[r] = p.reactions[r] || [];
@@ -3747,6 +3818,18 @@ document.addEventListener('input', e => {
   draft[x.dataset.k] = x.value; refreshDraft();
 });
 
+// Beitragsbilder immer im gleichen Hochformat 4:5 wie bei Instagram (mittig zugeschnitten)
+function cropImage(file, W=720, H=900, q=.78){
+  return new Promise((ok, fail) => {
+    const fr = new FileReader(); fr.onerror = fail;
+    fr.onload = () => { const img = new Image(); img.onerror = fail; img.onload = () => {
+      const sc = Math.max(W / img.width, H / img.height), w = W / sc, h = H / sc;
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      c.getContext('2d').drawImage(img, (img.width - w) / 2, (img.height - h) / 2, w, h, 0, 0, W, H); ok(c.toDataURL('image/jpeg', q));
+    }; img.src = fr.result; };
+    fr.readAsDataURL(file);
+  });
+}
 function resizeImage(file, max0=900, q=.78){
   return new Promise((ok, fail) => {
     const fr = new FileReader();
@@ -3862,7 +3945,7 @@ document.addEventListener('submit', async e => {
     const p = {id:'p' + Date.now().toString(36), author:S.me, type:composeType, text:val('ptext'), ts:Date.now(), reactions:{}, comments:[]};
     if (composeType === 'foto') {
       const file = document.getElementById('pfile').files[0]; if (!file) return;
-      try { p.img = await resizeImage(file); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
+      try { p.img = await cropImage(file); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
     }
     if (composeType === 'video') {
       const url = val('purl');
@@ -3873,6 +3956,16 @@ document.addEventListener('submit', async e => {
     if (!save()) { S.posts.pop(); return; }
     earn(PTS[composeType], {gedanke:'Gedanke geteilt',foto:'Bild geteilt',video:'Film geteilt'}[composeType]);
     composeOpen = false; save(); render();
+  } else if (t === 'pedit') {
+    const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
+    const text = val('pe-' + p.id);
+    if (p.type === 'video') { const url = val('pe-url-' + p.id); if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; } p.url = url; }
+    else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
+    p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
+  } else if (t === 'pcomment') {
+    const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(); if (!text || !social) return;
+    inp.value = '';
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, by:social.uid, name:me().name, ts:Date.now()}); } catch { inp.value = text; toast('Das hat gerade nicht geklappt.'); }
   } else if (t === 'comment') {
     const id = f.dataset.id, text = val('c-' + id); if (!text) return;
     const p = S.posts.find(x => x.id === id);
