@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='cfd1e2f33440';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='806bedbc2f16';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -737,9 +737,10 @@ footer.foot .lnk{color:var(--muted)}
   .wardrobe .shopgrid .iname{padding:2px 6px 6px;font-size:14px}
   /* Profil gestalten: Vorschau bleibt klein oben stehen, Bereiche als Reiter, Speichern immer da */
   .design{gap:0}
-  .design .preview{position:sticky;top:var(--rtop,calc(61px + env(safe-area-inset-top,0px)));z-index:30;height:auto;overflow:clip;display:flex;justify-content:center;margin:0 -12px;
+  .design .preview{position:sticky;top:var(--rtop,calc(61px + env(safe-area-inset-top,0px)));z-index:30;height:min(38vh,320px);max-height:min(38vh,320px);overflow:hidden;display:block;margin:0 -12px;
     border-bottom:1px solid var(--line);box-shadow:0 10px 22px #000c;background:var(--bg)}
-  .design .preview > section{zoom:.56;width:100%;flex:none}
+  .design .preview > section{width:100%;flex:none;transform-origin:50% 0;transform:scale(.5)}
+  .design .preview .tiles,.design .preview .psteck{display:none}
   .dtabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--dtop,calc(61px + env(safe-area-inset-top,0px) + 260px));z-index:25;background:var(--bg);margin:0 -12px;padding:10px 12px}
   .dtabs::-webkit-scrollbar{display:none}
   .dtabs button{flex:none;border:1px solid var(--line);border-radius:999px;background:#ffffff08;color:var(--muted);padding:8px 18px;min-height:42px;font:400 16px var(--f-display)}
@@ -2814,14 +2815,15 @@ function mobTop(nNew){ // Handy: Freunde und Chats oben rechts wie bei Momio
   const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
   return `<div class="mtop">${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}</div>`;
 }
-function fitPrev(){ // Handy: ganze Profil-Vorschau oben sichtbar, passend verkleinert
-  const sec = document.querySelector('#preview > section'); if (!sec) return;
-  if (!isMob()) { sec.style.zoom = ''; return; }
-  sec.style.zoom = 1; const h = sec.scrollHeight, maxH = Math.min(innerHeight * .4, 340);
-  sec.style.zoom = Math.max(.3, Math.min(.62, maxH / h)).toFixed(3);
-  const d = document.querySelector('.design'), pv = document.getElementById('preview'), rail = document.querySelector('.rail');
+function fitPrev(){ // Handy: ganze Profil-Vorschau oben sichtbar, passend verkleinert (transform klappt auch in Safari)
+  const sec = document.querySelector('#preview > section'), pv = document.getElementById('preview'); if (!sec || !pv) return;
+  if (!isMob()) { sec.style.transform = ''; pv.style.height = ''; return; }
+  sec.style.transform = ''; const h = sec.offsetHeight, maxH = Math.min(innerHeight * .38, 320);
+  const z = Math.max(.2, Math.min(.62, maxH / h));
+  sec.style.transform = `scale(${z.toFixed(3)})`; pv.style.height = Math.ceil(h * z) + 'px';
+  const d = document.querySelector('.design'), rail = document.querySelector('.rail');
   const rh = rail ? Math.round(rail.getBoundingClientRect().height) : 61;
-  if (d && pv) { d.style.setProperty('--rtop', rh + 'px'); d.style.setProperty('--dtop', (rh + pv.offsetHeight) + 'px'); }
+  if (d) { d.style.setProperty('--rtop', rh + 'px'); d.style.setProperty('--dtop', (rh + pv.offsetHeight) + 'px'); }
 }
 { let fpq = false; new MutationObserver(() => { if (fpq) return; fpq = true; requestAnimationFrame(() => { fpq = false; fitPrev(); }); }).observe(document.getElementById('app'), {childList: true, subtree: true}); }
 function centerRooms(){ // Handy: breites Zimmer so scrollen, dass der eigene Avatar in der Mitte steht
@@ -3047,8 +3049,8 @@ function tileHTML(p){
   else if (p.bigimg) b += `<img data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild">`;
   if (p.url) b += `<a class="vid p" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Film ansehen</span></a>`;
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) b += `<p class="caption">${etx(p.text)}</p>`;
-  const n = Object.values(p.reactions).reduce((s,a) => s + a.length, 0);
-  return `<div class="tile">${b}<span class="meta">${ago(p.ts)}${n ? ` · ${n} Reaktionen` : ''}${p.comments.length ? ` · ${p.comments.length} Kommentare` : ''}</span></div>`;
+  const n = Object.values(p.reactions || {}).reduce((s,a) => s + (a?.length || 0), 0), nc = (p.comments || []).length;
+  return `<div class="tile">${b}<span class="meta">${ago(p.ts)}${n ? ` · ${n} Reaktionen` : ''}${nc ? ` · ${nc} Kommentare` : ''}</span></div>`;
 }
 function chatHTML(h){
   const log = ((S.chats || {})[S.me + '>' + h.id]) || [];
