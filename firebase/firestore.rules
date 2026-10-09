@@ -15,6 +15,16 @@ service cloud.firestore {
     match /handles/{uid} { allow read: if signedIn(); allow write: if me(uid); }
     match /friends/{uid} { allow read: if signedIn(); allow write: if me(uid); }
 
+    // Anmelden mit Nutzername: einzeln abrufbar (nicht auflistbar); schreiben nur für den eigenen Nutzernamen
+    match /logins/{h} {
+      allow get: if true;
+      allow create, update: if signedIn() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && get(/databases/$(database)/documents/handles/$(request.auth.uid)).data.h == h
+        && (resource == null || resource.data.uid == request.auth.uid);
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
     // Chats, Pinnwände, Raumchats
     match /chats/{rest=**} { allow read, write: if signedIn(); }
 

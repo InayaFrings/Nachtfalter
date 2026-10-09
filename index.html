@@ -93,6 +93,8 @@
     async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
+    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
     onRecovery(){},
     get recovering(){ return false; }
   };
@@ -1861,7 +1863,7 @@ function regView(){
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Weiter</button></div>
       ${PUB ? '' : '<p class="note">Im Entwurf wird noch keine SMS und keine E-Mail verschickt. Die Bestätigung kommt dazu, sobald Nachtfalter online geht.</p>'}
     </form>` : forgotPw ? forgotHTML() : `<form data-form="login">
-      <label class="f" for="li-contact"><span class="lbl">E-Mail-Adresse</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <label class="f" for="li-contact"><span class="lbl">${forgotPw ? 'E-Mail-Adresse' : 'E-Mail-Adresse oder Nutzername'}</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
       <label class="f" for="li-pw"><span class="lbl">Passwort</span><input id="li-pw" type="password" autocomplete="current-password" required></label>
       <span id="li-err" class="err" hidden></span>
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Anmelden</button></div>
@@ -2395,7 +2397,17 @@ document.addEventListener('input', e => {
     if (await handleTaken(h) && normHandle(document.getElementById('uhandle')?.value) === h) { const x = document.getElementById('uhandle-err'); if (x) { x.textContent = 'Dieser Nutzername ist bereits vergeben.'; x.hidden = false; } }
   }, 450);
 });
-async function claimHandle(h){ if (cloud?.handles) try { await cloud.handles.doc(cloud.uid).set({h}); } catch {} }
+async function claimHandle(h){
+  if (!cloud?.handles) return;
+  let old = null;
+  try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; } catch {}
+  try { await cloud.handles.doc(cloud.uid).set({h}); } catch {}
+  // Anmelden mit Nutzername: Nutzername → E-Mail (nur einzeln abrufbar, nicht auflistbar)
+  if (PUB && NF_AUTH.email()) {
+    if (old && old !== h) await cloud.db.doc('logins/' + old).delete().catch(() => {});
+    await cloud.db.doc('logins/' + h).set({email:NF_AUTH.email(), uid:cloud.uid}).catch(() => {});
+  }
+}
 function refreshFoot(){ const f = document.getElementById('savestate'); if (f) f.textContent = saveText(); }
 const saveText = () => PUB ? (cloud?.ok ? 'Dein Konto ist sicher gespeichert.' : 'Wird gespeichert …') : cloud?.ok ? 'Dein Konto ist sicher in deinem Claude-Konto gespeichert.' : 'Dein Konto ist in diesem Browser gespeichert.';
 
@@ -2457,7 +2469,7 @@ function gateView(){
   if (gateMode === 'login') return `<div class="gate"><div class="card gate-card">${head}
     <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Schön, dass du wieder da bist.</p>
     ${forgotPw ? forgotHTML() : `<form data-form="login">
-      <label class="f" for="li-contact"><span class="lbl">E-Mail-Adresse</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <label class="f" for="li-contact"><span class="lbl">${forgotPw ? 'E-Mail-Adresse' : 'E-Mail-Adresse oder Nutzername'}</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
       <label class="f" for="li-pw"><span class="lbl">Passwort</span><input id="li-pw" type="password" autocomplete="current-password" required></label>
       <span id="li-err" class="err" hidden></span>
       <button class="btn" type="submit">Anmelden</button>
@@ -2772,7 +2784,7 @@ function profileView(id){
   if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.length ? `<div class="tiles">${posts.map(tileHTML).join('')}</div>` : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
   // Steckbrief steht direkt unter dem Profilkopf (Inayas Wunsch), nicht mehr als Reiter
   const sf = (k,v) => `<div><dt>${k}</dt><dd>${esc(v) || '–'}</dd></div>`;
-  const steckHTML = u.helper ? '' : `<div class="psteck"><h3 class="lbl">Steckbrief</h3><div class="steck2"><dl class="steck">${sf('Über mich',u.about)}</dl><dl class="steck">${sf('Musik',u.music)}${sf('Filme',u.films)}${sf('Hobbys',u.hobbies)}</dl></div></div>`;
+  const steckHTML = u.helper ? '' : `<div class="psteck"><h3 class="lbl">Steckbrief</h3><div class="steck2"><dl class="steck">${sf('Über mich',u.about)}</dl><dl class="steck">${sf('Musik',u.music)}${sf('Filme',u.films)}${sf('Hobbys',u.hobbies)}${sf('Spiele',u.games2)}</dl></div></div>`;
   let wallP = '';
   if (!u.helper && u.remote) wallP = `<div class="gb"><div id="rwall"><p class="muted" style="margin:0">Kommentare werden geladen …</p></div>
       ${isFriend(u.id) ? `<form class="wform" data-form="rwall">
@@ -2831,7 +2843,7 @@ function designView(){
         <form data-form="design" style="display:grid;gap:12px">
           <label class="f" for="e-handle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="e-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label><span id="e-handle-err" class="err" hidden></span>${f('name','Name (frei wählbar)',u.name)}${f('headline','Spruch (steht neben deinem Profilbild)',u.headline)}${f('mood','Gemüt',u.mood)}
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
-          ${f('hobbies','Hobbys',u.hobbies)}
+          ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <label class="f" for="e-song"><span class="lbl">♪ Song auf deinem Profil (YouTube-Link, freiwillig)</span><input id="e-song" type="url" placeholder="https://youtu.be/…" value="${esc(u.songUrl || '')}"></label>
           <div class="f"><span class="lbl">♪ Oder: eigenen Song als Datei (MP3, höchstens 5 MB)</span>
             <div class="row"><label class="btn ghost filebtn">${me().songFile ? 'Anderen Song wählen' : 'Song hochladen'}<input type="file" accept="audio/*,.mp3,.m4a" id="e-songfile"></label>${me().songFile ? `<span class="note" id="e-songname">♪ ${esc(me().songFile.name)}</span><button type="button" class="lnk" data-act="songfile-del">Entfernen</button>` : '<span class="note" id="e-songname"></span>'}</div>
@@ -2912,7 +2924,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
-    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
+    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
@@ -2947,7 +2959,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:''}));
     if (big()) doc.cover = null;
@@ -3140,6 +3152,7 @@ async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
   if (social) {
     const uid = social.uid; clearTimeout(pubTimer); pubTimer = null; deleting = true;
     for (const p of ['profiles/' + uid, 'handles/' + uid, 'friends/' + uid]) await social.db.doc(p).delete().catch(() => {});
+    if (me()?.handle) await social.db.doc('logins/' + me().handle).delete().catch(() => {});
     try { const w = await social.db.collection('chats/wall_' + uid + '/m').get(); for (const d of w.docs) await social.db.doc('chats/wall_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
     try { const z = await social.db.collection('chats/zimmer_' + uid + '/m').get(); for (const d of z.docs) await social.db.doc('chats/zimmer_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
   }
@@ -3902,11 +3915,16 @@ document.addEventListener('submit', async e => {
     u.pwh = await hashPw(p1); if (!u.birth && birth) u.birth = birth;
     forgotPw = false; S.me = u.id; S.unlocked = true; S.pending = null; welcomeDMs(); save(); go('home'); toast('Neues Passwort gespeichert. Willkommen zurück, ' + u.name);
   } else if (t === 'login') {
-    const contact = val('li-contact'), pw = document.getElementById('li-pw').value, err = document.getElementById('li-err');
+    let contact = val('li-contact'); const pw = document.getElementById('li-pw').value, err = document.getElementById('li-err');
     err.hidden = true;
     const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Einen Moment …'; }
     let u;
-    if (!isMail(contact)) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = 'Bitte melde dich mit deiner E-Mail-Adresse an.'; err.hidden = false; return; }
+    const stop = m => { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = m; err.hidden = false; };
+    if (!isMail(contact)) { // Anmelden mit Nutzername
+      const h = normHandle(contact.replace(/^@/, '')); if (!h) return stop('Bitte gib deine E-Mail-Adresse oder deinen Nutzernamen ein.');
+      if (PUB) { const r = await NF_AUTH.lookup(h); if (r.error) return stop('Mit Nutzername klappt die Anmeldung gerade nicht. Nimm bitte deine E-Mail-Adresse.'); if (!r.email) return stop('Den Nutzernamen @' + h + ' gibt es nicht. Prüf die Schreibweise oder nimm deine E-Mail-Adresse.'); contact = r.email; }
+      else { const x = Object.values(S.users).find(y => !y.helper && !y.remote && y.handle === h); if (!x) return stop('Den Nutzernamen @' + h + ' gibt es nicht.'); contact = contactsOf(x)[0] || contact; }
+    }
     if (PUB) {
       const r = await NF_AUTH.signIn(contact, pw);
       if (r.error) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = r.error; err.hidden = false; return; }
@@ -4057,7 +4075,7 @@ document.addEventListener('submit', async e => {
     const song = val('e-song'), serr = document.getElementById('e-song-err');
     if (song && !ytId(song)) { serr.textContent = 'Das ist kein YouTube-Link. Kopier den Link in YouTube über „Teilen“ und „Link kopieren“.'; serr.hidden = false; serr.scrollIntoView({block:'center'}); return; }
     if ((song || '') !== (u.songUrl || '')) { u.songUrl = song || ''; songOff = null; }
-    for (const k of ['name','headline','mood','about','music','films','hobbies']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
+    for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; // Banner-Funktion entfernt (Inayas Wunsch) u.banner = {...mdraft.banner};
     save(); go('profile', S.me); toast('Profil gespeichert');
   }
