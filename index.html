@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7825496d9fb9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9bd71e23b46a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1511,11 +1511,13 @@ function avatar(o0, view='full', pose='', lite=false){
   if (AON('teddy')) s += `<g transform="translate(${57+dx} 252)"><circle cx="-6" cy="-1" r="3.4" fill="#4a3a32" ${O}/><circle cx="6" cy="-1" r="3.4" fill="#4a3a32" ${O}/><ellipse cx="0" cy="18" rx="10" ry="11" fill="#4a3a32" ${O}/><circle cx="0" cy="5" r="8" fill="#5a4a40" ${O}/><path d="M-4.4 2.6L-1.6 5.4M-1.6 2.6L-4.4 5.4" stroke="#f2f0eb" stroke-width="1"/><circle cx="3" cy="4" r="1.3" fill="#f2f0eb"/><path d="M-2 9Q0 10.4 2 9" stroke="#141218" stroke-width=".9" fill="none"/><path d="M-3 14L3 22M3 14L-1 18" stroke="#c9b8a8" stroke-width=".8" fill="none"/></g>`;
   if (AON('schirm')) { const c = AC('schirm') || '#141218'; s += line(`M${134-dx} 250L${152-dx} 112`, 1.8, '#3a3a40') + path(`M${116-dx} 122Q${150-dx} 78 ${186-dx} 110Q${177-dx} 106 ${169-dx} 114Q${160-dx} 104 ${151-dx} 113Q${141-dx} 105 ${133-dx} 115Q${124-dx} 112 ${116-dx} 122Z`, c) + line(`M${116-dx} 122Q${124-dx} 112 ${133-dx} 115Q${141-dx} 105 ${151-dx} 113Q${160-dx} 104 ${169-dx} 114Q${177-dx} 106 ${186-dx} 110`, 1.4, '#d9d6d0', 'stroke-dasharray="1.5 1.5"'); }
 
-  // Schmuck (mehrere gleichzeitig)
-  const J = o.jewel || {};
+  // Schmuck (mehrere gleichzeitig). Armbänder und Ringe: links, rechts oder beide Seiten (o.jside, aus Sicht des Betrachters)
+  const J = o.jewel || {}, JS = o.jside || {}, KANDI = ['#2aa0a0','#e8d23a','#7a3aa0','#4ac04a'];
+  let WID = '';
+  const wrist = svg => { const sd = JS[WID] || 'b'; return armB(k => sd === 'b' || (sd === 'l' ? k === 0 : k === 1) ? svg : ''); };
   if (J.perlen) s += [92,94.5,97.2,100,102.8,105.5,108].map((x, k) => `<circle cx="${x}" cy="${121 + [0,2.6,4.2,4.8,4.2,2.6,0][k]}" r="1.7" fill="${J.perlen}" stroke="${INK}" stroke-width=".5"/>`).join('');
   if (J.kreuz) s += line('M93 118Q100 136 107 118', .9, J.kreuz) + path('M98.6 134H101.4V138H104V140.6H101.4V147H98.6V140.6H96V138H98.6Z', J.kreuz, 'stroke-width=".7"');
-  if (J.armreif) s += both(sh(`<rect x="62.5" y="236.5" width="8.5" height="4.6" rx="1.4" fill="${J.armreif}" stroke="${INK}" stroke-width=".7"/><circle cx="65" cy="238.8" r=".9" fill="#ddd"/><circle cx="68.4" cy="238.8" r=".9" fill="#ddd"/>`));
+  if (J.armreif && (WID = 'armreif')) s += wrist(`<rect x="62.5" y="236.5" width="8.5" height="4.6" rx="1.4" fill="${J.armreif}" stroke="${INK}" stroke-width=".7"/><circle cx="65" cy="238.8" r=".9" fill="#ddd"/><circle cx="68.4" cy="238.8" r=".9" fill="#ddd"/>`);
   if (J.rosenkranz) s += [[93,124],[93.6,132],[94.8,140],[96.4,148],[98.2,155],[100,160],[101.8,155],[103.6,148],[105.2,140],[106.4,132],[107,124]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="1.5" fill="${J.rosenkranz}" stroke="${INK}" stroke-width=".4"/>`).join('')
       + line('M100 161V166', 1, J.rosenkranz) + path('M98.8 166H101.2V170H104V172.4H101.2V180H98.8V172.4H96V170H98.8Z', J.rosenkranz, 'stroke-width=".6"');
   if (J.herzchoker) s += path('M92 115L108 115L108 120L92 120Z', J.herzchoker) + `<path d="M100 129C96 126 94.5 124 95.6 122.4C96.6 121 98.6 121.2 100 123C101.4 121.2 103.4 121 104.4 122.4C105.5 124 104 126 100 129Z" fill="${isLight(J.herzchoker) ? '#9a1f2a' : '#e05aa0'}" stroke="${INK}" stroke-width=".7"/>`;
@@ -1536,19 +1538,18 @@ function avatar(o0, view='full', pose='', lite=false){
   if (J.k_schloss) s += line('M92 118.6Q100 122.6 108 118.6', 2.4, J.k_schloss, 'stroke-dasharray="1.8 .9"') + `<path d="M98.2 123.4V121.6Q100 119.4 101.8 121.6V123.4" fill="none" stroke="${J.k_schloss}" stroke-width="1"/><rect x="97.2" y="123" width="5.6" height="4.6" rx=".8" ${pin(J.k_schloss)}/><circle cx="100" cy="125.2" r=".7" fill="${INK}"/>`;
   if (J.k_nadel) s += chain(130, J.k_nadel) + [[95.4,124],[100,129.8],[104.6,124]].map(([x,y]) => `<ellipse cx="${x}" cy="${y+2.4}" rx="1" ry="3" fill="none" stroke="${J.k_nadel}" stroke-width=".7"/>`).join('');
   if (J.k_lang) s += line('M93 118Q100 150 107 118', .8, J.k_lang) + line('M92 118Q100 168 108 118', .8, J.k_lang) + `<circle cx="100" cy="143" r="1.3" ${pin(J.k_lang, .4)}/>`;
-  const wrist = svg => armB(svg), KANDI = ['#2aa0a0','#e8d23a','#7a3aa0','#4ac04a'];
-  if (J.a_kandi) s += wrist([63.4,65.2,67,68.8,70.6].map((x, k) => `<circle cx="${x}" cy="238.6" r="1.15" ${pin(k ? KANDI[k - 1] : J.a_kandi, .4)}/>`).join('') + [63.6,65.4,67.2,69,70.8].map((x, k) => `<circle cx="${x}" cy="235.6" r="1.1" ${pin(KANDI[(k + 2) % 4], .4)}/>`).join(''));
-  if (J.a_kette) s += wrist(line('M62.4 238.6H71.2', 1.8, J.a_kette, 'stroke-dasharray="1.4 .8"'));
-  if (J.a_stachel) s += wrist(`<rect x="62.4" y="236.4" width="8.8" height="4" rx="1" ${pin(J.a_stachel)}/>` + [64,66.8,69.6].map(x => `<path d="M${x-1} 236.4L${x} 233.2L${x+1} 236.4Z" fill="#d8d8de" stroke="${INK}" stroke-width=".4"/>`).join(''));
-  if (J.a_perlen) s += wrist([63.4,65.2,67,68.8,70.6].map(x => `<circle cx="${x}" cy="238.6" r="1.2" ${pin(J.a_perlen, .4)}/>`).join(''));
-  if (J.a_gummi) s += wrist(line('M62.6 235H71', 1.1, J.a_gummi) + line('M62.6 237.4H71', 1.1, shade(J.a_gummi, isLight(J.a_gummi) ? .7 : 2.2)) + line('M62.6 239.8H71', 1.1, J.a_gummi));
-  if (J.a_schweiss) s += wrist(`<rect x="62" y="231.6" width="9.6" height="8" rx="1.4" ${pin(J.a_schweiss)}/>` + line('M62.4 235.6H71.2', 1.2, shade(J.a_schweiss, isLight(J.a_schweiss) ? .7 : 2.4)));
-  if (J.a_leder) s += wrist(`<rect x="62.4" y="236.4" width="8.8" height="3.8" ${pin(J.a_leder)}/><rect x="65.4" y="235.6" width="2.8" height="5.4" fill="none" stroke="#c9c9cf" stroke-width=".8"/>`);
+  if (J.a_kandi && (WID = 'a_kandi')) s += wrist([63.4,65.2,67,68.8,70.6].map((x, k) => `<circle cx="${x}" cy="238.6" r="1.15" ${pin(k ? KANDI[k - 1] : J.a_kandi, .4)}/>`).join('') + [63.6,65.4,67.2,69,70.8].map((x, k) => `<circle cx="${x}" cy="235.6" r="1.1" ${pin(KANDI[(k + 2) % 4], .4)}/>`).join(''));
+  if (J.a_kette && (WID = 'a_kette')) s += wrist(line('M62.4 238.6H71.2', 1.8, J.a_kette, 'stroke-dasharray="1.4 .8"'));
+  if (J.a_stachel && (WID = 'a_stachel')) s += wrist(`<rect x="62.4" y="236.4" width="8.8" height="4" rx="1" ${pin(J.a_stachel)}/>` + [64,66.8,69.6].map(x => `<path d="M${x-1} 236.4L${x} 233.2L${x+1} 236.4Z" fill="#d8d8de" stroke="${INK}" stroke-width=".4"/>`).join(''));
+  if (J.a_perlen && (WID = 'a_perlen')) s += wrist([63.4,65.2,67,68.8,70.6].map(x => `<circle cx="${x}" cy="238.6" r="1.2" ${pin(J.a_perlen, .4)}/>`).join(''));
+  if (J.a_gummi && (WID = 'a_gummi')) s += wrist(line('M62.6 235H71', 1.1, J.a_gummi) + line('M62.6 237.4H71', 1.1, shade(J.a_gummi, isLight(J.a_gummi) ? .7 : 2.2)) + line('M62.6 239.8H71', 1.1, J.a_gummi));
+  if (J.a_schweiss && (WID = 'a_schweiss')) s += wrist(`<rect x="62" y="231.6" width="9.6" height="8" rx="1.4" ${pin(J.a_schweiss)}/>` + line('M62.4 235.6H71.2', 1.2, shade(J.a_schweiss, isLight(J.a_schweiss) ? .7 : 2.4)));
+  if (J.a_leder && (WID = 'a_leder')) s += wrist(`<rect x="62.4" y="236.4" width="8.8" height="3.8" ${pin(J.a_leder)}/><rect x="65.4" y="235.6" width="2.8" height="5.4" fill="none" stroke="#c9c9cf" stroke-width=".8"/>`);
   const band = (y, c) => line(`M63.2 ${y}H69.8`, 1.2, c);
-  if (J.r_toten) s += wrist(band(248, J.r_toten) + `<circle cx="66.5" cy="248" r="1.4" ${pin(J.r_toten, .4)}/>`);
-  if (J.r_fleder) s += wrist(band(248, J.r_fleder) + `<path d="${batPath(66.5, 248, .38)}" ${pin(J.r_fleder, .3)}/>`);
-  if (J.r_kralle) s += wrist(band(249, J.r_kralle) + `<path d="M64.6 250L66.5 257.4L68.4 250Z" ${pin(J.r_kralle, .5)}/>`);
-  if (J.r_viele) s += wrist(band(245.6, J.r_viele) + band(248.2, J.r_viele) + band(250.8, J.r_viele));
+  if (J.r_toten && (WID = 'r_toten')) s += wrist(band(248, J.r_toten) + `<circle cx="66.5" cy="248" r="1.4" ${pin(J.r_toten, .4)}/>`);
+  if (J.r_fleder && (WID = 'r_fleder')) s += wrist(band(248, J.r_fleder) + `<path d="${batPath(66.5, 248, .38)}" ${pin(J.r_fleder, .3)}/>`);
+  if (J.r_kralle && (WID = 'r_kralle')) s += wrist(band(249, J.r_kralle) + `<path d="M64.6 250L66.5 257.4L68.4 250Z" ${pin(J.r_kralle, .5)}/>`);
+  if (J.r_viele && (WID = 'r_viele')) s += wrist(band(245.6, J.r_viele) + band(248.2, J.r_viele) + band(250.8, J.r_viele));
   if (J.p_nabel && o.top === 'netz' && (o.jacket || 'j_kein') === 'j_kein') s += `<ellipse cx="100" cy="190" rx="2.4" ry="3" fill="${skin}"/><circle cx="100" cy="190.4" r="1.1" fill="${shade(skin, .6)}"/><circle cx="100" cy="188.2" r="1.2" fill="${J.p_nabel}" stroke="${INK}" stroke-width=".3"/>` + line('M100 191.6V194.4', .8, J.p_nabel) + `<path d="${heartPath(100, 197, 1.1)}" fill="${J.p_nabel}" stroke="${INK}" stroke-width=".4"/>`;
   if (AON('kette')) s += line('M80 222Q92 254 116 232', 2.2, AC('kette') || '#cfcfcf', 'stroke-dasharray="3 2.4"');
 
@@ -2055,17 +2056,19 @@ function colorPanel(cat, o, act){
     + withPick(swatches('skin','Hautfarbe',SKINS,o.skin || SKINS[0][0],act), 'skin', o.skin, act) + swatches('eyes','Augen',EYES,o.eyes || 'hohl',act);
   if (MULTI.includes(cat)) {
     const on = Object.keys(asObj(o[cat])).filter(k => cat !== 'jewel' || inSub(item(k) || {cat})), pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC;
-    return on.length ? on.map(k => withPick(swatches(cat + '.' + k, 'Farbe: ' + (item(k)?.name || k), pal, o[cat][k], act), cat + '.' + k, o[cat][k], act)).join('') : cat === 'jewel' ? '<p class="note" style="margin:0">Zieh hier ein Teil an, dann erscheint oben die Farbauswahl dafür. Tipp Schmuck an, du kannst mehrere Teile gleichzeitig tragen. Jedes bekommt seine eigene Farbe.</p>' : cat === 'acc' ? '<p class="note" style="margin:0">Tipp Accessoires an, du kannst so viele tragen, wie du willst. Jedes bekommt seine eigene Farbe.</p>' : cat === 'legw' ? '<p class="note" style="margin:0">Tipp Strumpfhosen, Socken oder Stulpen an, du kannst sie auch kombinieren. Jedes Teil bekommt seine eigene Farbe.</p>' : '<p class="note" style="margin:0">Tipp Haarschmuck, Mützen oder Hüte an, du kannst mehrere gleichzeitig tragen. Jedes bekommt seine eigene Farbe.</p>';
+    return on.length ? on.map(k => withPick(swatches(cat + '.' + k, 'Farbe: ' + (item(k)?.name || k), pal, o[cat][k], act), cat + '.' + k, o[cat][k], act) + sideChips(item(k), o, act)).join('') : cat === 'jewel' ? '<p class="note" style="margin:0">Zieh hier ein Teil an, dann erscheint oben die Farbauswahl dafür. Tipp Schmuck an, du kannst mehrere Teile gleichzeitig tragen. Jedes bekommt seine eigene Farbe.</p>' : cat === 'acc' ? '<p class="note" style="margin:0">Tipp Accessoires an, du kannst so viele tragen, wie du willst. Jedes bekommt seine eigene Farbe.</p>' : cat === 'legw' ? '<p class="note" style="margin:0">Tipp Strumpfhosen, Socken oder Stulpen an, du kannst sie auch kombinieren. Jedes Teil bekommt seine eigene Farbe.</p>' : '<p class="note" style="margin:0">Tipp Haarschmuck, Mützen oder Hüte an, du kannst mehrere gleichzeitig tragen. Jedes bekommt seine eigene Farbe.</p>';
   }
   const c = COLOR_KEYS[cat];
   const motif = cat === 'top' ? withPick(swatches('motifC', 'Motivfarbe (Aufdruck, Streifen, Krawatte)', [[null,'Automatisch'], ...CLOTHC.slice(1)], o.motifC ?? null, act), 'motifC', o.motifC, act) : '';
   return c ? withPick(swatches(c[0], c[1], c[2], o[c[0]] ?? c[3], act), c[0], o[c[0]] ?? c[3], act) + motif : '';
 }
+const sideChips = (i, o, act) => i && i.cat === 'jewel' && (i.sub === 'arm' || i.sub === 'ring') ? `<fieldset class="opt"><legend class="lbl">Tragen: ${esc(i.name)}</legend><div class="chips">${[['l','Links'],['r','Rechts'],['b','Beide Seiten']].map(([v, l]) =>
+  `<button type="button" data-act="${act}" data-k="jside.${i.id}" data-v="${v}" aria-pressed="${((o.jside || {})[i.id] || 'b') === v}">${l}</button>`).join('')}</div></fieldset>` : '';
 let colItem = null; // Farbauswahl direkt am Teil: welches Teil gerade aufgeklappt ist
 function itemColorPanel(i, o, act){
   const cat = i.cat;
   if (MULTI.includes(cat)) { const pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC, k = cat + '.' + i.id, cur = asObj(o[cat])[i.id];
-    return withPick(swatches(k, 'Farbe: ' + i.name, pal, cur, act), k, cur, act); }
+    return withPick(swatches(k, 'Farbe: ' + i.name, pal, cur, act), k, cur, act) + (cur ? sideChips(i, o, act) : ''); }
   const c = COLOR_KEYS[cat]; if (!c) return '';
   const motif = cat === 'top' ? withPick(swatches('motifC', 'Motivfarbe (Aufdruck, Streifen, Krawatte)', [[null,'Automatisch'], ...CLOTHC.slice(1)], o.motifC ?? null, act), 'motifC', o.motifC, act) : '';
   return withPick(swatches(c[0], c[1], c[2], o[c[0]] ?? c[3], act), c[0], o[c[0]] ?? c[3], act) + motif;
@@ -2078,6 +2081,7 @@ function itemColUI(i, o, act){ // [Farbpunkt im Kasten, aufgeklappte Farben daru
     colItem === i.id ? `<div class="cpanel" data-id="cp_${i.id}">${p}</div>` : ''];
 }
 function setColor(o, k, v){
+  if (k.startsWith('jside.')) { o.jside = {...(o.jside || {})}; o.jside[k.slice(6)] = v; return; }
   const mm = k.match(/^(hacc|jewel|acc|legw)\.(.+)$/); if (mm) { o[mm[1]] = {...asObj(o[mm[1]])}; o[mm[1]][mm[2]] = v || '#141218'; return; }
   if (v) o[k] = v; else delete o[k];
 }
