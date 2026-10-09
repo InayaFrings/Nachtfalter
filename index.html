@@ -3355,7 +3355,7 @@ async function roomSync(){
   if (RM.owner !== owner) { g.leave().catch(() => {}); return; }
   RM.g = g;
   // Position und Pose im Zimmer: der Gastgeber steht da, wo sein Avatar im Zimmer steht; Gäste kommen an einen freien Platz
-  RM.me = owner === social.uid ? {x:me().room.av.x, y:me().room.av.y, pose:me().pose || 'gerade'} : {x:12 + Math.round(Math.random() * 60), y:38 + Math.round(Math.random() * 10), pose:me().pose || 'gerade'};
+  RM.me = owner === social.uid ? {x:me().room.av.x, y:me().room.av.y, pose:'gerade'} : {x:12 + Math.round(Math.random() * 60), y:38 + Math.round(Math.random() * 10), pose:'gerade'};
   g.presence({u:social.uid, ...RM.me});
   g.onPeers(ch => { RM.peers = [...new Set(ch.peers.map(p => p.by || p.presence?.u).filter(Boolean))]; RM.pres = {}; ch.peers.forEach(p => { const id = p.by || p.presence?.u; if (id) RM.pres[id] = p.presence || {}; }); RM.peers.forEach(id => { if (!PROF[id] && id !== social.uid) loadProf(id).then(paintRoom); }); paintRoom(); }, () => {});
   setTimeout(() => {
