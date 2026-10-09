@@ -1730,14 +1730,14 @@ function regView(){
       <button role="tab" data-act="auth" data-v="login" aria-selected="${authMode==='login'}">Anmelden</button>
     </div>
     ${authMode === 'reg' ? `<form data-form="reg">
-      <label class="f" for="reg-contact"><span class="lbl">${PUB ? 'E-Mail-Adresse' : 'Handynummer oder E-Mail-Adresse'}</span><input id="reg-contact" type="text" autocomplete="username" value="${esc(S.pending?.contact || '')}" required></label>
+      <label class="f" for="reg-contact"><span class="lbl">E-Mail-Adresse</span><input id="reg-contact" type="text" autocomplete="username" value="${esc(S.pending?.contact || '')}" required></label>
       ${birthInput('reg-birth', S.pending?.birth || '')}
       <label class="f" for="reg-pw"><span class="lbl">Passwort (mindestens 6 Zeichen)</span><input id="reg-pw" type="password" autocomplete="new-password" minlength="6" required></label>
       <span id="reg-err" class="err" hidden></span>
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Weiter</button></div>
       ${PUB ? '' : '<p class="note">Im Entwurf wird noch keine SMS und keine E-Mail verschickt. Die Bestätigung kommt dazu, sobald Nachtfalter online geht.</p>'}
     </form>` : forgotPw ? forgotHTML() : `<form data-form="login">
-      <label class="f" for="li-contact"><span class="lbl">${PUB ? 'E-Mail-Adresse' : 'Handynummer oder E-Mail-Adresse'}</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <label class="f" for="li-contact"><span class="lbl">E-Mail-Adresse</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
       <label class="f" for="li-pw"><span class="lbl">Passwort</span><input id="li-pw" type="password" autocomplete="current-password" required></label>
       <span id="li-err" class="err" hidden></span>
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Anmelden</button></div>
@@ -1756,8 +1756,8 @@ function forgotHTML(){
       <div class="row"><button class="btn ghost" type="button" data-act="forgot" data-v="">Zurück</button><span class="sp"></span><button class="btn" type="submit">Link schicken</button></div>
     </form>`; // Passwort zurücksetzen: Konto liegt privat im eigenen Claude-Konto, Geburtsdatum als Kontrolle
   return `<form data-form="forgot">
-      <p class="note" style="margin:0">Gib deine Handynummer oder E-Mail-Adresse und dein Geburtsdatum ein. Dann kannst du dir ein neues Passwort geben.</p>
-      <label class="f" for="fg-contact"><span class="lbl">Handynummer oder E-Mail-Adresse</span><input id="fg-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <p class="note" style="margin:0">Gib deine E-Mail-Adresse und dein Geburtsdatum ein. Dann kannst du dir ein neues Passwort geben.</p>
+      <label class="f" for="fg-contact"><span class="lbl">E-Mail-Adresse</span><input id="fg-contact" type="email" autocomplete="username" value="${esc(forgotContact)}" required></label>
       ${birthInput('fg-birth').replace(/Geburtsdatum \(Nachtfalter ist ab \d+\)/, 'Geburtsdatum')}
       <label class="f" for="fg-pw1"><span class="lbl">Neues Passwort (mindestens 6 Zeichen)</span><input id="fg-pw1" type="password" autocomplete="new-password" minlength="6" required></label>
       <label class="f" for="fg-pw2"><span class="lbl">Neues Passwort wiederholen</span><input id="fg-pw2" type="password" autocomplete="new-password" minlength="6" required></label>
@@ -2300,7 +2300,7 @@ function gateView(){
   if (gateMode === 'login') return `<div class="gate"><div class="card gate-card">${head}
     <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Schön, dass du wieder da bist.</p>
     ${forgotPw ? forgotHTML() : `<form data-form="login">
-      <label class="f" for="li-contact"><span class="lbl">${PUB ? 'E-Mail-Adresse' : 'Handynummer oder E-Mail-Adresse'}</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
+      <label class="f" for="li-contact"><span class="lbl">E-Mail-Adresse</span><input id="li-contact" type="text" autocomplete="username" value="${esc(forgotContact)}" required></label>
       <label class="f" for="li-pw"><span class="lbl">Passwort</span><input id="li-pw" type="password" autocomplete="current-password" required></label>
       <span id="li-err" class="err" hidden></span>
       <button class="btn" type="submit">Anmelden</button>
@@ -2536,7 +2536,7 @@ const HELP_FAQ = [
   [/zimmer|möbel|moebel|raum|einricht|deko/i, {andy:'Unter „Mein Zimmer“ stellst du Möbel auf und schiebst sie herum. Alle Möbel sind gratis.', juliet:'In „Mein Zimmer“ richtest du dich ein. Möbel kannst du frei hinschieben, spiegeln und wieder wegräumen.'}],
   [/freund|einlad|link|code|zirkel/i, {andy:'Deinen Einladungslink findest du unter „Zirkel“. Gib ihn nur Leuten, die du wirklich dabeihaben willst.', juliet:'Unter „Zirkel“ kannst du deinen Einladungslink kopieren. Bitte gib ihn nur Menschen, denen du vertraust.'}],
   [/beitrag|post|teil|bild|foto|film|video/i, {andy:'Im Salon oben teilst du Gedanken, Bilder oder Filme.', juliet:'Im Salon kannst du Gedanken, Bilder und Filme teilen. Fotos von anderen bitte nur mit deren Erlaubnis.'}],
-  [/passwort|anmeld|login|konto|abmeld/i, {andy:'Anmelden kannst du dich mit Handynummer oder E-Mail und deinem Passwort. Im Entwurf gibt es noch kein Passwort-Zurücksetzen.', juliet:'Du meldest dich mit Handynummer oder E-Mail und Passwort an. Wenn du dein Passwort vergessen hast, sag Bescheid.'}],
+  [/passwort|anmeld|login|konto|abmeld/i, {andy:'Anmelden kannst du dich mit E-Mail-Adresse und deinem Passwort. Im Entwurf gibt es noch kein Passwort-Zurücksetzen.', juliet:'Du meldest dich mit E-Mail-Adresse und Passwort an. Wenn du dein Passwort vergessen hast, sag Bescheid.'}],
 ];
 function helperAnswer(h, q){
   const hit = HELP_FAQ.find(([re]) => re.test(q));
@@ -3193,9 +3193,9 @@ function settingsView(){
     <button class="btn ghost setedit" data-act="set-open" data-k="${k}" aria-expanded="${setOpen === k}">${setOpen === k ? 'Schließen' : add ? 'Hinzufügen' : 'Ändern'}</button></div>
     ${setOpen === k ? form : ''}</div>`;
   return `<div class="card"><h2 class="card-h">Einstellungen</h2><div class="card-in">
-    <p class="note">Deine Daten. Mit „Ändern“ passt du sie an. Anmelden kannst du dich mit deiner E-Mail-Adresse oder deiner Handynummer.</p>
+    <p class="note">Deine Daten. Mit „Ändern“ passt du sie an. Anmelden kannst du dich mit deiner E-Mail-Adresse.</p>
     <div class="setlist">
-    ${['email','phone'].map(k => row(k, k === 'email' ? 'E-Mail-Adresse' : 'Handynummer', u[k] ? esc(u[k]) : '<span class="muted">nicht verknüpft</span>', `<form data-form="set-contact" data-k="${k}" class="setf">
+    ${['email'].map(k => row(k, k === 'email' ? 'E-Mail-Adresse' : 'Handynummer', u[k] ? esc(u[k]) : '<span class="muted">nicht verknüpft</span>', `<form data-form="set-contact" data-k="${k}" class="setf">
       <label class="f" for="s-contact"><span class="lbl">${k === 'email' ? 'Neue E-Mail-Adresse' : 'Neue Handynummer'}</span><input id="s-contact" type="${k === 'email' ? 'email' : 'tel'}" autocomplete="${k === 'email' ? 'email' : 'tel'}" value="${esc(u[k] || '')}" required></label>
       <label class="f" for="s-pw1"><span class="lbl">Zur Sicherheit: dein aktuelles Passwort</span><input id="s-pw1" type="password" autocomplete="current-password" required></label>
       <span id="s-contact-err" class="err" hidden></span>
@@ -3543,7 +3543,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'reg') {
     const contact = val('reg-contact'), pw = document.getElementById('reg-pw').value, err = document.getElementById('reg-err');
     const fail = m => { err.textContent = m; err.hidden = false; };
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) && !/^\+?[\d\s\/-]{6,}$/.test(contact)) return fail('Bitte gib eine gültige Handynummer oder E-Mail-Adresse ein.');
+    if (!isMail(contact)) return fail('Bitte gib eine gültige E-Mail-Adresse ein.');
     const birth = val('reg-birth'), bp = birthProblem(birth); if (bp) return fail(bp);
     if (pw.length < 6) return fail('Das Passwort braucht mindestens 6 Zeichen.');
     if (contactTaken(contact)) return fail('Dafür gibt es schon ein Konto. Melde dich stattdessen an.');
@@ -3577,7 +3577,7 @@ document.addEventListener('submit', async e => {
     const err = document.getElementById('fg-err'), fail = m => { err.textContent = m; err.hidden = false; };
     const contact = normContact(val('fg-contact')), birth = val('fg-birth'), p1 = document.getElementById('fg-pw1').value, p2 = document.getElementById('fg-pw2').value;
     const u = Object.values(S.users).find(x => !x.helper && !x.remote && contactsOf(x).includes(contact));
-    if (!u || (u.birth && u.birth !== birth)) return fail('Dazu finden wir kein Konto. Prüf Handynummer, E-Mail und Geburtsdatum.');
+    if (!u || (u.birth && u.birth !== birth)) return fail('Dazu finden wir kein Konto. Prüf E-Mail-Adresse und Geburtsdatum.');
     if (p1.length < 6) return fail('Das Passwort braucht mindestens 6 Zeichen.');
     if (p1 !== p2) return fail('Die beiden Passwörter sind nicht gleich.');
     u.pwh = await hashPw(p1); if (!u.birth && birth) u.birth = birth;
@@ -3587,8 +3587,8 @@ document.addEventListener('submit', async e => {
     err.hidden = true;
     const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Einen Moment …'; }
     let u;
+    if (!isMail(contact)) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = 'Bitte melde dich mit deiner E-Mail-Adresse an.'; err.hidden = false; return; }
     if (PUB) {
-      if (!isMail(contact)) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = 'Bitte melde dich mit deiner E-Mail-Adresse an.'; err.hidden = false; return; }
       const r = await NF_AUTH.signIn(contact, pw);
       if (r.error) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = r.error; err.hidden = false; return; }
       await cloudReinit();
@@ -3602,7 +3602,7 @@ document.addEventListener('submit', async e => {
     if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; }
     if (!u) {
       const known = Object.values(S.users).some(x => !x.helper && !x.remote && contactsOf(x).includes(normContact(contact)));
-      err.textContent = known ? 'Das Passwort stimmt nicht. Tipp aufs Auge, dann siehst du, was du eingibst.' : 'Zu dieser Handynummer oder E-Mail gibt es hier kein Konto. Bist du mit demselben Claude-Konto angemeldet wie bei der Registrierung?';
+      err.textContent = known ? 'Das Passwort stimmt nicht. Tipp aufs Auge, dann siehst du, was du eingibst.' : 'Zu dieser E-Mail-Adresse gibt es hier kein Konto. Bist du mit demselben Claude-Konto angemeldet wie bei der Registrierung?';
       err.hidden = false; return;
     }
     S.me = u.id; S.unlocked = true; S.pending = null; welcomeDMs(); save(); go('home'); toast('Willkommen zurück, ' + u.name);
