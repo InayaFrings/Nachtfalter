@@ -361,6 +361,8 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 .ritem{position:absolute}
 .ritem svg{width:100%;height:auto;display:block;overflow:visible}
 .ritem.av{width:14%}
+.room[data-live] .ritem.av{transition:left .7s ease-in-out,top .7s ease-in-out}.room[data-live]{cursor:pointer}
+.rposes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.rposes button{background:none;border:1px solid var(--line);color:var(--fg);padding:6px 10px;font:inherit;cursor:pointer}.rposes button[aria-pressed=true]{background:var(--fg);color:var(--bg)}
 .room.edit .ritem{cursor:grab;touch-action:none}
 .room.edit .ritem.sel{outline:1px dashed var(--fg);outline-offset:3px}
 .fthumb{display:grid;place-items:center;padding:12px}
@@ -1706,12 +1708,12 @@ function roomHTML(u, edit, live=edit){
   }).join('');
   const cols = [...new Set(r.items.map(it => it.c).filter(c => /^#[0-9a-f]{6}$/i.test(c || '')))];
   const z = 10 + Math.round(r.av.y + 45);
-  return `<div class="rscroll"><div class="room ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}">
+  return `<div class="rscroll"><div class="room ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}" ${live && !edit ? 'data-live="1"' : ''}>
     ${tintDefs(cols)}
     <div class="wall" style="background:${wallBG(r.wall)},linear-gradient(${r.wallC || '#232328'},${r.wallC ? shade(r.wallC, .7) : '#18181c'})"></div>
     <div class="floor" style="background:${floorBG(r.floor, r.floorC)}"></div>
     ${items}
-    <div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} style="left:${r.av.x}%;top:${r.av.y}%;z-index:${z}">${avatar(u.outfit,'full')}</div>
+    <div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} ${live && !edit ? 'data-rav="1"' : ''} style="left:${r.av.x}%;top:${r.av.y}%;z-index:${z}">${avatar(u.outfit,'full')}</div>
     ${live ? '<div class="visitors" id="roomvis"></div><div class="says" id="roomsay" aria-hidden="true"></div>' : ''}
   </div></div>`;
 }
@@ -1737,7 +1739,7 @@ function roomView(){
     </div></div>`;
   // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
   if (roomMode !== 'edit') return `<div class="card">${head}<div class="card-in">
-      ${roomHTML(u, false, true)}
+      ${roomHTML(u, false, true)}${poseBar()}
       ${roomMode === 'chat' ? '' : `<p class="note">${u.roomOpen ? `Dein Raumchat <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b> ist offen. ` : ''}Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
     </div></div>
     ${roomMode === 'chat' ? roomChatHTML(true) : ''}`;
@@ -3248,12 +3250,12 @@ function paintOnline(){ const rc = document.getElementById('roomchats'); if (rc)
 
 /* ---------- Zimmer besuchen (höchstens 6 Leute) ---------- */
 const ROOM_MAX = 6;
-const RM = {owner:null, g:null, peers:[], msgs:[], unsub:null, full:false, err:''};
+const RM = {owner:null, g:null, peers:[], msgs:[], unsub:null, full:false, err:'', pres:{}, me:{}};
 function roomKey(uid){ let h1 = 0x811c9dc5, h2 = 0x1b873593; for (const c of uid) { h1 = Math.imul(h1 ^ c.charCodeAt(0), 16777619); h2 = Math.imul(h2 ^ c.charCodeAt(0), 2246822519); } return 'zimmer-' + (h1 >>> 0).toString(16) + (h2 >>> 0).toString(16); }
 const roomOwnerUid = () => V.name === 'room' ? social?.uid : V.name === 'visit' ? V.arg : null;
 async function leaveRoom(){
   const g = RM.g; if (RM.unsub) RM.unsub();
-  Object.assign(RM, {owner:null, g:null, peers:[], msgs:[], unsub:null, full:false, err:''});
+  Object.assign(RM, {owner:null, g:null, peers:[], msgs:[], unsub:null, full:false, err:'', pres:{}, me:{}});
   if (g) try { await g.leave(); } catch {}
 }
 async function roomSync(){
@@ -3266,8 +3268,11 @@ async function roomSync(){
   if (!room) { RM.err = 'Gemeinsame Zimmer gehen nur in der geteilten Nachtfalter-Seite.'; return paintRoom(); }
   let g; try { g = await room.join(roomKey(owner)); } catch { RM.err = 'Das Zimmer ließ sich gerade nicht öffnen. Versuch es gleich nochmal.'; return paintRoom(); }
   if (RM.owner !== owner) { g.leave().catch(() => {}); return; }
-  RM.g = g; g.presence({u:social.uid});
-  g.onPeers(ch => { RM.peers = [...new Set(ch.peers.map(p => p.by || p.presence?.u).filter(Boolean))]; RM.peers.forEach(id => { if (!PROF[id] && id !== social.uid) loadProf(id).then(paintRoom); }); paintRoom(); }, () => {});
+  RM.g = g;
+  // Position und Pose im Zimmer: der Gastgeber steht da, wo sein Avatar im Zimmer steht; Gäste kommen an einen freien Platz
+  RM.me = owner === social.uid ? {x:me().room.av.x, y:me().room.av.y, pose:me().pose || 'gerade'} : {x:12 + Math.round(Math.random() * 60), y:38 + Math.round(Math.random() * 10), pose:me().pose || 'gerade'};
+  g.presence({u:social.uid, ...RM.me});
+  g.onPeers(ch => { RM.peers = [...new Set(ch.peers.map(p => p.by || p.presence?.u).filter(Boolean))]; RM.pres = {}; ch.peers.forEach(p => { const id = p.by || p.presence?.u; if (id) RM.pres[id] = p.presence || {}; }); RM.peers.forEach(id => { if (!PROF[id] && id !== social.uid) loadProf(id).then(paintRoom); }); paintRoom(); }, () => {});
   setTimeout(() => {
     if (RM.g !== g || owner === social.uid) return;
     const others = RM.peers.filter(id => id !== social.uid);
@@ -3277,14 +3282,53 @@ async function roomSync(){
     RM.msgs = snap.docs.map(d => d.data()).reverse(); drawRoomMsgs();
   }, () => {});
 }
-function visitorsHTML(owner){
-  const ou = owner === social?.uid ? S.me : owner;
-  return RM.peers.filter(id => id !== owner).slice(0, ROOM_MAX).map((id, i) => {
-    const o = id === social?.uid ? me().outfit : PROF[id]?.outfit; if (!o) return '';
-    const name = id === social?.uid ? 'Du' : PROF[id]?.name || '';
-    return `<div class="ritem av vis" data-uid="${esc(id)}" style="left:${8 + i * 15}%;top:${36 + (i % 2) * 6}%;z-index:${90 + i}">${avatar(o, 'full')}<span class="vname">${esc(name)}</span></div>`;
-  }).join('');
+function roomPos(id, i){ // Position und Pose einer Person im Zimmer
+  const p = id === social?.uid ? RM.me : RM.pres[id] || {};
+  return {x:typeof p.x === 'number' ? p.x : 8 + i * 15, y:typeof p.y === 'number' ? p.y : 36 + (i % 2) * 6, pose:typeof p.pose === 'string' ? p.pose : ''};
 }
+function visitorsData(owner){
+  return RM.peers.filter(id => id !== owner).slice(0, ROOM_MAX).map((id, i) => {
+    const o = id === social?.uid ? me().outfit : PROF[id]?.outfit; if (!o) return null;
+    return {id, o, name:id === social?.uid ? 'Du' : PROF[id]?.name || '', ...roomPos(id, i)};
+  }).filter(Boolean);
+}
+function visitorsHTML(owner){
+  return visitorsData(owner).map(w => `<div class="ritem av vis" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="left:${w.x}%;top:${w.y}%;z-index:${10 + Math.round(w.y + 45)}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`).join('');
+}
+// Nur ändern, was sich bewegt hat: so laufen die Avatare sichtbar an ihren neuen Platz
+function paintVisitors(v, owner){
+  const want = visitorsData(owner), have = new Map([...v.children].map(el => [el.dataset.uid, el]));
+  want.forEach(w => {
+    let el = have.get(w.id);
+    if (!el || el.dataset.sig !== w.pose) { const t = document.createElement('div'); t.innerHTML = `<div class="ritem av vis" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="left:${(el ? el.style.left : w.x + '%')};top:${(el ? el.style.top : w.y + '%')}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`; const n = t.firstElementChild; if (el) el.replaceWith(n); else v.appendChild(n); el = n; void el.offsetWidth; }
+    el.style.left = w.x + '%'; el.style.top = w.y + '%'; el.style.zIndex = 10 + Math.round(w.y + 45); have.delete(w.id);
+  });
+  have.forEach(el => el.remove());
+  // Gastgeber: Platz und Pose aus dem Zimmer (live, wenn er da ist)
+  const host = v.closest('.room')?.querySelector('[data-rav]');
+  if (host) {
+    const p = owner === social?.uid ? RM.me : RM.peers.includes(owner) ? RM.pres[owner] : null;
+    if (p && typeof p.x === 'number') { host.style.left = p.x + '%'; host.style.top = p.y + '%'; host.style.zIndex = 10 + Math.round(p.y + 45); }
+    const pose = p?.pose || '', o = owner === social?.uid ? me().outfit : (S.users[owner] || PROF[owner])?.outfit;
+    if (o && (host.dataset.sig || '') !== pose) { host.dataset.sig = pose; host.innerHTML = avatar(o, 'full', pose); }
+  }
+}
+function poseBar(){
+  const cur = RM.me.pose || 'gerade';
+  return `<div class="rposes" role="group" aria-label="Pose im Zimmer"><span class="lbl">Pose</span>${POSES.map(([k, l]) => `<button type="button" data-act="rpose" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>
+    <p class="note" style="margin:6px 0 0">Tipp auf den Boden, dann läuft dein Avatar dorthin.</p>`;
+}
+function roomMove(){ if (RM.g) RM.g.presence({u:social.uid, ...RM.me}).catch?.(() => {}); const v = document.getElementById('roomvis'); if (v && RM.owner) paintVisitors(v, RM.owner); }
+document.addEventListener('click', e => {
+  const room = e.target.closest('.room[data-live]'); if (!room || e.target.closest('button, a, .vname')) return;
+  const own = V.name === 'room'; if (!own && !RM.g) return;
+  const rc = room.getBoundingClientRect(), ref = room.querySelector(own ? '[data-rav]' : `.ritem.vis[data-uid="${CSS.escape(social?.uid || '')}"]`) || room.querySelector('[data-rav]');
+  const ar = ref.getBoundingClientRect(), w = ar.width / rc.width * 100, h = ar.height / rc.height * 100;
+  const x = Math.max(-2, Math.min(92, (e.clientX - rc.left) / rc.width * 100 - w / 2)), y = Math.max(20, Math.min(78, (e.clientY - rc.top) / rc.height * 100 - h));
+  RM.me.x = Math.round(x * 10) / 10; RM.me.y = Math.round(y * 10) / 10;
+  if (own) { me().room.av = {x:RM.me.x, y:RM.me.y}; const host = room.querySelector('[data-rav]'); host.style.left = RM.me.x + '%'; host.style.top = RM.me.y + '%'; host.style.zIndex = 10 + Math.round(RM.me.y + 45); clearTimeout(roomMove.t); roomMove.t = setTimeout(save, 900); }
+  roomMove();
+});
 function roomCountText(){
   if (RM.full) return 'Das Zimmer ist gerade voll (6 von 6). Versuch es später nochmal.';
   if (RM.err) return RM.err;
@@ -3294,7 +3338,7 @@ function roomCountText(){
 }
 function paintRoom(){
   const v = document.getElementById('roomvis'), c = document.getElementById('roomcount');
-  if (v && RM.owner) v.innerHTML = RM.full ? '' : visitorsHTML(RM.owner);
+  if (v && RM.owner) { if (RM.full) v.innerHTML = ''; else paintVisitors(v, RM.owner); }
   if (c) c.textContent = roomCountText();
   const f = document.querySelector('[data-form="rmsg"]'); if (f) f.hidden = !RM.g || roomStart() == null;
 }
@@ -3363,7 +3407,7 @@ function visitView(){
   const id = V.arg, u = S.users[id];
   if (!u || !isFriend(id)) return `<div class="card"><h2 class="card-h">Zimmer</h2><div class="card-in"><p class="note">In dieses Zimmer kommst du nur, wenn ihr befreundet seid.</p></div></div>`;
   return `<div class="card"><h2 class="card-h">Bei ${esc(u.name)} im Zimmer</h2><div class="card-in">
-    ${roomHTML(u, false, true)}
+    ${roomHTML(u, false, true)}${poseBar()}
     <div class="row"><button class="btn ghost" data-act="profile" data-id="${id}">Zimmer verlassen</button></div>
   </div></div>${roomChatHTML(false)}`;
 }
@@ -3773,6 +3817,11 @@ document.addEventListener('click', async e => {
     if (u.points < i.price || u.owned.includes(id)) return;
     u.points -= i.price; u.owned.push(id); wearItem(u.outfit, i); trial = null;
     save(); render(); toast(`${i.name} gekauft. Es liegt jetzt in deiner Garderobe.`);
+  }
+  else if (a === 'rpose') {
+    RM.me.pose = b.dataset.v; document.querySelectorAll('[data-act=rpose]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    if (V.name === 'room' && !RM.g) { const host = document.querySelector('[data-rav]'); if (host) host.innerHTML = avatar(me().outfit, 'full', RM.me.pose); }
+    roomMove();
   }
   else if (a === 'post-del') { postDelAsk = b.dataset.id; postEdit = null; render(); }
   else if (a === 'post-edit') { postEdit = b.dataset.id; postDelAsk = null; render(); document.getElementById('pe-' + postEdit)?.focus(); }
