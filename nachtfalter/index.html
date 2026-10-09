@@ -628,6 +628,12 @@ const ITEMS = [
   {id:'rockstar',cat:'back',name:'Rockstar-Mähne',st:'Rock',price:50},
   {id:'wellen',cat:'back',name:'Lange Wellen',st:'Viktorianisch',g:'w'},
   {id:'zoepfe',cat:'back',name:'Zwei Zöpfe',st:'Scene',g:'w'},
+  {id:'dreadk',cat:'back',name:'Dreadlocks kurz',st:'Punk'},
+  {id:'dreadl',cat:'back',name:'Dreadlocks lang',st:'Punk'},
+  {id:'afrok',cat:'back',name:'Afro kurz',st:'Rock'},
+  {id:'afrol',cat:'back',name:'Afro lang',st:'Rock'},
+  {id:'cornk',cat:'back',name:'Cornrows kurz',st:'Punk'},
+  {id:'cornl',cat:'back',name:'Cornrows lang',st:'Punk'},
   {id:'p_kein',cat:'front',name:'Kein Pony'},
   {id:'p_seitlich',cat:'front',name:'Seitlicher Scene-Pony',st:'Scene'},
   {id:'p_lang',cat:'front',name:'Langer Pony übers Auge',st:'Emo'},
@@ -827,7 +833,7 @@ function previewOutfit(o, i){
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
 const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? 'mouth' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
-let showAllG = false;
+let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
 const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
 const isOn = (o, i) => MULTI.includes(i.cat) ? !!(o[i.cat] || {})[i.id] : o[i.cat] === i.id;
 const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !== 'none' ? {[v]:'auto'} : {}; // alte Outfits hatten nur ein Accessoire als Text
@@ -921,7 +927,8 @@ function normOutfit(o){
   if (!o.eyeform) o.eyeform = 'e_rund'; if (!o.beard) o.beard = 'b_kein'; if (!o.lips) o.lips = 'l_laecheln';
   return o;
 }
-const SHORT_BACK = ['dutt','kurz','mod','iro','spikes','bob','scenek','gothzopf'];
+const SHORT_BACK = ['dutt','kurz','mod','iro','spikes','bob','scenek','gothzopf','dreadk','afrok','cornk','afrol'];
+const CORN = ['cornk','cornl']; // Cornrows liegen eng am Kopf: ohne Pony
 
 
 const pentPath = (cx, cy, r) => 'M' + [0,2,4,1,3].map(k => { const a = -Math.PI / 2 + k * Math.PI * 2 / 5; return (cx + r * Math.cos(a)).toFixed(2) + ' ' + (cy + r * Math.sin(a)).toFixed(2); }).join('L') + 'Z';
@@ -1040,6 +1047,30 @@ function avatar(o0, view='full', pose='', lite=false){
   if (o.back === 'dutt') s += path('M72 70Q68 32 100 30Q132 32 128 70L126 86L74 86Z', H);
   if (BACK[o.back]) s += path(BACK[o.back], H) + strandTex([BACK[o.back]], 'hb', 34, SHORT_BACK.includes(o.back) ? 110 : 236) + (SHORT_BACK.includes(o.back) || o.back === 'zoepfe' ? '' : line('M78 70Q72 120 76 176M86 62Q80 110 84 150M122 70Q128 120 124 176M114 62Q120 110 116 150', 1, shade(hairC, isLight(hairC) ? .82 : 1.45), 'opacity=".35"'));
   if (o.back === 'zoepfe') s += both(path('M74 50Q52 46 48 80Q44 112 54 134L60 120L64 136Q66 102 76 74Z', H));
+  // Dreadlocks, Afro und Cornrows, je kurz und lang, für alle Körper
+  const hDark = shade(hairC, isLight(hairC) ? .7 : .55), hLite = shade(hairC, isLight(hairC) ? .85 : 1.8);
+  const rope = (d, w, dash='1.6 2.6') => line(d, w + 1.8, INK) + line(d, w, hairC) + line(d, w * .55, hDark, `stroke-dasharray="${dash}" opacity=".85"`);
+  if (o.back === 'dreadk' || o.back === 'dreadl') {
+    const L = o.back === 'dreadl', yb = k => L ? 196 + k * 8 : 108 + k * 3;
+    s += path('M70 78Q64 32 100 28Q136 32 130 78Q100 70 70 78Z', H);
+    s += [[71,66,60,0],[76,58,68,1],[84,52,80,2],[93,50,92,3],[107,50,108,3],[116,52,120,2],[124,58,132,1],[129,66,140,0]]
+      .map(([x0, y0, x1, k]) => rope(`M${x0} ${y0}Q${(x0 + x1) / 2 + (x0 < 100 ? -5 : 5)} ${(y0 + yb(k)) / 2} ${x1} ${yb(k)}`, 6.4)).join('');
+  }
+  if (o.back === 'afrok' || o.back === 'afrol') {
+    const L = o.back === 'afrol', [cx, cy, rx, ry, n] = L ? [100, 78, 60, 64, 30] : [100, 58, 46, 40, 24];
+    const pt = (a, k) => [(cx + rx * k * Math.cos(a)).toFixed(1), (cy + ry * k * Math.sin(a)).toFixed(1)];
+    let d = 'M' + pt(0, 1).join(' ');
+    for (let i = 1; i <= n; i++) d += 'Q' + pt((i - .5) / n * Math.PI * 2, 1.09).join(' ') + ' ' + pt(i / n * Math.PI * 2, 1).join(' ');
+    s += path(d + 'Z', H);
+    const curls = []; // kleine Locken als Struktur
+    for (let i = 0; i < (L ? 46 : 30); i++) { const a = i * 2.39996, r = Math.sqrt((i + .5) / (L ? 46 : 30)) * .86, x = cx + rx * r * Math.cos(a), y = cy + ry * r * Math.sin(a);
+      curls.push(`M${(x - 2.4).toFixed(1)} ${y.toFixed(1)}q2.4 -3.2 4.8 0`); }
+    s += line(curls.join(''), 1, hDark, 'opacity=".7"') + line(`M${cx - rx * .55} ${cy - ry * .62}Q${cx} ${cy - ry * .9} ${cx + rx * .4} ${cy - ry * .7}`, 2, hLite, 'opacity=".45"');
+  }
+  if (CORN.includes(o.back)) {
+    s += path('M71 76Q66 34 100 30Q134 34 129 76Z', H);
+    if (o.back === 'cornl') s += [[74,74,70],[82,72,80],[118,72,120],[126,74,130],[90,70,92],[110,70,108]].map(([x0, y0, x1], k) => rope(`M${x0} ${y0}Q${x0 + (x0 < 100 ? -3 : 3)} 140 ${x1} ${200 + (k % 2) * 10}`, 5.4, '2.6 1.4')).join('');
+  }
 
   s += '</g>';
   // Körper
@@ -1384,9 +1415,12 @@ function avatar(o0, view='full', pose='', lite=false){
 
   // Haare vorne
   const fStart = s.length;
-  const F = id('f'), punk = o.back === 'iro' || o.back === 'spikes', fr = o.front, long = !SHORT_BACK.includes(o.back);
+  const F = id('f'), punk = o.back === 'iro' || o.back === 'spikes', fr = CORN.includes(o.back) ? 'p_corn' : o.front, long = !SHORT_BACK.includes(o.back);
   const hi = line('M84 44Q98 39 116 44', 1.4, shade(frontC, 1.5), 'opacity=".8"');
   if (punk && fr === 'p_kein') s += `<path d="M72 66Q74 40 100 38Q126 40 128 66Q116 52 100 52Q84 52 72 66Z" fill="${shade(hairC,.6)}" opacity=".7"/>`;
+  else if (fr === 'p_corn') { s += path('M72 70Q68 34 100 31Q132 34 128 70Q124 56 100 54Q76 56 72 70Z', F);
+    const rowC = shade(frontC, isLight(frontC) ? .72 : 1.6);
+    s += [76, 84, 92, 100, 108, 116, 124].map(x => { const d = `M${x} ${(55 + Math.pow(Math.abs(x - 100) / 24, 2) * 8).toFixed(1)}Q${100 + (x - 100) * .8} 42 ${100 + (x - 100) * .45} 32`; return line(d, 4.4, INK) + line(d, 3, frontC) + line(d, 1.4, rowC, 'stroke-dasharray="1.6 1.2"'); }).join(''); }
   else if (fr === 'p_kein') s += path('M72 76Q68 36 100 33Q132 36 128 76L125 56Q114 44 100 44Q86 44 75 56Z', F) + hi;
   else if (fr === 'p_seitlich') s += path('M74 52L66 30L82 40L84 18L96 34L104 14L110 34L124 22L122 42L134 40L128 58Z', F)
       + path('M70 84Q66 40 100 36Q130 38 132 72L127 62Q120 52 108 54Q94 58 88 72L86 94L82 84L78 100L74 88L70 102Z', F)
@@ -1782,7 +1816,7 @@ function curColor(cat, o){ // aktuelle Farbe für den kleinen Punkt am Knopf
 }
 function colorPanel(cat, o, act){
   if (cat === 'body') return `<fieldset class="opt"><legend class="lbl">Körper</legend><div class="chips">${[['w','Mädchen'],['m','Junge'],['a','Androgyn']].map(([v,l]) =>
-      `<button type="button" data-act="${act}" data-k="body" data-v="${v}" aria-pressed="${(o.body || 'a') === v}">${l}</button>`).join('')}</div><p class="note" style="margin:6px 0 0">Danach richten sich Figur und die Auswahl in der Garderobe. Unter „Alles zeigen“ siehst du trotzdem jedes Teil.</p></fieldset>`
+      `<button type="button" data-act="${act}" data-k="body" data-v="${v}" aria-pressed="${(o.body || 'a') === v}">${l}</button>`).join('')}</div><p class="note" style="margin:6px 0 0">Danach richtet sich die Figur.</p></fieldset>`
     + withPick(swatches('skin','Hautfarbe',SKINS,o.skin || SKINS[0][0],act), 'skin', o.skin, act) + swatches('eyes','Augen',EYES,o.eyes || 'hohl',act);
   if (MULTI.includes(cat)) {
     const on = Object.keys(asObj(o[cat])).filter(k => cat !== 'jewel' || inSub(item(k) || {cat})), pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC;
@@ -1918,7 +1952,6 @@ function creatorView(){
       <div style="display:grid;gap:16px;min-width:0;align-content:start">
         ${catTabs(obCat, 'ob-cat', true, o)}
         ${obCat === 'body' ? colorPanel(obCat, o, 'ob-color') : ''}
-        ${obCat === 'body' ? '' : `<label class="allg"><input type="checkbox" data-act="allg" ${showAllG ? 'checked' : ''}> Alles zeigen, auch für andere Körper</label>`}
         ${items ? `<div class="shopgrid">${items}</div>` : ''}
       </div>
     </div>
@@ -2939,7 +2972,6 @@ function shopView(isShop){
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
       ${catTabs(shopCat, 'cat', !isShop, u.outfit)}
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
-      ${shopCat === 'body' ? '' : `<label class="allg"><input type="checkbox" data-act="allg" ${showAllG ? 'checked' : ''}> Alles zeigen, auch für andere Körper</label>`}
       ${items ? `<div class="shopgrid">${items}</div>` : empty}
     </div></div>
   </div>`;
