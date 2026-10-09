@@ -384,6 +384,7 @@ footer.foot .lnk{color:var(--muted)}
 .songdock{position:fixed;right:14px;bottom:14px;z-index:60;background:#0e0e10;border:1px solid var(--line);padding:8px;display:grid;gap:6px;width:min(300px,calc(100vw - 32px))}
 .songdock iframe{width:100%;aspect-ratio:16/9;border:0;display:block}.songhead{display:flex;justify-content:space-between;gap:8px;font:italic 14px var(--f-ital)}
 .songdock[hidden]{display:none}.songdock audio{width:100%;display:block;height:36px}
+.deldanger{margin-top:18px}
 .modal{position:fixed;inset:0;z-index:80;background:#000a;display:grid;place-items:center;padding:16px}.modal[hidden]{display:none}.modal-card{padding:24px;max-width:380px;width:100%;display:grid;gap:18px;text-align:center}
 .subtabs{margin-top:-6px}.subtabs button{font-size:15px}
 .music{display:grid;gap:8px;margin-top:10px;justify-items:start}.music-form{display:grid;gap:8px;width:100%;max-width:520px;border:1px dashed var(--p-line);padding:12px}
@@ -506,6 +507,7 @@ footer.foot .lnk{color:var(--muted)}
 <div id="toast" class="toast" hidden></div>
 <div id="songdock" class="songdock" hidden></div>
 <div id="confirm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="confirm-h"><div class="card modal-card"><h2 id="confirm-h" class="ch-h">Willst du dich wirklich abmelden?</h2><div class="row"><button class="btn ghost" data-act="logout-no">Nein</button><span class="sp"></span><button class="btn" data-act="logout-yes">Ja, abmelden</button></div></div></div>
+<div id="delacct" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="delacct-h"><form class="card modal-card" data-form="delacct"><h2 id="delacct-h" class="ch-h">Willst du dein Konto wirklich löschen?</h2><p class="note" style="margin:0">Dein Profil, dein Zimmer, deine Beiträge und deine Freundesliste werden für immer gelöscht. Das kann man nicht rückgängig machen.</p><label class="f" for="del-in"><span class="lbl">Tippe zur Bestätigung LÖSCHEN ein</span><input id="del-in" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"></label><label class="f" for="del-pw" id="del-pwl" style="display:none"><span class="lbl">Dein Passwort</span><input id="del-pw" type="password" autocomplete="current-password"></label><span id="del-err" class="err" hidden></span><div class="row"><button class="btn ghost" type="button" data-act="delacct-no">Abbrechen</button><span class="sp"></span><button class="btn" type="submit" id="del-go" disabled>Konto löschen</button></div></form></div>
 
 <script>
 // Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
@@ -2909,6 +2911,30 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.emopop')) document.querySelectorAll('.emopop').forEach(x => x.remove());
 }, true);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.emopop').forEach(x => x.remove()); });
+const delWord = () => (document.getElementById('del-in')?.value || '').trim().toUpperCase().replace(/OE/g, 'Ö') === 'LÖSCHEN';
+document.addEventListener('input', e => { if (e.target.id === 'del-in') document.getElementById('del-go').disabled = !delWord(); });
+async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
+  if (PUB) { const r = await NF_AUTH.reauth(pw); if (r.error) return r.error; }
+  if (social) {
+    const uid = social.uid;
+    for (const p of ['profiles/' + uid, 'handles/' + uid, 'friends/' + uid]) await social.db.doc(p).delete().catch(() => {});
+    try { const w = await social.db.collection('chats/wall_' + uid + '/m').get(); for (const d of w.docs) await social.db.doc('chats/wall_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
+    try { const z = await social.db.collection('chats/zimmer_' + uid + '/m').get(); for (const d of z.docs) await social.db.doc('chats/zimmer_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
+  }
+  if (PUB) {
+    clearTimeout(cloudTimer);
+    if (cloud) { try { const d = await cloud.col.get(); for (const x of d.docs) await cloud.col.doc(x.id).delete().catch(() => {}); } catch {} cloud = null; }
+    const r = await NF_AUTH.deleteUser(); if (r.error) return r.error;
+    try { localStorage.removeItem(KEY); } catch {}
+    location.reload(); return null;
+  }
+  const id = S.me;
+  S.posts = S.posts.filter(p => p.author !== id);
+  for (const u of Object.values(S.users)) { if (u.wall) u.wall = u.wall.filter(w => w.author !== id); }
+  if (S.chats) for (const k of Object.keys(S.chats)) if (k.startsWith(id + '>')) delete S.chats[k];
+  delete S.users[id]; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); go('home');
+  return null;
+}
 document.addEventListener('keydown', e => { const r = e.target.closest?.('.proom'); if (r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); r.click(); } });
 const EMO_FORMS = '[data-form="comment"],[data-form="post"],[data-form="hchat"],[data-form="rwall"],[data-form="wall"],[data-form="cmsg"],[data-form="rmsg"]';
 function addEyes(){ // kleines Auge neben jedem Passwortfeld: zeigen / verstecken
@@ -3195,6 +3221,7 @@ function settingsView(){
     </div>
     <p class="note">Freunde verwaltest du unter <button class="lnk" data-act="nav" data-v="friends">Freunde</button>, neue findest du unter <button class="lnk" data-act="nav" data-v="find">Freunde finden</button>.</p>
     <div class="row"><button class="btn ghost" data-act="logout">Abmelden</button></div>
+    <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     <p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>
   </div></div>`;
 }
@@ -3420,6 +3447,8 @@ document.addEventListener('click', e => {
   else if (a === 'prof-edit') { profEdit = b.dataset.v === '1'; composeOpen = false; render(); }
   else if (a === 'logout') { const m = document.getElementById('confirm'); m.hidden = false; m.querySelector('[data-act=logout-no]').focus(); }
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
+  else if (a === 'delacct') { const m = document.getElementById('delacct'); m.hidden = false; m.querySelector('#del-in').value = ''; m.querySelector('#del-pw').value = ''; m.querySelector('#del-pwl').style.display = PUB ? '' : 'none'; m.querySelector('#del-err').hidden = true; m.querySelector('#del-go').disabled = true; m.querySelector('#del-in').focus(); }
+  else if (a === 'delacct-no') document.getElementById('delacct').hidden = true;
   else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} location.reload(); }); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'copy-invite') { const l = inviteLink(); (navigator.clipboard?.writeText(l) || Promise.reject()).then(() => toast('Einladungslink kopiert'), () => { const x = document.getElementById('invite-link'); x.select(); toast('Link markiert, jetzt kopieren'); }); }
@@ -3499,6 +3528,15 @@ document.addEventListener('submit', async e => {
   const f = e.target; if (!f.dataset.form) return;
   e.preventDefault();
   const t = f.dataset.form, val = id => (document.getElementById(id)?.value || '').trim();
+  if (t === 'delacct') {
+    const err = document.getElementById('del-err'), pw = document.getElementById('del-pw').value;
+    if (!delWord()) { err.textContent = 'Bitte tippe genau LÖSCHEN ein.'; err.hidden = false; return; }
+    if (PUB && !pw) { err.textContent = 'Bitte gib dein Passwort ein.'; err.hidden = false; return; }
+    document.getElementById('del-go').disabled = true; err.hidden = true;
+    const e2 = await deleteAccount(pw);
+    if (e2) { err.textContent = e2; err.hidden = false; document.getElementById('del-go').disabled = false; return; }
+    document.getElementById('delacct').hidden = true; toast('Dein Konto wurde gelöscht.'); window.scrollTo(0,0); return;
+  }
   if (t === 'gate') {
     if (await codeOk(val('code'))) { S.unlocked = true; S.icode = val('code').toUpperCase(); save(); render(); }
     else document.getElementById('gateErr').hidden = false;

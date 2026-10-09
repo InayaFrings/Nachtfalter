@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function me(uid) { return signedIn() && request.auth.uid == uid; }
+    function isOwner() { return signedIn() && request.auth.token.email is string
+      && request.auth.token.email.lower() == 'inayafrings@gmail.com'; }
+
+    // Eigene Daten: nur die Person selbst
+    match /data/users/{uid}/{rest=**} { allow read, write: if me(uid); }
+
+    // Profile, Namen, Freundeslisten: alle Angemeldeten lesen, nur man selbst schreibt
+    match /profiles/{uid} { allow read: if signedIn(); allow write: if me(uid); }
+    match /profiles/{uid}/{rest=**} { allow read: if signedIn(); allow write: if me(uid); }
+    match /handles/{uid} { allow read: if signedIn(); allow write: if me(uid); }
+    match /friends/{uid} { allow read: if signedIn(); allow write: if me(uid); }
+
+    // Chats, Pinnwände, Raumchats
+    match /chats/{rest=**} { allow read, write: if signedIn(); }
+
+    // Wer gerade online ist
+    match /presence/{room}/p/{key} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.resource.data.by == request.auth.uid;
+      allow delete: if signedIn();
+    }
+
+    // Seiten-Einstellungen: nur Inaya
+    match /site/{rest=**} { allow read: if signedIn(); allow write: if isOwner(); }
+  }
+}
