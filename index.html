@@ -1632,6 +1632,18 @@ for (const k of Object.keys(FURN)) {
   if (f.r) continue;
   f.r = f.t === 'poster' ? 'poster' : f.t === 'bett' ? 'schlaf' : f.t === 'teppich' ? 'wohn' : (Object.keys(ROOM_OF).find(r => ROOM_OF[r].includes(k)) || 'deko');
 }
+// Fenster als eigene Kategorie (Inayas Wunsch): drei weitere Fenster
+Object.assign(FURN, {
+  f_rosette:{name:'Rosetten\u00adfenster', price:0, w:12, vb:[80,80], wall:1, svg:`<circle cx="40" cy="40" r="37" fill="#1d1d22" stroke="${K}" stroke-width="3"/><circle cx="40" cy="40" r="31" fill="#2c2e36"/><path d="M40 10A30 30 0 0 1 61 19L40 40Z" fill="#3a1830"/><path d="M61 61A30 30 0 0 1 40 70L40 40Z" fill="#3a1830"/><path d="M19 61A30 30 0 0 1 10 40L40 40Z" fill="#3a1830"/><path d="M19 19A30 30 0 0 1 40 10L40 40Z" fill="#23233a"/><path d="M70 40A30 30 0 0 1 61 61L40 40Z" fill="#23233a"/><path d="M10 40A30 30 0 0 1 19 19L40 40Z" fill="#4a0f1c"/><path d="M40 40L70.0 40.0" stroke="${K}" stroke-width="2"/><path d="M40 40L61.2 61.2" stroke="${K}" stroke-width="2"/><path d="M40 40L40.0 70.0" stroke="${K}" stroke-width="2"/><path d="M40 40L18.8 61.2" stroke="${K}" stroke-width="2"/><path d="M40 40L10.0 40.0" stroke="${K}" stroke-width="2"/><path d="M40 40L18.8 18.8" stroke="${K}" stroke-width="2"/><path d="M40 40L40.0 10.0" stroke="${K}" stroke-width="2"/><path d="M40 40L61.2 18.8" stroke="${K}" stroke-width="2"/><circle cx="40" cy="40" r="31" fill="none" stroke="${K}" stroke-width="2.5"/><circle cx="40" cy="40" r="8" fill="#d4af37" stroke="${K}" stroke-width="2"/>`},
+  f_gitter:{name:'Gitter\u00adfenster bei Nacht', price:0, w:12, vb:[60,66], wall:1, svg:`<rect x="3" y="3" width="54" height="54" fill="#1d1d22" stroke="${K}" stroke-width="3"/><rect x="8" y="8" width="44" height="44" fill="#22242c"/><circle cx="20" cy="20" r="6" fill="#e9e7e2"/><path d="M12 40l3 6M24 34l3 6M38 30l3 6M44 44l3 6M30 46l3 5" stroke="#8a8f9a" stroke-width="1"/><path d="M19 8V52M30 8V52M41 8V52M8 30H52" stroke="#55555c" stroke-width="2.2"/><rect x="0" y="57" width="60" height="7" fill="#45454c" stroke="${K}" stroke-width="1"/>`},
+  f_bleiglas:{name:'Bleiglas\u00adfenster', price:0, w:9, vb:[40,100], wall:1, svg:`<path d="M3 98V24Q3 3 20 2Q37 3 37 24V98Z" fill="#1d1d22" stroke="${K}" stroke-width="3"/><path d="M8 94V25Q8 8 20 7Q32 8 32 25V94Z" fill="#3a1830"/><path d="M8 40H32M8 62H32M20 7V94" stroke="${K}" stroke-width="2"/><path d="M8 25Q8 8 20 7V40H8Z" fill="#4a0f1c"/><path d="M20 40H32V62H20Z" fill="#23233a"/><path d="M8 62H20V94H8Z" fill="#23233a"/><path d="M20 62H32V94H20Z" fill="#4a0f1c"/><circle cx="20" cy="26" r="5" fill="#d4af37" stroke="${K}" stroke-width="1.5"/><path d="M14 51l6-6 6 6-6 6Z" fill="#d4af37" stroke="${K}" stroke-width="1.2"/>`}
+});
+// Kategorien im Möbelhaus (Inayas Wunsch): Poster, Betten, Sofas, Lampen, Fenster, Haustiere, Teppiche, Deko
+const CAT_OF = {bett:['bett','b_sarg','b_emo','b_matratze','b_scene','b_eisen','b_metal'], sofa:['sofa','sessel','thron','sitzsack'], fenster:['fenster','vorhang','f_rosette','f_gitter','f_bleiglas'], teppich:['teppich']};
+for (const k of Object.keys(FURN)) {
+  const f = FURN[k], hit = Object.keys(CAT_OF).find(c => CAT_OF[c].includes(k));
+  f.r = hit || (/^t_/.test(k) ? 'teppich' : ['poster','lampe','tier'].includes(f.r) ? f.r : 'deko');
+}
 const FURN_IDS = Object.keys(FURN);
 const WALLS = [['damast','Damast'],['streifen','Streifen'],['stein','Stein'],['schlicht','Schlicht']];
 const FLOORS = [['dielen','Dielen'],['schach','Schachbrett'],['teppich','Teppichboden']];
@@ -1693,7 +1705,7 @@ function roomHTML(u, edit, live=edit){
   </div></div>`;
 }
 let roomSel = null, dragging = null;
-const FURN_TABS = [['alle','Alle'],['schlaf','Schlafzimmer'],['wohn','Wohnzimmer'],['poster','Poster'],['deko','Deko'],['lampe','Lampen'],['tier','Haustiere']];
+const FURN_TABS = [['alle','Alle'],['poster','Poster'],['bett','Betten'],['sofa','Sofas'],['lampe','Lampen'],['fenster','Fenster'],['tier','Haustiere'],['teppich','Teppiche'],['deko','Deko']];
 let furnTab = 'alle';
 function roomView(){
   const u = me(), r = u.room;
@@ -1873,8 +1885,8 @@ function nameView(){
   return `<div class="gate"><div class="card gate-card">
     ${logoSVG('big')}${obSteps(1)}
     <form data-form="uname">
-      <label class="f" for="uhandle"><span class="lbl">Nutzername (einmalig)</span><span class="handle-in"><b>@</b><input id="uhandle" type="text" maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false" value="${esc(S.pending?.handle || '')}" required></span></label>
-      <p class="note" style="margin-top:-6px">Den gibt es nur ein einziges Mal, wie bei Instagram. 3 bis 20 Zeichen: kleine Buchstaben, Zahlen, Punkt und Unterstrich.</p>
+      <label class="f" for="uhandle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="uhandle" type="text" maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false" value="${esc(S.pending?.handle || '')}" required></span></label>
+      <span id="uhandle-err" class="err" role="alert" hidden></span>
       <label class="f" for="uname"><span class="lbl">Name</span><input id="uname" type="text" maxlength="30" autocomplete="nickname" value="${esc(S.pending?.name || '')}" required></label>
       <p class="note" style="margin-top:-6px">So nennst du dich. Der darf alles sein und auch bei anderen gleich.</p>
       <span id="uname-err" class="err" hidden></span>
@@ -2363,6 +2375,17 @@ async function handleTaken(h){
   if (!cloud?.handles) return false;
   try { const q = await cloud.handles.where('h', '==', h).limit(5).get(); return q.docs.some(d => d.id !== cloud.uid); } catch { return false; }
 }
+// Beim Anmelden: sofort zeigen, wenn der Nutzername schon jemand hat
+let handleT = null;
+document.addEventListener('input', e => {
+  if (e.target.id !== 'uhandle') return;
+  const he = document.getElementById('uhandle-err'); if (he) he.hidden = true;
+  clearTimeout(handleT);
+  handleT = setTimeout(async () => {
+    const h = normHandle(e.target.value); if (handleProblem(h)) return;
+    if (await handleTaken(h) && normHandle(document.getElementById('uhandle')?.value) === h) { const x = document.getElementById('uhandle-err'); if (x) { x.textContent = 'Dieser Nutzername ist bereits vergeben.'; x.hidden = false; } }
+  }, 450);
+});
 async function claimHandle(h){ if (cloud?.handles) try { await cloud.handles.doc(cloud.uid).set({h}); } catch {} }
 function refreshFoot(){ const f = document.getElementById('savestate'); if (f) f.textContent = saveText(); }
 const saveText = () => PUB ? (cloud?.ok ? 'Dein Konto ist sicher gespeichert.' : 'Wird gespeichert …') : cloud?.ok ? 'Dein Konto ist sicher in deinem Claude-Konto gespeichert.' : 'Dein Konto ist in diesem Browser gespeichert.';
@@ -2748,7 +2771,7 @@ function designView(){
       </div></div>
       <div class="card"><h2 class="card-h">Über dich</h2><div class="card-in">
         <form data-form="design" style="display:grid;gap:12px">
-          <label class="f" for="e-handle"><span class="lbl">Nutzername (einmalig)</span><span class="handle-in"><b>@</b><input id="e-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label><span id="e-handle-err" class="err" hidden></span>${f('name','Name (frei wählbar)',u.name)}${f('headline','Spruch (steht neben deinem Profilbild)',u.headline)}${f('mood','Gemüt',u.mood)}
+          <label class="f" for="e-handle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="e-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label><span id="e-handle-err" class="err" hidden></span>${f('name','Name (frei wählbar)',u.name)}${f('headline','Spruch (steht neben deinem Profilbild)',u.headline)}${f('mood','Gemüt',u.mood)}
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
           ${f('hobbies','Hobbys',u.hobbies)}
           <label class="f" for="e-song"><span class="lbl">♪ Song auf deinem Profil (YouTube-Link, freiwillig)</span><input id="e-song" type="url" placeholder="https://youtu.be/…" value="${esc(u.songUrl || '')}"></label>
@@ -3371,7 +3394,7 @@ function settingsView(){
       <span id="s-contact-err" class="err" hidden></span>
       <div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form>`, !u[k])).join('')}
     ${row('handle', 'Nutzername', '@' + esc(u.handle || ''), `<form data-form="set-handle" class="setf">
-      <label class="f" for="s-handle"><span class="lbl">Nutzername (einmalig)</span><span class="handle-in"><b>@</b><input id="s-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label>
+      <label class="f" for="s-handle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="s-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label>
       <span id="s-handle-err" class="err" hidden></span>
       <div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form>`)}
     ${row('name', 'Name', esc(u.name), `<form data-form="set-name" class="setf">
@@ -3794,7 +3817,7 @@ document.addEventListener('submit', async e => {
     const fail = m => { err.textContent = m; err.hidden = false; };
     const bad = handleProblem(handle); if (bad) return fail(bad);
     if (!name) return fail('Bitte gib einen Namen ein.');
-    if (await handleTaken(handle)) return fail('@' + handle + ' ist schon vergeben. Probier einen anderen Nutzernamen.');
+    if (await handleTaken(handle)) { const he = document.getElementById('uhandle-err'); he.textContent = 'Dieser Nutzername ist bereits vergeben.'; he.hidden = false; document.getElementById('uhandle').focus(); return; }
     S.pending.handle = handle; S.pending.name = name; S.pending.step = 'avatar'; obCat = 'body'; save(); render();
   } else if (t === 'ob-finish') {
     const p = S.pending, id = 'u' + Date.now().toString(36);
@@ -3891,7 +3914,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'set-handle') {
     const u = me(), nh = normHandle(val('s-handle')), err = document.getElementById('s-handle-err');
     if (nh === u.handle) { setOpen = null; render(); return; }
-    const bad = handleProblem(nh) || (await handleTaken(nh) ? '@' + nh + ' ist schon vergeben.' : '');
+    const bad = handleProblem(nh) || (await handleTaken(nh) ? '@' + nh + ' ist bereits vergeben.' : '');
     if (bad) { err.textContent = bad; err.hidden = false; return; }
     u.handle = nh; claimHandle(nh); setOpen = null; save(); render(); toast('Du heißt jetzt @' + nh);
   } else if (t === 'set-birth' || t === 'birth') {
@@ -3904,7 +3927,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'design') {
     const u = me(), nh = normHandle(val('e-handle'));
     if (nh !== u.handle) {
-      const err = document.getElementById('e-handle-err'), bad = handleProblem(nh) || (await handleTaken(nh) ? '@' + nh + ' ist schon vergeben.' : '');
+      const err = document.getElementById('e-handle-err'), bad = handleProblem(nh) || (await handleTaken(nh) ? '@' + nh + ' ist bereits vergeben.' : '');
       if (bad) { err.textContent = bad; err.hidden = false; err.scrollIntoView({block:'center'}); return; }
       u.handle = nh; claimHandle(nh);
     }
