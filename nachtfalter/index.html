@@ -2782,8 +2782,9 @@ async function setMine(list){
   try { await social.db.doc('friends/' + social.uid).set({list:FR.mine}); } catch { toast('Das hat nicht geklappt. Hast du Schreibrechte für Nachtfalter?'); }
   syncFriends();
 }
+let deleting = false;
 function publishProfile(){
-  if (!social) return;
+  if (!social || deleting) return;
   clearTimeout(pubTimer);
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
@@ -2806,7 +2807,7 @@ async function searchPeople(q){
   let docs = [];
   try { docs = (await social.db.collection('profiles').where('handle', '>=', q).where('handle', '<=', q + '').limit(12).get()).docs; }
   catch { try { docs = (await social.db.collection('profiles').where('handle', '==', q).limit(5).get()).docs; } catch {} }
-  FR.results = docs.filter(d => d.id !== social.uid).map(d => { PROF[d.id] = d.data(); return d.id; });
+  FR.results = docs.filter(d => d.id !== social.uid && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; });
 }
 // Freundschaftsanfrage direkt auf dem Profil (Inayas Wunsch)
 function frReqHTML(id){
@@ -2982,7 +2983,7 @@ document.addEventListener('input', e => { if (e.target.id === 'del-in') document
 async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
   if (PUB) { const r = await NF_AUTH.reauth(pw); if (r.error) return r.error; }
   if (social) {
-    const uid = social.uid;
+    const uid = social.uid; clearTimeout(pubTimer); pubTimer = null; deleting = true;
     for (const p of ['profiles/' + uid, 'handles/' + uid, 'friends/' + uid]) await social.db.doc(p).delete().catch(() => {});
     try { const w = await social.db.collection('chats/wall_' + uid + '/m').get(); for (const d of w.docs) await social.db.doc('chats/wall_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
     try { const z = await social.db.collection('chats/zimmer_' + uid + '/m').get(); for (const d of z.docs) await social.db.doc('chats/zimmer_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
@@ -2990,6 +2991,7 @@ async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
   if (PUB) {
     clearTimeout(cloudTimer);
     if (cloud) { try { const d = await cloud.col.get(); for (const x of d.docs) await cloud.col.doc(x.id).delete().catch(() => {}); } catch {} cloud = null; }
+    if (social) await social.db.doc('profiles/' + social.uid).delete().catch(() => {}); // falls zwischendurch noch gespeichert wurde
     const r = await NF_AUTH.deleteUser(); if (r.error) return r.error;
     try { localStorage.removeItem(KEY); } catch {}
     location.reload(); return null;
@@ -3348,9 +3350,11 @@ function friendsView(){
       ${f.remote ? `<button class="btn ghost" data-act="fr-remove" data-id="${f.id}">Entfernen</button>` : ''}</div></div>`).join('')}</div></fieldset>
   </div></div>`;
 }
+// Übrig gebliebene Test-Profile (automatische Tests) nirgends zeigen
+const isTestHandle = h => /^test[a-z]mv[0-9a-z]{5,}$/.test(h || '');
 async function loadNewbies(){
   FR.newbies = FR.newbies || [];
-  try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(13).get()).docs; FR.newbies = docs.filter(d => d.id !== social.uid && d.data().handle).map(d => { PROF[d.id] = d.data(); return d.id; }).slice(0, 12); } catch {}
+  try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(13).get()).docs; FR.newbies = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }).slice(0, 12); } catch {}
   if (V.name === 'find') softRender();
 }
 function findView(){
