@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='41f8859ebfa2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='07cd7c240332';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1988,7 +1988,7 @@ function contactsOf(u){
 }
 const contactTaken = (c, exceptId) => Object.values(S.users).some(x => x.id !== exceptId && contactsOf(x).includes(normContact(c)));
 let authMode = 'reg', obCat = 'body', mdraft = null;
-const inviteCode = (() => { try { const m = (location.hash + location.search).match(/einladung=([\w-]+)/i); return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } })();
+let inviteCode = (() => { try { const m = (location.hash + location.search).match(/einladung=([\w-]+)/i); return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } })();
 let gateMode = inviteCode ? 'invite' : '';
 // Einladen nur mit Einmal-Links: jeder Link ist ein eigenes Dokument invites/<zufall> und wird bei der Registrierung verbraucht
 let INV = {link: '', busy: false};
@@ -2697,7 +2697,12 @@ function gateView(){
       <span id="gateErr" class="err" hidden>Dieser Einladungslink gilt nicht mehr. Jeder Link funktioniert nur einmal. Frag nach einem neuen Link.</span>
       <button class="btn" type="submit">Konto erstellen</button>
     </form>` : `<p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Nur mit Einladung.</p>
-    <p class="note" style="margin:0">Ein Konto erstellen kannst du nur über einen Einladungslink. Frag jemanden aus dem Zirkel, ob er dir einen schickt.</p>`}
+    <form data-form="gate">
+      <label class="f" for="inv-in"><span class="lbl">Einladungslink</span><input id="inv-in" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Link hier einfügen" required></label>
+      <span id="gateErr" class="err" hidden>Dieser Einladungslink gilt nicht mehr. Jeder Link funktioniert nur einmal. Frag nach einem neuen Link.</span>
+      <button class="btn" type="submit">Konto erstellen</button>
+    </form>
+    <p class="note" style="margin:0">Den Link bekommst du von jemandem aus dem Zirkel.</p>`}
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
   </div></div>`;
   return `<div class="gate"><div class="card gate-card">${head}
@@ -4146,11 +4151,14 @@ document.addEventListener('submit', async e => {
     document.getElementById('delacct').hidden = true; toast('Dein Konto wurde gelöscht.'); window.scrollTo(0,0); return;
   }
   if (t === 'gate') {
-    const btn = f.querySelector('button'); btn.disabled = true;
+    const pasted = val('inv-in');
+    if (pasted) { const m = pasted.match(/einladung=([\w-]+)/i) || pasted.match(/^([a-z0-9]{16,})$/i); inviteCode = m ? m[1] : ''; }
+    if (!inviteCode) { const er = document.getElementById('gateErr'); er.textContent = 'Das ist kein Einladungslink. Kopier den ganzen Link und füg ihn hier ein.'; er.hidden = false; return; }
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
     const r = PUB ? await NF_AUTH.checkInvite(inviteCode) : {ok: inviteCode.length >= 16};
     btn.disabled = false;
     if (r.ok) { S.unlocked = true; S.itoken = inviteCode; save(); render(); }
-    else { const er = document.getElementById('gateErr'); if (r.error) er.textContent = 'Keine Verbindung. Prüf dein Internet und probier es nochmal.'; er.hidden = false; }
+    else { const er = document.getElementById('gateErr'); er.textContent = r.error ? 'Keine Verbindung. Prüf dein Internet und probier es nochmal.' : 'Dieser Einladungslink gilt nicht mehr. Jeder Link funktioniert nur einmal. Frag nach einem neuen Link.'; er.hidden = false; }
   } else if (t === 'reg') {
     const contact = val('reg-contact'), pw = document.getElementById('reg-pw').value, err = document.getElementById('reg-err');
     const fail = m => { err.textContent = m; err.hidden = false; };
