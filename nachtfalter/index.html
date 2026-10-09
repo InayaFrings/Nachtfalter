@@ -630,17 +630,29 @@ footer.foot .lnk{color:var(--muted)}
   .wardrobe .shopgrid .thumb{border-radius:8px}
   .wardrobe .cdot{width:30px;height:30px;top:5px;right:5px}
   .wardrobe .shopgrid .iname{padding:2px 6px 6px;font-size:14px}
-  /* Profil gestalten: Vorschau bleibt klein oben stehen, Bereiche als Reiter, Speichern immer da */
-  .design{gap:0}
-  .design .preview{position:sticky;top:var(--rtop,calc(61px + env(safe-area-inset-top,0px)));z-index:30;height:min(38vh,320px);max-height:min(38vh,320px);overflow:hidden;display:block;margin:0 -12px;
-    border-bottom:1px solid var(--line);box-shadow:0 10px 22px #000c;background:var(--bg)}
-  .design .preview > section{width:100%;flex:none;transform-origin:50% 0;transform:scale(.5)}
-  .design .preview .tiles,.design .preview .psteck{display:none}
-  .dtabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--dtop,calc(61px + env(safe-area-inset-top,0px) + 260px));z-index:25;background:var(--bg);margin:0 -12px;padding:10px 12px}
-  .dtabs::-webkit-scrollbar{display:none}
-  .dtabs button{flex:none;border:1px solid var(--line);border-radius:999px;background:#ffffff08;color:var(--muted);padding:8px 18px;min-height:42px;font:400 16px var(--f-display)}
+  /* Profil gestalten wie geteilter Bildschirm: links dein echtes Profil zum Durchscrollen, rechts die Einstellungen */
+  #app:has(.design){min-height:0}
+  .shell:has(.design){padding-bottom:0}
+  .design{display:grid;grid-template-columns:44% 56%;gap:0;align-items:stretch;margin:-16px -12px 0;
+    height:calc(100dvh - var(--rtop,61px) - 64px - 67px - env(safe-area-inset-bottom,0px))}
+  .design .preview{order:0;position:relative;top:auto;height:auto;max-height:none;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;margin:0;box-shadow:none;border-right:1px solid var(--line);background:var(--bg)}
+  .design .preview > section{width:390px;transform-origin:0 0}
+  .design .preview :is(button,a,input,textarea,select,form,[data-act]){pointer-events:none}
+  .design > div:first-child{order:1;overflow-y:auto;overscroll-behavior:contain;padding:0 8px 18px;gap:10px!important;align-content:start}
+  .dtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;position:sticky;top:0;z-index:25;background:var(--bg);margin:0 -8px;padding:8px}
+  .dtabs button{border:1px solid var(--line);border-radius:999px;background:#ffffff08;color:var(--muted);padding:6px 4px;min-height:38px;font:400 15px var(--f-display)}
   .dtabs button[aria-selected="true"]{background:var(--fg);color:var(--ink);border-color:var(--fg)}
-  .design > div:first-child{gap:12px!important;padding-bottom:70px}
+  .design .card{border-left:0;border-right:0}
+  .design .card-h{font-size:18px;padding:10px 8px 0}
+  .design .card-in{padding:8px}
+  .design .optgroup h3{font-size:16px}
+  .design .swatches{gap:6px}
+  .design .swatches .sw,.design .swatches .cpick{width:28px;height:28px}
+  .design .pats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px}
+  .design .chips button{min-height:36px;padding:4px 10px;font-size:14px}
+  .design .posecard{grid-template-columns:1fr!important}
+  .design .posecard .fullfig{max-width:120px;margin:0 auto}
+  .design #fgrow > .note{display:none}
   .design[data-tab] .card[data-sec]{display:none}
   .design[data-tab="look"] .card[data-sec="look"],.design[data-tab="pic"] .card[data-sec="pic"],.design[data-tab="pose"] .card[data-sec="pose"],.design[data-tab="about"] .card[data-sec="about"]{display:block}
   .design .card-in > p.note:first-child{display:none}
@@ -2713,15 +2725,13 @@ function mobTop(nNew){ // Handy: Freunde und Chats oben rechts wie bei Momio
   const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
   return `<div class="mtop">${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}</div>`;
 }
-function fitPrev(){ // Handy: ganze Profil-Vorschau oben sichtbar, passend verkleinert (transform klappt auch in Safari)
+function fitPrev(){ // Handy: links das ganze Profil in Handybreite, verkleinert auf die linke Spalte (transform klappt auch in Safari)
   const sec = document.querySelector('#preview > section'), pv = document.getElementById('preview'); if (!sec || !pv) return;
-  if (!isMob()) { sec.style.transform = ''; pv.style.height = ''; return; }
-  sec.style.transform = ''; const h = sec.offsetHeight, maxH = Math.min(innerHeight * .38, 320);
-  const z = Math.max(.2, Math.min(.62, maxH / h));
-  sec.style.transform = `scale(${z.toFixed(3)})`; pv.style.height = Math.ceil(h * z) + 'px';
+  if (!isMob()) { sec.style.transform = ''; sec.style.marginBottom = ''; return; }
+  const z = pv.clientWidth / 390, h = sec.offsetHeight;
+  sec.style.transform = `scale(${z.toFixed(4)})`; sec.style.marginBottom = -Math.round(h * (1 - z)) + 'px';
   const d = document.querySelector('.design'), rail = document.querySelector('.rail');
-  const rh = rail ? Math.round(rail.getBoundingClientRect().height) : 61;
-  if (d) { d.style.setProperty('--rtop', rh + 'px'); d.style.setProperty('--dtop', (rh + pv.offsetHeight) + 'px'); }
+  if (d) d.style.setProperty('--rtop', (rail ? Math.round(rail.getBoundingClientRect().height) : 61) + 'px');
 }
 { let fpq = false; new MutationObserver(() => { if (fpq) return; fpq = true; requestAnimationFrame(() => { fpq = false; fitPrev(); }); }).observe(document.getElementById('app'), {childList: true, subtree: true}); }
 function centerRooms(){ // Handy: breites Zimmer so scrollen, dass der eigene Avatar in der Mitte steht
@@ -3034,6 +3044,12 @@ function profileView(id){
   </section>`;
 }
 function previewHTML(){
+  if (isMob()) { // Handy: links das ganze Profil zum Durchscrollen, mit den Änderungen, die du gerade machst
+    const u = me(), keep = {theme:u.theme, pic:u.pic, banner:u.banner, cover:u.cover}, pt = profTab, pw = PROF_WALL;
+    Object.assign(u, {theme:draft}, mdraft ? {pic:mdraft.pic, banner:mdraft.banner, cover:mdraft.cover} : {});
+    let h = ''; try { h = profileView(u.id); } finally { Object.assign(u, keep); profTab = pt; PROF_WALL = pw; }
+    return h.replace(/<div class="editbar">[\s\S]*?<\/div>/, '');
+  }
   const u0 = me(), u = mdraft ? {...u0, pic:mdraft.pic, banner:mdraft.banner, cover:mdraft.cover} : u0;
   return `<section class="themed" style="${themeStyle(draft)}">${bannerHTML(u.banner, u.name, u.handle || '')}${profileHead(u, draft, false)}
     <div class="tiles">${S.posts.filter(p => p.author === u.id).slice(-1).map(tileHTML).join('') || `<div class="tile"><blockquote class="thought">So sehen deine Beiträge aus.</blockquote></div>`}</div></section>`;
@@ -3879,12 +3895,14 @@ function render(){
   const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit'].includes(V.name);
   const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, settings:settingsView, visit:visitView}[V.name] || homeView;
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
+  const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
   app.innerHTML = `<div class="shell">${rail()}
     <main class="main${wide ? ' wide' : ''}">${body()}</main>
     ${wide ? '' : asideHTML()}
     <footer class="foot"><span>Nachtfalter · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
+  if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
   syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
   const mb = document.getElementById('msgs'); if (mb) mb.scrollTop = mb.scrollHeight;
 }
@@ -4016,7 +4034,7 @@ document.addEventListener('click', async e => {
     const fig = document.getElementById('posefig'); if (fig) { fig.innerHTML = avatar(me().outfit, 'full', me().pose); fig.className = 'fullfig mv-' + poseMove(me().pose); }
   }
   else if (a === 'pp-clear') { me().pic = null; save(); render(); }
-  else if (a === 'dtab') { designTab = b.dataset.v; render(); window.scrollTo(0, 0); }
+  else if (a === 'dtab') { designTab = b.dataset.v; render(); const col = document.querySelector('.design > div:first-child'); if (col) col.scrollTop = 0; }
   else if (a === 'prof-edit') { profEdit = b.dataset.v === '1'; composeOpen = false; render(); }
   else if (a === 'logout') { const m = document.getElementById('confirm'); m.hidden = false; m.querySelector('[data-act=logout-no]').focus(); }
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
