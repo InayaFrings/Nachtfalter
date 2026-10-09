@@ -97,6 +97,9 @@
     async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
     // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
     async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
+    // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
+    async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
+    async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
     onRecovery(){},
     get recovering(){ return false; }
   };
@@ -458,6 +461,8 @@ body.custom-page footer.foot{background:var(--paper);padding:10px;border:1px sol
 .choice .btn{width:100%;padding:14px}
 .invite{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .invite input{flex:1 1 220px;min-width:0}
+.invbox{display:grid;gap:10px;justify-items:start}.invbox .invite{width:100%}.invbox .note{margin:0}
+.fpinv{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .gate-card form{display:grid;gap:12px;width:100%;text-align:left}
 .err{color:var(--fg);font:italic 15px var(--f-ital);border-left:2px solid var(--fg);padding-left:8px}
 
@@ -697,8 +702,6 @@ setTimeout(() => crashBox('Die Seite hat nach 12 Sekunden nichts angezeigt. ' + 
 <script>
 // Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
 const PUB = !!window.NF_AUTH;
-const CODE_HASH = '90aca66704ab4922b64f6770a635185ac8b3b80362e2f5083ce1eb76cf5998a0'; // Einladungscode steht nur als Prüfsumme im Code
-async function codeOk(c){ try { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(c.toUpperCase())); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('') === CODE_HASH; } catch { return false; } }
 const KEY = 'nachtfalter-v2';
 const REACTIONS = ['🖤','💀','🦇','⛓️'];
 const PTS = {gedanke:10, foto:15, video:15, kommentar:3, reaktion:2};
@@ -1979,7 +1982,23 @@ const contactTaken = (c, exceptId) => Object.values(S.users).some(x => x.id !== 
 let authMode = 'reg', obCat = 'body', mdraft = null;
 const inviteCode = (() => { try { const m = (location.hash + location.search).match(/einladung=([\w-]+)/i); return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } })();
 let gateMode = inviteCode ? 'invite' : '';
-const inviteLink = () => { let base = ''; try { base = location.href.split('#')[0]; } catch {} return base + (S.icode ? '#einladung=' + S.icode.toLowerCase() : ''); };
+// Einladen nur mit Einmal-Links: jeder Link ist ein eigenes Dokument invites/<zufall> und wird bei der Registrierung verbraucht
+let INV = {link: '', busy: false};
+const newToken = () => [...crypto.getRandomValues(new Uint8Array(18))].map(x => 'abcdefghijkmnpqrstuvwxyz23456789'[x % 32]).join('');
+async function makeInvite(){
+  if (INV.busy || !social) return;
+  INV.busy = true; render();
+  const t = newToken();
+  try { await social.db.doc('invites/' + t).set({by: social.uid, ts: Date.now()}); let base = ''; try { base = location.href.split('#')[0]; } catch {} INV.link = base + '#einladung=' + t; }
+  catch { toast('Der Link konnte gerade nicht erstellt werden. Probier es gleich nochmal.'); }
+  INV.busy = false; render();
+}
+function inviteHTML(){
+  if (!social) return '<p class="note">Einladen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>';
+  return `<button class="btn" data-act="new-invite" ${INV.busy ? 'disabled' : ''}>${INV.link ? 'Neuen Link erstellen' : 'Freund mit Link einladen'}</button>
+    ${INV.link ? `<div class="invite"><input id="invite-link" type="text" readonly value="${esc(INV.link)}" aria-label="Einladungslink"><button class="btn ghost" data-act="copy-invite">Link kopieren</button></div>` : ''}
+    <p class="note">Jeder Link funktioniert nur ein einziges Mal. Für jede Person brauchst du einen neuen Link.</p>`;
+}
 
 function obSteps(cur){
   const keys = ['konto','name','avatar','seite'];
@@ -2665,12 +2684,12 @@ function gateView(){
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
   </div></div>`;
   if (gateMode === 'invite') return `<div class="gate"><div class="card gate-card">${head}
-    <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">${inviteCode ? 'Du wurdest in den Zirkel eingeladen.' : 'Nur mit Einladung.<br>Gib den Code aus deinem Einladungslink ein.'}</p>
+    ${inviteCode ? `<p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Du wurdest in den Zirkel eingeladen.</p>
     <form data-form="gate">
-      <label class="f" for="code"><span class="lbl">Einladungscode</span><input id="code" type="text" autocomplete="off" value="${esc(inviteCode)}" required></label>
-      <span id="gateErr" class="err" hidden>Der Code stimmt nicht. Frag die Person, die dich eingeladen hat, nach ihrem Einladungslink.</span>
+      <span id="gateErr" class="err" hidden>Dieser Einladungslink gilt nicht mehr. Jeder Link funktioniert nur einmal. Frag nach einem neuen Link.</span>
       <button class="btn" type="submit">Konto erstellen</button>
-    </form>
+    </form>` : `<p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Nur mit Einladung.</p>
+    <p class="note" style="margin:0">Ein Konto erstellen kannst du nur über einen Einladungslink. Frag jemanden aus dem Zirkel, ob er dir einen schickt.</p>`}
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
   </div></div>`;
   return `<div class="gate"><div class="card gate-card">${head}
@@ -2760,7 +2779,7 @@ function friendPanel(nNew){
       ;
   } else {
     const res = FR.results == null ? '' : FR.results.length ? FR.results.map(id => { const p = PROF[id] || {}; const u = S.users[id] || remoteUser(id, p); return fpRow(u, '@' + esc(u.handle) + (isFriend(id) ? ' · befreundet' : '')); }).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
-    body = social ? `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${res}`
+    body = social ? `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${res}<div class="invbox fpinv">${inviteHTML()}</div>`
       : '<p class="note">Suchen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>';
   }
   return `<button class="fpbtn ${fpOpen ? 'on' : ''}" data-act="fp-toggle" aria-expanded="${fpOpen}" aria-label="Freunde, Chats und Suche"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.friends}</svg>${badge ? `<i class="dot" aria-label="${badge} neu"></i>` : ''}</button>
@@ -3345,16 +3364,16 @@ const delWord = () => (document.getElementById('del-in')?.value || '').trim().to
 document.addEventListener('input', e => { if (e.target.id === 'del-in') document.getElementById('del-go').disabled = !delWord(); });
 async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
   if (PUB) { const r = await NF_AUTH.reauth(pw); if (r.error) return r.error; }
-  if (social) {
+  if (PUB) { clearTimeout(cloudTimer); if (cloud) { try { const d = await cloud.col.get(); for (const x of d.docs) await cloud.col.doc(x.id).delete().catch(() => {}); } catch {} cloud = null; } }
+  if (social) { // das Profil zuletzt: daran erkennt die Datenbank ältere Mitglieder ohne Einladungslink
     const uid = social.uid; clearTimeout(pubTimer); pubTimer = null; deleting = true;
-    for (const p of ['profiles/' + uid, 'handles/' + uid, 'friends/' + uid]) await social.db.doc(p).delete().catch(() => {});
+    for (const p of ['handles/' + uid, 'friends/' + uid]) await social.db.doc(p).delete().catch(() => {});
     if (me()?.handle) await social.db.doc('logins/' + me().handle).delete().catch(() => {});
     try { const w = await social.db.collection('chats/wall_' + uid + '/m').get(); for (const d of w.docs) await social.db.doc('chats/wall_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
     try { const z = await social.db.collection('chats/zimmer_' + uid + '/m').get(); for (const d of z.docs) await social.db.doc('chats/zimmer_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
+    await social.db.doc('profiles/' + uid).delete().catch(() => {});
   }
   if (PUB) {
-    clearTimeout(cloudTimer);
-    if (cloud) { try { const d = await cloud.col.get(); for (const x of d.docs) await cloud.col.doc(x.id).delete().catch(() => {}); } catch {} cloud = null; }
     if (social) await social.db.doc('profiles/' + social.uid).delete().catch(() => {}); // falls zwischendurch noch gespeichert wurde
     const r = await NF_AUTH.deleteUser(); if (r.error) return r.error;
     try { localStorage.removeItem(KEY); } catch {}
@@ -3771,8 +3790,7 @@ function findView(){
       <div class="plist">${results}</div>
       ${FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`
       : '<p class="note">Freunde suchen und hinzufügen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
-    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invite"><input id="invite-link" type="text" readonly value="${esc(inviteLink())}"><button class="btn ghost" data-act="copy-invite">Link kopieren</button></div>
-      <p class="note">Wer den Link öffnet, kann sich direkt registrieren. Gib ihn nur Menschen, die du im Zirkel haben willst.</p></fieldset>
+    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invbox">${inviteHTML()}</div></fieldset>
   </div></div>`;
 }
 
@@ -3992,7 +4010,8 @@ document.addEventListener('click', async e => {
   else if (a === 'delacct-no') document.getElementById('delacct').hidden = true;
   else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} location.reload(); }); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
-  else if (a === 'copy-invite') { const l = inviteLink(); (navigator.clipboard?.writeText(l) || Promise.reject()).then(() => toast('Einladungslink kopiert'), () => { const x = document.getElementById('invite-link'); x.select(); toast('Link markiert, jetzt kopieren'); }); }
+  else if (a === 'new-invite') makeInvite();
+  else if (a === 'copy-invite') { const l = INV.link; (navigator.clipboard?.writeText(l) || Promise.reject()).then(() => toast('Einladungslink kopiert'), () => { const x = document.getElementById('invite-link'); x.select(); toast('Link markiert, jetzt kopieren'); }); }
   else if (a === 'reset') {
     if (b.dataset.sure) { try { localStorage.removeItem(KEY); } catch {} S = ensureHelpers(seed()); V = {name:'home'}; save(); render(); }
     else { b.dataset.sure = '1'; b.textContent = 'Wirklich alles löschen? Nochmal klicken.'; }
@@ -4119,8 +4138,11 @@ document.addEventListener('submit', async e => {
     document.getElementById('delacct').hidden = true; toast('Dein Konto wurde gelöscht.'); window.scrollTo(0,0); return;
   }
   if (t === 'gate') {
-    if (await codeOk(val('code'))) { S.unlocked = true; S.icode = val('code').toUpperCase(); save(); render(); }
-    else document.getElementById('gateErr').hidden = false;
+    const btn = f.querySelector('button'); btn.disabled = true;
+    const r = PUB ? await NF_AUTH.checkInvite(inviteCode) : {ok: inviteCode.length >= 16};
+    btn.disabled = false;
+    if (r.ok) { S.unlocked = true; S.itoken = inviteCode; save(); render(); }
+    else { const er = document.getElementById('gateErr'); if (r.error) er.textContent = 'Keine Verbindung. Prüf dein Internet und probier es nochmal.'; er.hidden = false; }
   } else if (t === 'reg') {
     const contact = val('reg-contact'), pw = document.getElementById('reg-pw').value, err = document.getElementById('reg-err');
     const fail = m => { err.textContent = m; err.hidden = false; };
@@ -4130,7 +4152,11 @@ document.addEventListener('submit', async e => {
     if (contactTaken(contact)) return fail('Dafür gibt es schon ein Konto. Melde dich stattdessen an.');
     if (PUB) {
       if (!isMail(contact)) return fail('Bitte gib deine E-Mail-Adresse ein. Damit kannst du dein Passwort später zurücksetzen.');
+      if (!S.itoken) return fail('Bitte öffne deinen Einladungslink noch einmal.');
       const r = await NF_AUTH.signUp(contact, pw); if (r.error) return fail(r.error);
+      const c = await NF_AUTH.claimInvite(S.itoken); // Link verbrauchen, sonst Konto wieder entfernen
+      if (!c.ok) { await NF_AUTH.deleteUser(); await NF_AUTH.signOut(); return fail('Dieser Einladungslink wurde schon benutzt. Frag nach einem neuen Link.'); }
+      delete S.itoken;
       if (r.needsConfirm) toast('Wir haben dir eine Mail geschickt. Bitte bestätige deine E-Mail-Adresse.');
       else await cloudReinit();
     }

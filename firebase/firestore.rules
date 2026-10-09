@@ -2,23 +2,42 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    function me(uid) { return signedIn() && request.auth.uid == uid; }
     function isOwner() { return signedIn() && request.auth.token.email is string
       && request.auth.token.email.lower() == 'inayafrings@gmail.com'; }
+    // Mitglied ist, wer mit einem Einladungslink gekommen ist oder schon vorher ein Profil hatte
+    function invited() { return signedIn() && (isOwner()
+      || exists(/databases/$(database)/documents/members/$(request.auth.uid))
+      || exists(/databases/$(database)/documents/profiles/$(request.auth.uid))); }
+    function me(uid) { return invited() && request.auth.uid == uid; }
 
     // Eigene Daten: nur die Person selbst
     match /data/users/{uid}/{rest=**} { allow read, write: if me(uid); }
 
-    // Profile, Namen, Freundeslisten: alle Angemeldeten lesen, nur man selbst schreibt
-    match /profiles/{uid} { allow read: if signedIn(); allow write: if me(uid); }
-    match /profiles/{uid}/{rest=**} { allow read: if signedIn(); allow write: if me(uid); }
-    match /handles/{uid} { allow read: if signedIn(); allow write: if me(uid); }
-    match /friends/{uid} { allow read: if signedIn(); allow write: if me(uid); }
+    // Profile, Namen, Freundeslisten: alle Mitglieder lesen, nur man selbst schreibt
+    match /profiles/{uid} { allow read: if invited(); allow write: if me(uid); }
+    match /profiles/{uid}/{rest=**} { allow read: if invited(); allow write: if me(uid); }
+    match /handles/{uid} { allow read: if invited(); allow write: if me(uid); }
+    match /friends/{uid} { allow read: if invited(); allow write: if me(uid); }
+
+    // Einladungslinks: jeder Link gilt nur einmal
+    match /invites/{t} {
+      allow get: if true;
+      allow create: if invited() && t.size() >= 16 && request.resource.data.by == request.auth.uid
+        && request.resource.data.keys().hasOnly(['by', 'ts']);
+      allow update: if signedIn() && !('usedBy' in resource.data)
+        && request.resource.data.usedBy == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedTs']);
+    }
+    match /members/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid
+        && get(/databases/$(database)/documents/invites/$(request.resource.data.inv)).data.usedBy == uid;
+    }
 
     // Anmelden mit Nutzername: einzeln abrufbar (nicht auflistbar); schreiben nur für den eigenen Nutzernamen
     match /logins/{h} {
       allow get: if true;
-      allow create, update: if signedIn() && request.resource.data.uid == request.auth.uid
+      allow create, update: if invited() && request.resource.data.uid == request.auth.uid
         && request.resource.data.email == request.auth.token.email
         && get(/databases/$(database)/documents/handles/$(request.auth.uid)).data.h == h
         && (resource == null || resource.data.uid == request.auth.uid);
@@ -26,16 +45,16 @@ service cloud.firestore {
     }
 
     // Chats, Pinnwände, Raumchats
-    match /chats/{rest=**} { allow read, write: if signedIn(); }
+    match /chats/{rest=**} { allow read, write: if invited(); }
 
     // Wer gerade online ist
     match /presence/{room}/p/{key} {
-      allow read: if signedIn();
-      allow create, update: if signedIn() && request.resource.data.by == request.auth.uid;
+      allow read: if invited();
+      allow create, update: if invited() && request.resource.data.by == request.auth.uid;
       allow delete: if signedIn();
     }
 
     // Seiten-Einstellungen: nur Inaya
-    match /site/{rest=**} { allow read: if signedIn(); allow write: if isOwner(); }
+    match /site/{rest=**} { allow read: if invited(); allow write: if isOwner(); }
   }
 }
