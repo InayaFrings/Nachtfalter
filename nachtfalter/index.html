@@ -2540,14 +2540,14 @@ function musicHTML(u, mine){
 }
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
-  const circle = u.remote ? (PROF[u.id]?.circle ?? '–') : Object.keys(S.users).length - 1;
+  const circle = u.remote ? (PROF[u.id]?.friends ?? '–') : u.id !== S.me ? '–' : friendCount();
   return `<header class="phead">
     <div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${portrait(u, t)}
       ${mine ? `<div class="row ppic"><label class="btn ghost filebtn">📷 Profilbild ${u.pic ? 'ändern' : 'hochladen'}<input type="file" accept="image/*" id="pp-file"></label>${u.pic ? '<button class="lnk" data-act="pp-clear">Avatar statt Foto</button>' : ''}</div>` : ''}</div>
     <div style="min-width:0">
       ${u.id ? `<p class="phandle">${onlineHTML(u)}</p>` : ''}${ownerBadge(u)}${u.helper ? `<span class="badge">${u.helper} · erklärt die Regeln</span>` : ''}
       ${u.headline ? `<p class="phl">${esc(u.headline)}</p>` : ''}
-      <div class="pstats"><span><b>${posts}</b> Beiträge</span><span><b>${circle}</b> im Zirkel</span></div>
+      <div class="pstats"><span><b>${posts}</b> Beiträge</span><span><b>${circle}</b> Freunde</span></div>
       <dl class="pmeta"><dt>Gemüt</dt><dd>${esc(u.mood) || '–'}</dd></dl>
       ${musicHTML(u, mine)}
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
@@ -2765,12 +2765,16 @@ function remoteUser(id, p){
     joined:p.joined || Date.now(), wall:[], owned:[], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
+// Anzahl Freunde fürs Profil: mit geteilter Datenbank die gegenseitigen, sonst alle anderen außer den Helfern
+const friendCount = () => social ? FR.mine.filter(isFriend).length : Object.values(S.users).filter(x => x.id !== S.me && !x.helper).length;
+let lastFC = null;
 async function syncFriends(){
   if (!FR.ready) return;
   const ids = [...new Set([...FR.mine, ...FR.inc])];
   await Promise.all(ids.map(loadProf));
   for (const u of Object.values(S.users)) if (u.remote && !isFriend(u.id)) delete S.users[u.id];
   for (const id of ids) if (isFriend(id) && PROF[id]) S.users[id] = remoteUser(id, PROF[id]);
+  if (friendCount() !== lastFC) { lastFC = friendCount(); publishProfile(); }
   softRender();
 }
 async function setMine(list){
@@ -2787,7 +2791,7 @@ function publishProfile(){
       .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:p.img && p.img.length < 60000 ? p.img : '', ts:p.ts}));
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
+      hobbies:u.hobbies || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:''}));
     if (big()) doc.cover = null;
