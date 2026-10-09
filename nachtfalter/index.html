@@ -388,6 +388,10 @@ footer.foot .lnk{color:var(--muted)}
 .bubble .inv{display:block;margin-top:6px;width:100%}
 .gform{display:grid;gap:12px}.setf{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:16px;margin-top:6px}
 .invlist{display:flex;flex-wrap:wrap;gap:8px}
+.rchat{margin-top:10px;display:grid;gap:6px}.rchat .ropen{margin:0}.rchat .rcount{margin:0}.rchat .cform{margin:0}
+.rwrap{position:relative}
+.rlog .bubble{font-size:15px;padding:4px 10px;max-width:92%}.rlog .bubble .meta,.rlog .bubble small.t{font-size:11px}.rlog{gap:5px!important}
+.rwrap > .chat.rlog{position:absolute;left:10px;bottom:10px;width:min(46%,380px);max-height:42%;min-height:0;margin:0;padding:8px;z-index:6;background:#0a0a0bcc;border:1px solid var(--line-soft);backdrop-filter:blur(2px)}
 .visitors{position:absolute;inset:0;pointer-events:none}
 .says{position:absolute;inset:0;pointer-events:none;z-index:300}
 .say{position:absolute;transform:translate(-50%,-100%);max-width:34%;width:max-content;background:#ecebe7;color:#0a0a0b;border:1px solid #0a0a0b;border-radius:14px;padding:5px 10px;font:14px/1.3 var(--f-body,inherit);box-shadow:0 2px 8px #0008;overflow-wrap:anywhere;animation:sayin .25s ease-out;transition:opacity .5s}
@@ -650,6 +654,7 @@ footer.foot .lnk{color:var(--muted)}
   .rposes button{min-height:44px;border-radius:999px;padding:8px 16px}
   .rscroll{margin-inline:-12px}
   .rscroll > .room{width:100%}
+  .rwrap > .chat.rlog{position:static;width:auto;max-height:120px;min-height:64px;margin-top:8px;background:#0000002e;backdrop-filter:none}
   .rstick .rscroll > .room{width:100%}
   .wardrobe .mirror-card{padding-top:14px}
 }
@@ -1835,11 +1840,13 @@ function roomView(){
       ${ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
     </div></div>`;
   // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
+  // Raumchat direkt im Zimmer (wie bei Momio/MSP): Verlauf und Eingabe gleich unter dem Raum
+  const chatOn = roomMode === 'chat' || !!u.roomOpen;
   if (roomMode !== 'edit') return `<div class="card">${head}<div class="card-in">
-      ${roomHTML(u, false, true)}${poseBar()}
-      ${roomMode === 'chat' ? '' : `<p class="note">${u.roomOpen ? `Dein Raumchat <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b> ist offen. ` : ''}Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
+      ${roomWithChat(roomHTML(u, false, true), chatOn)}${chatOn ? roomChatInline(true) : ''}${poseBar()}
+      ${chatOn ? '' : `<p class="note">Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
     </div></div>
-    ${roomMode === 'chat' ? roomChatHTML(true) : ''}`;
+    ${roomMode === 'chat' ? roomChatExtra() : ''}`;
   const selRow = `<div class="row">${selName ? `<span class="lbl">Ausgewählt: ${selName}</span>${roomSel !== 'av' ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}` : '<span class="note">Tipp: Tippe ein Möbelstück an, um es zu spiegeln oder wegzuräumen.</span>'}</div>`;
   const wallFloor = `<fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}${r.wall===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="wallC" style="background:${esc(r.wallC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'wallC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
       ${colItem === 'wallC' ? `<div class="cpanel">${roomColorRow('Wandfarbe', 'wallC', r.wallC)}</div>` : ''}
@@ -3569,7 +3576,7 @@ function drawRoomMsgs(){
   const box = document.getElementById('rmsgs'); if (!box) return;
   const open = roomStart() != null, list = roomLive();
   const f = document.querySelector('[data-form="rmsg"]'); if (f) f.hidden = !RM.g || !open;
-  box.innerHTML = !open ? `<p class="muted" style="margin:auto;text-align:center">${RM.owner === social?.uid ? 'Öffne oben einen Raumchat, dann könnt ihr hier schreiben.' : 'Gerade ist hier kein Raumchat offen.'}</p>`
+  box.innerHTML = !open ? `<p class="muted" style="margin:auto;text-align:center">${RM.owner === social?.uid ? 'Öffne einen Raumchat, dann könnt ihr hier schreiben.' : 'Gerade ist hier kein Raumchat offen.'}</p>`
     : list.length ? list.map(m => bubbleHTML(m, true)).join('') : '<p class="muted" style="margin:auto">Noch ist es still im Zimmer.</p>';
   box.scrollTop = box.scrollHeight;
   sayBubbles();
@@ -3602,28 +3609,33 @@ function sayOne(lay, m){
   lay.appendChild(b);
   SAYT[m.from] = setTimeout(() => { b.classList.add('gone'); setTimeout(() => b.remove(), 600); }, 4500 + Math.min(m.text.length, 90) * 60);
 }
-function roomChatHTML(isMine){
-  if (!social) return `<div class="card"><h2 class="card-h">Raumchat</h2><div class="card-in"><p class="note">Freunde ins Zimmer holen und im Raumchat schreiben geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p></div></div>`;
-  const friends = Object.values(S.users).filter(u => u.remote);
+// Zimmer mit Chatverlauf: am PC liegt der Verlauf unten links im Raum (wie bei MSP), am Handy direkt darunter
+const roomWithChat = (html, on) => on && social ? `<div class="rwrap">${html}<div class="chat msgs rlog" id="rmsgs"></div></div>` : html;
+function roomChatInline(isMine){ // Eingabe direkt unter dem Raum
+  if (!social) return '<p class="note">Freunde ins Zimmer holen und im Raumchat schreiben geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>';
   const ro = me().roomOpen;
-  const openBox = isMine ? (ro ? `<div class="ropen"><span>🕯 Dein Raumchat <b>„${esc(ro.title || 'Mein Zimmer')}“</b> ist offen. Deine Freunde sehen ihn auf deinem Profil und können reinkommen.</span><button class="btn ghost" data-act="room-close">Raumchat schließen</button></div>`
-    : `<form class="ropen" data-form="room-open"><label class="f" for="ro-title" style="flex:1"><span class="lbl">Raumchat erstellen</span><input id="ro-title" type="text" maxlength="40" placeholder="Name, z. B. Mitternachtsrunde"></label><button class="btn" type="submit">Raumchat öffnen</button></form>`) : '';
-  return `<div class="card"><h2 class="card-h">Raumchat</h2><div class="card-in">
-    ${openBox}
-    <p class="lbl" id="roomcount">${esc(roomCountText())}</p>
-    <div class="chat msgs" id="rmsgs"></div>
+  const openForm = isMine && !ro ? `<form class="ropen rinl" data-form="room-open"><label class="f" for="ro-title" style="flex:1"><span class="lbl">Raumchat erstellen</span><input id="ro-title" type="text" maxlength="40" placeholder="Name, z. B. Mitternachtsrunde"></label><button class="btn" type="submit">Raumchat öffnen</button></form>` : '';
+  return `<div class="rchat">${openForm}
+    <p class="lbl rcount" id="roomcount">${isMine && ro ? `🕯 „${esc(ro.title || 'Mein Zimmer')}“ · ` : ''}${esc(roomCountText())}</p>
     <form class="cform" data-form="rmsg" ${RM.g && roomStart() != null ? '' : 'hidden'}><input type="text" id="rm-in" maxlength="500" placeholder="In den Raum schreiben …" aria-label="Nachricht in den Raumchat" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
-    ${isMine ? `<fieldset class="opt"><legend class="lbl">Freunde einladen</legend>${friends.length ? `<div class="invlist">${friends.map(f => `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">${esc(f.name)} einladen</button>`).join('')}</div>` : '<p class="note">Füg zuerst im Zirkel Freunde hinzu.</p>'}
-      <p class="note">Befreundete können auch ohne Einladung über dein Profil reinkommen. Höchstens ${ROOM_MAX} Leute passen gleichzeitig ins Zimmer.</p></fieldset>` : ''}
+  </div>`;
+}
+function roomChatExtra(){ // Einstellungen zum eigenen Raumchat: schließen und Freunde einladen
+  if (!social) return '';
+  const friends = Object.values(S.users).filter(u => u.remote), ro = me().roomOpen;
+  return `<div class="card"><h2 class="card-h">Raumchat</h2><div class="card-in">
+    ${ro ? `<div class="ropen"><span>🕯 Dein Raumchat <b>„${esc(ro.title || 'Mein Zimmer')}“</b> ist offen. Deine Freunde sehen ihn auf deinem Profil und können reinkommen.</span><button class="btn ghost" data-act="room-close">Raumchat schließen</button></div>` : ''}
+    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend>${friends.length ? `<div class="invlist">${friends.map(f => `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">${esc(f.name)} einladen</button>`).join('')}</div>` : '<p class="note">Füg zuerst im Zirkel Freunde hinzu.</p>'}
+      <p class="note">Befreundete können auch ohne Einladung über dein Profil reinkommen. Höchstens ${ROOM_MAX} Leute passen gleichzeitig ins Zimmer.</p></fieldset>
   </div></div>`;
 }
 function visitView(){
   const id = V.arg, u = S.users[id];
   if (!u || !isFriend(id)) return `<div class="card"><h2 class="card-h">Zimmer</h2><div class="card-in"><p class="note">In dieses Zimmer kommst du nur, wenn ihr befreundet seid.</p></div></div>`;
   return `<div class="card"><h2 class="card-h">Bei ${esc(u.name)} im Zimmer</h2><div class="card-in">
-    ${roomHTML(u, false, true)}${poseBar()}
+    ${roomWithChat(roomHTML(u, false, true), true)}${roomChatInline(false)}${poseBar()}
     <div class="row"><button class="btn ghost" data-act="profile" data-id="${id}">Zimmer verlassen</button></div>
-  </div></div>${roomChatHTML(false)}`;
+  </div></div>`;
 }
 
 /* ---------- Profilsong (YouTube) ---------- */
