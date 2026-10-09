@@ -360,7 +360,7 @@ footer.foot .lnk{color:var(--muted)}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fg);vertical-align:middle;margin-left:4px}
 .plist{display:grid;gap:8px;margin-top:10px}
 .prow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);padding:8px 12px;flex-wrap:wrap}
-.prow .cameo{width:46px;height:46px}.pinfo{display:grid;flex:1;min-width:120px}.pbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prow .cameo{width:46px;height:46px}.pgo{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit}.frq{display:grid;gap:8px}.pinfo{display:grid;flex:1;min-width:120px}.pbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .chatwrap{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:18px;align-items:start}
 @media (max-width:760px){.chatwrap{grid-template-columns:minmax(0,1fr)}}
 .chatside{display:grid;gap:6px}.chatside .row{margin-bottom:6px}
@@ -2545,6 +2545,7 @@ function profileHead(u, t, mine){
       ${musicHTML(u, mine)}
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
         : u.helper ? `<button class="btn" data-act="ptab" data-t="chat">Schreib mir</button>`
+        : u.remote && !isFriend(u.id) ? frReqHTML(u.id)
         : u.remote ? `<div class="row"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="room-visit" data-id="${u.id}">Zimmer betreten</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button></div>` : ''}
     </div>
   </header>`;
@@ -2596,8 +2597,9 @@ function roomOpenHTML(u, own){ // „Raumchat offen“ auf dem Profil, nur solan
   if (!u.remote || !isFriend(u.id) || !onlineState(u)[0]) return '';
   return `<div class="ropen pro"><span>🕯 ${esc(u.name)} hat einen Raumchat offen: <b>„${esc(u.roomOpen.title || 'Mein Zimmer')}“</b></span><button class="btn" data-act="room-visit" data-id="${esc(u.id)}">Reingehen</button></div>`;
 }
+const profUser = id => S.users[id] || (PROF[id] ? remoteUser(id, PROF[id]) : null);
 function profileView(id){
-  const u = S.users[id] || (PROF[id] && remoteUser(id, PROF[id])); if (!u) return homeView();
+  const u = profUser(id); if (!u) return homeView();
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
   const posts = (u.remote ? [...(u.posts || [])] : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
@@ -2620,7 +2622,7 @@ function profileView(id){
         <div class="wmedia"><label class="btn ghost filebtn">📷 Foto anhängen<input type="file" id="rw-img" accept="image/*"></label><input type="url" id="rw-url" placeholder="Video-Link (YouTube, TikTok …), freiwillig" aria-label="Video-Link"></div>
         <span id="rw-file" class="note"></span>
         <div class="row"><span class="sp"></span><button class="btn" type="submit">Kommentieren</button></div></form>`
-        : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick eine Freundschaftsanfrage unter „Freunde finden“.</p>'}</div>`;
+        : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
   else if (!u.helper) wallP = (own && social ? `<div class="gb"><h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3><div id="rwall"></div></div>` : '') + `<div class="gb">
       ${u.wall.length ? u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('') : '<p class="muted" style="margin:0">Noch keine Einträge.</p>'}
       <form class="cform" data-form="wall" data-id="${id}">
@@ -2632,7 +2634,6 @@ function profileView(id){
     ${own ? `<div class="editbar"><span class="note">So sehen andere dein Profil.</span><button class="btn" data-act="nav" data-v="design">✎ Profil bearbeiten</button></div>` : ''}
     ${roomOpenHTML(u, own)}
     ${profileHead(u, u.theme, mine)}
-    ${u.remote && !isFriend(id) ? `<div class="row pfriend">${personRow(id).replace(/^.*<div class="pbtns">/, '').replace(/<\/div><\/div>$/, '')}</div>` : ''}
     ${steckHTML}
     <div class="pz">${others.map(f => `<div class="m">${cameo(f)}${ulink(f.id)}</div>`).join('')}</div>
     <div class="ptabs" role="tablist">${tabs.map(([k,l]) =>
@@ -2796,13 +2797,20 @@ async function searchPeople(q){
   catch { try { docs = (await social.db.collection('profiles').where('handle', '==', q).limit(5).get()).docs; } catch {} }
   FR.results = docs.filter(d => d.id !== social.uid).map(d => { PROF[d.id] = d.data(); return d.id; });
 }
+// Freundschaftsanfrage direkt auf dem Profil (Inayas Wunsch)
+function frReqHTML(id){
+  if (!social) return '';
+  if (FR.inc.includes(id)) return `<div class="frq"><p class="note" style="margin:0">Möchte mit dir befreundet sein.</p><div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button><button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button></div></div>`;
+  if (FR.mine.includes(id)) return `<div class="row"><span class="muted">Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button></div>`;
+  return `<div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Freundschaftsanfrage senden</button></div>`;
+}
 function personRow(id){
   const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p);
   const btn = isFriend(id) ? `<span class="muted">Befreundet</span> <button class="btn ghost" data-act="fr-remove" data-id="${id}">Entfernen</button>`
     : FR.mine.includes(id) ? `<span class="muted">Anfrage gesendet</span> <button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button>`
     : FR.inc.includes(id) ? `<button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button> <button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button>`
     : `<button class="btn" data-act="fr-add" data-id="${id}">Hinzufügen</button>`;
-  return `<div class="prow"><span class="cameo">${avatar(u.outfit, 'head')}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span></div><div class="pbtns">${btn}</div></div>`;
+  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span></div></button><div class="pbtns">${btn}</div></div>`;
 }
 const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id)) ? `<span class="badge owner">✦ Owner · Gründerin von Nachtfalter</span>` : '';
 
@@ -3237,12 +3245,12 @@ function songPause(){
 }
 // Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite
 document.addEventListener('pointerdown', e => {
-  const u = V.name === 'profile' ? S.users[V.arg || S.me] : null;
+  const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   if (!u || songOff === u.id || songPlaying || songErr || e.target.closest?.('[data-act=music-toggle]')) return;
   songPlay();
 }, true);
 function syncSong(){
-  const u = V.name === 'profile' ? S.users[V.arg || S.me] : null;
+  const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const file = u && u.songFile && social ? u.songFile : null, vid = u && !file ? ytId(u.songUrl) : '';
   const dock = document.getElementById('songdock'); if (!dock) return;
   if (!vid && !file) { if (dock.dataset.v) { songKill(); dock.innerHTML = ''; dock.dataset.v = ''; } return; }
@@ -3329,11 +3337,18 @@ function friendsView(){
       ${f.remote ? `<button class="btn ghost" data-act="fr-remove" data-id="${f.id}">Entfernen</button>` : ''}</div></div>`).join('')}</div></fieldset>
   </div></div>`;
 }
+async function loadNewbies(){
+  FR.newbies = FR.newbies || [];
+  try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(13).get()).docs; FR.newbies = docs.filter(d => d.id !== social.uid && d.data().handle).map(d => { PROF[d.id] = d.data(); return d.id; }).slice(0, 12); } catch {}
+  if (V.name === 'find') softRender();
+}
 function findView(){
+  if (social && !FR.newbies) loadNewbies();
   const results = FR.results == null ? '' : FR.results.length ? FR.results.map(personRow).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
   return `<div class="card"><h2 class="card-h">Freunde finden</h2><div class="card-in">
     ${social ? `<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
-      <div class="plist">${results}</div>`
+      <div class="plist">${results}</div>
+      ${FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`
       : '<p class="note">Freunde suchen und hinzufügen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
     <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invite"><input id="invite-link" type="text" readonly value="${esc(inviteLink())}"><button class="btn ghost" data-act="copy-invite">Link kopieren</button></div>
       <p class="note">Wer den Link öffnet, kann sich direkt registrieren. Gib ihn nur Menschen, die du im Zirkel haben willst.</p></fieldset>
@@ -3350,7 +3365,7 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id;
   if (a === 'fr-add') { S.ignoredReq = (S.ignoredReq || []).filter(x => x !== id); save(); await setMine([...FR.mine, id]); toast(FR.inc.includes(id) ? 'Ihr seid jetzt befreundet' : 'Anfrage gesendet'); }
-  else if (a === 'fr-remove') { await setMine(FR.mine.filter(x => x !== id)); if (V.name === 'profile' && V.arg === id) go('friends'); toast('Entfernt'); }
+  else if (a === 'fr-remove') { const was = isFriend(id); await setMine(FR.mine.filter(x => x !== id)); if (was && V.name === 'profile' && V.arg === id) go('friends'); else render(); toast(was ? 'Entfernt' : 'Anfrage zurückgezogen'); }
   else if (a === 'fr-ignore') { S.ignoredReq = [...new Set([...(S.ignoredReq || []), id])]; save(); render(); }
   else if (a === 'chat-open') openChat(id);
   else if (a === 'chat-new') { CH.mode = 'new'; render(); }
@@ -3411,7 +3426,7 @@ function render(){
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
   const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit'].includes(V.name);
   const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, settings:settingsView, visit:visitView}[V.name] || homeView;
-  const pu = V.name === 'profile' ? S.users[V.arg || S.me] : null;
+  const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   app.innerHTML = `<div class="shell">${rail()}
     <main class="main${wide ? ' wide' : ''}">${body()}</main>
     ${wide ? '' : asideHTML()}
