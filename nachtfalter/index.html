@@ -1695,7 +1695,7 @@ function setColor(o, k, v){
 document.addEventListener('change', e => {
   const x = e.target.closest('.avpick'); if (!x) return;
   const o = x.dataset.act2 === 'ob-color' ? S.pending?.outfit : me()?.outfit; if (!o) return;
-  setColor(o, x.dataset.k, x.value); trial = null; save(); render();
+  setColor(o, x.dataset.k, x.value); trial = null; save(); x.dataset.act2 === 'ob-color' ? obPatch() : render();
 });
 
 /* ---------- Konto (im Entwurf nur lokal) ---------- */
@@ -1804,6 +1804,28 @@ function creatorView(){
     </div>
     <div class="row" style="width:100%"><button class="btn ghost" data-act="ob-back" data-v="name">Zurück</button><span class="sp"></span><button class="btn" data-act="ob-next">Weiter zu deiner Seite</button></div>
   </div></div>`;
+}
+// Beim Ankleiden nicht die ganze Seite neu bauen: Spiegel und Farben sofort, Vorschaubilder danach Stück für Stück
+let obGridT = null;
+function obPatch(){
+  const cur = document.querySelector('.creator'); if (!cur) return render();
+  const t = document.createElement('template'); t.innerHTML = creatorView();
+  const nw = t.content.querySelector('.creator'); if (!nw) return render();
+  const [mir, side] = cur.children, [nmir, nside] = nw.children;
+  cur.replaceChild(nmir, mir);
+  const grid = side.querySelector(':scope > .shopgrid'), ngrid = nside.querySelector(':scope > .shopgrid');
+  [...side.children].forEach(c => { if (c !== grid) c.remove(); });
+  [...nside.children].forEach(c => { if (c !== ngrid) side.insertBefore(c, grid); });
+  clearTimeout(obGridT);
+  if (!grid || !ngrid) { if (grid) grid.remove(); if (ngrid) side.appendChild(ngrid); return; }
+  const ids = g => [...g.children].map(b => b.dataset.id).join();
+  if (ids(grid) !== ids(ngrid)) { grid.replaceWith(ngrid); return; }
+  [...ngrid.children].forEach((nb, i) => { const b = grid.children[i]; b.classList.toggle('on', nb.classList.contains('on')); b.setAttribute('aria-pressed', nb.getAttribute('aria-pressed')); });
+  obGridT = setTimeout(() => {
+    const todo = [...ngrid.children].map((nb, i) => [grid.children[i], nb]).filter(([b, nb]) => b && b.innerHTML.replace(/\bav\d+/g, '') !== nb.innerHTML.replace(/\bav\d+/g, ''));
+    const step = () => { if (!grid.isConnected) return; todo.splice(0, 3).forEach(([b, nb]) => b.isConnected && b.replaceWith(nb)); if (todo.length) requestAnimationFrame(step); };
+    step();
+  }, 350);
 }
 const coverHTML = c => c && /^data:image\//.test(c) ? `<div class="pcover" style="background-image:url('${c}')" role="img" aria-label="Banner"></div>` : '';
 function coverEd(c){
@@ -1953,9 +1975,9 @@ document.addEventListener('click', e => {
   else if (a === 'gmode') { gateMode = b.dataset.v; render(); document.querySelector('.gate input')?.focus(); }
   else if (a === 'ob-cat') { obCat = b.dataset.c; render(); }
   else if (a === 'jsub') { jewelSub = b.dataset.c; render(); }
-  else if (a === 'ob-item') { wearItem(p.outfit, item(b.dataset.id)); save(); render(); }
+  else if (a === 'ob-item') { wearItem(p.outfit, item(b.dataset.id)); save(); obPatch(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
-  else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); render(); }
+  else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(); }
   else if (a === 'ob-next') { p.step = 'seite'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'ob-back') { p.step = b.dataset.v; if (p.step === 'konto') authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'to-landing') { S.unlocked = false; S.pending = null; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
