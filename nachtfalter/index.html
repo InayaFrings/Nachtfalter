@@ -385,7 +385,7 @@ footer.foot .lnk{color:var(--muted)}
 .ritem.vis{width:13%;pointer-events:none}.vname{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);font:italic 12px var(--f-ital);background:#0a0a0bcc;color:#ecebe7;padding:0 6px;white-space:nowrap}
 .songdock{position:fixed;right:14px;bottom:14px;z-index:60;background:#0e0e10;border:1px solid var(--line);padding:8px;display:grid;gap:6px;width:min(300px,calc(100vw - 32px))}
 .songdock iframe{width:100%;aspect-ratio:16/9;border:0;display:block}.songhead{display:flex;justify-content:space-between;gap:8px;font:italic 14px var(--f-ital)}
-.songdock[hidden]{display:none}.songdock audio{width:100%;display:block;height:36px}
+.songdock[hidden]{display:none}.ytrow{display:flex;align-items:center;gap:10px}.ytbtn{min-width:44px;padding:6px 10px}.ytmsg{font:italic 14px var(--f-ital);color:var(--muted,#aaa)}.ytbox{height:0;overflow:hidden}.songdock.needtap .ytbox{height:auto}.songdock.yt iframe{aspect-ratio:16/9;height:auto}.songdock audio{width:100%;display:block;height:36px}
 .deldanger{margin-top:18px}
 .modal{position:fixed;inset:0;z-index:80;background:#000a;display:grid;place-items:center;padding:16px}.modal[hidden]{display:none}.modal-card{padding:24px;max-width:380px;width:100%;display:grid;gap:18px;text-align:center}
 .subtabs{margin-top:-6px}.subtabs button{font-size:15px}
@@ -414,6 +414,7 @@ footer.foot .lnk{color:var(--muted)}
   .rail.more ul{display:grid;grid-template-columns:1fr 1fr;gap:4px;overflow:visible}
   .rail.more .nl{border:1px solid var(--line-soft);padding:12px;font-size:17px;white-space:normal;text-align:center;width:100%}
   .rail.more .nl[aria-current="page"]{border:1px solid var(--fg)}
+  .songdock{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:12px}
   .mobnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--bg);border-top:1px solid var(--line);padding:4px 4px env(safe-area-inset-bottom,0px)}
   .mb{position:relative;background:none;border:0;color:var(--muted);display:grid;justify-items:center;gap:2px;padding:7px 2px 6px;font:400 12.5px var(--f-display);letter-spacing:.04em;min-height:56px}
   .mb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
@@ -3180,19 +3181,60 @@ async function songURL(uid, f){
   const type = f.type || 'audio/mpeg';
   return SONGS[key] = {url:URL.createObjectURL(new Blob([arr], {type})), data:`data:${type};base64,${b64}`}; // data: als Ersatz, falls blob: blockiert ist
 }
+// YouTube-Song läuft unsichtbar im Hintergrund über die YouTube-Player-Schnittstelle, ohne Weiterleitung zu YouTube
+let YTP = null, ytApi = null, ytUserPaused = false;
+function ytLoad(){
+  return ytApi || (ytApi = new Promise(res => {
+    if (window.YT?.Player) return res(YT);
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { prev && prev(); res(YT); };
+    const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api';
+    sc.onerror = () => { ytApi = null; res(null); };
+    document.head.appendChild(sc);
+  }));
+}
+function ytKill(){ if (YTP) { try { YTP.destroy(); } catch {} YTP = null; } }
+function ytUI(){
+  const dock = document.getElementById('songdock'); if (!dock || !YTP?.getPlayerState) return;
+  const st = YTP.getPlayerState(), b = dock.querySelector('.ytbtn'), m = dock.querySelector('.ytmsg');
+  if (st === 1) { dock.classList.remove('needtap'); if (b) { b.textContent = '❚❚'; b.setAttribute('aria-label', 'Pause'); } if (m) m.textContent = 'läuft'; }
+  else if (b) { b.textContent = '▶'; b.setAttribute('aria-label', 'Abspielen'); if (m && st === 2) m.textContent = 'pausiert'; }
+}
+function ytNeedTap(){
+  const dock = document.getElementById('songdock'); if (!dock || !YTP || ytUserPaused || YTP.getPlayerState?.() === 1) return;
+  dock.classList.add('needtap');
+  const m = dock.querySelector('.ytmsg'); if (m) m.textContent = 'Tippe auf ▶ oder einmal aufs Video, dann läuft der Song.';
+}
+// Viele Browser spielen Ton erst nach dem ersten Tippen: dann einfach beim ersten Tippen auf die Seite starten
+document.addEventListener('pointerdown', e => {
+  if (!YTP?.getPlayerState || ytUserPaused || e.target.closest?.('.ytbtn, [data-act=song-stop]')) return;
+  const st = YTP.getPlayerState(); if (st !== 1 && st !== 3) { try { YTP.unMute(); YTP.playVideo(); } catch {} }
+}, true);
 function syncSong(){
   const u = V.name === 'profile' ? S.users[V.arg || S.me] : null, on = u && songOff !== u.id;
   const file = on && u.songFile && social ? u.songFile : null, vid = on && !file ? ytId(u.songUrl) : '';
   const dock = document.getElementById('songdock'); if (!dock) return;
-  if (!vid && !file) { if (dock.dataset.v) { dock.querySelector('audio')?.pause(); dock.innerHTML = ''; dock.dataset.v = ''; } dock.hidden = true; return; }
+  if (!vid && !file) { if (dock.dataset.v) { ytKill(); dock.querySelector('audio')?.pause(); dock.innerHTML = ''; dock.dataset.v = ''; } dock.hidden = true; return; }
   const key = (file ? 'f' + file.v : vid) + u.id;
   if (dock.dataset.v === key) return;
-  dock.querySelector('audio')?.pause();
-  dock.dataset.v = key; dock.hidden = false;
+  ytKill(); dock.querySelector('audio')?.pause();
+  dock.dataset.v = key; dock.hidden = false; dock.classList.remove('yt', 'needtap');
   const head = `<div class="songhead"><span>♪ Profilsong von ${esc(u.name)}</span><button class="lnk" data-act="song-stop" data-id="${esc(u.id)}">Aus</button></div>`;
   if (!file) {
-    dock.classList.remove('audio');
-    dock.innerHTML = head + `<iframe src="https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&loop=1&playlist=${vid}&rel=0&playsinline=1&modestbranding=1" title="Profilsong von ${esc(u.name)}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    dock.classList.remove('audio'); dock.classList.add('yt'); ytUserPaused = false;
+    dock.innerHTML = head + `<div class="ytrow"><button type="button" class="btn ghost ytbtn" data-act="yt-play" aria-label="Abspielen">▶</button><span class="ytmsg">wird geladen …</span></div><div class="ytbox"><div id="ytp"></div></div>`;
+    const msg = t => { const m = dock.querySelector('.ytmsg'); if (m) m.textContent = t; };
+    ytLoad().then(Y => {
+      if (dock.dataset.v !== key) return;
+      if (!Y) { msg('Der Song ließ sich gerade nicht laden.'); return; }
+      const pv = {autoplay:1, loop:1, playlist:vid, playsinline:1, controls:0, disablekb:1, rel:0, fs:0, iv_load_policy:3};
+      if (/^https?:/.test(location.origin)) pv.origin = location.origin;
+      YTP = new Y.Player('ytp', {width:240, height:135, videoId:vid, playerVars:pv, events:{
+        onReady: e => { if (dock.dataset.v !== key) return; try { e.target.setVolume(60); e.target.playVideo(); } catch {} setTimeout(ytNeedTap, 1800); },
+        onStateChange: () => ytUI(),
+        onError: e => { dock.classList.remove('needtap'); msg(e.data === 101 || e.data === 150 || e.data === 153 ? 'Dieses Video lässt YouTube nur auf YouTube selbst laufen. Nimm eine andere Version des Songs, zum Beispiel mit „Audio“ oder „Lyrics“ im Titel.' : 'Das Video ließ sich nicht abspielen. Prüf den Link.'); }
+      }});
+    });
     return;
   }
   dock.classList.add('audio');
@@ -3302,6 +3344,7 @@ document.addEventListener('click', async e => {
     if (!CH.list.some(c => c.id === cid)) try { await social.db.doc('chats/' + cid).set({group:false, members:[social.uid, id].sort(), ts:Date.now()}); } catch {}
     if (await sendMsg(cid, 'Komm in mein Zimmer! 🕯', {kind:'invite'})) toast('Einladung verschickt');
   }
+  else if (a === 'yt-play') { if (YTP?.getPlayerState) { if (YTP.getPlayerState() === 1) { ytUserPaused = true; YTP.pauseVideo(); } else { ytUserPaused = false; try { YTP.unMute(); YTP.playVideo(); } catch {} setTimeout(ytNeedTap, 1200); } } }
   else if (a === 'song-stop') { songOff = id; syncSong(); if (V.name === 'profile') render(); }
   else if (a === 'music-toggle') { songOff = songOff === id ? null : id; render(); }
   else if (a === 'music-edit') { musicEdit = !musicEdit; render(); document.getElementById('m-url')?.focus(); }
