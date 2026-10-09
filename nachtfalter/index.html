@@ -580,6 +580,78 @@ footer.foot .lnk{color:var(--muted)}
   .opt .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
   .opt .chips > *{flex:none}
 }
+
+/* ===== Handy wie die Momio-App (nur bis 760px; am PC ändert sich nichts) ===== */
+.dtabs,.dsave{display:none}
+@media (max-width:760px){
+  /* Tippen fühlt sich an wie eine App: keine Verzögerung, kein grauer Blitz, kleines Nachgeben */
+  button,a,label,[role=button],.thumb,.fthumb{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .btn,.chips button,.tabs button,.ricon,.mti,.mb,.thumb,.reacts button,.dtabs button{transition:transform .08s ease}
+  .btn:active,.chips button:active,.tabs button:active,.ricon:active,.mti:active,.reacts button:active,.dtabs button:active{transform:scale(.95)}
+  .thumb:active{transform:scale(.96)}
+  html{-webkit-text-size-adjust:100%}
+  body{overscroll-behavior-y:none}
+  /* Größere Ziele für den Daumen */
+  .btn{min-height:46px;padding:9px 18px;font-size:17px}
+  .chips{gap:8px}
+  .chips button{min-height:42px;padding:6px 16px;font-size:16px}
+  .reacts{gap:8px}
+  .reacts button{min-width:52px;min-height:42px;font-size:18px}
+  .lnk{padding:6px 0}
+  .ricon{width:48px;height:48px}
+  .ricon svg{width:25px;height:25px}
+  .mti{width:46px;height:46px}
+  .mb svg{width:27px;height:27px}
+  .mb{font-size:13px;min-height:60px}
+  /* Salon: ruhigere Schrift, damit mehr auf den Bildschirm passt */
+  .thought{font-size:19px;padding-left:14px}
+  .tile .thought{font-size:18px}
+  /* Garderobe wie bei Momio: großer Avatar bleibt oben, Abteilungen direkt darunter, Teile groß zum Antippen */
+  .wardrobe .mirror-card{position:sticky;top:calc(61px + env(safe-area-inset-top,0px));z-index:30;height:clamp(200px,32vh,280px);padding:6px 0 0;margin:0 -12px;border-left:0;border-right:0;
+    background:radial-gradient(ellipse at 50% 70%,#ffffff17,transparent 65%),var(--paper);box-shadow:0 10px 22px #000c;display:flex;align-items:flex-end;justify-content:center}
+  .wardrobe .mirror{width:auto;height:100%;aspect-ratio:9/17}
+  .wardrobe .mirror .pic,.wardrobe .mirror .pic svg{height:100%}
+  .wardrobe > .card:not(.mirror-card){margin:0 -12px;border-left:0;border-right:0}
+  .wardrobe .card-in{padding:0 10px 18px}
+  .wardrobe .ctabs{min-width:0;max-width:100%;position:sticky;top:calc(61px + env(safe-area-inset-top,0px) + clamp(200px,32vh,280px));z-index:25;background:var(--paper);margin:0 -10px 10px;padding:8px 10px 6px;border-bottom:1px solid var(--line-soft)}
+  .wardrobe .ctabs .tabs{border:0;gap:8px}
+  .wardrobe .ctabs .tabs button{border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:16px;min-height:42px;background:#ffffff08}
+  .wardrobe .ctabs .tabs button[aria-selected="true"]{background:var(--fg);color:var(--ink);border-color:var(--fg)}
+  .wardrobe .ctabs .subtabs{margin-top:6px}
+  .wardrobe .ctabs .subtabs button{min-height:36px;padding:5px 14px;font-size:15px;background:none}
+  .wardrobe .shopgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .wardrobe .shopgrid .item{padding:0;border-radius:10px;overflow:hidden;border:2px solid var(--line-soft)}
+  .wardrobe .shopgrid .item.on{border-color:var(--fg);box-shadow:none}
+  .wardrobe .shopgrid .item.on::after{content:"✓";position:absolute;left:6px;top:4px;width:22px;height:22px;border-radius:50%;background:var(--fg);color:var(--ink);font:700 14px/22px sans-serif;text-align:center;z-index:2}
+  .wardrobe .shopgrid .thumb{border-radius:8px}
+  .wardrobe .cdot{width:30px;height:30px;top:5px;right:5px}
+  .wardrobe .shopgrid .iname{padding:2px 6px 6px;font-size:14px}
+  /* Profil gestalten: Vorschau bleibt klein oben stehen, Bereiche als Reiter, Speichern immer da */
+  .design{gap:0}
+  .design .preview{position:sticky;top:calc(61px + env(safe-area-inset-top,0px));z-index:30;height:clamp(190px,30vh,260px);overflow-y:auto;overscroll-behavior:contain;margin:0 -12px;
+    border-bottom:1px solid var(--line);box-shadow:0 10px 22px #000c;background:var(--bg)}
+  .design .preview > section{zoom:.56}
+  .dtabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;position:sticky;top:calc(61px + env(safe-area-inset-top,0px) + clamp(190px,30vh,260px));z-index:25;background:var(--bg);margin:0 -12px;padding:10px 12px}
+  .dtabs::-webkit-scrollbar{display:none}
+  .dtabs button{flex:none;border:1px solid var(--line);border-radius:999px;background:#ffffff08;color:var(--muted);padding:8px 18px;min-height:42px;font:400 16px var(--f-display)}
+  .dtabs button[aria-selected="true"]{background:var(--fg);color:var(--ink);border-color:var(--fg)}
+  .design > div:first-child{gap:12px!important;padding-bottom:70px}
+  .design[data-tab] .card[data-sec]{display:none}
+  .design[data-tab="look"] .card[data-sec="look"],.design[data-tab="pic"] .card[data-sec="pic"],.design[data-tab="pose"] .card[data-sec="pose"],.design[data-tab="about"] .card[data-sec="about"]{display:block}
+  .design .card-in > p.note:first-child{display:none}
+  .design #designform > .row:last-child{display:none}
+  .dsave{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:900;padding:10px 12px;background:var(--bg);border-top:1px solid var(--line)}
+  .dsave .btn{flex:1}
+  .dsave .btn.ghost{flex:0 0 auto}
+  /* Zimmer: randlos über die ganze Breite, Posen als runde Knöpfe */
+  .card:has(> .rhead){margin-inline:-12px;border-left:0;border-right:0}
+  .chips button{border-radius:999px}
+  .rposes button{min-height:44px;border-radius:999px;padding:8px 16px}
+  .rscroll > .room{width:max(185%,680px)}
+  .rstick .rscroll > .room{width:100%}
+  .wardrobe .mirror-card{padding-top:14px}
+}
+
 </style>
 
 <div id="app"></div>
@@ -616,6 +688,14 @@ const inSub = i => i.cat !== 'jewel' || (i.sub || 'kette') === jewelSub;
 const inFace = c => FACE_SUB.some(([k]) => k === c);
 const BOTTOM_SUB = [['bottom','Hosen & Röcke'],['legw','Strumpfhosen & Socken']];
 const inBottom = c => BOTTOM_SUB.some(([k]) => k === c);
+let wearTimer = null;
+function mobWear(id){ // Handy wie Momio: Spiegel und Häkchen sofort, Vorschaubilder kurz danach
+  const i = item(id), o = me().outfit; if (!i) return;
+  wearItem(o, i); trial = null; save();
+  const pic = document.querySelector('.wardrobe .mirror .pic'); if (pic) pic.innerHTML = avatar(o, 'full');
+  document.querySelectorAll('.wardrobe .shopgrid .item').forEach(el => { const t = el.querySelector('.thumb'), it = t && item(t.dataset.id); if (it) el.classList.toggle('on', isOn(o, it)); });
+  clearTimeout(wearTimer); wearTimer = setTimeout(() => { if (V.name === 'wardrobe') softRender(); }, 650);
+}
 function catTabs(cur, act, withBody, o){
   const sub = FACE_SUB.filter(([k]) => k !== 'beard' || showAllG || (o?.body || 'a') !== 'w');
   const tabs = withBody ? [['body','Körper'], ...TABS] : TABS;
@@ -2326,6 +2406,7 @@ function fgRow(cur){ // Schriftfarbe im Profil; leer = passt sich automatisch an
 document.addEventListener('click', e => { // Klick auf Schrift in der Vorschau führt zur Schriftfarbe
   if (!e.target.closest('#preview') || e.target.closest('button, a, input')) return;
   if (!e.target.closest('.pname, .phandle, .phl, .pmeta, .pstats, .thought, .caption')) return;
+  if (isMob() && designTab !== 'look') { designTab = 'look'; render(); }
   const row = document.getElementById('fgrow'); if (!row) return;
   row.scrollIntoView({behavior:'smooth', block:'center'}); row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash');
 });
@@ -2785,7 +2866,7 @@ function postHTML(p){
     </form>`}`}
   </article>`;
 }
-let composeOpen = false, profEdit = false;
+let composeOpen = false, profEdit = false, designTab = 'look';
 function composeHTML(){
   const hint = {gedanke:'Was geht dir gerade durch den Kopf?', foto:'Ein paar Worte zum Bild (freiwillig)', video:'Worum geht es im Film? (freiwillig)'}[composeType];
   return `      <div class="tabs" role="tablist">${[['gedanke','Gedanke'],['foto','Bild'],['video','Film']].map(([k,l]) =>
@@ -2944,23 +3025,25 @@ function designView(){
   const f = (id,label,val,area) => `<label class="f" for="e-${id}"><span class="lbl">${label}</span>${area
     ? `<textarea id="e-${id}" maxlength="800">${esc(val)}</textarea>`
     : `<input id="e-${id}" type="text" maxlength="120" value="${esc(val)}">`}</label>`;
-  return `<div class="design">
+  const dt = (k, l) => `<button type="button" role="tab" data-act="dtab" data-v="${k}" aria-selected="${designTab === k}">${l}</button>`;
+  return `<div class="design" data-tab="${designTab}">
     <div style="display:grid;gap:22px;min-width:0">
-      <div class="card"><h2 class="card-h">Profil gestalten</h2><div class="card-in">
+      <div class="dtabs" role="tablist" aria-label="Was du bearbeitest">${dt('look', 'Farben')}${dt('pic', 'Bild')}${dt('pose', 'Pose')}${dt('about', 'Über dich')}</div>
+      <div class="card" data-sec="look"><h2 class="card-h">Profil gestalten</h2><div class="card-in">
         <p class="note">Hier bearbeitest du alles an deinem Profil. Rechts siehst du sofort, wie es aussieht. Am Ende unten auf „Speichern“.</p>
         <div class="optgroup"><h3>Dein Kasten</h3><p class="note">Der Bereich mit deinem Bild und Namen.</p>${colorRow('box', draft.box)}${fgRow(draft.fg)}<fieldset class="opt"><legend class="lbl">Muster</legend>${patTiles('pattern', draft.pattern)}</fieldset></div>
         <div class="optgroup"><h3>Ganzer Hintergrund</h3><p class="note">Alles hinter deinem Kasten, über den ganzen Bildschirm.</p>${colorRow('page', draft.page)}<fieldset class="opt"><legend class="lbl">Muster</legend>${patTiles('pagePattern', draft.pagePattern)}</fieldset></div>
         ${OPTS.map(([k,label,vals]) => `<fieldset class="opt"><legend class="lbl">${label}</legend><div class="chips">
           ${vals.map(([v,l]) => `<button type="button" data-act="topt" data-k="${k}" data-v="${v}" aria-pressed="${draft[k]===v}">${l}</button>`).join('')}</div></fieldset>`).join('')}
       </div></div>
-      <div class="card"><h2 class="card-h">Profilbild und Nutzername</h2><div class="card-in"><div id="media-ed">${mediaEditor(mdraft, u.name)}</div></div></div>
-      <div class="card"><h2 class="card-h">Dein Avatar an der Seite</h2><div class="card-in posecard">
+      <div class="card" data-sec="pic"><h2 class="card-h">Profilbild und Nutzername</h2><div class="card-in"><div id="media-ed">${mediaEditor(mdraft, u.name)}</div></div></div>
+      <div class="card" data-sec="pose"><h2 class="card-h">Dein Avatar an der Seite</h2><div class="card-in posecard">
         <div class="fullfig mv-${poseMove(u.pose)}" id="posefig">${avatar(u.outfit, 'full', u.pose)}</div>
         <div><fieldset class="opt"><legend class="lbl">Pose</legend><div class="chips">${POSES.map(([k,l]) => `<button type="button" data-act="pose" data-v="${k}" aria-pressed="${(u.pose || 'gerade') === k}">${l}</button>`).join('')}</div></fieldset>
         <p class="note">Kleidung und Aussehen änderst du in der <button type="button" class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button>.</p></div>
       </div></div>
-      <div class="card"><h2 class="card-h">Über dich</h2><div class="card-in">
-        <form data-form="design" style="display:grid;gap:12px">
+      <div class="card" data-sec="about"><h2 class="card-h">Über dich</h2><div class="card-in">
+        <form data-form="design" id="designform" style="display:grid;gap:12px">
           <label class="f" for="e-handle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="e-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label><span id="e-handle-err" class="err" hidden></span>${f('name','Name (frei wählbar)',u.name)}${f('headline','Spruch (steht neben deinem Profilbild)',u.headline)}${f('mood','Gemüt',u.mood)}
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
@@ -2974,6 +3057,7 @@ function designView(){
       </div></div>
     </div>
     <div class="preview" id="preview">${previewHTML()}</div>
+    <div class="dsave"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><button class="btn" type="submit" form="designform">Speichern</button></div>
   </div>`;
 }
 function shopView(isShop){
@@ -3002,7 +3086,7 @@ function shopView(isShop){
     </div>
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
-      ${catTabs(shopCat, 'cat', !isShop, u.outfit)}
+      <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit)}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${items ? `<div class="shopgrid">${items}</div>` : empty}
     </div></div>
@@ -3907,6 +3991,7 @@ document.addEventListener('click', async e => {
     const fig = document.getElementById('posefig'); if (fig) { fig.innerHTML = avatar(me().outfit, 'full', me().pose); fig.className = 'fullfig mv-' + poseMove(me().pose); }
   }
   else if (a === 'pp-clear') { me().pic = null; save(); render(); }
+  else if (a === 'dtab') { designTab = b.dataset.v; render(); window.scrollTo(0, 0); }
   else if (a === 'prof-edit') { profEdit = b.dataset.v === '1'; composeOpen = false; render(); }
   else if (a === 'logout') { const m = document.getElementById('confirm'); m.hidden = false; m.querySelector('[data-act=logout-no]').focus(); }
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
@@ -3925,7 +4010,7 @@ document.addEventListener('click', async e => {
   else if (a === 'compose-close') { composeOpen = false; postCrop = null; render(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
-  else if (a === 'try' && isMob()) { const i = item(id); wearItem(me().outfit, i); trial = null; save(); render(); }
+  else if (a === 'try' && isMob()) mobWear(id);
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
   else if (a === 'untry') { trial = null; render(); }
@@ -4248,14 +4333,15 @@ document.addEventListener('submit', async e => {
     const n = val('s-name'); if (!n) return;
     me().name = n; setOpen = null; save(); render(); toast('Name gespeichert');
   } else if (t === 'design') {
+    const toAbout = () => { if (isMob()) { designTab = 'about'; const d = document.querySelector('.design'); if (d) d.dataset.tab = 'about'; } };
     const u = me(), nh = normHandle(val('e-handle'));
     if (nh !== u.handle) {
       const err = document.getElementById('e-handle-err'), bad = handleProblem(nh) || (await handleTaken(nh) ? '@' + nh + ' ist bereits vergeben.' : '');
-      if (bad) { err.textContent = bad; err.hidden = false; err.scrollIntoView({block:'center'}); return; }
+      if (bad) { toAbout(); err.textContent = bad; err.hidden = false; err.scrollIntoView({block:'center'}); return; }
       u.handle = nh; claimHandle(nh);
     }
     const song = val('e-song'), serr = document.getElementById('e-song-err');
-    if (song && !ytId(song)) { serr.textContent = 'Das ist kein YouTube-Link. Kopier den Link in YouTube über „Teilen“ und „Link kopieren“.'; serr.hidden = false; serr.scrollIntoView({block:'center'}); return; }
+    if (song && !ytId(song)) { toAbout(); serr.textContent = 'Das ist kein YouTube-Link. Kopier den Link in YouTube über „Teilen“ und „Link kopieren“.'; serr.hidden = false; serr.scrollIntoView({block:'center'}); return; }
     if ((song || '') !== (u.songUrl || '')) { u.songUrl = song || ''; songOff = null; }
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; // Banner-Funktion entfernt (Inayas Wunsch) u.banner = {...mdraft.banner};
