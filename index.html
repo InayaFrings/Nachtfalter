@@ -968,7 +968,7 @@ const POSES = [ // Ganzkörper-Posen: Körper, Kopf, Arme (Drehung an der Schult
   ['schuechtern','Schüchtern', 'translate(0 3)', 'rotate(8 100 114) translate(0 3)', [-5, -5], ['', '']],
 ];
 const poseMove = k => (POSES.find(x => x[0] === k) || [])[6] || '';
-function avatar(o0, view='full', pose=''){
+function avatar(o0, view='full', pose='', lite=false){
   const PZ = POSES.find(x => x[0] === pose) || POSES[0];
   const ARM = side => PZ[4][side] ? `rotate(${PZ[4][side]} 79 131)` : '';
   // Arme pro Seite: links normal, rechts gespiegelt; jede Seite kann eigene Drehung haben
@@ -1014,9 +1014,9 @@ function avatar(o0, view='full', pose=''){
     <clipPath id="${u}cb"><rect y="204" width="200" height="200"/></clipPath>
     <clipPath id="${u}cp"><rect width="200" height="366"/></clipPath>
     <clipPath id="${u}to"><path d="${P.torso}"/></clipPath>
-  <filter id="${u}r" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="2.4" result="d"/><feColorMatrix in="d" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="a"/><feGaussianBlur in="a" stdDeviation="2.2" result="ab"/><feOffset in="ab" dx="1.8" dy="1.4" result="as"/><feComposite in="a" in2="as" operator="arithmetic" k2="1" k3="-1" result="es"/><feFlood flood-color="#120a18" flood-opacity=".42"/><feComposite in2="es" operator="in" result="sh"/><feOffset in="ab" dx="-1.4" dy="-1" result="al"/><feComposite in="a" in2="al" operator="arithmetic" k2="1" k3="-1" result="el"/><feFlood flood-color="#ffffff" flood-opacity=".22"/><feComposite in2="el" operator="in" result="hl"/><feMerge><feMergeNode in="d"/><feMergeNode in="sh"/><feMergeNode in="hl"/></feMerge></filter>
+  ${lite ? '' : `<filter id="${u}r" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="2.4" result="d"/><feColorMatrix in="d" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="a"/><feGaussianBlur in="a" stdDeviation="2.2" result="ab"/><feOffset in="ab" dx="1.8" dy="1.4" result="as"/><feComposite in="a" in2="as" operator="arithmetic" k2="1" k3="-1" result="es"/><feFlood flood-color="#120a18" flood-opacity=".42"/><feComposite in2="es" operator="in" result="sh"/><feOffset in="ab" dx="-1.4" dy="-1" result="al"/><feComposite in="a" in2="al" operator="arithmetic" k2="1" k3="-1" result="el"/><feFlood flood-color="#ffffff" flood-opacity=".22"/><feComposite in2="el" operator="in" result="hl"/><feMerge><feMergeNode in="d"/><feMergeNode in="sh"/><feMergeNode in="hl"/></feMerge></filter>`}
     <filter id="${u}b"><feGaussianBlur stdDeviation="1.6"/></filter>
-  </defs>${pose === 'schwebend' ? '<ellipse cx="100" cy="392" rx="34" ry="4" fill="#000" opacity=".35"/>' : ''}<g filter="url(#${u}r)"><g transform="${PZ[2]}">`;
+  </defs>${pose === 'schwebend' ? '<ellipse cx="100" cy="392" rx="34" ry="4" fill="#000" opacity=".35"/>' : ''}<g${lite ? '' : ` filter="url(#${u}r)"`}><g transform="${PZ[2]}">`;
 
   // Flügel ganz hinten
   if (AON('batwings')) {
@@ -1888,7 +1888,7 @@ function creatorView(){
   const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.price && fits(i, o)).map(i => {
     const t = previewOutfit(o, i);
     return `<button type="button" class="item obitem ${isOn(o, i) ? 'on' : ''}" data-act="ob-item" data-id="${i.id}" aria-pressed="${isOn(o, i)}">
-      <span class="thumb" aria-label="${esc(i.name)}">${avatar(t, thumbView(i))}</span>${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}</button>`;
+      <span class="thumb" aria-label="${esc(i.name)}">${avatar(t, thumbView(i), '', true)}</span>${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}</button>`;
   }).join('');
   return `<div class="gate"><div class="card gate-card creator-card">
     ${logoSVG()}${obSteps(2)}
@@ -2777,7 +2777,7 @@ function shopView(isShop){
       : `<button class="btn" disabled>Noch ${i.price - u.points} Punkte</button>`;
     const t = previewOutfit(u.outfit, i);
     return `<div class="item ${on?'on':''}">
-      <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i))}</button>
+      <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i), '', true)}</button>
       ${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}
       ${btn}</div>`;
   }).join('');
