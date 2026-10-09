@@ -2685,7 +2685,8 @@ function asideHTML(){
 const PI = {}, PIMG = {};
 let postDelAsk = null, postEdit = null;
 const postOwner = p => p.remote ? p.author : (social && p.author === S.me ? social.uid : null);
-function piKey(p){ const o = postOwner(p); return o && /^[\w-]+$/.test(p.id) ? o + '_' + p.id : null; }
+// vor dem Anmelden bei Firebase gibt es noch keine geteilten Reaktionen
+function piKey(p){ if (!social) return null; const o = postOwner(p); return o && /^[\w-]+$/.test(p.id) ? o + '_' + p.id : null; }
 function piWatch(p){
   const k = piKey(p); if (!k) return null;
   if (!PI[k]) {
