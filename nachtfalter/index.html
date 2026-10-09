@@ -510,7 +510,8 @@ footer.foot .lnk{color:var(--muted)}
 <script>
 // Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
 const PUB = !!window.NF_AUTH;
-const CODE = 'NACHTSCHICHT';
+const CODE_HASH = '90aca66704ab4922b64f6770a635185ac8b3b80362e2f5083ce1eb76cf5998a0'; // Einladungscode steht nur als Prüfsumme im Code
+async function codeOk(c){ try { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(c.toUpperCase())); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('') === CODE_HASH; } catch { return false; } }
 const KEY = 'nachtfalter-v2';
 const REACTIONS = ['🖤','💀','🦇','⛓️'];
 const PTS = {gedanke:10, foto:15, video:15, kommentar:3, reaktion:2};
@@ -1711,7 +1712,7 @@ const contactTaken = (c, exceptId) => Object.values(S.users).some(x => x.id !== 
 let authMode = 'reg', obCat = 'body', mdraft = null;
 const inviteCode = (() => { try { const m = (location.hash + location.search).match(/einladung=([\w-]+)/i); return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } })();
 let gateMode = inviteCode ? 'invite' : '';
-const inviteLink = () => { let base = ''; try { base = location.href.split('#')[0]; } catch {} return base + '#einladung=' + CODE.toLowerCase(); };
+const inviteLink = () => { let base = ''; try { base = location.href.split('#')[0]; } catch {} return base + (S.icode ? '#einladung=' + S.icode.toLowerCase() : ''); };
 
 function obSteps(cur){
   const keys = ['konto','name','avatar','seite'];
@@ -2313,7 +2314,6 @@ function gateView(){
       <button class="btn" type="submit">Konto erstellen</button>
     </form>
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
-    <p class="note">Demo-Code: NACHTSCHICHT</p>
   </div></div>`;
   return `<div class="gate"><div class="card gate-card">${head}
     <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Ein Ort nur für den Zirkel.</p>
@@ -3500,7 +3500,7 @@ document.addEventListener('submit', async e => {
   e.preventDefault();
   const t = f.dataset.form, val = id => (document.getElementById(id)?.value || '').trim();
   if (t === 'gate') {
-    if (val('code').toUpperCase() === CODE) { S.unlocked = true; save(); render(); }
+    if (await codeOk(val('code'))) { S.unlocked = true; S.icode = val('code').toUpperCase(); save(); render(); }
     else document.getElementById('gateErr').hidden = false;
   } else if (t === 'reg') {
     const contact = val('reg-contact'), pw = document.getElementById('reg-pw').value, err = document.getElementById('reg-err');
