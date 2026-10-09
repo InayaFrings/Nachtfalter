@@ -107,7 +107,7 @@ label.f{display:grid;gap:4px}
 .meta{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .thought{margin:0;font:italic 24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
 .caption{margin:0;white-space:pre-wrap;word-break:break-word}
-.photo{width:100%;display:block;border:1px solid var(--line-soft);filter:grayscale(1) contrast(1.05);aspect-ratio:4/5;object-fit:cover;background:#0b0b0d}
+.photo{width:100%;display:block;border:1px solid var(--line-soft);aspect-ratio:4/5;object-fit:cover;background:#0b0b0d}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
 .pdel{margin-left:auto;align-self:start}.pi .cmt .lnk{font-size:12px}
 .vid{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:12px;color:var(--fg);text-decoration:none;word-break:break-all;background:repeating-linear-gradient(90deg,transparent 0 14px,#ffffff08 14px 16px)}
@@ -190,7 +190,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .tiles{columns:2 220px;column-gap:14px}
 .tile{break-inside:avoid;margin-bottom:14px;background:var(--p-panel);border:1px solid var(--p-line);padding:14px;display:grid;gap:8px}
 .tile .thought{font-size:20px;border-left-color:var(--p-line)}
-.tile img{width:100%;display:block;filter:grayscale(1);aspect-ratio:4/5;object-fit:cover}
+.tile img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover}
 .tile .meta{font-size:13px}
 .vid.p{color:var(--p-fg);border-color:var(--p-line)}
 .vid.p .play{border-color:var(--p-fg)}
@@ -263,6 +263,11 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 .room.edit .ritem{cursor:grab;touch-action:none}
 .room.edit .ritem.sel{outline:1px dashed var(--fg);outline-offset:3px}
 .fthumb{display:grid;place-items:center;padding:12px}
+.shopgrid{grid-auto-flow:row dense}.item{position:relative}
+.cdot{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:2px solid #ecebe7;box-shadow:0 0 0 1px #000,0 1px 4px #000a;cursor:pointer;z-index:2;padding:0}
+.cdot[aria-expanded="true"]{outline:2px solid #ecebe7;outline-offset:2px}.cdot.in{position:static;display:inline-block;width:16px;height:16px;margin-left:8px;vertical-align:-3px;border-width:1px}
+.shopgrid .cpanel,.cpanel{grid-column:1/-1;display:grid;gap:10px;background:var(--paper-2);border:1px solid var(--line-soft);padding:10px;min-width:0}.cpanel .opt{margin:0;padding:0;border:0;min-width:0}
+.cropbox{position:relative;overflow:hidden;width:min(100%,340px);margin:0 auto;background:#0b0b0d;touch-action:none;cursor:grab;border:1px solid var(--line-soft)}.cropbox img{position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-select:none;pointer-events:none}
 .shopgrid .item{min-width:0}.shopgrid .iname{overflow-wrap:break-word;hyphens:manual}
 .fthumb svg{width:auto;height:auto;max-width:100%;max-height:100%}
 
@@ -1594,6 +1599,7 @@ function roomColorRow(label, k, cur){ // k: 'item' (ausgewähltes Möbel), 'wall
 }
 function setRoomColor(k, v){
   const r = me().room;
+  if (k.startsWith('f:')) { r.items.filter(x => x.k === k.slice(2)).forEach(it => { if (v) it.c = v; else delete it.c; }); return; }
   if (k === 'item') { const it = r.items[roomSel]; if (!it) return; if (v) it.c = v; else delete it.c; }
   else if (v) r[k] = v; else delete r[k];
 }
@@ -1627,7 +1633,9 @@ function roomView(){
       : owned ? `<button class="btn ghost" data-act="place" data-k="${k}">Hinstellen</button>`
       : u.points >= f.price ? `<button class="btn" data-act="buyf" data-k="${k}">Kaufen</button>`
       : `<button class="btn" disabled>Noch ${f.price - u.points} Punkte</button>`;
-    return `<div class="item ${here ? 'on' : ''}"><div class="thumb fthumb">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>`;
+    const fc = here ? r.items.find(x => x.k === k).c : null, open = here && colItem === 'f:' + k;
+    const dot = here ? `<span class="cdot" role="button" tabindex="0" data-act="fcol" data-k="f:${k}" style="background:${esc(fc || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe von ${esc(f.name.replace(/\u00ad/g, ''))} ändern" aria-expanded="${open}"></span>` : '';
+    return `<div class="item ${here ? 'on' : ''}">${dot}<div class="thumb fthumb">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k].name : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
@@ -1645,11 +1653,10 @@ function roomView(){
       <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
       ${roomHTML(u, true)}
       <div class="row">${selName ? `<span class="lbl">Ausgewählt: ${selName}</span>${roomSel !== 'av' ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}` : '<span class="note">Tipp: Tippe ein Möbelstück an, um es zu spiegeln oder wegzuräumen.</span>'}</div>
-      ${roomSel != null && roomSel !== 'av' && r.items[roomSel] ? roomColorRow('Farbe von: ' + FURN[r.items[roomSel].k].name, 'item', r.items[roomSel].c) : ''}
-      <fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}</button>`).join('')}</div></fieldset>
-      ${roomColorRow('Wandfarbe', 'wallC', r.wallC)}
-      <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}</button>`).join('')}</div></fieldset>
-      ${roomColorRow('Bodenfarbe', 'floorC', r.floorC)}
+      <fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}${r.wall===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="wallC" style="background:${esc(r.wallC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'wallC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
+      ${colItem === 'wallC' ? `<div class="cpanel">${roomColorRow('Wandfarbe', 'wallC', r.wallC)}</div>` : ''}
+      <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}${r.floor===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="floorC" style="background:${esc(r.floorC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'floorC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
+      ${colItem === 'floorC' ? `<div class="cpanel">${roomColorRow('Bodenfarbe', 'floorC', r.floorC)}</div>` : ''}
       <div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div>
     </div></div>
     <div class="card"><h2 class="card-h">Möbelhaus</h2><div class="card-in">
@@ -1712,8 +1719,24 @@ function colorPanel(cat, o, act){
   const motif = cat === 'top' ? withPick(swatches('motifC', 'Motivfarbe (Aufdruck, Streifen, Krawatte)', [[null,'Automatisch'], ...CLOTHC.slice(1)], o.motifC ?? null, act), 'motifC', o.motifC, act) : '';
   return c ? withPick(swatches(c[0], c[1], c[2], o[c[0]] ?? c[3], act), c[0], o[c[0]] ?? c[3], act) + motif : '';
 }
+let colItem = null; // Farbauswahl direkt am Teil: welches Teil gerade aufgeklappt ist
+function itemColorPanel(i, o, act){
+  const cat = i.cat;
+  if (MULTI.includes(cat)) { const pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC, k = cat + '.' + i.id, cur = asObj(o[cat])[i.id];
+    return withPick(swatches(k, 'Farbe: ' + i.name, pal, cur, act), k, cur, act); }
+  const c = COLOR_KEYS[cat]; if (!c) return '';
+  const motif = cat === 'top' ? withPick(swatches('motifC', 'Motivfarbe (Aufdruck, Streifen, Krawatte)', [[null,'Automatisch'], ...CLOTHC.slice(1)], o.motifC ?? null, act), 'motifC', o.motifC, act) : '';
+  return withPick(swatches(c[0], c[1], c[2], o[c[0]] ?? c[3], act), c[0], o[c[0]] ?? c[3], act) + motif;
+}
+function itemColor(i, o){ const v = MULTI.includes(i.cat) ? asObj(o[i.cat])[i.id] : curColor(i.cat, o); return /^#/.test(v || '') ? v : '#444'; }
+function itemColUI(i, o, act){ // [Farbpunkt im Kasten, aufgeklappte Farben darunter]
+  if (!isOn(o, i)) return ['', ''];
+  const p = itemColorPanel(i, o, act); if (!p) return ['', ''];
+  return [`<span class="cdot" role="button" tabindex="0" data-act="icol" data-id="${i.id}" style="background:${esc(itemColor(i, o))}" title="Farbe ändern" aria-label="Farbe von ${esc(i.name)} ändern" aria-expanded="${colItem === i.id}"></span>`,
+    colItem === i.id ? `<div class="cpanel" data-id="cp_${i.id}">${p}</div>` : ''];
+}
 function setColor(o, k, v){
-  const mm = k.match(/^(hacc|jewel|acc)\.(.+)$/); if (mm) { o[mm[1]] = {...asObj(o[mm[1]])}; o[mm[1]][mm[2]] = v || '#141218'; return; }
+  const mm = k.match(/^(hacc|jewel|acc|legw)\.(.+)$/); if (mm) { o[mm[1]] = {...asObj(o[mm[1]])}; o[mm[1]][mm[2]] = v || '#141218'; return; }
   if (v) o[k] = v; else delete o[k];
 }
 document.addEventListener('change', e => {
@@ -1809,9 +1832,9 @@ function creatorView(){
   const p = S.pending, o = p.outfit;
   const cats = [...BODY_CAT, ...CATS];
   const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.price && fits(i, o)).map(i => {
-    const t = previewOutfit(o, i);
+    const t = previewOutfit(o, i), [dot, pan] = itemColUI(i, o, 'ob-color');
     return `<button type="button" class="item obitem ${isOn(o, i) ? 'on' : ''}" data-act="ob-item" data-id="${i.id}" aria-pressed="${isOn(o, i)}">
-      <span class="thumb" aria-label="${esc(i.name)}">${avatar(t, thumbView(i), '', true)}</span>${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}</button>`;
+      <span class="thumb" aria-label="${esc(i.name)}">${avatar(t, thumbView(i), '', true)}</span>${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}${dot}</button>${pan}`;
   }).join('');
   return `<div class="gate"><div class="card gate-card creator-card">
     ${logoSVG()}${obSteps(2)}
@@ -1821,7 +1844,7 @@ function creatorView(){
       <div class="mirror-card" style="padding:16px 0">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}</div>
       <div style="display:grid;gap:16px;min-width:0;align-content:start">
         ${catTabs(obCat, 'ob-cat', true, o)}
-        ${colorPanel(obCat, o, 'ob-color')}
+        ${obCat === 'body' ? colorPanel(obCat, o, 'ob-color') : ''}
         ${obCat === 'body' ? '' : `<label class="allg"><input type="checkbox" data-act="allg" ${showAllG ? 'checked' : ''}> Alles zeigen, auch für andere Körper</label>`}
         ${items ? `<div class="shopgrid">${items}</div>` : ''}
       </div>
@@ -1938,12 +1961,60 @@ function cropImage(file, w, h, q=.8){
     fr.readAsDataURL(file);
   });
 }
+// Farbpunkte sind Spans im Kasten: auch mit der Tastatur bedienbar
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList?.contains('cdot')) { e.preventDefault(); e.stopPropagation(); e.target.click(); } }, true);
+// Zuschneiden: Bild verschieben und zoomen, der Rahmen hat das Format W:H
+function cropAsk(file, W, H){
+  return new Promise((ok, fail) => {
+    const fr = new FileReader(); fr.onerror = fail;
+    fr.onload = () => { const img = new Image(); img.onerror = fail; img.onload = () => show(img); img.src = fr.result; };
+    fr.readAsDataURL(file);
+    function show(img){
+      const m = document.createElement('div'); m.className = 'modal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Bild zuschneiden');
+      m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">Bild zuschneiden</h2><div class="cropbox" style="aspect-ratio:${W}/${H}"><img alt=""></div>
+        <label class="f"><span class="lbl">Zoom</span><input type="range" min="1" max="4" step="0.01" value="1" class="cropz"></label>
+        <p class="note" style="margin:0">Verschieb das Bild mit dem Finger oder der Maus. Mit zwei Fingern oder dem Regler zoomst du.</p>
+        <div class="row"><button type="button" class="btn ghost" data-c="no">Abbrechen</button><span class="sp"></span><button type="button" class="btn" data-c="ok">Fertig</button></div></div>`;
+      document.body.appendChild(m);
+      const box = m.querySelector('.cropbox'), im = m.querySelector('img'), z = m.querySelector('.cropz');
+      im.src = img.src;
+      let s = 1, x = 0, y = 0;
+      const bw = () => box.clientWidth, bh = () => box.clientHeight, base = () => Math.max(bw() / img.width, bh() / img.height);
+      const draw = () => { const k = base() * s, w = img.width * k, h = img.height * k;
+        x = Math.min(0, Math.max(bw() - w, x)); y = Math.min(0, Math.max(bh() - h, y));
+        im.style.width = w + 'px'; im.style.height = h + 'px'; im.style.transform = `translate(${x}px,${y}px)`; };
+      const zoom = ns => { const cx = bw() / 2, cy = bh() / 2, k0 = base() * s; s = Math.min(4, Math.max(1, ns)); const k1 = base() * s; x = cx - (cx - x) * k1 / k0; y = cy - (cy - y) * k1 / k0; z.value = s; draw(); };
+      requestAnimationFrame(() => { const k = base(); x = (bw() - img.width * k) / 2; y = (bh() - img.height * k) / 2; draw(); });
+      z.oninput = () => zoom(+z.value);
+      const pts = new Map(); let pd = 0;
+      box.onpointerdown = e => { box.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); e.preventDefault(); };
+      box.onpointermove = e => { if (!pts.has(e.pointerId)) return; const pr = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+        if (pts.size === 1) { x += e.clientX - pr[0]; y += e.clientY - pr[1]; draw(); }
+        else if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pd) zoom(s * d / pd); pd = d; } };
+      box.onpointerup = box.onpointercancel = e => { pts.delete(e.pointerId); if (pts.size < 2) pd = 0; };
+      box.addEventListener('wheel', e => { e.preventDefault(); zoom(s * (e.deltaY < 0 ? 1.08 : 1 / 1.08)); }, {passive:false});
+      const done = v => { m.remove(); ok(v); };
+      m.querySelector('[data-c=no]').onclick = () => done(null);
+      m.querySelector('[data-c=ok]').onclick = () => { const k = base() * s, c = document.createElement('canvas'); c.width = W; c.height = H;
+        c.getContext('2d').drawImage(img, -x / k, -y / k, bw() / k, bh() / k, 0, 0, W, H); done(c.toDataURL('image/jpeg', .8)); };
+      m.querySelector('[data-c=ok]').focus();
+    }
+  });
+}
+let postCrop = null; // zugeschnittenes Bild für den nächsten Beitrag
+document.addEventListener('change', async e => {
+  if (e.target.id !== 'pfile') return;
+  const file = e.target.files[0]; if (!file) return;
+  let v; try { v = await cropAsk(file, 720, 900); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); e.target.value = ''; return; }
+  if (!v) { e.target.value = ''; return; }
+  postCrop = v; const pv = document.getElementById('pfile-prev'); if (pv) { pv.src = v; pv.hidden = false; }
+});
 document.addEventListener('change', async e => {
   const t = mediaTarget(); if (!t) return;
   if (e.target.id !== 'pic-file' && e.target.id !== 'banner-file') return;
   const file = e.target.files[0]; if (!file) return;
   try {
-    if (e.target.id === 'pic-file') t.pic = await cropImage(file, 360, 460);
+    if (e.target.id === 'pic-file') { const v = await cropAsk(file, 360, 460); if (!v) { e.target.value = ''; return; } t.pic = v; }
     else { t.banner.img = await cropImage(file, 1200, 300); }
   } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
   if (S.pending && !save()) return;
@@ -1976,7 +2047,7 @@ document.addEventListener('change', async e => {
 document.addEventListener('change', async e => {
   if (e.target.id !== 'pp-file') return;
   const file = e.target.files[0]; if (!file) return;
-  try { me().pic = await cropImage(file, 360, 460); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
+  try { const v = await cropAsk(file, 360, 460); if (!v) { e.target.value = ''; return; } me().pic = v; } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
   save(); render(); toast('Profilbild gespeichert');
 });
 document.addEventListener('input', e => {
@@ -2001,6 +2072,7 @@ document.addEventListener('click', e => {
   else if (a === 'jsub') { jewelSub = b.dataset.c; render(); }
   else if (a === 'ob-item') { wearItem(p.outfit, item(b.dataset.id)); save(); obPatch(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
+  else if (a === 'icol') { colItem = colItem === b.dataset.id ? null : b.dataset.id; S.pending && document.querySelector('.creator') ? obPatch() : render(); }
   else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(); }
   else if (a === 'ob-next') { p.step = 'seite'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'ob-back') { p.step = b.dataset.v; if (p.step === 'konto') authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
@@ -2574,7 +2646,7 @@ function composeHTML(){
         `<button role="tab" data-act="ctype" data-t="${k}" aria-selected="${composeType===k}">${l}</button>`).join('')}</div>
       <form data-form="post" style="display:grid;gap:12px">
         <textarea id="ptext" maxlength="1000" placeholder="${hint}" aria-label="Text" ${composeType==='gedanke'?'required':''}></textarea>
-        ${composeType==='foto' ? `<label class="f" for="pfile"><span class="lbl">Bild auswählen</span><input id="pfile" type="file" accept="image/*" required></label>` : ''}
+        ${composeType==='foto' ? `<label class="f" for="pfile"><span class="lbl">Bild auswählen</span><input id="pfile" type="file" accept="image/*" ${postCrop ? '' : 'required'}></label><img id="pfile-prev" class="photo" alt="Ausgewähltes Bild" ${postCrop ? `src="${postCrop}"` : 'hidden'}>` : ''}
         ${composeType==='video' ? `<label class="f" for="purl"><span class="lbl">Link zum Film (YouTube, TikTok, Instagram …)</span><input id="purl" type="url" placeholder="https://" required></label>` : ''}
         <div class="row"><span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
@@ -2769,11 +2841,11 @@ function shopView(isShop){
       : !isShop ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">Anziehen</button>`
       : u.points >= i.price ? `<button class="btn" data-act="buy" data-id="${i.id}">Kaufen</button>`
       : `<button class="btn" disabled>Noch ${i.price - u.points} Punkte</button>`;
-    const t = previewOutfit(u.outfit, i);
-    return `<div class="item ${on?'on':''}">
+    const t = previewOutfit(u.outfit, i), [dot, pan] = isShop ? ['', ''] : itemColUI(i, u.outfit, 'color');
+    return `<div class="item ${on?'on':''}">${dot}
       <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i), '', true)}</button>
       ${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}
-      ${btn}</div>`;
+      ${btn}</div>${pan}`;
   }).join('');
   const empty = shopCat === 'body' ? '' : isShop ? `<p class="note">In dieser Abteilung hast du schon alles. Schau in deine <button class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button> oder in eine andere Abteilung.</p>` : '';
   return `<div class="wardrobe">
@@ -2784,7 +2856,7 @@ function shopView(isShop){
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
       ${catTabs(shopCat, 'cat', !isShop, u.outfit)}
-      ${isShop ? '' : shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : (() => { const cp = colorPanel(shopCat, u.outfit, 'color'); return cp ? `<button class="btn ghost wcoltog" data-act="wcol" aria-expanded="${wColOpen}"><i class="wcoldot" style="background:${esc(curColor(shopCat, u.outfit))}"></i>${wColOpen ? 'Farben schließen' : 'Farbe ändern'}</button><div class="wcolors ${wColOpen ? 'open' : ''}">${cp}</div>` : ''; })()}
+      ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${shopCat === 'body' ? '' : `<label class="allg"><input type="checkbox" data-act="allg" ${showAllG ? 'checked' : ''}> Alles zeigen, auch für andere Körper</label>`}
       ${items ? `<div class="shopgrid">${items}</div>` : empty}
     </div></div>
@@ -3704,7 +3776,7 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'ctype') { composeType = b.dataset.t; render(); }
   else if (a === 'compose-open') { composeOpen = true; render(); document.getElementById('ptext')?.focus(); }
-  else if (a === 'compose-close') { composeOpen = false; render(); }
+  else if (a === 'compose-close') { composeOpen = false; postCrop = null; render(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
@@ -3759,6 +3831,7 @@ document.addEventListener('click', async e => {
   else if (a === 'flip') { const it = me().room.items[roomSel]; if (it) { it.f = !it.f; save(); render(); } }
   else if (a === 'ftab') { furnTab = b.dataset.v; render(); }
   else if (a === 'room-close') { delete me().roomOpen; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); render(); toast('Raumchat geschlossen'); }
+  else if (a === 'fcol') { colItem = colItem === b.dataset.k ? null : b.dataset.k; render(); }
   else if (a === 'rcol') { setRoomColor(b.dataset.k, b.dataset.v); save(); render(); }
   else if (a === 'wall') { me().room.wall = b.dataset.v; save(); render(); }
   else if (a === 'floor') { me().room.floor = b.dataset.v; save(); render(); }
@@ -3910,8 +3983,8 @@ document.addEventListener('submit', async e => {
   } else if (t === 'post') {
     const p = {id:'p' + Date.now().toString(36), author:S.me, type:composeType, text:val('ptext'), ts:Date.now(), reactions:{}, comments:[]};
     if (composeType === 'foto') {
-      const file = document.getElementById('pfile').files[0]; if (!file) return;
-      try { p.img = await cropImage(file); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
+      const file = document.getElementById('pfile').files[0]; if (!file && !postCrop) return;
+      try { p.img = postCrop || await cropImage(file); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
     }
     if (composeType === 'video') {
       const url = val('purl');
@@ -3921,7 +3994,7 @@ document.addEventListener('submit', async e => {
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
     earn(PTS[composeType], {gedanke:'Gedanke geteilt',foto:'Bild geteilt',video:'Film geteilt'}[composeType]);
-    composeOpen = false; save(); render();
+    composeOpen = false; postCrop = null; save(); render();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
