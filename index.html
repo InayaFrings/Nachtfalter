@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7f5b59f3845a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b295f27c73f7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1964,7 +1964,7 @@ function roomView(){
   // Raumchat direkt im Zimmer (wie bei Momio/MSP): Verlauf und Eingabe gleich unter dem Raum
   const chatOn = roomMode === 'chat' || !!u.roomOpen;
   if (roomMode !== 'edit') return `<div class="card">${head}<div class="card-in">
-      ${roomWithChat(roomHTML(u, false, true), chatOn)}${chatOn ? roomChatInline(true) : ''}${poseBar()}
+      ${roomWithChat(roomHTML(u, false, true), chatOn)}${chatOn ? roomChatInline(true) : ''}${poseBar()}${(pubRoomsWatch(), '')}<div class="row">${hopBtn()}</div>
       ${chatOn ? '' : `<p class="note">Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
     </div></div>
     ${roomMode === 'chat' ? roomChatExtra() : ''}`;
@@ -2888,13 +2888,10 @@ function friendPanel(nNew){
       + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1])).join('')
       + (fr.some(u => !u.helper) ? '' : '<p class="note">Noch keine Freunde. Such sie über „Suchen“.</p>');
   } else if (fpTab === 'chats') {
-    const rc = Object.values(S.users).filter(u => u.remote && u.roomOpen && isFriend(u.id) && onlineState(u)[0]);
     body = (social ? `<div class="fpnew"><button class="btn fpreq" data-act="fp-newmenu" aria-expanded="${fpNew}">＋ Neuer Chat</button>${fpNew ? `<div class="fpnewopts"><button class="btn ghost" data-act="fp-newchat">Neues Gespräch</button><button class="btn ghost" data-act="fp-newgroup">Gruppenchat erstellen</button></div>` : ''}</div>` : '')
       + `<p class="lbl fplbl">Helfer</p>` + ['juliet', 'andy'].map(id => fpRow(S.users[id], etx(hLast(id)), 'helper-chat')).join('')
       + `<p class="lbl fplbl">Freunde</p>`
-      + (CH.list.length || rc.length ? '' : `<p class="note">${social ? 'Noch keine Chats mit Freunden.' : 'Chats mit Freunden gehen, sobald du angemeldet bist.'}</p>`)
-      + rc.map(u => fpRow(u, '🕯 Raumchat ' + roomKind(u.roomOpen), 'room-visit')).join('')
-      + (social ? `<p class="lbl fplbl">Öffentliche Raumchats</p>` + (() => { const pr = pubRooms().filter(id => !rc.some(u => u.id === id)); return pr.length ? pr.map(id => fpRow(remoteUser(id, PROF[id]), '🕯 Raumchat öffentlich', 'room-visit')).join('') : '<p class="note">Gerade ist kein öffentlicher Raumchat offen.</p>'; })() : '')
+      + (CH.list.length ? '' : `<p class="note">${social ? 'Noch keine Chats mit Freunden.' : 'Chats mit Freunden gehen, sobald du angemeldet bist.'}</p>`)
       + CH.list.map(c => {
         const other = c.group ? null : c.members.find(m => m !== social?.uid);
         const ou = other ? (S.users[other] || (PROF[other] && remoteUser(other, PROF[other]))) : null;
@@ -3288,9 +3285,14 @@ function pubRoomsWatch(){ // offene öffentliche Raumchats, live aus den Profile
     PUBR.list = snap.docs.map(d => { PROF[d.id] = {...(PROF[d.id] || {}), ...d.data()}; return d.id; });
     // Zimmer, die nicht mehr öffentlich sind: Profil neu laden; wer gerade als Fremder drin ist, muss raus
     snap.docChanges().filter(c => c.type === 'removed').forEach(c => loadProf(c.doc.id).then(() => { paintOnline(); if (V.name === 'visit' && V.arg === c.doc.id && !canEnter(c.doc.id)) { render(); roomSync(); } }));
-    paintOnline(); if (fpOpen && fpTab === 'chats') softRender();
+    paintOnline();
   }, () => { PUBR.on = false; });
 }
+function hopRooms(){ // alle offenen Raumchats, in die man gerade darf (Freunde + öffentliche), ohne das eigene und das aktuelle
+  const fr = Object.values(S.users).filter(u => u.remote && u.roomOpen && isFriend(u.id) && onlineState(u)[0]).map(u => u.id);
+  return [...new Set([...fr, ...pubRooms()])].filter(id => id !== social?.uid && !(V.name === 'visit' && V.arg === id));
+}
+const hopBtn = () => social ? `<button class="btn rhop" data-act="room-hop">🕯 Zu anderen Raumchats</button>` : '';
 function pubRooms(){ // nur Zimmer, deren Besitzer gerade da ist (online oder vor kurzem aktiv)
   pubRoomsWatch();
   return PUBR.list.filter(id => id !== social?.uid && PROF[id]?.roomOpen?.pub && !isTestHandle(PROF[id].handle) && (ONLINE.has(id) || Date.now() - (PROF[id].seen || 0) < 400000));
@@ -3392,13 +3394,6 @@ async function clearRoomChat(){ // alte Raumchat-Nachrichten wegräumen (Markier
     for (const d of snap.docs) { const m = d.data(); if (m.kind !== 'close') await social.db.doc('chats/zimmer_' + social.uid + '/m/' + d.id).delete().catch(() => {}); }
   } catch {}
 }
-function roomChatsList(){ // offene Raumchats von Freunden und öffentliche (nur solange die Besitzer online sind)
-  const open = Object.values(S.users).filter(u => u.remote && u.roomOpen && isFriend(u.id) && onlineState(u)[0]);
-  const pub = pubRooms().filter(id => !open.some(u => u.id === id));
-  const row = (id, name, ro) => `<button class="clist" data-act="room-visit" data-id="${esc(id)}"><b>🕯 Bei ${esc(name)}</b><small>Raumchat ${roomKind(ro)} · Reingehen</small></button>`;
-  return (open.length ? `<p class="lbl" style="margin:10px 0 0">Raumchats von Freunden</p>` + open.map(u => row(u.id, u.name, u.roomOpen)).join('') : '')
-    + `<p class="lbl" style="margin:10px 0 0">Öffentliche Raumchats</p>` + (pub.length ? pub.map(id => row(id, PROF[id].name || 'Unbekannt', PROF[id].roomOpen)).join('') : '<p class="note" style="margin:4px 0 0">Gerade ist kein öffentlicher Raumchat offen.</p>');
-}
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
   const list = CH.list.map(c => `<button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>`).join('');
@@ -3430,7 +3425,7 @@ function chatsView(){
         ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}
         <p class="lbl" style="margin:10px 0 0">Freunde</p>
         ${social ? list || '<p class="note">Noch keine Chats mit Freunden.</p>' : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
-        <div id="roomchats">${social ? roomChatsList() : ''}</div>
+
       </div>
       <div class="chatmain">${CH.mode ? '<button class="btn ghost mback" data-act="chat-back">← Alle Chats</button>' : ''}${right}</div>
     </div>
@@ -3613,7 +3608,7 @@ function onlineState(u){
   const seen = PROF[u.id]?.seen; return [false, seen ? 'Offline · zuletzt da ' + ago(seen) : 'Offline'];
 }
 const onlineHTML = u => { const [on, t] = onlineState(u); return `<span class="onl ${on ? 'on' : ''}" data-onl="${esc(u.id)}"><i aria-hidden="true"></i>${esc(t)}</span>`; };
-function paintOnline(){ const rc = document.getElementById('roomchats'); if (rc) rc.innerHTML = roomChatsList(); document.querySelectorAll('[data-onl]').forEach(el => { const u = S.users[el.dataset.onl]; if (u) el.outerHTML = onlineHTML(u); }); }
+function paintOnline(){ document.querySelectorAll('[data-onl]').forEach(el => { const u = S.users[el.dataset.onl]; if (u) el.outerHTML = onlineHTML(u); }); }
 
 /* ---------- Zimmer besuchen (höchstens 6 Leute) ---------- */
 const ROOM_MAX = 6;
@@ -3782,7 +3777,7 @@ function visitView(){
   if (!u || !canEnter(id)) return `<div class="card"><h2 class="card-h">Zimmer</h2><div class="card-in"><p class="note">${u?.roomOpen ? 'Dieser Raumchat ist nur für Freunde.' : 'In dieses Zimmer kommst du nur, wenn ihr befreundet seid oder ein öffentlicher Raumchat offen ist.'}</p></div></div>`;
   return `<div class="card"><h2 class="card-h">Bei ${esc(u.name)} im Zimmer</h2><div class="card-in">
     ${roomWithChat(roomHTML(u, false, true), true)}${roomChatInline(false)}${poseBar()}
-    <div class="row"><button class="btn ghost" data-act="profile" data-id="${id}">Zimmer verlassen</button></div>
+    <div class="row">${hopBtn()}<button class="btn ghost" data-act="profile" data-id="${id}">Zimmer verlassen</button></div>
   </div></div>`;
 }
 
@@ -3980,6 +3975,7 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'gopt') { grabGroupDraft(); CH.gdraft.theme[b.dataset.k] = b.dataset.v; render(); }
   else if (a === 'room-visit') go('visit', id);
+  else if (a === 'room-hop') { const l = hopRooms(); if (!l.length) toast('Gerade sind keine Raumchats offen.'); else go('visit', l[Math.floor(Math.random() * l.length)]); }
   else if (a === 'room-open') { me().roomOpen = {pub:b.dataset.v === 'pub', ts:Date.now()}; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'open'}); render(); toast(me().roomOpen.pub ? 'Dein öffentlicher Raumchat ist offen' : 'Dein Raumchat für Freunde ist offen'); }
   else if (a === 'room-kind') { const ro = me().roomOpen; if (ro) { ro.pub = b.dataset.v === 'pub'; save(); render(); toast(ro.pub ? 'Jetzt öffentlich' : 'Jetzt nur für Freunde'); } }
   else if (a === 'room-invite') {
