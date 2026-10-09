@@ -1058,7 +1058,7 @@ const POSES = [ // Ganzkörper-Posen: Körper, Kopf, Arme (Drehung an der Schult
   ['neugierig','Neugierig', '', 'rotate(-9 100 114)', [0, 0], ['', '']],
   ['schuechtern','Schüchtern', 'translate(0 3)', 'rotate(8 100 114) translate(0 3)', [-5, -5], ['', '']],
   ['sitzen','Sitzen', '', 'rotate(-4 100 114)', [8, 8], ['', '']], // Beine werden unten in avatar() geknickt
-  ['liegen','Liegen', 'matrix(0 -.5 .5 0 -10 419.5)', '', [4, 4], ['', '']], // flach auf dem Boden, Kopf links
+  ['liegen','Liegen', 'matrix(0 -1 1 0 -104 446)', 'rotate(-8 100 114)', [-3, 150], ['', '']], // in Originalgröße auf dem Rücken, Kopf links, ein Knie angewinkelt (ragt seitlich aus dem Kasten)
 ];
 // Posen im Zimmer (Inaya): Winken, Drehen, Springen, Schüchtern, Sitzen, Liegen
 const ROOM_POSES = ['gerade', 'winken', 'drehen', 'springen', 'schuechtern', 'sitzen', 'liegen'];
@@ -1096,7 +1096,7 @@ function avatar(o0, view='full', pose='', lite=false){
   const legs = (fill, c) => both(path(P.legL, fill, c ? clip(c) : ''));
   const hems = short => armB(short ? line('M67 162L78 162', 1.4) : line('M64 234L70.5 234', 1.4)); // Ärmelsaum bewegt sich mit dem Arm
   const grad = (k, c) => `<linearGradient id="${u}${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(c,1.18)}"/><stop offset="1" stop-color="${shade(c,.7)}"/></linearGradient>`;
-  let s = `<svg viewBox="${VIEWS[view] || VIEWS.full}" role="img" aria-label="Avatar"><defs>
+  let s = `<svg viewBox="${VIEWS[view] || VIEWS.full}" role="img" aria-label="Avatar"${pose === 'liegen' ? ' style="overflow:visible"' : ''}><defs>
     <linearGradient id="${u}k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(skin,1.02)}"/><stop offset="1" stop-color="${shade(skin,.93)}"/></linearGradient>
     ${grad('h', hairC)}${grad('f', frontC)}
     <linearGradient id="${u}w" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d8d0e8"/></linearGradient>
@@ -1607,6 +1607,13 @@ function avatar(o0, view='full', pose='', lite=false){
       + part('tl', `translate(0 ${D}) rotate(75 88 232)`) + part('tr', `translate(0 ${D}) rotate(-75 112 232)`)
       + part('hr', `translate(177.7 ${249.6 + D}) rotate(78) translate(-112 -300)`) + part('hl', `translate(22.3 ${249.6 + D}) rotate(-78) translate(-88 -300)`)
       + part('su', `translate(0 ${D})`);
+  }
+  if (pose === 'liegen') { // Liegen: ein Bein bleibt gestreckt, das andere wird angewinkelt (Knie nach oben)
+    const OPEN = `<g transform="${PZ[2]}">`, i = s.indexOf(OPEN), C = s.slice(i + OPEN.length);
+    const cp = (k, r) => `<clipPath id="${u}${k}">${r.map(([x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`).join('')}</clipPath>`;
+    const part = (k, tf) => `<g transform="${tf}"><g clip-path="url(#${u}${k})">${C}</g></g>`;
+    s = s.slice(0, i) + OPEN + `<defs>${cp('lu', [[-50, -50, 300, 282], [-50, 232, 110, 40], [140, 232, 110, 40], [78, 230, 44, 22]])}${cp('ll', [[-50, 272, 150, 300], [60, 232, 40, 40]])}${cp('lt', [[100, 232, 40, 68]])}${cp('lh', [[100, 300, 150, 200], [140, 272, 110, 28]])}</defs>`
+      + part('ll', '') + part('lh', 'translate(160.1 280.1) rotate(45) translate(-112 -300)') + part('lt', 'rotate(-45 112 232)') + part('lu', '');
   }
   return s + `</g></g></svg>`;
 }
