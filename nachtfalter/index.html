@@ -125,6 +125,7 @@ label.f{display:grid;gap:4px}
 .caption{margin:0;white-space:pre-wrap;word-break:break-word}
 .photo{width:100%;display:block;border:1px solid var(--line-soft);aspect-ratio:4/5;object-fit:cover;background:#0b0b0d}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
+.shared{border:1px solid var(--line-soft);padding:12px;display:grid;gap:10px;background:#ffffff06}.sh-h{display:flex;gap:10px;align-items:center}.sh-h>span{display:grid;min-width:0}.sh-ico{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.pshare{display:inline-flex;gap:6px;align-items:center}.pshare svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdel{margin-left:auto;align-self:start}.ph>div{min-width:0;flex:1}.ph .pdel{flex-wrap:nowrap;white-space:nowrap;gap:14px;flex:none}.pi .cmt .lnk{font-size:12px}
 .vid{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:12px;color:var(--fg);text-decoration:none;word-break:break-all;background:repeating-linear-gradient(90deg,transparent 0 14px,#ffffff08 14px 16px)}
 .vid:hover{border-color:var(--fg)}
@@ -218,7 +219,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .pabout{margin:-4px 0 16px;white-space:pre-wrap;font:italic 17px/1.45 var(--f-ital);color:var(--p-fg)}
 .pmeta dt{font:400 13px/1.9 var(--f-display);letter-spacing:.09em;color:var(--p-muted)}
 .pmeta dd{margin:0}
-.pz{display:flex;flex-wrap:wrap;gap:16px}
+.ritem.av.away{visibility:hidden}.pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
 .ptabs{display:flex;gap:22px;border-bottom:1px solid var(--p-line);flex-wrap:wrap}
@@ -3948,7 +3949,7 @@ const hmark = u => isSiteOwner(u) ? `<span class="hmark omark" title="Owner von 
 const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name)}</button>${hmark(u)}</span>`; };
 const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}"><div class="pic">${u.pic && !cls.includes('mirror') ? `<img src="${u.pic}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
 const cameo = u => `<span class="cameo">${avatar(u.outfit,'head')}</span>`;
-const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Film',neu:'Neuigkeit'};
+const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Film',neu:'Neuigkeit',teilen:'Geteilt'};
 
 /* ---------- Ansichten ---------- */
 function gateView(){
@@ -4139,7 +4140,7 @@ const CMH = {};
 function cbub(uid, name, text, ts, del, k){
   const u = uid === social?.uid ? me() : S.users[uid] || (PROF[uid] ? profUser(uid) : null);
   if (!u && uid && social && !CMH[uid]) { CMH[uid] = 1; loadProf(uid).then(() => k ? piDraw(k) : softRender()); }
-  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><div class="bub"><b>${esc(name)}</b><span class="btx">${etx(text)}</span><span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div></div>`;
+  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><div class="bub"><b>${esc(name)}${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b><span class="btx">${etx(text)}</span><span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div></div>`;
 }
 function piInner(p){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
@@ -4267,6 +4268,30 @@ function showHTML(hs){
 const HIDDEN = new Set(); let HIDW = false;
 function hiddenWatch(){ if (HIDW || !social) return; HIDW = true; social.db.doc('site/hidden').onSnapshot(d => { HIDDEN.clear(); (d.exists ? d.data().ids || [] : []).forEach(x => HIDDEN.add(x)); softRender(); }, () => { HIDW = false; }); }
 const isHidden = p => { const o = p.remote ? p.author : social && p.author === S.me ? social.uid : null; return !!o && HIDDEN.has(o + '_' + p.id); };
+// Beiträge von anderen teilen (reposten), wie bei Insta/Tumblr (Inaya, 2026-10-10)
+function sharedHTML(sh){
+  const u = S.users[sh.a] || (PROF[sh.a] ? profUser(sh.a) : null);
+  if (!u && sh.a && social && !CMH[sh.a]) { CMH[sh.a] = 1; loadProf(sh.a).then(softRender); }
+  let b = '';
+  if (sh.type === 'gedanke' || sh.type === 'neu') b = `<blockquote class="thought">${etx(sh.text || '')}</blockquote>`;
+  if (sh.img) b += `<img class="photo" src="${esc(sh.img)}" alt="Bild von ${esc(sh.name || '')}">`;
+  else if (sh.bigk) b += `<img class="photo" data-pimg="${esc(sh.bigk)}" alt="Bild von ${esc(sh.name || '')}">`;
+  if (sh.url) { const v = ytId(sh.url); b += v ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>` : `<a class="vid" href="${esc(sh.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>${esc(sh.url)}</span></a>`; }
+  if (sh.type !== 'gedanke' && sh.type !== 'neu' && sh.text) b += `<p class="caption">${etx(sh.text)}</p>`;
+  const mark = hmark(u || (sh.a === OWNER ? {id:sh.a, remote:true} : null));
+  return `<div class="shared"><div class="sh-h"><svg class="sh-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(sh.a)}" aria-label="${esc(sh.name || '')}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><span><span class="uname"><button class="lnk" data-act="profile" data-id="${esc(sh.a)}">${esc(u?.name || sh.name || 'Jemand')}</button>${mark}</span><span class="meta">${KIND[sh.type] || 'Beitrag'} · ${ago(sh.ts)}</span></span></div>${b}</div>`;
+}
+function sharePost(pid, aid){
+  const src = (aid === S.me ? S.posts : [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...(typeof ownerPubPosts === 'function' ? ownerPubPosts() : [])]).find(x => x.id === pid && x.author === aid);
+  if (!src) { toast('Diesen Beitrag finde ich gerade nicht.'); return; }
+  const a = profUser(src.author) || {};
+  const sh = src.share || {a:src.author, name:a.name || '', type:src.type, text:src.text || '', img:src.img && src.img.length < 40000 ? src.img : '', bigk:!src.img && src.bigimg ? postOwner(src) + '/' + src.id : '', url:src.url || '', pid:src.id, ts:src.ts};
+  if (S.posts.some(x => x.author === S.me && x.share && x.share.a === sh.a && x.share.pid === sh.pid)) { toast('Den hast du schon geteilt.'); return; }
+  const p = {id:'p' + Date.now().toString(36), author:S.me, type:'teilen', text:'', ts:Date.now(), reactions:{}, comments:[], share:sh};
+  if (amOwner && social) p.pub = 1;
+  S.posts.push(p); if (!save()) { S.posts.pop(); return; }
+  render(); toast('Geteilt. Der Beitrag steht jetzt bei dir.');
+}
 function postHTML(p){
   hiddenWatch(); if (isHidden(p)) return '';
   const a = profUser(p.author); if (!a) return '';
@@ -4276,15 +4301,17 @@ function postHTML(p){
   else if (p.bigimg) body += `<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`;
   if (p.url) { const v = ytId(p.url); body += v ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>`
     : `<a class="vid" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>${esc(p.url)}</span></a>`; }
+  if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
-  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body += `<p class="caption"><b>${esc(a.name)}</b>${etx(p.text)}</p>`;
+  if (p.type !== 'gedanke' && p.type !== 'neu' && p.type !== 'teilen' && p.text) body += `<p class="caption"><b>${esc(a.name)}</b>${etx(p.text)}</p>`;
+  if (p.type === 'teilen' && p.text) body = `<p class="caption">${etx(p.text)}</p>` + body;
   const reacts = REACTIONS.map(r => {
     const who = p.reactions[r] || [], on = who.includes(S.me);
     return `<button data-act="react" data-id="${p.id}" data-r="${r}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${who.length || ''}</button>`;
   }).join('');
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   return `<article class="post">
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && amOwner && social ? (p.pub ? ' · für alle' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : ''}</header>
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && amOwner && social ? (p.pub ? ' · für alle' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : `<span class="pdel row"><button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
@@ -4335,9 +4362,33 @@ function musicHTML(u, mine){
   // Songs nur noch als MP3-Datei (Inaya, 2026-10-10): hochladen unter „Profil bearbeiten“
   return `<div class="music">${vid ? `<button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button> <button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : `<button class="btn ghost" data-act="nav" data-v="design">♪ Song hochladen (MP3)</button>`}</div>`;
 }
+// Auf jedem Profil sieht man, mit wem die Person befreundet ist, auch bei anderen (Inaya, 2026-10-10)
+const FRL = {};
+async function loadFriendsOf(uid){
+  if (!social || FRL[uid]?.busy) return;
+  FRL[uid] = {...(FRL[uid] || {}), busy:true};
+  try {
+    const [d, back] = await Promise.all([social.db.doc('friends/' + uid).get(), social.db.collection('friends').where('list', 'array-contains', uid).get()]);
+    const both = new Set(back.docs.map(x => x.id)), ids = (d.exists ? d.data().list || [] : []).filter(id => id !== uid && both.has(id)); // nur gegenseitige Freunde
+    await Promise.all(ids.filter(id => id !== social.uid && !PROF[id]).map(loadProf));
+    FRL[uid] = {ids:ids.filter(id => id === social.uid || (PROF[id] && !isTestHandle(PROF[id].handle))), ts:Date.now()};
+  } catch { FRL[uid] = {ids:[], ts:Date.now()}; }
+  softRender();
+}
+function profFriends(u, others){
+  if (u.helper) return '';
+  let list;
+  if (!u.remote) list = others;
+  else {
+    const c = FRL[u.id]; if (!c || (!c.busy && Date.now() - c.ts > 120000)) loadFriendsOf(u.id);
+    list = c?.ids ? c.ids.map(id => id === social?.uid ? me() : profUser(id)).filter(Boolean) : null;
+  }
+  const n = list ? list.filter(f => !f.helper).length : 0;
+  return `<div class="pfr"><h3 class="lbl">Freunde${n ? ` <span class="muted">${n}</span>` : ''}</h3>${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}</div>`;
+}
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
-  const circle = u.remote ? (PROF[u.id]?.friends ?? '–') : u.id !== S.me ? '–' : friendCount();
+  const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.id !== S.me ? '–' : friendCount();
   return `<header class="phead">
     <div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${portrait(u, t)}
       ${mine ? `<div class="row ppic"><label class="btn ghost filebtn">📷 Profilbild ${u.pic ? 'ändern' : 'hochladen'}<input type="file" accept="image/*" id="pp-file"></label>${u.pic ? '<button class="lnk" data-act="pp-clear">Avatar statt Foto</button>' : ''}</div>` : ''}</div>
@@ -4357,6 +4408,7 @@ function profileHead(u, t, mine){
 function tileHTML(p){
   let b = '';
   if (p.type === 'gedanke' || p.type === 'neu') b = `<blockquote class="thought">${etx(p.text)}</blockquote>`;
+  if (p.share) b += `<p class="meta">Geteilt von ${esc(p.share.name || 'jemandem')}</p>` + (p.share.text ? `<blockquote class="thought">${etx(p.share.text)}</blockquote>` : '') + (p.share.img ? `<img src="${esc(p.share.img)}" alt="Bild">` : '');
   if (p.img) b += `<img src="${esc(p.img)}" alt="Bild">`;
   else if (p.bigimg) b += `<img data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild">`;
   if (p.url) b += `<a class="vid p" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Film ansehen</span></a>`;
@@ -4441,7 +4493,7 @@ function profileView(id){
     ${(own || (u.looks || []).length) ? `<div class="row lbrow">${lookBtn(u)}</div>` : ''}${LB === u.id ? lookModal(u, own) : ''}
     ${profileHead(u, u.theme, mine)}
     ${steckHTML}
-    <div class="pz">${others.map(f => `<div class="m">${cameo(f)}${ulink(f.id)}</div>`).join('')}</div>
+    ${profFriends(u, others)}
     <div class="ptabs" role="tablist">${tabs.map(([k,l]) =>
       `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}">${l}</button>`).join('')}</div>
     <div class="ppanel">${panel}</div>${(PROF_WALL = wallP, '')}
@@ -4646,7 +4698,7 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me).sort((a,b) => b.ts - a.ts).slice(0, 15)
-      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img}));
+      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null}));
     let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
@@ -4655,7 +4707,7 @@ function publishProfile(){
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', games2:u.games2 || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
-    if (big()) doc.posts = posts.map(p => ({...p, img:''}));
+    if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
     if (big() && doc.banner) doc.banner = {...doc.banner, img:null};
     if (big()) doc.pic = null;
@@ -4909,7 +4961,7 @@ function mediaHTML(c){
 function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
-  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry"><b>${esc(chatWho(c.from))}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
+  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry"><b>${esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
     : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
 function bubbleHTML(m, group){
@@ -4968,7 +5020,7 @@ async function roomSync(){
     if (others.length >= ROOM_MAX) { g.leave().catch(() => {}); RM.g = null; RM.peers = []; RM.full = true; paintRoom(); }
   }, 1800);
   RM.unsub = social.db.collection('chats/zimmer_' + owner + '/m').orderBy('ts', 'desc').limit(100).onSnapshot(snap => {
-    RM.msgs = snap.docs.map(d => d.data()).reverse(); drawRoomMsgs();
+    RM.msgs = snap.docs.map(d => d.data()).reverse(); drawRoomMsgs(); paintRoom();
   }, () => {});
 }
 function roomPos(id, i){ // Position und Pose einer Person im Zimmer
@@ -4986,7 +5038,9 @@ function visitorsHTML(owner){
 }
 // Nur ändern, was sich bewegt hat: so laufen die Avatare sichtbar an ihren neuen Platz
 function paintVisitors(v, owner){
-  const want = visitorsData(owner), have = new Map([...v.children].map(el => [el.dataset.uid, el]));
+  // Raumchat zu: jeder ist allein im Zimmer, der Gastgeber steht nur bei offenem Raumchat drin (Inaya, 2026-10-10)
+  const open = roomStart() != null, own = owner === social?.uid;
+  const want = visitorsData(owner).filter(w => open || (!own && w.id === social?.uid)), have = new Map([...v.children].map(el => [el.dataset.uid, el]));
   want.forEach(w => {
     let el = have.get(w.id);
     if (!el || el.dataset.sig !== w.pose) { const t = document.createElement('div'); t.innerHTML = `<div class="ritem av vis mv-${poseMove(w.pose)}" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="left:${(el ? el.style.left : w.x + '%')};top:${(el ? el.style.top : w.y + '%')}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`; const n = t.firstElementChild; if (el) el.replaceWith(n); else v.appendChild(n); el = n; void el.offsetWidth; }
@@ -4996,6 +5050,7 @@ function paintVisitors(v, owner){
   // Gastgeber: Platz und Pose aus dem Zimmer (live, wenn er da ist)
   const host = v.closest('.room')?.querySelector('[data-rav]');
   if (host) {
+    host.classList.toggle('away', !own && !open);
     const p = owner === social?.uid ? RM.me : RM.peers.includes(owner) ? RM.pres[owner] : null;
     if (p && typeof p.x === 'number') { host.style.left = p.x + '%'; host.style.top = p.y + '%'; host.style.zIndex = 10 + Math.round(p.y + 45); }
     const pose = p?.pose || '', o = owner === social?.uid ? me().outfit : (S.users[owner] || PROF[owner])?.outfit;
@@ -5022,6 +5077,7 @@ function roomCountText(){
   if (RM.full) return 'Das Zimmer ist gerade voll (6 von 6). Versuch es später nochmal.';
   if (RM.err) return RM.err;
   if (!RM.g) return 'Zimmer wird geöffnet …';
+  if (roomStart() == null) return 'Der Raumchat ist zu, darum bist du gerade allein im Zimmer.';
   const n = RM.peers.length;
   return `${n} von ${ROOM_MAX} im Zimmer` + (n > 1 ? ': ' + RM.peers.map(id => id === social?.uid ? 'du' : PROF[id]?.name || 'jemand').map(esc).join(', ') : '');
 }
@@ -5605,6 +5661,7 @@ document.addEventListener('click', async e => {
     if (!(await askYesNo('Diesen Beitrag für alle löschen?', 'Ja, löschen', 'Nein'))) return;
     try { await social.db.doc('site/hidden').set({ids:[...new Set([...HIDDEN, key])]}); HIDDEN.add(key); render(); toast('Beitrag gelöscht'); } catch { toast('Das hat nicht geklappt.'); }
   }
+  else if (a === 'post-share') { sharePost(id, b.dataset.a); }
   else if (a === 'post-del') { postDelAsk = b.dataset.id; postEdit = null; render(); }
   else if (a === 'post-edit') { postEdit = b.dataset.id; postDelAsk = null; render(); document.getElementById('pe-' + postEdit)?.focus(); }
   else if (a === 'post-edit-no') { postEdit = null; render(); }
