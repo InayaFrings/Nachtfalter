@@ -993,9 +993,7 @@ ITEMS.push(
   {id:'mary',cat:'shoes',name:'Mary Janes',price:70,shop:1,g:'w'},
   {id:'teddy',cat:'acc',name:'Gruselteddy',price:90,shop:1},
   {id:'batwings',cat:'acc',name:'Fledermausflügel',price:150,shop:1},
-  {id:'p_snakering',cat:'jewel',sub:'pierc',name:'Snakebites (Ringe)',c:'#d8d8de'},
   {id:'p_nase',cat:'jewel',sub:'pierc',name:'Nostril',c:'#d8d8de'},
-  {id:'p_nasenring',cat:'jewel',sub:'pierc',name:'Nostril-Ring',c:'#d8d8de'},
   {id:'p_septum',cat:'jewel',sub:'pierc',name:'Septum',c:'#d8d8de'},
   {id:'p_bridge',cat:'jewel',sub:'pierc',name:'Bridge',c:'#d8d8de'},
   {id:'p_braue',cat:'jewel',sub:'pierc',name:'Eyebrow',c:'#d8d8de'},
@@ -1255,6 +1253,7 @@ function normOutfit(o){
   if (!o.body || o.body === 'a') o.body = 'w'; // „Androgyn“ gibt es nicht mehr (Inaya)
   if (o.face === 'lippen') { o.face = 'liner'; if (!o.lipC) o.lipC = '#3a0a18'; }
   if (!o.jewel || Array.isArray(o.jewel)) o.jewel = {};
+  delete o.jewel.p_snakering; delete o.jewel.p_nasenring; // aus dem Sortiment genommen (Inaya, 2026-10-10)
   if (['kopfhoerer','zylinder','hut','halo'].includes(o.acc)) { o.hacc[o.acc] = o.accC || HACC_C[o.acc]; o.acc = 'none'; delete o.accC; }
   if (o.acc === 'halsband') { o.jewel.halsband = o.accC || HACC_C.halsband; o.acc = 'none'; delete o.accC; }
   if (!o.acc || typeof o.acc === 'string') { const a = {}; if (o.acc && o.acc !== 'none') a[o.acc] = o.accC || 'auto'; o.acc = a; delete o.accC; } // Accessoires sind jetzt mehrfach tragbar
