@@ -110,6 +110,11 @@ label.f{display:grid;gap:4px}
 .feed.insta .post>*{margin-inline:18px;min-width:0}
 .feed.insta .post>.ph{padding-top:14px}
 .feed.insta .post>.photo,.feed.insta .post>.vframe{margin-inline:0;width:100%;border-left:0;border-right:0}
+.post.tp,.feed.insta .post.tp,.feed.insta .post.tp:first-child{background:linear-gradient(var(--p-bg),var(--p-bg)) padding-box,var(--pp-pat) border-box border-box,var(--p-bg);border:12px solid transparent;border-radius:10px;color:var(--p-fg);box-shadow:0 0 0 1px var(--p-line)}
+.post.tp .meta,.post.tp .muted{color:var(--p-muted)}.post.tp .lnk,.post.tp .who a,.post.tp .who button{color:var(--p-fg)}.post.tp .thought{border-left-color:var(--p-line)}
+.post.tp .reacts button{color:var(--p-fg);border-color:var(--p-line);background:transparent}.post.tp .reacts button[aria-pressed="true"]{border-color:var(--p-fg);background:color-mix(in srgb,var(--p-fg) 12%,transparent)}
+.post.tp .cform input{background:var(--p-panel);color:var(--p-fg);border-color:var(--p-line)}.post.tp .cform input::placeholder{color:var(--p-muted)}.post.tp .btn.ghost{color:var(--p-fg);border-color:var(--p-line);background:transparent}.post.tp .btn:not(.ghost){background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}
+.post.tp .vid{color:var(--p-fg);border-color:var(--p-line)}.post.tp .vid .play,.post.tp .aplay{border-color:var(--p-fg)}.post.tp .aplay{background:var(--p-fg);color:var(--p-bg)}.post.tp .plink b{color:var(--p-muted)}.post.tp .bub{background:var(--p-panel);border-color:var(--p-line);color:var(--p-fg)}.post.tp .bub:before{border-color:var(--p-line)}
 .newgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:#000}
 .ncell{aspect-ratio:1/1;background:radial-gradient(circle at 50% 40%,#ffffff1f,transparent 70%),#0e0e10;min-width:0;overflow:hidden}.ncell svg{width:100%;height:100%;display:block}
 .ncell.fcell{display:grid;place-items:center;padding:14%}.ncell.fcell svg{width:auto;height:auto;max-width:100%;max-height:100%}
@@ -2333,9 +2338,10 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (ITOP[o.top]) body += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif);
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
   body += belts;
+  const JK = Object.keys(J).sort((a, b) => /^(st|h)_/.test(b) - /^(st|h)_/.test(a)); // Armstulpen und Handschuhe zuerst, Armbänder darüber, die Jacke liegt über beidem (Inaya, 2026-10-10)
+  for (const k of JK) if (IARMB[k]) { X.cur = k; body += IARMB[k](X, J[k]); }
   if (IJACK[o.jacket]) body += IJACK[o.jacket](XL, o.jacketC || IJACKC[o.jacket] || '#141218');
-  const JK = Object.keys(J).sort((a, b) => /^(st|h)_/.test(b) - /^(st|h)_/.test(a)); // Armstulpen und Handschuhe zuerst, Armbänder liegen darüber (Inaya, 2026-10-10)
-  for (const k of JK) { if (INECK[k]) body += INECK[k](X, J[k]); if (IARMB[k]) { X.cur = k; body += IARMB[k](X, J[k]); } if (IRINGS[k]) { X.cur = k; body += IRINGS[k](X, J[k]); } }
+  for (const k of JK) { if (INECK[k]) body += INECK[k](X, J[k]); if (IRINGS[k]) { X.cur = k; body += IRINGS[k](X, J[k]); } }
   // Gegenstände in der Hand (Tasche, Kuscheltier, Schirm …) gehören zur Hand: bei Posen drehen sie ganz mit dem Arm mit und werden nicht zerschnitten (Inaya)
   const held = ['', ''];
   for (const k of Object.keys(o.acc || {})) if (IACC_FRONT[k] && k !== 'kette') held[/B\.hl\b/.test(String(IACC_FRONT[k])) ? 0 : 1] += IACC_FRONT[k](X, AC(k));
@@ -4422,6 +4428,8 @@ function sharePost(pid, aid){
   S.posts.push(p); if (!save()) { S.posts.pop(); return; }
   render(); toast('Geteilt. Der Beitrag steht jetzt bei dir.');
 }
+// Beiträge tragen den Kasten vom Profil: Muster nur als Rahmen außen, die Fläche mit der Schrift ist einfarbig, Schrift automatisch hell/dunkel (Inaya, 2026-10-10)
+function postTheme(t){ const box = t.box || '#0e0e10'; return themeStyle(t) + `;--pp-pat:${patternURL(t.pattern, isLight(box) ? 'tag' : 'nacht', .28)}`; }
 function postHTML(p){
   hiddenWatch(); if (isHidden(p)) return '';
   const a = profUser(p.author); if (!a) return '';
@@ -4441,7 +4449,8 @@ function postHTML(p){
     return `<button data-act="react" data-id="${p.id}" data-r="${r}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${who.length || ''}</button>`;
   }).join('');
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
-  return `<article class="post">
+  const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
+  return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
     <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && amOwner && social ? (p.pub ? ' · für alle' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : `<span class="pdel row"><button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
