@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='476fbe433c6f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='88c7a1d860f1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -571,6 +571,10 @@ footer.foot .lnk{color:var(--muted)}
 .ch-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--p-line);padding-bottom:8px}
 .ch-head > div{display:grid}.ch-name{font-size:22px}.ch-h{margin:0 0 8px;font:400 20px var(--f-display)}
 .msgs{min-height:240px;max-height:52vh}
+/* Offener Chat immer gleich groß wie bei WhatsApp: Kopf oben, Nachrichten scrollen innen, Schreibfeld unten (Inaya, 2026-10-10) */
+.chatmain>.chatpanel{height:clamp(420px,calc(100dvh - 240px),680px);grid-template-rows:auto minmax(0,1fr) auto;align-content:stretch}
+.chatmain>.chatpanel>.chat{max-height:none;min-height:0;height:100%;margin-bottom:0;overscroll-behavior:contain}
+.chatmain>.chatpanel>.cform{margin:0}
 .bubble .who{display:block;font:italic 13px var(--f-ital);opacity:.75}.bubble .meta{display:block;font-size:11px;opacity:.6;margin-top:3px}
 .bubble .inv{display:block;margin-top:6px;width:100%}
 .gform{display:grid;gap:12px}.setf{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:16px;margin-top:6px}
@@ -651,6 +655,7 @@ footer.foot .lnk{color:var(--muted)}
   .chatwrap.open .chatside{display:none}
   .mback{display:inline-flex;margin-bottom:10px}
   .chat.msgs{max-height:58vh}
+  .chatmain>.chatpanel{height:calc(100dvh - 285px - env(safe-area-inset-bottom,0px));min-height:360px}
 }
 
 .rhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-right:14px}
