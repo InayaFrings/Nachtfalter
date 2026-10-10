@@ -4148,11 +4148,12 @@ function loadPimgs(){
 }
 const PIMG_UP = new Set();
 // Neuigkeiten von Andy und Juliet mit Bild der neuen Sachen (Garderobe bzw. Schlafzimmer)
+const NEWS_MODEL = {...DEFAULT_OUTFIT, body:'w', back:'lang', front:'p_gerade', hairC:'#1c1b20', eyeform:'e_katze', face:'liner', top:'band', jacket:'j_kein', bottom:'jeans', shoes:'springer', hacc:{}, acc:{}, jewel:{}, legw:{}};
 function showHTML(hs){
   const btn = ([l, a, v]) => `<button class="btn ghost nlink" data-act="${a}" ${a === 'profile' ? 'data-id' : 'data-v'}="${v}">${l}</button>`;
   let grid = '', b = hs.btn;
-  if (hs.wear) { // die neuen Teile am eigenen Avatar (Inayas Wunsch); Schmuck und Gesicht ohne Haare
-    const base = me()?.outfit || DEFAULT_OUTFIT;
+  if (hs.wear) { // feste Vorführ-Figur: die Bilder bleiben gleich, egal welchen Look man selbst trägt (Inaya, 2026-10-10); Schmuck und Gesicht ohne Haare
+    const base = NEWS_MODEL;
     const list = hs.wear.map(x => { const [main, ...ex] = x.split('|'), [c, id] = main.split(':'), i = ITEMS.find(i => i.id === id && i.cat === c), o = {...base, ...(i && ['jewel','face','eyeform','lips','beard'].includes(i.cat) ? {back:'h_kein', front:'p_kein'} : {})}; /* Schmuck und Gesicht ohne Haare (Inaya) */ ex.forEach(e => { const [k, v] = e.split('='); o[k] = v; }); return i && {i, o}; }).filter(Boolean).slice(0, 9);
     grid = list.map(({i, o}) => `<div class="ncell" title="${esc(i.name)}">${avatar(previewOutfit(o, i), i.cat === 'front' || i.cat === 'back' ? 'bust' : i.cat === 'acc' ? 'bottom' : thumbView(i), '', true)}</div>`).join(''); b = b || ['Zur Garderobe', 'nav', 'wardrobe'];
   }
