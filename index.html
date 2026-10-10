@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2eb5bce038f4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3cdaf1edc337';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -786,6 +786,16 @@ footer.foot .lnk{color:var(--muted)}
   .wardrobe .mirror-card{padding-top:14px}
 }
 
+.sidebar{display:grid;gap:10px;margin:0 0 14px;padding:12px 14px;background:var(--paper-2);border:1px solid var(--line-soft)}
+.sidebar .lbl{margin:0}
+.siderow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.siderow .sname{font:italic 17px/1.2 var(--f-ital);color:var(--fg);min-width:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:0 0 auto}
+.seg button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;min-width:88px;padding:0 14px;border:0;border-left:1px solid var(--line);background:transparent;color:var(--fg);font:400 15px var(--f-display);letter-spacing:.02em;cursor:pointer;transition:background .15s,color .15s}
+.seg button:first-child{border-left:0}
+.seg button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--ink)}
+@media (max-width:760px){.siderow{flex-direction:column;align-items:stretch;gap:8px}.seg{display:flex}.seg button{flex:1;min-width:0;min-height:46px;font-size:16px}}
 </style>
 
 <div id="app"></div>
@@ -1089,7 +1099,7 @@ const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !
 // Teile, die man ganz ausziehen kann: nochmal antippen = aus (wie bei Momio)
 const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', face:'natur', back:'h_kein'};
 // „Komplett ausziehen“: Kleidung, Schuhe, Accessoires, Kopfbedeckung, Strümpfe und Schmuck aus; Körper, Haare und Gesicht bleiben
-function undressAll(o){ Object.assign(o, {top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
+function undressAll(o){ Object.assign(o, {back:'h_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
 function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; }
 
 /* ---------- Avatar ---------- */
@@ -2115,13 +2125,22 @@ function colorPanel(cat, o, act){
 }
 const sideMini = (i, o, act) => i && i.cat === 'jewel' && !i.none && (i.sub === 'arm' || i.sub === 'ring') && isOn(o, i) ? `<div class="sidemini" role="group" aria-label="Seite für ${esc(i.name)}">${[['l','Links'],['r','Rechts'],['b','Beide']].map(([v, l]) =>
   `<button type="button" data-act="${act}" data-k="jside.${i.id}" data-v="${v}" aria-pressed="${((o.jside || {})[i.id] || 'b') === v}">${l}</button>`).join('')}</div>` : '';
+// Links/Rechts/Beide: eigene, luftige Leiste über den Armbändern/Ringen (Inaya: in den Karten war es gequetscht)
+const SIDE_IC = {l:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>', r:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>', b:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg>'};
+function sideBar(cat, o, act){
+  if (cat !== 'jewel' || (jewelSub !== 'arm' && jewelSub !== 'ring')) return '';
+  const worn = Object.keys(asObj(o.jewel)).map(item).filter(i => i && !i.none && i.sub === jewelSub);
+  if (!worn.length) return '';
+  return `<div class="sidebar"><p class="lbl">${jewelSub === 'ring' ? 'An welcher Hand?' : 'An welchem Arm?'}</p>${worn.map(i => `<div class="siderow"><span class="sname">${esc(i.name)}</span><div class="seg" role="group" aria-label="Seite für ${esc(i.name)}">${[['l','Links'],['r','Rechts'],['b','Beide']].map(([v, l]) =>
+    `<button type="button" data-act="${act}" data-k="jside.${i.id}" data-v="${v}" aria-pressed="${((o.jside || {})[i.id] || 'b') === v}">${SIDE_IC[v]}<span>${l}</span></button>`).join('')}</div></div>`).join('')}</div>`;
+}
 const sideChips = (i, o, act) => i && i.cat === 'jewel' && (i.sub === 'arm' || i.sub === 'ring') ? `<fieldset class="opt"><legend class="lbl">Tragen: ${esc(i.name)}</legend><div class="chips">${[['l','Links'],['r','Rechts'],['b','Beide Seiten']].map(([v, l]) =>
   `<button type="button" data-act="${act}" data-k="jside.${i.id}" data-v="${v}" aria-pressed="${((o.jside || {})[i.id] || 'b') === v}">${l}</button>`).join('')}</div></fieldset>` : '';
 let colItem = null; // Farbauswahl direkt am Teil: welches Teil gerade aufgeklappt ist
 function itemColorPanel(i, o, act){
   const cat = i.cat;
   if (MULTI.includes(cat)) { const pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC, k = cat + '.' + i.id, cur = asObj(o[cat])[i.id];
-    return withPick(swatches(k, 'Farbe: ' + i.name, pal, cur, act), k, cur, act) + (cur ? sideChips(i, o, act) : ''); }
+    return withPick(swatches(k, 'Farbe: ' + i.name, pal, cur, act), k, cur, act); }
   const c = COLOR_KEYS[cat]; if (!c) return '';
   const motif = cat === 'top' ? withPick(swatches('motifC', 'Motivfarbe (Aufdruck, Streifen, Krawatte)', [[null,'Automatisch'], ...CLOTHC.slice(1)], o.motifC ?? null, act), 'motifC', o.motifC, act) : '';
   return withPick(swatches(c[0], c[1], c[2], o[c[0]] ?? c[3], act), c[0], o[c[0]] ?? c[3], act) + motif;
@@ -2251,7 +2270,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
     const t = previewOutfit(o, i), [dot, pan] = itemColUI(i, o, 'ob-color');
     return `<div class="item ${on ? 'on' : ''}">${dot}
       <button type="button" class="thumb" data-act="ob-item" data-id="${i.id}" aria-label="${esc(i.name)} anziehen">${avatar(t, thumbView(i), '', true)}</button>
-      ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}${sideMini(i, o, 'ob-color')}
+      ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}
       ${on && !off ? '<button class="btn ghost" disabled>Angezogen</button>' : `<button type="button" class="btn ghost" data-act="ob-item" data-id="${i.id}">${off ? (MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen') : 'Anziehen'}</button>`}</div>${pan}`;
   }).join('');
   return `<div class="obwear">
@@ -2263,7 +2282,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
       <div class="card"><h2 class="card-h">Garderobe</h2><div class="card-in">
         <div class="ctabs">${catTabs(obCat, 'ob-cat', true, o)}</div>
         ${obCat === 'body' ? colorPanel(obCat, o, 'ob-color') : ''}
-        ${items ? `<div class="shopgrid">${items}</div>` : ''}
+        ${sideBar(obCat, o, 'ob-color')}${items ? `<div class="shopgrid">${items}</div>` : ''}
       </div></div>
     </div>
     <div class="card obfoot"><div class="row"><button class="btn ghost" data-act="ob-back" data-v="name">Zurück</button><span class="sp"></span><button class="btn" data-act="ob-next">Weiter zu deiner Seite</button></div></div>
@@ -3318,7 +3337,7 @@ function shopView(isShop){
     const t = previewOutfit(u.outfit, i), [dot, pan] = isShop ? ['', ''] : itemColUI(i, u.outfit, 'color');
     return `<div class="item ${on?'on':''}">${dot}
       <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i), '', true)}</button>
-      ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}${sideMini(i, u.outfit, 'color')}
+      ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}
       ${btn}</div>${pan}`;
   }).join('');
   const empty = shopCat === 'body' ? '' : isShop ? `<p class="note">In dieser Abteilung hast du schon alles. Schau in deine <button class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button> oder in eine andere Abteilung.</p>` : '';
@@ -3332,7 +3351,7 @@ function shopView(isShop){
       ${isShop ? '' : `<div class="row lookbar"><button type="button" class="lbbtn" data-act="lb-open" data-id="${u.id}" title="Lookbuch" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="btn ghost" data-act="look-save">✦ Look speichern</button><button type="button" class="btn ghost" data-act="undress">Komplett ausziehen</button></div>`}
       <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit)}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
-      ${items ? `<div class="shopgrid">${items}</div>` : empty}
+      ${isShop ? '' : sideBar(shopCat, u.outfit, 'color')}${items ? `<div class="shopgrid">${items}</div>` : empty}
       ${!isShop && LB === u.id ? lookModal(u, true) : ''}
     </div></div>
   </div>`;
