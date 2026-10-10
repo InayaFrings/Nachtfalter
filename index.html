@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='71b71c635fb7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1c26a29787d5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -4181,8 +4181,7 @@ function friendPanel(nNew){
       ;
   } else {
     const res = FR.results == null ? '' : FR.results.length ? FR.results.map(id => { const p = PROF[id] || {}; const u = S.users[id] || remoteUser(id, p); return fpRow(u, '@' + esc(u.handle) + (isFriend(id) ? ' · befreundet' : '')); }).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
-    body = social ? `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${res}<div class="invbox fpinv">${inviteHTML()}</div>`
-      : '<p class="note">Suchen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>';
+    body = `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${res}<div class="invbox fpinv">${inviteHTML()}</div>`;
   }
   return `<button class="fpbtn ${fpOpen ? 'on' : ''}" data-act="fp-toggle" aria-expanded="${fpOpen}" aria-label="Freunde und Freunde finden"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.friends}</svg>${badge ? `<i class="dot" aria-label="${badge} neu"></i>` : ''}</button>
   ${fpOpen ? `<div class="fpback" data-act="fp-toggle"></div><aside class="fpanel" aria-label="Freunde">
@@ -4731,7 +4730,9 @@ function publishProfile(){
 }
 async function searchPeople(q){
   q = normHandle(q); FR.q = q;
-  if (!social || q.length < 2) { FR.results = q.length ? [] : null; return; }
+  if (!social && typeof socialStart === 'function') socialStart(); // Suche soll auch gehen, wenn die Verbindung gerade erst kommt
+  if (!social) { FR.results = null; toast('Die Verbindung wird noch aufgebaut. Versuch es gleich noch mal.'); return; }
+  if (q.length < 2) { FR.results = q.length ? [] : null; return; }
   let docs = [];
   try { docs = (await social.db.collection('profiles').where('handle', '>=', q).where('handle', '<=', q + '').limit(12).get()).docs; }
   catch { try { docs = (await social.db.collection('profiles').where('handle', '==', q).limit(5).get()).docs; } catch {} }
@@ -5373,10 +5374,9 @@ function findView(){
   if (social && amOwner && !FR.newbies) loadNewbies();
   const results = FR.results == null ? '' : FR.results.length ? FR.results.map(personRow).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
   return `<div class="card"><h2 class="card-h">Freunde finden</h2><div class="card-in">
-    ${social ? `<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
+    ${`<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
       <div class="plist">${results}</div>
-      ${amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`
-      : '<p class="note">Freunde suchen und hinzufügen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
+      ${amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`}
     <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invbox">${inviteHTML()}</div></fieldset>
   </div></div>`;
 }
