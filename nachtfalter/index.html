@@ -2774,7 +2774,7 @@ function gateView(){
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
   </div></div>`;
   return `<div class="gate"><div class="card gate-card">${head}
-    <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Ein Ort nur für den Zirkel.</p>
+    <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Ein Ort für Freunde.</p>
     <div class="choice">
       <button class="btn" data-act="gmode" data-v="login">Ich habe schon ein Konto</button>
       <button class="btn ghost" data-act="gmode" data-v="invite">Konto erstellen mit Einladungslink</button>
@@ -2786,7 +2786,7 @@ function rail(){
   const tabs = [['home','Salon'],['profile','Mein Profil'],['room','Mein Zimmer'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? ' <i class="dot" aria-label="neue Anfrage"></i>' : '')],['find','Freunde finden'],['chats','Chats' + (nNew ? ` <i class="dot" aria-label="${nNew} neu"></i>` : '')],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen']];
   const cur = V.name === 'design' ? 'profile' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
-    ${logoSVG()}<p class="logo">Nachtfalter<small>ein Ort nur für den Zirkel</small></p>
+    ${logoSVG()}<p class="logo">Nachtfalter<small>ein Ort für Freunde</small></p>
     ${mobTop(nNew)}
     <nav aria-label="Hauptnavigation"><ul>
       ${tabs.map(([k,l]) => `<li><button class="nl" data-act="nav" data-v="${k}" ${cur===k?'aria-current="page"':''}>${l}</button></li>`).join('')}
