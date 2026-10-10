@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9d182faf4839';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2783eb3af632';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1524,20 +1524,29 @@ const IPONY = {
   p_mitte:IPO + 'L292 232L272 236Q270 150 240 104Q206 82 176 78L172 84L168 78Q138 82 104 104Q74 150 72 236L52 232Z',
   p_zerzaust:IPO + 'L282 150L272 128L262 152L250 116L238 146L222 112L208 150L194 108L178 152L162 110L148 150L134 112L120 146L106 116L94 152L82 126L66 150Z',
 };
+// Dreadlocks und Cornrows bedecken den ganzen Oberkopf (Inaya, 2026-10-10): Struktur über die ganze Kopfhaube, auf ICAP zugeschnitten
+function iCrown(kind, X, C){
+  const dk = shade(C, isLight(C) ? .62 : .45), lt = shade(C, isLight(C) ? 1.08 : 1.9), id = X.u + 'cr' + kind;
+  const hy = x => f1(62 + Math.pow((x - 172) / 112, 2) * 122); // Haaransatz an der Stelle x
+  let d = '', g = '';
+  if (kind === 'corn') {
+    for (let i = 0; i < 11; i++) { const x = 52 + i * 24; d += `M${x} ${hy(x) + 6}Q${f1(x + (x - 172) * .22)} ${f1(hy(x) * .45)} ${f1(172 + (x - 172) * .42)} -34`; }
+    g = X.LN(d, IOL, 17) + X.LN(d, C, 13) + X.LN(d, dk, 9, .85).replace('stroke-linecap="round"', 'stroke-dasharray="5 4" stroke-linecap="round"') + X.LN(d, lt, 2, .25);
+  } else {
+    for (let i = 0; i < 10; i++) { const x = 50 + i * 27; d = `M${x} ${hy(x) + 10}Q${f1(x + (x - 172) * .25)} ${f1(hy(x) * .45)} ${f1(172 + (x - 172) * .4)} -36`;
+      g += X.LN(d, IOL, 27) + X.LN(d, C, 21) + X.LN(d, dk, 12, .7).replace('stroke-linecap="round"', 'stroke-dasharray="6 9" stroke-linecap="round"') + X.LN(d, lt, 2.5, .18); }
+  }
+  return `<clipPath id="${id}"><path d="${ICAP}"/></clipPath><path d="${ICAP}" fill="${dk}"/><g clip-path="url(#${id})">${g}</g><path d="${ICAP}" fill="none" ${IO}/>`;
+}
 // Eigene Vorderkopfteile für Dreadlocks und Cornrows (Inaya, 2026-10-10)
 const ISPECP = {p_dread:1, p_corn:1};
 function iSpecPony(k, X, FC, ff){
   const dk = shade(FC, isLight(FC) ? .62 : .45), lt = shade(FC, isLight(FC) ? 1.08 : 1.9), cap = `<path d="${ICAP}" fill="${ff}"/>`;
-  if (k === 'p_corn') {
-    let d = ''; for (let i = 0; i < 7; i++) { const x = 97 + i * 25, y0 = f1(64 + Math.abs(x - 172) * .42); d += `M${x} ${y0}Q${f1(x + (x - 172) * .3)} 20 ${f1(172 + (x - 172) * .5)} -24`; }
-    const dash = w => `stroke-dasharray="${w} ${w * .8}" stroke-linecap="round"`;
-    return cap + X.LN(d, IOL, 15) + X.LN(d, FC, 11) + X.LN(d, dk, 8, .85).replace('stroke-linecap="round"', dash(5)) + X.LN(d, lt, 2, .25)
-      + X.LN('M66 156q12 -14 4 -28q-8 8 2 16M278 156q-12 -14 -4 -28q8 8 -2 16', FC, 2.6); // kleine Baby Hairs an den Schläfen
-  }
+  if (k === 'p_corn') return iCrown('corn', X, FC) + X.LN('M66 160q12 -14 4 -28q-8 8 2 16M278 160q-12 -14 -4 -28q8 8 -2 16', FC, 2.6); // kleine Baby Hairs an den Schläfen
   const lock = (d, w) => X.LN(d, IOL, w + 6) + X.LN(d, FC, w) + X.LN(d, dk, w * .55, .7).replace('stroke-linecap="round"', `stroke-dasharray="${f1(w * .3)} ${f1(w * .45)}" stroke-linecap="round"`) + X.LN(d, lt, w * .12, .18);
   const tip = (x, y, w) => `<ellipse cx="${x}" cy="${y}" rx="${f1(w / 2 + 1)}" ry="${f1(w / 2 + 3)}" fill="${FC}" ${IO} stroke-width="2"/>`;
   let fr = ''; [[98, 84, 84, 160, 17], [246, 84, 260, 160, 17], [124, 64, 114, 140, 18], [220, 64, 230, 140, 18], [150, 54, 144, 128, 18], [194, 54, 200, 128, 18]].forEach(([x0, y0, x1, y, w]) => { fr += lock(`M${x0} ${y0}Q${f1((x0 + x1) / 2 + (x0 < 172 ? -8 : 8))} ${f1((y0 + y) / 2)} ${x1} ${y}`, w) + tip(x1, y, w); });
-  return cap + fr;
+  return iCrown('dread', X, FC) + fr;
 }
 function iHair(o, X){ // gibt {back, front} zurück
   const h = IHAIR[o.back], HC = o.hairC || '#1c1b20', FC = o.frontC || HC, P = X.P, dk = shade(HC, isLight(HC) ? .62 : .45), lt = shade(HC, isLight(HC) ? 1.08 : 1.9);
@@ -1564,8 +1573,8 @@ function iHair(o, X){ // gibt {back, front} zurück
       back += bk;
       let fr = ''; [[56, 130, 34, 16], [70, 170, 52, 0]].forEach(([x0, y0, x1, dy]) => { const y = Math.min(y1, 700) - 30 - dy; fr += lock(`M${x0} ${y0}C${x0 - 22} ${f1(y0 + (y - y0) * .35)} ${x1 + 16} ${f1(y0 + (y - y0) * .65)} ${x1} ${y}`, 20) + tip(x1, y, 20); });
       if (!IPONY[o.front] && !ISPECP[o.front]) [[150, 66, 92, 236], [128, 70, 72, 270]].forEach(([x0, y0, x1, y]) => { fr += lock(`M${x0} ${y0}C${x0 - 40} ${y0 + 10} ${x1 - 6} ${f1(y0 + (y - y0) * .4)} ${x1} ${y}`, 18) + tip(x1, y, 18); }); // ohne Pony: Mittelscheitel, Locks fallen seitlich über die Schläfen
-      front += iboF(fr); }
-    if (h.corn !== undefined) { front += `<path d="${ICAP}" fill="${HC}"/><path d="${ICAP}" fill="none" ${IO}/>`; let d = ''; for (let k = 0; k < 7; k++) { const x = 96 + k * 25; d += `M${x} 74Q${x + (x - 172) * .3} 20 ${172 + (x - 172) * .5} -24`; } front += X.LN(d, dk, 6, .8).replace('stroke-linecap="round"', 'stroke-dasharray="7 5" stroke-linecap="round"');
+      front += iCrown('dread', X, HC) + iboF(fr); }
+    if (h.corn !== undefined) { front += iCrown('corn', X, HC);
       if (h.corn) back += [70, 110, 234, 274].map((x, k) => X.LN(`M${x} 150Q${x + (x < 172 ? -16 : 16)} 360 ${x + (x < 172 ? -10 : 10)} 560`, IOL, 22) + X.LN(`M${x} 150Q${x + (x < 172 ? -16 : 16)} 360 ${x + (x < 172 ? -10 : 10)} 560`, HC, 16)).join(''); }
     if (h.buns) front += iboF(P('M40 -6A44 44 0 1 1 128 -6A44 44 0 1 1 40 -6Z', hf) + X.LN('M62 -24Q84 -42 106 -24', lt, 3, .5)) + P(h.f, hf);
     if (o.back === 'gothzopf') front += `<circle cx="292" cy="80" r="10" fill="${shade(HC, 1.6)}" ${IO}/>`;
@@ -3739,13 +3748,13 @@ for (const h of Object.values(HELPERS)) { h.deko = h.room.items.map(i => i.k); h
 const HELPER_POSTS = [
 ];
 HELPER_POSTS.push( // Neuigkeiten immer mit Bild der Neuerung und passendem Knopf (Inaya, 2026-10-10)
-  {id:'n-farben',author:'juliet',type:'neu',text:'Neu: Du kannst deinem Profil eigene Farben geben, für deinen Kasten und für den ganzen Hintergrund. Dazu Muster wie Tiger, Kreuze oder Engelsflügel. Hast du das schon gesehen?',show:{theme:[['#3a1a2a','tiger'],['#141416','kreuze'],['#1c2230','fluegel']],btn:['Profil gestalten','nav','design']},reactions:{},comments:[],age:20},
-  {id:'n-shop',author:'andy',type:'neu',text:'Neu: Ganz viel Schmuck und Make-up in der Garderobe, alles gratis. Kreuz-Ohrringe, Kettenhalsband mit Schloss, Totenkopfring, Smokey Eyes, Fledermaus-Liner und ein Herz unterm Auge. Probier dich durch!',show:{wear:['jewel:o_kreuz','jewel:k_schloss','jewel:r_toten','face:smokey','face:fledermaus','face:herz']},reactions:{},comments:[],age:12},
-  {id:'n-haare',author:'andy',type:'neu',text:'Neu: Haare vorne und hinten sind jetzt getrennt. Such dir einen Pony aus, zum Beispiel seitlich, lang übers Auge, gerade oder als V, und kombinier ihn mit jeder Frisur.',show:{wear:['front:p_seitlich','front:p_lang','front:p_gerade','front:p_v','front:p_kurz','front:p_mitte']},reactions:{},comments:[],age:3},
-  {id:'n-chat',author:'juliet',type:'neu',text:'Neu: Du kannst Andy und mir jetzt schreiben. Geh auf unser Profil und tipp auf „Schreib mir“. Wir helfen dir bei allem rund um Nachtfalter.',show:{helpers:1,btn:['Juliet schreiben','profile','juliet']},reactions:{},comments:[],age:1},
-  {id:'n-garderobe-okt',author:'andy',type:'neu',text:'Neu in der Garderobe! Eine Puffärmelbluse, ein Korsett mit Spitzenrand, ein Crop-Top mit Rüschensaum, ein Spitzen-Bandeau, zerrissene Hotpants, eine Low-Waist-Baggy, eine High-Waist-Marlenehose, gestufte Scene-Haare und ein kleines grünes Kuscheltier zum Knuddeln. Ich hab ewig daran herumgenäht und hoffe so sehr, dass es euch gefällt!',show:{wear:['top:b_puff','top:k_spitze','top:c_ruesche','top:s_bandeau','bottom:hot_ripped','bottom:lw_baggy','bottom:hw_marlene','back:scenestl','acc:girplusch']},reactions:{},comments:[],age:.5},
-  {id:'n-schlaf-okt',author:'juliet',type:'neu',text:'Neu fürs Schlafzimmer: ein Himmelbett mit Schleiern, eine Kommode mit Spitzendeckchen, eine kleine Spieluhr, ein Mond-Nachtlicht und ein grünes Kuscheltier. Ich hab mein Zimmer sofort umgeräumt und will gar nicht mehr raus. Macht es euch schön gemütlich, ihr Lieben!',show:{furn:['himmelbett','kommode','spieluhr','mondlampe','girplusch']},reactions:{},comments:[],age:.4},
-  {id:'n-pony-okt',author:'andy',type:'neu',text:'Neu bei den Ponys: ein Dread-Pony und ein Cornrow-Vorderkopf, passend zu den Dreadlocks und Cornrows. Und die zwei Zöpfe fangen jetzt direkt am Haaransatz an. Probiert es aus!',show:{wear:['front:p_dread|back=dreadk','front:p_corn|back=cornk','back:zoepfe|front=p_gerade']},reactions:{},comments:[],age:.2},
+  {id:'n-farben',author:'juliet',type:'neu',text:'Neu: Gib deinem Profil eigene Farben und Muster!',show:{theme:[['#3a1a2a','tiger'],['#141416','kreuze'],['#1c2230','fluegel']],btn:['Profil gestalten','nav','design']},reactions:{},comments:[],age:20},
+  {id:'n-shop',author:'andy',type:'neu',text:'Neu: Schmuck und Make-up in der Garderobe. Probier dich durch!',show:{wear:['jewel:o_kreuz','jewel:k_schloss','jewel:r_toten','face:smokey','face:fledermaus','face:herz']},reactions:{},comments:[],age:12},
+  {id:'n-haare',author:'andy',type:'neu',text:'Neu: Pony und Frisur kannst du jetzt getrennt wählen.',show:{wear:['front:p_seitlich','front:p_lang','front:p_gerade','front:p_v','front:p_kurz','front:p_mitte']},reactions:{},comments:[],age:3},
+  {id:'n-chat',author:'juliet',type:'neu',text:'Neu: Schreib Andy und mir, wenn du Hilfe brauchst!',show:{helpers:1,btn:['Juliet schreiben','profile','juliet']},reactions:{},comments:[],age:1},
+  {id:'n-garderobe-okt',author:'andy',type:'neu',text:'Neue Teile in der Garderobe! Ich hoffe, ihr liebt sie so wie ich.',show:{wear:['top:b_puff','top:k_spitze','top:c_ruesche','top:s_bandeau','bottom:hot_ripped','bottom:lw_baggy','bottom:hw_marlene','back:scenestl','acc:girplusch']},reactions:{},comments:[],age:.5},
+  {id:'n-schlaf-okt',author:'juliet',type:'neu',text:'Neue Möbel fürs Schlafzimmer. Macht es euch gemütlich!',show:{furn:['himmelbett','kommode','spieluhr','mondlampe','girplusch']},reactions:{},comments:[],age:.4},
+  {id:'n-pony-okt',author:'andy',type:'neu',text:'Neue Ponys für Dreads und Cornrows. Probiert sie aus!',show:{wear:['front:p_dread|back=dreadk','front:p_corn|back=cornk','back:zoepfe|front=p_gerade']},reactions:{},comments:[],age:.2},
 );
 const OLD_DEMO = ['nyx','matze','jule','kaspar'];
 function ensureHelpers(st){
