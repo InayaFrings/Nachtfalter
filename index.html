@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b98f88304fc9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='bb1c87374689';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -328,7 +328,13 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .pabout{margin:-4px 0 16px;white-space:pre-wrap;font:italic 17px/1.45 var(--f-ital);color:var(--p-fg)}
 .pmeta dt{font:400 13px/1.9 var(--f-display);letter-spacing:.09em;color:var(--p-muted)}
 .pmeta dd{margin:0}
-.ritem.av.away{visibility:hidden}.pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
+.ritem.av.away{visibility:hidden}.brbtn{display:inline-flex;gap:8px;align-items:center;justify-self:start;margin-top:10px}.brbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.brgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.brcard{display:grid;justify-items:center;gap:2px;padding:10px 8px 12px;background:var(--paper-2,#151517);border:1px solid var(--line-soft);color:var(--fg);cursor:pointer;font:inherit;text-align:center;min-width:0}.brcard b{overflow-wrap:anywhere}.brcard .muted{font-size:14px;overflow-wrap:anywhere}
+.brfig{width:100%;aspect-ratio:1/1;display:block;overflow:hidden;background:radial-gradient(circle at 50% 40%,#ffffff1c,transparent 70%)}.brfig svg{width:100%;height:100%;display:block}
+.brtag{font-size:12px;border:1px solid var(--line);padding:1px 8px;margin-top:4px;color:var(--muted)}.brtag.on{color:var(--fg)}
+@media (max-width:760px){.brgrid{grid-template-columns:repeat(2,1fr)}}
+.pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
 .ptabs{display:flex;gap:22px;border-bottom:1px solid var(--p-line);flex-wrap:wrap}
@@ -4108,7 +4114,7 @@ function rail(){
   const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
   ntWatch();
   const tabs = [['home','Salon'],['profile','Mein Profil'],['room','Mein Zimmer'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? ' <i class="dot" aria-label="neue Anfrage"></i>' : '')],['find','Freunde finden'],['chats','Chats' + (nNew ? ` <i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN ? ` <i class="dot" aria-label="${ntN} neu"></i>` : '')],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? ' <i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
-  const cur = V.name === 'design' ? 'profile' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
+  const cur = V.name === 'design' ? 'profile' : V.name === 'browse' ? 'find' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${logoSVG()}<p class="logo">Nachtfalter<small>ein Ort für Freunde</small></p>
     ${mobTop(nNew, ntN)}
@@ -4195,7 +4201,7 @@ function friendPanel(nNew){
       ;
   } else {
     const res = FR.results == null ? '' : FR.results.length ? FR.results.map(id => { const p = PROF[id] || {}; const u = S.users[id] || remoteUser(id, p); return fpRow(u, '@' + esc(u.handle) + (isFriend(id) ? ' · befreundet' : '')); }).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
-    body = `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${res}<div class="invbox fpinv">${inviteHTML()}</div>`;
+    body = `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${browseBtn()}${res}<div class="invbox fpinv">${inviteHTML()}</div>`;
   }
   return `<button class="fpbtn ${fpOpen ? 'on' : ''}" data-act="fp-toggle" aria-expanded="${fpOpen}" aria-label="Freunde und Freunde finden"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.friends}</svg>${badge ? `<i class="dot" aria-label="${badge} neu"></i>` : ''}</button>
   ${fpOpen ? `<div class="fpback" data-act="fp-toggle"></div><aside class="fpanel" aria-label="Freunde">
@@ -5469,11 +5475,30 @@ async function loadNewbies(){
   try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(13).get()).docs; FR.newbies = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }).slice(0, 12); } catch {}
   if (V.name === 'find') softRender();
 }
+// Stöbern: Profile von anderen ansehen, auch ohne Nutzernamen zu kennen (Inaya, 2026-10-10)
+const BR = {ids:null, n:30, busy:false};
+async function loadBrowse(){
+  if (!social || BR.busy) return; BR.busy = true;
+  try { const docs = (await social.db.collection('profiles').orderBy('seen', 'desc').limit(BR.n + 1).get()).docs;
+    BR.ids = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); BR.more = docs.length > BR.n;
+  } catch { BR.ids = BR.ids || []; }
+  BR.busy = false; if (V.name === 'browse') softRender();
+}
+const browseBtn = () => `<button class="btn ghost brbtn" data-act="browse"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5"/><rect x="13.5" y="3" width="7.5" height="7.5"/><rect x="3" y="13.5" width="7.5" height="7.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5"/></svg>Stöbern</button>`;
+function browseView(){
+  if (social && !BR.ids && !BR.busy) loadBrowse();
+  const card = id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), on = onlineState(u);
+    return `<button type="button" class="brcard" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="brfig">${avatar(u.outfit, 'bust')}</span><b>${esc(u.name)}${hmark(u)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<span class="brtag">Befreundet</span>' : on[0] ? '<span class="brtag on">online</span>' : ''}</button>`; };
+  return `<div class="card"><h2 class="card-h">Stöbern</h2><div class="card-in">
+    <div class="row"><button class="btn ghost" data-act="nav" data-v="find">← Freunde finden</button></div>
+    ${!social ? '<p class="note">Stöbern geht, sobald du angemeldet bist.</p>' : !BR.ids ? '<p class="muted">Profile werden geladen …</p>' : BR.ids.length ? `<div class="brgrid">${BR.ids.map(card).join('')}</div>${BR.more ? '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="browse-more">Mehr anzeigen</button></div>' : ''}` : '<p class="note">Noch keine anderen Profile.</p>'}
+  </div></div>`;
+}
 function findView(){
   if (social && amOwner && !FR.newbies) loadNewbies();
   const results = FR.results == null ? '' : FR.results.length ? FR.results.map(personRow).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
   return `<div class="card"><h2 class="card-h">Freunde finden</h2><div class="card-in">
-    ${`<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
+    ${`<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>${browseBtn()}
       <div class="plist">${results}</div>
       ${amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`}
     <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invbox">${inviteHTML()}</div></fieldset>
@@ -5570,8 +5595,8 @@ function render(){
   if (!S.unlocked) { applyPage(null); app.innerHTML = gateView(); return; }
   if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); restoreX(); return; }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
-  const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit'].includes(V.name);
-  const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, settings:settingsView, visit:visitView}[V.name] || homeView;
+  const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit','browse'].includes(V.name);
+  const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, visit:visitView}[V.name] || homeView;
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
   app.innerHTML = `<div class="shell">${rail()}
@@ -5770,6 +5795,8 @@ document.addEventListener('click', async e => {
     if (!(await askYesNo('Diesen Beitrag für alle löschen?', 'Ja, löschen', 'Nein'))) return;
     try { await social.db.doc('site/hidden').set({ids:[...new Set([...HIDDEN, key])]}); HIDDEN.add(key); render(); toast('Beitrag gelöscht'); } catch { toast('Das hat nicht geklappt.'); }
   }
+  else if (a === 'browse') { fpOpen = false; BR.ids = null; go('browse'); }
+  else if (a === 'browse-more') { BR.n += 30; loadBrowse(); }
   else if (a === 'post-share') { sharePost(id, b.dataset.a); }
   else if (a === 'post-del') { postDelAsk = b.dataset.id; postEdit = null; render(); }
   else if (a === 'post-edit') { postEdit = b.dataset.id; postDelAsk = null; render(); document.getElementById('pe-' + postEdit)?.focus(); }
