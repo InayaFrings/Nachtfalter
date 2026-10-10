@@ -878,7 +878,7 @@ const ITEMS = [
   {id:'shorts',cat:'bottom',name:'Shorts',st:'Goth',g:'w'},
   {id:'langrock',cat:'bottom',name:'Langer Rüschenrock',st:'Viktorianisch',g:'w',price:60},
   {id:'bondage',cat:'bottom',name:'Bondage-Hose',st:'Punk',price:75},
-  {id:'s_kein',cat:'shoes',name:'Barfuß'},
+  {id:'s_kein',cat:'shoes',name:'Keine Schuhe'},
   {id:'chucks',cat:'shoes',name:'Chucks',st:'Emo'},
   {id:'skate',cat:'shoes',name:'Skaterschuhe',st:'Skater'},
   {id:'springer',cat:'shoes',name:'Schnürstiefel',st:'Grunge'},
@@ -972,6 +972,8 @@ function previewOutfit(o, i){
 const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? 'mouth' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
 const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
+const noneFirst = (a, b) => isNoneItem(b) - isNoneItem(a); // „Kein …“-Karte immer vorne, damit man sie gleich findet
+const isNoneItem = i => +!!(i.none || NONE_ITEM[i.cat] === i.id);
 const noneKeys = (o, i) => Object.keys(asObj(o[i.cat])).filter(k => i.cat !== 'jewel' || (item(k)?.sub || 'kette') === i.sub); // was von dieser Sorte gerade getragen wird
 const isOn = (o, i) => i.none ? !noneKeys(o, i).length : MULTI.includes(i.cat) ? !!(o[i.cat] || {})[i.id] : o[i.cat] === i.id;
 const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !== 'none' ? {[v]:'auto'} : {}; // alte Outfits hatten nur ein Accessoire als Text
@@ -2135,7 +2137,7 @@ function nameView(){
 }
 function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der App
   const p = S.pending, o = p.outfit;
-  const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.price && fits(i, o)).map(i => {
+  const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.price && fits(i, o)).sort(noneFirst).map(i => {
     const on = isOn(o, i), off = on && (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id));
     const t = previewOutfit(o, i), [dot, pan] = itemColUI(i, o, 'ob-color');
     return `<div class="item ${on ? 'on' : ''}">${dot}
@@ -3197,7 +3199,7 @@ function shopView(isShop){
   const has = i => !i.price || u.owned.includes(i.id);
   const cats = isShop ? CATS.filter(([k]) => k !== 'body') : [...BODY_CAT, ...CATS];
   if (!cats.some(([k]) => k === shopCat)) shopCat = 'back';
-  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && (isShop ? !has(i) : has(i)) && fits(i, u.outfit));
+  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && (isShop ? !has(i) : has(i)) && fits(i, u.outfit)).sort(noneFirst);
   const items = list.map(i => {
     const on = isOn(u.outfit, i);
     const btn = on ? (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id) ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">${MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen'}</button>` : `<button class="btn ghost" disabled>Angezogen</button>`)
