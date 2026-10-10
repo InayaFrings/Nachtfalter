@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ac0805bb4108';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='082d47103276';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1122,7 +1122,7 @@ function previewOutfit(o, i){
   if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_zunge' ? {lips:'l_offen'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
-const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? 'mouth' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
+const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
 const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
 const noneFirst = (a, b) => isNoneItem(b) - isNoneItem(a); // „Kein …“-Karte immer vorne, damit man sie gleich findet
@@ -1948,7 +1948,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
   if (o.lipC && ILIPS[o.lips]) face += X.P(ILIPS[o.lips], o.lipC, 'stroke-width="1.4"');
   if (B === IB.m && IBEARD[o.beard]) face += IBEARD[o.beard](o.beardC || o.hairC || '#1c1b20', X);
-  const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel'];
+  const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel', 'p_braue', 'p_augenbraue', 'p_bridge', 'p_dermal'];
   let ears = ''; // Ohrschmuck liegt über den Haaren, sonst verschwindet er unter fast jeder Frisur
   for (const k in J) { if (IPIERC[k]) { if (IEARP.includes(k)) ears += IPIERC[k](J[k]); else face += IPIERC[k](J[k]); } if (IEARR[k]) ears += IEARR[k](J[k]); }
   let headFront = face + hair.front + ears + Object.keys(o.hacc || {}).filter(k => IHACC[k] && !IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k] && o.hacc[k] !== 'auto' ? o.hacc[k] : (HACC_C[k] && HACC_C[k] !== 'auto' ? HACC_C[k] : '#141218'), X)).join('');
