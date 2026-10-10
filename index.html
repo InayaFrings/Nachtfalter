@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='09210f716cd0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='12bda3551ea1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2343,7 +2343,7 @@ function finishOb(){
     const p = S.pending, id = 'u' + Date.now().toString(36);
     S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth, contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
       theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), mood:'neu hier', headline:'', about:'', music:'', films:'', hobbies:'',
-      wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen im Zirkel. Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
+      wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen an alle neuen Nachtfalter! Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
     delete S.pending; S.me = id; welcomeDMs();
     claimHandle(p.handle);
     if (!save()) return;
@@ -2623,7 +2623,7 @@ const HELPERS = {
   juliet:{id:'juliet',name:'Juliet',handle:'juliet',helper:'Helferin',outfit:{body:'w',back:'wellen',front:'p_gerade',hacc:{blume:'#8a1020',haarreif:'#141218'},eyeform:'e_katze',lips:'l_schmoll',lipC:'#3a0a18',face:'liner',top:'korsett',bottom:'langrock',shoes:'plateau',acc:'sfluegel',jewel:{perlen:'#ecebe7',ohrringe:'#c9c9cf'},hairC:'#1c1b20'},
     theme:{box:'#0e0e10',pattern:'spitze',frame:'ornament',shape:'oval',font:'hand',page:'#4a0f1c',pagePattern:'fluegel'},banner:{pattern:'sterne',mode:'nacht',font:'hand',text:'Juliets Salon'},points:999,
     mood:'immer für dich da',headline:'Ich passe auf, dass sich hier alle wohlfühlen.',
-    about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Nachtfalter. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Nachtfalter ist nur für den Zirkel. Gib das Losungswort nicht weiter.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n4. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n5. Wenn dich etwas stört, schreib Andy oder mir ins Gästebuch.',
+    about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Nachtfalter. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Nachtfalter ist ein Ort für Freunde. Gib deinen Einladungslink nur an Leute weiter, denen du vertraust.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n4. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n5. Wenn dich etwas stört, schreib Andy oder mir ins Gästebuch.',
     music:'Siouxsie and the Banshees, Lana Del Rey',films:'Crimson Peak, Wednesday',hobbies:'Briefe schreiben, Friedhofsspaziergänge, Nähen'},
   andy:{id:'andy',name:'Andy',handle:'andy',helper:'Helfer',outfit:{body:'m',back:'lang',front:'p_lang',hacc:{},eyeform:'e_muede',lips:'l_neutral',face:'smokey',top:'band',jacket:'leder',bottom:'bondage',shoes:'creeper',acc:'kette',jewel:{halsband:'#0b0b0f',kreuz:'#c9c9cf'},hairC:'#1c1b20'},
     theme:{box:'#0e0e10',pattern:'fledermaus',frame:'dornen',shape:'bogen',font:'fraktur',page:'#8a1020',pagePattern:'kreuze'},banner:{pattern:'kreuze',mode:'nacht',font:'fraktur',text:'Andys Nachtwache'},points:999,
@@ -2869,7 +2869,7 @@ function gateView(){
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
   </div></div>`;
   if (gateMode === 'invite') return `<div class="gate"><div class="card gate-card">${head}
-    ${inviteCode ? `<p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Du wurdest in den Zirkel eingeladen.</p>
+    ${inviteCode ? `<p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Du wurdest zu Nachtfalter eingeladen.</p>
     <form data-form="gate">
       <span id="gateErr" class="err" hidden>Dieser Einladungslink gilt nicht mehr. Jeder Link funktioniert nur einmal. Frag nach einem neuen Link.</span>
       <button class="btn" type="submit">Konto erstellen</button>
@@ -2879,7 +2879,7 @@ function gateView(){
       <span id="gateErr" class="err" hidden>Dieser Einladungslink gilt nicht mehr. Jeder Link funktioniert nur einmal. Frag nach einem neuen Link.</span>
       <button class="btn" type="submit">Konto erstellen</button>
     </form>
-    <p class="note" style="margin:0">Den Link bekommst du von jemandem aus dem Zirkel.</p>`}
+    <p class="note" style="margin:0">Den Link bekommst du von anderen Nutzern.</p>`}
     <button class="lnk" data-act="gmode" data-v="">Zurück</button>
   </div></div>`;
   return `<div class="gate"><div class="card gate-card">${head}
@@ -3167,7 +3167,7 @@ const HELP_FAQ = [
   [/kleid|garderobe|anzieh|outfit|klamott|avatar|körper|koerper|schuh|hose|rock|oberteil|make/i, {andy:'In der Garderobe ziehst du deinen Avatar an. Klick ein Teil an, um es anzuprobieren, und such dir darunter eine Farbe aus.', juliet:'In der Garderobe kannst du alles anprobieren und umfärben. Unter „Körper“ stellst du Haut, Augen und Körperform ein.'}],
   [/farb|hintergrund|muster|banner|profil|gestalt|design|rahmen|schrift/i, {andy:'Unter „Profil gestalten“ suchst du Farben und Muster für deinen Kasten und den ganzen Hintergrund aus. Profilbild und Nutzername-Kasten findest du da auch.', juliet:'Geh auf „Profil gestalten“. Da färbst du deinen Kasten und den Hintergrund, suchst Muster aus und machst dein Banner.'}],
   [/zimmer|möbel|moebel|raum|einricht|deko/i, {andy:'Unter „Mein Zimmer“ stellst du Möbel auf und schiebst sie herum. Alle Möbel sind gratis.', juliet:'In „Mein Zimmer“ richtest du dich ein. Möbel kannst du frei hinschieben, spiegeln und wieder wegräumen.'}],
-  [/freund|einlad|link|code|zirkel/i, {andy:'Deinen Einladungslink findest du unter „Zirkel“. Gib ihn nur Leuten, die du wirklich dabeihaben willst.', juliet:'Unter „Zirkel“ kannst du deinen Einladungslink kopieren. Bitte gib ihn nur Menschen, denen du vertraust.'}],
+  [/freund|einlad|link|code|zirkel/i, {andy:'Deinen Einladungslink findest du unter „Freunde finden“. Gib ihn nur Leuten, die du wirklich dabeihaben willst.', juliet:'Unter „Freunde finden“ kannst du deinen Einladungslink kopieren. Bitte gib ihn nur Menschen, denen du vertraust.'}],
   [/beitrag|post|teil|bild|foto|film|video/i, {andy:'Im Salon oben teilst du Gedanken, Bilder oder Filme.', juliet:'Im Salon kannst du Gedanken, Bilder und Filme teilen. Fotos von anderen bitte nur mit deren Erlaubnis.'}],
   [/passwort|anmeld|login|konto|abmeld/i, {andy:'Anmelden kannst du dich mit E-Mail-Adresse und deinem Passwort. Im Entwurf gibt es noch kein Passwort-Zurücksetzen.', juliet:'Du meldest dich mit E-Mail-Adresse und Passwort an. Wenn du dein Passwort vergessen hast, sag Bescheid.'}],
 ];
@@ -3500,7 +3500,7 @@ function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
   const list = CH.list.map(c => `<button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
-  if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst im Zirkel Freunde hinzu.</p>'}`;
+  if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
   if (CH.mode === 'helper' && S.users[CH.helper]) {
     const h = S.users[CH.helper];
@@ -3538,7 +3538,7 @@ function groupForm(friends){
   const g = CH.gdraft;
   return `<form data-form="group" class="gform"><h3 class="ch-h">${g.id ? 'Gruppe gestalten' : 'Neue Gruppe'}</h3>
     <label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>
-    <fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst im Zirkel Freunde hinzu.</p>'}</fieldset>
+    <fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Schrift</legend><div class="chips">${FONT_OPTS.map(([v,l]) => `<button type="button" data-act="gopt" data-k="font" data-v="${v}" aria-pressed="${g.theme.font===v}">${l}</button>`).join('')}</div></fieldset>
@@ -3869,7 +3869,7 @@ function roomChatExtra(){ // Einstellungen zum eigenen Raumchat: schließen und 
   return `<div class="card"><h2 class="card-h">Raumchat</h2><div class="card-in">
     ${ro ? `<div class="ropen"><span>🕯 Dein Raumchat ist offen (<b>${roomKind(ro)}</b>). ${ro.pub ? 'Alle aus Nachtfalter sehen ihn in der Liste der offenen Raumchats und können reinkommen.' : 'Nur deine Freunde können reinkommen.'}</span><button class="btn ghost" data-act="room-close">Raumchat schließen</button></div>
     <fieldset class="opt"><legend class="lbl">Wer darf rein?</legend><div class="row"><button class="btn ${ro.pub ? 'ghost' : ''}" data-act="room-kind" data-v="friends" aria-pressed="${!ro.pub}">Nur Freunde</button><button class="btn ${ro.pub ? '' : 'ghost'}" data-act="room-kind" data-v="pub" aria-pressed="${!!ro.pub}">Öffentlich</button></div></fieldset>` : ''}
-    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend>${friends.length ? `<div class="invlist">${friends.map(f => `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">${esc(f.name)} einladen</button>`).join('')}</div>` : '<p class="note">Füg zuerst im Zirkel Freunde hinzu.</p>'}
+    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend>${friends.length ? `<div class="invlist">${friends.map(f => `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">${esc(f.name)} einladen</button>`).join('')}</div>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}
       <p class="note">Befreundete können auch ohne Einladung über dein Profil reinkommen. Höchstens ${ROOM_MAX} Leute passen gleichzeitig ins Zimmer.</p></fieldset>
   </div></div>`;
 }
