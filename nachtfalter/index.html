@@ -703,6 +703,10 @@ footer.foot .lnk{color:var(--muted)}
 .mrow .pinfo{display:grid;flex:1;min-width:0}
 .mrow small{flex:none}
 .mnew{font:normal 12px var(--f-display);letter-spacing:.06em;text-transform:uppercase;background:var(--fg);color:var(--ink);padding:1px 6px;margin-left:6px;vertical-align:middle}
+.salonend{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 0 14px;text-align:center}
+.salonend .sefig{width:120px;height:240px}
+.salonend .sefig svg{width:100%;height:100%}
+.salonend p{margin:0;font:italic 18px/1.3 var(--f-ital);color:var(--muted,#9a9aa2)}
 </style>
 
 <div id="app"></div>
@@ -2932,14 +2936,20 @@ function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
     ${edit ? `<fieldset class="opt"><legend class="lbl">Pose</legend><div class="chips">${POSES.map(([k,l]) => `<button type="button" data-act="pose" data-v="${k}" aria-pressed="${(u.pose || 'gerade') === k}">${l}</button>`).join('')}</div></fieldset>` : ''}
   </div></div>`;
 }
+function salonEnd(){ // Handy: ganz unten im Salon der eigene Avatar mit kleinem Hinweis (Inaya)
+  const u = me(); if (!u?.outfit) return '';
+  return `<div class="salonend"><div class="sefig">${avatar(u.outfit, 'full', u.pose)}</div><p>Du bist am Ende angelangt.</p></div>`;
+}
 function asideHTML(){
   const u = me(), others = ['juliet', 'andy'].map(id => S.users[id]).filter(Boolean); // nur die Helfer, Freunde stehen auf dem Profil
+  // Handy (Inaya): unten kein eigenes Profilbild und kein eigener Avatar mehr, Helfer nur in den Einstellungen
+  const mob = isMob(), pid = V.name === 'profile' ? (V.arg || S.me) : S.me;
   return `<aside class="aside">
-    ${V.name === 'profile' && (V.arg || S.me) === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
-    <div class="card"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
+    ${mob || V.name === 'profile' && (V.arg || S.me) === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
+    ${mob && V.name !== 'settings' ? '' : `<div class="card"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
       ${others.map(f => `<li>${cameo(f)}<span>${ulink(f.id)}<small>${esc(f.mood) || '&nbsp;'}</small></span></li>`).join('')}
-    </ul></div></div>
-    ${fullCard()}
+    </ul></div></div>`}
+    ${mob && pid === S.me ? '' : fullCard()}
     ${V.name === 'profile' && PROF_WALL ? `<div class="card gbcard"><h2 class="card-h">Gästebuch</h2><div class="card-in">${PROF_WALL}</div></div>` : ''}
   </aside>`;
 }
@@ -4100,7 +4110,7 @@ function render(){
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
   app.innerHTML = `<div class="shell">${rail()}
-    <main class="main${wide ? ' wide' : ''}">${body()}</main>
+    <main class="main${wide ? ' wide' : ''}">${body()}${V.name === 'home' && isMob() ? salonEnd() : ''}</main>
     ${wide ? '' : asideHTML()}
     <footer class="foot"><span>Nachtfalter · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
