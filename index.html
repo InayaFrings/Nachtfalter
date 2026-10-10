@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b6b38057f119';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6994af815833';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1473,7 +1473,7 @@ function iHair(o, X){ // gibt {back, front} zurück
     if (h.afro) { const [cx, cy, rx, ry] = h.afro, n = 30; let d = ''; for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2, a2 = (i - .5) / n * Math.PI * 2; d += (i ? `Q${f1(cx + rx * 1.08 * Math.cos(a2))} ${f1(cy + ry * 1.08 * Math.sin(a2))} ` : 'M') + `${f1(cx + rx * Math.cos(a))} ${f1(cy + ry * Math.sin(a))}`; }
       back += P(d + 'Z', hf); let c = ''; for (let i = 0; i < 60; i++) { const a = i * 2.39996, r = Math.sqrt((i + .5) / 60) * .9; c += `M${f1(cx + rx * r * Math.cos(a) - 7)} ${f1(cy + ry * r * Math.sin(a))}q7 -9 14 0`; } back += X.LN(c, dk, 2, .55);
     }
-    if (h.cap) front += (h.b ? `<path d="${ICAP}" fill="${hf}"/>` : P(ICAP, hf)) + // bei langen Haaren keine zweite Kontur am Oberkopf
+    if (h.cap) front += (h.b ? `<path d="${ICAP}" fill="${hf}"/>` + X.LN('M292 186' + ICAP.slice(ICAP.indexOf('L284')).replace(/Z$/, 'L52 186'), IOL, 2.6) : P(ICAP, hf)) + // bei langen Haaren keine zweite Kontur am Oberkopf
       X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
     if (h.side && IPONY[o.front]) front += iboF(`<path d="M44 96L84 96L76 150L66 188L44 188Z" fill="${hf}"/>`); // Schläfe zwischen Pony und Strähne schließen
     if (h.side) { const s = h.flat ? `M54 170L46 ${h.side}L100 ${h.side}L102 236Q104 180 92 136Z` : ISIDE(h.side); front += iboF(P(s, hf) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
