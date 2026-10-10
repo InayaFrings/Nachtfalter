@@ -5051,7 +5051,9 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'gopt') { grabGroupDraft(); CH.gdraft.theme[b.dataset.k] = b.dataset.v; render(); }
   else if (a === 'room-visit') go('visit', id);
-  else if (a === 'room-hop') { const l = hopRooms(); if (!l.length) toast('Gerade sind keine Raumchats offen.'); else go('visit', l[Math.floor(Math.random() * l.length)]); }
+  else if (a === 'room-hop') { // eigener offener Raumchat gehört mit dazu, wenn man gerade woanders ist (Inaya)
+    const l = hopRooms(); if (me()?.roomOpen && V.name !== 'room') l.push(S.me);
+    if (!l.length) toast('Gerade sind keine anderen Raumchats offen.'); else { const id = l[Math.floor(Math.random() * l.length)]; if (id === S.me) go('room'); else go('visit', id); } }
   else if (a === 'room-open') { me().roomOpen = {pub:b.dataset.v === 'pub', ts:Date.now()}; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'open'}); render(); toast(me().roomOpen.pub ? 'Dein öffentlicher Raumchat ist offen' : 'Dein Raumchat für Freunde ist offen'); }
   else if (a === 'room-kind') { const ro = me().roomOpen; if (ro) { ro.pub = b.dataset.v === 'pub'; save(); render(); toast(ro.pub ? 'Jetzt öffentlich' : 'Jetzt nur für Freunde'); } }
   else if (a === 'room-invite') {

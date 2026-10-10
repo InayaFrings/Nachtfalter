@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f5f5bb8599c3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='24269cb10531';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5160,7 +5160,9 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'gopt') { grabGroupDraft(); CH.gdraft.theme[b.dataset.k] = b.dataset.v; render(); }
   else if (a === 'room-visit') go('visit', id);
-  else if (a === 'room-hop') { const l = hopRooms(); if (!l.length) toast('Gerade sind keine Raumchats offen.'); else go('visit', l[Math.floor(Math.random() * l.length)]); }
+  else if (a === 'room-hop') { // eigener offener Raumchat gehört mit dazu, wenn man gerade woanders ist (Inaya)
+    const l = hopRooms(); if (me()?.roomOpen && V.name !== 'room') l.push(S.me);
+    if (!l.length) toast('Gerade sind keine anderen Raumchats offen.'); else { const id = l[Math.floor(Math.random() * l.length)]; if (id === S.me) go('room'); else go('visit', id); } }
   else if (a === 'room-open') { me().roomOpen = {pub:b.dataset.v === 'pub', ts:Date.now()}; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'open'}); render(); toast(me().roomOpen.pub ? 'Dein öffentlicher Raumchat ist offen' : 'Dein Raumchat für Freunde ist offen'); }
   else if (a === 'room-kind') { const ro = me().roomOpen; if (ro) { ro.pub = b.dataset.v === 'pub'; save(); render(); toast(ro.pub ? 'Jetzt öffentlich' : 'Jetzt nur für Freunde'); } }
   else if (a === 'room-invite') {
