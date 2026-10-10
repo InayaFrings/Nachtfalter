@@ -2006,16 +2006,16 @@ Object.assign(IACC_FRONT, {
   girplusch:(X, c) => { const [x, y] = X.B.hl; return `<g transform="translate(${x + 4} ${y + 96}) scale(1.6)">${IGIRPLUSH(c && c !== 'auto' ? c : '#8fd16a')}</g>`; },
 });
 // Scene-/Emo-Hair mit vielen Stufen (Inaya, 2026-10-10): toupierter Oberkopf, gestufte Spitzen nach außen, kurz und lang
-const ISCENE_B = (L) => { const R = L.map(([x, y]) => [344 - x, y]).reverse(); const pt = a => a.map(([x, y]) => `L${x} ${y}`).join(''); return `M172 -96Q${L[0][0] - 10} -96 ${L[0][0]} ${L[0][1]}` + pt(L.slice(1)) + pt(R.slice(0, -1)) + `L${R[R.length - 1][0]} ${R[R.length - 1][1]}Q${354 - L[0][0]} -96 172 -96Z`; };
+const ISCENE_B = (L) => { const R = L.map(([x, y]) => [344 - x, y]).reverse(); const pt = a => a.map(([x, y]) => `L${x} ${y}`).join(''); return `M172 -66Q${L[0][0] - 8} -66 ${L[0][0]} ${L[0][1]}` + pt(L.slice(1)) + pt(R.slice(0, -1)) + `L${R[R.length - 1][0]} ${R[R.length - 1][1]}Q${352 - L[0][0]} -66 172 -66Z`; };
 // Stufen vor den Seitensträhnen: spitze Lagen, die nach außen abstehen (linke Seite, wird gespiegelt)
 const ISCENE_FX = (tiers) => (X, hf, dk) => iboF(tiers.map(([y0, y1, out]) => { const d = `M74 ${y0}Q60 ${f1((y0 + y1) / 2)} ${48 - out} ${y1}L${62 - out * .4} ${y1 - 14}L${58 - out * .2} ${y1 + 18}L${76} ${y1 - 8}L84 ${y1 + 6}Q90 ${f1((y0 + y1) / 2)} 88 ${y0}Z`; return `<path d="${d}" fill="${hf}"/>` + X.LN(d, IOL, 2.2) + X.LN(`M78 ${y0 + 20}Q70 ${f1((y0 + y1) / 2)} ${60 - out * .5} ${y1 - 6}`, dk, 1.4, .5); }).join(''));
 Object.assign(IHAIR, {
-  scenestk:{b:ISCENE_B([[24, 40], [-2, 150], [30, 128], [-6, 228], [30, 202], [6, 300], [44, 270], [34, 352], [70, 312], [84, 368], [104, 318], [120, 350], [128, 300]]),
-    side:240, cap:1, ln:'M60 -40Q36 40 40 140M284 -40Q308 40 304 140M120 -86Q100 -40 102 10',
-    fx:ISCENE_FX([[160, 262, 22]])},
-  scenestl:{b:ISCENE_B([[24, 40], [-2, 150], [30, 128], [-8, 236], [28, 208], [-4, 330], [32, 296], [2, 424], [38, 390], [14, 510], [52, 470], [42, 590], [78, 540], [90, 630], [108, 560], [122, 610], [128, 540]]),
-    side:330, cap:1, ln:'M60 -40Q36 40 40 140M284 -40Q308 40 304 140M120 -86Q100 -40 102 10',
-    fx:ISCENE_FX([[160, 262, 22], [230, 350, 30]])},
+  scenestk:{b:ISCENE_B([[34, 60], [22, 160], [40, 140], [20, 236], [42, 214], [30, 300], [56, 276], [54, 340], [80, 306], [96, 352], [110, 310], [124, 336], [130, 296]]),
+    side:240, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150M124 -60Q108 -20 110 20',
+    fx:ISCENE_FX([[160, 256, 10]])},
+  scenestl:{b:ISCENE_B([[34, 60], [22, 160], [40, 140], [18, 246], [40, 220], [20, 336], [44, 306], [26, 426], [50, 396], [36, 510], [60, 476], [54, 586], [82, 540], [96, 616], [112, 556], [124, 600], [130, 540]]),
+    side:330, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150M124 -60Q108 -20 110 20',
+    fx:ISCENE_FX([[160, 256, 10], [236, 340, 14]])},
 });
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
