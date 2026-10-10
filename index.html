@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='36c588ca98f4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='c70d96751f99';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -386,7 +386,9 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 .steps li::before{content:counter(st) ". "}
 .steps li.done{color:var(--muted)}
 .steps li.cur{color:var(--fg);border-bottom:1px solid var(--fg)}
-.gate-card.creator-card{width:min(980px,100%);text-align:left;justify-items:stretch}
+.gate-card.lookbar{gap:8px;margin:0 0 12px;flex-wrap:wrap}.album{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft);display:grid;gap:12px}.albumh{margin:0}.albumh small{margin-left:8px;opacity:.7;letter-spacing:0;text-transform:none}.looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}.look{aspect-ratio:1/2;border:2px solid var(--line);border-radius:10px;padding:6px 4px 0;cursor:pointer;overflow:hidden;display:block}.look.on{border-color:var(--fg)}.look svg{width:100%;height:100%;display:block}.lookctl{display:grid;gap:10px}.lookctl .row{gap:8px;flex-wrap:wrap}
+.obwear{width:min(1100px,100%);margin:0 auto;padding:32px 16px 48px;display:grid;gap:18px}.obwear .obhead{display:grid;gap:14px;justify-items:center;text-align:center;padding:24px 20px}.obwear .obhead .note{margin:0;max-width:560px}.obwear .obfoot{padding:14px 18px}.obwear .obfoot .row{margin:0}
+.creator-card{width:min(980px,100%);text-align:left;justify-items:stretch}
 .creator-card .logo-mark{margin-inline:auto}
 .ob-h{font:400 30px/1.15 var(--f-display);margin:0;text-align:center}
 .creator-card > .note{text-align:center}
@@ -513,7 +515,7 @@ footer.foot .lnk{color:var(--muted)}
 .songdock iframe{width:200px;height:113px;border:0;display:block}
 
 .deldanger{margin-top:18px}
-.modal{position:fixed;inset:0;z-index:80;background:#000a;display:grid;place-items:center;padding:16px}.modal[hidden]{display:none}.modal-card{padding:24px;max-width:380px;width:100%;display:grid;gap:18px;text-align:center}
+.modal{position:fixed;inset:0;z-index:1100;background:#000a;display:grid;place-items:center;padding:16px}.modal[hidden]{display:none}.modal-card{padding:24px;max-width:380px;width:100%;display:grid;gap:18px;text-align:center}
 .subtabs{margin-top:-6px}.subtabs button{font-size:15px}
 .music{display:grid;gap:8px;margin-top:10px;justify-items:start}.music-form{display:grid;gap:8px;width:100%;max-width:520px;border:1px dashed var(--p-line);padding:12px}
 .setlist{display:grid;border-top:1px solid var(--line)}.setrow{border-bottom:1px solid var(--line)}
@@ -721,6 +723,9 @@ footer.foot .lnk{color:var(--muted)}
   .thought{font-size:19px;padding-left:14px}
   .tile .thought{font-size:18px}
   /* Garderobe wie bei Momio: großer Avatar bleibt oben, Abteilungen direkt darunter, Teile groß zum Antippen */
+  .obwear{padding:12px 12px 32px;gap:12px}.obwear .obhead{padding:16px 14px;gap:10px}
+  .obwear .wardrobe .mirror-card{top:env(safe-area-inset-top,0px)}.obwear .wardrobe .ctabs{top:calc(env(safe-area-inset-top,0px) + clamp(200px,32vh,280px))}
+  .obwear .obfoot{position:sticky;bottom:0;z-index:40;margin:0 -12px;border-left:0;border-right:0}
   .wardrobe .mirror-card{position:sticky;top:calc(61px + env(safe-area-inset-top,0px));z-index:30;height:clamp(200px,32vh,280px);padding:6px 0 0;margin:0 -12px;border-left:0;border-right:0;
     background:radial-gradient(ellipse at 50% 70%,#ffffff17,transparent 65%),var(--paper);box-shadow:0 10px 22px #000c;display:flex;align-items:flex-end;justify-content:center}
   .wardrobe .mirror{width:auto;height:100%;aspect-ratio:9/17}
@@ -914,6 +919,7 @@ const ITEMS = [
   {id:'kontur',cat:'face',name:'Contouring'},
   {id:'blass',cat:'face',name:'Blass gepudert'},
   {id:'corpse',cat:'face',name:'Corpse Paint',st:'Metal',price:55},
+  {id:'t_kein',cat:'top',name:'Kein Oberteil'},
   {id:'band',cat:'top',name:'Bandshirt',st:'Metal'},
   {id:'ringel',cat:'top',name:'Ringelpulli',st:'Scene'},
   {id:'netz',cat:'top',name:'Netzshirt',st:'Goth'},
@@ -956,6 +962,7 @@ const ITEMS = [
   {id:'l_stulpen_kurz',cat:'legw',name:'Gerüschte kurze Stulpen',c:'#2a2a30'},
   {id:'l_stulpen_fell',cat:'legw',name:'Flauschige Stulpen',c:'#ecebe7'},
   {id:'l_stulpen_schnuer',cat:'legw',name:'Stulpen mit Schnürung',c:'#141218'},
+  {id:'u_kein',cat:'bottom',name:'Keine Hose'},
   {id:'jeans',cat:'bottom',name:'Röhrenjeans',st:'Emo'},
   {id:'karohose',cat:'bottom',name:'Karohose',st:'Punk'},
   {id:'baggy',cat:'bottom',name:'Weite Skaterhose',st:'Skater'},
@@ -963,6 +970,7 @@ const ITEMS = [
   {id:'shorts',cat:'bottom',name:'Shorts',st:'Goth',g:'w'},
   {id:'langrock',cat:'bottom',name:'Langer Rüschenrock',st:'Viktorianisch',g:'w',price:60},
   {id:'bondage',cat:'bottom',name:'Bondage-Hose',st:'Punk',price:75},
+  {id:'s_kein',cat:'shoes',name:'Barfuß'},
   {id:'chucks',cat:'shoes',name:'Chucks',st:'Emo'},
   {id:'skate',cat:'shoes',name:'Skaterschuhe',st:'Skater'},
   {id:'springer',cat:'shoes',name:'Schnürstiefel',st:'Grunge'},
@@ -1058,7 +1066,9 @@ const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 
 const isOn = (o, i) => MULTI.includes(i.cat) ? !!(o[i.cat] || {})[i.id] : o[i.cat] === i.id;
 const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !== 'none' ? {[v]:'auto'} : {}; // alte Outfits hatten nur ein Accessoire als Text
 // Teile, die man ganz ausziehen kann: nochmal antippen = aus (wie bei Momio)
-const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein'};
+const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein'};
+// „Komplett ausziehen“: Kleidung, Schuhe, Accessoires, Kopfbedeckung, Strümpfe und Schmuck aus; Körper, Haare und Gesicht bleiben
+function undressAll(o){ Object.assign(o, {top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
 function wearItem(o, i){ const k = i.cat; if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; }
 
 /* ---------- Avatar ---------- */
@@ -1395,6 +1405,8 @@ function avatar(o0, view='full', pose='', lite=false){
     s += legs(c, 'cp') + path(P.torso, c, clip('cb')) + line('M100 214V236', 1, '#3a3650');
     if (b === 'ripped') s += both([[86,262,4,2],[88,300,6,2.8],[90,334,3,1.6]].map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${skin}" ${O} stroke-width=".6"/>` + line(`M${x - rx} ${y - ry - 1}H${x + rx}M${x - rx} ${y + ry + 1}H${x + rx}`, .7, '#d8d0e0')).join(''));
     else s += both(line('M84 240Q82 290 88 340', 1.2, '#fff', 'opacity=".25"') + line('M80 226Q78 236 82 246', 1, '#fff', 'opacity=".2"'));
+  } else if (b === 'u_kein') { // ausgezogen: schlichte Unterhose
+    s += path('M78 204L122 204L124 228Q112 234 100 240Q88 234 76 228Z', botC || '#141218');
   } else {
     const fill = b === 'karohose' ? id('p') : botC || '#1c1a28';
     s += legs(fill, 'cp') + path(P.torso, fill, clip('cb'))
@@ -1423,6 +1435,7 @@ function avatar(o0, view='full', pose='', lite=false){
   else if (f === 'schnallen') s += both(path('M78 318L98 318L99 380Q90 390 71 389Q69 380 78 372Z', shoeC || '#141218') + path('M69 385L100 385L100 394L69 394Z', '#0b0a0c') + [328,342,356].map(y => line(`M78 ${y}H98`, 2.4, '#2a2a30') + `<rect x="91" y="${y - 2.2}" width="4.4" height="4.4" fill="none" stroke="#c9c9cf" stroke-width="1"/>`).join(''));
   else if (f === 'karosneaker') s += `<pattern id="${u}ks" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#f2eef4"/><rect width="2.5" height="2.5" fill="${shoeC || '#141218'}"/><rect x="2.5" y="2.5" width="2.5" height="2.5" fill="${shoeC || '#141218'}"/></pattern>` + both(path('M80 350L97 350L98 383Q90 391 72 389Q71 382 80 377Z', `url(#${u}ks)`) + path('M70 386L99 386L99 392L70 392Z', '#f2eef4') + line('M84 358L94 360M84 364L94 366M84 370L94 372', 1, '#141218'));
   else if (f === 'halbschuh') s += both(path('M80 368L97 368L99 384Q90 392 71 389Q69 380 80 372Z', shoeC || '#1b1a1e') + path('M70 386L99 386L99 393L70 393Z', '#111') + line('M70 389.5H99', .8, '#e8d040', 'stroke-dasharray="1.4 1"') + line('M84 372L94 373M84 377L94 378', 1, '#bdbdbd'));
+  else if (f === 's_kein') s += both(path('M82 368L97 368L98 386Q91 392 76 390Q73 384 82 378Z', skin) + line('M77 388.6Q79 387 81 388.6', .6, shade(skin, .7))); // barfuß
   else s += both(path('M80 356L97 356L98 383Q90 391 72 389Q71 382 80 377Z', shoeC || '#141218')
       + path('M71 383Q73 378 82 380L84 389Q76 391 71 388Z', '#f2eef4') + path('M70 387L99 387L99 392L70 392Z', '#f2eef4')
       + line('M84 362L94 364M84 368L94 370M84 374L94 376', 1, '#f2eef4') + `<circle cx="91" cy="370" r="3" fill="#f2eef4" stroke="${INK}" stroke-width=".6"/>`);
@@ -1430,7 +1443,8 @@ function avatar(o0, view='full', pose='', lite=false){
   { const shoesSVG = s; s = ['baggy','bondage','langrock','schlag','cargo'].includes(o.bottom) ? sBefore.slice(0, preBottom) + shoesSVG + sBefore.slice(preBottom) : sBefore + shoesSVG; }
   // Oberteil
   const topHem = line('M83.5 206L116.5 206', 1.4), t = o.top, tc = clip('to');
-  if (t === 'netz') {
+  if (t === 't_kein') s += path('M79 146Q100 153 121 146L119 172Q100 177 81 172Z', topC || '#141218'); // ausgezogen: nur ein schlichtes Bandeau
+  else if (t === 'netz') {
     s += path('M79 146Q100 153 121 146L119 172Q100 177 81 172Z', topC || '#141218')
       + path(P.torso, id('n'), clip('ct')) + arms(id('n'), 'cl') + topHem + hems(false);
   } else if (t === 'sterne') {
@@ -1797,8 +1811,6 @@ Object.assign(FURN, {
   po_miw:{...PV, name:'Poster: Motionless In Weiß', s:'goth', svg:POSTER('#0b0b0c', [['MOTIONLESS',13,5.8,'#ecebe7','',34],['IN WEISS',21,5.4,'#ecebe7','Georgia,serif',24]], `<ellipse cx="20" cy="37" rx="8" ry="10" fill="#e9e7e2"/><path d="M14 35L18 36M22 36L26 35" stroke="${K}" stroke-width="1.8"/><path d="M15 42H25" stroke="${K}" stroke-width=".8"/><path d="M17 41V43M20 41V43M23 41V43" stroke="${K}" stroke-width=".6"/>`)},
   po_aa:{...PV, name:'Poster: Asking Alexandra', s:'metal', svg:POSTER('#141416', [['ASKING',14,7,'#ecebe7','',26],['ALEXANDRA',22,5.6,'#ecebe7','',34]], `<path d="M20 26L28 44H12Z" fill="none" stroke="#c8202e" stroke-width="1.4"/><path d="M15 38H25" stroke="#c8202e" stroke-width="1.2"/>`)},
   po_bfmv:{...PV, name:'Poster: Bullet Für Mein Valentin', s:'metal', svg:POSTER('#1a0a0e', [['BULLET FÜR MEIN',13,4.8,'#ecebe7','',34],['VALENTIN',21,6,'#c8202e','',32]], HEART_S(20, 37, 2.2, '#c8202e') + `<path d="M10 32L30 42" stroke="#c9c9cf" stroke-width="1.4"/><path d="M30 42L27 39M30 42L26 43" stroke="#c9c9cf" stroke-width=".8"/>`)},
-  po_hh:{...PV, name:'Poster: Hagedorn Höhen', s:'emo', svg:POSTER('#e8e2d6', [['HAGEDORN',13,6,'#141214','',32],['HÖHEN',21,6,'#141214','',26]], `<path d="M10 46V34L20 26L30 34V46Z" fill="none" stroke="#141214" stroke-width="1.2"/><path d="M17 46V39H23V46" fill="#141214"/><circle cx="29" cy="28" r="2.6" fill="#141214"/>`)},
-  po_adtr:{...PV, name:'Poster: Ein Tag Zum Erinnern', s:'punk', svg:POSTER('#ecebe7', [['EIN TAG ZUM',14,6.5,'#141214','',28],['ERINNERN',22,6.5,'#c8202e','',32]], `<circle cx="20" cy="37" r="9" fill="none" stroke="#141214" stroke-width="1.3"/><path d="M20 31V37L24 40" stroke="#141214" stroke-width="1.3" fill="none"/>`)},
   // ---------- Teppiche ----------
   t_mond:{name:'Mondteppich', price:0, w:28, vb:[120,40], rug:1, s:'goth', t:'teppich', svg:`<ellipse cx="60" cy="20" rx="58" ry="18" fill="#1a1a26" stroke="#4a4a5a" stroke-width="2"/><circle cx="58" cy="20" r="11" fill="#e9e7e2"/><circle cx="63" cy="17" r="9.5" fill="#1a1a26"/><circle cx="84" cy="14" r="1.6" fill="#e9e7e2"/><circle cx="34" cy="24" r="1.2" fill="#e9e7e2"/><circle cx="92" cy="26" r="1" fill="#e9e7e2"/>`},
   t_fleder:{name:'Fledermausteppich', price:0, w:30, vb:[120,40], rug:1, s:'goth', t:'teppich', svg:`<path d="${batPath(60, 20, 8)}" fill="#1b1b1f" stroke="#55555c" stroke-width="1.5"/>`},
@@ -1946,6 +1958,7 @@ function setRoomColor(k, v){
 }
 function roomHTML(u, edit, live=edit){
   const r = u.room, sel = edit && roomSel;
+  if (r.items.some(it => !FURN[it.k])) { r.items = r.items.filter(it => FURN[it.k]); roomSel = null; } // entfernte Möbel/Poster verschwinden aus dem Zimmer
   const items = r.items.map((it, i) => {
     const f = FURN[it.k]; if (!f) return '';
     const z = f.rug ? 2 : f.wall ? 1 : 10 + Math.round(it.y + itemH(it.k));
@@ -1978,7 +1991,7 @@ function roomView(){
     const dot = here ? `<span class="cdot" role="button" tabindex="0" data-act="fcol" data-k="f:${k}" style="background:${esc(fc || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe von ${esc(f.name.replace(/\u00ad/g, ''))} ändern" aria-expanded="${open}"></span>` : '';
     return `<div class="item ${here ? 'on' : ''}">${dot}<div class="thumb fthumb" data-act="ftap" data-k="${k}">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
   }).join('');
-  const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k].name : '';
+  const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k]?.name || '' : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
   const head = `<div class="rhead"><h2 class="card-h">Mein Zimmer</h2><div class="ricons">
       ${roomMode === 'edit' ? '<button class="btn rdone" data-act="rmode" data-v="edit">✓ Fertig</button>' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
@@ -2094,10 +2107,11 @@ function setColor(o, k, v){
   const mm = k.match(/^(hacc|jewel|acc|legw)\.(.+)$/); if (mm) { o[mm[1]] = {...asObj(o[mm[1]])}; o[mm[1]][mm[2]] = v || '#141218'; return; }
   if (v) o[k] = v; else delete o[k];
 }
+document.addEventListener('change', e => { const lp = e.target.closest('.lookpick'), l = lp && me()?.looks?.[lookSel]; if (l) { l.bg = lp.value; save(); render(); } });
 document.addEventListener('change', e => {
   const x = e.target.closest('.avpick'); if (!x) return;
   const o = x.dataset.act2 === 'ob-color' ? S.pending?.outfit : me()?.outfit; if (!o) return;
-  setColor(o, x.dataset.k, x.value); trial = null; save(); x.dataset.act2 === 'ob-color' ? obPatch() : render();
+  setColor(o, x.dataset.k, x.value); trial = null; save(); x.dataset.act2 === 'ob-color' ? obPatch(true) : render();
 });
 
 /* ---------- Konto (im Entwurf nur lokal) ---------- */
@@ -2199,50 +2213,41 @@ function nameView(){
     </form>
   </div></div>`;
 }
-function creatorView(){
+function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der App
   const p = S.pending, o = p.outfit;
-  const cats = [...BODY_CAT, ...CATS];
   const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.price && fits(i, o)).map(i => {
+    const on = isOn(o, i), off = on && (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id));
     const t = previewOutfit(o, i), [dot, pan] = itemColUI(i, o, 'ob-color');
-    return `<button type="button" class="item obitem ${isOn(o, i) ? 'on' : ''}" data-act="ob-item" data-id="${i.id}" aria-pressed="${isOn(o, i)}">
-      <span class="thumb" aria-label="${esc(i.name)}">${avatar(t, thumbView(i), '', true)}</span>${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}${dot}</button>${pan}`;
+    return `<div class="item ${on ? 'on' : ''}">${dot}
+      <button type="button" class="thumb" data-act="ob-item" data-id="${i.id}" aria-label="${esc(i.name)} anziehen">${avatar(t, thumbView(i), '', true)}</button>
+      ${i.cat === 'jewel' || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}
+      ${on && !off ? '<button class="btn ghost" disabled>Angezogen</button>' : `<button type="button" class="btn ghost" data-act="ob-item" data-id="${i.id}">${off ? (MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen') : 'Anziehen'}</button>`}</div>${pan}`;
   }).join('');
-  return `<div class="gate"><div class="card gate-card creator-card">
-    ${logoSVG()}${obSteps(2)}
-    <h1 class="ob-h">Gestalte deinen Avatar</h1>
-    <p class="note">Fang bei „Körper“ an: Mädchen, Junge oder Androgyn. Danach Haare hinten, Pony und Haar-Extras, dann Kleidung. Zum Start ist alles gratis und jede Farbe frei wählbar.</p>
-    <div class="creator">
-      <div class="mirror-card" style="padding:16px 0">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}</div>
-      <div style="display:grid;gap:16px;min-width:0;align-content:start">
-        ${catTabs(obCat, 'ob-cat', true, o)}
+  return `<div class="obwear">
+    <div class="card obhead">${logoSVG()}${obSteps(2)}
+      <h1 class="ob-h">Gestalte deinen Avatar</h1>
+      <p class="note">Fang bei „Körper“ an: Mädchen, Junge oder Androgyn. Danach Haare, Kleidung und Schmuck. Alles ist gratis und jede Farbe frei wählbar.</p></div>
+    <div class="wardrobe">
+      <div class="card mirror-card">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}<p class="note">Tipp ein Teil an, um es anzuziehen.</p></div>
+      <div class="card"><h2 class="card-h">Garderobe</h2><div class="card-in">
+        <div class="ctabs">${catTabs(obCat, 'ob-cat', true, o)}</div>
         ${obCat === 'body' ? colorPanel(obCat, o, 'ob-color') : ''}
         ${items ? `<div class="shopgrid">${items}</div>` : ''}
-      </div>
+      </div></div>
     </div>
-    <div class="row" style="width:100%"><button class="btn ghost" data-act="ob-back" data-v="name">Zurück</button><span class="sp"></span><button class="btn" data-act="ob-next">Weiter zu deiner Seite</button></div>
-  </div></div>`;
+    <div class="card obfoot"><div class="row"><button class="btn ghost" data-act="ob-back" data-v="name">Zurück</button><span class="sp"></span><button class="btn" data-act="ob-next">Weiter zu deiner Seite</button></div></div>
+  </div>`;
 }
-// Beim Ankleiden nicht die ganze Seite neu bauen: Spiegel und Farben sofort, Vorschaubilder danach Stück für Stück
+// Beim Ankleiden nicht sofort alles neu bauen: Spiegel und Häkchen sofort, der Rest kurz danach (wie in der Garderobe)
 let obGridT = null;
-function obPatch(){
-  const cur = document.querySelector('.creator'); if (!cur) return render();
-  const t = document.createElement('template'); t.innerHTML = creatorView();
-  const nw = t.content.querySelector('.creator'); if (!nw) return render();
-  const [mir, side] = cur.children, [nmir, nside] = nw.children;
-  cur.replaceChild(nmir, mir);
-  const grid = side.querySelector(':scope > .shopgrid'), ngrid = nside.querySelector(':scope > .shopgrid');
-  [...side.children].forEach(c => { if (c !== grid) c.remove(); });
-  [...nside.children].forEach(c => { if (c !== ngrid) side.insertBefore(c, grid); });
+const obRender = () => { const y = window.scrollY; render(); window.scrollTo(0, y); };
+function obPatch(full){
+  const o = S.pending?.outfit, pic = document.querySelector('.obwear .mirror .pic');
   clearTimeout(obGridT);
-  if (!grid || !ngrid) { if (grid) grid.remove(); if (ngrid) side.appendChild(ngrid); return; }
-  const ids = g => [...g.children].map(b => b.dataset.id).join();
-  if (ids(grid) !== ids(ngrid)) { grid.replaceWith(ngrid); return; }
-  [...ngrid.children].forEach((nb, i) => { const b = grid.children[i]; b.classList.toggle('on', nb.classList.contains('on')); b.setAttribute('aria-pressed', nb.getAttribute('aria-pressed')); });
-  obGridT = setTimeout(() => {
-    const todo = [...ngrid.children].map((nb, i) => [grid.children[i], nb]).filter(([b, nb]) => b && b.innerHTML.replace(/\bav\d+/g, '') !== nb.innerHTML.replace(/\bav\d+/g, ''));
-    const step = () => { if (!grid.isConnected) return; todo.splice(0, 3).forEach(([b, nb]) => b.isConnected && b.replaceWith(nb)); if (todo.length) requestAnimationFrame(step); };
-    step();
-  }, 350);
+  if (!o || !pic || full) return obRender();
+  pic.innerHTML = avatar(o, 'full');
+  document.querySelectorAll('.obwear .shopgrid .item').forEach(el => { const t = el.querySelector('.thumb'), it = t && item(t.dataset.id); if (it) el.classList.toggle('on', isOn(o, it)); });
+  obGridT = setTimeout(() => { if (S.pending?.step === 'avatar') obRender(); }, 650);
 }
 const coverHTML = c => c && /^data:image\//.test(c) ? `<div class="pcover" style="background-image:url('${c}')" role="img" aria-label="Banner"></div>` : '';
 function coverEd(c){
@@ -2300,6 +2305,18 @@ function seiteView(){
       <div class="row"><button class="btn ghost" type="button" data-act="ob-back" data-v="avatar">Zurück</button><span class="sp"></span><button class="btn" type="submit">Fertig, zu meiner Seite</button></div>
     </form>
   </div></div>`;
+}
+// Nach dem Ankleiden: Konto anlegen und direkt in „Profil gestalten“, genau wie in der App (Schritt 4)
+let obDesign = false;
+function finishOb(){
+    const p = S.pending, id = 'u' + Date.now().toString(36);
+    S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth, contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
+      theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), mood:'neu hier', headline:'', about:'', music:'', films:'', hobbies:'',
+      wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen im Zirkel. Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
+    delete S.pending; S.me = id; welcomeDMs();
+    claimHandle(p.handle);
+    if (!save()) return;
+    draft = null; mdraft = null; designTab = 'look'; go('design'); obDesign = true; render(); window.scrollTo(0, 0); toast('Willkommen bei Nachtfalter');
 }
 function onboardView(){
   const st = S.pending?.step;
@@ -2438,13 +2455,13 @@ document.addEventListener('click', e => {
   if (a === 'auth') { authMode = b.dataset.v; forgotPw = false; render(); }
   else if (a === 'forgot') { forgotSent = ''; const lc = document.getElementById('li-contact')?.value.trim(); if (lc) forgotContact = lc; forgotPw = !!b.dataset.v; render(); if (forgotPw && forgotContact) { const fp = document.getElementById('fg-birth'); if (fp) { fp.focus(); return; } } document.querySelector('.gate input')?.focus(); }
   else if (a === 'gmode') { gateMode = b.dataset.v; render(); document.querySelector('.gate input')?.focus(); }
-  else if (a === 'ob-cat') { obCat = b.dataset.c; render(); }
+  else if (a === 'ob-cat') { obCat = b.dataset.c; obPatch(true); }
   else if (a === 'jsub') { jewelSub = b.dataset.c; render(); }
   else if (a === 'ob-item') { wearItem(p.outfit, item(b.dataset.id)); save(); obPatch(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
-  else if (a === 'icol') { colItem = colItem === b.dataset.id ? null : b.dataset.id; S.pending && document.querySelector('.creator') ? obPatch() : render(); }
-  else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(); }
-  else if (a === 'ob-next') { p.step = 'seite'; save(); render(); window.scrollTo(0,0); }
+  else if (a === 'icol') { colItem = colItem === b.dataset.id ? null : b.dataset.id; S.pending && document.querySelector('.obwear') ? obPatch(true) : render(); }
+  else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(true); }
+  else if (a === 'ob-next') finishOb();
   else if (a === 'ob-back') { p.step = b.dataset.v; if (p.step === 'konto') authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'to-landing') { S.unlocked = false; S.pending = null; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'color') { setColor(me().outfit, b.dataset.k, b.dataset.v); trial = null; save(); render(); }
@@ -2780,7 +2797,7 @@ function toast(msg){
 function earn(){} // Punkte gibt es nicht mehr
 const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
 function go(name, arg=null){
-  mobMore = false; fpOpen = false; if (name !== V.name) roomMode = '';
+  mobMore = false; fpOpen = false; if (name !== V.name) roomMode = ''; if (name !== 'design') obDesign = false;
   if (name !== V.name || arg !== V.arg) { profTab = null; songOff = null; profEdit = false; }
   if (name !== 'chats' && CH.mode === 'helper') { CH.mode = null; CH.helper = null; }
   if (name !== 'chats' && CH.unsub) { CH.unsub(); CH.unsub = null; CH.open = null; CH.mode = null; }
@@ -3198,6 +3215,7 @@ function designView(){
   const dt = (k, l) => `<button type="button" role="tab" data-act="dtab" data-v="${k}" aria-selected="${designTab === k}">${l}</button>`;
   return `<div class="design" data-tab="${designTab}">
     <div style="display:grid;gap:22px;min-width:0">
+      ${obDesign ? `<div class="card obwelcome"><div class="card-in">${obSteps(3)}<p class="note" style="margin:0">Jetzt gestaltest du deine Seite, genau wie später unter „Profil bearbeiten“. Mit „Speichern“ bist du fertig.</p></div></div>` : ''}
       <div class="dtabs" role="tablist" aria-label="Was du bearbeitest">${dt('look', 'Farben')}${dt('pic', 'Bild')}${dt('pose', 'Pose')}${dt('about', 'Über dich')}</div>
       <div class="card" data-sec="look"><h2 class="card-h">Profil gestalten</h2><div class="card-in">
         <p class="note">Hier bearbeitest du alles an deinem Profil. Rechts siehst du sofort, wie es aussieht. Am Ende unten auf „Speichern“.</p>
@@ -3230,6 +3248,19 @@ function designView(){
     <div class="dsave"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><button class="btn" type="submit" form="designform">Speichern</button></div>
   </div>`;
 }
+// Sammelalbum: fertige Looks speichern, mit eigener Hintergrundfarbe
+let lookSel = null;
+const LOOK_MAX = 30;
+function albumHTML(u){
+  const L = u.looks || [];
+  const sel = lookSel != null && L[lookSel] ? L[lookSel] : null;
+  return `<div class="album" id="album"><h3 class="lbl albumh">Sammelalbum <small>${L.length} von ${LOOK_MAX}</small></h3>
+    ${L.length ? `<div class="looks">${L.map((l, i) => `<button type="button" class="look ${i === lookSel ? 'on' : ''}" data-act="look-sel" data-i="${i}" style="background:${esc(l.bg || '#26262b')}" aria-label="Look ${i + 1}">${avatar(l.outfit, 'full', '', true)}</button>`).join('')}</div>`
+      : '<p class="note" style="margin:0">Noch leer. Wenn dir ein Look gefällt, tipp oben auf „Look speichern“.</p>'}
+    ${sel ? `<div class="lookctl"><fieldset class="opt"><legend class="lbl">Hintergrund</legend><div class="swatches">${BG_COLORS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="look-bg" data-v="${c}" aria-pressed="${sel.bg === c}" title="${l}" aria-label="Hintergrund ${l}"></button>`).join('')}<input type="color" class="cpick lookpick" value="${/^#[0-9a-f]{6}$/i.test(sel.bg || '') ? sel.bg : '#26262b'}" title="Eigene Farbe" aria-label="Eigene Hintergrundfarbe"></div></fieldset>
+      <div class="row"><button type="button" class="btn" data-act="look-wear">Diesen Look anziehen</button><button type="button" class="btn ghost" data-act="look-del">Aus dem Album löschen</button></div></div>` : ''}
+  </div>`;
+}
 function shopView(isShop){
   const u = me(), shown = trial || u.outfit;
   const has = i => !i.price || u.owned.includes(i.id);
@@ -3256,9 +3287,11 @@ function shopView(isShop){
     </div>
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
+      ${isShop ? '' : `<div class="row lookbar"><button type="button" class="btn ghost" data-act="look-save">✦ Look speichern</button><button type="button" class="btn ghost" data-act="undress">Komplett ausziehen</button></div>`}
       <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit)}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${items ? `<div class="shopgrid">${items}</div>` : empty}
+      ${isShop ? '' : albumHTML(u)}
     </div></div>
   </div>`;
 }
@@ -4193,7 +4226,7 @@ document.addEventListener('click', async e => {
   else if (a === 'pp-clear') { me().pic = null; save(); render(); }
   else if (a === 'dtab') { designTab = b.dataset.v; render(); const col = document.querySelector('.design > div:first-child'); if (col) col.scrollTop = 0; }
   else if (a === 'prof-edit') { profEdit = b.dataset.v === '1'; composeOpen = false; render(); }
-  else if (a === 'logout') { const m = document.getElementById('confirm'); m.hidden = false; m.querySelector('[data-act=logout-no]').focus(); }
+  else if (a === 'logout') { if (mobMore) { mobMore = false; render(); } const m = document.getElementById('confirm'); m.hidden = false; m.querySelector('[data-act=logout-no]').focus(); }
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
   else if (a === 'delacct') { const m = document.getElementById('delacct'); m.hidden = false; m.querySelector('#del-in').value = ''; m.querySelector('#del-pw').value = ''; m.querySelector('#del-pwl').style.display = PUB ? '' : 'none'; m.querySelector('#del-err').hidden = true; m.querySelector('#del-go').disabled = true; m.querySelector('#del-in').focus(); }
   else if (a === 'delacct-no') document.getElementById('delacct').hidden = true;
@@ -4214,6 +4247,12 @@ document.addEventListener('click', async e => {
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
   else if (a === 'untry') { trial = null; render(); }
+  else if (a === 'undress') { undressAll(me().outfit); trial = null; save(); render(); toast('Komplett ausgezogen'); }
+  else if (a === 'look-save') { const u = me(); u.looks = u.looks || []; if (u.looks.length >= LOOK_MAX) { toast('Dein Album ist voll. Lösch zuerst einen Look.'); return; } u.looks.push({outfit:JSON.parse(JSON.stringify(u.outfit)), bg:'#26262b', ts:Date.now()}); lookSel = u.looks.length - 1; save(); render(); document.getElementById('album')?.scrollIntoView({block:'center', behavior:'smooth'}); toast('Look im Sammelalbum gespeichert'); }
+  else if (a === 'look-sel') { const i = +b.dataset.i; lookSel = lookSel === i ? null : i; render(); }
+  else if (a === 'look-bg') { const l = me().looks?.[lookSel]; if (l) { l.bg = b.dataset.v; save(); render(); } }
+  else if (a === 'look-wear') { const l = me().looks?.[lookSel]; if (l) { me().outfit = normOutfit(JSON.parse(JSON.stringify(l.outfit))); trial = null; save(); render(); toast('Look angezogen'); } }
+  else if (a === 'look-del') { const u = me(); if (u.looks?.[lookSel]) { u.looks.splice(lookSel, 1); lookSel = null; save(); render(); toast('Look gelöscht'); } }
   else if (a === 'wear') { const i = item(id), was = isOn(me().outfit, i); wearItem(me().outfit, i); trial = null; save(); render(); toast(was ? (MULTI.includes(i.cat) ? 'Abgenommen' : 'Ausgezogen') : 'Angezogen'); }
   else if (a === 'buy') {
     const i = item(id), u = me();
@@ -4417,15 +4456,7 @@ document.addEventListener('submit', async e => {
     if (!name) return fail('Bitte gib einen Namen ein.');
     if (await handleTaken(handle)) { const he = document.getElementById('uhandle-err'); he.textContent = 'Dieser Nutzername ist bereits vergeben.'; he.hidden = false; document.getElementById('uhandle').focus(); return; }
     S.pending.handle = handle; S.pending.name = name; S.pending.step = 'avatar'; obCat = 'body'; save(); render();
-  } else if (t === 'ob-finish') {
-    const p = S.pending, id = 'u' + Date.now().toString(36);
-    S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth, contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
-      theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), mood:'neu hier', headline:val('ob-headline'), about:val('ob-about'), music:'', films:'', hobbies:'',
-      wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen im Zirkel. Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
-    delete S.pending; S.me = id; welcomeDMs();
-    claimHandle(p.handle);
-    if (!save()) return;
-    go('profile', id); toast('Willkommen bei Nachtfalter');
+  } else if (t === 'ob-finish') { finishOb();
   } else if (t === 'post') {
     const p = {id:'p' + Date.now().toString(36), author:S.me, type:composeType, text:val('ptext'), ts:Date.now(), reactions:{}, comments:[]};
     if (composeType === 'foto') {
@@ -4543,7 +4574,8 @@ document.addEventListener('submit', async e => {
     if ((song || '') !== (u.songUrl || '')) { u.songUrl = song || ''; songOff = null; }
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; // Banner-Funktion entfernt (Inayas Wunsch) u.banner = {...mdraft.banner};
-    save(); go('profile', S.me); toast('Profil gespeichert');
+    const first = obDesign; obDesign = false;
+    save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert');
   }
 });
 
