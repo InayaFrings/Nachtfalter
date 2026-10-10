@@ -696,6 +696,13 @@ footer.foot .lnk{color:var(--muted)}
 .cpm-r::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #111;box-shadow:0 0 0 1px #fff,0 2px 8px #000a;cursor:pointer}
 .cpm-r::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid #111;cursor:pointer}
 .cpm-btns{justify-content:flex-end;gap:10px}.cpm-btns .btn{min-width:110px}
+.mlist{display:grid;gap:6px}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:1px solid var(--line-soft);padding:8px 12px;color:var(--fg);cursor:pointer;font:inherit}
+.mrow:hover{border-color:var(--line)}
+.mrow .cameo{width:44px;height:44px;flex:none}
+.mrow .pinfo{display:grid;flex:1;min-width:0}
+.mrow small{flex:none}
+.mnew{font:normal 12px var(--f-display);letter-spacing:.06em;text-transform:uppercase;background:var(--fg);color:var(--ink);padding:1px 6px;margin-left:6px;vertical-align:middle}
 </style>
 
 <div id="app"></div>
@@ -2755,6 +2762,7 @@ function toast(msg){
 function earn(){} // Punkte gibt es nicht mehr
 const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
 function go(name, arg=null){
+  if (name !== 'settings') memSeenSnap = null;
   mobMore = false; fpOpen = false; if (name !== V.name) roomMode = ''; if (name !== 'design') obDesign = false; LB = null;
   if (name !== V.name || arg !== V.arg) { profTab = null; songOff = null; profEdit = false; }
   if (name !== 'chats' && CH.mode === 'helper') { CH.mode = null; CH.helper = null; }
@@ -2819,7 +2827,7 @@ function gateView(){
 }
 function rail(){
   const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet');
-  const tabs = [['home','Salon'],['profile','Mein Profil'],['room','Mein Zimmer'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? ' <i class="dot" aria-label="neue Anfrage"></i>' : '')],['find','Freunde finden'],['chats','Chats' + (nNew ? ` <i class="dot" aria-label="${nNew} neu"></i>` : '')],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen']];
+  const tabs = [['home','Salon'],['profile','Mein Profil'],['room','Mein Zimmer'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? ' <i class="dot" aria-label="neue Anfrage"></i>' : '')],['find','Freunde finden'],['chats','Chats' + (nNew ? ` <i class="dot" aria-label="${nNew} neu"></i>` : '')],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? ' <i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
   const cur = V.name === 'design' ? 'profile' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${logoSVG()}<p class="logo">Nachtfalter<small>ein Ort für Freunde</small></p>
@@ -2834,7 +2842,7 @@ function rail(){
 function mobTop(nNew){ // Handy: Freunde und Chats oben rechts wie bei Momio
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)).length;
   const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
-  return `<div class="mtop">${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen')}</div>`;
+  return `<div class="mtop">${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', V.name === 'settings' ? 0 : newMembers())}</div>`;
 }
 function fitPrev(){ // Handy: links das ganze Profil in Handybreite, verkleinert auf die linke Spalte (transform klappt auch in Safari)
   const sec = document.querySelector('#preview > section'), pv = document.getElementById('preview'); if (!sec || !pv) return;
@@ -3096,7 +3104,7 @@ const HELP_FAQ = [
   [/zimmer|möbel|moebel|raum|einricht|deko/i, {andy:'Unter „Mein Zimmer“ stellst du Möbel auf und schiebst sie herum. Alle Möbel sind gratis.', juliet:'In „Mein Zimmer“ richtest du dich ein. Möbel kannst du frei hinschieben, spiegeln und wieder wegräumen.'}],
   [/freund|einlad|link|code|zirkel/i, {andy:'Deinen Einladungslink findest du unter „Freunde finden“. Gib ihn nur Leuten, die du wirklich dabeihaben willst.', juliet:'Unter „Freunde finden“ kannst du deinen Einladungslink kopieren. Bitte gib ihn nur Menschen, denen du vertraust.'}],
   [/beitrag|post|teil|bild|foto|film|video/i, {andy:'Im Salon oben teilst du Gedanken, Bilder oder Filme.', juliet:'Im Salon kannst du Gedanken, Bilder und Filme teilen. Fotos von anderen bitte nur mit deren Erlaubnis.'}],
-  [/passwort|anmeld|login|konto|abmeld/i, {andy:'Anmelden kannst du dich mit E-Mail-Adresse und deinem Passwort. Im Entwurf gibt es noch kein Passwort-Zurücksetzen.', juliet:'Du meldest dich mit E-Mail-Adresse und Passwort an. Wenn du dein Passwort vergessen hast, sag Bescheid.'}],
+  [/passwort|anmeld|login|konto|abmeld/i, {andy:'Anmelden kannst du dich mit E-Mail-Adresse und deinem Passwort. Wenn du es vergessen hast, tipp beim Anmelden auf „Passwort vergessen?“. Dann bekommst du eine E-Mail.', juliet:'Du meldest dich mit E-Mail-Adresse und Passwort an. Wenn du dein Passwort vergessen hast, tipp beim Anmelden auf „Passwort vergessen?“, dann kommt eine E-Mail zum Zurücksetzen.'}],
 ];
 function helperAnswer(h, q){
   const hit = HELP_FAQ.find(([re]) => re.test(q));
@@ -3285,7 +3293,7 @@ function socialStart(){
   db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.ready = true; syncFriends(); }).catch(() => {});
   db.doc('site/owner').get().then(async d => {
     OWNER = d.exists ? d.data().uid : null;
-    if (amOwner && OWNER !== social.uid) { try { await db.doc('site/owner').set({uid:social.uid}); OWNER = social.uid; } catch {} }
+    if (amOwner && OWNER !== social.uid) { try { await db.doc('site/owner').set({uid:social.uid}); OWNER = social.uid; } catch {} } if (amOwner && !MEMBERS) loadMembers();
     softRender();
   }).catch(() => {});
   publishProfile();
@@ -3908,6 +3916,26 @@ function syncSong(){
 
 /* ---------- Einstellungen ---------- */
 let setOpen = null;
+// Nur für die Ownerin: alle neuen Mitglieder sehen, ohne mit ihnen befreundet zu sein (Inaya)
+let MEMBERS = null, memSeenSnap = null;
+async function loadMembers(){
+  MEMBERS = MEMBERS || [];
+  try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(60).get()).docs; MEMBERS = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); } catch {}
+  if (V.name === 'settings' || isMob()) softRender();
+}
+const newMembers = () => amOwner && MEMBERS ? MEMBERS.filter(id => (PROF[id]?.joined || 0) > (S.ownerSeen || 0)).length : 0;
+function membersCard(){
+  if (!amOwner || !social) return '';
+  if (!MEMBERS) loadMembers();
+  if (memSeenSnap == null && MEMBERS?.length) { memSeenSnap = S.ownerSeen || 0; S.ownerSeen = Date.now(); save(); }
+  const seen = memSeenSnap ?? (S.ownerSeen || 0);
+  const rows = (MEMBERS || []).map(id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), fresh = (p.joined || 0) > seen;
+    return `<button type="button" class="mrow" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="pinfo"><b>${esc(u.name)}${fresh ? ' <i class="mnew">neu</i>' : ''}</b><span class="muted">@${esc(u.handle)}</span></span><small class="muted">${p.joined ? ago(p.joined) : ''}</small></button>`; }).join('');
+  return `<div class="card ownercard"><h2 class="card-h">Neue Mitglieder</h2><div class="card-in">
+    <p class="note">Nur du als Ownerin siehst diese Liste. Hier stehen alle, die sich angemeldet haben, die neuesten oben. Tipp auf jemanden, um das Profil anzusehen. Befreundet sein musst du dafür nicht.</p>
+    ${MEMBERS == null ? '<p class="note">Lädt …</p>' : rows ? `<div class="mlist">${rows}</div>` : '<p class="note">Noch niemand außer dir.</p>'}
+  </div></div>`;
+}
 function settingsView(){
   const u = me();
   contactsOf(u);
@@ -3915,7 +3943,7 @@ function settingsView(){
     <div class="setinfo"><span class="lbl">${label}</span><span class="setval">${value}</span>
     <button class="btn ghost setedit" data-act="set-open" data-k="${k}" aria-expanded="${setOpen === k}">${setOpen === k ? 'Schließen' : add ? 'Hinzufügen' : 'Ändern'}</button></div>
     ${setOpen === k ? form : ''}</div>`;
-  return `<div class="card"><h2 class="card-h">Einstellungen</h2><div class="card-in">
+  return `${membersCard()}<div class="card"><h2 class="card-h">Einstellungen</h2><div class="card-in">
     <p class="note">Deine Daten. Mit „Ändern“ passt du sie an. Anmelden kannst du dich mit deiner E-Mail-Adresse.</p>
     <div class="setlist">
     ${['email'].map(k => row(k, k === 'email' ? 'E-Mail-Adresse' : 'Handynummer', u[k] ? esc(u[k]) : '<span class="muted">nicht verknüpft</span>', `<form data-form="set-contact" data-k="${k}" class="setf">
@@ -3945,7 +3973,7 @@ function settingsView(){
     <p class="note">Freunde verwaltest du unter <button class="lnk" data-act="nav" data-v="friends">Freunde</button>, neue findest du unter <button class="lnk" data-act="nav" data-v="find">Freunde finden</button>.</p>
     <div class="row"><button class="btn ghost" data-act="logout">Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
-    <p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>
+    ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
   </div></div>`;
 }
 
@@ -3968,12 +3996,12 @@ async function loadNewbies(){
   if (V.name === 'find') softRender();
 }
 function findView(){
-  if (social && !FR.newbies) loadNewbies();
+  if (social && amOwner && !FR.newbies) loadNewbies();
   const results = FR.results == null ? '' : FR.results.length ? FR.results.map(personRow).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
   return `<div class="card"><h2 class="card-h">Freunde finden</h2><div class="card-in">
     ${social ? `<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
       <div class="plist">${results}</div>
-      ${FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`
+      ${amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`
       : '<p class="note">Freunde suchen und hinzufügen geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
     <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invbox">${inviteHTML()}</div></fieldset>
   </div></div>`;
