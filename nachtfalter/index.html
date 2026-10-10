@@ -1378,7 +1378,7 @@ const IHAIR = { // b = hinter dem Körper, f = vor dem Kopf (über dem Gesicht),
   rockstar:{b:'M20 170Q-20 -60 172 -66Q364 -60 324 170Q366 300 340 470Q354 520 320 560L300 520L284 570L262 520L82 520L60 570L44 520L24 560Q-10 520 4 470Q-22 300 20 170Z', side:520, cap:1, ln:'M30 220Q0 340 30 500M314 220Q344 340 314 500M80 -40Q50 60 56 160M264 -40Q294 60 288 160'},
   wellen:{b:'M36 170Q16 -40 172 -44Q328 -40 308 170Q338 260 314 340Q344 430 316 520Q344 610 312 700Q330 750 300 770L280 744L256 776L230 740L114 740L88 776L64 744L44 770Q14 750 32 700Q0 610 28 520Q0 430 30 340Q6 260 36 170Z', side:640, wavy:1, cap:1, ln:'M50 220Q30 300 50 380Q30 460 52 540Q34 620 56 700M294 220Q314 300 294 380Q314 460 292 540Q310 620 288 700'},
   zoepfe:{cap:1, braids:1, ln:''},
-  dreadk:{cap:1, dreads:300, ln:''}, dreadl:{cap:1, dreads:700, ln:''},
+  dreadk:{cap:1, dreads:330, ln:''}, dreadl:{cap:1, dreads:720, ln:''},
   afrok:{afro:[172,70,150,130], cap:1}, afrol:{afro:[172,150,210,230], cap:1},
   cornk:{corn:0, cap:0}, cornl:{corn:1, cap:0},
   dutt:{cap:1, buns:1, f:'M60 60Q90 -40 172 -44Q256 -40 288 60Q300 -10 172 -20Q44 -10 60 60Z'},
@@ -1411,7 +1411,13 @@ function iHair(o, X){ // gibt {back, front} zurück
     if (h.f) front += P(h.f, hf) + lines(h.ln);
     if (h.shave) front = `<path d="${ICAP}" fill="${shade(HC, .5)}" opacity=".18"/>` + front;
     if (h.braids) { const br = `M70 190Q40 260 56 330Q36 400 54 470Q40 520 56 560`; front += iboF(X.LN(br, IOL, 34) + X.LN(br, HC, 28) + X.LN(br, dk, 26, .5).replace('stroke-linecap="round"', 'stroke-dasharray="10 12" stroke-linecap="round"') + `<path d="M44 556L68 556L62 590L50 590Z" fill="${HC}" ${IO}/><rect x="44" y="548" width="24" height="10" rx="4" fill="#e05aa0" ${IO}/>`); }
-    if (h.dreads) { const y1 = h.dreads; let d = ''; [[70,140,40],[82,100,60],[100,70,86],[126,56,112],[218,56,232],[244,70,258],[262,100,284],[274,140,304]].forEach(([x0, y0, x1], k) => { const y = y1 - (k % 3) * 18; d += X.LN(`M${x0} ${y0}Q${(x0 + x1) / 2 + (x0 < 172 ? -14 : 14)} ${(y0 + y) / 2} ${x1} ${y}`, IOL, 26) + X.LN(`M${x0} ${y0}Q${(x0 + x1) / 2 + (x0 < 172 ? -14 : 14)} ${(y0 + y) / 2} ${x1} ${y}`, HC, 20) + X.LN(`M${x0} ${y0}Q${(x0 + x1) / 2 + (x0 < 172 ? -14 : 14)} ${(y0 + y) / 2} ${x1} ${y}`, dk, 12, .7).replace('stroke-linecap="round"', 'stroke-dasharray="6 9" stroke-linecap="round"'); }); front += d; }
+    if (h.dreads) { // Dreadlocks (überarbeitet 2026-10-10): dichte Locks hinter dem Körper, vorn nur seitlich neben dem Gesicht, damit jeder Pony frei bleibt
+      const y1 = h.dreads, lock = (d, w) => X.LN(d, IOL, w + 6) + X.LN(d, HC, w) + X.LN(d, dk, w * .55, .7).replace('stroke-linecap="round"', `stroke-dasharray="${f1(w * .3)} ${f1(w * .45)}" stroke-linecap="round"`) + X.LN(d, lt, w * .12, .18);
+      const tip = (x, y, w) => `<ellipse cx="${x}" cy="${y}" rx="${f1(w / 2 + 1)}" ry="${f1(w / 2 + 3)}" fill="${HC}" ${IO} stroke-width="2"/>`;
+      let bk = ''; [[44, 120, 22, 0], [64, 70, 26, 22], [96, 30, 30, 8], [130, 10, 52, 30], [172, 0, 172, 14], [214, 10, 292, 30], [248, 30, 314, 8], [280, 70, 344 - 26, 22], [300, 120, 322, 0]].forEach(([x0, y0, x1, dy]) => { const y = y1 - dy; bk += lock(`M${x0} ${y0}Q${f1((x0 + x1) / 2 + (x0 < 172 ? -18 : x0 > 172 ? 18 : 0))} ${f1((y0 + y) / 2)} ${x1} ${y}`, 22) + tip(x1, y, 22); });
+      back += bk;
+      let fr = ''; [[56, 130, 34, 16], [70, 170, 52, 0]].forEach(([x0, y0, x1, dy]) => { const y = Math.min(y1, 700) - 30 - dy; fr += lock(`M${x0} ${y0}C${x0 - 22} ${f1(y0 + (y - y0) * .35)} ${x1 + 16} ${f1(y0 + (y - y0) * .65)} ${x1} ${y}`, 20) + tip(x1, y, 20); });
+      front += iboF(fr); }
     if (h.corn !== undefined) { front += `<path d="${ICAP}" fill="${HC}"/><path d="${ICAP}" fill="none" ${IO}/>`; let d = ''; for (let k = 0; k < 7; k++) { const x = 96 + k * 25; d += `M${x} 74Q${x + (x - 172) * .3} 20 ${172 + (x - 172) * .5} -24`; } front += X.LN(d, dk, 6, .8).replace('stroke-linecap="round"', 'stroke-dasharray="7 5" stroke-linecap="round"');
       if (h.corn) back += [70, 110, 234, 274].map((x, k) => X.LN(`M${x} 150Q${x + (x < 172 ? -16 : 16)} 360 ${x + (x < 172 ? -10 : 10)} 560`, IOL, 22) + X.LN(`M${x} 150Q${x + (x < 172 ? -16 : 16)} 360 ${x + (x < 172 ? -10 : 10)} 560`, HC, 16)).join(''); }
     if (h.buns) front += iboF(P('M40 -6A44 44 0 1 1 128 -6A44 44 0 1 1 40 -6Z', hf) + X.LN('M62 -24Q84 -42 106 -24', lt, 3, .5)) + P(h.f, hf);
