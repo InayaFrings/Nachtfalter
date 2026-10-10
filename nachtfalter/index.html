@@ -225,6 +225,9 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .brfig{width:100%;aspect-ratio:1/1;display:block;overflow:hidden;background:radial-gradient(circle at 50% 40%,#ffffff1c,transparent 70%)}.brfig svg{width:100%;height:100%;display:block}
 .brtag{font-size:12px;border:1px solid var(--line);padding:1px 8px;margin-top:4px;color:var(--muted)}.brtag.on{color:var(--fg)}
 @media (max-width:760px){.brgrid{grid-template-columns:repeat(2,1fr)}}
+.apost{display:flex;gap:14px;align-items:center;border:1px solid var(--line-soft);padding:12px 14px;background:#ffffff06;flex-wrap:wrap}.apost audio{width:100%}.aname{width:100%}
+.aplay{width:52px;height:52px;border-radius:50%;border:1px solid var(--fg);background:var(--fg);color:var(--bg);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}.aplay svg{width:22px;height:22px;fill:currentColor;margin-left:3px}.ainfo{display:grid;min-width:0;flex:1}.ainfo b{overflow-wrap:anywhere}.ainfo .muted{font-size:14px}
+.plinks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.plink{display:inline-grid;gap:0;padding:5px 12px;border:1px solid var(--p-line,var(--line));color:inherit;text-decoration:none;line-height:1.2}.plink b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.plink span{font-size:15px;overflow-wrap:anywhere}a.plink:hover{border-color:var(--fg)}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
@@ -3955,7 +3958,7 @@ const hmark = u => isSiteOwner(u) ? `<span class="hmark omark" title="Owner von 
 const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name)}</button>${hmark(u)}</span>`; };
 const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}"><div class="pic">${u.pic && !cls.includes('mirror') ? `<img src="${u.pic}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
 const cameo = u => `<span class="cameo">${avatar(u.outfit,'head')}</span>`;
-const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Film',neu:'Neuigkeit',teilen:'Geteilt'};
+const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Link',neu:'Neuigkeit',teilen:'Geteilt',musik:'Musik'};
 
 /* ---------- Ansichten ---------- */
 function gateView(){
@@ -4092,7 +4095,7 @@ function friendPanel(nNew){
       ;
   } else {
     const res = FR.results == null ? '' : FR.results.length ? FR.results.map(id => { const p = PROF[id] || {}; const u = S.users[id] || remoteUser(id, p); return fpRow(u, '@' + esc(u.handle) + (isFriend(id) ? ' · befreundet' : '')); }).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
-    body = `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${browseBtn()}${res}<div class="invbox fpinv">${inviteHTML()}</div>`;
+    body = `<form data-form="fp-search" class="cform"><input type="search" id="fp-q" placeholder="@nutzername" value="${esc(FR.q || '')}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" class="fpico" aria-hidden="true">${MOB_ICONS.search}</svg></button></form>${browseBtn()}${res}`;
   }
   return `<button class="fpbtn ${fpOpen ? 'on' : ''}" data-act="fp-toggle" aria-expanded="${fpOpen}" aria-label="Freunde und Freunde finden"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.friends}</svg>${badge ? `<i class="dot" aria-label="${badge} neu"></i>` : ''}</button>
   ${fpOpen ? `<div class="fpback" data-act="fp-toggle"></div><aside class="fpanel" aria-label="Freunde">
@@ -4306,7 +4309,8 @@ function postHTML(p){
   if (p.img) body += `<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`;
   else if (p.bigimg) body += `<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`;
   if (p.url) { const v = ytId(p.url); body += v ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>`
-    : `<a class="vid" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>${esc(p.url)}</span></a>`; }
+    : `<a class="vid" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">↗</span><span>${esc(p.url)}</span></a>`; }
+  if (p.audio) body += audioHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.type !== 'teilen' && p.text) body += `<p class="caption"><b>${esc(a.name)}</b>${etx(p.text)}</p>`;
@@ -4334,13 +4338,14 @@ function postHTML(p){
 }
 let postAud = 'pub', composeOpen = false, profEdit = false, designTab = 'look';
 function composeHTML(){
-  const hint = {gedanke:'Was geht dir gerade durch den Kopf?', foto:'Ein paar Worte zum Bild (freiwillig)', video:'Worum geht es im Film? (freiwillig)'}[composeType];
-  return `      <div class="tabs" role="tablist">${[['gedanke','Gedanke'],['foto','Bild'],['video','Film']].map(([k,l]) =>
+  const hint = {gedanke:'Was geht dir gerade durch den Kopf?', foto:'Ein paar Worte zum Bild (freiwillig)', video:'Teile einen Link mit deinen Freunden (freiwillig ein paar Worte dazu)', musik:'Schreib etwas zum Lied (freiwillig)'}[composeType];
+  return `      <div class="tabs" role="tablist">${[['gedanke','Gedanke'],['foto','Bild'],['video','Link'],['musik','Musik']].map(([k,l]) =>
         `<button role="tab" data-act="ctype" data-t="${k}" aria-selected="${composeType===k}">${l}</button>`).join('')}</div>
       <form data-form="post" style="display:grid;gap:12px">
         <textarea id="ptext" maxlength="1000" placeholder="${hint}" aria-label="Text" ${composeType==='gedanke'?'required':''}></textarea>
         ${composeType==='foto' ? `<label class="f" for="pfile"><span class="lbl">Bild auswählen</span><input id="pfile" type="file" accept="image/*" ${postCrop ? '' : 'required'}></label><img id="pfile-prev" class="photo" alt="Ausgewähltes Bild" ${postCrop ? `src="${postCrop}"` : 'hidden'}>` : ''}
-        ${composeType==='video' ? `<label class="f" for="purl"><span class="lbl">Link zum Film (YouTube, TikTok, Instagram …)</span><input id="purl" type="url" placeholder="https://" required></label>` : ''}
+        ${composeType==='musik' ? `<label class="f" for="paudio"><span class="lbl">MP3 auswählen (höchstens 5 MB)</span><input id="paudio" type="file" accept="audio/*,.mp3" required></label><label class="f" for="pfile"><span class="lbl">Bild dazu (freiwillig)</span><input id="pfile" type="file" accept="image/*"></label><img id="pfile-prev" class="photo" alt="Ausgewähltes Bild" ${postCrop ? `src="${postCrop}"` : 'hidden'}>` : ''}
+        ${composeType==='video' ? `<label class="f" for="purl"><span class="lbl">Teile einen Link mit deinen Freunden (YouTube, Spotify, TikTok, Instagram …)</span><input id="purl" type="url" placeholder="https://" required></label>` : ''}
         <div class="row">${amOwner && social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${postAud === 'pub' ? 'selected' : ''}>Für alle</option><option value="fr" ${postAud === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
@@ -4392,6 +4397,20 @@ function profFriends(u, others){
   const n = list ? list.filter(f => !f.helper).length : 0;
   return `<div class="pfr"><h3 class="lbl">Freunde${n ? ` <span class="muted">${n}</span>` : ''}</h3>${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}</div>`;
 }
+// Links auf dem Profil: Spotify, Snapchat, Instagram, TikTok, Discord (Inaya, 2026-10-10)
+const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link'],['discord','Discord','Discord-Name']];
+function plinkURL(k, v){
+  v = String(v || '').trim(); if (!v) return '';
+  if (/^https?:\/\//i.test(v)) return v;
+  const h = v.replace(/^@/, '');
+  return k === 'snap' ? 'https://www.snapchat.com/add/' + encodeURIComponent(h) : k === 'insta' ? 'https://www.instagram.com/' + encodeURIComponent(h) : k === 'tiktok' ? 'https://www.tiktok.com/@' + encodeURIComponent(h) : '';
+}
+function plinksHTML(u){
+  const L = u.links || {}, has = PLINKS.filter(([k]) => L[k]);
+  if (!has.length) return '';
+  return `<div class="plinks">${has.map(([k, l]) => { const url = plinkURL(k, L[k]), shown = /^https?:/i.test(L[k]) ? 'Öffnen ↗' : (k === 'discord' ? '' : '@') + String(L[k]).replace(/^@/, '');
+    return url ? `<a class="plink" href="${esc(url)}" target="_blank" rel="noopener"><b>${l}</b><span>${esc(shown)}</span></a>` : `<span class="plink"><b>${l}</b><span>${esc(String(L[k]))}</span></span>`; }).join('')}</div>`;
+}
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.id !== S.me ? '–' : friendCount();
@@ -4402,6 +4421,7 @@ function profileHead(u, t, mine){
       ${u.id ? `<p class="phandle">${onlineHTML(u)}</p>` : ''}${ownerBadge(u)}${u.helper ? `<span class="badge">${u.helper} · erklärt die Regeln</span>` : ''}
       ${u.headline ? `<p class="phl">${esc(u.headline)}</p>` : ''}
       <div class="pstats"><span><b>${posts}</b> Beiträge</span><span><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</span></div>
+      ${plinksHTML(u)}
       <dl class="pmeta"><dt>Gemüt</dt><dd>${esc(u.mood) || '–'}</dd></dl>
       ${musicHTML(u, mine)}
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
@@ -4417,6 +4437,7 @@ function tileHTML(p){
   if (p.share) b += `<p class="meta">Geteilt von ${esc(p.share.name || 'jemandem')}</p>` + (p.share.text ? `<blockquote class="thought">${etx(p.share.text)}</blockquote>` : '') + (p.share.img ? `<img src="${esc(p.share.img)}" alt="Bild">` : '');
   if (p.img) b += `<img src="${esc(p.img)}" alt="Bild">`;
   else if (p.bigimg) b += `<img data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild">`;
+  if (p.audio) b += `<p class="caption">♪ ${esc(p.audio.name || 'Lied')}</p>`;
   if (p.url) b += `<a class="vid p" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Film ansehen</span></a>`;
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) b += `<p class="caption">${etx(p.text)}</p>`;
   const n = Object.values(p.reactions || {}).reduce((s,a) => s + (a?.length || 0), 0), nc = (p.comments || []).length;
@@ -4547,6 +4568,7 @@ function designView(){
           <label class="f" for="e-handle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="e-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label><span id="e-handle-err" class="err" hidden></span>${f('name','Name (frei wählbar)',u.name)}${f('headline','Spruch (steht neben deinem Profilbild)',u.headline)}${f('mood','Gemüt',u.mood)}
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
+          <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
           <div class="f"><span class="lbl">♪ Song auf deinem Profil (MP3, höchstens 5 MB, freiwillig)</span>
             <div class="row"><label class="btn ghost filebtn">${me().songFile ? 'Anderen Song wählen' : 'Song hochladen'}<input type="file" accept="audio/*,.mp3,.m4a" id="e-songfile"></label>${me().songFile ? `<span class="note" id="e-songname">♪ ${esc(me().songFile.name)}</span><button type="button" class="lnk" data-act="songfile-del">Entfernen</button>` : '<span class="note" id="e-songname"></span>'}</div>
             <p class="note" style="margin:0">Der Song spielt, wenn jemand dein Profil öffnet.</p></div>
@@ -4653,7 +4675,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
-    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
+    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
@@ -4704,14 +4726,14 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me).sort((a,b) => b.ts - a.ts).slice(0, 15)
-      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null}));
+      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null}));
     let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -5196,9 +5218,20 @@ async function uploadSong(file, onStep){
   for (let i = n; i < old; i++) social.db.doc(`profiles/${social.uid}/song/c${i}`).delete().catch(() => {});
   return {n, v, type:/^audio\//.test(file.type) ? file.type : 'audio/mpeg', name:file.name.slice(0, 80)};
 }
-async function songURL(uid, f){
-  const key = uid + ':' + f.v; if (SONGS[key]) return SONGS[key];
-  const docs = await Promise.all(Array.from({length:f.n}, (_, i) => social.db.doc(`profiles/${uid}/song/c${i}`).get()));
+// MP3 im Salon: die Datei liegt in Stücken unter profiles/<uid>/pa_<beitrag>/c<i> (Inaya, 2026-10-10)
+async function uploadPostAudio(file, pid, onStep){
+  const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(file); });
+  const n = Math.ceil(b64.length / SONG_CHUNK), v = Date.now();
+  for (let i = 0; i < n; i++) { await social.db.doc(`profiles/${social.uid}/pa_${pid}/c${i}`).set({v, d:b64.slice(i * SONG_CHUNK, (i + 1) * SONG_CHUNK)}); onStep?.(i + 1, n); }
+  return {n, v, type:/^audio\//.test(file.type) ? file.type : 'audio/mpeg', name:file.name.replace(/\.[a-z0-9]+$/i, '').slice(0, 80)};
+}
+function audioHTML(p){
+  const o = postOwner(p) || '';
+  return `<div class="apost"><button type="button" class="aplay" data-act="aplay" data-u="${esc(o)}" data-id="${esc(p.id)}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(p.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
+}
+async function songURL(uid, f, base='song'){
+  const key = uid + ':' + base + ':' + f.v; if (SONGS[key]) return SONGS[key];
+  const docs = await Promise.all(Array.from({length:f.n}, (_, i) => social.db.doc(`profiles/${uid}/${base}/c${i}`).get()));
   if (docs.some(d => !d.exists || d.data().v !== f.v)) throw new Error('unvollständig');
   const b64 = docs.map(d => d.data().d).join(''), bin = atob(b64), arr = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
@@ -5392,7 +5425,6 @@ function findView(){
     ${`<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>${browseBtn()}
       <div class="plist">${results}</div>
       ${amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Nachtfalter</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`}
-    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend><div class="invbox">${inviteHTML()}</div></fieldset>
   </div></div>`;
 }
 
@@ -5694,9 +5726,17 @@ document.addEventListener('click', async e => {
   else if (a === 'post-edit-no') { postEdit = null; render(); }
   else if (a === 'post-del-no') { postDelAsk = null; render(); }
   else if (a === 'post-del-yes') {
-    const pid = b.dataset.id; postDelAsk = null;
+    const pid = b.dataset.id; postDelAsk = null; const delAudio = S.posts.find(x => x.id === pid)?.audio;
     S.posts = S.posts.filter(x => x.id !== pid); save(); render(); toast('Beitrag gelöscht');
     if (social) social.db.doc('chats/pimg_' + social.uid + '/m/' + pid).delete().catch(() => {});
+    if (social && delAudio) for (let i = 0; i < delAudio.n; i++) social.db.doc(`profiles/${social.uid}/pa_${pid}/c${i}`).delete().catch(() => {});
+  }
+  else if (a === 'aplay') {
+    const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === id && (postOwner(x) || '') === b.dataset.u);
+    if (!p?.audio || !social) return;
+    b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
+    songURL(b.dataset.u, p.audio, 'pa_' + p.id).then(src => { if (box) box.innerHTML = `<b class="aname">♪ ${esc(p.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${src.url}"></audio>`; })
+      .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
   }
   else if (a === 'vplay') { b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
   else if (a === 'preact') {
@@ -5885,6 +5925,16 @@ document.addEventListener('submit', async e => {
       const file = document.getElementById('pfile').files[0]; if (!file && !postCrop) return;
       try { p.img = postCrop || await cropImage(file); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
     }
+    if (composeType === 'musik') {
+      const file = document.getElementById('paudio')?.files[0]; if (!file) return;
+      if (!social) { toast('Musik posten geht, sobald du angemeldet bist.'); return; }
+      if (file.size > SONG_MAX) { toast('Das Lied ist zu groß. Höchstens 5 MB gehen.'); return; }
+      const pf = document.getElementById('pfile')?.files[0];
+      if (postCrop || pf) { try { p.img = postCrop || await cropImage(pf); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; } }
+      const sb = f.querySelector('button[type=submit]'); if (sb) sb.disabled = true;
+      try { p.audio = await uploadPostAudio(file, p.id, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.round(i / n * 100)} %`; }); }
+      catch { toast('Das Lied ging nicht hoch. Versuch es nochmal.'); if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } return; }
+    }
     if (composeType === 'video') {
       const url = val('purl');
       if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
@@ -5994,6 +6044,7 @@ document.addEventListener('submit', async e => {
     }
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
+    if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; // Banner-Funktion entfernt (Inayas Wunsch) u.banner = {...mdraft.banner};
     const first = obDesign; obDesign = false;
     save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert');
