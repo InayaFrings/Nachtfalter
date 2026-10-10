@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e8a148704377';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='15b4517aebed';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -337,9 +337,18 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .apost{display:flex;gap:14px;align-items:center;border:1px solid var(--line-soft);padding:12px 14px;background:#ffffff06;flex-wrap:wrap}.apost audio{width:100%}.aname{width:100%}
 .aplay{width:52px;height:52px;border-radius:50%;border:1px solid var(--fg);background:var(--fg);color:var(--bg);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}.aplay svg{width:22px;height:22px;fill:currentColor;margin-left:3px}.ainfo{display:grid;min-width:0;flex:1}.ainfo b{overflow-wrap:anywhere}.ainfo .muted{font-size:14px}
 .plinks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.plink{display:inline-grid;gap:0;padding:5px 12px;border:1px solid var(--p-line,var(--line));color:inherit;text-decoration:none;line-height:1.2}.plink b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.plink span{font-size:15px;overflow-wrap:anywhere}a.plink:hover{border-color:var(--fg)}
-.pinb{flex:none;width:40px;height:40px;display:grid;place-items:center;background:none;border:1px solid transparent;color:var(--muted);padding:0;cursor:pointer}.pinb svg,.pinm svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.pinb.on{color:var(--fg)}.pinb.on svg{fill:currentColor}@media (hover:hover){.pinb:hover{border-color:var(--line)}}
-.clrow{display:flex;gap:4px;align-items:stretch}.clrow .clist{flex:1;min-width:0}.pinm{display:inline-block;vertical-align:-3px;margin-right:4px}.pinm svg{fill:currentColor}
-.zcard{position:relative}.zcard>.pinb{position:absolute;top:6px;right:6px}.zcard.pinned{outline:1px solid var(--fg)}
+.pinm{flex:none;display:grid;place-items:center;color:var(--muted);padding:0 4px}.pinm svg{width:16px;height:16px;fill:currentColor;stroke:currentColor;stroke-width:1.4;transform:rotate(35deg)}
+.clrow,.fprow{position:relative;-webkit-touch-callout:none;user-select:none}.clrow{display:flex;gap:0;align-items:stretch}.clrow .clist{flex:1;min-width:0}.clrow .pinm{position:absolute;right:10px;top:10px}
+.pinmore{position:absolute;right:6px;bottom:6px;width:28px;height:28px;display:none;place-items:center;padding:0;background:var(--paper-2,#151517);border:1px solid var(--line);color:var(--fg);cursor:pointer}.pinmore svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+@media (hover:hover){[data-pk]:hover>.pinmore{display:grid}}
+.zcard{position:relative}.zcard>.pinm{position:absolute;top:8px;right:8px}.zcard{-webkit-touch-callout:none}
+.pinpop{position:fixed;inset:0;z-index:1200;background:#0008;display:flex;align-items:flex-end;justify-content:center}.pinpop.at{background:transparent;display:block}
+.pinsheet{background:var(--paper-2,#151517);border:1px solid var(--line);width:100%;max-width:480px;padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));display:grid;gap:6px;box-shadow:0 10px 40px #000a}
+.pinpop.at .pinsheet{position:fixed;width:220px;padding:6px}
+.pinname{margin:4px 8px 6px;color:var(--muted);font-size:14px}.pinpop.at .pinname{display:none}
+.pinsheet button{display:flex;gap:12px;align-items:center;background:none;border:0;color:var(--fg);font:inherit;font-size:17px;padding:12px 10px;text-align:left;cursor:pointer}.pinsheet button:hover{background:#ffffff10}.pinsheet button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;transform:rotate(35deg)}
+.pincancel{justify-content:center;border-top:1px solid var(--line-soft)!important;color:var(--muted)!important}.pinpop.at .pincancel{display:none!important}
+.gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
@@ -4181,10 +4190,30 @@ let fpOpen = false, fpTab = 'friends', fpNew = false;
 const PIN_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg>';
 const isPin = (kind, id) => ((kind === 'f' ? S.pinF : S.pinC) || []).includes(id);
 const byPin = kind => (a, b) => (isPin(kind, b.id) ? 1 : 0) - (isPin(kind, a.id) ? 1 : 0);
-const pinBtn = (kind, id, name) => `<button type="button" class="pinb${isPin(kind, id) ? ' on' : ''}" data-act="pin" data-k="${kind}" data-id="${esc(id)}" aria-pressed="${isPin(kind, id)}" aria-label="${esc(name)} ${isPin(kind, id) ? 'lösen' : 'anpinnen'}" title="${isPin(kind, id) ? 'Lösen' : 'Anpinnen'}">${PIN_ICO}</button>`;
+// Wie bei WhatsApp: lange drücken (oder am PC Rechtsklick / Pfeil) öffnet ein Menü mit „Anpinnen“; angepinnt steht oben mit kleiner Nadel (Inaya, 2026-10-10)
+const PIN_MAX = 3;
+const pinMark = (kind, id) => `${isPin(kind, id) ? `<span class="pinm" title="Angepinnt" aria-label="Angepinnt">${PIN_ICO}</span>` : ''}<button type="button" class="pinmore" data-act="pin-menu" aria-label="Optionen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
+function pinMenu(el, x, y){
+  document.querySelector('.pinpop')?.remove();
+  const kind = el.dataset.pk, id = el.dataset.pid, on = isPin(kind, id);
+  const m = document.createElement('div'); m.className = 'pinpop'; m.setAttribute('role', 'menu');
+  m.innerHTML = `<div class="pinsheet"><p class="pinname">${esc(el.dataset.pn || '')}</p><button type="button" role="menuitem" data-act="pin" data-k="${kind}" data-id="${esc(id)}">${PIN_ICO}<span>${on ? 'Lösen' : 'Anpinnen'}</span></button><button type="button" class="pincancel" data-act="pin-close">Abbrechen</button></div>`;
+  document.body.appendChild(m);
+  if (!isMob()) { const sh = m.firstChild; sh.style.left = Math.min(x, innerWidth - 230) + 'px'; sh.style.top = Math.min(y, innerHeight - 140) + 'px'; m.classList.add('at'); }
+  const t0 = Date.now(); m.addEventListener('click', e => { if (e.target === m && Date.now() - t0 > 450) m.remove(); });
+}
+{ let t = null, el = null, sx = 0, sy = 0, fired = false;
+  document.addEventListener('pointerdown', e => { const r = e.target.closest('[data-pk]'); if (!r || e.button > 0) return; el = r; sx = e.clientX; sy = e.clientY; fired = false;
+    clearTimeout(t); t = setTimeout(() => { fired = true; navigator.vibrate?.(15); pinMenu(el, sx, sy); }, 500); });
+  const stop = () => { clearTimeout(t); t = null; };
+  document.addEventListener('pointerup', stop); document.addEventListener('pointercancel', stop);
+  document.addEventListener('pointermove', e => { if (t && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) stop(); });
+  document.addEventListener('click', e => { if (fired && e.target.closest('[data-pk]')) { e.preventDefault(); e.stopImmediatePropagation(); fired = false; } }, true);
+  document.addEventListener('contextmenu', e => { const r = e.target.closest('[data-pk]'); if (!r) return; e.preventDefault(); stop(); pinMenu(r, e.clientX, e.clientY); });
+}
 function fpRow(u, sub, act='profile', extra=''){
   const on = onlineState(u)[0];
-  return `<div class="fprow"><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
+  return `<div class="fprow" ${!u.helper && act === 'profile' ? `data-pk="f" data-pid="${esc(u.id)}" data-pn="${esc(u.name)}"` : ''}><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
 }
 function friendPanel(nNew){
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
@@ -4196,7 +4225,7 @@ function friendPanel(nNew){
     const fr = Object.values(S.users).filter(u => u.helper || (u.remote && isFriend(u.id)));
     fr.sort((a, b) => (a.helper ? 1 : 0) - (b.helper ? 1 : 0) || byPin('f')(a, b) || (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
     body = (reqs.length ? `<button class="btn fpreq" data-act="nav" data-v="friends">${reqs.length === 1 ? '1 Freundschaftsanfrage' : reqs.length + ' Freundschaftsanfragen'}</button>` : '')
-      + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1], 'profile', u.helper ? '' : pinBtn('f', u.id, u.name))).join('')
+      + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1], 'profile', u.helper ? '' : pinMark('f', u.id))).join('')
       + (fr.some(u => !u.helper) ? '' : '<p class="note">Noch keine Freunde. Such sie über „Freunde finden“.</p>');
   } else if (fpTab === 'chats') {
     body = (social ? `<div class="fpnew"><button class="btn fpreq" data-act="fp-newmenu" aria-expanded="${fpNew}">＋ Neuer Chat</button>${fpNew ? `<div class="fpnewopts"><button class="btn ghost" data-act="fp-newchat">Neues Gespräch</button><button class="btn ghost" data-act="fp-newgroup">Gruppenchat erstellen</button></div>` : ''}</div>` : '')
@@ -4920,7 +4949,7 @@ async function clearRoomChat(){ // alte Raumchat-Nachrichten wegräumen (Markier
 }
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].sort(byPin('c')).map(c => `<div class="clrow"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${isPin('c', c.id) ? '<span class="pinm">' + PIN_ICO + '</span>' : ''}${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinBtn('c', c.id, chatName(c))}</div>`).join('');
+  const list = [...CH.list].sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -4956,9 +4985,16 @@ function chatsView(){
     <p class="note">Hinweis: Im Entwurf sind Chats noch nicht verschlüsselt.</p>
   </div></div>`;
 }
+document.addEventListener('input', e => { if (e.target.id !== 'g-name') return; const n = document.getElementById('g-prevname'); if (n) n.textContent = e.target.value || 'Eure Gruppe'; });
 function groupForm(friends){
   const g = CH.gdraft;
-  return `<form data-form="group" class="gform"><h3 class="ch-h">${g.id ? 'Gruppe gestalten' : 'Neue Gruppe'}</h3>
+  // Vorschau: so sieht der Gruppenchat aus, ändert sich bei jeder Farbe, jedem Muster und jeder Schrift sofort mit (Inaya, 2026-10-10)
+  const who = g.members.map(id => S.users[id]?.name || PROF[id]?.name).filter(Boolean);
+  const prev = `<div class="gprev"><span class="lbl">So sieht eure Gruppe aus</span><section class="themed chatpanel" style="${themeStyle(normTheme({...g.theme}))}">
+      <header class="ch-head"><div><b class="ch-name" id="g-prevname">${esc(g.name || 'Eure Gruppe')}</b><small class="muted">${esc(['Du', ...who].join(', '))}</small></div></header>
+      <div class="chat msgs"><div class="bubble them"><small class="who">${esc(who[0] || 'Freundin')}</small>${etx('Wer kommt heute Abend mit auf den Friedhof? :lach:')}<small class="meta">vor 2 Min.</small></div><div class="bubble me">Ich bin dabei!<small class="meta">gerade eben</small></div></div>
+    </section></div>`;
+  return `<form data-form="group" class="gform"><h3 class="ch-h">${g.id ? 'Gruppe gestalten' : 'Neue Gruppe'}</h3>${prev}
     <label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>
     <fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
@@ -5504,7 +5540,7 @@ function friendsView(){
   const friends = Object.values(S.users).filter(u => u.id !== S.me).sort(byPin('f'));
   return `<div class="card"><h2 class="card-h">Freunde</h2><div class="card-in">
     ${reqs.length ? `<fieldset class="opt"><legend class="lbl">Freundschaftsanfragen</legend><div class="plist">${reqs.map(personRow).join('')}</div></fieldset>` : ''}
-    <fieldset class="opt"><legend class="lbl">Deine Freunde</legend>${friends.some(f => f.remote) ? '' : `<p class="note">Noch hast du hier nur Andy und Juliet. Unter <button class="lnk" data-act="nav" data-v="find">Freunde finden</button> suchst du nach Leuten.</p>`}<div class="zgrid">${friends.map(f => `<div class="themed zcard${isPin('f', f.id) ? ' pinned' : ''}" style="${themeStyle(f.theme)}">${f.remote ? pinBtn('f', f.id, f.name) : ''}
+    <fieldset class="opt"><legend class="lbl">Deine Freunde</legend>${friends.some(f => f.remote) ? '' : `<p class="note">Noch hast du hier nur Andy und Juliet. Unter <button class="lnk" data-act="nav" data-v="find">Freunde finden</button> suchst du nach Leuten.</p>`}<div class="zgrid">${friends.map(f => `<div class="themed zcard" style="${themeStyle(f.theme)}" ${f.remote ? `data-pk="f" data-pid="${esc(f.id)}" data-pn="${esc(f.name)}"` : ''}>${f.remote ? pinMark('f', f.id) : ''}
       ${portrait(f)}<div><div class="pname">${ulink(f.id)}</div><p class="phandle">@${esc(f.handle || '')}</p>${onlineHTML(f)}<p class="phl">${esc(f.headline) || esc(f.mood)}</p>
       ${f.remote ? `<button class="btn ghost" data-act="fr-remove" data-id="${f.id}">Entfernen</button>` : ''}</div></div>`).join('')}</div></fieldset>
   </div></div>`;
@@ -5835,7 +5871,11 @@ document.addEventListener('click', async e => {
     if (!(await askYesNo('Diesen Beitrag für alle löschen?', 'Ja, löschen', 'Nein'))) return;
     try { await social.db.doc('site/hidden').set({ids:[...new Set([...HIDDEN, key])]}); HIDDEN.add(key); render(); toast('Beitrag gelöscht'); } catch { toast('Das hat nicht geklappt.'); }
   }
-  else if (a === 'pin') { const key = b.dataset.k === 'f' ? 'pinF' : 'pinC', l = S[key] || []; S[key] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; save(); render(); return; }
+  else if (a === 'pin-menu') { const r = b.closest('[data-pk]'), bb = b.getBoundingClientRect(); if (r) pinMenu(r, bb.left - 180, bb.bottom + 4); return; }
+  else if (a === 'pin-close') { document.querySelector('.pinpop')?.remove(); return; }
+  else if (a === 'pin') { document.querySelector('.pinpop')?.remove(); const key = b.dataset.k === 'f' ? 'pinF' : 'pinC', l = S[key] || [];
+    if (!l.includes(id) && l.length >= PIN_MAX) { toast(`Du kannst höchstens ${PIN_MAX} anpinnen.`); return; }
+    S[key] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; save(); render(); toast(S[key].includes(id) ? 'Angepinnt' : 'Gelöst'); return; }
   else if (a === 'browse') { fpOpen = false; BR.ids = null; go('browse'); }
   else if (a === 'browse-more') { BR.n += 30; loadBrowse(); }
   else if (a === 'post-share') { sharePost(id, b.dataset.a); }
