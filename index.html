@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d2f9909e9915';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='83a5c16577c7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -213,6 +213,7 @@ label.f{display:grid;gap:4px}
 .feed .post:first-child{border-top:0}
 /* Salon wie bei Instagram: jeder Beitrag eine eigene Karte mit Abstand (Inaya, 2026-10-10) */
 .salon-h{font:400 21px/1.2 var(--f-display);margin:0 0 12px}
+.salonseg{margin:0 0 14px}
 .feed.insta{display:grid;gap:22px}
 .feed.insta .post{content-visibility:auto;contain-intrinsic-size:auto 640px}
 .feed.insta .post,.feed.insta .post:first-child{background:var(--paper);border:1px solid var(--line-soft);border-radius:8px;padding:0 0 16px;gap:12px;overflow:hidden;min-width:0}
@@ -4399,7 +4400,7 @@ function cbub(uid, name, text, ts, del, k){
 }
 function piInner(p){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
-  const can = owner === uid || isFriend(owner) || (owner === OWNER && !!p.pub); // Owner-Beiträge für alle: jeder darf reagieren
+  const can = owner === uid || isFriend(owner) || !!p.pub; // öffentliche Beiträge: jeder darf reagieren
   const reacts = REACTIONS.map((r, i) => {
     const n = list.filter(x => x.kind === 'r' && x.r === r).length, on = list.some(x => x.kind === 'r' && x.r === r && x.by === uid);
     return can ? `<button data-act="preact" data-k="${k}" data-i="${i}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${n || ''}</button>` : n ? `<span class="muted">${RICON[r]} ${n}</span>` : '';
@@ -4570,7 +4571,7 @@ function postHTML(p){
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
   return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && amOwner && social ? (p.pub ? ' · für alle' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : `<span class="pdel row">${amOwner && social && p.remote ? `<button class="lnk" data-act="post-hide" data-id="${esc(p.author + '_' + p.id)}" title="Als Gründerin für alle löschen">Löschen</button>` : ''}<button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : `<span class="pdel row"><button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
@@ -4585,7 +4586,8 @@ function postHTML(p){
     </form>`}`}
   </article>`;
 }
-let postAud = 'pub', composeOpen = false, profEdit = false, designTab = 'look';
+let postAud = null, composeOpen = false, profEdit = false, designTab = 'look';
+const aud = () => postAud || (amOwner ? 'pub' : 'fr'); // jeder wählt: öffentlich oder nur für Freunde (Inaya, 2026-10-10)
 function composeHTML(){
   const hint = {gedanke:'Was geht dir gerade durch den Kopf?', foto:'Ein paar Worte zum Bild (freiwillig)', video:'Teile einen Link mit deinen Freunden (freiwillig ein paar Worte dazu)', musik:'Schreib etwas zum Lied (freiwillig)'}[composeType];
   return `      <div class="tabs" role="tablist">${[['gedanke','Gedanke'],['foto','Bild'],['video','Link'],['musik','Musik']].map(([k,l]) =>
@@ -4595,7 +4597,7 @@ function composeHTML(){
         ${composeType==='foto' ? `<label class="f" for="pfile"><span class="lbl">Bild auswählen</span><input id="pfile" type="file" accept="image/*" ${postCrop ? '' : 'required'}></label><img id="pfile-prev" class="photo" alt="Ausgewähltes Bild" ${postCrop ? `src="${postCrop}"` : 'hidden'}>` : ''}
         ${composeType==='musik' ? `<label class="f" for="paudio"><span class="lbl">MP3 auswählen (höchstens 5 MB)</span><input id="paudio" type="file" accept="audio/*,.mp3" required></label><label class="f" for="pfile"><span class="lbl">Bild dazu (freiwillig)</span><input id="pfile" type="file" accept="image/*"></label><img id="pfile-prev" class="photo" alt="Ausgewähltes Bild" ${postCrop ? `src="${postCrop}"` : 'hidden'}>` : ''}
         ${composeType==='video' ? `<label class="f" for="purl"><span class="lbl">Teile einen Link mit deinen Freunden (YouTube, Spotify, TikTok, Instagram …)</span><input id="purl" type="url" placeholder="https://" required></label>` : ''}
-        <div class="row">${amOwner && social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${postAud === 'pub' ? 'selected' : ''}>Für alle</option><option value="fr" ${postAud === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
+        <div class="row">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${aud() === 'pub' ? 'selected' : ''}>Öffentlich</option><option value="fr" ${aud() === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
 }
@@ -4606,13 +4608,28 @@ function ownerPubPosts(){
   if (!OWNW) { OWNW = true; social.db.doc('profiles/' + OWNER).onSnapshot(d => { if (d.exists) { PROF[OWNER] = d.data(); softRender(); } }, () => { OWNW = false; }); }
   return PROF[OWNER] ? remoteUser(OWNER, PROF[OWNER]).posts.filter(p => p.pub) : [];
 }
+// Salon: Beiträge von Freunden oder öffentliche Beiträge von allen (Inaya, 2026-10-10)
+const PUBF = {ids:[], ts:0, busy:false};
+async function loadPubFeed(force){
+  if (!social || PUBF.busy || (!force && Date.now() - PUBF.ts < 60000)) return;
+  PUBF.busy = true;
+  try { const q = await social.db.collection('profiles').orderBy('pubTs', 'desc').limit(40).get(); PUBF.ids = []; q.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle)) return; PROF[d.id] = x; PUBF.ids.push(d.id); }); } catch {}
+  PUBF.ts = Date.now(); PUBF.busy = false; softRender();
+}
+function pubPosts(){
+  loadPubFeed();
+  const seen = new Set(), out = [];
+  for (const p of [...S.posts.filter(p => (p.author === S.me && p.pub) || S.users[p.author]?.helper), ...PUBF.ids.flatMap(id => PROF[id] ? remoteUser(id, PROF[id]).posts.filter(p => p.pub) : []), ...ownerPubPosts()]) { const k = p.author + '_' + p.id; if (!seen.has(k)) { seen.add(k); out.push(p); } }
+  return out;
+}
 function homeView(){
-  const posts = [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()].sort((a,b) => b.ts - a.ts);
+  const pubMode = social && S.salonMode === 'pub';
+  const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).sort((a,b) => b.ts - a.ts);
   const compose = isMob() && !homeCompose ? `<button class="btn mcompose" data-act="hcompose">＋ Etwas teilen</button>` : `<div class="card"><h2 class="card-h">Etwas teilen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
   return `${compose}
-    <section class="salon"><h2 class="salon-h">Salon</h2><div class="feed insta">${posts.length ? posts.map(postHTML).join('') : '<p class="empty muted">Noch ist es still. Teil den ersten Gedanken.</p>'}</div></section>`;
+    <section class="salon"><h2 class="salon-h">Salon</h2>${social ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${posts.length ? posts.map(postHTML).join('') : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`}</div></section>`;
 }
 let musicEdit = false;
 function musicHTML(u, mine){
@@ -4680,7 +4697,7 @@ function profileHead(u, t, mine){
       <dl class="pmeta"><dt>Gemüt</dt><dd>${esc(u.mood) || '–'}</dd></dl>
       ${musicHTML(u, mine)}
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
-        : u.helper ? `<button class="btn" data-act="ptab" data-t="chat">Schreib mir</button>`
+        : u.helper ? `<button class="btn" data-act="helper-chat" data-id="${u.id}">Schreib mir</button>`
         : u.remote && !isFriend(u.id) ? frReqHTML(u.id)
         : u.remote ? `<div class="row"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button></div>` : ''}
     </div>
@@ -4741,12 +4758,12 @@ function profileView(id){
   const u = profUser(id); if (!u) return homeView();
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
-  const posts = (u.remote ? [...(u.posts || [])].filter(p => (p.pub || id !== OWNER || isFriend(id)) && !isHidden(p)) : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
+  const posts = (u.remote ? [...(u.posts || [])].filter(p => (p.pub || isFriend(id)) && !isHidden(p)) : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
   let panel = '';
-  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten'],['chat','Schreib mir']] : [['room','Zimmer'],['posts','Beiträge']]; // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
+  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge']]; // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
   if (!tabs.some(([k]) => k === profTab)) profTab = tabs[0][0];
   if (profTab === 'rules') panel = `<div class="rules">${esc(u.about)}</div>`;
-  if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="gb">${n.map(p => `<div class="entry"><span class="meta">${ago(p.ts)}</span><p style="margin:4px 0 0">${etx(p.text)}</p></div>`).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
+  if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="feed insta pfeed">${n.map(postHTML).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
   if (profTab === 'chat') panel = chatHTML(u);
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
   if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
@@ -4988,7 +5005,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.pinF || []).slice(0, 4), songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.pinF || []).slice(0, 4), songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, pubTs:Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -5733,6 +5750,7 @@ document.addEventListener('click', async e => {
   else if (a === 'chat-new') { CH.mode = 'new'; render(); }
   else if (a === 'chat-group') { CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
+  else if (a === 'salon-mode') { S.salonMode = b.dataset.v === 'pub' ? 'pub' : 'fr'; save(); if (S.salonMode === 'pub') loadPubFeed(true); render(); }
   else if (a === 'helper-chat') { chatTab = 'priv'; go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
   else if (a === 'chat-tab') { chatTab = b.dataset.v === 'group' ? 'group' : 'priv'; render(); }
   else if (a === 'chat-add') { gRmAsk = null; CH.mode = 'gadd'; render(); }
@@ -6254,7 +6272,7 @@ document.addEventListener('submit', async e => {
       if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
       p.url = url;
     }
-    if (amOwner && social) { postAud = val('paud') === 'fr' ? 'fr' : 'pub'; if (postAud === 'pub') p.pub = 1; } // Owner: Beitrag für alle oder nur für Freunde
+    if (social) { postAud = val('paud') === 'pub' ? 'pub' : 'fr'; if (postAud === 'pub') p.pub = 1; } // Beitrag öffentlich oder nur für Freunde
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
     earn(PTS[composeType], {gedanke:'Gedanke geteilt',foto:'Bild geteilt',video:'Film geteilt'}[composeType]);
