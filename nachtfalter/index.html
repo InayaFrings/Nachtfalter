@@ -277,7 +277,7 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 .steps li::before{content:counter(st) ". "}
 .steps li.done{color:var(--muted)}
 .steps li.cur{color:var(--fg);border-bottom:1px solid var(--fg)}
-.gate-card.lookbar{gap:8px;margin:0 0 12px;flex-wrap:wrap}.album{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft);display:grid;gap:12px}.albumh{margin:0}.albumh small{margin-left:8px;opacity:.7;letter-spacing:0;text-transform:none}.looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}.look{aspect-ratio:1/2;border:2px solid var(--line);border-radius:10px;padding:6px 4px 0;cursor:pointer;overflow:hidden;display:block}.look.on{border-color:var(--fg)}.look svg{width:100%;height:100%;display:block}.lookctl{display:grid;gap:10px}.lookctl .row{gap:8px;flex-wrap:wrap}
+.gate-card.lookbar{gap:8px;margin:0 0 12px;flex-wrap:wrap;align-items:center}.lbbtn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:400 14px var(--f-display);letter-spacing:.03em;cursor:pointer;min-height:0}.lbbtn:hover{background:rgba(255,255,255,.06)}.lbbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}.lbrow{margin:8px 0}.lbcard{max-width:640px;max-height:86vh;overflow:auto;text-align:left}.lbhead{display:flex;align-items:center;justify-content:space-between;gap:10px}.lbhead .ch-h{margin:0}.lbcard .album{margin:0;padding:0;border:0}.album{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft);display:grid;gap:12px}.albumh{margin:0}.albumh small{margin-left:8px;opacity:.7;letter-spacing:0;text-transform:none}.looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}.look{aspect-ratio:1/2;border:2px solid var(--line);border-radius:10px;padding:6px 4px 0;cursor:pointer;overflow:hidden;display:block}.look.on{border-color:var(--fg)}.look svg{width:100%;height:100%;display:block}.lookctl{display:grid;gap:10px}.lookctl .row{gap:8px;flex-wrap:wrap}
 .obwear{width:min(1100px,100%);margin:0 auto;padding:32px 16px 48px;display:grid;gap:18px}.obwear .obhead{display:grid;gap:14px;justify-items:center;text-align:center;padding:24px 20px}.obwear .obhead .note{margin:0;max-width:560px}.obwear .obfoot{padding:14px 18px}.obwear .obfoot .row{margin:0}
 .creator-card{width:min(980px,100%);text-align:left;justify-items:stretch}
 .creator-card .logo-mark{margin-inline:auto}
@@ -731,6 +731,7 @@ function catTabs(cur, act, withBody, o){
 }
 const LAUNCH_FREE = true; // Zum Start ist alle Kleidung gratis. Preise bleiben für später in "later".
 const ITEMS = [
+  {id:'h_kein',cat:'back',name:'Keine Haare'},
   {id:'scenek',cat:'back',name:'Scene-Hair kurz',st:'Emo'},
   {id:'scenel',cat:'back',name:'Scene-Hair lang',st:'Emo'},
   {id:'goth',cat:'back',name:'Auftoupiert und offen',st:'Goth'},
@@ -787,7 +788,7 @@ const ITEMS = [
   {id:'b_ziege',cat:'beard',name:'Spitzbart mit Schnurrbart',g:'m'},
   {id:'b_voll',cat:'beard',name:'Vollbart',g:'m'},
   {id:'b_kotel',cat:'beard',name:'Koteletten',g:'m'},
-  {id:'natur',cat:'face',name:'Ungeschminkt'},
+  {id:'natur',cat:'face',name:'Kein Make-up'},
   {id:'liner',cat:'face',name:'Eyeliner',st:'Emo'},
   {id:'smokey',cat:'face',name:'Smokey Eyes',st:'Goth'},
   {id:'rouge',cat:'face',name:'Rosige Wangen',st:'Scene'},
@@ -854,6 +855,14 @@ const ITEMS = [
   {id:'l_stulpen_fell',cat:'legw',name:'Flauschige Stulpen',c:'#ecebe7'},
   {id:'l_stulpen_schnuer',cat:'legw',name:'Stulpen mit Schnürung',c:'#141218'},
   {id:'u_kein',cat:'bottom',name:'Keine Hose'},
+  {id:'x_hacc',cat:'hacc',name:'Keine Kopfbedeckung',none:1},
+  {id:'x_acc',cat:'acc',name:'Keine Accessoires',none:1},
+  {id:'x_legw',cat:'legw',name:'Keine Strümpfe',none:1},
+  {id:'x_pierc',cat:'jewel',sub:'pierc',name:'Keine Piercings',none:1},
+  {id:'x_kette',cat:'jewel',sub:'kette',name:'Keine Ketten',none:1},
+  {id:'x_arm',cat:'jewel',sub:'arm',name:'Keine Armbänder',none:1},
+  {id:'x_ohr',cat:'jewel',sub:'ohr',name:'Keine Ohrringe',none:1},
+  {id:'x_ring',cat:'jewel',sub:'ring',name:'Keine Ringe',none:1},
   {id:'jeans',cat:'bottom',name:'Röhrenjeans',st:'Emo'},
   {id:'karohose',cat:'bottom',name:'Karohose',st:'Punk'},
   {id:'baggy',cat:'bottom',name:'Weite Skaterhose',st:'Skater'},
@@ -948,19 +957,21 @@ for (const i of ITEMS) { i.later = i.price || 0; i.price = 0; } // Kein Shop meh
 const FREE = ITEMS.filter(i=>!i.price).map(i=>i.id);
 const DEFAULT_OUTFIT = {body:'a',back:'scenek',front:'p_seitlich',hacc:{},jewel:{},legw:{},eyeform:'e_rund',lips:'l_schmoll',face:'liner',top:'band',jacket:'j_kein',bottom:'jeans',shoes:'chucks',acc:{}};
 function previewOutfit(o, i){
+  if (i.none) { const t = {...o}; wearItem(t, i); return t; }
   if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_zunge' ? {lips:'l_offen'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
 const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? 'mouth' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
 const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
-const isOn = (o, i) => MULTI.includes(i.cat) ? !!(o[i.cat] || {})[i.id] : o[i.cat] === i.id;
+const noneKeys = (o, i) => Object.keys(asObj(o[i.cat])).filter(k => i.cat !== 'jewel' || (item(k)?.sub || 'kette') === i.sub); // was von dieser Sorte gerade getragen wird
+const isOn = (o, i) => i.none ? !noneKeys(o, i).length : MULTI.includes(i.cat) ? !!(o[i.cat] || {})[i.id] : o[i.cat] === i.id;
 const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !== 'none' ? {[v]:'auto'} : {}; // alte Outfits hatten nur ein Accessoire als Text
 // Teile, die man ganz ausziehen kann: nochmal antippen = aus (wie bei Momio)
-const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein'};
+const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', face:'natur', back:'h_kein'};
 // „Komplett ausziehen“: Kleidung, Schuhe, Accessoires, Kopfbedeckung, Strümpfe und Schmuck aus; Körper, Haare und Gesicht bleiben
 function undressAll(o){ Object.assign(o, {top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
-function wearItem(o, i){ const k = i.cat; if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; }
+function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; }
 
 /* ---------- Avatar ---------- */
 // Skizzenhafte Emo-Zeichnungen der 2000er: sehr dünne Figuren, hohle weiße Augen, kreideblasse Haut, zittrige Outline
@@ -1988,7 +1999,7 @@ function itemColorPanel(i, o, act){
 }
 function itemColor(i, o){ const v = MULTI.includes(i.cat) ? asObj(o[i.cat])[i.id] : curColor(i.cat, o); return /^#/.test(v || '') ? v : '#444'; }
 function itemColUI(i, o, act){ // [Farbpunkt im Kasten, aufgeklappte Farben darunter]
-  if (!isOn(o, i)) return ['', ''];
+  if (!isOn(o, i) || i.none || NONE_ITEM[i.cat] === i.id) return ['', ''];
   const p = itemColorPanel(i, o, act); if (!p) return ['', ''];
   return [`<span class="cdot" role="button" tabindex="0" data-act="icol" data-id="${i.id}" style="background:${esc(itemColor(i, o))}" title="Farbe ändern" aria-label="Farbe von ${esc(i.name)} ändern" aria-expanded="${colItem === i.id}"></span>`,
     colItem === i.id ? `<div class="cpanel" data-id="cp_${i.id}">${p}</div>` : ''];
@@ -2688,7 +2699,7 @@ function toast(msg){
 function earn(){} // Punkte gibt es nicht mehr
 const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
 function go(name, arg=null){
-  mobMore = false; fpOpen = false; if (name !== V.name) roomMode = ''; if (name !== 'design') obDesign = false;
+  mobMore = false; fpOpen = false; if (name !== V.name) roomMode = ''; if (name !== 'design') obDesign = false; LB = null;
   if (name !== V.name || arg !== V.arg) { profTab = null; songOff = null; profEdit = false; }
   if (name !== 'chats' && CH.mode === 'helper') { CH.mode = null; CH.helper = null; }
   if (name !== 'chats' && CH.unsub) { CH.unsub(); CH.unsub = null; CH.open = null; CH.mode = null; }
@@ -3076,6 +3087,7 @@ function profileView(id){
     ${bannerHTML(u.banner, u.name, u.handle || '')}
     ${own ? `<div class="editbar"><span class="note">So sehen andere dein Profil.</span><button class="btn" data-act="nav" data-v="design">✎ Profil bearbeiten</button></div>` : ''}
     ${roomOpenHTML(u, own)}
+    ${(own || (u.looks || []).length) ? `<div class="row lbrow">${lookBtn(u)}</div>` : ''}${LB === u.id ? lookModal(u, own) : ''}
     ${profileHead(u, u.theme, mine)}
     ${steckHTML}
     <div class="pz">${others.map(f => `<div class="m">${cameo(f)}${ulink(f.id)}</div>`).join('')}</div>
@@ -3139,15 +3151,23 @@ function designView(){
     <div class="dsave"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><button class="btn" type="submit" form="designform">Speichern</button></div>
   </div>`;
 }
-// Sammelalbum: fertige Looks speichern, mit eigener Hintergrundfarbe
-let lookSel = null;
+// Sammelalbum (Lookbuch): fertige Looks speichern, mit eigener Hintergrundfarbe; andere sehen es auf dem Profil
+let lookSel = null, LB = null;
+const lookBtn = u => `<button type="button" class="lbbtn" data-act="lb-open" data-id="${esc(u.id)}" title="Lookbuch" aria-label="Lookbuch von ${esc(u.name)} öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button>`;
+function lookModal(u, own){
+  const L = u.looks || [];
+  return `<div class="modal lbmodal" role="dialog" aria-modal="true" aria-label="Lookbuch"><div class="card modal-card lbcard">
+    <div class="lbhead"><h2 class="ch-h">${own ? 'Dein Lookbuch' : 'Lookbuch von ' + esc(u.name)}</h2><button type="button" class="btn ghost" data-act="lb-close" aria-label="Schließen">✕</button></div>
+    ${own ? albumHTML(u) : L.length ? `<div class="looks">${L.map(l => `<div class="look" style="background:${esc(l.bg || '#26262b')}">${avatar(l.outfit, 'full', '', true)}</div>`).join('')}</div>` : '<p class="note">Noch keine Looks gespeichert.</p>'}
+  </div></div>`;
+}
 const LOOK_MAX = 30;
 function albumHTML(u){
   const L = u.looks || [];
   const sel = lookSel != null && L[lookSel] ? L[lookSel] : null;
-  return `<div class="album" id="album"><h3 class="lbl albumh">Sammelalbum <small>${L.length} von ${LOOK_MAX}</small></h3>
+  return `<div class="album" id="album"><p class="lbl albumh">${L.length} von ${LOOK_MAX} Looks</p>
     ${L.length ? `<div class="looks">${L.map((l, i) => `<button type="button" class="look ${i === lookSel ? 'on' : ''}" data-act="look-sel" data-i="${i}" style="background:${esc(l.bg || '#26262b')}" aria-label="Look ${i + 1}">${avatar(l.outfit, 'full', '', true)}</button>`).join('')}</div>`
-      : '<p class="note" style="margin:0">Noch leer. Wenn dir ein Look gefällt, tipp oben auf „Look speichern“.</p>'}
+      : '<p class="note" style="margin:0">Noch leer. Wenn dir ein Look gefällt, tipp in der Garderobe auf „Look speichern“.</p>'}
     ${sel ? `<div class="lookctl"><fieldset class="opt"><legend class="lbl">Hintergrund</legend><div class="swatches">${BG_COLORS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="look-bg" data-v="${c}" aria-pressed="${sel.bg === c}" title="${l}" aria-label="Hintergrund ${l}"></button>`).join('')}<input type="color" class="cpick lookpick" value="${/^#[0-9a-f]{6}$/i.test(sel.bg || '') ? sel.bg : '#26262b'}" title="Eigene Farbe" aria-label="Eigene Hintergrundfarbe"></div></fieldset>
       <div class="row"><button type="button" class="btn" data-act="look-wear">Diesen Look anziehen</button><button type="button" class="btn ghost" data-act="look-del">Aus dem Album löschen</button></div></div>` : ''}
   </div>`;
@@ -3178,11 +3198,11 @@ function shopView(isShop){
     </div>
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
-      ${isShop ? '' : `<div class="row lookbar"><button type="button" class="btn ghost" data-act="look-save">✦ Look speichern</button><button type="button" class="btn ghost" data-act="undress">Komplett ausziehen</button></div>`}
+      ${isShop ? '' : `<div class="row lookbar"><button type="button" class="lbbtn" data-act="lb-open" data-id="${u.id}" title="Lookbuch" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="btn ghost" data-act="look-save">✦ Look speichern</button><button type="button" class="btn ghost" data-act="undress">Komplett ausziehen</button></div>`}
       <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit)}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${items ? `<div class="shopgrid">${items}</div>` : empty}
-      ${isShop ? '' : albumHTML(u)}
+      ${!isShop && LB === u.id ? lookModal(u, true) : ''}
     </div></div>
   </div>`;
 }
@@ -3221,7 +3241,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
-    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
+    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
@@ -3277,7 +3297,7 @@ function publishProfile(){
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
       delete x.full; }
-    const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
+    const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', games2:u.games2 || '', songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
@@ -3968,10 +3988,25 @@ function birthView(){
       <div class="row"><button class="btn ghost" type="button" data-act="logout-yes">Abmelden</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
     </form></div></div>`;
 }
+let lastViewKey = '';
+function scrollXs(root){
+  const out = [];
+  root.querySelectorAll('[class]').forEach(el => {
+    if (el.scrollLeft > 0 && el.className && typeof el.className === 'string') {
+      const all = root.querySelectorAll(`[class="${CSS.escape(el.className)}"]`);
+      out.push([el.className, [...all].indexOf(el), el.scrollLeft]);
+    }
+  });
+  return out;
+}
 function render(){
   const app = document.getElementById('app');
+  // Waagerechte Leisten (Reiter, Posen, Möbel, Zimmer) bleiben beim Antippen, wo sie gerade stehen
+  const viewKey = (S.me && S.users[S.me] ? V.name + '|' + V.arg : 'ob|' + (S.pending?.step || '')), keepX = viewKey === lastViewKey ? scrollXs(app) : [];
+  lastViewKey = viewKey;
+  const restoreX = () => keepX.forEach(([cls, i, x]) => { const el = app.querySelectorAll(`[class="${CSS.escape(cls)}"]`)[i]; if (el) el.scrollLeft = x; });
   if (!S.unlocked) { applyPage(null); app.innerHTML = gateView(); return; }
-  if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); return; }
+  if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); restoreX(); return; }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
   const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit'].includes(V.name);
   const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, settings:settingsView, visit:visitView}[V.name] || homeView;
@@ -3985,6 +4020,7 @@ function render(){
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
   syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
+  restoreX();
   const mb = document.getElementById('msgs'); if (mb) mb.scrollTop = mb.scrollHeight;
 }
 
@@ -4138,8 +4174,10 @@ document.addEventListener('click', async e => {
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
   else if (a === 'untry') { trial = null; render(); }
+  else if (a === 'lb-open') { LB = id; lookSel = null; if (id !== S.me && !profUser(id)?.looks) await loadProf(id); render(); }
+  else if (a === 'lb-close') { LB = null; lookSel = null; render(); }
   else if (a === 'undress') { undressAll(me().outfit); trial = null; save(); render(); toast('Komplett ausgezogen'); }
-  else if (a === 'look-save') { const u = me(); u.looks = u.looks || []; if (u.looks.length >= LOOK_MAX) { toast('Dein Album ist voll. Lösch zuerst einen Look.'); return; } u.looks.push({outfit:JSON.parse(JSON.stringify(u.outfit)), bg:'#26262b', ts:Date.now()}); lookSel = u.looks.length - 1; save(); render(); document.getElementById('album')?.scrollIntoView({block:'center', behavior:'smooth'}); toast('Look im Sammelalbum gespeichert'); }
+  else if (a === 'look-save') { const u = me(); u.looks = u.looks || []; if (u.looks.length >= LOOK_MAX) { toast('Dein Album ist voll. Lösch zuerst einen Look.'); return; } u.looks.push({outfit:JSON.parse(JSON.stringify(u.outfit)), bg:'#26262b', ts:Date.now()}); lookSel = u.looks.length - 1; save(); render(); toast('Look im Lookbuch gespeichert'); }
   else if (a === 'look-sel') { const i = +b.dataset.i; lookSel = lookSel === i ? null : i; render(); }
   else if (a === 'look-bg') { const l = me().looks?.[lookSel]; if (l) { l.bg = b.dataset.v; save(); render(); } }
   else if (a === 'look-wear') { const l = me().looks?.[lookSel]; if (l) { me().outfit = normOutfit(JSON.parse(JSON.stringify(l.outfit))); trial = null; save(); render(); toast('Look angezogen'); } }
