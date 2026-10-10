@@ -2762,7 +2762,7 @@ function toast(msg){
 function earn(){} // Punkte gibt es nicht mehr
 const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
 function go(name, arg=null){
-  if (name !== 'settings') memSeenSnap = null;
+  if (name !== 'settings') { memSeenSnap = null; memAll = false; }
   mobMore = false; fpOpen = false; if (name !== V.name) roomMode = ''; if (name !== 'design') obDesign = false; LB = null;
   if (name !== V.name || arg !== V.arg) { profTab = null; songOff = null; profEdit = false; }
   if (name !== 'chats' && CH.mode === 'helper') { CH.mode = null; CH.helper = null; }
@@ -3917,10 +3917,10 @@ function syncSong(){
 /* ---------- Einstellungen ---------- */
 let setOpen = null;
 // Nur für die Ownerin: alle neuen Mitglieder sehen, ohne mit ihnen befreundet zu sein (Inaya)
-let MEMBERS = null, memSeenSnap = null;
-async function loadMembers(){
+let MEMBERS = null, memSeenSnap = null, memAll = false;
+async function loadMembers(all){
   MEMBERS = MEMBERS || [];
-  try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(60).get()).docs; MEMBERS = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); } catch {}
+  try { const q = social.db.collection('profiles').orderBy('joined', 'desc'); const docs = (await (all ? q : q.limit(30)).get()).docs; MEMBERS = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); } catch {}
   if (V.name === 'settings' || isMob()) softRender();
 }
 const newMembers = () => amOwner && MEMBERS ? MEMBERS.filter(id => (PROF[id]?.joined || 0) > (S.ownerSeen || 0)).length : 0;
@@ -3929,11 +3929,12 @@ function membersCard(){
   if (!MEMBERS) loadMembers();
   if (memSeenSnap == null && MEMBERS?.length) { memSeenSnap = S.ownerSeen || 0; S.ownerSeen = Date.now(); save(); }
   const seen = memSeenSnap ?? (S.ownerSeen || 0);
-  const rows = (MEMBERS || []).map(id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), fresh = (p.joined || 0) > seen;
+  const list = MEMBERS || [], rows = (memAll ? list : list.slice(0, 5)).map(id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), fresh = (p.joined || 0) > seen;
     return `<button type="button" class="mrow" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="pinfo"><b>${esc(u.name)}${fresh ? ' <i class="mnew">neu</i>' : ''}</b><span class="muted">@${esc(u.handle)}</span></span><small class="muted">${p.joined ? ago(p.joined) : ''}</small></button>`; }).join('');
   return `<div class="card ownercard"><h2 class="card-h">Neue Mitglieder</h2><div class="card-in">
-    <p class="note">Nur du als Ownerin siehst diese Liste. Hier stehen alle, die sich angemeldet haben, die neuesten oben. Tipp auf jemanden, um das Profil anzusehen. Befreundet sein musst du dafür nicht.</p>
+    <p class="note">Nur du als Ownerin siehst diese Liste. ${memAll ? `Alle ${list.length} Mitglieder, die neuesten oben.` : 'Die fünf Neuesten.'} Tipp auf jemanden, um das Profil anzusehen.</p>
     ${MEMBERS == null ? '<p class="note">Lädt …</p>' : rows ? `<div class="mlist">${rows}</div>` : '<p class="note">Noch niemand außer dir.</p>'}
+    ${list.length > 5 || (!memAll && list.length >= 5) ? `<div class="row"><button type="button" class="btn ghost" data-act="mem-all">${memAll ? 'Weniger anzeigen' : 'Alle anzeigen'}</button></div>` : ''}
   </div></div>`;
 }
 function settingsView(){
@@ -3943,7 +3944,7 @@ function settingsView(){
     <div class="setinfo"><span class="lbl">${label}</span><span class="setval">${value}</span>
     <button class="btn ghost setedit" data-act="set-open" data-k="${k}" aria-expanded="${setOpen === k}">${setOpen === k ? 'Schließen' : add ? 'Hinzufügen' : 'Ändern'}</button></div>
     ${setOpen === k ? form : ''}</div>`;
-  return `${membersCard()}<div class="card"><h2 class="card-h">Einstellungen</h2><div class="card-in">
+  return `<div class="card"><h2 class="card-h">Einstellungen</h2><div class="card-in">
     <p class="note">Deine Daten. Mit „Ändern“ passt du sie an. Anmelden kannst du dich mit deiner E-Mail-Adresse.</p>
     <div class="setlist">
     ${['email'].map(k => row(k, k === 'email' ? 'E-Mail-Adresse' : 'Handynummer', u[k] ? esc(u[k]) : '<span class="muted">nicht verknüpft</span>', `<form data-form="set-contact" data-k="${k}" class="setf">
@@ -3974,7 +3975,7 @@ function settingsView(){
     <div class="row"><button class="btn ghost" data-act="logout">Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
-  </div></div>`;
+  </div></div>${membersCard()}`;
 }
 
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
@@ -4246,6 +4247,7 @@ document.addEventListener('click', async e => {
   else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} location.reload(); }); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'new-invite') makeInvite();
+  else if (a === 'mem-all') { memAll = !memAll; if (memAll) loadMembers(true); render(); }
   else if (a === 'copy-invite') { // Inaya: kleine Bestätigung „Link wurde kopiert“, auch direkt am Knopf
     const l = INV.link, btn = b;
     const ok = () => { toast('Link wurde kopiert'); if (btn) { btn.textContent = '✓ Kopiert'; setTimeout(() => { if (btn.isConnected) btn.textContent = 'Link kopieren'; }, 2000); } };
