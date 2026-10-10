@@ -105,6 +105,7 @@ label.f{display:grid;gap:4px}
 /* Salon wie bei Instagram: jeder Beitrag eine eigene Karte mit Abstand (Inaya, 2026-10-10) */
 .salon-h{font:400 21px/1.2 var(--f-display);margin:0 0 12px}
 .feed.insta{display:grid;gap:22px}
+.feed.insta .post{content-visibility:auto;contain-intrinsic-size:auto 640px}
 .feed.insta .post,.feed.insta .post:first-child{background:var(--paper);border:1px solid var(--line-soft);border-radius:8px;padding:0 0 16px;gap:12px;overflow:hidden;min-width:0}
 .feed.insta .post>*{margin-inline:18px;min-width:0}
 .feed.insta .post>.ph{padding-top:14px}
@@ -2190,8 +2191,14 @@ function avatarI(o0, view='full', pose='', lite=false){
     <clipPath id="${u}ac"><path d="${IARMCLIP[B.k]}"/></clipPath>${sk}${defs.join('')}
   </defs><g transform="${PT}">${inner}</g></svg>`;
 }
+// Flüssiger: gleiche Avatare nicht bei jedem Neuzeichnen neu berechnen (Inaya: Anmelden ruckelte)
+const AVC = new Map();
 function avatar(o0, view='full', pose='', lite=false){
-  return avatarI(o0, view, pose, lite); // seit 2026-10-10: Inayas gezeichnete Figuren; der alte Zeichner unten bleibt nur als Reserve
+  let k; try { k = JSON.stringify([o0, view, pose, lite]); } catch { return avatarI(o0, view, pose, lite); }
+  const hit = AVC.get(k); if (hit !== undefined) return hit;
+  const svg = avatarI(o0, view, pose, lite);
+  if (AVC.size > 400) AVC.delete(AVC.keys().next().value);
+  AVC.set(k, svg); return svg; // seit 2026-10-10: Inayas gezeichnete Figuren; der alte Zeichner unten bleibt nur als Reserve
   const PZ = POSES.find(x => x[0] === pose) || POSES[0];
   const ARM = side => PZ[4][side] ? `rotate(${PZ[4][side]} 79 131)` : '';
   // Arme pro Seite: links normal, rechts gespiegelt; jede Seite kann eigene Drehung haben
@@ -3763,7 +3770,7 @@ async function cloudInit(){
       const st = await cloudRead(col, meta.data().n);
       S = ensureHelpers(st); cloud.ok = true;
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
-      render();
+      softRender();
     } else if (S.me || S.pending || meta.exists) { cloudQueue(); }
     else { cloud.ok = true; }
     if (me()?.handle) claimHandle(me().handle);
@@ -4402,10 +4409,14 @@ function socialStart(){
   }).catch(() => {});
   publishProfile();
 }
+// Hintergrund-Updates (Freunde, Chats, Profile …) kommen oft kurz nacheinander: zu einem Neuzeichnen bündeln
+let softT = null;
 function softRender(){
-  const a = document.activeElement;
-  if (a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'checkbox')) && a.value) return;
-  render();
+  if (softT) return;
+  softT = setTimeout(() => { softT = null;
+    const a = document.activeElement;
+    if (a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'checkbox')) && a.value) return;
+    render(); }, 150);
 }
 async function loadProf(id){ try { const d = await social.db.doc('profiles/' + id).get(); if (d.exists) PROF[id] = d.data(); } catch {} }
 function remoteUser(id, p){
@@ -5211,6 +5222,7 @@ function scrollXs(root){
   return out;
 }
 function render(){
+  if (softT) { clearTimeout(softT); softT = null; }
   const app = document.getElementById('app');
   // Waagerechte Leisten (Reiter, Posen, Möbel, Zimmer) bleiben beim Antippen, wo sie gerade stehen
   const viewKey = (S.me && S.users[S.me] ? V.name + '|' + V.arg : 'ob|' + (S.pending?.step || '')), keepX = viewKey === lastViewKey ? scrollXs(app) : [];
