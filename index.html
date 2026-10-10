@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2783eb3af632';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='718909f7e198';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -4184,7 +4184,7 @@ function showHTML(hs){
   let grid = '', b = hs.btn;
   if (hs.wear) { // neutrales Grundoutfit, damit man nur das neue Teil sieht
     const base = {...DEFAULT_OUTFIT, body:me()?.outfit?.body === 'm' ? 'm' : 'w', front:'p_kein', back:'bob', top:'band'};
-    const list = hs.wear.map(x => { const [main, ...ex] = x.split('|'), [c, id] = main.split(':'), i = ITEMS.find(i => i.id === id && i.cat === c), o = {...base, ...(i && i.sub === 'ohr' ? {back:'h_kein'} : {})}; ex.forEach(e => { const [k, v] = e.split('='); o[k] = v; }); return i && {i, o}; }).filter(Boolean).slice(0, 9);
+    const list = hs.wear.map(x => { const [main, ...ex] = x.split('|'), [c, id] = main.split(':'), i = ITEMS.find(i => i.id === id && i.cat === c), o = {...base, ...(i && ['jewel','face','eyeform','lips','beard'].includes(i.cat) ? {back:'h_kein', front:'p_kein'} : {})}; /* Schmuck und Gesicht ohne Haare (Inaya) */ ex.forEach(e => { const [k, v] = e.split('='); o[k] = v; }); return i && {i, o}; }).filter(Boolean).slice(0, 9);
     grid = list.map(({i, o}) => `<div class="ncell" title="${esc(i.name)}">${avatar(previewOutfit(o, i), i.cat === 'front' || i.cat === 'back' ? 'bust' : i.cat === 'acc' ? 'bottom' : thumbView(i), '', true)}</div>`).join(''); b = b || ['Zur Garderobe', 'nav', 'wardrobe'];
   }
   if (hs.furn) { grid = hs.furn.filter(k => FURN[k]).map(k => `<div class="ncell fcell" title="${esc(FURN[k].name)}">${furnSVG(k)}</div>`).join(''); b = b || ['Zu meinem Zimmer', 'nav', 'room']; }
