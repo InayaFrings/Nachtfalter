@@ -743,7 +743,7 @@ const FACE_SUB = [['eyeform','Augen'],['lips','Lippen'],['face','Make-up'],['bea
 const CATS = [...TABS.filter(([k]) => k !== 'eyeform'), ...FACE_SUB, ['legw','Strumpfhosen & Socken']];
 const MULTI = ['hacc','jewel','legw','acc'];
 const JEWELC = [['#d8d8de','Silber'],['#d4af37','Gold'],['#e0a090','Roségold'],['#141218','Schwarz'],['#f2f0eb','Weiß'],['#8a1020','Blutrot'],['#e05aa0','Pink'],['#7a3aa0','Lila'],['#3a6ad0','Blau'],['#2aa0a0','Türkis'],['#3a9a4a','Grün'],['#e8d23a','Gelb']];
-const JEWEL_SUB = [['pierc','Piercings'],['kette','Ketten'],['arm','Armbänder'],['ohr','Ohrringe'],['ring','Ringe'],['guertel','Gürtel']];
+const JEWEL_SUB = [['pierc','Piercings'],['kette','Ketten'],['arm','Armbänder &amp; Stulpen'],['ohr','Ohrringe'],['ring','Ringe'],['guertel','Gürtel']];
 let jewelSub = 'pierc';
 const inSub = i => i.cat !== 'jewel' || (i.sub || 'kette') === jewelSub;
 const inFace = c => FACE_SUB.some(([k]) => k === c);
@@ -1013,7 +1013,7 @@ function previewOutfit(o, i){
   if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_zunge' ? {lips:'l_offen'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
-const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
+const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
 const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
 const noneFirst = (a, b) => isNoneItem(b) - isNoneItem(a); // „Kein …“-Karte immer vorne, damit man sie gleich findet
@@ -1155,6 +1155,14 @@ ITEMS.push(
   {id:'druck_rose',cat:'top',name:'Shirt mit Rose',st:'Viktorianisch'},
   {id:'druck_auge',cat:'top',name:'Shirt mit Auge',st:'Goth'},
   {id:'druck_sensemann',cat:'top',name:'Shirt mit Sensenmann',st:'Metal'},
+  {id:'st_ringel',cat:'jewel',sub:'arm',name:'Geringelte Armstulpen',c:'#141218'},
+  {id:'st_netz',cat:'jewel',sub:'arm',name:'Netz-Armstulpen',c:'#141218'},
+  {id:'st_spitze',cat:'jewel',sub:'arm',name:'Spitzen-Armstulpen',c:'#141218'},
+  {id:'st_stulpe',cat:'jewel',sub:'arm',name:'Strick-Armstulpen',c:'#141218'},
+  {id:'h_lang',cat:'jewel',sub:'arm',name:'Lange Handschuhe',c:'#141218'},
+  {id:'h_fingerlos',cat:'jewel',sub:'arm',name:'Fingerlose Handschuhe',c:'#141218'},
+  {id:'h_netz',cat:'jewel',sub:'arm',name:'Netzhandschuhe',c:'#141218'},
+  {id:'h_spitze',cat:'jewel',sub:'arm',name:'Spitzenhandschuhe',c:'#141218'},
   {id:'buch',cat:'acc',name:'Zauberbuch',st:'Goth'},
   {id:'laterne',cat:'acc',name:'Laterne',st:'Viktorianisch'},
   {id:'pluschfleder',cat:'acc',name:'Plüschfledermaus',st:'Scene'},
@@ -1850,6 +1858,20 @@ const IPRINT = {
 };
 for (const k in IPRINT) ITOP['druck_' + k] = (X, c, m) => X.G(isleeve(X.B, 0, 'short'), c) + X.G(isleeve(X.B, 1, 'short'), c) + X.G(ibody(X.B, X.B.hem), c) + IPRINT[k](X.B.cx, X.B.chest + 40, m);
 for (const k in IPRINT) ITOPC['druck_' + k] = ['#141218', k === 'herz' || k === 'rose' ? '#9a1f2a' : '#ecebe7'];
+// Armstulpen und Handschuhe (Inaya, 2026-10-10): liegen auf Unterarm bzw. Hand, links/rechts/beide wie Armbänder
+const iarmSeg = (X, side, y0, y1, pad=2) => { const L = [], R = []; for (let y = y0; y <= y1; y += 6) { const r = iarm(X.B, y), a = side === 'l' ? r[1] : r[3], b = side === 'l' ? r[2] : r[4]; L.push(`${f1(Math.min(a, b) - pad)} ${y}`); R.unshift(`${f1(Math.max(a, b) + pad)} ${y}`); } return `M${L.join('L')}L${R.join('L')}Z`; };
+const iawarm = (X, y0, y1, fill, top) => ['l', 'r'].filter(s => ibraceSide(X, s)).map(s => X.P(iarmSeg(X, s, y0, y1), fill, 'stroke-width="1.8"') + (top ? top(X, s, y0) : '') ).join('');
+const iaruff = (X, s, y, c) => { const r = iarm(X.B, y), a = (s === 'l' ? r[1] : r[3]) - 6, b = (s === 'l' ? r[2] : r[4]) + 6; let d = `M${f1(a)} ${y}`; const n = 5, w = (b - a) / n; for (let k = 0; k < n; k++) d += `q${f1(w / 2)} -12 ${f1(w)} 0`; return `<path d="${d}Z" fill="${c}" ${IO} stroke-width="1.4"/>`; };
+Object.assign(IARMB, {
+  st_ringel:(X, c) => iawarm(X, 650, 790, X.pat('stripe', c, c === '#ecebe7' ? '#141218' : '#ecebe7', 16)),
+  st_netz:(X, c) => iawarm(X, 630, 800, X.pat('net', c, null, 10)),
+  st_spitze:(X, c) => iawarm(X, 640, 790, X.pat('lace', c), (X, s, y) => iaruff(X, s, y + 2, c)),
+  st_stulpe:(X, c) => iawarm(X, 620, 800, c, (X, s, y) => iaruff(X, s, y + 2, c)) + ['l', 'r'].filter(s => ibraceSide(X, s)).map(s => { const r = iarm(X.B, 700), a = s === 'l' ? r[1] : r[3], b = s === 'l' ? r[2] : r[4]; return X.LN(`M${f1(a + 4)} 680L${f1(b - 4)} 690M${f1(a + 4)} 720L${f1(b - 4)} 730M${f1(a + 4)} 760L${f1(b - 4)} 770`, shade(c, isLight(c) ? .7 : 1.8), 2, .7); }).join(''),
+  h_lang:(X, c) => iawarm(X, 600, 905, c),
+  h_fingerlos:(X, c) => iawarm(X, 740, 845, c) + ['l', 'r'].filter(s => ibraceSide(X, s)).map(s => { const r = iarm(X.B, 845), a = s === 'l' ? r[1] : r[3], b = s === 'l' ? r[2] : r[4]; return X.LN(`M${f1(Math.min(a, b) - 2)} 845L${f1(Math.max(a, b) + 2)} 845`, IOL, 2.4); }).join(''),
+  h_netz:(X, c) => iawarm(X, 740, 905, X.pat('net', c, null, 8)),
+  h_spitze:(X, c) => iawarm(X, 700, 905, X.pat('lace', c), (X, s, y) => iaruff(X, s, y + 2, c)),
+});
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
