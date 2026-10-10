@@ -781,9 +781,12 @@ const MULTI = ['hacc','jewel','legw','acc'];
 const JEWELC = [['#d8d8de','Silber'],['#d4af37','Gold'],['#e0a090','Roségold'],['#141218','Schwarz'],['#f2f0eb','Weiß'],['#8a1020','Blutrot'],['#e05aa0','Pink'],['#7a3aa0','Lila'],['#3a6ad0','Blau'],['#2aa0a0','Türkis'],['#3a9a4a','Grün'],['#e8d23a','Gelb']];
 const JEWEL_SUB = [['pierc','Piercings'],['kette','Ketten'],['arm','Armbänder &amp; Stulpen'],['ohr','Ohrringe'],['ring','Ringe'],['guertel','Gürtel']];
 let jewelSub = 'pierc';
-const inSub = i => i.cat !== 'jewel' || (i.sub || 'kette') === jewelSub;
+const inSub = i => i.cat === 'bottom' ? (i.id === 'u_kein' || isSkirt(i) === (bottomSub === 'rock')) : i.cat !== 'jewel' || (i.sub || 'kette') === jewelSub;
 const inFace = c => FACE_SUB.some(([k]) => k === c);
-const BOTTOM_SUB = [['bottom','Hosen & Röcke'],['legw','Strumpfhosen & Socken']];
+// Unterteile getrennt in Hosen und Röcke (Inaya, 2026-10-10)
+const BOTTOM_SUB = [['bottom','Hosen','hose'],['bottom','Röcke','rock'],['legw','Strumpfhosen & Socken']];
+let bottomSub = 'hose';
+const isSkirt = i => /rock|tutu|tuell|kilt|^lw_mini|^lw_falten|^hw_bleistift|^hw_korsage/.test(i.id);
 const inBottom = c => BOTTOM_SUB.some(([k]) => k === c);
 let wearTimer = null;
 function mobWear(id){ // Handy wie Momio: Spiegel und Häkchen sofort, Vorschaubilder kurz danach
@@ -797,7 +800,7 @@ function catTabs(cur, act, withBody, o){
   const sub = FACE_SUB.filter(([k]) => k !== 'beard' || o?.body === 'm');
   const tabs = withBody ? [['body','Körper'], ...TABS] : TABS;
   return `<div class="tabs" role="tablist">${tabs.map(([k,l]) => `<button role="tab" data-act="${act}" data-c="${k}" aria-selected="${k === cur || (k === 'eyeform' && inFace(cur)) || (k === 'bottom' && inBottom(cur))}">${l}</button>`).join('')}</div>`
-    + (inBottom(cur) ? `<div class="tabs subtabs" role="tablist" aria-label="Unterteile">${BOTTOM_SUB.map(([k,l]) => `<button role="tab" data-act="${act}" data-c="${k}" aria-selected="${k === cur}">${l}</button>`).join('')}</div>` : '')
+    + (inBottom(cur) ? `<div class="tabs subtabs" role="tablist" aria-label="Unterteile">${BOTTOM_SUB.map(([k,l,bs]) => `<button role="tab" data-act="${act}" data-c="${k}" ${bs ? `data-bs="${bs}"` : ''} aria-selected="${k === cur && (!bs || bs === bottomSub)}">${l}</button>`).join('')}</div>` : '')
     + (inFace(cur) ? `<div class="tabs subtabs" role="tablist" aria-label="Gesicht">${sub.map(([k,l]) => `<button role="tab" data-act="${act}" data-c="${k}" aria-selected="${k === cur}">${l}</button>`).join('')}</div>` : '')
     + (cur === 'jewel' ? `<div class="tabs subtabs" role="tablist" aria-label="Schmuck">${JEWEL_SUB.map(([k,l]) => `<button role="tab" data-act="jsub" data-c="${k}" aria-selected="${k === jewelSub}">${l}</button>`).join('')}</div>` : '');
 }
@@ -3558,6 +3561,7 @@ document.addEventListener('input', e => {
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, p = S.pending;
+  if (b.dataset.bs) bottomSub = b.dataset.bs;
   if (a === 'auth') { authMode = b.dataset.v; forgotPw = false; render(); }
   else if (a === 'forgot') { forgotSent = ''; const lc = document.getElementById('li-contact')?.value.trim(); if (lc) forgotContact = lc; forgotPw = !!b.dataset.v; render(); if (forgotPw && forgotContact) { const fp = document.getElementById('fg-birth'); if (fp) { fp.focus(); return; } } document.querySelector('.gate input')?.focus(); }
   else if (a === 'gmode') { gateMode = b.dataset.v; render(); document.querySelector('.gate input')?.focus(); }
