@@ -228,6 +228,9 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .apost{display:flex;gap:14px;align-items:center;border:1px solid var(--line-soft);padding:12px 14px;background:#ffffff06;flex-wrap:wrap}.apost audio{width:100%}.aname{width:100%}
 .aplay{width:52px;height:52px;border-radius:50%;border:1px solid var(--fg);background:var(--fg);color:var(--bg);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}.aplay svg{width:22px;height:22px;fill:currentColor;margin-left:3px}.ainfo{display:grid;min-width:0;flex:1}.ainfo b{overflow-wrap:anywhere}.ainfo .muted{font-size:14px}
 .plinks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.plink{display:inline-grid;gap:0;padding:5px 12px;border:1px solid var(--p-line,var(--line));color:inherit;text-decoration:none;line-height:1.2}.plink b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.plink span{font-size:15px;overflow-wrap:anywhere}a.plink:hover{border-color:var(--fg)}
+.pinb{flex:none;width:40px;height:40px;display:grid;place-items:center;background:none;border:1px solid transparent;color:var(--muted);padding:0;cursor:pointer}.pinb svg,.pinm svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.pinb.on{color:var(--fg)}.pinb.on svg{fill:currentColor}@media (hover:hover){.pinb:hover{border-color:var(--line)}}
+.clrow{display:flex;gap:4px;align-items:stretch}.clrow .clist{flex:1;min-width:0}.pinm{display:inline-block;vertical-align:-3px;margin-right:4px}.pinm svg{fill:currentColor}
+.zcard{position:relative}.zcard>.pinb{position:absolute;top:6px;right:6px}.zcard.pinned{outline:1px solid var(--fg)}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
@@ -4065,6 +4068,11 @@ function mobNav(cur, nNew){
 }
 /* Handy: Freunde-Knopf links wie bei Momio – Freunde, Chats und Suche, von überall zu den Profilen */
 let fpOpen = false, fpTab = 'friends', fpNew = false;
+// Anpinnen: Lieblingsfreunde und Lieblingschats (auch Gruppen) stehen oben (Inaya, 2026-10-10)
+const PIN_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg>';
+const isPin = (kind, id) => ((kind === 'f' ? S.pinF : S.pinC) || []).includes(id);
+const byPin = kind => (a, b) => (isPin(kind, b.id) ? 1 : 0) - (isPin(kind, a.id) ? 1 : 0);
+const pinBtn = (kind, id, name) => `<button type="button" class="pinb${isPin(kind, id) ? ' on' : ''}" data-act="pin" data-k="${kind}" data-id="${esc(id)}" aria-pressed="${isPin(kind, id)}" aria-label="${esc(name)} ${isPin(kind, id) ? 'lösen' : 'anpinnen'}" title="${isPin(kind, id) ? 'Lösen' : 'Anpinnen'}">${PIN_ICO}</button>`;
 function fpRow(u, sub, act='profile', extra=''){
   const on = onlineState(u)[0];
   return `<div class="fprow"><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
@@ -4077,9 +4085,9 @@ function friendPanel(nNew){
   let body = '';
   if (fpTab === 'friends') {
     const fr = Object.values(S.users).filter(u => u.helper || (u.remote && isFriend(u.id)));
-    fr.sort((a, b) => (a.helper ? 1 : 0) - (b.helper ? 1 : 0) || (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
+    fr.sort((a, b) => (a.helper ? 1 : 0) - (b.helper ? 1 : 0) || byPin('f')(a, b) || (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
     body = (reqs.length ? `<button class="btn fpreq" data-act="nav" data-v="friends">${reqs.length === 1 ? '1 Freundschaftsanfrage' : reqs.length + ' Freundschaftsanfragen'}</button>` : '')
-      + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1])).join('')
+      + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1], 'profile', u.helper ? '' : pinBtn('f', u.id, u.name))).join('')
       + (fr.some(u => !u.helper) ? '' : '<p class="note">Noch keine Freunde. Such sie über „Freunde finden“.</p>');
   } else if (fpTab === 'chats') {
     body = (social ? `<div class="fpnew"><button class="btn fpreq" data-act="fp-newmenu" aria-expanded="${fpNew}">＋ Neuer Chat</button>${fpNew ? `<div class="fpnewopts"><button class="btn ghost" data-act="fp-newchat">Neues Gespräch</button><button class="btn ghost" data-act="fp-newgroup">Gruppenchat erstellen</button></div>` : ''}</div>` : '')
@@ -4803,7 +4811,7 @@ async function clearRoomChat(){ // alte Raumchat-Nachrichten wegräumen (Markier
 }
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = CH.list.map(c => `<button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>`).join('');
+  const list = [...CH.list].sort(byPin('c')).map(c => `<div class="clrow"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${isPin('c', c.id) ? '<span class="pinm">' + PIN_ICO + '</span>' : ''}${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinBtn('c', c.id, chatName(c))}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -5384,10 +5392,10 @@ function settingsView(){
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
 function friendsView(){
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
-  const friends = Object.values(S.users).filter(u => u.id !== S.me);
+  const friends = Object.values(S.users).filter(u => u.id !== S.me).sort(byPin('f'));
   return `<div class="card"><h2 class="card-h">Freunde</h2><div class="card-in">
     ${reqs.length ? `<fieldset class="opt"><legend class="lbl">Freundschaftsanfragen</legend><div class="plist">${reqs.map(personRow).join('')}</div></fieldset>` : ''}
-    <fieldset class="opt"><legend class="lbl">Deine Freunde</legend>${friends.some(f => f.remote) ? '' : `<p class="note">Noch hast du hier nur Andy und Juliet. Unter <button class="lnk" data-act="nav" data-v="find">Freunde finden</button> suchst du nach Leuten.</p>`}<div class="zgrid">${friends.map(f => `<div class="themed zcard" style="${themeStyle(f.theme)}">
+    <fieldset class="opt"><legend class="lbl">Deine Freunde</legend>${friends.some(f => f.remote) ? '' : `<p class="note">Noch hast du hier nur Andy und Juliet. Unter <button class="lnk" data-act="nav" data-v="find">Freunde finden</button> suchst du nach Leuten.</p>`}<div class="zgrid">${friends.map(f => `<div class="themed zcard${isPin('f', f.id) ? ' pinned' : ''}" style="${themeStyle(f.theme)}">${f.remote ? pinBtn('f', f.id, f.name) : ''}
       ${portrait(f)}<div><div class="pname">${ulink(f.id)}</div><p class="phandle">@${esc(f.handle || '')}</p>${onlineHTML(f)}<p class="phl">${esc(f.headline) || esc(f.mood)}</p>
       ${f.remote ? `<button class="btn ghost" data-act="fr-remove" data-id="${f.id}">Entfernen</button>` : ''}</div></div>`).join('')}</div></fieldset>
   </div></div>`;
@@ -5718,6 +5726,7 @@ document.addEventListener('click', async e => {
     if (!(await askYesNo('Diesen Beitrag für alle löschen?', 'Ja, löschen', 'Nein'))) return;
     try { await social.db.doc('site/hidden').set({ids:[...new Set([...HIDDEN, key])]}); HIDDEN.add(key); render(); toast('Beitrag gelöscht'); } catch { toast('Das hat nicht geklappt.'); }
   }
+  else if (a === 'pin') { const key = b.dataset.k === 'f' ? 'pinF' : 'pinC', l = S[key] || []; S[key] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; save(); render(); return; }
   else if (a === 'browse') { fpOpen = false; BR.ids = null; go('browse'); }
   else if (a === 'browse-more') { BR.n += 30; loadBrowse(); }
   else if (a === 'post-share') { sharePost(id, b.dataset.a); }
