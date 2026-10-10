@@ -102,6 +102,21 @@ label.f{display:grid;gap:4px}
 .tabs .pts{font:italic 14px var(--f-ital);margin-left:4px}
 .post{padding:18px;display:grid;gap:12px;border-top:1px solid var(--line-soft)}
 .feed .post:first-child{border-top:0}
+/* Salon wie bei Instagram: jeder Beitrag eine eigene Karte mit Abstand (Inaya, 2026-10-10) */
+.salon-h{font:400 21px/1.2 var(--f-display);margin:0 0 12px}
+.feed.insta{display:grid;gap:22px}
+.feed.insta .post,.feed.insta .post:first-child{background:var(--paper);border:1px solid var(--line-soft);border-radius:8px;padding:0 0 16px;gap:12px;overflow:hidden;min-width:0}
+.feed.insta .post>*{margin-inline:18px;min-width:0}
+.feed.insta .post>.ph{padding-top:14px}
+.feed.insta .post>.photo,.feed.insta .post>.vframe{margin-inline:0;width:100%;border-left:0;border-right:0}
+.newgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:#000}
+.ncell{aspect-ratio:1/1;background:radial-gradient(circle at 50% 40%,#ffffff1f,transparent 70%),#0e0e10;min-width:0;overflow:hidden}.ncell svg{width:100%;height:100%;display:block}
+.ncell.fcell{display:grid;place-items:center;padding:14%}.ncell.fcell svg{width:auto;height:auto;max-width:100%;max-height:100%}
+.nlink{justify-self:start}
+.feed.insta .post>.newgrid{margin-inline:0}
+.feed.insta .caption b{font-weight:600;margin-right:4px}
+.feed.insta .empty{background:var(--paper);border:1px solid var(--line-soft);border-radius:8px;padding:18px;margin:0}
+@media (max-width:760px){.feed.insta{gap:16px}.feed.insta .post>*{margin-inline:14px}}
 .ph{display:flex;gap:12px;align-items:center}
 .who{font:400 18px var(--f-display)}
 .meta{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
@@ -2802,6 +2817,10 @@ Object.assign(FURN, {
   amp:{name:'Verstärker', price:0, w:9, vb:[50,50], s:'punk', t:'deko', svg:`<rect x="2" y="4" width="46" height="44" rx="2" fill="#141214" stroke="#55555c" stroke-width="1.5"/><rect x="6" y="8" width="38" height="8" fill="#2a2a30"/>${[11,18,25,32,39].map(x => `<circle cx="${x}" cy="12" r="2" fill="#c9c9cf"/>`).join('')}<rect x="6" y="19" width="38" height="25" fill="#2a2a30"/><path d="M6 22H44M6 26H44M6 30H44M6 34H44M6 38H44M6 42H44" stroke="#3a3a40" stroke-width="1"/><text x="25" y="35" text-anchor="middle" font-size="6" font-family="Brush Script MT,cursive" fill="#e9e7e2">Nacht</text>`},
   platten:{name:'Plattenspieler mit Platten', price:0, w:11, vb:[60,60], s:'emo', t:'deko', svg:`<rect x="4" y="30" width="52" height="28" fill="#2a2a30" stroke="${K}"/><path d="M8 34V56M14 34V56M20 34V56" stroke="#141214" stroke-width="4"/><rect x="26" y="36" width="8" height="18" fill="#e98fa6"/><rect x="36" y="36" width="8" height="18" fill="#5f8fc0"/><rect x="46" y="36" width="6" height="18" fill="#e8c53a"/><rect x="6" y="18" width="48" height="12" fill="#1b1b1f" stroke="#55555c"/><ellipse cx="26" cy="20" rx="16" ry="4" fill="#0b0b0c"/><ellipse cx="26" cy="20" rx="4" ry="1.2" fill="#c8202e"/><path d="M48 16L40 22" stroke="#c9c9cf" stroke-width="1.5"/>`},
   lavalampe:{name:'Lavalampe', price:0, w:4, vb:[20,60], s:'scene', t:'deko', svg:`<circle cx="10" cy="26" r="12" fill="#ff4fb0" opacity=".18"/><path d="M5 50L7 14H13L15 50Z" fill="#9a6fd0" stroke="${K}"/><ellipse cx="10" cy="22" rx="2.4" ry="3.4" fill="#b6ff4a"/><ellipse cx="9" cy="34" rx="3" ry="4" fill="#b6ff4a"/><ellipse cx="11" cy="44" rx="2" ry="2.6" fill="#b6ff4a"/><path d="M7 14L8 6H12L13 14Z" fill="#c9c9cf" stroke="${K}"/><path d="M4 50H16L18 58H2Z" fill="#c9c9cf" stroke="${K}"/>`},
+  himmelbett:{name:'Himmelbett mit Schleiern', price:0, w:31, vb:[120,110], s:'goth', t:'bett', svg:`<path d="M10 6V106M110 6V106" stroke="#2a2a30" stroke-width="5"/><rect x="4" y="2" width="112" height="8" fill="#1b1b1f" stroke="#55555c" stroke-width="1.5"/><path d="M14 64Q60 30 106 64V72H14Z" fill="#1b1b1f" stroke="#55555c" stroke-width="1.5"/><path d="M60 42L62 47L60 52L58 47Z" fill="#d4af37"/><rect x="12" y="68" width="96" height="26" rx="3" fill="#2a2a30" stroke="${K}" stroke-width="1.5"/><rect x="18" y="60" width="26" height="12" rx="5" fill="#ecebe7" stroke="${K}"/><path d="M46 66H108V94H46Z" fill="#3a1a3a" stroke="${K}"/><circle cx="48" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="54" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="60" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="66" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="72" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="78" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="84" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="90" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="96" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><circle cx="102" cy="93" r="3" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><path d="M10 10Q2 50 16 104H26Q14 60 30 10Z" fill="#141214" opacity=".82"/><path d="M110 10Q118 50 104 104H94Q106 60 90 10Z" fill="#141214" opacity=".82"/><path d="M14 20Q10 60 20 100M106 20Q110 60 100 100" stroke="#3a3a40" fill="none"/>`},
+  kommode:{name:'Kommode mit Spitzendeckchen', price:0, w:13, vb:[60,60], s:'goth', t:'deko', r:'schlaf', svg:`<rect x="4" y="18" width="52" height="36" fill="#1b1b1f" stroke="#55555c" stroke-width="1.5"/><path d="M4 30H56M4 42H56" stroke="#55555c"/>${[24,36,48].map(y => `<circle cx="20" cy="${y}" r="1.6" fill="#d4af37"/><circle cx="40" cy="${y}" r="1.6" fill="#d4af37"/>`).join('')}<path d="M6 54V59M54 54V59" stroke="#55555c" stroke-width="2"/><path d="M2 14H58V18H2Z" fill="#2a2a30" stroke="#55555c"/><path d="M14 14H46V17Q42 21 38 17Q34 21 30 17Q26 21 22 17Q18 21 14 17Z" fill="#ecebe7" stroke="${K}" stroke-width=".5"/><rect x="12" y="4" width="4" height="10" fill="#e9e7e2" stroke="${K}" stroke-width=".6"/><path d="M14 3Q13 1 14 -1Q15 1 14 3Z" fill="#f2c14a"/>${SKULL_S(44, 8, .7)}`},
+  spieluhr:{name:'Spieluhr mit Tänzerin', price:0, w:6, vb:[40,42], s:'goth', t:'deko', r:'schlaf', svg:`<path d="M6 24L4 8H36L34 24Z" fill="#2a1a2a" stroke="#d4af37" stroke-width="1.2"/><rect x="6" y="24" width="28" height="15" fill="#2a1a2a" stroke="#d4af37" stroke-width="1.2"/><path d="M10 31H30" stroke="#d4af37" stroke-width=".7" stroke-dasharray="2 2"/><path d="M34 31H38M38 28V34" stroke="#9a9aa0" stroke-width="1.6"/><circle cx="20" cy="9" r="2" fill="#141214"/><path d="M20 11V18M20 13L16 9M20 13L25 10" stroke="#141214" stroke-width="1.2"/><path d="M14 19Q20 14 26 19Z" fill="#141214"/><path d="M19 19L18 24M21 19L23 23" stroke="#141214" stroke-width="1"/>`},
+  mondlampe:{name:'Mond-Nachtlicht', price:0, w:6, vb:[40,46], s:'goth', t:'deko', r:'schlaf', svg:`<defs><mask id="nfmoon"><rect width="40" height="46" fill="#fff"/><circle cx="27" cy="15" r="11" fill="#000"/></mask></defs><circle cx="20" cy="20" r="18" fill="#e9e7e2" opacity=".08"/><circle cx="19" cy="20" r="14" fill="#e9e7e2" mask="url(#nfmoon)"/><circle cx="13" cy="22" r="1.4" fill="#c9c9cf"/><circle cx="17" cy="28" r="1" fill="#c9c9cf"/><path d="M18 33V40" stroke="#55555c" stroke-width="2"/><rect x="11" y="40" width="18" height="4" fill="#2a2a30" stroke="#55555c"/>`},
   girplusch:{name:'Grünes Hunde-Plüschtier (GIR)', price:0, w:7, vb:[40,44], s:'emo', t:'deko', svg:`<g transform="translate(20 23.5) scale(.33)">${IGIRPLUSH()}</g>`},
   teddy:{name:'Gruseliger Teddy', price:0, w:7, vb:[40,44], s:'emo', t:'deko', svg:`<circle cx="10" cy="8" r="5" fill="#6a5a6a" stroke="${K}"/><circle cx="30" cy="8" r="5" fill="#6a5a6a" stroke="${K}"/><circle cx="20" cy="16" r="11" fill="#7a6a7a" stroke="${K}"/><path d="M14 12L18 16M18 12L14 16" stroke="${K}" stroke-width="1.3"/><circle cx="25" cy="14" r="2.4" fill="${K}"/><path d="M16 21H24" stroke="${K}" stroke-width="1"/><path d="M17 20V22M19 20V22M21 20V22M23 20V22" stroke="${K}" stroke-width=".6"/><ellipse cx="20" cy="34" rx="12" ry="9" fill="#7a6a7a" stroke="${K}"/><path d="M14 30L26 38" stroke="#c8202e" stroke-width="1" stroke-dasharray="2 1"/>${HEART_S(20, 34, .8, '#c8202e')}`},
   thron:{name:'Gotischer Thron', price:0, w:12, vb:[60,100], s:'goth', t:'deko', svg:`<path d="M14 60V14L20 4L26 12L30 2L34 12L40 4L46 14V60Z" fill="#1b1b1f" stroke="#55555c" stroke-width="1.5"/><path d="M20 56V18L30 10L40 18V56Z" fill="#4a0f1c"/><path d="M8 58H52V68H8Z" fill="#2a2a30" stroke="#55555c"/><path d="M6 50Q4 44 10 44H14V70H8Z M54 50Q56 44 50 44H46V70H52Z" fill="#1b1b1f" stroke="#55555c"/><path d="M10 68L8 98M50 68L52 98M18 68V96M42 68V96" stroke="#55555c" stroke-width="3"/><circle cx="30" cy="30" r="3" fill="#d4af37"/>`},
@@ -2859,7 +2878,7 @@ Object.assign(FURN, {
   tier_korb:{...PETV, name:'Katzenkorb', w:11, vb:[70,40], svg:`<ellipse cx="35" cy="24" rx="32" ry="12" fill="#4a0f1c" stroke="#0b0a0c" stroke-width="1.2"/><ellipse cx="35" cy="20" rx="25" ry="7" fill="#6a1a2a"/><path d="M5 26Q35 44 65 26" stroke="#2a0810" stroke-width="2" fill="none"/>`},
 });
 // Raum-Kategorien fürs Möbelhaus (Inayas Wunsch): Schlafzimmer, Wohnzimmer, Poster, Deko, Lampen
-const ROOM_OF = {tier:['kraehe','kaefig'], schlaf:['bett','sarg','teddy','girplusch','spiegel','kleiderschrank','nachttisch','schminktisch'], wohn:['sessel','thron','sitzsack','regal','grammophon','platten','standuhr','pc','teppich','gitarre','amp','fenster','vorhang','sofa','couchtisch','fernseher'], lampe:['kerzen','kandelaber','lavalampe','kronleuchter','lichterkette','totenkopfkerze','neon_rawr','neon_herz','neon_stern','stehlampe','tischlampe','laterne']};
+const ROOM_OF = {tier:['kraehe','kaefig'], schlaf:['bett','sarg','teddy','girplusch','kommode','spieluhr','mondlampe','spiegel','kleiderschrank','nachttisch','schminktisch'], wohn:['sessel','thron','sitzsack','regal','grammophon','platten','standuhr','pc','teppich','gitarre','amp','fenster','vorhang','sofa','couchtisch','fernseher'], lampe:['kerzen','kandelaber','lavalampe','kronleuchter','lichterkette','totenkopfkerze','neon_rawr','neon_herz','neon_stern','stehlampe','tischlampe','laterne']};
 for (const k of Object.keys(FURN)) {
   const f = FURN[k];
   if (f.r) continue;
@@ -3591,6 +3610,8 @@ HELPER_POSTS.push(
   {id:'n-farben',author:'juliet',type:'neu',text:'Neu: Du kannst deinem Profil eigene Farben geben, für deinen Kasten und für den ganzen Hintergrund. Dazu Muster wie Tiger, Kreuze oder Engelsflügel. Hast du das schon gesehen? Unter „Profil gestalten“.',reactions:{},comments:[],age:20},
   {id:'n-shop',author:'andy',type:'neu',text:'Neu: Ganz viel Schmuck und Make-up in der Garderobe, alles gratis. Probier dich durch!',reactions:{},comments:[],age:12},
   {id:'n-haare',author:'andy',type:'neu',text:'Neu: Haare vorne und hinten sind jetzt getrennt. Such dir einen Pony aus, eine Länge, Zöpfe oder nicht, und färb alles so, wie du willst. Haar-Extras wie Strähnen oder Spangen kannst du sogar kombinieren.',reactions:{},comments:[],age:3},
+  {id:'n-garderobe-okt',author:'andy',type:'neu',text:'Neu in der Garderobe! Rüschenblusen, Korsetts, Crop Tops, Hotpants, Low- und High-Waist-Sachen, gestufte Scene-Haare und ein kleiner GIR zum Knuddeln. Ich hab ewig daran herumgenäht und hoffe so sehr, dass es euch gefällt. Zeigt mir unbedingt eure neuen Outfits!',show:{wear:['top:b_puff','top:k_spitze','top:c_ruesche','top:b_jabot','top:s_bandeau','bottom:hot_ripped','bottom:lw_baggy','bottom:hw_marlene','back:scenestl','back:scenestk','acc:girplusch','top:k_schnuer']},reactions:{},comments:[],age:.5},
+  {id:'n-schlaf-okt',author:'juliet',type:'neu',text:'Neu fürs Schlafzimmer: ein Himmelbett mit Schleiern, eine Kommode mit Spitzendeckchen, eine kleine Spieluhr, ein Mond-Nachtlicht und GIR zum Kuscheln. Ich hab mein Zimmer sofort umgeräumt und will gar nicht mehr raus. Macht es euch schön gemütlich, ihr Lieben!',show:{furn:['himmelbett','kommode','spieluhr','mondlampe','girplusch','b_eisen']},reactions:{},comments:[],age:.4},
   {id:'n-chat',author:'juliet',type:'neu',text:'Neu: Du kannst Andy und mir jetzt schreiben. Geh auf unser Profil und tipp auf „Schreib mir“. Wir helfen dir bei allem rund um Nachtfalter.',reactions:{},comments:[],age:1},
 );
 const OLD_DEMO = ['nyx','matze','jule','kaspar'];
@@ -4008,6 +4029,16 @@ function loadPimgs(){
   });
 }
 const PIMG_UP = new Set();
+// Neuigkeiten von Andy und Juliet mit Bild der neuen Sachen (Garderobe bzw. Schlafzimmer)
+function showHTML(hs){
+  if (hs.wear) {
+    const base = me()?.outfit || {};
+    const list = hs.wear.map(x => { const [c, id] = x.split(':'); return ITEMS.find(i => i.id === id && i.cat === c); }).filter(i => i && fits(i, base)).slice(0, 9);
+    return `<div class="newgrid">${list.map(i => `<div class="ncell" title="${esc(i.name)}">${avatar(previewOutfit(base, i), thumbView(i), '', true)}</div>`).join('')}</div><button class="btn ghost nlink" data-act="nav" data-v="wardrobe">Zur Garderobe</button>`;
+  }
+  if (hs.furn) return `<div class="newgrid">${hs.furn.filter(k => FURN[k]).map(k => `<div class="ncell fcell" title="${esc(FURN[k].name)}">${furnSVG(k)}</div>`).join('')}</div><button class="btn ghost nlink" data-act="nav" data-v="room">Zu meinem Zimmer</button>`;
+  return '';
+}
 function postHTML(p){
   const a = profUser(p.author); if (!a) return '';
   let body = '';
@@ -4016,7 +4047,8 @@ function postHTML(p){
   else if (p.bigimg) body += `<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`;
   if (p.url) { const v = ytId(p.url); body += v ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>`
     : `<a class="vid" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>${esc(p.url)}</span></a>`; }
-  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body += `<p class="caption">${etx(p.text)}</p>`;
+  const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
+  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body += `<p class="caption"><b>${esc(a.name)}</b>${etx(p.text)}</p>`;
   const reacts = REACTIONS.map(r => {
     const who = p.reactions[r] || [], on = who.includes(S.me);
     return `<button data-act="react" data-id="${p.id}" data-r="${r}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${who.length || ''}</button>`;
@@ -4064,7 +4096,7 @@ function homeView(){
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
   return `${compose}
-    <section class="card"><h2 class="card-h">Salon</h2><div class="feed">${posts.length ? posts.map(postHTML).join('') : '<p class="card-in muted">Noch ist es still. Teil den ersten Gedanken.</p>'}</div></section>`;
+    <section class="salon"><h2 class="salon-h">Salon</h2><div class="feed insta">${posts.length ? posts.map(postHTML).join('') : '<p class="empty muted">Noch ist es still. Teil den ersten Gedanken.</p>'}</div></section>`;
 }
 let musicEdit = false;
 function musicHTML(u, mine){

@@ -42,8 +42,22 @@ service cloud.firestore {
       allow delete: if signedIn() && resource.data.uid == request.auth.uid;
     }
 
-    // Chats, Pinnwände, Raumchats
-    match /chats/{rest=**} { allow read, write: if invited(); }
+    // Gästebuch (wall_<uid>): schreiben nur gegenseitige Freunde und die Person selbst (Inaya, 2026-10-10)
+    function friendsWith(uid) { return request.auth.uid == uid
+      || (request.auth.uid in get(/databases/$(database)/documents/friends/$(uid)).data.list
+        && uid in get(/databases/$(database)/documents/friends/$(request.auth.uid)).data.list); }
+    match /chats/{cid}/m/{mid} {
+      allow read: if invited();
+      allow create: if invited() && (!cid.matches('wall_.+')
+        || (request.resource.data.from == request.auth.uid && friendsWith(cid.split('_')[1])));
+      allow update: if invited() && !cid.matches('wall_.+');
+      allow delete: if invited() && (!cid.matches('wall_.+')
+        || request.auth.uid == cid.split('_')[1] || resource.data.from == request.auth.uid);
+    }
+
+    // Chats, Raumchats
+    match /chats/{cid} { allow read, write: if invited(); }
+    match /chats/{cid}/{sub}/{rest=**} { allow read, write: if invited() && sub != 'm'; }
 
     // Wer gerade online ist
     match /presence/{room}/p/{key} {
