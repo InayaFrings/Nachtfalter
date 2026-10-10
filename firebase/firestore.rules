@@ -4,10 +4,8 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function isOwner() { return signedIn() && request.auth.token.email is string
       && request.auth.token.email.lower() == 'inayafrings@gmail.com'; }
-    // Mitglied ist, wer mit einem Einladungslink gekommen ist oder schon vorher ein Profil hatte
-    function invited() { return signedIn() && (isOwner()
-      || exists(/databases/$(database)/documents/members/$(request.auth.uid))
-      || exists(/databases/$(database)/documents/profiles/$(request.auth.uid))); }
+    // Offene Anmeldung (Inaya, 2026-10-10): jedes angemeldete Konto ist Mitglied, ein Einladungslink ist nicht mehr nötig
+    function invited() { return signedIn(); }
     function me(uid) { return invited() && request.auth.uid == uid; }
 
     // Eigene Daten: nur die Person selbst

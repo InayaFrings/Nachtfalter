@@ -3444,6 +3444,7 @@ document.addEventListener('click', e => {
   else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(true); }
   else if (a === 'ob-next') finishOb();
   else if (a === 'ob-back') { p.step = b.dataset.v; if (p.step === 'konto') authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
+  else if (a === 'reg-open') { S.unlocked = true; authMode = 'reg'; save(); render(); window.scrollTo(0,0); } // offene Anmeldung ohne Einladungslink (Inaya, 2026-10-10)
   else if (a === 'to-landing') { S.unlocked = false; S.pending = null; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'color') { setColor(me().outfit, b.dataset.k, b.dataset.v); trial = null; save(); render(); }
   else if (a === 'bopt') { const t = mediaTarget(); t.banner[b.dataset.k] = b.dataset.v; if (b.dataset.k === 'mode') { delete t.banner.bg; delete t.banner.fg; const c = document.getElementById('bcols'); if (c) c.outerHTML = bannerColors(t.banner); } if (S.pending) save(); refreshMedia(); }
@@ -3837,7 +3838,7 @@ function gateView(){
     <p style="margin:0;font:italic 19px/1.4 var(--f-ital)">Ein Ort für Freunde.</p>
     <div class="choice">
       <button class="btn" data-act="gmode" data-v="login">Ich habe schon ein Konto</button>
-      <button class="btn ghost" data-act="gmode" data-v="invite">Konto erstellen mit Einladungslink</button>
+      <button class="btn ghost" data-act="reg-open">Konto erstellen</button>
     </div>
   </div></div>`;
 }
@@ -5449,11 +5450,9 @@ document.addEventListener('submit', async e => {
     if (contactTaken(contact)) return fail('Dafür gibt es schon ein Konto. Melde dich stattdessen an.');
     if (PUB) {
       if (!isMail(contact)) return fail('Bitte gib deine E-Mail-Adresse ein. Damit kannst du dein Passwort später zurücksetzen.');
-      if (!S.itoken) return fail('Bitte öffne deinen Einladungslink noch einmal.');
       const r = await NF_AUTH.signUp(contact, pw); if (r.error) return fail(r.error);
-      const c = await NF_AUTH.claimInvite(S.itoken); // Link verbrauchen, sonst Konto wieder entfernen
-      if (!c.ok) { await NF_AUTH.deleteUser(); await NF_AUTH.signOut(); return fail('Dieser Einladungslink wurde schon benutzt. Frag nach einem neuen Link.'); }
-      delete S.itoken;
+      if (S.itoken) { await NF_AUTH.claimInvite(S.itoken).catch(() => {}); delete S.itoken; } // Einladungslink zählt nur noch als Gruß; Anmelden geht auch ohne
+
       if (r.needsConfirm) toast('Wir haben dir eine Mail geschickt. Bitte bestätige deine E-Mail-Adresse.');
       else await cloudReinit();
     }
