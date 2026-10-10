@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d50fecfc1c36';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='27f89781b006';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1174,6 +1174,9 @@ ITEMS.push(
   {id:'m_schnuer',cat:'bottom',name:'Hose mit Seitenschnürung',st:'Goth',g:'m'},
   {id:'m_trench',cat:'jacket',name:'Langer Ledermantel mit Gürtel',st:'Goth',g:'m'},
   {id:'m_biker',cat:'shoes',name:'Bikerstiefel',st:'Punk',g:'m'},
+  {id:'m_baggy',cat:'bottom',name:'Gerade Baggy',st:'Skater',g:'m'},
+  {id:'m_baggyk',cat:'bottom',name:'Gerade Baggy mit Ketten',st:'Punk',g:'m'},
+  {id:'m_baggyc',cat:'bottom',name:'Gerade Baggy mit Taschen',st:'Skater',g:'m'},
 );
 // Kleidung ist nach Körper getrennt; der Knopf „Klamotten für alle Körper“ zeigt alles (Inaya, 2026-10-10)
 const GCATS = ['top','bottom','jacket','shoes','legw','acc'];
@@ -1627,13 +1630,13 @@ const IHACC = {
 const IHACC_BACK = ['schleier'];
 // Make-up (makeC), zwei Augen: links gezeichnet, rechts gespiegelt
 // Bart (nur Jungs-Figur sinnvoll)
-const IBEARD = {
-  b_stoppeln:(c, X) => `<path d="M88 214Q100 256 172 270Q244 256 258 214Q246 250 172 258Q100 250 88 214Z" fill="${c}" opacity=".3"/>` + [...Array(40)].map((_, k) => `<circle cx="${f1(100 + (k * 37) % 148)}" cy="${f1(232 + (k * 13) % 30)}" r="1.4" fill="${c}" opacity=".6"/>`).join(''),
-  b_schnurr:(c, X) => X.P('M150 234Q160 226 178 232Q196 226 206 234Q196 240 178 236Q160 240 150 234Z', c),
-  b_kinn:(c, X) => X.P('M160 256Q178 252 196 256L190 278Q178 284 166 278Z', c),
-  b_ziege:(c, X) => IBEARD.b_schnurr(c, X) + X.P('M166 254Q178 250 190 254L186 282Q178 288 170 282Z', c),
-  b_voll:(c, X) => X.P('M80 196Q84 270 172 290Q260 270 264 196L250 200Q246 250 206 254Q192 246 178 248Q164 246 150 254Q110 250 96 200Z', c) + IBEARD.b_schnurr(c, X),
-  b_kotel:(c, X) => iboF(X.P('M66 168L84 168L92 236L78 240Z', c)),
+const IBEARD = { // Koordinaten am Jungen-Gesicht: Nase 168/224, Mund 175/249, Kinn 285 (Inaya, 2026-10-10: Bärte waren versetzt)
+  b_stoppeln:(c, X) => { const P = 'M86 196Q92 226 104 240L160 283Q178 291 196 283L244 240Q258 226 264 196Q252 236 216 250Q200 242 178 242Q154 242 138 250Q100 236 86 196Z', D = []; for (let k = 0; k < 260; k++) { const r = n => { const v = Math.sin(k * n) * 43758.5453; return v - Math.floor(v); }; D.push(`<circle cx="${f1(84 + r(12.9898) * 182)}" cy="${f1(194 + r(78.233) * 98)}" r="1.2"/>`); } return `<clipPath id="bstopc"><path d="${P}"/></clipPath><path d="${P}" fill="${c}" opacity=".16"/><g clip-path="url(#bstopc)" fill="${c}" opacity=".6">${D.join('')}</g>`; },
+  b_schnurr:(c, X) => X.P('M148 240Q158 232 175 237Q192 232 202 240Q192 246 175 242Q158 246 148 240Z', c),
+  b_kinn:(c, X) => X.P('M160 260Q175 256 190 260L186 284Q175 290 164 284Z', c),
+  b_ziege:(c, X) => IBEARD.b_schnurr(c, X) + X.P('M164 260Q175 256 186 260L182 288Q175 294 168 288Z', c),
+  b_voll:(c, X) => X.P('M88 196Q92 220 108 238L160 284Q175 295 192 284L242 238Q256 220 260 196L250 200Q250 234 216 256Q196 266 175 266Q154 266 134 256Q98 234 98 200Z', c) + IBEARD.b_schnurr(c, X),
+  b_kotel:(c, X) => iboF(X.P('M72 160L88 160L96 222L84 226Z', c)),
 };
 // Piercings und Ohrringe im Gesicht (Farbe c)
 // Piercings: kleine Metallkugeln mit Glanzpunkt und dünne Ringe, die oben in der Haut verschwinden
@@ -1649,7 +1652,7 @@ const IPIERC = {
   p_snakering:c => IHOOP(168, 247.5, c, 5.2) + IHOOP(188, 247.5, c, 5.2),
   p_nase:c => IPC(183, 225, c, 2.8), p_nasenring:c => IHOOP(182, 229, c, 4.2),
   // Septum: Hufeisen unter der Nasenspitze, Kugeln an beiden Enden
-  p_septum:c => { const d = 'M170.5 234A5.6 5.6 0 1 1 180.5 234'; return `<path d="${d}" fill="none" stroke="${IOL}" stroke-width="4.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>` + IPC(170, 234.6, c, 2.4) + IPC(181, 234.6, c, 2.4); },
+  p_septum:c => { const d = 'M170.5 229A5.6 5.6 0 1 0 180.5 229'; return `<path d="${d}" fill="none" stroke="${IOL}" stroke-width="4.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>` + IPC(170, 228.6, c, 2.4) + IPC(181, 228.6, c, 2.4); },
   p_bridge:c => IBAR(163, 187, 189, 186, c, 3.4),
   p_braue:c => IHOOP(246, 141, c, 4.8) + IHOOP(235, 137, c, 4.4),
   p_labret:c => IPC(178, 256, c, 3.4), p_monroe:c => IPC(166, 235, c, 3),
@@ -2225,6 +2228,23 @@ Object.assign(ISHOE, {
   m_biker:(X, c) => [0, 1].map(i => ishoe(X, i, X.B.ay - 200, c, '#111', 26, 10) + [X.B.ay - 170, X.B.ay - 10].map(y => { const [a, b] = ilegE(X.B, i, y); return X.LN(`M${f1(a - 10)} ${y}H${f1(b + 10)}`, '#2a2a30', 9) + `<rect x="${f1(i ? a - 8 : b - 10)}" y="${y - 9}" width="18" height="18" fill="none" stroke="#c9c9cf" stroke-width="3"/>`; }).join('')).join(''),
 });
 Object.assign(ISHOEC, {m_biker:'#141218'});
+// Gerade, lockere Baggy-Hosen für Jungs (Inaya, 2026-10-10): Beine fallen senkrecht, unten leicht gestaucht
+function istraight(B, y1, out=16, ex=10){
+  const l0 = B.legs[0][0], P = [], Q = [];
+  for (let y = B.wy; y < l0; y += 12) { const [a] = ihipX(B, y, out); P.push(f1(a) + ' ' + y); }
+  const xo = ihipX(B, l0, out)[0] - ex, xr = 2 * B.cx - xo, xi = Math.max(ilegE(B, 0, B.cy + 6)[1] + 6, B.cx - 26), xj = 2 * B.cx - xi;
+  for (let y = B.wy; y < l0; y += 12) { const [, b] = ihipX(B, y, out); Q.unshift(f1(b) + ' ' + y); }
+  const hem = (a, b) => `L${f1(a)} ${y1}Q${f1(a + (b - a) * .25)} ${y1 + 12} ${f1((a + b) / 2)} ${y1 + 2}Q${f1(a + (b - a) * .75)} ${y1 + 12} ${f1(b)} ${y1}`;
+  return 'M' + P.join('L') + `L${f1(xo)} ${l0 + 40}` + hem(xo, xi) + `L${f1(xi)} ${B.cy + 10}L${B.cx} ${B.cy - 4}L${f1(xj)} ${B.cy + 10}` + hem(xj, xr) + `L${f1(xr)} ${l0 + 40}L` + Q.join('L') + 'Z';
+}
+const IBAGFOLD = (X, c, y1) => { const B = X.B, l0 = B.legs[0][0], xo = ihipX(B, l0, 16)[0] - 10, xi = Math.max(ilegE(B, 0, B.cy + 6)[1] + 6, B.cx - 26), k = shade(c, isLight(c) ? .75 : 1.7); return X.LN(ibo2(X, `M${f1(xo + 14)} ${y1 - 70}Q${f1((xo + xi) / 2)} ${y1 - 50} ${f1(xi - 10)} ${y1 - 74}M${f1(xo + 20)} ${y1 - 34}Q${f1((xo + xi) / 2)} ${y1 - 14} ${f1(xi - 14)} ${y1 - 36}M${f1((xo + xi) / 2 + 6)} ${B.cy + 40}V${y1 - 120}`), k, 2.2); };
+Object.assign(IBOT, {
+  m_baggy:(X, c) => X.G(istraight(X.B, X.B.fy - 34), c) + IBAGFOLD(X, c, X.B.fy - 34) + X.LN(`M${X.B.cx} ${X.B.wy + 10}V${X.B.cy - 20}`, shade(c, isLight(c) ? .75 : 1.7), 2),
+  m_baggyk:(X, c) => IBOT.m_baggy(X, c) + [0, 1, 2].map(k => X.LN(`M${X.B.cx - 120} ${X.B.wy + 24 + k * 22}Q${X.B.cx - 100 + k * 20} ${X.B.cy + 70 + k * 36} ${X.B.cx + 10 + k * 30} ${X.B.wy + 34 + k * 18}`, '#c9c9cf', 4).replace('stroke-linecap="round"', 'stroke-dasharray="7 4"')).join('') + [0, 1].map(i => { const y = X.B.ky + 20, xo = ihipX(X.B, X.B.legs[0][0], 16)[0] - 10, xi = Math.max(ilegE(X.B, 0, X.B.cy + 6)[1] + 6, X.B.cx - 26), a = i ? 2 * X.B.cx - xi : xo, b = i ? 2 * X.B.cx - xo : xi; return X.LN(`M${f1(a)} ${y}H${f1(b)}`, '#0b0a0d', 9) + `<rect x="${f1((a + b) / 2 - 10)}" y="${y - 10}" width="20" height="20" fill="none" stroke="#c9c9cf" stroke-width="3"/>`; }).join(''),
+  m_baggyc:(X, c) => IBOT.m_baggy(X, c) + [0, 1].map(i => { const xo = ihipX(X.B, X.B.legs[0][0], 16)[0] - 10, x = i ? 2 * X.B.cx - xo - 58 : xo + 4; return `<path d="M${f1(x)} ${X.B.cy + 70}h54v70q-27 8 -54 0Z" fill="${shade(c, isLight(c) ? .9 : 1.2)}" ${IO} stroke-width="1.8"/>` + X.LN(`M${f1(x)} ${X.B.cy + 88}h54`, IOL, 1.6); }).join(''),
+});
+Object.assign(IBOTC, {m_baggy:'#2a2a30', m_baggyk:'#141218', m_baggyc:'#3d4430'});
+IWIDE.push('m_baggy', 'm_baggyk', 'm_baggyc');
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
@@ -2270,7 +2290,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel', 'p_braue', 'p_augenbraue', 'p_bridge', 'p_dermal'];
   let ears = ''; // Ohrschmuck liegt über den Haaren, sonst verschwindet er unter fast jeder Frisur
   // Jungs-Gesicht: Nase etwas weiter links, Mund, Kinn und Brauen tiefer als beim Mädchen (Inaya, 2026-10-10)
-  const PM = B === IB.m ? {p_nase:[-8, 0], p_nasenring:[-8, 0], p_septum:[-8, 0], p_labret:[-2, 12], p_braue:[0, 10], p_wange:[0, 7]} : {};
+  const PM = B === IB.m ? {p_nase:[-8, 0], p_nasenring:[-8, 0], p_septum:[-4, -1], p_labret:[-2, 12], p_braue:[0, 10], p_wange:[0, 7]} : {};
   const PMOUTH = B === IB.m ? [-3, 8] : null, PMK = ['piercing', 'p_snakering', 'p_monroe', 'p_medusa', 'p_spider', 'p_angel', 'p_dahlia', 'p_zunge'];
   const pmv = k => PM[k] || (PMOUTH && PMK.includes(k) ? PMOUTH : null), pmt = (k, svg) => { const v = pmv(k); return v ? `<g transform="translate(${v[0]} ${v[1]})">${svg}</g>` : svg; };
   for (const k in J) { if (IPIERC[k]) { if (IEARP.includes(k)) ears += pmt(k, IPIERC[k](J[k])); else face += pmt(k, IPIERC[k](J[k])); } if (IEARR[k]) ears += IEARR[k](J[k]); }
