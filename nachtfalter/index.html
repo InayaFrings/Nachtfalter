@@ -1361,7 +1361,8 @@ function iHair(o, X){ // gibt {back, front} zurück
     if (o.back === 'gothzopf') front += `<circle cx="292" cy="80" r="10" fill="${shade(HC, 1.6)}" ${IO}/>`;
   }
   const pf = IPONY[o.front];
-  if (pf) front += P(pf, ff) + X.LN('M110 70Q100 110 106 150M150 50Q140 90 140 140M206 50Q214 90 214 130M246 70Q256 100 256 140', shade(FC, isLight(FC) ? .62 : .45), 1.6, .45);
+  // Pony ohne eigene Außenlinie: nur die Fransenkante bekommt eine Linie, so geht er nahtlos in die Frisur über
+  if (pf) front += `<path d="${pf}" fill="${ff}"/>` + X.LN(pf.slice(IPO.length).replace(/^L/, 'M').replace(/Z$/, ''), IOL, 2.2) + X.LN('M110 70Q100 110 106 150M150 50Q140 90 140 140M206 50Q214 90 214 130M246 70Q256 100 256 140', shade(FC, isLight(FC) ? .62 : .45), 1.6, .45);
   return {back, front};
 }
 // Kopfschmuck (Mehrfachauswahl), c = Farbe
@@ -2688,7 +2689,7 @@ const ROOM_COLS = [['#141416','Schwarz'],['#3a3a40','Grau'],['#8a8a92','Silber']
 function roomColorRow(label, k, cur){ // k: 'item' (ausgewähltes Möbel), 'wallC' oder 'floorC'
   return `<fieldset class="opt"><legend class="lbl">${esc(label)}</legend><div class="swatches">
     ${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="rcol" data-k="${k}" data-v="${c}" aria-pressed="${cur === c}" title="${l}" aria-label="${esc(label)}: ${l}"></button>`).join('')}
-    <input type="color" class="cpick rpick" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="${esc(label)}: eigene Farbe mischen"></div></fieldset>`;
+    <input type="button" data-ctype="color" class="cpick rpick" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="${esc(label)}: eigene Farbe mischen"></div></fieldset>`;
 }
 function setRoomColor(k, v){
   const r = me().room;
@@ -2805,7 +2806,7 @@ function swatches(key, label, pal, cur, act){
   return `<fieldset class="opt"><legend class="lbl">${label}</legend><div class="swatches">${pal.filter(([c]) => c != null).map(([c,l]) =>
     `<button type="button" class="sw ${c === 'hohl' ? 'hohl' : ''} ${c == null ? 'orig' : ''}" style="${c && c !== 'hohl' ? 'background:' + c : ''}" data-act="${act}" data-k="${key}" data-v="${c ?? ''}" aria-pressed="${(cur ?? '') === (c ?? '')}" title="${l}" aria-label="${label}: ${l}"></button>`).join('')}</div></fieldset>`;
 }
-const pick = (k, cur, act) => `<input type="color" class="cpick avpick" data-act2="${act}" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen">`;
+const pick = (k, cur, act) => `<input type="button" data-ctype="color" class="cpick avpick" data-act2="${act}" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen">`;
 const withPick = (html, k, cur, act) => html.replace(/<\/div><\/fieldset>$/, pick(k, cur, act) + '</div></fieldset>');
 let wColOpen = false; // Handy: Farbauswahl in der Garderobe auf- und zuklappen
 function curColor(cat, o){ // aktuelle Farbe für den kleinen Punkt am Knopf
@@ -3015,7 +3016,7 @@ function bannerHTML(b, name, handle=''){ // im Bannerkasten steht der Nutzername
 const BANNER_FG = [['#ecebe7','Weiß'],['#c9c9cf','Silber'],['#8a8a92','Grau'],['#151515','Schwarz'],['#c8324e','Rot'],['#e98fa6','Rosa'],['#9a6fd0','Lila'],['#6fa8dc','Blau'],['#5fae6b','Grün'],['#d4af37','Gold']];
 function bannerColors(b){ // freie Farben für Hintergrund und Muster/Schrift
   const row = (k, label, pal, cur) => `<fieldset class="opt"><legend class="lbl">${label}</legend><div class="swatches">${pal.map(([c,l]) =>
-    `<button type="button" class="sw" style="background:${c}" data-act="bcol" data-k="${k}" data-v="${c}" aria-pressed="${cur === c}" title="${l}" aria-label="${label}: ${l}"></button>`).join('')}<input type="color" class="cpick bpick" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="${label}: eigene Farbe mischen"></div></fieldset>`;
+    `<button type="button" class="sw" style="background:${c}" data-act="bcol" data-k="${k}" data-v="${c}" aria-pressed="${cur === c}" title="${l}" aria-label="${label}: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick bpick" data-k="${k}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#888888'}" title="Eigene Farbe mischen" aria-label="${label}: eigene Farbe mischen"></div></fieldset>`;
   return `<div id="bcols">${row('bg', 'Hintergrundfarbe', BG_COLORS, b.bg)}${row('fg', 'Farbe von Muster und Schrift', BANNER_FG, b.fg)}</div>`;
 }
 function mediaEditor(st, name){
@@ -3325,7 +3326,7 @@ const FG_COLS = [['#ecebe7','Weiß'],['#c9c9cf','Silber'],['#8a8a92','Grau'],['#
 function fgRow(cur){ // Schriftfarbe im Profil; leer = passt sich automatisch an den Kasten an
   return `<fieldset class="opt" id="fgrow"><legend class="lbl">Schriftfarbe</legend><div class="swatches">
     ${FG_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="topt" data-k="fg" data-v="${c}" aria-pressed="${cur === c}" title="${l}" aria-label="Schriftfarbe: ${l}"></button>`).join('')}
-    <input type="color" class="cpick" data-k="fg" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#ecebe7'}" title="Eigene Farbe mischen" aria-label="Schriftfarbe: eigene Farbe mischen"></div>
+    <input type="button" data-ctype="color" class="cpick" data-k="fg" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#ecebe7'}" title="Eigene Farbe mischen" aria-label="Schriftfarbe: eigene Farbe mischen"></div>
     <p class="note" style="margin:4px 0 0">Tipp: Klick rechts in der Vorschau auf eine Schrift, dann springst du hierher.</p></fieldset>`;
 }
 document.addEventListener('click', e => { // Klick auf Schrift in der Vorschau führt zur Schriftfarbe
@@ -3336,7 +3337,7 @@ document.addEventListener('click', e => { // Klick auf Schrift in der Vorschau f
   row.scrollIntoView({behavior:'smooth', block:'center'}); row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash');
 });
 function colorRow(k, cur){
-  return swatches(k, 'Farbe', BG_COLORS, cur, 'topt').replace('</div></fieldset>', `<input type="color" class="cpick" data-k="${k}" value="${cur}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></fieldset>`);
+  return swatches(k, 'Farbe', BG_COLORS, cur, 'topt').replace('</div></fieldset>', `<input type="button" data-ctype="color" class="cpick" data-k="${k}" value="${cur}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></fieldset>`);
 }
 
 const HELPERS = {
@@ -4026,7 +4027,7 @@ function albumHTML(u){
   return `<div class="album" id="album"><p class="lbl albumh">${L.length} von ${LOOK_MAX} Looks</p>
     ${L.length ? `<div class="looks">${L.map((l, i) => `<button type="button" class="look ${i === lookSel ? 'on' : ''}" data-act="look-sel" data-i="${i}" style="background:${esc(l.bg || '#26262b')}" aria-label="Look ${i + 1}">${avatar(l.outfit, 'full', '', true)}</button>`).join('')}</div>`
       : '<p class="note" style="margin:0">Noch leer. Wenn dir ein Look gefällt, tipp in der Garderobe auf „Look speichern“.</p>'}
-    ${sel ? `<div class="lookctl"><fieldset class="opt"><legend class="lbl">Hintergrund</legend><div class="swatches">${BG_COLORS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="look-bg" data-v="${c}" aria-pressed="${sel.bg === c}" title="${l}" aria-label="Hintergrund ${l}"></button>`).join('')}<input type="color" class="cpick lookpick" value="${/^#[0-9a-f]{6}$/i.test(sel.bg || '') ? sel.bg : '#26262b'}" title="Eigene Farbe" aria-label="Eigene Hintergrundfarbe"></div></fieldset>
+    ${sel ? `<div class="lookctl"><fieldset class="opt"><legend class="lbl">Hintergrund</legend><div class="swatches">${BG_COLORS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="look-bg" data-v="${c}" aria-pressed="${sel.bg === c}" title="${l}" aria-label="Hintergrund ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick lookpick" value="${/^#[0-9a-f]{6}$/i.test(sel.bg || '') ? sel.bg : '#26262b'}" title="Eigene Farbe" aria-label="Eigene Hintergrundfarbe"></div></fieldset>
       <div class="row"><button type="button" class="btn" data-act="look-wear">Diesen Look anziehen</button><button type="button" class="btn ghost" data-act="look-del">Aus dem Album löschen</button></div></div>` : ''}
   </div>`;
 }
@@ -5131,7 +5132,7 @@ document.addEventListener('click', async e => {
 
 function refreshDraft(){
   document.querySelectorAll('[data-act="topt"]').forEach(x => x.setAttribute('aria-pressed', draft[x.dataset.k] === x.dataset.v));
-  document.querySelectorAll('.cpick').forEach(x => { if (/^#[0-9a-f]{6}$/i.test(draft[x.dataset.k])) x.value = draft[x.dataset.k]; });
+  document.querySelectorAll('.cpick').forEach(x => { if (/^#[0-9a-f]{6}$/i.test(draft[x.dataset.k])) { x.value = draft[x.dataset.k]; x.style.backgroundColor = x.value; } });
   document.getElementById('preview').innerHTML = previewHTML();
   applyPage(draft);
 }
@@ -5395,25 +5396,52 @@ document.addEventListener('submit', async e => {
 render();
 const cloudReady = cloudInit();
 
-// Eigene Farbe: eigener Mischer statt des Handy-Farbwählers (Inaya: der schloss sich bei jeder Bewegung). Erst „Fertig“ übernimmt die Farbe.
-(function(){
-  let target = null, H = 0, Sa = 0, L = 50;
-  const $ = id => document.getElementById(id);
-  const hex2hsl = h => { let r = parseInt(h.slice(1,3),16)/255, g = parseInt(h.slice(3,5),16)/255, b = parseInt(h.slice(5,7),16)/255; const mx = Math.max(r,g,b), mn = Math.min(r,g,b), d = mx - mn; let hh = 0, ss = 0; const ll = (mx + mn) / 2;
-    if (d) { ss = d / (1 - Math.abs(2 * ll - 1)); hh = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; hh *= 60; if (hh < 0) hh += 360; } return [Math.round(hh), Math.round(ss * 100), Math.round(ll * 100)]; };
-  const hsl2hex = (h, s, l) => { s /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)); return '#' + [f(0), f(8), f(4)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join(''); };
-  const paint = () => { const c = hsl2hex(H, Sa, L); $('cpm-prev').style.background = c;
-    $('cpm-s-r').style.background = `linear-gradient(90deg,${hsl2hex(H,0,L)},${hsl2hex(H,100,L)})`;
-    $('cpm-l-r').style.background = `linear-gradient(90deg,#000,${hsl2hex(H,Sa,50)},#fff)`; };
-  const open = x => { target = x; [H, Sa, L] = hex2hsl(/^#[0-9a-f]{6}$/i.test(x.value) ? x.value : '#888888'); $('cpm-h-r').value = H; $('cpm-s-r').value = Sa; $('cpm-l-r').value = L; paint(); $('cpmodal').hidden = false; };
-  const close = () => { $('cpmodal').hidden = true; target = null; };
-  document.addEventListener('click', e => { const x = e.target.closest && e.target.closest('input[type=color]'); if (!x) return; e.preventDefault(); e.stopPropagation(); open(x); }, true);
-  document.addEventListener('keydown', e => { const x = e.target.closest && e.target.closest('input[type=color]'); if (x && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(x); } if (e.key === 'Escape' && !$('cpmodal').hidden) close(); }, true);
-  ['cpm-h-r','cpm-s-r','cpm-l-r'].forEach(id => $(id).addEventListener('input', () => { H = +$('cpm-h-r').value; Sa = +$('cpm-s-r').value; L = +$('cpm-l-r').value; paint(); }));
-  $('cpm-cancel').addEventListener('click', close);
-  $('cpmodal').addEventListener('click', e => { if (e.target.id === 'cpmodal') close(); });
-  $('cpm-ok').addEventListener('click', () => { let x = target; const c = hsl2hex(H, Sa, L); close();
-    if (x && !x.isConnected) x = [...document.querySelectorAll('input[type=color]')].find(y => y.className === x.className && y.dataset.k === x.dataset.k) || null;
-    if (!x) return; x.value = c; x.dispatchEvent(new Event('input', {bubbles:true})); x.dispatchEvent(new Event('change', {bubbles:true})); });
+// Eigenes Farbgitter statt des System-Farbwählers (Inaya, 2026-10-10): nur das Gitter, kein Spektrum, keine Regler.
+// Die <input type="button" data-ctype="color"> bleiben als Wertspeicher; Antippen öffnet das Gitter, die Wahl löst input + change aus wie vorher.
+(() => {
+  const hex = (h, sat, l) => { sat /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = sat * Math.min(l, 1 - l), f = n => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)))).toString(16).padStart(2, '0'); return '#' + f(0) + f(8) + f(4); };
+  const COLS = [];
+  for (let i = 0; i < 12; i++) { const v = Math.round(255 * (1 - i / 11)).toString(16).padStart(2, '0'); COLS.push('#' + v + v + v); }
+  const HUES = [200, 220, 250, 275, 300, 330, 0, 15, 30, 45, 60, 100], LS = [[90, 88], [82, 80], [72, 72], [62, 66], [52, 62], [44, 58], [36, 56], [28, 58], [20, 60]];
+  for (const [l, sat] of LS) for (const h of HUES) COLS.push(hex(h, sat, l));
+  const st = document.createElement('style');
+  st.textContent = `input.cpick[data-ctype]{padding:3px;background-clip:content-box;color:transparent;font-size:0;-webkit-appearance:none;appearance:none}
+.cgrid-bg{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s ease-out;-webkit-tap-highlight-color:transparent}
+.cgrid-bg.on{opacity:1}
+.cgrid{width:min(440px,100%);background:var(--paper-2);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(24px);transition:transform .18s ease-out;will-change:transform;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
+.cgrid-bg.on .cgrid{transform:none}
+@media (min-width:700px){.cgrid-bg{align-items:center}.cgrid{border-radius:14px;border-bottom:1px solid var(--line)}}
+.cgrid-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-family:var(--f-display);color:var(--fg);font-size:17px}
+.cgrid-x{background:none;border:1px solid var(--line);color:var(--fg);border-radius:999px;min-width:44px;height:36px;padding:0 14px;font:inherit;font-size:14px;cursor:pointer}
+.cgrid-g{display:grid;grid-template-columns:repeat(12,1fr);border-radius:8px;overflow:hidden;touch-action:manipulation;contain:layout paint}
+.cgrid-g button{aspect-ratio:1;border:0;padding:0;margin:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cgrid-g button[aria-pressed=true]{outline:3px solid var(--fg);outline-offset:-3px;box-shadow:inset 0 0 0 5px #000;position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.cgrid-bg,.cgrid{transition:none}}`;
+  document.head.appendChild(st);
+  let bg = null, target = null;
+  const build = () => {
+    bg = document.createElement('div'); bg.className = 'cgrid-bg'; bg.hidden = true;
+    bg.innerHTML = `<div class="cgrid" role="dialog" aria-modal="true" aria-label="Farbe wählen"><div class="cgrid-h"><span>Farbe wählen</span><button type="button" class="cgrid-x">Fertig</button></div><div class="cgrid-g">${COLS.map(c => `<button type="button" data-gc="${c}" style="background:${c}" aria-label="Farbe ${c}" aria-pressed="false"></button>`).join('')}</div></div>`;
+    document.body.appendChild(bg);
+    bg.addEventListener('click', e => {
+      const b = e.target.closest('[data-gc]');
+      if (b && target) { const t = target, c = b.dataset.gc; close(); t.value = c; t.style.backgroundColor = c; t.dispatchEvent(new Event('input', {bubbles:true})); t.dispatchEvent(new Event('change', {bubbles:true})); return; }
+      if (e.target === bg || e.target.closest('.cgrid-x')) close();
+    });
+  };
+  const close = () => { if (!bg || bg.hidden) return; bg.classList.remove('on'); target = null; setTimeout(() => { if (!bg.classList.contains('on')) bg.hidden = true; }, 170); };
+  const open = inp => {
+    if (!bg) build(); target = inp;
+    const cur = (inp.value || '').toLowerCase();
+    bg.querySelectorAll('[data-gc]').forEach(b => b.setAttribute('aria-pressed', b.dataset.gc === cur ? 'true' : 'false'));
+    bg.hidden = false; requestAnimationFrame(() => bg.classList.add('on'));
+    (bg.querySelector('[aria-pressed=true]') || bg.querySelector('[data-gc]')).focus({preventScroll:true});
+  };
+  document.addEventListener('click', e => { const inp = e.target.closest?.('input[data-ctype=color]'); if (!inp) return; e.preventDefault(); e.stopPropagation(); open(inp); }, true);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  // Die Knöpfe zeigen ihre Farbe selbst (kein System-Farbfeld mehr)
+  const paintAll = () => document.querySelectorAll('input[data-ctype=color]').forEach(x => { if (x.style.backgroundColor !== x.value) x.style.backgroundColor = x.value; });
+  let q = 0; new MutationObserver(() => { if (!q) q = requestAnimationFrame(() => { q = 0; paintAll(); }); }).observe(document.body, {childList:true, subtree:true});
+  paintAll();
 })();
 </script>
