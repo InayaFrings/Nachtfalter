@@ -1131,7 +1131,14 @@ const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !
 const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', face:'natur', back:'h_kein'};
 // „Komplett ausziehen“: Kleidung, Schuhe, Accessoires, Kopfbedeckung, Strümpfe und Schmuck aus; Körper, Haare und Gesicht bleiben
 function undressAll(o){ Object.assign(o, {back:'h_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
-function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; }
+function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
+// Farben gelten nur für das Teil, das man gerade umgefärbt hat: jedes Kleidungsstück merkt sich seine eigene Farbe, alle anderen bleiben im Originaldesign (Inaya, 2026-10-10)
+const ICF = {top:['topC', 'motifC'], bottom:['bottomC'], shoes:['shoesC'], jacket:['jacketC']};
+function icolSwap(o, k, nv){
+  const ic = o.icol = {...(o.icol || {})}, prev = o[k], fs = ICF[k];
+  if (prev) { const sv = {}; fs.forEach(f => { if (o[f] != null) sv[f] = o[f]; }); if (Object.keys(sv).length) ic[prev] = sv; else delete ic[prev]; }
+  const ld = ic[nv] || {}; fs.forEach(f => { if (ld[f] != null) o[f] = ld[f]; else delete o[f]; });
+}
 
 /* ---------- Avatar ---------- */
 // Skizzenhafte Emo-Zeichnungen der 2000er: sehr dünne Figuren, hohle weiße Augen, kreideblasse Haut, zittrige Outline
@@ -4159,7 +4166,7 @@ const PIN_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 
 const isPin = (kind, id) => ((kind === 'f' ? S.pinF : S.pinC) || []).includes(id);
 const byPin = kind => (a, b) => (isPin(kind, b.id) ? 1 : 0) - (isPin(kind, a.id) ? 1 : 0);
 // Wie bei WhatsApp: lange drücken (oder am PC Rechtsklick / Pfeil) öffnet ein Menü mit „Anpinnen“; angepinnt steht oben mit kleiner Nadel (Inaya, 2026-10-10)
-const PIN_MAX = 3;
+const PIN_MAX = 3, pinMax = kind => kind === 'f' ? 4 : PIN_MAX; // angepinnte Freunde (max. 4) stehen auch auf dem Profil (Inaya, 2026-10-10)
 const pinMark = (kind, id) => `${isPin(kind, id) ? `<span class="pinm" title="Angepinnt" aria-label="Angepinnt">${PIN_ICO}</span>` : ''}<button type="button" class="pinmore" data-act="pin-menu" aria-label="Optionen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
 function pinMenu(el, x, y){
   document.querySelector('.pinpop')?.remove();
@@ -4500,6 +4507,7 @@ async function loadFriendsOf(uid){
   } catch { FRL[uid] = {ids:[], ts:Date.now()}; }
   softRender();
 }
+const PF_ASK = new Set();
 function profFriends(u, others){
   if (u.helper) return '';
   let list;
@@ -4509,7 +4517,11 @@ function profFriends(u, others){
     list = c?.ids ? c.ids.map(id => id === social?.uid ? me() : profUser(id)).filter(Boolean) : null;
   }
   const n = list ? list.filter(f => !f.helper).length : 0;
-  return `<div class="pfr"><h3 class="lbl">Freunde${n ? ` <span class="muted">${n}</span>` : ''}</h3>${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}</div>`;
+  // Nur angepinnte Freunde (höchstens 4) stehen auf dem Profil (Inaya, 2026-10-10)
+  if (list) { const pins = (u.remote ? u.pins : S.pinF) || [], have = new Set(u.remote ? (FRL[u.id]?.ids || []) : list.map(f => f.id));
+    list = pins.filter(id => have.has(id)).slice(0, 4).map(id => u.remote ? (id === social?.uid ? me() : profUser(id) || (PF_ASK.has(id) ? null : (PF_ASK.add(id), loadProf(id).then(softRender), null))) : list.find(f => f.id === id)).filter(Boolean); }
+  const none = u.remote ? '' : '<p class="note" style="margin:0">Pinne bis zu 4 Freunde an, dann stehen sie hier. Unter „Freunde“ lange auf einen Namen drücken (am PC Rechtsklick) und „Anpinnen“ wählen.</p>';
+  return `<div class="pfr"><h3 class="lbl">Freunde${n ? ` <span class="muted">${n}</span>` : ''}</h3>${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : n ? none : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}</div>`;
 }
 // Links auf dem Profil: Spotify, Snapchat, Instagram, TikTok, Discord (Inaya, 2026-10-10)
 const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link'],['discord','Discord','Discord-Name']];
@@ -4789,7 +4801,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
-    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
+    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
@@ -4847,7 +4859,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.pinF || []).slice(0, 4), songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -5888,8 +5900,8 @@ document.addEventListener('click', async e => {
   else if (a === 'pin-menu') { const r = b.closest('[data-pk]'), bb = b.getBoundingClientRect(); if (r) pinMenu(r, bb.left - 180, bb.bottom + 4); return; }
   else if (a === 'pin-close') { document.querySelector('.pinpop')?.remove(); return; }
   else if (a === 'pin') { document.querySelector('.pinpop')?.remove(); const key = b.dataset.k === 'f' ? 'pinF' : 'pinC', l = S[key] || [];
-    if (!l.includes(id) && l.length >= PIN_MAX) { toast(`Du kannst höchstens ${PIN_MAX} anpinnen.`); return; }
-    S[key] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; save(); render(); toast(S[key].includes(id) ? 'Angepinnt' : 'Gelöst'); return; }
+    if (!l.includes(id) && l.length >= pinMax(b.dataset.k)) { toast(b.dataset.k === 'f' ? 'Du kannst höchstens 4 Freunde anpinnen.' : `Du kannst höchstens ${PIN_MAX} anpinnen.`); return; }
+    S[key] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; save(); if (key === 'pinF') publishProfile(); render(); toast(S[key].includes(id) ? (key === 'pinF' ? 'Angepinnt, steht jetzt auf deinem Profil' : 'Angepinnt') : 'Gelöst'); return; }
   else if (a === 'browse') { fpOpen = false; BR.ids = null; go('browse'); }
   else if (a === 'browse-more') { BR.n += 30; loadBrowse(); }
   else if (a === 'post-share') { sharePost(id, b.dataset.a); }
