@@ -241,6 +241,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .pincancel{justify-content:center;border-top:1px solid var(--line-soft)!important;color:var(--muted)!important}.pinpop.at .pincancel{display:none!important}
 .gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
 .nbtns{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nbtns .nlink{margin:0!important;width:100%;padding-inline:8px;white-space:nowrap}
+.ctabs2{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line-soft);margin-bottom:4px}.ctabs2 button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.ctabs2 button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
@@ -4813,7 +4814,7 @@ const chatWho = id => id === social?.uid ? 'Du' : PROF[id]?.name || 'Jemand';
 const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last > ((S.seen || {})[c.id] || 0);
 function openChat(id){
   if (CH.unsub) CH.unsub();
-  CH.open = id; CH.mode = 'chat'; CH.msgs = [];
+  CH.open = id; CH.mode = 'chat'; CH.msgs = []; { const c = CH.list.find(x => x.id === id); chatTab = c ? (c.group ? 'group' : 'priv') : id.startsWith('g') ? 'group' : 'priv'; }
   CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot(snap => {
     CH.msgs = snap.docs.map(d => d.data()).reverse(); markSeen(); drawMsgs();
   }, () => {});
@@ -4839,9 +4840,10 @@ async function clearRoomChat(){ // alte Raumchat-Nachrichten wegräumen (Markier
     for (const d of snap.docs) { const m = d.data(); if (m.kind !== 'close') await social.db.doc('chats/zimmer_' + social.uid + '/m/' + d.id).delete().catch(() => {}); }
   } catch {}
 }
+let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz unten (Inaya, 2026-10-10)
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
+  const list = [...CH.list].filter(c => !!c.group === (chatTab === 'group')).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}" data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -4871,12 +4873,11 @@ function chatsView(){
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
     <div class="chatwrap ${CH.mode ? 'open' : ''}">
       <div class="chatside">
-        ${social ? `<div class="row"><button class="btn" data-act="chat-new">Neuer Chat</button><button class="btn ghost" data-act="chat-group">Neue Gruppe</button></div>` : ''}
-        <p class="lbl" style="margin:10px 0 0">Helfer</p>
-        ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}
-        <p class="lbl" style="margin:10px 0 0">Freunde</p>
-        ${social ? list || '<p class="note">Noch keine Chats mit Freunden.</p>' : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
-
+        <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats']].map(([k, l]) => { const n = CH.list.filter(c => !!c.group === (k === 'group') && unread(c)).length + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}">${l}${n ? ' <i class="dot" aria-label="neu"></i>' : ''}</button>`; }).join('')}</div>
+        ${social ? `<div class="row">${chatTab === 'group' ? '<button class="btn" data-act="chat-group">＋ Neue Gruppe</button>' : '<button class="btn" data-act="chat-new">＋ Neuer Chat</button>'}</div>` : ''}
+        ${social ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
+        ${chatTab === 'priv' ? `<p class="lbl" style="margin:14px 0 0">Helfer</p>
+        ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}` : ''}
       </div>
       <div class="chatmain">${CH.mode ? '<button class="btn ghost mback" data-act="chat-back">← Alle Chats</button>' : ''}${right}</div>
     </div>
@@ -5511,7 +5512,8 @@ document.addEventListener('click', async e => {
   else if (a === 'chat-new') { CH.mode = 'new'; render(); }
   else if (a === 'chat-group') { CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
-  else if (a === 'helper-chat') { go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
+  else if (a === 'helper-chat') { chatTab = 'priv'; go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
+  else if (a === 'chat-tab') { chatTab = b.dataset.v === 'group' ? 'group' : 'priv'; render(); }
   else if (a === 'chat-add') { CH.mode = 'gadd'; render(); }
   else if (a === 'chat-edit') { const c = CH.list.find(x => x.id === CH.open); CH.gdraft = {id:c.id, name:c.name || '', members:c.members.filter(m => m !== social.uid), theme:{...BLANK_THEME(), ...(c.theme || {})}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-leave') {
