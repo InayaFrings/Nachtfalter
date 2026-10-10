@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='43c206b5d6db';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e2348de5e8bf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1451,7 +1451,7 @@ const IPONY = {
 function iHair(o, X){ // gibt {back, front} zurück
   const h = IHAIR[o.back], HC = o.hairC || '#1c1b20', FC = o.frontC || HC, P = X.P, dk = shade(HC, isLight(HC) ? .62 : .45), lt = shade(HC, isLight(HC) ? 1.08 : 1.9);
   const hf = X.grad(HC), ff = X.grad(FC);
-  let back = '', front = '';
+  let back = '', front = '', sideD = '';
   const lines = d => d ? X.LN(d, dk, 1.8, .5) : '';
   if (h) {
     if (h.b) back += P(h.b, hf) + (h.wavy || h.flat ? '' : lines(h.ln && h.ln.split('M').slice(0, 3).join('M')));
@@ -1459,7 +1459,7 @@ function iHair(o, X){ // gibt {back, front} zurück
       back += P(d + 'Z', hf); let c = ''; for (let i = 0; i < 60; i++) { const a = i * 2.39996, r = Math.sqrt((i + .5) / 60) * .9; c += `M${f1(cx + rx * r * Math.cos(a) - 7)} ${f1(cy + ry * r * Math.sin(a))}q7 -9 14 0`; } back += X.LN(c, dk, 2, .55);
     }
     if (h.cap) front += P(ICAP, hf) + X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
-    if (h.side) { const s = h.flat ? `M54 170L46 ${h.side}L100 ${h.side}L102 236Q104 180 92 136Z` : ISIDE(h.side); front += iboF(P(s, hf) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); }
+    if (h.side) { const s = h.flat ? `M54 170L46 ${h.side}L100 ${h.side}L102 236Q104 180 92 136Z` : ISIDE(h.side); front += iboF(P(s, hf) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
     if (h.f) front += P(h.f, hf) + lines(h.ln);
     if (h.shave) front = `<path d="${ICAP}" fill="${shade(HC, .5)}" opacity=".18"/>` + front;
     if (h.braids) { const br = `M70 190Q40 260 56 330Q36 400 54 470Q40 520 56 560`; front += iboF(X.LN(br, IOL, 34) + X.LN(br, HC, 28) + X.LN(br, dk, 26, .5).replace('stroke-linecap="round"', 'stroke-dasharray="10 12" stroke-linecap="round"') + `<path d="M44 556L68 556L62 590L50 590Z" fill="${HC}" ${IO}/><rect x="44" y="548" width="24" height="10" rx="4" fill="#e05aa0" ${IO}/>`); }
@@ -1471,7 +1471,7 @@ function iHair(o, X){ // gibt {back, front} zurück
   }
   const pf = IPONY[o.front];
   // Pony ohne eigene Außenlinie: nur die Fransenkante bekommt eine Linie, so geht er nahtlos in die Frisur über
-  if (pf) front += `<path d="${pf}" fill="${ff}"/>` + X.LN(pf.slice(IPO.length).replace(/^L/, 'M').replace(/Z$/, ''), IOL, 2.2) + X.LN('M110 70Q100 110 106 150M150 50Q140 90 140 140M206 50Q214 90 214 130M246 70Q256 100 256 140', shade(FC, isLight(FC) ? .62 : .45), 1.6, .45);
+  if (pf) front += `<path d="${pf}" fill="${ff}"/>` + (sideD ? `<mask id="${X.u}pm" maskUnits="userSpaceOnUse" x="-200" y="-300" width="800" height="1200"><rect x="-200" y="-300" width="800" height="1200" fill="#fff"/>${iboF(`<path d="${sideD}" fill="#000" stroke="#000" stroke-width="3"/>`)}</mask><g mask="url(#${X.u}pm)">` : '') + X.LN(pf.slice(IPO.length).replace(/^L/, 'M').replace(/Z$/, ''), IOL, 2.2) + (sideD ? '</g>' : '') + X.LN('M110 70Q100 110 106 150M150 50Q140 90 140 140M206 50Q214 90 214 130M246 70Q256 100 256 140', shade(FC, isLight(FC) ? .62 : .45), 1.6, .45);
   return {back, front};
 }
 // Kopfschmuck (Mehrfachauswahl), c = Farbe
@@ -1868,10 +1868,10 @@ Object.assign(ISHOEC, {stiefeletten:'#141218', hightops:'#141218', pumps:'#14121
 // Kopfbedeckungen (Mädchen-Kopf-Koordinaten)
 Object.assign(IHACC, {
   beret:(c, X) => X.P('M40 40Q30 -40 172 -50Q320 -46 312 30Q300 60 172 52Q50 60 40 40Z', c) + X.P('M164 -50L168 -66L176 -66L180 -50Z', c) + X.LN('M60 46Q172 70 296 40', shade(c, isLight(c) ? .7 : 1.8), 3),
-  kappe:(c, X) => X.P('M54 120Q46 -40 172 -46Q298 -40 290 120Q172 96 54 120Z', c) + X.P('M54 118Q172 92 290 118Q300 150 270 152Q172 126 74 152Q44 150 54 118Z', shade(c, .8)) + X.LN('M172 -46V100', shade(c, isLight(c) ? .7 : 1.8), 2) + `<path d="${pentPath(120, 40, 18)}" fill="${ICON(c)}"/>`,
+  kappe:(c, X) => X.P('M30 128Q22 -50 172 -56Q322 -50 314 128Q172 102 30 128Z', c) + X.P('M30 124Q172 98 314 124Q326 158 288 160Q172 132 56 160Q18 158 30 124Z', shade(c, .8)) + X.LN('M172 -56V104', shade(c, isLight(c) ? .7 : 1.8), 2) + `<path d="${pentPath(116, 40, 18)}" fill="${ICON(c)}"/>`,
   fascinator:(c, X) => X.P('M206 30Q236 -10 276 6Q284 30 250 44Q220 50 206 30Z', c) + `<path d="M196 30Q262 10 300 70L292 170Q236 150 182 160Z" fill="${X.pat('net', c, null, 10)}" opacity=".85"/>` + X.P('M250 10Q270 -60 300 -70Q284 -30 262 12Z', c),
   tiara:(c, X) => X.LN('M80 70Q172 20 264 70', c, 6) + X.P('M110 54L120 10L138 44L156 -4L172 36L188 -4L206 44L224 10L234 54Q172 34 110 54Z', c) + [120, 156, 188, 224].map(x => `<circle cx="${x}" cy="${x === 156 || x === 188 ? 8 : 20}" r="5" fill="#8a1020" ${IO} stroke-width="1"/>`).join(''),
-  bandana:(c, X) => X.P('M48 110Q46 0 172 -6Q298 0 296 110Q172 70 48 110Z', X.pat('motif', c, 'kreuz', 34)) + X.P('M286 96L330 140L300 150L290 116Z', c) + X.P('M290 104L322 180L296 176Z', c),
+  bandana:(c, X) => `<path d="M32 116Q28 -4 172 -10Q316 -4 312 116Q172 74 32 116Z" fill="${c}"/>` + X.P('M32 116Q28 -4 172 -10Q316 -4 312 116Q172 74 32 116Z', X.pat('motif', c, 'kreuz', 34)) + X.P('M300 100L340 144L310 154L298 120Z', c) + X.P('M302 108L332 184L306 180Z', c),
   hasenohren:(c, X) => iboF(X.P('M108 40Q72 -60 96 -150Q128 -150 134 -50Q136 0 130 34Z', c) + X.P('M108 18Q88 -60 104 -128Q120 -126 122 -50Q124 0 120 20Z', '#e8a0b4')),
   kranz:(c, X) => X.LN('M66 120Q60 20 172 14Q284 20 278 120', '#2f4a33', 8) + [[70, 100], [86, 56], [116, 28], [150, 16], [194, 16], [228, 28], [258, 56], [274, 100]].map(([x, y], k) => `<circle cx="${x}" cy="${y}" r="${k % 2 ? 13 : 11}" fill="${k % 2 ? c : shade(c, .7)}" ${IO} stroke-width="1.4"/><path d="M${x - 5} ${y}Q${x} ${y - 6} ${x + 5} ${y}" fill="none" stroke="${shade(c, .5)}" stroke-width="1.6"/>`).join(''),
 });
@@ -1938,6 +1938,9 @@ function avatarI(o0, view='full', pose='', lite=false){
   const J = o.jewel || {}, jsub = id => (typeof item === 'function' ? item(id)?.sub : '') || '';
   // Kopf: Haare hinten, Gesicht, Haare vorn
   const hair = iHair(o, X);
+  // Hüte und Mützen: Haare oberhalb der Hutkante weg, sonst schaut der Oberkopf durch (Inaya, 2026-10-10)
+  const HATCUT = {zylinder:42, hut:78, muetze:138, beret:36, kappe:104, bandana:70}, hcut = Math.max(-999, ...Object.keys(o.hacc || {}).map(k => HATCUT[k] ?? -999));
+  if (hcut > -999) { defs.push(`<clipPath id="${u}hc"><path d="M-500 ${hcut}H900V1600H-500Z"/></clipPath>`); hair.back = `<g clip-path="url(#${u}hc)">${hair.back}</g>`; hair.front = `<g clip-path="url(#${u}hc)">${hair.front}</g>`; }
   let headBack = hair.back + Object.keys(o.hacc || {}).filter(k => IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k], X)).join('');
   let face = '';
   const drawn = o.eyeform === 'e_leer' || IEYEFORMS.includes(o.eyeform); // andere Augen als Inayas: ihre Augen werden mit Haut abgedeckt
