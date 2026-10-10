@@ -4787,6 +4787,17 @@ function sayOne(lay, m){
   lay.appendChild(b);
   SAYT[m.from] = setTimeout(() => { b.classList.add('gone'); setTimeout(() => b.remove(), 600); }, 4500 + Math.min(m.text.length, 90) * 60);
 }
+function closeRoomChat(){ delete me().roomOpen; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); render(); toast('Raumchat geschlossen'); }
+// Kleine Ja/Nein-Frage als eigenes Fenster
+function askYesNo(q, yes='Ja', no='Nein'){
+  return new Promise(res => {
+    const m = document.createElement('div'); m.className = 'modal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(q)}</h2><div class="row"><button type="button" class="btn ghost" data-r="0">${esc(no)}</button><span class="sp"></span><button type="button" class="btn" data-r="1">${esc(yes)}</button></div></div>`;
+    const done = v => { m.remove(); res(v); };
+    m.addEventListener('click', e => { const r = e.target.closest('[data-r]'); if (r) { e.stopPropagation(); done(r.dataset.r === '1'); } else if (e.target === m) done(false); });
+    document.body.appendChild(m); m.querySelector('[data-r="1"]').focus();
+  });
+}
 // Zimmer mit Chatverlauf: am PC liegt der Verlauf unten links im Raum (wie bei MSP), am Handy direkt darunter
 const roomWithChat = (html, on) => on && social ? `<div class="rwrap">${html}<div class="chat msgs rlog" id="rmsgs"></div></div>` : html;
 function roomChatInline(isMine){ // Eingabe direkt unter dem Raum
@@ -5225,6 +5236,9 @@ document.addEventListener('click', e => {
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id;
+  if (a === 'rmode' && b.dataset.v === 'chat' && me().roomOpen) { // offener Raumchat: Sprechblase fragt, ob er geschlossen werden soll (Inaya)
+    if (await askYesNo('Raumchat schließen?', 'Ja, schließen', 'Nein')) closeRoomChat();
+    return; }
   if (a === 'rmode') { roomMode = roomMode === b.dataset.v ? '' : b.dataset.v; roomSel = null; render(); return; }
   if (a === 'fp-toggle') { fpOpen = !fpOpen; mobMore = false; render(); if (fpOpen && fpTab === 'search') document.getElementById('fp-q')?.focus(); return; }
   if (a === 'fp-tab') { fpTab = b.dataset.v; render(); if (fpTab === 'search') document.getElementById('fp-q')?.focus(); return; }
@@ -5333,7 +5347,7 @@ document.addEventListener('click', async e => {
   else if (a === 'unplace-sel') { me().room.items.splice(roomSel, 1); roomSel = null; save(); render(); }
   else if (a === 'flip') { const it = me().room.items[roomSel]; if (it) { it.f = !it.f; save(); render(); } }
   else if (a === 'ftab') { furnTab = b.dataset.v; render(); }
-  else if (a === 'room-close') { delete me().roomOpen; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); render(); toast('Raumchat geschlossen'); }
+  else if (a === 'room-close') closeRoomChat();
   else if (a === 'fcol') { colItem = colItem === b.dataset.k ? null : b.dataset.k; render(); }
   else if (a === 'rcol') { setRoomColor(b.dataset.k, b.dataset.v); save(); render(); }
   else if (a === 'wall') { me().room.wall = b.dataset.v; save(); render(); }
