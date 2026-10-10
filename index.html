@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a9735477931e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7e685dfca2d7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -923,7 +923,6 @@ const ITEMS = [
   {id:'krone',cat:'hacc',name:'Kleine Krone',st:'Engel'},
   {id:'totenkopf',cat:'hacc',name:'Totenkopf-Spange',st:'Punk'},
   {id:'muetze',cat:'hacc',name:'Beanie',st:'Skater'},
-  {id:'girkapuze',cat:'hacc',name:'GIR-Kapuze mit Ohren und Augen',st:'Scene'},
   {id:'kopfhoerer',cat:'hacc',name:'Kopfhörer',st:'Emo',price:30},
   {id:'zylinder',cat:'hacc',name:'Zylinder',st:'Viktorianisch',price:60},
   {id:'hut',cat:'hacc',name:'Breiter Hut',st:'Goth',price:60},
@@ -1291,7 +1290,6 @@ ITEMS.push(
   {id:'c_neck',cat:'top',name:'Neckholder-Crop-Top',st:'Scene',g:'w'},
   {id:'s_passe',cat:'top',name:'Longsleeve mit Spitzenärmeln',st:'Goth'},
   {id:'s_bandeau',cat:'top',name:'Spitzen-Bandeau mit Rüschen',st:'Goth',g:'w'},
-  {id:'gir',cat:'top',name:'Grüner Hunde-Hoodie (GIR)',st:'Scene'},
   {id:'st_ringel',cat:'jewel',sub:'arm',name:'Geringelte Armstulpen',c:'#141218'},
   {id:'st_netz',cat:'jewel',sub:'arm',name:'Netz-Armstulpen',c:'#141218'},
   {id:'st_spitze',cat:'jewel',sub:'arm',name:'Spitzen-Armstulpen',c:'#141218'},
@@ -1325,6 +1323,7 @@ function normOutfit(o){
   if (!o.jacket) o.jacket = 'j_kein';
   if (o.face === 'kreuz' || o.face === 'sterne') o.face = 'm_' + o.face;
   if (!o.legw || Array.isArray(o.legw)) o.legw = ['rock','tuell','shorts'].includes(o.bottom) ? {l_netz:'#0b080d'} : {};
+  if (o.top === 'gir') o.top = 'hoodie'; if (o.hacc?.girkapuze) delete o.hacc.girkapuze; // GIR wieder entfernt (Inaya)
   if (/^druck_/.test(o.top || '')) o.top = 'skelett'; // Motiv-Shirts entfernt, nur Skelett bleibt (Inaya)
   if (!['e_leer','e_mandel','e_katze','e_kuller','e_muede','e_zu','e_x','e_herz','e_stern','e_knopf','e_spirale'].includes(o.eyeform)) o.eyeform = 'e_rund'; if (!o.beard) o.beard = 'b_kein'; if (!o.lips) o.lips = 'l_laecheln';
   return o;
