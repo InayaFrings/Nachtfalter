@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7eb43dfd01d0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='cb22869e08fc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -913,6 +913,7 @@ const ITEMS = [
   {id:'krone',cat:'hacc',name:'Kleine Krone',st:'Engel'},
   {id:'totenkopf',cat:'hacc',name:'Totenkopf-Spange',st:'Punk'},
   {id:'muetze',cat:'hacc',name:'Beanie',st:'Skater'},
+  {id:'girkapuze',cat:'hacc',name:'GIR-Kapuze mit Ohren und Augen',st:'Scene'},
   {id:'kopfhoerer',cat:'hacc',name:'Kopfhörer',st:'Emo',price:30},
   {id:'zylinder',cat:'hacc',name:'Zylinder',st:'Viktorianisch',price:60},
   {id:'hut',cat:'hacc',name:'Breiter Hut',st:'Goth',price:60},
@@ -1293,7 +1294,7 @@ ITEMS.push(
   {id:'laterne',cat:'acc',name:'Laterne',st:'Viktorianisch'},
   {id:'pluschfleder',cat:'acc',name:'Plüschfledermaus',st:'Scene'},
 );
-const HACC_C = {g_nieten:'#ece6f0', g_schach:'#141218', g_leder:'#2a1d18', g_pyramide:'#141218', g_kette:'#d8d8de', g_doppel:'#141218', g_schnalle:'#141218', straehnen:'#e05aa0', schleife:'#141218', spangen:'#ecebe7', blume:'#8a1020', haarreif:'#141218', ohren:'#141218', krone:'#c9c9cf', totenkopf:'#ecebe7', hoerner:'#9a1f2a', schleier:'#141218', herzchoker:'#141218', rosenkranz:'#c9c9cf', muetze:'#2a2a30', kopfhoerer:'#1d1b22', zylinder:'#141218', hut:'#141218', halo:'#e9e9ef', halsband:'#0b0b0f', kreuz:'#c9c9cf', perlen:'#ecebe7', ohrringe:'#c9c9cf', armreif:'#141218', piercing:'#e2e2e2'};
+const HACC_C = {girkapuze:'#8fd16a', g_nieten:'#ece6f0', g_schach:'#141218', g_leder:'#2a1d18', g_pyramide:'#141218', g_kette:'#d8d8de', g_doppel:'#141218', g_schnalle:'#141218', straehnen:'#e05aa0', schleife:'#141218', spangen:'#ecebe7', blume:'#8a1020', haarreif:'#141218', ohren:'#141218', krone:'#c9c9cf', totenkopf:'#ecebe7', hoerner:'#9a1f2a', schleier:'#141218', herzchoker:'#141218', rosenkranz:'#c9c9cf', muetze:'#2a2a30', kopfhoerer:'#1d1b22', zylinder:'#141218', hut:'#141218', halo:'#e9e9ef', halsband:'#0b0b0f', kreuz:'#c9c9cf', perlen:'#ecebe7', ohrringe:'#c9c9cf', armreif:'#141218', piercing:'#e2e2e2'};
 Object.assign(HACC_C, {g_herz:'#141218', g_stern:'#141218', beret:'#141218', kappe:'#141218', fascinator:'#141218', tiara:'#c9c9cf', bandana:'#141218', hasenohren:'#141218', kranz:'#7a1020'});
 for (const i of ITEMS) if (i.c && !HACC_C[i.id]) HACC_C[i.id] = i.c;
 for (const i of ITEMS) if (i.cat === 'acc' && !HACC_C[i.id]) HACC_C[i.id] = 'auto'; // Accessoires: 'auto' = Originalfarbe
@@ -2077,9 +2078,19 @@ Object.assign(ITOP, {
     const earR = X.G(`M${B.nr + 30} ${B.ny + 4}Q${B.nr + 74} ${B.ny + 6} ${B.nr + 86} ${B.sy + 60}Q${B.nr + 90} ${B.sy + 160} ${B.nr + 66} ${B.sy + 176}Q${B.nr + 54} ${B.sy + 90} ${B.nr + 16} ${B.ny + 22}Z`, ear);
     const zip = X.LN(`M${B.cx} ${B.ny + 26}V${B.hem + 18}`, shade(c, .6), 5) + X.LN(`M${B.cx} ${B.ny + 26}V${B.hem + 18}`, zl, 1.6).replace('stroke-linecap="round"', 'stroke-dasharray="3 3"');
     const pull = X.P(`M${B.cx - 9} ${B.ny + 40}L${B.cx + 9} ${B.ny + 40}L${B.cx + 11} ${B.ny + 100}Q${B.cx} ${B.ny + 110} ${B.cx - 11} ${B.ny + 100}Z`, zl, 'stroke-width="2"') + X.LN(`M${B.cx - 4} ${B.ny + 56}h8M${B.cx - 4} ${B.ny + 68}h6l-6 6h8M${B.cx - 4} ${B.ny + 86}h8`, '#5a5a60', 1.6);
-    return hood + X.G(isleeve(B, 0, 'long', 10), c) + X.G(isleeve(B, 1, 'long', 10), c) + X.G(ibody(B, B.hem + 22, 'crew', 9), c) + X.LN(`M${B.nl - 4} ${B.hem + 8}H${B.nr + 4}`, shade(c, .7), 3) + zip + pull + earL + earR; },
+    const up = !!(X.o.hacc || {}).girkapuze; // Kapuze auf dem Kopf: hinten keine Kapuze und keine Schlappohren
+    return (up ? '' : hood) + X.G(isleeve(B, 0, 'long', 10), c) + X.G(isleeve(B, 1, 'long', 10), c) + X.G(ibody(B, B.hem + 22, 'crew', 9), c) + X.LN(`M${B.nl - 4} ${B.hem + 8}H${B.nr + 4}`, shade(c, .7), 3) + zip + pull + (up ? '' : earL + earR); },
 });
 ITOPC.gir = ['#8fd16a'];
+// GIR-Kapuze (Inaya, 2026-10-10): eigene Zeichnung, grüne Kapuze auf dem Kopf mit Gesichtsöffnung, zwei schwarzen Ohren und großen Augen oben drauf
+Object.assign(IHACC, {
+  girkapuze:(c, X) => { const dk = shade(c, .78), ear = '#141218';
+    const ears = X.P('M86 -40Q40 -150 58 -250Q74 -262 84 -246Q92 -150 120 -60Z', ear, 'stroke-width="2"') + X.P('M258 -40Q304 -150 286 -250Q270 -262 260 -246Q252 -150 224 -60Z', ear, 'stroke-width="2"');
+    const hood = `<path d="M18 330Q-6 -96 172 -96Q350 -96 326 330Q172 372 18 330ZM72 196A100 122 0 1 0 272 196A100 122 0 1 0 72 196Z" fill="${c}" fill-rule="evenodd" ${IO}/>` + `<path d="M72 196A100 122 0 1 0 272 196A100 122 0 1 0 72 196Z" fill="none" stroke="${dk}" stroke-width="10" opacity=".7"/>`;
+    const eye = (x, r) => `<circle cx="${x}" cy="0" r="${r}" fill="#f4f6f6" ${IO} stroke-width="3"/><path d="M${x - r * .7} ${r * .55}A${r} ${r} 0 0 0 ${x + r * .8} ${r * .45}" fill="none" stroke="#bfd8dc" stroke-width="${r * .3}" opacity=".8"/><circle cx="${x + r * .1}" cy="${-r * .05}" r="${r * .14}" fill="#141218"/>`;
+    const stitch = X.LN('M196 -90Q204 -40 198 40', shade(c, .5), 2.4).replace('stroke-linecap="round"', 'stroke-dasharray="9 7"');
+    return ears + hood + stitch + `<g transform="translate(0 6)">${eye(118, 34)}${eye(232, 30)}</g>`; },
+});
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
@@ -2108,7 +2119,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const hair = iHair(o, X);
   // Hüte und Mützen: Haare oberhalb der Hutkante weg, sonst schaut der Oberkopf durch (Inaya, 2026-10-10)
   // Hüte: Haare nur oberhalb der Krempen-Oberkante weg (Krempe deckt den Rest), Mützen: oberhalb der Mützenkante
-  const HATCLIP = {zylinder:'M-500 1600V36H30Q172 8 314 36H900V1600Z', hut:'M-500 1600V74H-40Q172 6 384 74H900V1600Z', muetze:'M-500 1600V138H900V1600Z', beret:'M-500 1600V36H900V1600Z', kappe:'M-500 1600V104H900V1600Z', bandana:'M-500 1600V70H900V1600Z'};
+  const HATCLIP = {zylinder:'M-500 1600V36H30Q172 8 314 36H900V1600Z', hut:'M-500 1600V74H-40Q172 6 384 74H900V1600Z', muetze:'M-500 1600V138H900V1600Z', beret:'M-500 1600V36H900V1600Z', kappe:'M-500 1600V104H900V1600Z', bandana:'M-500 1600V70H900V1600Z', girkapuze:'M-500 1600V318H900V1600ZM72 196A100 122 0 1 1 272 196A100 122 0 1 1 72 196Z'};
   const hk = Object.keys(o.hacc || {}).filter(k => HATCLIP[k]);
   if (hk.length) { hk.forEach((k, i) => defs.push(`<clipPath id="${u}hc${i}"><path d="${HATCLIP[k]}"/></clipPath>`)); const wrap = h => hk.reduce((acc, k, i) => `<g clip-path="url(#${u}hc${i})">${acc}</g>`, h); hair.back = wrap(hair.back); hair.front = wrap(hair.front); }
   let headBack = hair.back + Object.keys(o.hacc || {}).filter(k => IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k], X)).join('');
