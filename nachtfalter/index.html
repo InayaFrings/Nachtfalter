@@ -1145,16 +1145,33 @@ ITEMS.push(
   {id:'tutu_lila',cat:'bottom',name:'Tütü mit lila Unterrock',st:'Goth',g:'w'},
   {id:'tutu_stern',cat:'bottom',name:'Sternen-Tütü',st:'Scene',g:'w'},
   {id:'tutu_lang',cat:'bottom',name:'Langes Tüll-Tütü',st:'Goth',g:'w'},
-  {id:'druck_mond',cat:'top',name:'Longsleeve mit Mond',st:'Goth'},
-  {id:'druck_spinne',cat:'top',name:'Tanktop mit Spinne',st:'Goth'},
-  {id:'druck_netz',cat:'top',name:'Crop-Top mit Spinnennetz',st:'Goth'},
-  {id:'druck_herz',cat:'top',name:'Baseballshirt mit Herz und Dolch',st:'Emo'},
-  {id:'druck_sarg',cat:'top',name:'Sarg-Hoodie',st:'Goth'},
-  {id:'druck_katze',cat:'top',name:'Oversize-Shirt mit Katze',st:'Goth'},
-  {id:'druck_pentagramm',cat:'top',name:'Muskelshirt mit Pentagramm',st:'Metal'},
-  {id:'druck_rose',cat:'top',name:'Puffärmel-Bluse mit Rose',st:'Viktorianisch'},
-  {id:'druck_auge',cat:'top',name:'Rollkragen mit Auge',st:'Goth'},
-  {id:'druck_sensemann',cat:'top',name:'Zerfetztes Shirt mit Sensenmann',st:'Metal'},
+  {id:'hot_glatt',cat:'bottom',name:'Hotpants glatt',st:'Goth',g:'w'},
+  {id:'hot_ripped',cat:'bottom',name:'Hotpants zerrissen (Low-Waist)',st:'Punk',g:'w'},
+  {id:'hot_hw',cat:'bottom',name:'High-Waist-Hotpants',st:'Scene',g:'w'},
+  {id:'lw_jeans',cat:'bottom',name:'Low-Waist-Jeans mit Nietengürtel',st:'Emo'},
+  {id:'lw_baggy',cat:'bottom',name:'Low-Waist-Baggy',st:'Skater'},
+  {id:'hw_jeans',cat:'bottom',name:'High-Waist-Jeans',st:'Grunge'},
+  {id:'hw_marlene',cat:'bottom',name:'High-Waist-Marlenehose',st:'Viktorianisch'},
+  {id:'lw_mini',cat:'bottom',name:'Low-Waist-Minirock mit Nietengürtel',st:'Punk',g:'w'},
+  {id:'lw_falten',cat:'bottom',name:'Low-Waist-Faltenrock',st:'Scene',g:'w'},
+  {id:'hw_bleistift',cat:'bottom',name:'High-Waist-Bleistiftrock',st:'Goth',g:'w'},
+  {id:'hw_korsage',cat:'bottom',name:'High-Waist-Korsagenrock',st:'Viktorianisch',g:'w'},
+  {id:'b_puff',cat:'top',name:'Puffärmelbluse',st:'Viktorianisch'},
+  {id:'b_jabot',cat:'top',name:'Jabot-Bluse mit Trompetenärmeln',st:'Viktorianisch'},
+  {id:'b_carmen',cat:'top',name:'Schulterfreie Rüschenbluse',st:'Viktorianisch',g:'w'},
+  {id:'b_bischof',cat:'top',name:'Bluse mit Bischofsärmeln',st:'Goth'},
+  {id:'b_bubi',cat:'top',name:'Bluse mit Bubikragen',st:'Emo'},
+  {id:'b_stufen',cat:'top',name:'Stufenbluse mit Rüschen',st:'Goth',g:'w'},
+  {id:'b_wickel',cat:'top',name:'Wickeltop',st:'Goth'},
+  {id:'k_spitze',cat:'top',name:'Korsett mit Spitzenrand',st:'Viktorianisch',g:'w'},
+  {id:'k_schnuer',cat:'top',name:'Schnürkorsett mit Netzärmeln',st:'Goth',g:'w'},
+  {id:'k_unter',cat:'top',name:'Unterbrust-Korsett mit Bluse',st:'Viktorianisch',g:'w'},
+  {id:'c_ruesche',cat:'top',name:'Crop-Top mit Rüschensaum',st:'Scene',g:'w'},
+  {id:'c_lang',cat:'top',name:'Langarm-Crop-Top',st:'Emo'},
+  {id:'c_neck',cat:'top',name:'Neckholder-Crop-Top',st:'Scene',g:'w'},
+  {id:'s_passe',cat:'top',name:'Longsleeve mit Spitzenärmeln',st:'Goth'},
+  {id:'s_bandeau',cat:'top',name:'Spitzen-Bandeau mit Rüschen',st:'Goth',g:'w'},
+  {id:'gir',cat:'top',name:'Grüner Hunde-Hoodie (GIR)',st:'Scene'},
   {id:'st_ringel',cat:'jewel',sub:'arm',name:'Geringelte Armstulpen',c:'#141218'},
   {id:'st_netz',cat:'jewel',sub:'arm',name:'Netz-Armstulpen',c:'#141218'},
   {id:'st_spitze',cat:'jewel',sub:'arm',name:'Spitzen-Armstulpen',c:'#141218'},
@@ -1188,6 +1205,7 @@ function normOutfit(o){
   if (!o.jacket) o.jacket = 'j_kein';
   if (o.face === 'kreuz' || o.face === 'sterne') o.face = 'm_' + o.face;
   if (!o.legw || Array.isArray(o.legw)) o.legw = ['rock','tuell','shorts'].includes(o.bottom) ? {l_netz:'#0b080d'} : {};
+  if (/^druck_/.test(o.top || '')) o.top = 'skelett'; // Motiv-Shirts entfernt, nur Skelett bleibt (Inaya)
   if (!['e_leer','e_mandel','e_katze','e_kuller','e_muede','e_zu','e_x','e_herz','e_stern','e_knopf','e_spirale'].includes(o.eyeform)) o.eyeform = 'e_rund'; if (!o.beard) o.beard = 'b_kein'; if (!o.lips) o.lips = 'l_laecheln';
   return o;
 }
@@ -1859,29 +1877,52 @@ const IPRINT = {
 // Jeder Aufdruck hat einen eigenen Schnitt (Inaya: nicht alle gleich)
 const IPR = (X, k, m, dy=40, sc=1) => `<g transform="translate(${X.B.cx} ${X.B.chest + dy}) scale(${sc}) translate(${-X.B.cx} ${-X.B.chest - 40})">${IPRINT[k](X.B.cx, X.B.chest + 40, m)}</g>`;
 const ITORN = (X, c, hem) => { const B = X.B, r = iarm(B, hem); let d = `M${f1(r[2] - 6)} ${hem - 2}`; const n = 9, w = (r[3] - r[2] + 12) / n; for (let k = 0; k < n; k++) d += `l${f1(w / 2)} ${k % 2 ? 22 : 14}l${f1(w / 2)} ${k % 2 ? -22 : -14}`; return X.P(d + 'Z', c); };
+// Neue Oberteile statt der Motiv-Shirts (Inaya, 2026-10-10): Blusen, Korsetts, Crop-Tops, Spitze, Rüschen
+// Rüschenband waagerecht: oben gerade bei y, unten gewellt bei y + h
+const irband = (X, x0, x1, y, h, c, n) => { const fl = h * .35, b0 = x0 - fl, b1 = x1 + fl; n = Math.max(4, Math.round((b1 - b0) / 13)); const w = (b1 - b0) / n, dk = shade(c, isLight(c) ? .72 : 1.9); let d = `M${f1(x0)} ${y}L${f1(x1)} ${y}L${f1(b1)} ${y + h}`, f = ''; for (let k = n; k > 0; k--) { const a = b0 + k * w; d += `Q${f1(a - w / 2)} ${y + h + 7} ${f1(a - w)} ${y + h}`; if (k < n && k % 2 === 0) { const t = x0 + (x1 - x0) * k / n; f += `M${f1(t)} ${y + 3}Q${f1((t + a) / 2 + 2)} ${f1(y + h * .55)} ${f1(a)} ${y + h + 2}`; } } return X.G(d + `L${f1(x0)} ${y}Z`, c) + X.LN(f, dk, 1.3); };
+// Rüsche am Ärmelende (k 0 links, 1 rechts), hängt nach unten
+const ircuff = (X, k, y, c, h=26, out=10) => { const r = iarm(X.B, y), a = (k ? r[3] : r[1]) - out, b = (k ? r[4] : r[2]) + out; return irband(X, a, b, y - 4, h, c, 4); };
+// Rüschenkaskade (Jabot) in der Mitte
+const ijabot = (X, y0, n, c) => { let s = ''; for (let k = 0; k < n; k++) { const w = 18 + k * 6; s += irband(X, X.B.cx - w, X.B.cx + w, y0 + k * 26, 18, c, 3); } return s; };
+const ibow = (X, x, y, c, s=1) => X.P(`M${x} ${y}L${x - 22 * s} ${y - 12 * s}L${x - 22 * s} ${y + 12 * s}ZM${x} ${y}L${x + 22 * s} ${y - 12 * s}L${x + 22 * s} ${y + 12 * s}ZM${x} ${y}L${x - 10 * s} ${y + 30 * s}M${x} ${y}L${x + 10 * s} ${y + 30 * s}`, c, 'stroke-width="1.6"') + `<circle cx="${x}" cy="${y}" r="${5 * s}" fill="${c}" ${IO} stroke-width="1.4"/>`;
+// Oberkörper ohne Schultern, oben gerade bei y0 (für schulterfreie Teile, Korsetts, Bandeaus)
+const iboff = (B, y0, hem, out=4, top) => { const L = [], R = []; for (let y = y0; ; y = Math.min(y + 14, hem)) { const r = iarm(B, Math.max(y, B.sy + 30)); L.push(`${f1(r[2] - out)} ${y}`); R.push(`${f1(r[3] + out)} ${y}`); if (y >= hem) break; } return `M${L[0]}${top ? top + R[0] : "L" + R[0]}L${R.join('L')}L${L.reverse().join('L')}Z`; };
+const isweet = (B, y0) => `Q${B.cx - 40} ${y0 - 34} ${B.cx} ${y0 + 6}Q${B.cx + 40} ${y0 - 34} `;
+const ilace = (X, y0, y1, c) => X.LN([0, 1, 2, 3, 4, 5].map(k => `M${X.B.cx - 12} ${y0 + k * (y1 - y0) / 6}L${X.B.cx + 12} ${y0 + (k + .7) * (y1 - y0) / 6}M${X.B.cx + 12} ${y0 + k * (y1 - y0) / 6}L${X.B.cx - 12} ${y0 + (k + .7) * (y1 - y0) / 6}`).join(''), c, 2.2);
+const itrim = c => isLight(c) ? '#141218' : '#ecebe7';
 Object.assign(ITOP, {
-  // Mond: Longsleeve mit Daumenlöchern und weitem U-Ausschnitt
-  druck_mond:(X, c, m) => X.G(isleeve(X.B, 0, X.B.wr + 50, 6, 10), c) + X.G(isleeve(X.B, 1, X.B.wr + 50, 6, 10), c) + X.G(ibody(X.B, X.B.hem + 10, 'scoop', 5), c) + IPR(X, 'mond', m, 54),
-  // Spinne: Tanktop, die Spinne hängt an einem Faden vom Ausschnitt
-  druck_spinne:(X, c, m) => X.G(ibody(X.B, X.B.hem, 'scoop', 4, true), c) + X.LN(`M${X.B.cx} ${X.B.ny + 70}V${X.B.chest + 20}`, m, 2) + IPR(X, 'spinne', m, 70, .8),
-  // Spinnennetz: bauchfreies Top mit Netzärmeln, Netz über die Schulter
-  druck_netz:(X, c, m) => { const p = X.pat('net', c, null, 12); return X.P(isleeve(X.B, 0, 'long', 4), p) + X.P(isleeve(X.B, 1, 'long', 4), p) + X.G(ibody(X.B, X.B.pit + 40, 'crew', 4), c) + `<g transform="translate(-40 -30)">${IPRINT.netz(X.B.cx, X.B.chest + 40, m)}</g>`; },
-  // Herz mit Dolch: Baseball-Shirt mit andersfarbigen Raglanärmeln
-  druck_herz:(X, c, m) => { const sl = isLight(c) ? '#141218' : '#ecebe7'; return X.G(isleeve(X.B, 0, X.B.sy + 200, 6), sl) + X.G(isleeve(X.B, 1, X.B.sy + 200, 6), sl) + X.G(ibody(X.B, X.B.hem, 'crew'), c) + X.LN(`M${X.B.nl - 4} ${X.B.ny + 2}L${f1(iarm(X.B, X.B.pit)[2])} ${X.B.pit}M${X.B.nr + 4} ${X.B.ny + 2}L${f1(iarm(X.B, X.B.pit)[3])} ${X.B.pit}`, sl, 6) + IPR(X, 'herz', m, 40); },
-  // Sarg: Kapuzenpulli mit Sarg auf der Bauchtasche
-  druck_sarg:(X, c, m) => ITOP.hoodie(X, c, m) + IPR(X, 'sarg', m, 30, .75),
-  // Katze: Oversize-Shirt, schief über eine Schulter gerutscht, Katze sitzt unten an der Ecke
-  druck_katze:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.sy + 170, 16, 18), c) + X.G(isleeve(B, 1, B.sy + 150, 12, 12), c) + X.G(ibody(B, B.hem + 30, 'scoop', 18), c) + `<g transform="translate(46 ${B.hem - B.chest - 70})">${IPRINT.katze(B.cx, B.chest + 40, m)}</g>`; },
-  // Pentagramm: weites Muskelshirt mit tiefen Armlöchern und langem Saum
-  druck_pentagramm:(X, c, m) => { const B = X.B, r = iarm(B, B.hem + 20), t = iarm(B, B.sy); return X.G(`M${B.nl - 4} ${B.ny}Q${B.cx} ${B.ny + 40} ${B.nr + 4} ${B.ny}L${f1(t[4] - 30)} ${B.sy + 4}Q${f1(t[4] - 50)} ${B.chest} ${f1(r[3] + 10)} ${B.chest + 40}L${f1(r[3] + 8)} ${B.hem + 30}L${f1(r[2] - 8)} ${B.hem + 30}L${f1(r[2] - 10)} ${B.chest + 40}Q${f1(t[1] + 50)} ${B.chest} ${f1(t[1] + 30)} ${B.sy + 4}Z`, c) + IPR(X, 'pentagramm', m, 46); },
-  // Rose: Carmen-Bluse mit Puffärmeln und Schnürung, Rose seitlich
-  druck_rose:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.sy + 90, 22, 14), c) + X.G(isleeve(B, 1, B.sy + 90, 22, 14), c) + X.G(ibody(B, B.hem, 'square', 5), c) + X.LN(`M${B.nl + 4} ${B.ny + 20}Q${B.cx} ${B.ny + 34} ${B.nr - 4} ${B.ny + 20}`, shade(c, isLight(c) ? .7 : 1.8), 3) + `<g transform="translate(36 10) rotate(-12 ${B.cx} ${B.chest + 40})">${IPRINT.rose(B.cx, B.chest + 40, m)}</g>`; },
-  // Auge: Rollkragen-Longsleeve, Auge groß in der Mitte
-  druck_auge:(X, c, m) => X.G(isleeve(X.B, 0, 'long'), c) + X.G(isleeve(X.B, 1, 'long'), c) + X.G(ibody(X.B, X.B.hem, 'turtle'), c) + IPR(X, 'auge', m, 50, 1.15),
-  // Sensenmann: langes, zerfetztes Shirt mit Rissen am Saum und an den Ärmeln
-  druck_sensemann:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.sy + 140, 8), c) + X.G(isleeve(B, 1, B.sy + 140, 8), c) + X.G(ibody(B, B.hem + 40, 'v', 6), c) + ITORN(X, c, B.hem + 40) + [[-50, 110], [30, 170], [-20, 230]].map(([dx, dy]) => `<path d="M${B.cx + dx} ${B.chest + dy}l10 -4l6 8l-8 6Z" fill="${shade(c, isLight(c) ? .7 : 2.2)}" opacity=".8"/>`).join('') + IPR(X, 'sensemann', m, 34); },
+  // Puffärmelbluse: kurze, bauschige Ärmel mit Rüschen, Rüschenkragen
+  b_puff:(X, c, m) => { const B = X.B; return X.G(iarmPoly(B, 0, B.sy - 4, B.sy + 110, 18, 10), c) + X.G(iarmPoly(B, 1, B.sy - 4, B.sy + 110, 18, 10), c) + X.LN(`M${f1(iarm(B, B.sy + 40)[1] - 12)} ${B.sy + 40}q10 20 4 60M${f1(iarm(B, B.sy + 40)[4] + 12)} ${B.sy + 40}q-10 20 -4 60`, shade(c, isLight(c) ? .72 : 1.8), 1.6) + ircuff(X, 0, B.sy + 108, c, 18, 12) + ircuff(X, 1, B.sy + 108, c, 18, 12) + X.G(ibody(B, B.hem + 10, 'scoop', 8), c) + irband(X, B.nl - 4, B.nr + 4, B.ny + 4, 16, m); },
+  // Jabot-Bluse: Stehkragen, Rüschenkaskade, Trompetenärmel mit Rüschen
+  b_jabot:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, 'long', 8, 26), c) + X.G(isleeve(B, 1, 'long', 8, 26), c) + ircuff(X, 0, B.wr, m, 30, 30) + ircuff(X, 1, B.wr, m, 30, 30) + X.G(ibody(B, B.hem + 10, 'turtle', 6), c) + ijabot(X, B.ny + 10, 5, m); },
+  // Carmen-Bluse: schulterfrei, Rüschenvolant über Oberarme
+  b_carmen:(X, c, m) => { const B = X.B, t = iarm(B, B.sy + 34); return X.G(iarmPoly(B, 0, B.sy + 30, B.sy + 130, 14, 8), c) + X.G(iarmPoly(B, 1, B.sy + 30, B.sy + 130, 14, 8), c) + X.G(iboff(B, B.sy + 40, B.hem + 10, 8), c) + irband(X, t[1] - 16, t[4] + 16, B.sy + 30, 34, c, 12) + X.LN(`M${f1(t[1] - 16)} ${B.sy + 31}L${f1(t[4] + 16)} ${B.sy + 31}`, m, 3); },
+  // Bischofsärmel: weite Ärmel, am Handgelenk gerafft, Schleife am V-Ausschnitt
+  b_bischof:(X, c, m) => { const B = X.B, w = iarm(B, B.wr - 24); return X.G(isleeve(B, 0, B.wr - 24, 10, 46), c) + X.G(isleeve(B, 1, B.wr - 24, 10, 46), c) + X.G(`M${f1(w[1] - 4)} ${B.wr - 26}L${f1(w[2] + 4)} ${B.wr - 26}L${f1(w[2] + 2)} ${B.wr + 4}L${f1(w[1] - 2)} ${B.wr + 4}Z`, m) + X.G(`M${f1(w[3] - 4)} ${B.wr - 26}L${f1(w[4] + 4)} ${B.wr - 26}L${f1(w[4] + 2)} ${B.wr + 4}L${f1(w[3] - 2)} ${B.wr + 4}Z`, m) + X.G(ibody(B, B.hem + 10, 'v', 8), c) + ibow(X, B.cx, B.ny + 80, m, 1); },
+  // Bubikragen-Bluse: kurze Ärmel, runder Kragen, Knopfleiste
+  b_bubi:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, 'short', 6, 4), c) + X.G(isleeve(B, 1, 'short', 6, 4), c) + X.G(ibody(B, B.hem, 'crew', 5), c) + X.G(`M${B.cx} ${B.ny + 26}Q${B.cx - 20} ${B.ny + 70} ${B.nl - 22} ${B.ny + 40}Q${B.nl - 24} ${B.ny + 6} ${B.nl - 2} ${B.ny}Q${B.cx} ${B.ny + 30} ${B.nr + 2} ${B.ny}Q${B.nr + 24} ${B.ny + 6} ${B.nr + 22} ${B.ny + 40}Q${B.cx + 20} ${B.ny + 70} ${B.cx} ${B.ny + 26}Z`, m) + [80, 140, 200, 260].map(d => `<circle cx="${B.cx}" cy="${B.ny + d}" r="4" fill="${m}" ${IO} stroke-width="1"/>`).join(''); },
+  // Stufenbluse: drei Rüschenstufen über dem Körper, Spaghettiträger
+  b_stufen:(X, c, m) => { const B = X.B, ys = [B.chest - 10, B.chest + 60, B.chest + 130]; return X.G(ibody(B, B.hem + 20, 'strap', 6, true), c) + ys.map(y => { const r = iarm(B, y + 30); return irband(X, r[2] - 6, r[3] + 6, y, 50, c); }).join('') + X.LN(`M${B.nl - 6} ${B.ny + 4}L${B.nl + 2} ${B.chest - 10}M${B.nr + 6} ${B.ny + 4}L${B.nr - 2} ${B.chest - 10}`, c, 4); },
+  // Wickeltop: überkreuzter V-Ausschnitt, seitlich gebunden
+  b_wickel:(X, c, m) => { const B = X.B, r = iarm(B, B.wy - 20), dk = shade(c, isLight(c) ? .7 : 1.8); return X.G(isleeve(B, 0, 'long', 6, 6), c) + X.G(isleeve(B, 1, 'long', 6, 6), c) + X.G(ibody(B, B.wy, 'v', 4), c) + X.LN(`M${B.nl - 2} ${B.ny}L${f1(r[3])} ${B.wy - 30}M${B.nr + 2} ${B.ny}L${B.cx + 6} ${B.ny + 100}`, dk, 2.4) + X.P(`M${f1(r[3] + 2)} ${B.wy - 30}q22 10 14 70l-10 -2q4 -40 -10 -56Z`, c, 'stroke-width="1.6"') + X.P(`M${f1(r[3] + 2)} ${B.wy - 30}q28 0 30 56l-10 2q-2 -40 -22 -46Z`, c, 'stroke-width="1.6"'); },
+  // Überbrust-Korsett mit Spitzenrand und Trägern
+  k_spitze:(X, c, m) => { const B = X.B, y0 = B.chest - 14; return X.G(`M${B.cx - 70} ${B.hem}L${B.cx} ${B.hem + 30}L${B.cx + 70} ${B.hem}Z`, c) + X.G(iboff(B, y0, B.hem + 6, 2, isweet(B, y0)), c) + X.P(iboff(B, y0 - 24, y0 + 4, 2, isweet(B, y0 - 24)), X.pat('lace', m), 'stroke-width="1.4"') + X.LN(`M${B.nl - 2} ${B.ny + 4}L${B.nl + 4} ${y0 - 20}M${B.nr + 2} ${B.ny + 4}L${B.nr - 4} ${y0 - 20}`, c, 4) + X.LN(`M${B.cx - 50} ${y0 + 20}V${B.hem}M${B.cx + 50} ${y0 + 20}V${B.hem}M${B.cx - 24} ${y0 + 30}V${B.hem + 10}M${B.cx + 24} ${y0 + 30}V${B.hem + 10}`, shade(c, isLight(c) ? .7 : 1.9), 1.6); },
+  // Schnürkorsett vorn über Netzärmeln
+  k_schnuer:(X, c, m) => { const B = X.B, y0 = B.chest - 20, p = X.pat('net', c, null, 12); return X.P(isleeve(B, 0, 'long', 4), p) + X.P(isleeve(B, 1, 'long', 4), p) + X.P(ibody(B, y0 + 10, 'crew', 2), p) + X.G(iboff(B, y0, B.hem + 10, 4, isweet(B, y0)), c) + ilace(X, y0 + 20, B.hem - 4, m) + [0, 1, 2, 3, 4, 5].map(k => `<circle cx="${B.cx - 14}" cy="${f1(y0 + 20 + k * (B.hem - 24 - y0) / 6)}" r="2.6" fill="#c9c9cf"/><circle cx="${B.cx + 14}" cy="${f1(y0 + 20 + k * (B.hem - 24 - y0) / 6)}" r="2.6" fill="#c9c9cf"/>`).join(''); },
+  // Korsett mit Unterbrust-Schnitt über Puffärmel-Bluse
+  k_unter:(X, c, m) => { const B = X.B, y0 = B.chest + 30; return ITOP.b_puff(X, m, m) + X.G(iboff(B, y0, B.hem + 10, 6, `Q${B.cx} ${y0 + 24} `), c) + X.LN([0, 1, 2].map(k => `M${B.cx - 60 + k * 60} ${y0 + 20}V${B.hem}`).join(''), shade(c, isLight(c) ? .7 : 1.9), 1.6) + ilace(X, y0 + 20, B.hem, itrim(c)); },
+  // Crop-Top mit Rüschensaum und Spaghettiträgern
+  c_ruesche:(X, c, m) => { const B = X.B, h = B.chest + 60, r = iarm(B, h); return X.G(ibody(B, h, 'strap', 4, true), c) + irband(X, r[2] - 10, r[3] + 10, h - 4, 34, c) + X.LN(`M${B.nl - 6} ${B.ny + 4}L${B.nl + 2} ${B.chest - 20}M${B.nr + 6} ${B.ny + 4}L${B.nr - 2} ${B.chest - 20}`, c, 4); },
+  // Langarm-Crop mit Karree-Ausschnitt und Daumenlöchern
+  c_lang:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.wr + 18, 4, 6), c) + X.G(isleeve(B, 1, B.wr + 18, 4, 6), c) + X.G(ibody(B, B.chest + 50, 'square', 3), c) + X.LN(`M${B.nl + 6} ${B.ny + 70}L${B.nr - 6} ${B.ny + 70}`, shade(c, isLight(c) ? .7 : 1.9), 2); },
+  // Neckholder-Crop: Band um den Hals, Dreieck vorn
+  c_neck:(X, c, m) => { const B = X.B, h = B.chest + 40, r = iarm(B, h); return X.G(`M${B.nl + 6} ${B.ny - 4}L${B.nr - 6} ${B.ny - 4}L${f1(r[3] + 4)} ${h}Q${B.cx} ${h + 14} ${f1(r[2] - 4)} ${h}Z`, c) + X.LN(`M${B.nl + 6} ${B.ny - 2}Q${B.cx} ${B.ny - 22} ${B.nr - 6} ${B.ny - 2}`, c, 5) + X.LN(`M${B.cx} ${B.ny + 10}V${h + 4}`, shade(c, isLight(c) ? .7 : 1.9), 1.6) + irband(X, r[2] - 6, r[3] + 6, h, 14, m, 6); },
+  // Spitzen-Longsleeve: Spitzenärmel und Spitzenpasse, Körper blickdicht
+  s_passe:(X, c, m) => { const B = X.B, l = X.pat('lace', c); return X.P(isleeve(B, 0, 'long', 5, 14), l) + X.P(isleeve(B, 1, 'long', 5, 14), l) + ircuff(X, 0, B.wr + 10, c, 20, 16) + ircuff(X, 1, B.wr + 10, c, 20, 16) + X.P(ibody(B, B.chest, 'turtle', 4), l) + X.G(iboff(B, B.chest - 20, B.hem + 10, 5, isweet(B, B.chest - 20)), c); },
+  // Spitzen-Bandeau mit Rüschen an Ober- und Unterkante
+  s_bandeau:(X, c, m) => { const B = X.B, y0 = B.chest - 20, h = B.chest + 50, r = iarm(B, y0), r2 = iarm(B, h); return X.P(iboff(B, y0, h, 3), X.pat('lace', c), 'stroke-width="1.6"') + irband(X, r[2] - 6, r[3] + 6, y0 - 10, 16, c, 7) + irband(X, r2[2] - 8, r2[3] + 8, h - 4, 22, c, 7); },
 });
-for (const k in IPRINT) ITOPC['druck_' + k] = ['#141218', k === 'herz' || k === 'rose' ? '#9a1f2a' : '#ecebe7'];
+Object.assign(ITOPC, {b_puff:['#ecebe7','#141218'], b_jabot:['#141218','#ecebe7'], b_carmen:['#ecebe7','#141218'], b_bischof:['#2a0f18','#141218'], b_bubi:['#141218','#ecebe7'], b_stufen:['#141218'], b_wickel:['#4a1426'], k_spitze:['#141218','#141218'], k_schnuer:['#2a0f18','#ecebe7'], k_unter:['#141218','#ecebe7'], c_ruesche:['#141218'], c_lang:['#141218'], c_neck:['#141218','#141218'], s_passe:['#141218'], s_bandeau:['#141218']});
 // Armstulpen und Handschuhe (Inaya, 2026-10-10): liegen auf Unterarm bzw. Hand, links/rechts/beide wie Armbänder
 const iarmSeg = (X, side, y0, y1, pad=2) => { const L = [], R = []; for (let y = y0; y <= y1; y += 6) { const r = iarm(X.B, y), a = side === 'l' ? r[1] : r[3], b = side === 'l' ? r[2] : r[4]; L.push(`${f1(Math.min(a, b) - pad)} ${y}`); R.unshift(`${f1(Math.max(a, b) + pad)} ${y}`); } return `M${L.join('L')}L${R.join('L')}Z`; };
 const iawarm = (X, y0, y1, fill, top) => ['l', 'r'].filter(s => ibraceSide(X, s)).map(s => X.P(iarmSeg(X, s, y0, y1), fill, 'stroke-width="1.8"') + (top ? top(X, s, y0) : '') ).join('');
@@ -1896,6 +1937,40 @@ Object.assign(IARMB, {
   h_netz:(X, c) => iawarm(X, 740, 905, X.pat('net', c, null, 8)),
   h_spitze:(X, c) => iawarm(X, 700, 905, X.pat('lace', c), (X, s, y) => iaruff(X, s, y + 2, c)),
 });
+// Hotpants, Low-Waist und High-Waist (Inaya, 2026-10-10). Low-Waist sitzt auf der Hüfte (Bauch frei), High-Waist reicht bis über die Taille
+const ILOW = B => B.wy + 34, IHIGH = B => B.wy - 74;
+const ifray = (X, y, i, c) => { const [a, b] = ilegE(X.B, i, y); let d = `M${f1(a - 8)} ${y + 2}`; for (let x = a - 8; x < b + 8; x += 6) d += `l3 ${8 + (x * 7) % 5}l3 -${6 + (x * 3) % 4}`; return X.LN(d, shade(c, 1.7), 2.4); };
+const islit = (X, x, y, w=20) => `<path d="M${f1(x - w)} ${y}Q${f1(x)} ${y - 9} ${f1(x + w)} ${y}Q${f1(x)} ${y + 9} ${f1(x - w)} ${y}Z" fill="#e9e5e3" ${IO} stroke-width="1.4"/>` + X.LN(`M${f1(x - w)} ${y - 6}H${f1(x + w)}M${f1(x - w + 4)} ${y + 6}H${f1(x + w - 4)}`, '#e8e2d8', 2);
+const ifly = (X, c, wy, y1) => X.LN(`M${X.B.cx} ${wy + 10}V${y1}`, shade(c, 1.6), 2) + X.LN(`M${X.B.cx - 70} ${wy + 14}Q${X.B.cx - 60} ${wy + 46} ${X.B.cx - 26} ${wy + 48}`, shade(c, 1.6), 2);
+const iwband = (X, c, wy, h=16) => { const [a, b] = ihipX(X.B, wy, 4), [a2, b2] = ihipX(X.B, wy + h, 5); return X.G(`M${f1(a)} ${wy}L${f1(b)} ${wy}L${f1(b2)} ${wy + h}L${f1(a2)} ${wy + h}Z`, c); };
+// High-Waist: Bund oberhalb der Taille, Oberkörperkante aus der Armtabelle
+const ihwTop = (X, c, y0, out=4) => { const B = X.B, L = [], R = []; for (let y = y0; y <= B.wy; y += 12) { const r = iarm(B, y); L.push(`${f1(r[2] - out)} ${y}`); R.push(`${f1(r[3] + out)} ${y}`); } const [a, b] = ihipX(B, B.wy, out); return X.G(`M${L.join('L')}L${f1(a)} ${B.wy + 2}L${f1(b)} ${B.wy + 2}L${R.reverse().join('L')}Z`, c); };
+Object.assign(IBOT, {
+  hot_glatt:(X, c) => X.G(ipants(X.B, X.B.cy + 26, 6, 0, ILOW(X.B) - 30), c) + ifly(X, c, ILOW(X.B) - 30, X.B.cy - 20),
+  hot_ripped:(X, c) => X.G(ipants(X.B, X.B.cy + 30, 6, 0, ILOW(X.B)), c) + ifly(X, c, ILOW(X.B), X.B.cy - 20) + ifray(X, X.B.cy + 30, 0, c) + ifray(X, X.B.cy + 30, 1, c) + islit(X, X.B.cx - 62, X.B.cy, 16) + islit(X, X.B.cx + 58, X.B.cy + 12, 14),
+  hot_hw:(X, c) => ihwTop(X, c, IHIGH(X.B)) + X.G(ipants(X.B, X.B.cy + 24, 6), c) + X.LN(`M${X.B.cx} ${X.B.wy}V${X.B.cy - 20}`, shade(c, 1.6), 2) + [0, 1, 2].map(k => `<circle cx="${X.B.cx}" cy="${IHIGH(X.B) + 18 + k * 26}" r="4.5" fill="#c9c9cf" ${IO} stroke-width="1"/>`).join(''),
+  lw_jeans:(X, c) => X.G(ipants(X.B, X.B.ay + 14, 6, 30, ILOW(X.B)), c) + ifly(X, c, ILOW(X.B), X.B.cy - 20) + iwband(X, '#141218', ILOW(X.B) + 4, 12) + [-60, -20, 20, 60].map(d => `<circle cx="${X.B.cx + d}" cy="${ILOW(X.B) + 10}" r="3" fill="#c9c9cf"/>`).join(''),
+  lw_baggy:(X, c) => X.G(ipants(X.B, X.B.fy - 26, 18, 24, ILOW(X.B)), c) + ifly(X, c, ILOW(X.B), X.B.cy - 20) + X.LN([0, 1].map(i => { const [a, b] = ilegE(X.B, i, X.B.ky); return `M${f1((a + b) / 2)} ${X.B.cy + 40}V${X.B.fy - 40}`; }).join(''), shade(c, 1.5), 1.6),
+  hw_jeans:(X, c) => ihwTop(X, c, IHIGH(X.B)) + X.G(ipants(X.B, X.B.ay + 14, 6, 6), c) + X.LN(`M${X.B.cx} ${IHIGH(X.B) + 10}V${X.B.cy - 20}`, shade(c, 1.6), 2) + `<circle cx="${X.B.cx}" cy="${IHIGH(X.B) + 12}" r="4.5" fill="#c9c9cf" ${IO} stroke-width="1"/>`,
+  hw_marlene:(X, c) => ihwTop(X, c, IHIGH(X.B)) + X.G(ipants(X.B, X.B.fy - 16, 14, 40), c) + X.LN([0, 1].map(i => { const [a, b] = ilegE(X.B, i, X.B.ky); return `M${f1((a + b) / 2)} ${X.B.wy}V${X.B.fy - 30}`; }).join(''), shade(c, isLight(c) ? .7 : 1.8), 1.8) + [0, 1].map(k => `<circle cx="${X.B.cx - 40 + k * 80}" cy="${IHIGH(X.B) + 30}" r="5" fill="#c9c9cf" ${IO} stroke-width="1"/><circle cx="${X.B.cx - 40 + k * 80}" cy="${IHIGH(X.B) + 60}" r="5" fill="#c9c9cf" ${IO} stroke-width="1"/>`).join(''),
+  lw_mini:(X, c) => X.G(iskirt(X.B, X.B.cy + 20, 120, ILOW(X.B)), c) + X.LN(`M${f1(ihipX(X.B, ILOW(X.B) + 10, 4)[0])} ${ILOW(X.B) + 10}Q${X.B.cx} ${ILOW(X.B) + 30} ${f1(ihipX(X.B, ILOW(X.B) + 10, 4)[1])} ${ILOW(X.B) + 10}`, '#0b0a0d', 9) + [-80, -40, 0, 40, 80].map(d => `<circle cx="${X.B.cx + d}" cy="${f1(ILOW(X.B) + 10 + 20 * (1 - (d / 100) ** 2) * .5)}" r="3" fill="#c9c9cf"/>`).join(''),
+  lw_falten:(X, c) => X.G(iskirt(X.B, X.B.cy + 60, 170, ILOW(X.B)), c) + X.LN([-120, -80, -40, 0, 40, 80, 120].map(d => `M${X.B.cx + d * .55} ${ILOW(X.B) + 10}L${X.B.cx + d} ${X.B.cy + 56}`).join(''), shade(c, isLight(c) ? .7 : 2), 2),
+  hw_bleistift:(X, c) => ihwTop(X, c, IHIGH(X.B)) + X.G(`M${f1(ihipX(X.B, X.B.wy, 4)[0])} ${X.B.wy}L${f1(ihipX(X.B, X.B.wy, 4)[1])} ${X.B.wy}L${f1(ilegE(X.B, 1, X.B.ky)[1] + 6)} ${X.B.ky - 10}L${f1(ilegE(X.B, 0, X.B.ky)[0] - 6)} ${X.B.ky - 10}Z`, c) + X.LN(`M${X.B.cx} ${X.B.ky - 70}V${X.B.ky - 10}`, shade(c, isLight(c) ? .7 : 2), 2),
+  hw_korsage:(X, c) => ihwTop(X, c, IHIGH(X.B) - 10) + X.G(iskirt(X.B, X.B.ky + 60, 180, X.B.wy, 0), c) + ilace(X, IHIGH(X.B), X.B.wy + 4, '#c9c9cf') + X.LN(`M${X.B.cx - 60} ${X.B.wy + 30}L${X.B.cx - 110} ${X.B.ky + 50}M${X.B.cx + 60} ${X.B.wy + 30}L${X.B.cx + 110} ${X.B.ky + 50}`, '#000', 2.4, .35),
+});
+Object.assign(IBOTC, {hot_glatt:'#141218', hot_ripped:'#2a3a5a', hot_hw:'#1c1a28', lw_jeans:'#1c1a28', lw_baggy:'#3a3a42', hw_jeans:'#2a3a5a', hw_marlene:'#141218', lw_mini:'#141218', lw_falten:'#47474c', hw_bleistift:'#141218', hw_korsage:'#141218'});
+IWIDE.push('lw_baggy','hw_marlene');
+// Grüner Hunde-Hoodie im GIR-Stil (Inaya, 2026-10-10): eigene Zeichnung, Kapuze hinten mit zwei schwarzen Schlappohren auf den Schultern, durchgehender Reißverschluss mit großem Zipper
+Object.assign(ITOP, {
+  gir:(X, c, m) => { const B = X.B, ear = '#141218', zl = '#c9c9cf';
+    const hood = X.G(`M${B.nl - 46} ${B.ny + 14}Q${B.cx} ${B.ny - 40} ${B.nr + 46} ${B.ny + 14}Q${B.cx} ${B.ny + 78} ${B.nl - 46} ${B.ny + 14}Z`, shade(c, .82));
+    const earL = X.G(`M${B.nl - 30} ${B.ny + 4}Q${B.nl - 74} ${B.ny + 6} ${B.nl - 86} ${B.sy + 60}Q${B.nl - 90} ${B.sy + 160} ${B.nl - 66} ${B.sy + 176}Q${B.nl - 54} ${B.sy + 90} ${B.nl - 16} ${B.ny + 22}Z`, ear);
+    const earR = X.G(`M${B.nr + 30} ${B.ny + 4}Q${B.nr + 74} ${B.ny + 6} ${B.nr + 86} ${B.sy + 60}Q${B.nr + 90} ${B.sy + 160} ${B.nr + 66} ${B.sy + 176}Q${B.nr + 54} ${B.sy + 90} ${B.nr + 16} ${B.ny + 22}Z`, ear);
+    const zip = X.LN(`M${B.cx} ${B.ny + 26}V${B.hem + 18}`, shade(c, .6), 5) + X.LN(`M${B.cx} ${B.ny + 26}V${B.hem + 18}`, zl, 1.6).replace('stroke-linecap="round"', 'stroke-dasharray="3 3"');
+    const pull = X.P(`M${B.cx - 9} ${B.ny + 40}L${B.cx + 9} ${B.ny + 40}L${B.cx + 11} ${B.ny + 100}Q${B.cx} ${B.ny + 110} ${B.cx - 11} ${B.ny + 100}Z`, zl, 'stroke-width="2"') + X.LN(`M${B.cx - 4} ${B.ny + 56}h8M${B.cx - 4} ${B.ny + 68}h6l-6 6h8M${B.cx - 4} ${B.ny + 86}h8`, '#5a5a60', 1.6);
+    return hood + X.G(isleeve(B, 0, 'long', 10), c) + X.G(isleeve(B, 1, 'long', 10), c) + X.G(ibody(B, B.hem + 22, 'crew', 9), c) + X.LN(`M${B.nl - 4} ${B.hem + 8}H${B.nr + 4}`, shade(c, .7), 3) + zip + pull + earL + earR; },
+});
+ITOPC.gir = ['#8fd16a'];
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
@@ -3078,7 +3153,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
   return `<div class="obwear">
     <div class="card obhead">${logoSVG()}${obSteps(2)}
       <h1 class="ob-h">Gestalte deinen Avatar</h1>
-      <p class="note">Fang bei „Körper“ an: Mädchen, Junge oder Androgyn. Danach Haare, Kleidung und Schmuck. Alles ist gratis und jede Farbe frei wählbar.</p></div>
+      <p class="note">Fang bei „Körper“ an: Mädchen oder Junge. Danach Haare, Kleidung und Schmuck. Alles ist gratis und jede Farbe frei wählbar.</p></div>
     <div class="wardrobe">
       <div class="card mirror-card">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}<p class="note">Tipp ein Teil an, um es anzuziehen.</p></div>
       <div class="card"><h2 class="card-h">Garderobe</h2><div class="card-in">
@@ -4810,23 +4885,30 @@ function syncSong(){
 /* ---------- Einstellungen ---------- */
 let setOpen = null;
 // Nur für die Ownerin: alle neuen Mitglieder sehen, ohne mit ihnen befreundet zu sein (Inaya)
-let MEMBERS = null, memSeenSnap = null, memAll = false;
-async function loadMembers(all){
-  MEMBERS = MEMBERS || [];
-  try { const q = social.db.collection('profiles').orderBy('joined', 'desc'); const docs = (await (all ? q : q.limit(30)).get()).docs; MEMBERS = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); } catch {}
+let MEMBERS = null, memSeenSnap = null, memAll = false, memTry = 0, memBusy = false, memErr = false;
+// Liste wird beim Öffnen der Einstellungen, beim Zurückkommen in die App und alle 5 Minuten neu geladen,
+// damit neue Anmeldungen auch ohne Neuladen der Seite erscheinen; ein Fehler wird nach 30 s erneut versucht
+async function loadMembers(all = memAll){
+  if (!social || memBusy) return; memBusy = true; memTry = Date.now();
+  try { const q = social.db.collection('profiles').orderBy('joined', 'desc'); const docs = (await (all ? q : q.limit(30)).get()).docs; MEMBERS = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); memErr = false; }
+  catch (e) { console.warn('Mitgliederliste', e); memErr = true; MEMBERS = MEMBERS || []; }
+  memBusy = false;
   if (V.name === 'settings' || isMob()) softRender();
 }
+const memStale = (ms = 30000) => amOwner && social && Date.now() - memTry > ms;
+setInterval(() => { if (!document.hidden && memStale(300000)) loadMembers(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && memStale()) loadMembers(); });
 const newMembers = () => amOwner && MEMBERS ? MEMBERS.filter(id => (PROF[id]?.joined || 0) > (S.ownerSeen || 0)).length : 0;
 function membersCard(){
   if (!amOwner || !social) return '';
-  if (!MEMBERS) loadMembers();
+  if (!MEMBERS || memStale()) loadMembers();
   if (memSeenSnap == null && MEMBERS?.length) { memSeenSnap = S.ownerSeen || 0; S.ownerSeen = Date.now(); save(); }
   const seen = memSeenSnap ?? (S.ownerSeen || 0);
   const list = MEMBERS || [], rows = (memAll ? list : list.slice(0, 5)).map(id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), fresh = (p.joined || 0) > seen;
     return `<button type="button" class="mrow" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="pinfo"><b>${esc(u.name)}${fresh ? ' <i class="mnew">neu</i>' : ''}</b><span class="muted">@${esc(u.handle)}</span></span><small class="muted">${p.joined ? ago(p.joined) : ''}</small></button>`; }).join('');
   return `<div class="card ownercard"><h2 class="card-h">Neue Mitglieder</h2><div class="card-in">
     <p class="note">Nur du als Ownerin siehst diese Liste. ${memAll ? `Alle ${list.length} Mitglieder, die neuesten oben.` : 'Die fünf Neuesten.'} Tipp auf jemanden, um das Profil anzusehen.</p>
-    ${MEMBERS == null ? '<p class="note">Lädt …</p>' : rows ? `<div class="mlist">${rows}</div>` : '<p class="note">Noch niemand außer dir.</p>'}
+    ${MEMBERS == null ? '<p class="note">Lädt …</p>' : rows ? `<div class="mlist">${rows}</div>` : memErr ? '<p class="note">Die Liste konnte gerade nicht geladen werden. Ich versuche es gleich noch einmal.</p>' : '<p class="note">Noch niemand außer dir.</p>'}
     ${list.length > 5 || (!memAll && list.length >= 5) ? `<div class="row"><button type="button" class="btn ghost" data-act="mem-all">${memAll ? 'Weniger anzeigen' : 'Alle anzeigen'}</button></div>` : ''}
   </div></div>`;
 }
