@@ -1837,11 +1837,14 @@ const ibelt = (X, fill, h=22, dl=0, dr=0) => { const B = X.B, [a, b] = ihipX(B, 
 const ibeltDots = (X, f) => { const B = X.B, [a, b] = ihipX(B, B.wy, 0); let s = ''; for (let x = a + 14; x < b - 8; x += 22) s += `<g transform="translate(${f1(x)} ${f1(B.wy + 11 + 6 * (1 - Math.pow((x - B.cx) / ((b - a) / 2), 2)))})">${f(x)}</g>`; return s; };
 // Ketten am Hals
 const INECK = {
-  // Stacheln zeigen vom Hals weg: unten nach unten/außen gefächert, an den Seiten waagerecht nach außen
-  halsband:(X, c) => { const [l, r, y] = X.B.ck, h = 18, cx = X.B.cx, sp = (x, yy, ang, len=15, w=6) => `<path d="M${-w} 0L0 ${len}L${w} 0Z" transform="translate(${f1(x)} ${f1(yy)}) rotate(${ang})" fill="#e2e2e8" stroke="${IOL}" stroke-width="1.2" stroke-linejoin="round"/><path d="M${f1(-w * .4)} 1L0 ${f1(len * .7)}" stroke="#fff" stroke-width="1" opacity=".8" transform="translate(${f1(x)} ${f1(yy)}) rotate(${ang})"/>`;
-    let s = ichoker(X, c, h) + X.LN(`M${l + 2} ${y + 3}Q${cx} ${y + 11} ${r - 2} ${y + 3}`, '#c9c9cf', 1.6, .8);
-    [0.14, 0.32, 0.5, 0.68, 0.86].forEach(t => { const x = l + (r - l) * t, yy = y + h - 2 + 4 * Math.sin(t * Math.PI); s += sp(x, yy, (0.5 - t) * 50); });
-    return sp(l + 1, y + h / 2, 90, 12, 5) + sp(r - 1, y + h / 2, -90, 12, 5) + s; },
+  // Stachelhalsband: vorn Kegel-Stacheln von vorn gesehen, an den Seiten waagerecht nach außen (Inaya, 2026-10-10)
+  halsband:(X, c) => { const [l, r, y] = X.B.ck, h = 18, cx = X.B.cx, my = y + h / 2 + 1;
+    const cone = (x, yy, ang, len, w) => `<g transform="translate(${f1(x)} ${f1(yy)}) rotate(${f1(ang)})"><path d="M0 ${-w}L${len} 0L0 ${w}Q${f1(-w * .45)} 0 0 ${-w}Z" fill="#e2e2e8" stroke="${IOL}" stroke-width="1.2" stroke-linejoin="round"/><path d="M1 ${f1(-w * .45)}L${f1(len * .75)} -.6" stroke="#fff" stroke-width="1" opacity=".85"/></g>`;
+    const stud = (x, yy) => `<circle cx="${f1(x)}" cy="${f1(yy)}" r="5.6" fill="#c9c9cf" stroke="${IOL}" stroke-width="1.2"/><path d="M${f1(x - 4)} ${f1(yy + 2)}L${f1(x)} ${f1(yy - 1)}L${f1(x + 1.5)} ${f1(yy + 4.5)}Z" fill="#8a8a92"/><path d="M${f1(x - 3.6)} ${f1(yy - 1.6)}L${f1(x)} ${f1(yy - 1)}L${f1(x - .4)} ${f1(yy - 5)}Z" fill="#fff"/>`; // Kegel von vorn: Spitze zeigt zum Betrachter
+    let s = ichoker(X, c, h) + X.LN(`M${l + 2} ${y + 3}Q${cx} ${y + 11} ${r - 2} ${y + 3}`, '#c9c9cf', 1.4, .7);
+    [0.2, 0.35, 0.5, 0.65, 0.8].forEach(t => { const x = l + (r - l) * t, yy = my + 4 * Math.sin(t * Math.PI), d = t - .5;
+      s += stud(x + d * 4, yy); });
+    return s + cone(l + 2, my, 180, 13, 5) + cone(r - 2, my, 0, 13, 5); },
   kreuz:(X, c) => ichain(X, c) + `<path d="M${X.B.cx - 4} ${X.B.ny + 64}h8v14h12v8h-12v26h-8v-26h-12v-8h12Z" fill="${c}" ${IO} stroke-width="1.4"/>`,
   perlen:(X, c) => { let s = ''; for (let k = 0; k <= 16; k++) { const t = k / 16, x = X.B.nl - 6 + (X.B.nr - X.B.nl + 12) * t, y = X.B.ny - 4 + Math.sin(t * Math.PI) * 50; s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="6" fill="${c}" ${IO} stroke-width="1.2"/>`; } return s; },
   k_spitze:(X, c) => ichoker(X, c, 16) + ichokerDots(X, `<path d="M-6 8Q0 18 6 8" fill="none" stroke="${c}" stroke-width="2"/>`),
@@ -2266,7 +2269,8 @@ function avatarI(o0, view='full', pose='', lite=false){
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
   body += belts;
   if (IJACK[o.jacket]) body += IJACK[o.jacket](XL, o.jacketC || IJACKC[o.jacket] || '#141218');
-  for (const k in J) { if (INECK[k]) body += INECK[k](X, J[k]); if (IARMB[k]) { X.cur = k; body += IARMB[k](X, J[k]); } if (IRINGS[k]) { X.cur = k; body += IRINGS[k](X, J[k]); } }
+  const JK = Object.keys(J).sort((a, b) => /^(st|h)_/.test(b) - /^(st|h)_/.test(a)); // Armstulpen und Handschuhe zuerst, Armbänder liegen darüber (Inaya, 2026-10-10)
+  for (const k of JK) { if (INECK[k]) body += INECK[k](X, J[k]); if (IARMB[k]) { X.cur = k; body += IARMB[k](X, J[k]); } if (IRINGS[k]) { X.cur = k; body += IRINGS[k](X, J[k]); } }
   // Gegenstände in der Hand (Tasche, Kuscheltier, Schirm …) gehören zur Hand: bei Posen drehen sie ganz mit dem Arm mit und werden nicht zerschnitten (Inaya)
   const held = ['', ''];
   for (const k of Object.keys(o.acc || {})) if (IACC_FRONT[k] && k !== 'kette') held[/B\.hl\b/.test(String(IACC_FRONT[k])) ? 0 : 1] += IACC_FRONT[k](X, AC(k));
