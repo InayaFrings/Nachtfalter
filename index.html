@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='3d25cd61238e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2fa457d16b7b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1254,16 +1254,16 @@ ITEMS.push(
   {id:'tutu_lila',cat:'bottom',name:'Tütü mit lila Unterrock',st:'Goth',g:'w'},
   {id:'tutu_stern',cat:'bottom',name:'Sternen-Tütü',st:'Scene',g:'w'},
   {id:'tutu_lang',cat:'bottom',name:'Langes Tüll-Tütü',st:'Goth',g:'w'},
-  {id:'druck_mond',cat:'top',name:'Shirt mit Mond',st:'Goth'},
-  {id:'druck_spinne',cat:'top',name:'Shirt mit Spinne',st:'Goth'},
-  {id:'druck_netz',cat:'top',name:'Shirt mit Spinnennetz',st:'Goth'},
-  {id:'druck_herz',cat:'top',name:'Shirt mit Herz und Dolch',st:'Emo'},
-  {id:'druck_sarg',cat:'top',name:'Shirt mit Sarg',st:'Goth'},
-  {id:'druck_katze',cat:'top',name:'Shirt mit schwarzer Katze',st:'Goth'},
-  {id:'druck_pentagramm',cat:'top',name:'Shirt mit Pentagramm',st:'Metal'},
-  {id:'druck_rose',cat:'top',name:'Shirt mit Rose',st:'Viktorianisch'},
-  {id:'druck_auge',cat:'top',name:'Shirt mit Auge',st:'Goth'},
-  {id:'druck_sensemann',cat:'top',name:'Shirt mit Sensenmann',st:'Metal'},
+  {id:'druck_mond',cat:'top',name:'Longsleeve mit Mond',st:'Goth'},
+  {id:'druck_spinne',cat:'top',name:'Tanktop mit Spinne',st:'Goth'},
+  {id:'druck_netz',cat:'top',name:'Crop-Top mit Spinnennetz',st:'Goth'},
+  {id:'druck_herz',cat:'top',name:'Baseballshirt mit Herz und Dolch',st:'Emo'},
+  {id:'druck_sarg',cat:'top',name:'Sarg-Hoodie',st:'Goth'},
+  {id:'druck_katze',cat:'top',name:'Oversize-Shirt mit Katze',st:'Goth'},
+  {id:'druck_pentagramm',cat:'top',name:'Muskelshirt mit Pentagramm',st:'Metal'},
+  {id:'druck_rose',cat:'top',name:'Puffärmel-Bluse mit Rose',st:'Viktorianisch'},
+  {id:'druck_auge',cat:'top',name:'Rollkragen mit Auge',st:'Goth'},
+  {id:'druck_sensemann',cat:'top',name:'Zerfetztes Shirt mit Sensenmann',st:'Metal'},
   {id:'st_ringel',cat:'jewel',sub:'arm',name:'Geringelte Armstulpen',c:'#141218'},
   {id:'st_netz',cat:'jewel',sub:'arm',name:'Netz-Armstulpen',c:'#141218'},
   {id:'st_spitze',cat:'jewel',sub:'arm',name:'Spitzen-Armstulpen',c:'#141218'},
@@ -1965,7 +1965,31 @@ const IPRINT = {
   auge:(x, y, c) => `<path d="M${x - 56} ${y}Q${x} ${y - 44} ${x + 56} ${y}Q${x} ${y + 44} ${x - 56} ${y}Z" fill="none" stroke="${c}" stroke-width="6"/><circle cx="${x}" cy="${y}" r="16" fill="${c}"/>` + [-40, -20, 0, 20, 40].map(d => `<path d="M${x + d} ${y - 30 + Math.abs(d) * .3}L${x + d * 1.2} ${y - 46 + Math.abs(d) * .4}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`).join(''),
   sensemann:(x, y, c) => SKULL_S(x - 6, y - 14, 3, c) + `<path d="M${x + 34} ${y + 64}L${x + 34} ${y - 54}" stroke="${c}" stroke-width="5" stroke-linecap="round"/><path d="M${x + 34} ${y - 54}Q${x - 20} ${y - 66} ${x - 50} ${y - 30}Q${x - 6} ${y - 48} ${x + 34} ${y - 42}Z" fill="${c}"/>`,
 };
-for (const k in IPRINT) ITOP['druck_' + k] = (X, c, m) => X.G(isleeve(X.B, 0, 'short'), c) + X.G(isleeve(X.B, 1, 'short'), c) + X.G(ibody(X.B, X.B.hem), c) + IPRINT[k](X.B.cx, X.B.chest + 40, m);
+// Jeder Aufdruck hat einen eigenen Schnitt (Inaya: nicht alle gleich)
+const IPR = (X, k, m, dy=40, sc=1) => `<g transform="translate(${X.B.cx} ${X.B.chest + dy}) scale(${sc}) translate(${-X.B.cx} ${-X.B.chest - 40})">${IPRINT[k](X.B.cx, X.B.chest + 40, m)}</g>`;
+const ITORN = (X, c, hem) => { const B = X.B, r = iarm(B, hem); let d = `M${f1(r[2] - 6)} ${hem - 2}`; const n = 9, w = (r[3] - r[2] + 12) / n; for (let k = 0; k < n; k++) d += `l${f1(w / 2)} ${k % 2 ? 22 : 14}l${f1(w / 2)} ${k % 2 ? -22 : -14}`; return X.P(d + 'Z', c); };
+Object.assign(ITOP, {
+  // Mond: Longsleeve mit Daumenlöchern und weitem U-Ausschnitt
+  druck_mond:(X, c, m) => X.G(isleeve(X.B, 0, X.B.wr + 50, 6, 10), c) + X.G(isleeve(X.B, 1, X.B.wr + 50, 6, 10), c) + X.G(ibody(X.B, X.B.hem + 10, 'scoop', 5), c) + IPR(X, 'mond', m, 54),
+  // Spinne: Tanktop, die Spinne hängt an einem Faden vom Ausschnitt
+  druck_spinne:(X, c, m) => X.G(ibody(X.B, X.B.hem, 'scoop', 4, true), c) + X.LN(`M${X.B.cx} ${X.B.ny + 70}V${X.B.chest + 20}`, m, 2) + IPR(X, 'spinne', m, 70, .8),
+  // Spinnennetz: bauchfreies Top mit Netzärmeln, Netz über die Schulter
+  druck_netz:(X, c, m) => { const p = X.pat('net', c, null, 12); return X.P(isleeve(X.B, 0, 'long', 4), p) + X.P(isleeve(X.B, 1, 'long', 4), p) + X.G(ibody(X.B, X.B.pit + 40, 'crew', 4), c) + `<g transform="translate(-40 -30)">${IPRINT.netz(X.B.cx, X.B.chest + 40, m)}</g>`; },
+  // Herz mit Dolch: Baseball-Shirt mit andersfarbigen Raglanärmeln
+  druck_herz:(X, c, m) => { const sl = isLight(c) ? '#141218' : '#ecebe7'; return X.G(isleeve(X.B, 0, X.B.sy + 200, 6), sl) + X.G(isleeve(X.B, 1, X.B.sy + 200, 6), sl) + X.G(ibody(X.B, X.B.hem, 'crew'), c) + X.LN(`M${X.B.nl - 4} ${X.B.ny + 2}L${f1(iarm(X.B, X.B.pit)[2])} ${X.B.pit}M${X.B.nr + 4} ${X.B.ny + 2}L${f1(iarm(X.B, X.B.pit)[3])} ${X.B.pit}`, sl, 6) + IPR(X, 'herz', m, 40); },
+  // Sarg: Kapuzenpulli mit Sarg auf der Bauchtasche
+  druck_sarg:(X, c, m) => ITOP.hoodie(X, c, m) + IPR(X, 'sarg', m, 30, .75),
+  // Katze: Oversize-Shirt, schief über eine Schulter gerutscht, Katze sitzt unten an der Ecke
+  druck_katze:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.sy + 170, 16, 18), c) + X.G(isleeve(B, 1, B.sy + 150, 12, 12), c) + X.G(ibody(B, B.hem + 30, 'scoop', 18), c) + `<g transform="translate(46 ${B.hem - B.chest - 70})">${IPRINT.katze(B.cx, B.chest + 40, m)}</g>`; },
+  // Pentagramm: weites Muskelshirt mit tiefen Armlöchern und langem Saum
+  druck_pentagramm:(X, c, m) => { const B = X.B, r = iarm(B, B.hem + 20), t = iarm(B, B.sy); return X.G(`M${B.nl - 4} ${B.ny}Q${B.cx} ${B.ny + 40} ${B.nr + 4} ${B.ny}L${f1(t[4] - 30)} ${B.sy + 4}Q${f1(t[4] - 50)} ${B.chest} ${f1(r[3] + 10)} ${B.chest + 40}L${f1(r[3] + 8)} ${B.hem + 30}L${f1(r[2] - 8)} ${B.hem + 30}L${f1(r[2] - 10)} ${B.chest + 40}Q${f1(t[1] + 50)} ${B.chest} ${f1(t[1] + 30)} ${B.sy + 4}Z`, c) + IPR(X, 'pentagramm', m, 46); },
+  // Rose: Carmen-Bluse mit Puffärmeln und Schnürung, Rose seitlich
+  druck_rose:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.sy + 90, 22, 14), c) + X.G(isleeve(B, 1, B.sy + 90, 22, 14), c) + X.G(ibody(B, B.hem, 'square', 5), c) + X.LN(`M${B.nl + 4} ${B.ny + 20}Q${B.cx} ${B.ny + 34} ${B.nr - 4} ${B.ny + 20}`, shade(c, isLight(c) ? .7 : 1.8), 3) + `<g transform="translate(36 10) rotate(-12 ${B.cx} ${B.chest + 40})">${IPRINT.rose(B.cx, B.chest + 40, m)}</g>`; },
+  // Auge: Rollkragen-Longsleeve, Auge groß in der Mitte
+  druck_auge:(X, c, m) => X.G(isleeve(X.B, 0, 'long'), c) + X.G(isleeve(X.B, 1, 'long'), c) + X.G(ibody(X.B, X.B.hem, 'turtle'), c) + IPR(X, 'auge', m, 50, 1.15),
+  // Sensenmann: langes, zerfetztes Shirt mit Rissen am Saum und an den Ärmeln
+  druck_sensemann:(X, c, m) => { const B = X.B; return X.G(isleeve(B, 0, B.sy + 140, 8), c) + X.G(isleeve(B, 1, B.sy + 140, 8), c) + X.G(ibody(B, B.hem + 40, 'v', 6), c) + ITORN(X, c, B.hem + 40) + [[-50, 110], [30, 170], [-20, 230]].map(([dx, dy]) => `<path d="M${B.cx + dx} ${B.chest + dy}l10 -4l6 8l-8 6Z" fill="${shade(c, isLight(c) ? .7 : 2.2)}" opacity=".8"/>`).join('') + IPR(X, 'sensemann', m, 34); },
+});
 for (const k in IPRINT) ITOPC['druck_' + k] = ['#141218', k === 'herz' || k === 'rose' ? '#9a1f2a' : '#ecebe7'];
 // Armstulpen und Handschuhe (Inaya, 2026-10-10): liegen auf Unterarm bzw. Hand, links/rechts/beide wie Armbänder
 const iarmSeg = (X, side, y0, y1, pad=2) => { const L = [], R = []; for (let y = y0; y <= y1; y += 6) { const r = iarm(X.B, y), a = side === 'l' ? r[1] : r[3], b = side === 'l' ? r[2] : r[4]; L.push(`${f1(Math.min(a, b) - pad)} ${y}`); R.unshift(`${f1(Math.max(a, b) + pad)} ${y}`); } return `M${L.join('L')}L${R.join('L')}Z`; };
@@ -2046,7 +2070,9 @@ function avatarI(o0, view='full', pose='', lite=false){
   const img = crop?.none ? '' : crop ? `<image href="${crop.href}" x="${crop.x}" y="${crop.y}" width="${crop.w}" height="${crop.h}" preserveAspectRatio="none"${skf}/>` : `<image href="${ifigUrl(B.k)}" width="${B.W}" height="${B.H}" preserveAspectRatio="none"${skf}/>`;
   body += `<g clip-path="url(#${u}ac)">${img}</g>`;
   const tc = ITOPC[o.top] || ['#141218'], topC = o.topC || tc[0], motifDef = tc[1] || ICON(topC);
-  const motif = o.motifC || (o.topC && Math.abs(lum(o.topC) - lum(motifDef)) < .25 ? ICON(o.topC) : motifDef);
+  const grey = h => { const n = parseInt((h || '#000').slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return Math.max(r, g, b) - Math.min(r, g, b) < 34; };
+  // Motiv automatisch: Schwarz/Weiß-Motive immer im Kontrast zum Stoff (weißes Shirt -> schwarzes Motiv), eigene Motivfarbe hat Vorrang
+  const motif = o.motifC || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
   if (ITOP[o.top]) body += ITOP[o.top](X, topC, motif);
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
   body += belts;
