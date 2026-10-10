@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8af3dd3ec87b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='36c588ca98f4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1057,7 +1057,9 @@ let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
 const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
 const isOn = (o, i) => MULTI.includes(i.cat) ? !!(o[i.cat] || {})[i.id] : o[i.cat] === i.id;
 const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !== 'none' ? {[v]:'auto'} : {}; // alte Outfits hatten nur ein Accessoire als Text
-function wearItem(o, i){ const k = i.cat; if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = i.id; }
+// Teile, die man ganz ausziehen kann: nochmal antippen = aus (wie bei Momio)
+const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein'};
+function wearItem(o, i){ const k = i.cat; if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else o[k] = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; }
 
 /* ---------- Avatar ---------- */
 // Skizzenhafte Emo-Zeichnungen der 2000er: sehr dünne Figuren, hohle weiße Augen, kreideblasse Haut, zittrige Outline
@@ -3236,14 +3238,14 @@ function shopView(isShop){
   const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && (isShop ? !has(i) : has(i)) && fits(i, u.outfit));
   const items = list.map(i => {
     const on = isOn(u.outfit, i);
-    const btn = on ? (MULTI.includes(i.cat) ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">Abnehmen</button>` : `<button class="btn ghost" disabled>Angezogen</button>`)
+    const btn = on ? (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id) ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">${MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen'}</button>` : `<button class="btn ghost" disabled>Angezogen</button>`)
       : !isShop ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">Anziehen</button>`
       : u.points >= i.price ? `<button class="btn" data-act="buy" data-id="${i.id}">Kaufen</button>`
       : `<button class="btn" disabled>Noch ${i.price - u.points} Punkte</button>`;
     const t = previewOutfit(u.outfit, i), [dot, pan] = isShop ? ['', ''] : itemColUI(i, u.outfit, 'color');
     return `<div class="item ${on?'on':''}">${dot}
       <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i), '', true)}</button>
-      ${i.cat === 'jewel' ? `<span class="iname">${esc(i.name)}</span>` : ''}
+      ${i.cat === 'jewel' || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}
       ${btn}</div>${pan}`;
   }).join('');
   const empty = shopCat === 'body' ? '' : isShop ? `<p class="note">In dieser Abteilung hast du schon alles. Schau in deine <button class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button> oder in eine andere Abteilung.</p>` : '';
@@ -4212,7 +4214,7 @@ document.addEventListener('click', async e => {
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
   else if (a === 'allg') { showAllG = b.checked; render(); }
   else if (a === 'untry') { trial = null; render(); }
-  else if (a === 'wear') { const i = item(id), was = isOn(me().outfit, i); wearItem(me().outfit, i); trial = null; save(); render(); toast(MULTI.includes(i.cat) && was ? 'Abgenommen' : 'Angezogen'); }
+  else if (a === 'wear') { const i = item(id), was = isOn(me().outfit, i); wearItem(me().outfit, i); trial = null; save(); render(); toast(was ? (MULTI.includes(i.cat) ? 'Abgenommen' : 'Ausgezogen') : 'Angezogen'); }
   else if (a === 'buy') {
     const i = item(id), u = me();
     if (u.points < i.price || u.owned.includes(id)) return;
