@@ -1283,7 +1283,6 @@ ITEMS.push(
   {id:'h_fingerlos',cat:'jewel',sub:'arm',name:'Fingerlose Handschuhe',c:'#141218'},
   {id:'h_netz',cat:'jewel',sub:'arm',name:'Netzhandschuhe',c:'#141218'},
   {id:'h_spitze',cat:'jewel',sub:'arm',name:'Spitzenhandschuhe',c:'#141218'},
-  {id:'buch',cat:'acc',name:'Zauberbuch',st:'Goth'},
   {id:'laterne',cat:'acc',name:'Laterne',st:'Viktorianisch'},
   {id:'pluschfleder',cat:'acc',name:'Plüschfledermaus',st:'Scene'},
   {id:'girplusch',cat:'acc',name:'Grünes Kuscheltier',st:'Scene'},
@@ -1297,6 +1296,7 @@ function normOutfit(o){
   if (o.hair) { const m = OLD_HAIR[o.hair] || OLD_HAIR.pony; o.back = o.back || m[0]; o.front = o.front || m[1]; if (o.hair === 'pink') o.hacc = {...(o.hacc || {}), straehnen:'#f2f0eb'}; delete o.hair; }
   if (!o.back) o.back = 'scenek'; if (!o.front) o.front = 'p_seitlich';
   if (!o.hacc || Array.isArray(o.hacc)) o.hacc = {};
+  if (o.acc && typeof o.acc === 'object' && 'buch' in o.acc) { o.acc = {...o.acc}; delete o.acc.buch; } // Zauberbuch entfernt (Inaya, 2026-10-10)
   if (o.acc === 'schleife' || o.acc === 'ohren') { o.hacc[o.acc] = HACC_C[o.acc]; o.acc = 'none'; }
   if (!o.body || o.body === 'a') o.body = 'w'; // „Androgyn“ gibt es nicht mehr (Inaya)
   if (o.face === 'lippen') { o.face = 'liner'; if (!o.lipC) o.lipC = '#3a0a18'; }
@@ -1378,6 +1378,8 @@ const IB = {
   m:{k:'M', cx:200, nl:158, nr:244, ny:292, sy:326, pit:470, chest:410, wy:598, hem:620, cy:786, ky:1082, ay:1352, fy:1505, wr:762, nav:[200,566], hl:[30,858], hr:[366,858], ck:[164,238,270], head:'translate(46 0) scale(.88)', mx:400},
 };
 // Männer-Rumpf (aus der Figur gemessen): Oberteile folgen der Taille statt der Arm-Innenkante, damit sie unten nicht breiter werden (Inaya, 2026-10-10)
+IB.m.shl = [[150,281],[140,287],[120,298],[100,307],[80,313],[64,318]]; // Schulterlinie links (Hals -> außen), rechts gespiegelt: Oberteile liegen auf der Schulter auf
+IB.m.long = 672; // Männer-Oberteile reichen bis über den Hosenbund; nur MCROP bleiben bauchfrei (Inaya, 2026-10-10)
 IB.m.torso = [[470,95,307],[480,97,306],[500,102,300],[520,108,295],[540,112,291],[560,113,289],[580,110,292],[600,104,298],[620,100,303],[640,93,309],[660,87,316],[680,83,320],[700,79,324],[720,76,327],[740,74,329],[760,73,330]];
 for (const k in IB) { const D = IFIG_DATA[IB[k].k]; IB[k].W = D.W; IB[k].H = D.H; IB[k].arm = D.arm; IB[k].legs = D.legs; }
 const IBODY = o => (o?.body === 'm' ? IB.m : IB.w);
@@ -1432,6 +1434,7 @@ function ibody(B, hem, neck='crew', out=4, sleeveless=false){
   const top = iarm(B, B.sy), pitR = iarm(B, B.pit), cx = B.cx, ny = B.ny, nl = B.nl, nr = B.nr;
   const L = [], R = [];
   if (sleeveless) { L.push(`${f1(pitR[2] + 8)} ${B.pit - 10}`); R.push(`${f1(pitR[3] - 8)} ${B.pit - 10}`); }
+  else if (B.shl) { const ia = iarm(B, B.sy + 40); B.shl.forEach(([x, y]) => { L.push(`${x} ${y}`); R.push(`${2 * cx - x} ${y}`); }); L.push(`${f1(top[1] + 10)} ${B.sy + 8}`, `${f1(ia[2] - out)} ${B.sy + 40}`); R.push(`${f1(top[4] - 10)} ${B.sy + 8}`, `${f1(ia[3] + out)} ${B.sy + 40}`); }
   else { L.push(`${f1(top[1] + 10)} ${B.sy + 8}`, `${f1(pitR[1] + 4)} ${B.sy + 40}`); R.push(`${f1(top[4] - 10)} ${B.sy + 8}`, `${f1(pitR[4] - 4)} ${B.sy + 40}`); }
   for (let y = B.pit; ; y = Math.min(y + 14, hem)) { const r = B.torso ? irow(B.torso, y) : iarm(B, y), a = B.torso ? 1 : 2; L.push(`${f1(r[a] - out)} ${y}`); R.push(`${f1(r[a + 1] + out)} ${y}`); if (y >= hem) break; }
   const sh = sleeveless ? [`${f1(nl - 6)} ${ny + 4}`, `${f1(nr + 6)} ${ny + 4}`] : [`${f1(nl - 2)} ${ny}`, `${f1(nr + 2)} ${ny}`];
@@ -2186,6 +2189,7 @@ Object.assign(IBOT, {
 Object.assign(IBOTC, {m_baggy:'#2a2a30', m_baggyk:'#141218', m_baggyc:'#3d4430'});
 IWIDE.push('m_baggy', 'm_baggyk', 'm_baggyc');
 const IARMCLIP = {};
+const MCROP = new Set(['m_raglan', 'm_netztank', 'tank', 'netz', 'mesharm', 'sterne']); // bauchfreie Männer-Oberteile
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
   const B = IBODY(o), u = 'ai' + (++avN), defs = [], seen = {};
@@ -2257,10 +2261,11 @@ function avatarI(o0, view='full', pose='', lite=false){
   const grey = h => { const n = parseInt((h || '#000').slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return Math.max(r, g, b) - Math.min(r, g, b) < 34; };
   // Motiv automatisch: Schwarz/Weiß-Motive immer im Kontrast zum Stoff (weißes Shirt -> schwarzes Motiv), eigene Motivfarbe hat Vorrang
   const motif = o.motifC || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
-  if (ITOP[o.top]) body += ITOP[o.top](X, topC, motif);
+  const XL = B.long ? {...X, B:{...B, hem:B.long}} : X; // Männer: lange Oberteile und passende Jacken
+  if (ITOP[o.top]) body += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif);
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
   body += belts;
-  if (IJACK[o.jacket]) body += IJACK[o.jacket](X, o.jacketC || IJACKC[o.jacket] || '#141218');
+  if (IJACK[o.jacket]) body += IJACK[o.jacket](XL, o.jacketC || IJACKC[o.jacket] || '#141218');
   for (const k in J) { if (INECK[k]) body += INECK[k](X, J[k]); if (IARMB[k]) { X.cur = k; body += IARMB[k](X, J[k]); } if (IRINGS[k]) { X.cur = k; body += IRINGS[k](X, J[k]); } }
   // Gegenstände in der Hand (Tasche, Kuscheltier, Schirm …) gehören zur Hand: bei Posen drehen sie ganz mit dem Arm mit und werden nicht zerschnitten (Inaya)
   const held = ['', ''];
