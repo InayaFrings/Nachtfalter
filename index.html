@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='13ec925d476a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='23b9379ee7f5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -367,6 +367,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .ptabs button[aria-selected="true"]{color:var(--p-fg);border-bottom-color:var(--p-fg)}
 .ppanel{display:grid;gap:14px}
 .tiles{columns:2 220px;column-gap:14px}
+.themed .pfeed{margin-inline:calc(6px - var(--tp));max-width:640px}.pfeed .reacts{flex-wrap:nowrap}.pfeed .reacts button{flex:1 1 0;min-width:0;justify-content:center;padding-inline:4px}@media (min-width:761px){.themed .pfeed{margin-inline:0}}
 .tile{break-inside:avoid;margin-bottom:14px;background:var(--p-panel);border:1px solid var(--p-line);padding:14px;display:grid;gap:8px}
 .tile .thought{font-size:20px;border-left-color:var(--p-line)}
 .tile img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover}
@@ -4743,7 +4744,7 @@ function profileView(id){
   if (profTab === 'chat') panel = chatHTML(u);
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
   if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
-  if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.length ? `<div class="tiles">${posts.map(tileHTML).join('')}</div>` : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
+  if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.length ? `<div class="feed insta pfeed">${posts.map(postHTML).join('')}</div>` : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
   // Steckbrief steht direkt unter dem Profilkopf (Inayas Wunsch), nicht mehr als Reiter
   const sf = (k,v) => `<div><dt>${k}</dt><dd>${esc(v) || '–'}</dd></div>`;
   const steckHTML = u.helper ? '' : `<div class="psteck"><h3 class="lbl">Steckbrief</h3><div class="steck2"><dl class="steck">${sf('Über mich',u.about)}</dl><dl class="steck">${sf('Musik',u.music)}${sf('Filme',u.films)}${sf('Hobbys',u.hobbies)}${sf('Spiele',u.games2)}</dl></div></div>`;
