@@ -4073,8 +4073,8 @@ const PIMG_UP = new Set();
 function showHTML(hs){
   const btn = ([l, a, v]) => `<button class="btn ghost nlink" data-act="${a}" ${a === 'profile' ? 'data-id' : 'data-v'}="${v}">${l}</button>`;
   let grid = '', b = hs.btn;
-  if (hs.wear) { // neutrales Grundoutfit, damit man nur das neue Teil sieht
-    const base = {...DEFAULT_OUTFIT, body:me()?.outfit?.body === 'm' ? 'm' : 'w', front:'p_kein', back:'bob', top:'band'};
+  if (hs.wear) { // die neuen Teile am eigenen Avatar (Inayas Wunsch); Schmuck und Gesicht ohne Haare
+    const base = me()?.outfit || DEFAULT_OUTFIT;
     const list = hs.wear.map(x => { const [main, ...ex] = x.split('|'), [c, id] = main.split(':'), i = ITEMS.find(i => i.id === id && i.cat === c), o = {...base, ...(i && ['jewel','face','eyeform','lips','beard'].includes(i.cat) ? {back:'h_kein', front:'p_kein'} : {})}; /* Schmuck und Gesicht ohne Haare (Inaya) */ ex.forEach(e => { const [k, v] = e.split('='); o[k] = v; }); return i && {i, o}; }).filter(Boolean).slice(0, 9);
     grid = list.map(({i, o}) => `<div class="ncell" title="${esc(i.name)}">${avatar(previewOutfit(o, i), i.cat === 'front' || i.cat === 'back' ? 'bust' : i.cat === 'acc' ? 'bottom' : thumbView(i), '', true)}</div>`).join(''); b = b || ['Zur Garderobe', 'nav', 'wardrobe'];
   }
