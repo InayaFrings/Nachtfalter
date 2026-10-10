@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='76e48a8f4e27';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b6b38057f119';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1473,7 +1473,9 @@ function iHair(o, X){ // gibt {back, front} zurück
     if (h.afro) { const [cx, cy, rx, ry] = h.afro, n = 30; let d = ''; for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2, a2 = (i - .5) / n * Math.PI * 2; d += (i ? `Q${f1(cx + rx * 1.08 * Math.cos(a2))} ${f1(cy + ry * 1.08 * Math.sin(a2))} ` : 'M') + `${f1(cx + rx * Math.cos(a))} ${f1(cy + ry * Math.sin(a))}`; }
       back += P(d + 'Z', hf); let c = ''; for (let i = 0; i < 60; i++) { const a = i * 2.39996, r = Math.sqrt((i + .5) / 60) * .9; c += `M${f1(cx + rx * r * Math.cos(a) - 7)} ${f1(cy + ry * r * Math.sin(a))}q7 -9 14 0`; } back += X.LN(c, dk, 2, .55);
     }
-    if (h.cap) front += P(ICAP, hf) + X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
+    if (h.cap) front += (h.b ? `<path d="${ICAP}" fill="${hf}"/>` : P(ICAP, hf)) + // bei langen Haaren keine zweite Kontur am Oberkopf
+      X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
+    if (h.side && IPONY[o.front]) front += iboF(`<path d="M44 96L84 96L76 150L66 188L44 188Z" fill="${hf}"/>`); // Schläfe zwischen Pony und Strähne schließen
     if (h.side) { const s = h.flat ? `M54 170L46 ${h.side}L100 ${h.side}L102 236Q104 180 92 136Z` : ISIDE(h.side); front += iboF(P(s, hf) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
     if (h.f) front += P(h.f, hf) + lines(h.ln);
     if (h.shave) front = `<path d="${ICAP}" fill="${shade(HC, .5)}" opacity=".18"/>` + front;
@@ -1560,7 +1562,8 @@ const IEYEP = [{x:115, y:186, s:-1, r:-10, k:1.1}, {x:238, y:176, s:1, r:-14, k:
 const IEYE = [[125, 183], [230, 175]]; // Iris in Inayas Zeichnung
 const IEF = (E, svg) => `<g transform="translate(${E.x} ${E.y}) scale(${E.s * E.k} ${E.k}) rotate(${E.r})">${svg}</g>`;
 const IEYES = f => IEYEP.map((E, i) => IEF(E, f(E, i))).join('');
-const IFACE_OUT = 'M60 110L62 160Q66 212 100 248Q140 272 180 272Q228 268 262 244Q288 210 292 150L292 110Q178 50 60 110Z';
+const IFACE_OUT_M = 'M64 108L66 160Q70 210 102 238L160 282Q178 290 196 282L244 238Q276 212 280 160L283 108Q178 50 64 108Z', IFACE = X => X.B === IB.m ? IFACE_OUT_M : IFACE_OUT;
+const IFACE_OUT = 'M64 108L66 160Q70 210 102 237L178 270L243 238Q275 212 279 160L283 108Q178 50 64 108Z'; // an Kinn und Kiefer ihrer Zeichnung angepasst
 const ISKIN = (o, B) => o.skin && o.skin !== '#f7f6f3' ? o.skin : B === IB.m ? '#e6e0db' : '#ece7e3';
 // Haut über Inayas Augen, damit neue Augenformen darauf gezeichnet werden können
 const IEYE_COVER = (X, sk) => IEYES(() => `<ellipse cx="2" cy="-2" rx="44" ry="31" fill="${sk}" filter="url(#${X.u}bl)"/><ellipse cx="2" cy="-2" rx="39" ry="26" fill="${sk}"/>`);
@@ -1610,8 +1613,8 @@ const IMAKE = {
   spinne:(c, X) => X.LN('M262 196L274 182M262 196L278 200M262 196L266 214M262 196L248 212M262 196L246 196M255 189Q262 186 268 190Q272 196 270 203Q264 207 257 205Q251 202 252 196Q252 191 255 189M249 182Q262 176 276 186Q281 199 274 211Q262 218 250 212Q242 204 244 194', c, 1.3) + `<circle cx="262" cy="196" r="1.8" fill="${c}"/>`,
   herzwange:(c, X) => ICHEEK.map(([x, y]) => `<path d="${heartPath(x, y, 3.4)}" fill="${c === '#141218' ? '#e8768e' : c}" opacity=".7"/>`).join(''),
   kontur:(c, X) => [[104, 228, 28], [256, 218, -28]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="24" ry="8" transform="rotate(${r} ${x} ${y})" fill="#6a4a4a" opacity=".45" filter="url(#${X.u}bl)"/>`).join(''),
-  blass:(c, X) => `<path d="${IFACE_OUT}" fill="#ffffff" opacity=".45"/>`,
-  corpse:(c, X) => `<path d="${IFACE_OUT}" fill="#ffffff" opacity=".6"/>` + IEYES(() => `<path d="M-36 -2Q-30 -40 -4 -42Q30 -40 40 -14Q36 20 10 40Q-8 30 -36 -2Z" fill="${c}" opacity=".9"/>`) + `<path d="M166 238L190 238L186 262L170 262Z" fill="${c}" opacity=".85"/>`,
+  blass:(c, X) => `<path d="${IFACE(X)}" fill="#ffffff" opacity=".45"/>`,
+  corpse:(c, X) => `<path d="${IFACE(X)}" fill="#ffffff" opacity=".6"/>` + IEYES(() => `<path d="M-36 -2Q-30 -40 -4 -42Q30 -40 40 -14Q36 20 10 40Q-8 30 -36 -2Z" fill="${c}" opacity=".9"/>`) + `<path d="M166 238L190 238L186 262L170 262Z" fill="${c}" opacity=".85"/>`,
   tranen:(c, X) => IEYES(() => `<path d="M-4 24Q-10 38 -4 44Q2 38 -4 24Z M2 52Q-3 64 2 70Q7 64 2 52Z" fill="${c}"/>`),
   glitzer:(c, X) => ICHEEK.map(([x, y]) => [[-14, -4], [-4, 2], [6, -2], [14, 4], [-8, 10], [8, 10]].map(([a, b]) => `<path d="M${x + a} ${y + b - 3.5}L${x + a + 1.3} ${y + b}L${x + a} ${y + b + 3.5}L${x + a - 1.3} ${y + b}Z" fill="${c === '#141218' ? '#c9c4d8' : c}" stroke="${IOL}" stroke-width=".6"/>`).join('')).join(''),
 };
