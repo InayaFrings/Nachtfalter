@@ -360,7 +360,7 @@ body.custom-page footer.foot{background:var(--paper);padding:10px;border:1px sol
 .gate-card form{display:grid;gap:12px;width:100%;text-align:left}
 .err{color:var(--fg);font:italic 15px var(--f-ital);border-left:2px solid var(--fg);padding-left:8px}
 
-.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--ink);font:400 17px var(--f-display);padding:9px 18px;z-index:9;max-width:calc(100% - 32px);box-shadow:0 6px 30px #000a}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--ink);font:400 17px var(--f-display);padding:9px 18px;z-index:1300;max-width:calc(100% - 32px);box-shadow:0 6px 30px #000a}
 footer.foot{grid-column:1/-1;font:italic 14px var(--f-ital);color:var(--dim);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-top:10px}
 footer.foot .lnk{color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){.post,.tile{animation:rise .35s ease-out both}}
@@ -4182,7 +4182,11 @@ document.addEventListener('click', async e => {
   else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} location.reload(); }); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'new-invite') makeInvite();
-  else if (a === 'copy-invite') { const l = INV.link; (navigator.clipboard?.writeText(l) || Promise.reject()).then(() => toast('Einladungslink kopiert'), () => { const x = document.getElementById('invite-link'); x.select(); toast('Link markiert, jetzt kopieren'); }); }
+  else if (a === 'copy-invite') { // Inaya: kleine Bestätigung „Link wurde kopiert“, auch direkt am Knopf
+    const l = INV.link, btn = b;
+    const ok = () => { toast('Link wurde kopiert'); if (btn) { btn.textContent = '✓ Kopiert'; setTimeout(() => { if (btn.isConnected) btn.textContent = 'Link kopieren'; }, 2000); } };
+    const old = () => { const x = document.getElementById('invite-link'); x.select(); x.setSelectionRange(0, 9999); let done = false; try { done = document.execCommand('copy'); } catch (e) {} done ? ok() : toast('Link markiert, jetzt kopieren'); };
+    navigator.clipboard?.writeText ? navigator.clipboard.writeText(l).then(ok, old) : old(); }
   else if (a === 'reset') {
     if (b.dataset.sure) { try { localStorage.removeItem(KEY); } catch {} S = ensureHelpers(seed()); V = {name:'home'}; save(); render(); }
     else { b.dataset.sure = '1'; b.textContent = 'Wirklich alles löschen? Nochmal klicken.'; }
