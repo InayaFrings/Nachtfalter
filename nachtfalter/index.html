@@ -240,6 +240,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .pinsheet button{display:flex;gap:12px;align-items:center;background:none;border:0;color:var(--fg);font:inherit;font-size:17px;padding:12px 10px;text-align:left;cursor:pointer}.pinsheet button:hover{background:#ffffff10}.pinsheet button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;transform:rotate(35deg)}
 .pincancel{justify-content:center;border-top:1px solid var(--line-soft)!important;color:var(--muted)!important}.pinpop.at .pincancel{display:none!important}
 .gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
+.nbtns{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nbtns .nlink{margin:0!important;width:100%;padding-inline:8px;white-space:nowrap}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
@@ -3762,7 +3763,7 @@ HELPER_POSTS.push( // Neuigkeiten immer mit Bild der Neuerung und passendem Knop
   {id:'n-farben',author:'juliet',type:'neu',text:'Neu: Gib deinem Profil eigene Farben und Muster!',show:{theme:[['#3a1a2a','tiger'],['#141416','kreuze'],['#1c2230','fluegel']],btn:['Profil gestalten','nav','design']},reactions:{},comments:[],age:20},
   {id:'n-shop',author:'andy',type:'neu',text:'Neu: Schmuck und Make-up in der Garderobe. Probier dich durch!',show:{wear:['jewel:o_kreuz','jewel:k_schloss','jewel:r_toten','face:smokey','face:fledermaus','face:herz']},reactions:{},comments:[],age:12},
   {id:'n-haare',author:'andy',type:'neu',text:'Neu: Pony und Frisur kannst du jetzt getrennt wählen.',show:{wear:['front:p_seitlich','front:p_lang','front:p_gerade','front:p_v','front:p_kurz','front:p_mitte']},reactions:{},comments:[],age:3},
-  {id:'n-chat',author:'juliet',type:'neu',text:'Neu: Schreib Andy und mir, wenn du Hilfe brauchst!',show:{helpers:1,btn:['Juliet schreiben','profile','juliet']},reactions:{},comments:[],age:1},
+  {id:'n-chat',author:'juliet',type:'neu',text:'Neu: Schreib Andy und mir, wenn du Hilfe brauchst!',show:{helpers:1,btns:[['Juliet schreiben','helper-chat','juliet'],['Andy schreiben','helper-chat','andy']]},reactions:{},comments:[],age:1},
   {id:'n-garderobe-okt',author:'andy',type:'neu',text:'Neue Teile in der Garderobe! Ich hoffe, ihr liebt sie so wie ich.',show:{wear:['top:b_puff','top:k_spitze','top:c_ruesche','top:s_bandeau','bottom:hot_ripped','bottom:lw_baggy','bottom:hw_marlene','back:scenestl','acc:girplusch']},reactions:{},comments:[],age:.5},
   {id:'n-schlaf-okt',author:'juliet',type:'neu',text:'Neue Möbel fürs Schlafzimmer. Macht es euch gemütlich!',show:{furn:['himmelbett','kommode','spieluhr','mondlampe','girplusch']},reactions:{},comments:[],age:.4},
   {id:'n-pony-okt',author:'andy',type:'neu',text:'Neue Ponys für Dreads und Cornrows. Probiert sie aus!',show:{wear:['front:p_dread|back=dreadk','front:p_corn|back=cornk','back:zoepfe|front=p_gerade']},reactions:{},comments:[],age:.2},
@@ -4296,7 +4297,7 @@ const NEWS_MODEL = {...DEFAULT_OUTFIT, body:'w', back:'lang', front:'p_gerade', 
 const NEWS_HAIR = ['#c0182a','#e05aa0','#7a3aa0','#3a6ad0','#2aa0a0','#3a9a4a','#e8d23a','#e07a20','#9a1f2a','#5ad0e0','#b070e0','#f0a0c8'];
 const NEWS_MODEL_M = {...NEWS_MODEL, body:'m', back:'kurz', front:'p_zerzaust', eyeform:'e_rund'};
 function showHTML(hs){
-  const btn = ([l, a, v]) => `<button class="btn ghost nlink" data-act="${a}" ${a === 'profile' ? 'data-id' : 'data-v'}="${v}">${l}</button>`;
+  const btn = ([l, a, v]) => `<button class="btn ghost nlink" data-act="${a}" ${a === 'profile' || a === 'helper-chat' ? 'data-id' : 'data-v'}="${v}">${l}</button>`;
   let grid = '', b = hs.btn;
   if (hs.wear) { // feste Vorführ-Figur: die Bilder bleiben gleich, egal welchen Look man selbst trägt (Inaya, 2026-10-10); Schmuck und Gesicht ohne Haare
     const base = me()?.outfit?.body === 'm' ? NEWS_MODEL_M : NEWS_MODEL;
@@ -4308,7 +4309,7 @@ function showHTML(hs){
   if (hs.theme) grid = hs.theme.map(([box, pat]) => `<div class="ncell themed tcell" style="${themeStyle({...BLANK_THEME(), box, pattern:pat})}"><span>${esc((PATTERN_OPTS.find(x => x[0] === pat) || [0, pat])[1])}</span></div>`).join('');
   if (hs.helpers) grid = ['juliet', 'andy'].map(id => `<div class="ncell" title="${esc(HELPERS[id].name)}">${avatar(HELPERS[id].outfit, 'bust')}</div>`).join('');
   const n = (grid.match(/class="ncell/g) || []).length;
-  return (grid ? `<div class="newgrid${n === 2 || n === 4 ? ' g2' : ''}">${grid}</div>` : '') + (b ? btn(b) : '');
+  return (grid ? `<div class="newgrid${n === 2 || n === 4 ? ' g2' : ''}">${grid}</div>` : '') + (hs.btns ? `<div class="row nbtns">${hs.btns.map(btn).join('')}</div>` : b ? btn(b) : '');
 }
 // Vom Owner gelöschte Beiträge anderer (site/hidden), für alle ausgeblendet
 const HIDDEN = new Set(); let HIDW = false;
