@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='24269cb10531';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ca7b4b52a072';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -889,6 +889,8 @@ const ITEMS = [
   {id:'h_kein',cat:'back',name:'Keine Haare'},
   {id:'scenek',cat:'back',name:'Scene-Hair kurz',st:'Emo'},
   {id:'scenel',cat:'back',name:'Scene-Hair lang',st:'Emo'},
+  {id:'scenestk',cat:'back',name:'Scene-Hair gestuft kurz',st:'Scene'},
+  {id:'scenestl',cat:'back',name:'Scene-Hair gestuft lang',st:'Scene'},
   {id:'goth',cat:'back',name:'Auftoupiert und offen',st:'Goth'},
   {id:'gothzopf',cat:'back',name:'Auftoupiert mit Zopf',st:'Goth'},
   {id:'bob',cat:'back',name:'Bob',st:'Goth'},
@@ -1514,6 +1516,7 @@ function iHair(o, X){ // gibt {back, front} zurück
       X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
     if (h.side && IPONY[o.front]) front += iboF(`<path d="M44 96L84 96L76 150L66 188L44 188Z" fill="${hf}"/>`); // Schläfe zwischen Pony und Strähne schließen
     if (h.side) { const s = h.flat ? `M48 70L48 170L46 ${h.side}L100 ${h.side}L102 236Q100 150 82 88L70 66Z` : ISIDE(h.side), sk = s.replace('M48 70L', 'M').replace(/L70 66Z$/, ''); front += iboF(`<path d="${s}" fill="${hf}"/>` + X.LN(sk, IOL, 2.6) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
+    if (h.fx) front += h.fx(X, hf, dk, HC); // eigene Zusatzlagen (z. B. Stufen beim Scene-Hair)
     if (h.f) front += P(h.f, hf) + lines(h.ln);
     if (h.shave) front = `<path d="${ICAP}" fill="${shade(HC, .5)}" opacity=".18"/>` + front;
     if (h.braids) { const br = `M70 190Q40 260 56 330Q36 400 54 470Q40 520 56 560`; front += iboF(X.LN(br, IOL, 34) + X.LN(br, HC, 28) + X.LN(br, dk, 26, .5).replace('stroke-linecap="round"', 'stroke-dasharray="10 12" stroke-linecap="round"') + `<path d="M44 556L68 556L62 590L50 590Z" fill="${HC}" ${IO}/><rect x="44" y="548" width="24" height="10" rx="4" fill="#e05aa0" ${IO}/>`); }
@@ -2110,6 +2113,18 @@ const IGIRPLUSH = (k='#8fd16a', o='stroke="#1f1b1f" stroke-width="2.4" stroke-li
   + `<path d="M-4 10h8v14l-4 3l-4 -3Z" fill="#c9c9cf" ${o.replace('2.4', '1.4')}/>`;
 Object.assign(IACC_FRONT, {
   girplusch:(X, c) => { const [x, y] = X.B.hl; return `<g transform="translate(${x + 4} ${y + 96}) scale(1.6)">${IGIRPLUSH(c && c !== 'auto' ? c : '#8fd16a')}</g>`; },
+});
+// Scene-/Emo-Hair mit vielen Stufen (Inaya, 2026-10-10): toupierter Oberkopf, gestufte Spitzen nach außen, kurz und lang
+const ISCENE_B = (L) => { const R = L.map(([x, y]) => [344 - x, y]).reverse(); const pt = a => a.map(([x, y]) => `L${x} ${y}`).join(''); return `M172 -96Q${L[0][0] - 10} -96 ${L[0][0]} ${L[0][1]}` + pt(L.slice(1)) + pt(R.slice(0, -1)) + `L${R[R.length - 1][0]} ${R[R.length - 1][1]}Q${354 - L[0][0]} -96 172 -96Z`; };
+// Stufen vor den Seitensträhnen: spitze Lagen, die nach außen abstehen (linke Seite, wird gespiegelt)
+const ISCENE_FX = (tiers) => (X, hf, dk) => iboF(tiers.map(([y0, y1, out]) => { const d = `M74 ${y0}Q60 ${f1((y0 + y1) / 2)} ${48 - out} ${y1}L${62 - out * .4} ${y1 - 14}L${58 - out * .2} ${y1 + 18}L${76} ${y1 - 8}L84 ${y1 + 6}Q90 ${f1((y0 + y1) / 2)} 88 ${y0}Z`; return `<path d="${d}" fill="${hf}"/>` + X.LN(d, IOL, 2.2) + X.LN(`M78 ${y0 + 20}Q70 ${f1((y0 + y1) / 2)} ${60 - out * .5} ${y1 - 6}`, dk, 1.4, .5); }).join(''));
+Object.assign(IHAIR, {
+  scenestk:{b:ISCENE_B([[24, 40], [-2, 150], [30, 128], [-6, 228], [30, 202], [6, 300], [44, 270], [34, 352], [70, 312], [84, 368], [104, 318], [120, 350], [128, 300]]),
+    side:240, cap:1, ln:'M60 -40Q36 40 40 140M284 -40Q308 40 304 140M120 -86Q100 -40 102 10',
+    fx:ISCENE_FX([[160, 262, 22]])},
+  scenestl:{b:ISCENE_B([[24, 40], [-2, 150], [30, 128], [-8, 236], [28, 208], [-4, 330], [32, 296], [2, 424], [38, 390], [14, 510], [52, 470], [42, 590], [78, 540], [90, 630], [108, 560], [122, 610], [128, 540]]),
+    side:330, cap:1, ln:'M60 -40Q36 40 40 140M284 -40Q308 40 304 140M120 -86Q100 -40 102 10',
+    fx:ISCENE_FX([[160, 262, 22], [230, 350, 30]])},
 });
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
