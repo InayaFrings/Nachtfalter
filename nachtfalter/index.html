@@ -1877,8 +1877,10 @@ function avatarI(o0, view='full', pose='', lite=false){
   // Kopf: Haare hinten, Gesicht, Haare vorn
   const hair = iHair(o, X);
   // Hüte und Mützen: Haare oberhalb der Hutkante weg, sonst schaut der Oberkopf durch (Inaya, 2026-10-10)
-  const HATCUT = {zylinder:42, hut:78, muetze:138, beret:36, kappe:104, bandana:70}, hcut = Math.max(-999, ...Object.keys(o.hacc || {}).map(k => HATCUT[k] ?? -999));
-  if (hcut > -999) { defs.push(`<clipPath id="${u}hc"><path d="M-500 ${hcut}H900V1600H-500Z"/></clipPath>`); hair.back = `<g clip-path="url(#${u}hc)">${hair.back}</g>`; hair.front = `<g clip-path="url(#${u}hc)">${hair.front}</g>`; }
+  // Hüte: Haare nur oberhalb der Krempen-Oberkante weg (Krempe deckt den Rest), Mützen: oberhalb der Mützenkante
+  const HATCLIP = {zylinder:'M-500 1600V36H30Q172 8 314 36H900V1600Z', hut:'M-500 1600V74H-40Q172 6 384 74H900V1600Z', muetze:'M-500 1600V138H900V1600Z', beret:'M-500 1600V36H900V1600Z', kappe:'M-500 1600V104H900V1600Z', bandana:'M-500 1600V70H900V1600Z'};
+  const hk = Object.keys(o.hacc || {}).filter(k => HATCLIP[k]);
+  if (hk.length) { hk.forEach((k, i) => defs.push(`<clipPath id="${u}hc${i}"><path d="${HATCLIP[k]}"/></clipPath>`)); const wrap = h => hk.reduce((acc, k, i) => `<g clip-path="url(#${u}hc${i})">${acc}</g>`, h); hair.back = wrap(hair.back); hair.front = wrap(hair.front); }
   let headBack = hair.back + Object.keys(o.hacc || {}).filter(k => IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k], X)).join('');
   let face = '';
   const drawn = o.eyeform === 'e_leer' || IEYEFORMS.includes(o.eyeform); // andere Augen als Inayas: ihre Augen werden mit Haut abgedeckt
