@@ -3793,7 +3793,7 @@ const BAT = `<svg class="hbat" viewBox="-21 -8 42 14" aria-hidden="true"><path f
 const OWNER_BAT = `<svg class="obat" viewBox="-24 -14 48 26" aria-hidden="true"><path d="M-4-9L-2-12L0-9.6L2-12L4-9L3-7H-3Z" fill="#e9e3f4"/><path fill="currentColor" d="M0-3C1-6 2-7 3-6C3-4 4-3 6-4C9-8 14-9 22-6C19-5 18-3 18 0C16-1 15 0 15 2C13 0 11 0 10 3C8 1 5 1 3 4C2 3 1 3 0 6C-1 3-2 3-3 4C-5 1-8 1-10 3C-11 0-13 0-15 2C-15 0-16-1-18 0C-18-3-19-5-22-6C-14-9-9-8-6-4C-4-3-3-4-3-6C-2-7-1-6 0-3Z"/><circle cx="-1.3" cy="-3.6" r=".7" fill="#b48ae0"/><circle cx="1.3" cy="-3.6" r=".7" fill="#b48ae0"/><path d="M13-3L14-5L15-3L17-2L15-1L14 1L13-1L11-2Z" fill="#e9e3f4"/><path d="M-13-3L-14-5L-15-3L-17-2L-15-1L-14 1L-13-1L-11-2Z" fill="#e9e3f4"/></svg>`;
 const isSiteOwner = u => !!u && (u.id === S.me ? amOwner : (u.remote && OWNER === u.id));
 const hmark = u => isSiteOwner(u) ? `<span class="hmark omark" title="Owner von Nachtfalter">${OWNER_BAT}<span class="sr">Owner</span></span>` : u?.helper ? `<span class="hmark" title="${u.helper} von Nachtfalter">${BAT}<span class="sr">${u.helper}</span></span>` : '';
-const ulink = id => `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(S.users[id]?.name)}</button>${hmark(S.users[id])}</span>`;
+const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name)}</button>${hmark(u)}</span>`; };
 const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}"><div class="pic">${u.pic && !cls.includes('mirror') ? `<img src="${u.pic}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
 const cameo = u => `<span class="cameo">${avatar(u.outfit,'head')}</span>`;
 const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Film',neu:'Neuigkeit'};
@@ -3982,7 +3982,7 @@ function piWatch(p){
 }
 function piInner(p){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
-  const can = owner === uid || isFriend(owner);
+  const can = owner === uid || isFriend(owner) || (owner === OWNER && !!p.pub); // Owner-Beiträge für alle: jeder darf reagieren
   const reacts = REACTIONS.map((r, i) => {
     const n = list.filter(x => x.kind === 'r' && x.r === r).length, on = list.some(x => x.kind === 'r' && x.r === r && x.by === uid);
     return can ? `<button data-act="preact" data-k="${k}" data-i="${i}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${n || ''}</button>` : n ? `<span class="muted">${RICON[r]} ${n}</span>` : '';
@@ -4009,7 +4009,7 @@ function loadPimgs(){
 }
 const PIMG_UP = new Set();
 function postHTML(p){
-  const a = S.users[p.author]; if (!a) return '';
+  const a = profUser(p.author); if (!a) return '';
   let body = '';
   if (p.type === 'gedanke' || p.type === 'neu') body = `<blockquote class="thought">${etx(p.text)}</blockquote>`;
   if (p.img) body += `<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`;
@@ -4023,7 +4023,7 @@ function postHTML(p){
   }).join('');
   const cm = p.comments.map(c => `<div class="cmt">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span></div>`).join('');
   return `<article class="post">
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : ''}</header>
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && amOwner && social ? (p.pub ? ' · für alle' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : ''}</header>
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
@@ -4038,7 +4038,7 @@ function postHTML(p){
     </form>`}`}
   </article>`;
 }
-let composeOpen = false, profEdit = false, designTab = 'look';
+let postAud = 'pub', composeOpen = false, profEdit = false, designTab = 'look';
 function composeHTML(){
   const hint = {gedanke:'Was geht dir gerade durch den Kopf?', foto:'Ein paar Worte zum Bild (freiwillig)', video:'Worum geht es im Film? (freiwillig)'}[composeType];
   return `      <div class="tabs" role="tablist">${[['gedanke','Gedanke'],['foto','Bild'],['video','Film']].map(([k,l]) =>
@@ -4047,12 +4047,19 @@ function composeHTML(){
         <textarea id="ptext" maxlength="1000" placeholder="${hint}" aria-label="Text" ${composeType==='gedanke'?'required':''}></textarea>
         ${composeType==='foto' ? `<label class="f" for="pfile"><span class="lbl">Bild auswählen</span><input id="pfile" type="file" accept="image/*" ${postCrop ? '' : 'required'}></label><img id="pfile-prev" class="photo" alt="Ausgewähltes Bild" ${postCrop ? `src="${postCrop}"` : 'hidden'}>` : ''}
         ${composeType==='video' ? `<label class="f" for="purl"><span class="lbl">Link zum Film (YouTube, TikTok, Instagram …)</span><input id="purl" type="url" placeholder="https://" required></label>` : ''}
-        <div class="row"><span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
+        <div class="row">${amOwner && social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${postAud === 'pub' ? 'selected' : ''}>Für alle</option><option value="fr" ${postAud === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
 }
+// Beiträge, die Inaya (Owner) „für alle“ teilt, sieht jedes Mitglied im Salon, auch ohne Freundschaft
+let OWNW = false;
+function ownerPubPosts(){
+  if (!social || !OWNER || OWNER === social.uid || S.users[OWNER]) return [];
+  if (!OWNW) { OWNW = true; social.db.doc('profiles/' + OWNER).onSnapshot(d => { if (d.exists) { PROF[OWNER] = d.data(); softRender(); } }, () => { OWNW = false; }); }
+  return PROF[OWNER] ? remoteUser(OWNER, PROF[OWNER]).posts.filter(p => p.pub) : [];
+}
 function homeView(){
-  const posts = [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || [])].sort((a,b) => b.ts - a.ts);
+  const posts = [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()].sort((a,b) => b.ts - a.ts);
   const compose = isMob() && !homeCompose ? `<button class="btn mcompose" data-act="hcompose">＋ Etwas teilen</button>` : `<div class="card"><h2 class="card-h">Etwas teilen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
@@ -4145,7 +4152,7 @@ function profileView(id){
   const u = profUser(id); if (!u) return homeView();
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
-  const posts = (u.remote ? [...(u.posts || [])] : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
+  const posts = (u.remote ? [...(u.posts || [])].filter(p => p.pub || id !== OWNER || isFriend(id)) : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
   let panel = '';
   const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten'],['chat','Schreib mir']] : [['room','Zimmer'],['posts','Beiträge']]; // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
   if (!tabs.some(([k]) => k === profTab)) profTab = tabs[0][0];
@@ -4381,7 +4388,7 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me).sort((a,b) => b.ts - a.ts).slice(0, 15)
-      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, full:p.img}));
+      .map(p => ({id:p.id, type:p.type, text:p.text || '', url:p.url || '', img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img}));
     let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
@@ -5533,6 +5540,7 @@ document.addEventListener('submit', async e => {
       if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
       p.url = url;
     }
+    if (amOwner && social) { postAud = val('paud') === 'fr' ? 'fr' : 'pub'; if (postAud === 'pub') p.pub = 1; } // Owner: Beitrag für alle oder nur für Freunde
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
     earn(PTS[composeType], {gedanke:'Gedanke geteilt',foto:'Bild geteilt',video:'Film geteilt'}[composeType]);
