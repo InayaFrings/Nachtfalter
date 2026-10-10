@@ -1455,7 +1455,8 @@ const IFACE_OUT = 'M60 110L62 160Q66 212 100 248Q140 272 180 272Q228 268 262 244
 const ISKIN = (o, B) => o.skin && o.skin !== '#f7f6f3' ? o.skin : B === IB.m ? '#e6e0db' : '#ece7e3';
 // Haut über Inayas Augen, damit neue Augenformen darauf gezeichnet werden können
 const IEYE_COVER = (X, sk) => IEYES(() => `<ellipse cx="2" cy="-2" rx="44" ry="31" fill="${sk}" filter="url(#${X.u}bl)"/><ellipse cx="2" cy="-2" rx="39" ry="26" fill="${sk}"/>`);
-const IEYE_LEER = X => IEYES(() => `<ellipse cx="0" cy="0" rx="36" ry="38" fill="#bfb2b6" opacity=".55" filter="url(#${X.u}bl)"/><ellipse cx="0" cy="0" rx="29" ry="32" fill="#fcfcfc" stroke="${IOL}" stroke-width="3"/><path d="M-26 -12Q0 -40 26 -12Q0 -26 -26 -12Z" fill="#d9d2d5" opacity=".8"/>` + X.LN('M-22 14Q-14 30 0 34', '#a08890', 1.6, .6));
+const IEYE_LEER = (X, c) => { const f = c && c !== 'hohl' ? c : '#fcfcfc', sh = f === '#fcfcfc' ? '#d9d2d5' : shade(f, .72); // große leere Augen in der gewählten Augenfarbe (Puppenschwarz = weiß)
+  return IEYES(() => `<ellipse cx="0" cy="0" rx="36" ry="38" fill="#bfb2b6" opacity=".55" filter="url(#${X.u}bl)"/><ellipse cx="0" cy="0" rx="29" ry="32" fill="${f}" stroke="${IOL}" stroke-width="3"/><path d="M-26 -12Q0 -40 26 -12Q0 -26 -26 -12Z" fill="${sh}" opacity=".8"/><ellipse cx="-11" cy="-12" rx="6" ry="4" fill="#fff" opacity="${f === '#fcfcfc' ? 0 : .55}"/>` + X.LN('M-22 14Q-14 30 0 34', f === '#fcfcfc' ? '#a08890' : shade(f, 1.5), 1.6, .6)); };
 const IEYE_TINT = (c, X) => c && c !== 'hohl' ? IEYE.map(([x, y]) => `<circle cx="${x}" cy="${y + 1}" r="14" fill="${c}" opacity=".5" style="mix-blend-mode:multiply"/>`).join('') : '';
 // gemeinsame Teile: Mandelform, Iris, Wimpern
 const IALM = (w, up, lo, lift) => `M${-w} 2Q${-w * .2} ${-up} ${w} ${-lift}Q${w * .2} ${lo} ${-w} 2Z`;
@@ -1882,7 +1883,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   // Flächiges Make-up liegt unter den Augen, Linien und Motive darüber (sonst verdeckt die gezeichnete Lidlinie den Liner)
   const mc = o.makeC || ({lidschatten:'#6a3a8a', neon:'#7ad04a', glitzerlid:'#e8e6ee'})[o.face] || '#141218', under = ['smokey', 'panda', 'corpse', 'lidschatten', 'regenbogen', 'blass', 'kontur', 'rouge'].includes(o.face);
   if (IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYES(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
-  if (o.eyeform === 'e_leer') face += IEYE_LEER(X); else if (drawn) face += ieyeDraw(o.eyeform, X, o.eyes);
+  if (o.eyeform === 'e_leer') face += IEYE_LEER(X, o.eyes); else if (drawn) face += ieyeDraw(o.eyeform, X, o.eyes);
   if (IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
   if (o.lipC && ILIPS[o.lips]) face += X.P(ILIPS[o.lips], o.lipC, 'stroke-width="1.4"');
   if (B === IB.m && IBEARD[o.beard]) face += IBEARD[o.beard](o.beardC || o.hairC || '#1c1b20', X);
