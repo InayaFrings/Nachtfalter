@@ -4465,7 +4465,7 @@ function profileHead(u, t, mine){
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
         : u.helper ? `<button class="btn" data-act="ptab" data-t="chat">Schreib mir</button>`
         : u.remote && !isFriend(u.id) ? frReqHTML(u.id)
-        : u.remote ? `<div class="row"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="room-visit" data-id="${u.id}">Zimmer betreten</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button></div>` : ''}
+        : u.remote ? `<div class="row"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button></div>` : ''}
     </div>
   </header>`;
 }
@@ -4532,7 +4532,7 @@ function profileView(id){
   if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="gb">${n.map(p => `<div class="entry"><span class="meta">${ago(p.ts)}</span><p style="margin:4px 0 0">${etx(p.text)}</p></div>`).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
   if (profTab === 'chat') panel = chatHTML(u);
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
-  if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false)) + (u.remote ? `<div class="row" style="margin-top:12px"><button class="btn" data-act="room-visit" data-id="${u.id}">Zimmer betreten</button><span class="note">Höchstens ${ROOM_MAX} Leute gleichzeitig.</span></div>` : '');
+  if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
   if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.length ? `<div class="tiles">${posts.map(tileHTML).join('')}</div>` : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
   // Steckbrief steht direkt unter dem Profilkopf (Inayas Wunsch), nicht mehr als Reiter
   const sf = (k,v) => `<div><dt>${k}</dt><dd>${esc(v) || '–'}</dd></div>`;
