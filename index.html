@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e2348de5e8bf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='42f7c3c11332';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1249,6 +1249,21 @@ ITEMS.push(
   {id:'p_nase2',cat:'jewel',sub:'pierc',name:'Nostril beidseitig',c:'#d8d8de'},
   {id:'p_augenbraue',cat:'jewel',sub:'pierc',name:'Eyebrow (Stab)',c:'#d8d8de'},
   {id:'p_kinn',cat:'jewel',sub:'pierc',name:'Vertical Labret',c:'#d8d8de'},
+  {id:'tutu',cat:'bottom',name:'Tütü',st:'Scene',g:'w'},
+  {id:'tutu_pink',cat:'bottom',name:'Tütü mit pinkem Unterrock',st:'Scene',g:'w'},
+  {id:'tutu_lila',cat:'bottom',name:'Tütü mit lila Unterrock',st:'Goth',g:'w'},
+  {id:'tutu_stern',cat:'bottom',name:'Sternen-Tütü',st:'Scene',g:'w'},
+  {id:'tutu_lang',cat:'bottom',name:'Langes Tüll-Tütü',st:'Goth',g:'w'},
+  {id:'druck_mond',cat:'top',name:'Shirt mit Mond',st:'Goth'},
+  {id:'druck_spinne',cat:'top',name:'Shirt mit Spinne',st:'Goth'},
+  {id:'druck_netz',cat:'top',name:'Shirt mit Spinnennetz',st:'Goth'},
+  {id:'druck_herz',cat:'top',name:'Shirt mit Herz und Dolch',st:'Emo'},
+  {id:'druck_sarg',cat:'top',name:'Shirt mit Sarg',st:'Goth'},
+  {id:'druck_katze',cat:'top',name:'Shirt mit schwarzer Katze',st:'Goth'},
+  {id:'druck_pentagramm',cat:'top',name:'Shirt mit Pentagramm',st:'Metal'},
+  {id:'druck_rose',cat:'top',name:'Shirt mit Rose',st:'Viktorianisch'},
+  {id:'druck_auge',cat:'top',name:'Shirt mit Auge',st:'Goth'},
+  {id:'druck_sensemann',cat:'top',name:'Shirt mit Sensenmann',st:'Metal'},
   {id:'buch',cat:'acc',name:'Zauberbuch',st:'Goth'},
   {id:'laterne',cat:'acc',name:'Laterne',st:'Viktorianisch'},
   {id:'pluschfleder',cat:'acc',name:'Plüschfledermaus',st:'Scene'},
@@ -1912,6 +1927,34 @@ Object.assign(IACC_FRONT, {
   laterne:(X, c) => { const [x, y] = X.B.hl, k = c || '#141218'; return X.LN(`M${x} ${y + 6}V${y + 50}`, IOL, 4) + X.P(`M${x - 26} ${y + 50}L${x + 26} ${y + 50}L${x + 30} ${y + 150}L${x - 30} ${y + 150}Z`, k) + `<rect x="${x - 18}" y="${y + 62}" width="36" height="76" fill="#f0d070" opacity=".85"/><ellipse cx="${x}" cy="${y + 104}" rx="7" ry="14" fill="#fff6c8"/>` + X.LN(`M${x} ${y + 50}V${y + 150}`, k, 4); },
   pluschfleder:(X, c) => { const [x, y] = X.B.hl, k = c || '#2a2a30'; return `<g transform="translate(${x} ${y + 40})">${X.P('M0 -20C-20 -40 -60 -40 -80 -10C-60 -14 -50 0 -50 10C-30 0 -14 6 0 20C14 6 30 0 50 10C50 0 60 -14 80 -10C60 -40 20 -40 0 -20Z', k)}<circle cx="0" cy="-6" r="20" fill="${k}" ${IO}/><path d="M-14 -22L-12 -40L-2 -26ZM14 -22L12 -40L2 -26Z" fill="${k}" ${IO}/><circle cx="-7" cy="-8" r="4" fill="#fff"/><circle cx="7" cy="-8" r="4" fill="#fff"/><circle cx="-7" cy="-8" r="2" fill="#000"/><circle cx="7" cy="-8" r="2" fill="#000"/></g>`; },
 });
+// Tütüs (Inaya, 2026-10-10): mehrere Tüll-Lagen, die äußeren halb durchsichtig
+const itutu = (X, c, under, len=0, wide=0) => { const B = X.B, y = B.cy + len;
+  return `<path d="${iskirt(B, y + 46, 248 + wide, 0, 20)}" fill="${c}" opacity=".5" ${IO} stroke-width="1.4"/>` + (under ? `<path d="${iskirt(B, y + 40, 238 + wide, 0, 18)}" fill="${under}" ${IO} stroke-width="1.4"/>` : '') + `<path d="${iskirt(B, y + (under ? 20 : 30), 218 + wide, 0, 16)}" fill="${c}" opacity="${under ? .85 : .7}" ${IO} stroke-width="1.4"/>` + X.G(iskirt(B, y + 8, 194 + wide, 0, 12), c)
+    + X.LN([-120, -70, -20, 30, 80, 130].map(d => `M${B.cx + d * .35} ${B.wy + 20}Q${B.cx + d * .8} ${y - 20} ${B.cx + d} ${y + 30}`).join(''), shade(c, isLight(c) ? .75 : 1.8), 1.6, .6); };
+Object.assign(IBOT, {
+  tutu:(X, c) => itutu(X, c),
+  tutu_pink:(X, c) => itutu(X, c, '#e05aa0'),
+  tutu_lila:(X, c) => itutu(X, c, '#7a3aa0'),
+  tutu_stern:(X, c) => itutu(X, c) + [[-130, 40], [-70, 90], [-10, 20], [50, 100], [110, 50], [-100, -10], [80, -20], [10, 70]].map(([dx, dy]) => `<path d="${pentPath(X.B.cx + dx, X.B.cy + dy, 8)}" fill="#e8e2d0" opacity=".9"/>`).join(''),
+  tutu_lang:(X, c) => itutu(X, c, null, 230, 40),
+});
+Object.assign(IBOTC, {tutu:'#141218', tutu_pink:'#141218', tutu_lila:'#141218', tutu_stern:'#141218', tutu_lang:'#141218'});
+IWIDE.push('tutu', 'tutu_pink', 'tutu_lila', 'tutu_stern', 'tutu_lang');
+// T-Shirts mit Aufdruck: gleiche Shirtform wie das Bandshirt, Motiv in der Motivfarbe
+const IPRINT = {
+  mond:(x, y, c) => `<path d="M${x + 24} ${y - 42}A48 48 0 1 0 ${x + 24} ${y + 42}A46 46 0 0 1 ${x + 24} ${y - 42}Z" fill="${c}"/><path d="${pentPath(x + 36, y - 14, 10)}" fill="${c}"/><path d="${pentPath(x + 50, y + 22, 7)}" fill="${c}"/>`,
+  spinne:(x, y, c) => `<ellipse cx="${x}" cy="${y + 10}" rx="18" ry="24" fill="${c}"/><circle cx="${x}" cy="${y - 20}" r="12" fill="${c}"/>` + [-1, 1].map(s => `<path d="M${x + s * 14} ${y - 4}L${x + s * 40} ${y - 30}L${x + s * 48} ${y - 6}M${x + s * 16} ${y + 6}L${x + s * 46} ${y}L${x + s * 56} ${y + 22}M${x + s * 16} ${y + 16}L${x + s * 42} ${y + 30}L${x + s * 46} ${y + 54}M${x + s * 12} ${y + 26}L${x + s * 30} ${y + 50}L${x + s * 30} ${y + 74}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`).join(''),
+  netz:(x, y, c) => { let d = ''; for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; d += `M${x} ${y}L${f1(x + Math.cos(a) * 56)} ${f1(y + Math.sin(a) * 56)}`; } for (const r of [18, 34, 50]) { for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2, b = (k + 1) / 8 * Math.PI * 2, m = (a + b) / 2; d += `M${f1(x + Math.cos(a) * r)} ${f1(y + Math.sin(a) * r)}Q${f1(x + Math.cos(m) * r * .8)} ${f1(y + Math.sin(m) * r * .8)} ${f1(x + Math.cos(b) * r)} ${f1(y + Math.sin(b) * r)}`; } } return `<path d="${d}" fill="none" stroke="${c}" stroke-width="3"/>`; },
+  herz:(x, y, c) => `<path d="${heartPath(x, y, 13)}" fill="${c}"/><path d="M${x - 40} ${y + 40}L${x + 30} ${y - 44}" stroke="${c}" stroke-width="7" stroke-linecap="round"/><path d="M${x + 22} ${y - 30}L${x + 44} ${y - 50}L${x + 36} ${y - 22}Z" fill="${c}"/>`,
+  sarg:(x, y, c) => `<path d="M${x - 20} ${y - 52}L${x + 20} ${y - 52}L${x + 40} ${y - 18}L${x + 24} ${y + 56}L${x - 24} ${y + 56}L${x - 40} ${y - 18}Z" fill="none" stroke="${c}" stroke-width="6" stroke-linejoin="round"/><path d="M${x - 5} ${y - 30}h10v18h16v10h-16v34h-10v-34h-16v-10h16Z" fill="${c}"/>`,
+  katze:(x, y, c) => `<path d="M${x - 34} ${y + 56}Q${x - 44} ${y + 10} ${x - 22} ${y - 10}L${x - 30} ${y - 50}L${x - 8} ${y - 28}Q${x} ${y - 30} ${x + 8} ${y - 28}L${x + 30} ${y - 50}L${x + 22} ${y - 10}Q${x + 44} ${y + 10} ${x + 34} ${y + 56}Z" fill="${c}"/><path d="M${x + 30} ${y + 50}Q${x + 70} ${y + 40} ${x + 56} ${y}" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/>`,
+  pentagramm:(x, y, c) => `<circle cx="${x}" cy="${y}" r="50" fill="none" stroke="${c}" stroke-width="5"/><path d="${pentPath(x, y, 46)}" fill="none" stroke="${c}" stroke-width="4" stroke-linejoin="round"/>`,
+  rose:(x, y, c) => `<path d="M${x} ${y + 60}Q${x + 6} ${y + 20} ${x} ${y - 4}" fill="none" stroke="${c}" stroke-width="5"/><path d="M${x} ${y + 30}Q${x - 26} ${y + 20} ${x - 30} ${y + 4}Q${x - 10} ${y + 6} ${x} ${y + 24}Z" fill="${c}"/><path d="M${x - 26} ${y - 22}Q${x} ${y - 66} ${x + 26} ${y - 22}Q${x + 22} ${y + 6} ${x} ${y + 6}Q${x - 22} ${y + 6} ${x - 26} ${y - 22}Z" fill="${c}"/>`,
+  auge:(x, y, c) => `<path d="M${x - 56} ${y}Q${x} ${y - 44} ${x + 56} ${y}Q${x} ${y + 44} ${x - 56} ${y}Z" fill="none" stroke="${c}" stroke-width="6"/><circle cx="${x}" cy="${y}" r="16" fill="${c}"/>` + [-40, -20, 0, 20, 40].map(d => `<path d="M${x + d} ${y - 30 + Math.abs(d) * .3}L${x + d * 1.2} ${y - 46 + Math.abs(d) * .4}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`).join(''),
+  sensemann:(x, y, c) => SKULL_S(x - 6, y - 14, 3, c) + `<path d="M${x + 34} ${y + 64}L${x + 34} ${y - 54}" stroke="${c}" stroke-width="5" stroke-linecap="round"/><path d="M${x + 34} ${y - 54}Q${x - 20} ${y - 66} ${x - 50} ${y - 30}Q${x - 6} ${y - 48} ${x + 34} ${y - 42}Z" fill="${c}"/>`,
+};
+for (const k in IPRINT) ITOP['druck_' + k] = (X, c, m) => X.G(isleeve(X.B, 0, 'short'), c) + X.G(isleeve(X.B, 1, 'short'), c) + X.G(ibody(X.B, X.B.hem), c) + IPRINT[k](X.B.cx, X.B.chest + 40, m);
+for (const k in IPRINT) ITOPC['druck_' + k] = ['#141218', k === 'herz' || k === 'rose' ? '#9a1f2a' : '#ecebe7'];
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
