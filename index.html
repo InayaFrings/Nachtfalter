@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='42ab033277bb';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6182e255316b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -331,6 +331,11 @@ dl.steck dd{margin:2px 0 0;white-space:pre-wrap;word-break:break-word}
 .steps .lnk{font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit}
 .handle-in{display:flex;align-items:center;gap:4px}.handle-in b{font-weight:400;color:var(--muted)}.handle-in input{flex:1;min-width:0}
 .phandle{margin:-4px 0 6px;font:italic 16px var(--f-ital);color:var(--p-muted)}
+.allgbtn{display:inline-flex;align-items:center;gap:10px;margin:4px 0 10px;padding:8px 14px 8px 8px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:inherit;font-size:14px;cursor:pointer}
+.allgbtn .knob{width:34px;height:20px;border-radius:999px;background:#3a3a40;position:relative;flex:none;transition:background .15s}
+.allgbtn .knob::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#bdbdc3;transition:transform .15s}
+.allgbtn[aria-pressed="true"] .knob{background:#ecebe7}
+.allgbtn[aria-pressed="true"] .knob::after{transform:translateX(14px);background:#141218}
 .allg{display:flex;gap:8px;align-items:center;font:italic 15px var(--f-ital);color:var(--muted);cursor:pointer}
 .rules{white-space:pre-wrap;background:var(--p-panel);border:1px solid var(--p-line);padding:16px 18px;line-height:1.6}
 .chat{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;padding:4px 2px;margin-bottom:10px}
@@ -1014,34 +1019,34 @@ const ITEMS = [
   {id:'mantel',cat:'jacket',name:'Langer Mantel',st:'Viktorianisch',price:70},
   {id:'cardigan',cat:'jacket',name:'Strickjacke',st:'Emo'},
   {id:'kapuze',cat:'jacket',name:'Offene Kapuzenjacke',st:'Skater'},
-  {id:'l_blick',cat:'legw',name:'Blickdichte Strumpfhose',c:'#141218'},
-  {id:'l_fein',cat:'legw',name:'Feinstrumpfhose',c:'#141218'},
+  {id:'l_blick',cat:'legw',name:'Blickdichte Strumpfhose',c:'#141218',g:'w'},
+  {id:'l_fein',cat:'legw',name:'Feinstrumpfhose',c:'#141218',g:'w'},
   {id:'l_netz',cat:'legw',name:'Netzstrumpfhose',c:'#0b080d'},
-  {id:'l_grobnetz',cat:'legw',name:'Grobe Netzstrumpfhose',c:'#0b080d'},
-  {id:'l_ringel',cat:'legw',name:'Ringelstrumpfhose',c:'#141218'},
+  {id:'l_grobnetz',cat:'legw',name:'Grobe Netzstrumpfhose',c:'#0b080d',g:'w'},
+  {id:'l_ringel',cat:'legw',name:'Ringelstrumpfhose',c:'#141218',g:'w'},
   {id:'l_zerrissen',cat:'legw',name:'Zerrissene Strumpfhose',c:'#141218'},
-  {id:'l_spinne',cat:'legw',name:'Spinnennetz-Strumpfhose',c:'#141218'},
-  {id:'l_strapse',cat:'legw',name:'Strapse',c:'#141218'},
-  {id:'l_overknee',cat:'legw',name:'Overknees',c:'#141218'},
-  {id:'l_ringelknie',cat:'legw',name:'Geringelte Overknees',c:'#141218'},
+  {id:'l_spinne',cat:'legw',name:'Spinnennetz-Strumpfhose',c:'#141218',g:'w'},
+  {id:'l_strapse',cat:'legw',name:'Strapse',c:'#141218',g:'w'},
+  {id:'l_overknee',cat:'legw',name:'Overknees',c:'#141218',g:'w'},
+  {id:'l_ringelknie',cat:'legw',name:'Geringelte Overknees',c:'#141218',g:'w'},
   {id:'l_knie',cat:'legw',name:'Kniestrümpfe',c:'#141218'},
   {id:'l_socken',cat:'legw',name:'Söckchen',c:'#141218'},
-  {id:'l_ruesche',cat:'legw',name:'Rüschensöckchen',c:'#ecebe7'},
-  {id:'l_stulpen',cat:'legw',name:'Stulpen',c:'#2a2a30'},
-  {id:'l_ringelstulpen',cat:'legw',name:'Geringelte Stulpen',c:'#141218'},
-  {id:'l_herzen',cat:'legw',name:'Strumpfhose mit Herzen',c:'#141218'},
-  {id:'l_sterne',cat:'legw',name:'Strumpfhose mit Sternen',c:'#141218'},
-  {id:'l_kreuze',cat:'legw',name:'Strumpfhose mit Kreuzen',c:'#141218'},
-  {id:'l_schach',cat:'legw',name:'Schachbrett-Strumpfhose',c:'#141218'},
-  {id:'l_laufmasche',cat:'legw',name:'Strumpfhose mit Laufmaschen',c:'#141218'},
-  {id:'l_ok_totenkopf',cat:'legw',name:'Overknees mit Totenköpfen',c:'#141218'},
-  {id:'l_ok_streifen',cat:'legw',name:'Overknees mit Streifen oben',c:'#141218'},
-  {id:'l_ok_herz',cat:'legw',name:'Overknees mit Herzen',c:'#141218'},
-  {id:'l_ok_schleife',cat:'legw',name:'Overknees mit Schleife',c:'#141218'},
-  {id:'l_stulpen_schief',cat:'legw',name:'Stulpen, eine hoch, eine runter',c:'#2a2a30'},
-  {id:'l_stulpen_kurz',cat:'legw',name:'Gerüschte kurze Stulpen',c:'#2a2a30'},
-  {id:'l_stulpen_fell',cat:'legw',name:'Flauschige Stulpen',c:'#ecebe7'},
-  {id:'l_stulpen_schnuer',cat:'legw',name:'Stulpen mit Schnürung',c:'#141218'},
+  {id:'l_ruesche',cat:'legw',name:'Rüschensöckchen',c:'#ecebe7',g:'w'},
+  {id:'l_stulpen',cat:'legw',name:'Stulpen',c:'#2a2a30',g:'w'},
+  {id:'l_ringelstulpen',cat:'legw',name:'Geringelte Stulpen',c:'#141218',g:'w'},
+  {id:'l_herzen',cat:'legw',name:'Strumpfhose mit Herzen',c:'#141218',g:'w'},
+  {id:'l_sterne',cat:'legw',name:'Strumpfhose mit Sternen',c:'#141218',g:'w'},
+  {id:'l_kreuze',cat:'legw',name:'Strumpfhose mit Kreuzen',c:'#141218',g:'w'},
+  {id:'l_schach',cat:'legw',name:'Schachbrett-Strumpfhose',c:'#141218',g:'w'},
+  {id:'l_laufmasche',cat:'legw',name:'Strumpfhose mit Laufmaschen',c:'#141218',g:'w'},
+  {id:'l_ok_totenkopf',cat:'legw',name:'Overknees mit Totenköpfen',c:'#141218',g:'w'},
+  {id:'l_ok_streifen',cat:'legw',name:'Overknees mit Streifen oben',c:'#141218',g:'w'},
+  {id:'l_ok_herz',cat:'legw',name:'Overknees mit Herzen',c:'#141218',g:'w'},
+  {id:'l_ok_schleife',cat:'legw',name:'Overknees mit Schleife',c:'#141218',g:'w'},
+  {id:'l_stulpen_schief',cat:'legw',name:'Stulpen, eine hoch, eine runter',c:'#2a2a30',g:'w'},
+  {id:'l_stulpen_kurz',cat:'legw',name:'Gerüschte kurze Stulpen',c:'#2a2a30',g:'w'},
+  {id:'l_stulpen_fell',cat:'legw',name:'Flauschige Stulpen',c:'#ecebe7',g:'w'},
+  {id:'l_stulpen_schnuer',cat:'legw',name:'Stulpen mit Schnürung',c:'#141218',g:'w'},
   {id:'u_kein',cat:'bottom',name:'Keine Hose'},
   {id:'x_hacc',cat:'hacc',name:'Keine Kopfbedeckung',none:1},
   {id:'x_acc',cat:'acc',name:'Keine Accessoires',none:1},
@@ -1074,8 +1079,8 @@ const ITEMS = [
   {id:'plateau',cat:'shoes',name:'Plateau-Boots',st:'Goth',price:65},
   {id:'fluegel',cat:'acc',name:'Engelsflügel',st:'Engel'},
   {id:'sfluegel',cat:'acc',name:'Große Federflügel',st:'Engel',price:120},
-  {id:'tasche',cat:'acc',name:'Handtasche',st:'Goth'},
-  {id:'schirm',cat:'acc',name:'Spitzenschirm',st:'Viktorianisch'},
+  {id:'tasche',cat:'acc',name:'Handtasche',st:'Goth',g:'w'},
+  {id:'schirm',cat:'acc',name:'Spitzenschirm',st:'Viktorianisch',g:'w'},
   {id:'kette',cat:'acc',name:'Hosenkette',st:'Punk'},
   {id:'halsband',cat:'jewel',sub:'kette',name:'Nietenhalsband',st:'Goth',price:25},
   {id:'kreuz',cat:'jewel',sub:'kette',name:'Kreuzkette',st:'Goth'},
@@ -1094,7 +1099,7 @@ ITEMS.push(
   {id:'sterne',cat:'top',name:'Sternenshirt',price:50,shop:1},
   {id:'pelz',cat:'jacket',name:'Kunstpelzjacke',price:120,shop:1},
   {id:'tuell',cat:'bottom',name:'Tüllrock',price:80,shop:1,g:'w'},
-  {id:'mary',cat:'shoes',name:'Mary Janes',price:70,shop:1},
+  {id:'mary',cat:'shoes',name:'Mary Janes',price:70,shop:1,g:'w'},
   {id:'teddy',cat:'acc',name:'Gruselteddy',price:90,shop:1},
   {id:'batwings',cat:'acc',name:'Fledermausflügel',price:150,shop:1},
   {id:'p_snakering',cat:'jewel',sub:'pierc',name:'Snakebites (Ringe)',c:'#d8d8de'},
@@ -1158,8 +1163,23 @@ function previewOutfit(o, i){
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
 const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
-let showAllG = true; // alle Teile für alle Körper (Inayas Wunsch)
-const fits = (i, o) => showAllG || !i.g || o.body === 'a' || i.g === (o.body || 'a');
+ITEMS.push(
+  {id:'m_fliege',cat:'top',name:'Hemd mit Fliege',st:'Viktorianisch',g:'m'},
+  {id:'m_offen',cat:'top',name:'Offenes Karohemd über Shirt',st:'Grunge',g:'m'},
+  {id:'m_vampir',cat:'top',name:'Vampirhemd mit Rüschen',st:'Viktorianisch',g:'m'},
+  {id:'m_raglan',cat:'top',name:'Raglan-Shirt mit Totenkopf',st:'Punk',g:'m'},
+  {id:'m_netztank',cat:'top',name:'Netz-Tanktop',st:'Punk',g:'m'},
+  {id:'m_anzug',cat:'bottom',name:'Nadelstreifenhose',st:'Viktorianisch',g:'m'},
+  {id:'m_kilt',cat:'bottom',name:'Gothic-Kilt',st:'Punk',g:'m'},
+  {id:'m_schnuer',cat:'bottom',name:'Hose mit Seitenschnürung',st:'Goth',g:'m'},
+  {id:'m_trench',cat:'jacket',name:'Langer Ledermantel mit Gürtel',st:'Goth',g:'m'},
+  {id:'m_biker',cat:'shoes',name:'Bikerstiefel',st:'Punk',g:'m'},
+);
+// Kleidung ist nach Körper getrennt; der Knopf „Klamotten für alle Körper“ zeigt alles (Inaya, 2026-10-10)
+const GCATS = ['top','bottom','jacket','shoes','legw','acc'];
+let showAllG = (() => { try { return localStorage.getItem('nf-allg') === '1'; } catch (e) { return false; } })();
+const fits = (i, o) => showAllG || !i.g || !GCATS.includes(i.cat) || i.g === (o.body === 'm' ? 'm' : 'w');
+const allgBtn = () => `<button type="button" class="allgbtn" data-act="allg" aria-pressed="${showAllG}"><span class="knob" aria-hidden="true"></span>Klamotten für alle Körper</button>`;
 const noneFirst = (a, b) => isNoneItem(b) - isNoneItem(a); // „Kein …“-Karte immer vorne, damit man sie gleich findet
 const isNoneItem = i => +!!(i.none || NONE_ITEM[i.cat] === i.id);
 const noneKeys = (o, i) => Object.keys(asObj(o[i.cat])).filter(k => i.cat !== 'jewel' || (item(k)?.sub || 'kette') === i.sub); // was von dieser Sorte gerade getragen wird
@@ -1215,7 +1235,7 @@ ITEMS.push(
   {id:'schlag',cat:'bottom',name:'Schlaghose',st:'Goth'},
   {id:'cargo',cat:'bottom',name:'Cargohose',st:'Skater'},
   {id:'tank',cat:'top',name:'Tanktop',st:'Metal'},
-  {id:'crop',cat:'top',name:'Bauchfreies Top',st:'Scene'},
+  {id:'crop',cat:'top',name:'Bauchfreies Top',st:'Scene',g:'w'},
   {id:'rollkragen',cat:'top',name:'Rollkragenpulli',st:'Goth'},
   {id:'mesharm',cat:'top',name:'Shirt mit Netzärmeln',st:'Emo'},
   {id:'schnuer',cat:'top',name:'Schnürbluse',st:'Viktorianisch'},
@@ -1225,15 +1245,15 @@ ITEMS.push(
   {id:'bomber',cat:'jacket',name:'Bomberjacke',st:'Punk'},
   {id:'gehrock',cat:'jacket',name:'Gehrock',st:'Viktorianisch'},
   {id:'umhang',cat:'jacket',name:'Umhang',st:'Goth'},
-  {id:'ballerina',cat:'shoes',name:'Ballerinas',st:'Goth'},
-  {id:'overknee',cat:'shoes',name:'Overknee-Stiefel',st:'Goth'},
+  {id:'ballerina',cat:'shoes',name:'Ballerinas',st:'Goth',g:'w'},
+  {id:'overknee',cat:'shoes',name:'Overknee-Stiefel',st:'Goth',g:'w'},
   {id:'schnallen',cat:'shoes',name:'Schnallenstiefel',st:'Punk'},
   {id:'karosneaker',cat:'shoes',name:'Karo-Sneaker',st:'Scene'},
   {id:'halbschuh',cat:'shoes',name:'Halbschuhe',st:'Grunge'},
   {id:'schmetterling',cat:'acc',name:'Schmetterlingsflügel',st:'Engel'},
   {id:'sargtasche',cat:'acc',name:'Sargtasche',st:'Goth'},
   {id:'rose',cat:'acc',name:'Rote Rose',st:'Viktorianisch'},
-  {id:'faecher',cat:'acc',name:'Spitzenfächer',st:'Viktorianisch'},
+  {id:'faecher',cat:'acc',name:'Spitzenfächer',st:'Viktorianisch',g:'w'},
   {id:'schwanz',cat:'acc',name:'Teufelsschwanz',st:'Punk'},
 );
 // Noch mehr Teile (Inayas Wunsch 2026-10-10)
@@ -1250,7 +1270,7 @@ ITEMS.push(
   {id:'militaer',cat:'jacket',name:'Militärjacke',st:'Metal'},
   {id:'nietenweste',cat:'jacket',name:'Nietenweste',st:'Punk'},
   {id:'blazer',cat:'jacket',name:'Blazer',st:'Viktorianisch'},
-  {id:'leggings',cat:'bottom',name:'Leggings',st:'Emo'},
+  {id:'leggings',cat:'bottom',name:'Leggings',st:'Emo',g:'w'},
   {id:'midirock',cat:'bottom',name:'Langer Rock',st:'Goth',g:'w'},
   {id:'ballonrock',cat:'bottom',name:'Ballonrock',st:'Scene',g:'w'},
   {id:'jeansshorts',cat:'bottom',name:'Jeansshorts',st:'Grunge'},
@@ -1295,25 +1315,25 @@ ITEMS.push(
   {id:'lw_jeans',cat:'bottom',name:'Low-Waist-Jeans mit Nietengürtel',st:'Emo'},
   {id:'lw_baggy',cat:'bottom',name:'Low-Waist-Baggy',st:'Skater'},
   {id:'hw_jeans',cat:'bottom',name:'High-Waist-Jeans',st:'Grunge'},
-  {id:'hw_marlene',cat:'bottom',name:'High-Waist-Marlenehose',st:'Viktorianisch'},
+  {id:'hw_marlene',cat:'bottom',name:'High-Waist-Marlenehose',st:'Viktorianisch',g:'w'},
   {id:'lw_mini',cat:'bottom',name:'Low-Waist-Minirock mit Nietengürtel',st:'Punk',g:'w'},
   {id:'lw_falten',cat:'bottom',name:'Low-Waist-Faltenrock',st:'Scene',g:'w'},
   {id:'hw_bleistift',cat:'bottom',name:'High-Waist-Bleistiftrock',st:'Goth',g:'w'},
   {id:'hw_korsage',cat:'bottom',name:'High-Waist-Korsagenrock',st:'Viktorianisch',g:'w'},
-  {id:'b_puff',cat:'top',name:'Puffärmelbluse',st:'Viktorianisch'},
+  {id:'b_puff',cat:'top',name:'Puffärmelbluse',st:'Viktorianisch',g:'w'},
   {id:'b_jabot',cat:'top',name:'Jabot-Bluse mit Trompetenärmeln',st:'Viktorianisch'},
   {id:'b_carmen',cat:'top',name:'Schulterfreie Rüschenbluse',st:'Viktorianisch',g:'w'},
-  {id:'b_bischof',cat:'top',name:'Bluse mit Bischofsärmeln',st:'Goth'},
-  {id:'b_bubi',cat:'top',name:'Bluse mit Bubikragen',st:'Emo'},
+  {id:'b_bischof',cat:'top',name:'Bluse mit Bischofsärmeln',st:'Goth',g:'w'},
+  {id:'b_bubi',cat:'top',name:'Bluse mit Bubikragen',st:'Emo',g:'w'},
   {id:'b_stufen',cat:'top',name:'Stufenbluse mit Rüschen',st:'Goth',g:'w'},
-  {id:'b_wickel',cat:'top',name:'Wickeltop',st:'Goth'},
+  {id:'b_wickel',cat:'top',name:'Wickeltop',st:'Goth',g:'w'},
   {id:'k_spitze',cat:'top',name:'Korsett mit Spitzenrand',st:'Viktorianisch',g:'w'},
   {id:'k_schnuer',cat:'top',name:'Schnürkorsett mit Netzärmeln',st:'Goth',g:'w'},
   {id:'k_unter',cat:'top',name:'Unterbrust-Korsett mit Bluse',st:'Viktorianisch',g:'w'},
   {id:'c_ruesche',cat:'top',name:'Crop-Top mit Rüschensaum',st:'Scene',g:'w'},
-  {id:'c_lang',cat:'top',name:'Langarm-Crop-Top',st:'Emo'},
+  {id:'c_lang',cat:'top',name:'Langarm-Crop-Top',st:'Emo',g:'w'},
   {id:'c_neck',cat:'top',name:'Neckholder-Crop-Top',st:'Scene',g:'w'},
-  {id:'s_passe',cat:'top',name:'Longsleeve mit Spitzenärmeln',st:'Goth'},
+  {id:'s_passe',cat:'top',name:'Longsleeve mit Spitzenärmeln',st:'Goth',g:'w'},
   {id:'s_bandeau',cat:'top',name:'Spitzen-Bandeau mit Rüschen',st:'Goth',g:'w'},
   {id:'st_ringel',cat:'jewel',sub:'arm',name:'Geringelte Armstulpen',c:'#141218'},
   {id:'st_netz',cat:'jewel',sub:'arm',name:'Netz-Armstulpen',c:'#141218'},
@@ -2181,6 +2201,30 @@ Object.assign(IHAIR, {
     side:330, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150M124 -60Q108 -20 110 20',
     fx:ISCENE_FX([[160, 256, 10], [236, 340, 14]])},
 });
+// ---- Jungs-Kleidung (Inaya, 2026-10-10) ----
+const ILEGLINE = (X, i, t, y0, y1) => { const P = []; for (let y = y0; y <= y1; y += 30) { const [a, b] = ilegE(X.B, i, y); P.push(`${f1(a + (b - a) * t)} ${y}`); } return 'M' + P.join('L'); };
+Object.assign(ITOP, {
+  m_fliege:(X, c, m) => { const B = X.B, k = ICON(c); return X.G(isleeve(B, 0, 'long'), c) + X.G(isleeve(B, 1, 'long'), c) + X.G(ibody(B, B.hem + 6, 'crew'), c) + X.G(`M${B.nl - 4} ${B.ny - 4}L${B.cx - 4} ${B.ny + 26}L${B.cx - 34} ${B.ny + 34}Z`, c) + X.G(`M${B.nr + 4} ${B.ny - 4}L${B.cx + 4} ${B.ny + 26}L${B.cx + 34} ${B.ny + 34}Z`, c) + X.G(`M${B.cx} ${B.ny + 22}L${B.cx - 30} ${B.ny + 8}L${B.cx - 30} ${B.ny + 38}Z M${B.cx} ${B.ny + 22}L${B.cx + 30} ${B.ny + 8}L${B.cx + 30} ${B.ny + 38}Z`, m === '#ecebe7' ? '#141218' : m) + `<circle cx="${B.cx}" cy="${B.ny + 22}" r="6" fill="${m === '#ecebe7' ? '#141218' : m}" ${IO} stroke-width="1.4"/>` + X.LN(`M${B.cx} ${B.ny + 40}V${B.hem}`, shade(c, isLight(c) ? .8 : 1.6), 2) + [90, 140, 190, 240].map(d => `<circle cx="${B.cx + 8}" cy="${B.ny + d}" r="3" fill="${k}"/>`).join(''); },
+  m_offen:(X, c, m) => { const B = X.B, u = m === '#ecebe7' ? '#141218' : m; return X.G(ibody(B, B.hem, 'crew'), u) + ISKULL(B.cx, B.chest + 40, 2.6, '#ecebe7') + ijacket(X, X.pat('plaid', c), B.hem + 14, {lapel:false, gap:46, out:5}) + X.G(`M${B.nl - 4} ${B.ny - 6}L${B.cx - 50} ${B.ny + 40}L${B.cx - 46} ${B.ny + 2}Z`, shade(c, .8)) + X.G(`M${B.nr + 4} ${B.ny - 6}L${B.cx + 50} ${B.ny + 40}L${B.cx + 46} ${B.ny + 2}Z`, shade(c, .8)); },
+  m_vampir:(X, c, m) => { const B = X.B, fr = shade(c, isLight(c) ? .86 : 1.4); return X.G(isleeve(B, 0, 'long', 8, 26), c) + X.G(isleeve(B, 1, 'long', 8, 26), c) + X.G(ibody(B, B.hem + 10, 'v', 6), c) + X.G(`M${B.nl - 2} ${B.ny - 2}L${B.nl - 20} ${B.ny - 40}L${B.cx - 26} ${B.ny + 40}Z M${B.nr + 2} ${B.ny - 2}L${B.nr + 20} ${B.ny - 40}L${B.cx + 26} ${B.ny + 40}Z`, c) + [0, 1, 2, 3].map(k => `<path d="M${B.cx - 6} ${B.ny + 96 + k * 34}q-34 14 -16 40q10 -10 22 0q18 -26 -6 -40Z" fill="${fr}" ${IO} stroke-width="1.4"/>`).join('') + X.LN(`M${B.cx} ${B.ny + 92}V${B.hem + 6}`, shade(c, isLight(c) ? .75 : 1.7), 2); },
+  m_raglan:(X, c, m) => { const B = X.B, s = m === '#ecebe7' ? '#9a1f2a' : m; return X.G(isleeve(B, 0, B.sy + 240, 6), s) + X.G(isleeve(B, 1, B.sy + 240, 6), s) + X.G(ibody(B, B.hem, 'crew'), c) + X.G(`M${B.nl - 2} ${B.ny}Q${B.cx} ${B.ny + 28} ${B.nr + 2} ${B.ny}L${B.nr + 6} ${B.ny + 10}Q${B.cx} ${B.ny + 42} ${B.nl - 6} ${B.ny + 10}Z`, s) + ISKULL(B.cx, B.chest + 30, 3.2, ICON(c)); },
+  m_netztank:(X, c, m) => X.P(ibody(X.B, X.B.hem, 'scoop', 4, true), X.pat('net', c, null, 12)) + X.LN(`M${X.B.nl - 6} ${X.B.ny + 4}Q${X.B.cx} ${X.B.ny + 96} ${X.B.nr + 6} ${X.B.ny + 4}`, c, 5),
+});
+Object.assign(ITOPC, {m_fliege:['#ecebe7','#141218'], m_offen:['#5a1a24','#141218'], m_vampir:['#ecebe7'], m_raglan:['#141218','#9a1f2a'], m_netztank:['#0b080d']});
+Object.assign(IBOT, {
+  m_anzug:(X, c) => X.G(ipants(X.B, X.B.ay + 14, 6), c) + [0, 1].map(i => X.LN([.2, .4, .6, .8].map(t => ILEGLINE(X, i, t, X.B.wy + 30, X.B.ay)).join(''), shade(c, isLight(c) ? .7 : 2.6), 1.4)).join('') + X.LN(`M${X.B.cx - 110} ${X.B.wy + 12}H${X.B.cx + 110}`, '#0b0a0d', 6),
+  m_kilt:(X, c) => X.G(ipants(X.B, X.B.ky + 20, 4), '#141218') + X.G(iskirt(X.B, X.B.ky + 10, 150), X.pat('plaid', c)) + [X.B.wy + 40, X.B.cy + 20].map(y => X.LN(`M${X.B.cx - 120} ${y}H${X.B.cx + 120}`, '#0b0a0d', 9) + `<rect x="${X.B.cx + 50}" y="${y - 11}" width="22" height="22" fill="none" stroke="#c9c9cf" stroke-width="3"/>`).join('') + X.LN(`M${X.B.cx - 100} ${X.B.wy + 46}Q${X.B.cx - 40} ${X.B.cy + 80} ${X.B.cx + 30} ${X.B.wy + 50}`, '#c9c9cf', 4).replace('stroke-linecap="round"', 'stroke-dasharray="7 4"'),
+  m_schnuer:(X, c) => X.G(ipants(X.B, X.B.ay + 14, 6), c) + [0, 1].map(i => { const P = []; for (let k = 0; k < 11; k++) { const y = X.B.cy - 20 + k * 34, [a, b] = ilegE(X.B, i, y), x = i ? b - 12 : a + 12; P.push(`M${f1(x - 8)} ${y}L${f1(x + 8)} ${y + 22}M${f1(x + 8)} ${y}L${f1(x - 8)} ${y + 22}`); } return X.LN(P.join(''), '#c9c9cf', 2.4); }).join(''),
+});
+Object.assign(IBOTC, {m_anzug:'#1d1b22', m_kilt:'#3a1018', m_schnuer:'#0f0e13'});
+Object.assign(IJACK, {
+  m_trench:(X, c) => ijacket(X, c, X.B.ay - 90, {flare:50, gap:24}) + X.LN(`M${X.B.cx - 130} ${X.B.wy + 4}H${X.B.cx - 24}M${X.B.cx + 24} ${X.B.wy + 4}H${X.B.cx + 130}`, '#2a2a30', 10) + `<rect x="${X.B.cx - 46}" y="${X.B.wy - 8}" width="22" height="24" fill="none" stroke="#c9c9cf" stroke-width="3"/>` + X.LN(`M${X.B.cx - 70} ${X.B.ny + 140}Q${X.B.cx - 90} ${X.B.cy} ${X.B.cx - 100} ${X.B.ky}`, '#fff', 6, .2),
+});
+Object.assign(IJACKC, {m_trench:'#0c0b0e'});
+Object.assign(ISHOE, {
+  m_biker:(X, c) => [0, 1].map(i => ishoe(X, i, X.B.ay - 200, c, '#111', 26, 10) + [X.B.ay - 170, X.B.ay - 10].map(y => { const [a, b] = ilegE(X.B, i, y); return X.LN(`M${f1(a - 10)} ${y}H${f1(b + 10)}`, '#2a2a30', 9) + `<rect x="${f1(i ? a - 8 : b - 10)}" y="${y - 9}" width="18" height="18" fill="none" stroke="#c9c9cf" stroke-width="3"/>`; }).join('')).join(''),
+});
+Object.assign(ISHOEC, {m_biker:'#141218'});
 const IARMCLIP = {};
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
@@ -2221,11 +2265,15 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYES(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
   if (o.eyeform === 'e_leer') face += IEYE_LEER(X, o.eyes); else if (drawn) face += ieyeDraw(o.eyeform, X, o.eyes);
   if (IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
-  if (o.lipC && ILIPS[o.lips]) face += X.P(ILIPS[o.lips], o.lipC, 'stroke-width="1.4"');
+  if (o.lipC && ILIPS[o.lips]) face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + X.P(ILIPS[o.lips], o.lipC, 'stroke-width="1.4"') + '</g>';
   if (B === IB.m && IBEARD[o.beard]) face += IBEARD[o.beard](o.beardC || o.hairC || '#1c1b20', X);
   const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel', 'p_braue', 'p_augenbraue', 'p_bridge', 'p_dermal'];
   let ears = ''; // Ohrschmuck liegt über den Haaren, sonst verschwindet er unter fast jeder Frisur
-  for (const k in J) { if (IPIERC[k]) { if (IEARP.includes(k)) ears += IPIERC[k](J[k]); else face += IPIERC[k](J[k]); } if (IEARR[k]) ears += IEARR[k](J[k]); }
+  // Jungs-Gesicht: Nase etwas weiter links, Mund, Kinn und Brauen tiefer als beim Mädchen (Inaya, 2026-10-10)
+  const PM = B === IB.m ? {p_nase:[-8, 0], p_nasenring:[-8, 0], p_septum:[-8, 0], p_labret:[-2, 12], p_braue:[0, 10], p_wange:[0, 7]} : {};
+  const PMOUTH = B === IB.m ? [-3, 8] : null, PMK = ['piercing', 'p_snakering', 'p_monroe', 'p_medusa', 'p_spider', 'p_angel', 'p_dahlia', 'p_zunge'];
+  const pmv = k => PM[k] || (PMOUTH && PMK.includes(k) ? PMOUTH : null), pmt = (k, svg) => { const v = pmv(k); return v ? `<g transform="translate(${v[0]} ${v[1]})">${svg}</g>` : svg; };
+  for (const k in J) { if (IPIERC[k]) { if (IEARP.includes(k)) ears += pmt(k, IPIERC[k](J[k])); else face += pmt(k, IPIERC[k](J[k])); } if (IEARR[k]) ears += IEARR[k](J[k]); }
   let headFront = face + hair.front + ears + Object.keys(o.hacc || {}).filter(k => IHACC[k] && !IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k] && o.hacc[k] !== 'auto' ? o.hacc[k] : (HACC_C[k] && HACC_C[k] !== 'auto' ? HACC_C[k] : '#141218'), X)).join('');
   // Körper
   let back = Object.keys(o.acc || {}).filter(k => IACC_BACK[k]).map(k => IACC_BACK[k](X, AC(k))).join('') + (IJACK_BACK[o.jacket] ? IJACK_BACK[o.jacket](X) : '');
@@ -2300,7 +2348,6 @@ function avatarI(o0, view='full', pose='', lite=false){
     <clipPath id="${u}ac"><path d="${IARMCLIP[B.k]}"/></clipPath>${sk}${defs.join('')}
   </defs><g transform="${PT}">${inner}</g></svg>`;
 }
-// Flüssiger: gleiche Avatare nicht bei jedem Neuzeichnen neu berechnen (Inaya: Anmelden ruckelte)
 const AVC = new Map();
 function avatar(o0, view='full', pose='', lite=false){
   let k; try { k = JSON.stringify([o0, view, pose, lite]); } catch { return avatarI(o0, view, pose, lite); }
@@ -3378,6 +3425,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
     <div class="wardrobe">
       <div class="card mirror-card">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}<p class="note">Tipp ein Teil an, um es anzuziehen.</p></div>
       <div class="card"><h2 class="card-h">Garderobe</h2><div class="card-in">
+        ${obCat === 'body' ? '' : allgBtn()}
         <div class="ctabs">${catTabs(obCat, 'ob-cat', true, o)}</div>
         ${obCat === 'body' ? colorPanel(obCat, o, 'ob-color') : ''}
         ${sideBar(obCat, o, 'ob-color')}${items ? `<div class="shopgrid">${items}</div>` : ''}
@@ -3606,7 +3654,7 @@ document.addEventListener('click', e => {
   else if (a === 'ob-cat') { obCat = b.dataset.c; obPatch(true); }
   else if (a === 'jsub') { jewelSub = b.dataset.c; render(); }
   else if (a === 'ob-item') { wearItem(p.outfit, item(b.dataset.id)); save(); obPatch(); }
-  else if (a === 'allg') { showAllG = b.checked; render(); }
+  else if (a === 'allg') { showAllG = !showAllG; try { localStorage.setItem('nf-allg', showAllG ? '1' : '0'); } catch (e) {} S.pending && document.querySelector('.obwear') ? obPatch(true) : render(); }
   else if (a === 'icol') { colItem = colItem === b.dataset.id ? null : b.dataset.id; S.pending && document.querySelector('.obwear') ? obPatch(true) : render(); }
   else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(true); }
   else if (a === 'ob-next') finishOb();
@@ -4485,6 +4533,7 @@ function shopView(isShop){
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
       ${isShop ? '' : `<div class="row lookbar"><button type="button" class="lbbtn" data-act="lb-open" data-id="${u.id}" title="Lookbuch" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="btn ghost" data-act="look-save">✦ Look speichern</button><button type="button" class="btn ghost" data-act="undress">Komplett ausziehen</button></div>`}
+      ${isShop || shopCat === 'body' ? '' : allgBtn()}
       <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit)}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${isShop ? '' : sideBar(shopCat, u.outfit, 'color')}${items ? `<div class="shopgrid">${items}</div>` : empty}
@@ -5512,7 +5561,7 @@ document.addEventListener('click', async e => {
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
   else if (a === 'try' && isMob()) mobWear(id);
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
-  else if (a === 'allg') { showAllG = b.checked; render(); }
+  /* allg: im ersten Klick-Handler */
   else if (a === 'untry') { trial = null; render(); }
   else if (a === 'lb-open') { LB = id; lookSel = null; if (id !== S.me && !profUser(id)?.looks) await loadProf(id); render(); }
   else if (a === 'lb-close') { LB = null; lookSel = null; render(); }
