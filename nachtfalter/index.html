@@ -242,6 +242,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
 .nbtns{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nbtns .nlink{margin:0!important;width:100%;padding-inline:8px;white-space:nowrap}
 .ctabs2{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line-soft);margin-bottom:4px}.ctabs2 button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.ctabs2 button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.gmems{display:grid;gap:6px}.gmem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line-soft);min-width:0}.gmem>span:first-child{min-width:0;overflow-wrap:anywhere}
 .iconb{width:46px;padding:0;display:inline-grid;place-items:center;align-self:stretch;min-height:40px}.iconb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.gdel{border:1px solid var(--fg);padding:12px;display:grid;gap:10px}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
@@ -1375,6 +1376,8 @@ const IB = {
   w:{k:'F', cx:175, nl:150, nr:210, ny:306, sy:336, pit:490, chest:420, wy:612, hem:634, cy:752, ky:1075, ay:1390, fy:1484, wr:770, nav:[173,578], hl:[30,852], hr:[314,852], ck:[152,208,292], head:'', mx:350},
   m:{k:'M', cx:200, nl:158, nr:244, ny:292, sy:326, pit:470, chest:410, wy:598, hem:620, cy:786, ky:1082, ay:1352, fy:1505, wr:762, nav:[200,566], hl:[30,858], hr:[366,858], ck:[164,238,270], head:'translate(46 0) scale(.88)', mx:400},
 };
+// Männer-Rumpf (aus der Figur gemessen): Oberteile folgen der Taille statt der Arm-Innenkante, damit sie unten nicht breiter werden (Inaya, 2026-10-10)
+IB.m.torso = [[470,95,307],[480,97,306],[500,102,300],[520,108,295],[540,112,291],[560,113,289],[580,110,292],[600,104,298],[620,100,303],[640,93,309],[660,87,316],[680,83,320],[700,79,324],[720,76,327],[740,74,329],[760,73,330]];
 for (const k in IB) { const D = IFIG_DATA[IB[k].k]; IB[k].W = D.W; IB[k].H = D.H; IB[k].arm = D.arm; IB[k].legs = D.legs; }
 const IBODY = o => (o?.body === 'm' ? IB.m : IB.w);
 const IVIEWS = {
@@ -1402,7 +1405,7 @@ function iarmPoly(B, k, y0, y1, out=5, flare=0){
   return 'M' + A.concat(C.reverse()).join('L') + 'Z';
 }
 const ihipX = (B, y, out=0) => { // Außenkante Hüfte zwischen Bund und Beinbeginn
-  const l0 = B.legs[0][0], r = iarm(B, B.wy), e = ilegE(B, 0, l0), e1 = ilegE(B, 1, l0);
+  const l0 = B.legs[0][0], r = B.torso ? (t => [0, 0, t[1], t[2]])(irow(B.torso, B.wy)) : iarm(B, B.wy), e = ilegE(B, 0, l0), e1 = ilegE(B, 1, l0);
   const t = Math.max(0, Math.min(1, (y - B.wy) / (l0 - B.wy))), s = Math.sin(t * Math.PI / 2);
   return [r[2] + (e[0] - r[2]) * s - out, r[3] + (e1[1] - r[3]) * s + out];
 };
@@ -1429,7 +1432,7 @@ function ibody(B, hem, neck='crew', out=4, sleeveless=false){
   const L = [], R = [];
   if (sleeveless) { L.push(`${f1(pitR[2] + 8)} ${B.pit - 10}`); R.push(`${f1(pitR[3] - 8)} ${B.pit - 10}`); }
   else { L.push(`${f1(top[1] + 10)} ${B.sy + 8}`, `${f1(pitR[1] + 4)} ${B.sy + 40}`); R.push(`${f1(top[4] - 10)} ${B.sy + 8}`, `${f1(pitR[4] - 4)} ${B.sy + 40}`); }
-  for (let y = B.pit; ; y = Math.min(y + 14, hem)) { const r = iarm(B, y); L.push(`${f1(r[2] - out)} ${y}`); R.push(`${f1(r[3] + out)} ${y}`); if (y >= hem) break; }
+  for (let y = B.pit; ; y = Math.min(y + 14, hem)) { const r = B.torso ? irow(B.torso, y) : iarm(B, y), a = B.torso ? 1 : 2; L.push(`${f1(r[a] - out)} ${y}`); R.push(`${f1(r[a + 1] + out)} ${y}`); if (y >= hem) break; }
   const sh = sleeveless ? [`${f1(nl - 6)} ${ny + 4}`, `${f1(nr + 6)} ${ny + 4}`] : [`${f1(nl - 2)} ${ny}`, `${f1(nr + 2)} ${ny}`];
   let nk;
   if (neck === 'v') nk = `L${cx} ${ny + 90}`;
@@ -3412,7 +3415,7 @@ function bannerHTML(b, name, handle=''){ // im Bannerkasten steht der Nutzername
   if (!b) return '';
   const t = handle, span = t ? `<span style="font-family:${FONTS[b.font]}">${esc(t)}</span>` : '';
   if (b.img) return `<div class="pbanner img" style="background-image:url('${b.img}');color:#ecebe7">${span}</div>`;
-  const day = b.mode === 'tag', fg = b.fg || (day ? '#151515' : '#ecebe7');
+  const day = b.mode === 'tag', bbg = b.bg || (day ? '#eeece7' : '#0e0e10'), fg = readFg(bbg, b.fg) || (isLight(bbg) ? '#151515' : '#ecebe7');
   return `<div class="pbanner" style="background-color:${b.bg || (day ? '#eeece7' : '#0e0e10')};background-image:${patternURL(b.pattern, b.mode, b.fg ? .32 : .14, b.fg || '')};color:${fg}">${span}</div>`;
 }
 const BANNER_FG = [['#ecebe7','Weiß'],['#c9c9cf','Silber'],['#8a8a92','Grau'],['#151515','Schwarz'],['#c8324e','Rot'],['#e98fa6','Rosa'],['#9a6fd0','Lila'],['#6fa8dc','Blau'],['#5fae6b','Grün'],['#d4af37','Gold']];
@@ -3677,6 +3680,9 @@ function lum(hex){
   return .2126 * ch[0] + .7152 * ch[1] + .0722 * ch[2];
 }
 const isLight = hex => lum(hex) > .3;
+const cRatio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+// Schriftfarbe lesbar halten: eigene Farbe nur, wenn sie sich genug vom Hintergrund abhebt, sonst automatisch hell/dunkel
+const readFg = (bg, fg) => /^#[0-9a-f]{6}$/i.test(fg || '') && cRatio(bg, fg) >= 3 ? fg : '';
 function patternURL(name, mode, op=.08, col=''){
   const c = col || (mode === 'tag' ? '#000000' : '#ffffff'), x = 'xmlns="http://www.w3.org/2000/svg"';
   const F = (k=1) => `fill="${c}" fill-opacity="${Math.min(1, op*k)}"`, L = (k=1.6, w=1.2) => `fill="none" stroke="${c}" stroke-opacity="${Math.min(1, op*k)}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"`;
@@ -3713,8 +3719,8 @@ function normTheme(t){
   return t;
 }
 function themeStyle(t){
-  const box = t.box || '#0e0e10', light = isLight(box);
-  return `--p-bg:${box};--p-panel:${light ? shade(box,1.35) : shade(box,1.12)};--p-fg:${t.fg || (light?'#151515':'#ecebe7')};--p-muted:${t.fg ? shade(t.fg, isLight(t.fg) ? .75 : 1.5) : light?'#4f4d4a':'#a9a7a2'};--p-line:${light ? shade(box,.78) : shade(box,1.35)};--p-font:${FONTS[t.font] || FONTS.fell};--p-pattern:${patternURL(t.pattern, light ? 'tag' : 'nacht', .1)}`;
+  const box = t.box || '#0e0e10', light = isLight(box), fg = readFg(box, t.fg);
+  return `--p-bg:${box};--p-panel:${light ? shade(box,1.35) : shade(box,1.12)};--p-fg:${fg || (light?'#151515':'#ecebe7')};--p-muted:${fg ? shade(fg, isLight(fg) ? .75 : 1.5) : light?'#4f4d4a':'#a9a7a2'};--p-line:${light ? shade(box,.78) : shade(box,1.35)};--p-font:${FONTS[t.font] || FONTS.fell};--p-pattern:${patternURL(t.pattern, light ? 'tag' : 'nacht', .1)}`;
 }
 function applyPage(t){
   const bs = document.body.style;
@@ -4850,7 +4856,10 @@ function chatsView(){
   if (CH.mode === 'group') right = groupForm(friends);
   if (CH.mode === 'gadd') { // Jedes Mitglied darf nach dem Erstellen noch Freunde dazuholen (Inaya, 2026-10-10)
     const c = CH.list.find(x => x.id === CH.open), cand = c ? friends.filter(f => !c.members.includes(f.id)) : [];
-    right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Freunde zu „${esc(c ? chatName(c) : '')}“ hinzufügen</h3>
+    const mems = c ? c.members.filter(m => m !== social.uid) : []; // Mitglieder wieder entfernen (Inaya, 2026-10-10)
+    right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
+      <div class="gmems">${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}</span>${gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
+      <h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
       ${cand.length ? cand.map(f => `<label class="allg"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}
       <div class="row"><button class="btn ghost" type="button" data-act="chat-open" data-id="${esc(CH.open || '')}">Zurück</button><span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
   }
@@ -4866,7 +4875,7 @@ function chatsView(){
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
       <header class="ch-head"><div><b class="ch-name">${esc(chatName(c))}</b><small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small></div>
-        ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Freunde hinzufügen" title="Freunde hinzufügen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>` : ''}</header>
+        ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>` : ''}</header>
       <div class="chat msgs" id="msgs">${msgsHTML()}</div>
       <form class="cform" data-form="cmsg"><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
     </section>`;
@@ -4886,7 +4895,7 @@ function chatsView(){
   </div></div>`;
 }
 document.addEventListener('input', e => { if (e.target.id !== 'g-name') return; const n = document.getElementById('g-prevname'); if (n) n.textContent = e.target.value || 'Eure Gruppe'; });
-let gDelAsk = false; // Gruppen löschen (Inaya, 2026-10-10)
+let gDelAsk = false, gRmAsk = null; // Gruppen löschen / Mitglieder entfernen (Inaya, 2026-10-10)
 function groupForm(friends){
   const g = CH.gdraft;
   // Vorschau: so sieht der Gruppenchat aus, ändert sich bei jeder Farbe, jedem Muster und jeder Schrift sofort mit (Inaya, 2026-10-10)
@@ -5517,7 +5526,16 @@ document.addEventListener('click', async e => {
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
   else if (a === 'helper-chat') { chatTab = 'priv'; go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
   else if (a === 'chat-tab') { chatTab = b.dataset.v === 'group' ? 'group' : 'priv'; render(); }
-  else if (a === 'chat-add') { CH.mode = 'gadd'; render(); }
+  else if (a === 'chat-add') { gRmAsk = null; CH.mode = 'gadd'; render(); }
+  else if (a === 'grm') { gRmAsk = b.dataset.id; render(); }
+  else if (a === 'grm-no') { gRmAsk = null; render(); }
+  else if (a === 'grm-yes') {
+    const id = b.dataset.id, cid = CH.open, c = CH.list.find(x => x.id === cid); gRmAsk = null; if (!c) return;
+    try { await sendMsg(cid, `${me().name} hat ${PROF[id]?.name || S.users[id]?.name || 'jemanden'} entfernt.`);
+      await social.db.doc('chats/' + cid).update({members:c.members.filter(m => m !== id)});
+      c.members = c.members.filter(m => m !== id); render(); toast('Entfernt'); }
+    catch { toast('Das hat nicht geklappt. Versuch es nochmal.'); render(); }
+  }
   else if (a === 'chat-edit') { gDelAsk = false; const c = CH.list.find(x => x.id === CH.open); CH.gdraft = {id:c.id, name:c.name || '', members:c.members.filter(m => m !== social.uid), theme:{...BLANK_THEME(), ...(c.theme || {})}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-del') { grabGroupDraft(); gDelAsk = true; render(); }
   else if (a === 'chat-del-no') { gDelAsk = false; render(); }
@@ -5862,6 +5880,7 @@ document.addEventListener('click', async e => {
   else if (a === 'floor') { me().room.floor = b.dataset.v; save(); render(); }
   else if (a === 'topt') {
     draft[b.dataset.k] = b.dataset.v;
+    if (b.dataset.k === 'box' && draft.fg && !readFg(draft.box, draft.fg)) delete draft.fg; // neue Kastenfarbe: Schrift passt sich an
     refreshDraft();
   }
 });
@@ -5874,7 +5893,7 @@ function refreshDraft(){
 }
 document.addEventListener('input', e => {
   const x = e.target.closest('.cpick'); if (!x || !draft || x.matches('.bpick,.rpick')) return;
-  draft[x.dataset.k] = x.value; refreshDraft();
+  draft[x.dataset.k] = x.value; if (x.dataset.k === 'box' && draft.fg && !readFg(draft.box, draft.fg)) delete draft.fg; refreshDraft();
 });
 
 // Beitragsbilder immer im gleichen Hochformat 4:5 wie bei Instagram (mittig zugeschnitten)
