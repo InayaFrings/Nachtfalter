@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8c5401ecf57f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='376f48d9cb86';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1113,6 +1113,27 @@ textarea.sttxt{top:44%}
 /* Story-Song spielt automatisch, Player liegt unten in der Story */
 .stspw{position:fixed;z-index:3001}.stspw[hidden]{display:none}.stspw iframe{width:100%;border:0;border-radius:12px;display:block}
 .stviewc{display:contents}
+
+/* Text-Bearbeiten: volle Größe, Werkzeuge im sichtbaren Bereich (Inaya, 2026-10-11) */
+.stedov{display:block}
+.stedtop{position:absolute;left:0;right:0;top:0;display:grid;gap:8px;padding:10px 10px 0}.stedtop{grid-template-columns:minmax(0,1fr)}.stedtop>*{min-width:0}.stedbot{grid-template-columns:minmax(0,1fr)}
+.sttoprow{display:flex;align-items:center;gap:8px}.sttoprow .ststyles{flex:1;min-width:0}
+.stat{flex:none;width:40px;height:38px;border:1px solid #ffffff60;border-radius:2px;background:#0a0a0bb0;color:#fff;font:600 19px -apple-system,Arial,sans-serif;cursor:pointer}
+.stedbot{position:absolute;left:0;right:0;bottom:0;margin:0}
+.stmsug[hidden]{display:none}
+.stcols .stseg button{width:auto;height:auto;border-radius:2px;border:1px solid #ffffff50;padding:6px 10px;transform:none;box-shadow:none;background:#0a0a0bb0;color:#fff;font:14px var(--f-display)}
+.stcols .stseg button[aria-pressed=true]{background:#eeedf2;color:#0a0a0b}
+.stbgrow,.stpatrow{gap:8px;align-items:center}.stbgl{flex:none;color:#eeedf2;font:14px var(--f-display);text-shadow:0 1px 3px #000;margin-right:2px}
+.stbgrow button{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid #fff;padding:0;cursor:pointer}.stbgrow button[aria-pressed=true]{box-shadow:0 0 0 2px #000,0 0 0 4px #fff}
+.stpatrow button{flex:none;width:40px;height:40px;padding:3px;border:1px solid #ffffff50;border-radius:2px;background:#0a0a0bb0;cursor:pointer}.stpatrow button[aria-pressed=true]{border-color:#fff;box-shadow:0 0 0 1px #fff}
+.stpatrow i{display:block;width:100%;height:100%}
+textarea.sttxt{top:44%}
+
+/* lesbare Knöpfe im Text-Editor (Inaya, 2026-10-11) */
+.ststyles .stsch{display:grid;justify-items:center;gap:1px;padding:4px 8px;min-width:62px;min-height:46px}
+.stsch b{font-size:19px;line-height:1.1;text-shadow:none;color:inherit}.stsch small{font:600 11px -apple-system,'Helvetica Neue',Arial,sans-serif;letter-spacing:.02em}
+.stouts button,.stcols .stseg button{font:600 14px -apple-system,'Helvetica Neue',Arial,sans-serif;letter-spacing:0}
+.stbgl{font:600 13px -apple-system,'Helvetica Neue',Arial,sans-serif}
 </style>
 
 <div id="app"></div>
@@ -5341,7 +5362,9 @@ function stEditorHTML(){
     <div class="sttrash" id="sttrash" hidden>${ico.tr}</div>
     ${n.tb ? '' : `<span class="stfcur">${esc(fx[1])}</span>`}`}
     ${e ? `<div class="stedov">
-      <div class="stedtop"><div class="strow scroll ststyles" role="group" aria-label="Schrift">${STXT.map(([k, l]) => `<button class="st-${k}" data-act="st-tstyle" data-v="${k}" aria-pressed="${e.st === k}">${l}</button>`).join('')}</div><button class="stdone" data-act="st-tdone">Fertig</button></div>
+      <div class="stedtop"><div class="sttoprow"><div class="strow scroll ststyles" role="group" aria-label="Schrift">${STXT.map(([k, l]) => `<button class="stsch" data-act="st-tstyle" data-v="${k}" aria-pressed="${e.st === k}" aria-label="Schrift ${l}"><b class="st-${k}">Aa</b><small>${{neon:'Schnörkel', schreib:'Maschine'}[k] || l}</small></button>`).join('')}</div><button class="stat" data-act="st-at" aria-label="Jemanden markieren">@</button><button class="stdone" data-act="st-tdone">Fertig</button></div>
+        ${n.tb ? `<div class="strow scroll stbgrow" role="group" aria-label="Hintergrundfarbe"><span class="stbgl">Farbe</span>${STBGC.map(c => `<button data-act="st-bgc" data-v="${c}" style="background:${c}" aria-label="Hintergrund ${c}" aria-pressed="${n.tb.c === c}"></button>`).join('')}</div>
+        <div class="strow scroll stpatrow" role="group" aria-label="Muster am Rand"><span class="stbgl">Muster</span>${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="st-bgp" data-v="${k}" aria-pressed="${(n.tb.p || '') === k}" title="${l}" aria-label="Muster ${l}"><i style="background-color:${esc(n.tb.c)};background-image:${stTbPat({c:n.tb.c, p:k})}"></i></button>`).join('')}</div>` : ''}</div>
       <input class="stsize" id="st-size" type="range" min="4" max="16" step=".5" value="${e.s}" aria-label="Schriftgröße">
       <div class="stedbot">
         <div class="stmsug" id="stmsug" hidden></div>
@@ -5354,10 +5377,16 @@ function stEditorHTML(){
     ${n.tool === 'music' && !e ? `<div class="stmpanel"><label class="f"><span class="lbl">♪ Spotify-Link zu einem Song</span><input id="st-song" type="url" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="https://open.spotify.com/track/…" value="${esc(n.song)}"></label>${stSpotify(n.song)}<div class="row">${n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-songok">Fertig</button></div></div>` : ''}
   </div>${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class="cameo">${avatar(me().outfit, 'head', '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
-function stVV(){ // Handy: Story-Fenster auf den sichtbaren Teil über der Tastatur setzen
-  const o = document.getElementById('storyov'), v = window.visualViewport; if (!o || !v) return;
-  if (stNew?.edit == null || !isMob()) { o.style.top = o.style.height = o.style.bottom = ''; return; }
-  o.style.top = v.offsetTop + 'px'; o.style.height = v.height + 'px'; o.style.bottom = 'auto';
+function stVV(){ // Story bleibt bildschirmgroß; die Werkzeuge rücken in den sichtbaren Teil über der Tastatur (Inaya, 2026-10-11)
+  const fr = document.getElementById('stfr'), ed = fr?.querySelector('.stedov'); if (!ed) return;
+  const v = window.visualViewport, r = fr.getBoundingClientRect();
+  const vt = Math.max(0, (v ? v.offsetTop : 0) - r.top), vb = Math.min(r.height, (v ? v.offsetTop + v.height : innerHeight) - r.top);
+  const t = ed.querySelector('.stedtop'), b = ed.querySelector('.stedbot'), ta = document.getElementById('st-ta'), sz = document.getElementById('st-size');
+  const th = t ? t.offsetHeight : 0, bh = b ? b.offsetHeight : 0;
+  if (t) t.style.top = vt + 'px';
+  if (b) { b.style.top = Math.max(vt + th, vb - bh) + 'px'; b.style.bottom = 'auto'; }
+  const mid = Math.round((vt + th + Math.max(vt + th, vb - bh)) / 2);
+  if (ta) ta.style.top = mid + 'px'; if (sz) sz.style.top = mid + 'px';
 }
 window.visualViewport?.addEventListener('resize', stVV); window.visualViewport?.addEventListener('scroll', stVV);
 function stTaCommit(){ const n = stNew, ta = document.getElementById('st-ta'); if (!n || n.edit == null || !ta) return; n.texts[n.edit].t = ta.value; }
@@ -5367,11 +5396,11 @@ function stEditWire(){
   const ta = document.getElementById('st-ta');
   if (ta) { stTaFit(); ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch {}
     const sug = document.getElementById('stmsug'), showSug = () => { const q = mentionQ(ta.value, ta.selectionEnd); sug.hidden = q == null; if (q != null) sug.innerHTML = mentionList(mentionFind(q), 'st-mention', q); sug.hidden = !q; };
-    ta.addEventListener('input', () => { n.texts[n.edit].t = ta.value; stTaFit(); showSug(); });
+    ta.addEventListener('input', () => { n.texts[n.edit].t = ta.value; stTaFit(); showSug(); stVV(); });
     showSug();
     document.querySelectorAll('.stedov button, .stedov .stmsug').forEach(x => x.addEventListener('mousedown', e => e.preventDefault())); // Tastatur bleibt offen
     document.getElementById('st-size').addEventListener('input', e => { n.texts[n.edit].s = +e.target.value; ta.style.setProperty('--fs', e.target.value); stTaFit(); });
-    stVV(); return; }
+    stVV(); setTimeout(stVV, 350); setTimeout(stVV, 800); return; }
   if (n.hint) setTimeout(() => { if (stNew === n && n.hint) { n.hint = false; const fn = document.getElementById('stfname'); if (fn) fn.hidden = true; } }, 2200);
   let d = null;
   fr.addEventListener('pointerdown', e => {
@@ -7423,7 +7452,12 @@ document.addEventListener('click', async e => {
     storyPaint(); }
   else if (a === 'st-tag') { if (stNew) { stNewText(62); stNew.texts[stNew.edit].t = '@'; storyPaint(); } }
   else if (a === 'st-bg') { if (stNew) { stNew.tool = stNew.tool === 'bg' ? null : 'bg'; storyPaint(); } }
-  else if (a === 'st-bgc' || a === 'st-bgp') { const n = stNew; if (!n?.tb) return; if (a === 'st-bgc') n.tb.c = b.dataset.v; else n.tb.p = b.dataset.v; storyPaint(); }
+  else if (a === 'st-bgc' || a === 'st-bgp') { const n = stNew; if (!n?.tb) return; if (a === 'st-bgc') n.tb.c = b.dataset.v; else n.tb.p = b.dataset.v;
+    if (n.edit == null) return storyPaint();
+    const bg = document.querySelector('#stfr .sttbg'); if (bg) { bg.style.backgroundColor = n.tb.c; bg.style.backgroundImage = stTbPat(n.tb); bg.firstElementChild.style.background = n.tb.c; }
+    document.querySelectorAll('[data-act=st-bgc]').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === n.tb.c));
+    document.querySelectorAll('[data-act=st-bgp]').forEach(x => { x.setAttribute('aria-pressed', x.dataset.v === (n.tb.p || '')); const i = x.firstElementChild; i.style.backgroundColor = n.tb.c; i.style.backgroundImage = stTbPat({c:n.tb.c, p:x.dataset.v}); }); }
+  else if (a === 'st-at') { const ta = document.getElementById('st-ta'); if (!ta) return; const pos = ta.selectionEnd ?? ta.value.length, pre = ta.value.slice(0, pos), ins = (pre && !/\s$/.test(pre) ? ' ' : '') + '@'; ta.value = pre + ins + ta.value.slice(pos); try { ta.setSelectionRange(pos + ins.length, pos + ins.length); } catch {} ta.focus(); ta.dispatchEvent(new Event('input')); }
   else if (a === 'st-mention') { const n = stNew, ta = document.getElementById('st-ta'), u = mentionPool().find(x => x.id === b.dataset.id); if (!n || n.edit == null || !ta || !u) return;
     const pos = ta.selectionEnd ?? ta.value.length, head = ta.value.slice(0, pos).replace(/@[^\s@]*$/, '@' + u.name + ' '); ta.value = head + ta.value.slice(pos);
     const x = n.texts[n.edit]; x.t = ta.value; x.m = [...(x.m || []).filter(m => m.id !== u.id), {id:u.id, n:u.name}].slice(0, 10);
