@@ -135,7 +135,8 @@ label.f{display:grid;gap:4px}
 .shared{border:1px solid var(--line-soft);padding:12px;display:grid;gap:10px;background:#ffffff06}.sh-h{display:flex;gap:10px;align-items:center}.sh-h>span{display:grid;min-width:0}.sh-ico{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.pshare{display:inline-flex;gap:6px;align-items:center}.pshare svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdel{margin-left:auto;align-self:start}.ph>div{min-width:0;flex:1}.ph .pdel{flex-wrap:nowrap;white-space:nowrap;gap:14px;flex:none}.pi .cmt .lnk{font-size:12px}
 .vclip{aspect-ratio:auto;min-height:200px;max-height:560px}.vclip img{position:relative;inset:auto;width:100%;height:auto;max-height:560px;object-fit:contain;filter:none}.vclip .play{position:absolute}.vclip.on{display:block;cursor:auto;min-height:0}.vclip video{display:block;width:100%;max-height:600px;background:#000}.pattvid{position:relative;display:inline-block}.pattvid img{max-width:160px;max-height:200px;display:block;border:1px solid var(--line)}.pattvid i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:#fff;text-shadow:0 0 6px #000}
-.rights{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.35;color:var(--muted);cursor:pointer}.rights input{flex:none;margin-top:2px;width:18px;height:18px}.msp{display:grid;gap:6px}.msp .emb{max-width:420px}
+.prep svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}.repopts{display:grid;gap:8px}.replist{list-style:none;margin:0;padding:0;display:grid;gap:12px}.rep{display:grid;gap:6px;border-bottom:1px solid var(--line-soft);padding-bottom:10px}.rep .row{gap:14px}
+.rights{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.35;color:var(--muted);cursor:pointer}.rights input{flex:none;margin-top:2px;width:18px;height:18px}.msp{display:grid;gap:6px}.msp .emb{max-width:360px;border:0}
 .emb{width:100%;border:1px solid var(--line-soft);background:#0b0b0d;overflow:hidden}.emb iframe{display:block;width:100%;border:0}.emb-tt{max-width:340px;margin-inline:auto}.emb-sp,.emb-am,.emb-dz{border-radius:12px;background:transparent}
 .lcard{display:grid;border:1px solid var(--line);color:var(--fg);text-decoration:none;overflow:hidden;background:#ffffff06}.lcard>img{width:100%;max-height:260px;object-fit:cover;display:block;border-bottom:1px solid var(--line-soft)}.lc-t{display:grid;gap:4px;padding:10px 12px;min-width:0}.lc-t b{font-weight:600;line-height:1.3}.lc-t small{color:var(--muted);word-break:break-word}.lc-h{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted);text-transform:lowercase}.lc-h img{width:16px;height:16px;border-radius:3px}.post.tp .lcard{color:var(--p-fg);border-color:var(--p-line)}.post.tp .lc-t small,.post.tp .lc-h{color:var(--p-muted)}
 .vid{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:12px;color:var(--fg);text-decoration:none;word-break:break-all;background:repeating-linear-gradient(90deg,transparent 0 14px,#ffffff08 14px 16px)}
@@ -864,6 +865,7 @@ setTimeout(() => crashBox('Die Seite hat nach 12 Sekunden nichts angezeigt. ' + 
 <label class="cpm-l"><span class="lbl">Helligkeit</span><input type="range" id="cpm-l-r" min="0" max="100" step="1" class="cpm-r"></label>
 <div class="row cpm-btns"><button type="button" class="btn ghost" id="cpm-cancel">Abbrechen</button><button type="button" class="btn" id="cpm-ok">Fertig</button></div></div></div>
 <div id="confirm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="confirm-h"><div class="card modal-card"><h2 id="confirm-h" class="ch-h">Willst du dich wirklich abmelden?</h2><div class="row"><button class="btn ghost" data-act="logout-no">Nein</button><span class="sp"></span><button class="btn" data-act="logout-yes">Ja, abmelden</button></div></div></div>
+<div id="repmodal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="rep-h"><form class="card modal-card" data-form="report"><h2 id="rep-h" class="ch-h">Beitrag melden</h2><p class="note" style="margin:0">Warum meldest du diesen Beitrag? Die Person erfährt nicht, wer gemeldet hat.</p><div class="repopts"><label class="rights"><input type="radio" name="rep-r" value="recht" checked><span>Fremde Musik, Videos oder Fotos ohne Erlaubnis</span></label><label class="rights"><input type="radio" name="rep-r" value="mobbing"><span>Beleidigung oder Mobbing</span></label><label class="rights"><input type="radio" name="rep-r" value="nackt"><span>Nacktheit oder Gewalt</span></label><label class="rights"><input type="radio" name="rep-r" value="spam"><span>Spam oder Werbung</span></label><label class="rights"><input type="radio" name="rep-r" value="anders"><span>Etwas anderes</span></label></div><label class="f" for="rep-t"><span class="lbl">Was genau? (freiwillig)</span><input id="rep-t" type="text" maxlength="200"></label><div class="row"><button class="btn ghost" type="button" data-act="rep-no">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Melden</button></div></form></div>
 <div id="delacct" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="delacct-h"><form class="card modal-card" data-form="delacct"><h2 id="delacct-h" class="ch-h">Willst du dein Konto wirklich löschen?</h2><p class="note" style="margin:0">Dein Profil, dein Zimmer, deine Beiträge und deine Freundesliste werden für immer gelöscht. Das kann man nicht rückgängig machen.</p><label class="f" for="del-in"><span class="lbl">Tippe zur Bestätigung LÖSCHEN ein</span><input id="del-in" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"></label><label class="f" for="del-pw" id="del-pwl" style="display:none"><span class="lbl">Dein Passwort</span><input id="del-pw" type="password" autocomplete="current-password"></label><span id="del-err" class="err" hidden></span><div class="row"><button class="btn ghost" type="button" data-act="delacct-no">Abbrechen</button><span class="sp"></span><button class="btn" type="submit" id="del-go" disabled>Konto löschen</button></div></form></div>
 
 <script>
@@ -4571,7 +4573,34 @@ function showHTML(hs){
 // Vom Owner gelöschte Beiträge anderer (site/hidden), für alle ausgeblendet
 const HIDDEN = new Set(); let HIDW = false;
 function hiddenWatch(){ if (HIDW || !social) return; HIDW = true; social.db.doc('site/hidden').onSnapshot(d => { HIDDEN.clear(); (d.exists ? d.data().ids || [] : []).forEach(x => HIDDEN.add(x)); softRender(); }, () => { HIDW = false; }); }
-const isHidden = p => { const o = p.remote ? p.author : social && p.author === S.me ? social.uid : null; return !!o && HIDDEN.has(o + '_' + p.id); };
+const isHidden = p => { const o = p.remote ? p.author : social && p.author === S.me ? social.uid : null; return !!o && (HIDDEN.has(o + '_' + p.id) || repHidden(o + '_' + p.id)); };
+/* ---------- Melden (Inaya, 2026-10-11): Meldungen in chats/meldungen; ab REP_MIN verschiedenen Meldenden ist der Beitrag für alle weg, bis Inaya ihn zurückholt ---------- */
+const REP_MIN = 3, REP = {list:[], ok:[], on:false};
+const REP_R = {recht:'Fremde Rechte (Musik, Video, Foto)', mobbing:'Beleidigung oder Mobbing', nackt:'Nacktheit oder Gewalt', spam:'Spam oder Werbung', anders:'Etwas anderes'};
+function repWatch(){
+  if (REP.on || !social) return; REP.on = true;
+  social.db.doc('chats/meldungen').onSnapshot(d => { REP.list = d.exists ? d.data().list || [] : []; softRender(); }, () => { REP.on = false; });
+  social.db.doc('site/meldungen').onSnapshot(d => { REP.ok = d.exists ? d.data().ok || [] : []; softRender(); }, () => {});
+}
+const repBy = k => [...new Set(REP.list.filter(x => x.k === k).map(x => x.by))];
+const repHidden = k => { repWatch(); return repBy(k).length >= REP_MIN && !REP.ok.includes(k); };
+let repTarget = null;
+async function sendReport(k, r, t){
+  const e = {k, by:social.uid, r, t:String(t || '').slice(0, 200), ts:Date.now()};
+  const d = await social.db.doc('chats/meldungen').get(), l = (d.exists ? d.data().list || [] : []).filter(x => !(x.k === k && x.by === e.by)); // je Person eine Meldung pro Beitrag
+  await social.db.doc('chats/meldungen').set({list:[...l, e].slice(-400)});
+}
+function reportsCard(){
+  if (!amOwner || !social) return ''; repWatch();
+  const ks = [...new Set(REP.list.map(x => x.k))].filter(k => !HIDDEN.has(k)).map(k => ({k, n:repBy(k).length, last:Math.max(...REP.list.filter(x => x.k === k).map(x => x.ts)), items:REP.list.filter(x => x.k === k)})).sort((a, b) => b.last - a.last).slice(0, 30);
+  const row = g => { const [o, ...pid] = g.k.split('_'), pp = PROF[o] ? remoteUser(o, PROF[o]).posts.find(x => x.id === pid.join('_')) : null, gone = repHidden(g.k), ok = REP.ok.includes(g.k);
+    return `<li class="rep"><div><b>${esc(ntName(o))}</b>: ${pp ? esc(String(pp.text || KIND[pp.type] || 'Beitrag').slice(0, 60)) : 'Beitrag'}<br><span class="note">${g.n}× gemeldet · ${[...new Set(g.items.map(x => REP_R[x.r] || x.r))].join(', ')}${g.items.some(x => x.t) ? ' · „' + esc(g.items.filter(x => x.t).map(x => x.t).slice(-2).join('“, „')) + '“' : ''}</span><br><span class="note">${ok ? 'Von dir freigegeben' : gone ? 'Gerade für alle ausgeblendet' : `Sichtbar (ab ${REP_MIN} Meldungen automatisch weg)`}</span></div>
+      <div class="row"><button class="lnk" data-act="profile" data-id="${esc(o)}">Ansehen</button>${ok ? '' : `<button class="lnk" data-act="rep-ok" data-k="${esc(g.k)}">Ist okay</button>`}<button class="lnk" data-act="post-hide" data-id="${esc(g.k)}">Löschen</button></div></li>`; };
+  return `<div class="card ownercard"><h2 class="card-h">Meldungen</h2><div class="card-in">
+    ${ks.length ? `<ul class="replist">${ks.map(row).join('')}</ul>` : '<p class="note">Keine offenen Meldungen.</p>'}
+    <p class="note">Wird ein Beitrag von ${REP_MIN} verschiedenen Leuten gemeldet, verschwindet er automatisch für alle. Mit „Ist okay“ holst du ihn zurück. Das siehst nur du.</p>
+  </div></div>`;
+}
 // Beiträge von anderen teilen (reposten), wie bei Insta/Tumblr (Inaya, 2026-10-10)
 function sharedHTML(sh){
   const u = S.users[sh.a] || (PROF[sh.a] ? profUser(sh.a) : null);
@@ -4619,7 +4648,7 @@ function postHTML(p){
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
   return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : `<span class="pdel row"><button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? `<span class="pdel row"><span class="muted">Wirklich löschen?</span><button class="btn ghost" data-act="post-del-yes" data-id="${p.id}">Ja</button><button class="btn ghost" data-act="post-del-no">Nein</button></span>` : `<span class="pdel row"><button class="lnk" data-act="post-edit" data-id="${p.id}">Bearbeiten</button><button class="lnk" data-act="post-del" data-id="${p.id}">Löschen</button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}<button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
@@ -4751,7 +4780,7 @@ let musicEdit = false;
 function musicHTML(u, mine){
   if (!u.id) return '';
   const sp = u.songSp && embedOf(u.songSp);
-  if (sp) return `<div class="music msp">${linkHTML(u.songSp)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
+  if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
   const vid = u.songFile ? 'file' : '', playing = vid && songPlaying && V.name === 'profile';
   if (!mine) return vid ? `<div class="music"><button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button></div>` : '';
   // Songs nur noch als MP3-Datei (Inaya, 2026-10-10): hochladen unter „Profil bearbeiten“
@@ -5720,10 +5749,31 @@ function embedOf(url){
   return null;
 }
 const linkHost = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
-function linkHTML(url, lp){
+// Kurzlinks aus den Apps (vm.tiktok.com, spotify.link …) werden beim Anzeigen aufgelöst, notfalls über mehrere Dienste
+const SHORT_RE = /^https?:\/\/(?:vm\.tiktok\.com|vt\.tiktok\.com|(?:www\.)?tiktok\.com\/t\/|spotify\.link|pin\.it|on\.soundcloud\.com|youtu\.be\/|instagr\.am)/i, LRES = {};
+async function jget(u, ms=7000){ const ac = new AbortController(), tm = setTimeout(() => ac.abort(), ms); try { const r = await fetch(u, {signal:ac.signal}); return r.ok ? await r.json() : null; } catch { return null; } finally { clearTimeout(tm); } }
+function jsonp(u, ms=7000){ return new Promise(ok => { const cb = 'nfj' + Math.random().toString(36).slice(2), sc = document.createElement('script'); let done = false; const end = v => { if (done) return; done = true; delete window[cb]; sc.remove(); ok(v); }; window[cb] = end; sc.src = u + (u.includes('?') ? '&' : '?') + 'callback=' + cb; sc.onerror = () => end(null); document.head.appendChild(sc); setTimeout(() => end(null), ms); }); }
+async function resolveLink(url){
+  let j;
+  if (/tiktok\.com/i.test(url)) for (const api of ['https://www.tiktok.com/oembed?url=', 'https://noembed.com/embed?url=']) {
+    j = await jget(api + encodeURIComponent(url));
+    const id = j && (j.embed_product_id || String(j.html || '').match(/data-video-id="(\d+)"/)?.[1] || String(j.html || '').match(/\/video\/(\d+)/)?.[1]);
+    if (id) return {u:`https://www.tiktok.com/@${(j.author_unique_id || String(j.author_url || '').split('@')[1] || 'x').replace(/[^\w.-]/g, '')}/video/${id}`, t:String(j.title || '').slice(0, 140), img:String(j.thumbnail_url || '').slice(0, 500), site:'TikTok'};
+  }
+  j = await jget('https://noembed.com/embed?url=' + encodeURIComponent(url)) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(url));
+  const tid = j && String(j.html || '').match(/data-video-id="(\d+)"/)?.[1]; if (tid) return {u:`https://www.tiktok.com/@x/video/${tid}`, t:String(j.title || '').slice(0, 140), img:String(j.thumbnail_url || '').slice(0, 500), site:'TikTok'};
+  if (j && j.url && j.url !== url) return {u:String(j.url).slice(0, 500), t:String(j.title || '').slice(0, 140), img:String(j.thumbnail_url || '').slice(0, 500), site:String(j.provider_name || '').slice(0, 60)};
+  return await linkPreview(url);
+}
+function linkHTML(url, lp, compact){
+  if (!lp?.u && SHORT_RE.test(url)) { // noch nicht aufgelöst: im Hintergrund nachschlagen und dann neu zeichnen
+    if (LRES[url] === undefined) { LRES[url] = 'busy'; resolveLink(url).then(x => { LRES[url] = x || null; if (x) { const mine = S.posts.find(p => p.author === S.me && p.url === url && !p.lp?.u); if (mine) { mine.lp = {...(mine.lp || {}), ...x}; save(); } softRender(); } }); }
+    if (LRES[url] && LRES[url] !== 'busy') lp = {...(lp || {}), ...LRES[url]};
+  }
   const v = ytId(lp?.u || url);
   if (v) return `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
   const e = embedOf(lp?.u || url);
+  if (e && compact && e.k === 'sp') e.h = 80; // Profilsong: schmale Spotify-Leiste (Inaya, 2026-10-11)
   if (e) return `<div class="emb emb-${e.k}"><iframe src="${esc(e.src)}" title="${esc(e.name)}" loading="lazy" style="${e.ar ? `aspect-ratio:${e.ar}` : `height:${e.h}px`}" allow="autoplay; encrypted-media; fullscreen; clipboard-write; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
   const host = linkHost(lp?.u || url), img = lp?.img && /^https:\/\//.test(lp.img) ? lp.img : '';
   return `<a class="lcard${img ? '' : ' noimg'}" href="${esc(url)}" target="_blank" rel="noopener">${img ? `<img src="${esc(img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span class="lc-t"><span class="lc-h"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64" alt="" onerror="this.remove()">${esc(lp?.site || host)}</span>${lp?.t ? `<b>${esc(lp.t)}</b>` : ''}${lp?.d ? `<small>${esc(String(lp.d).slice(0, 140))}</small>` : ''}${!lp?.t ? `<small>${esc(url)}</small>` : ''}</span></a>`;
@@ -5911,7 +5961,7 @@ function settingsView(){
     <div class="row"><button class="btn ghost" data-act="logout">Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
-  </div></div>${membersCard()}`;
+  </div></div>${reportsCard()}${membersCard()}`;
 }
 
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
@@ -6318,6 +6368,9 @@ document.addEventListener('click', async e => {
     if (V.name === 'room' && !RM.g) { const host = document.querySelector('[data-rav]'); if (host) { host.innerHTML = avatar(me().outfit, 'full', RM.me.pose); host.dataset.sig = RM.me.pose; setMv(host, RM.me.pose); } }
     roomMove();
   }
+  else if (a === 'rep-open') { if (!social) return; repTarget = b.dataset.k; const m = document.getElementById('repmodal'); m.querySelector('#rep-t').value = ''; m.hidden = false; return; }
+  else if (a === 'rep-no') { document.getElementById('repmodal').hidden = true; return; }
+  else if (a === 'rep-ok') { if (!amOwner || !social) return; const k = b.dataset.k; try { await social.db.doc('site/meldungen').set({ok:[...new Set([...REP.ok, k])].slice(-300)}); toast('Beitrag ist wieder für alle sichtbar'); } catch { toast('Das hat nicht geklappt.'); } return; }
   else if (a === 'post-hide') { // Owner blendet einen Beitrag für alle aus (z. B. alte Beiträge mit kaputtem Bild)
     if (!amOwner || !social) return; const key = b.dataset.id;
     if (!(await askYesNo('Diesen Beitrag für alle löschen?', 'Ja, löschen', 'Nein'))) return;
@@ -6440,6 +6493,11 @@ document.addEventListener('submit', async e => {
   const f = e.target; if (!f.dataset.form) return;
   e.preventDefault();
   const t = f.dataset.form, val = id => (document.getElementById(id)?.value || '').trim();
+  if (t === 'report') {
+    const k = repTarget, r = f.querySelector('input[name=rep-r]:checked')?.value || 'anders'; if (!k || !social) return;
+    try { await sendReport(k, r, val('rep-t')); document.getElementById('repmodal').hidden = true; toast('Danke, die Meldung ist angekommen.'); } catch { toast('Die Meldung ging gerade nicht raus.'); }
+    return;
+  }
   if (t === 'delacct') {
     const err = document.getElementById('del-err'), pw = document.getElementById('del-pw').value;
     if (!delWord()) { err.textContent = 'Bitte tippe genau LÖSCHEN ein.'; err.hidden = false; return; }
@@ -6549,7 +6607,7 @@ document.addEventListener('submit', async e => {
     const p = {id:'p' + Date.now().toString(36), author:S.me, type, text, ts:Date.now(), reactions:{}, comments:[]};
     if (postCrop) p.img = postCrop;
     if (url) p.url = url;
-    if (url && !ytId(url) && social) { const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Lädt Vorschau …'; } const lp = await linkPreview(url); if (lp) p.lp = lp; if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } }
+    if (url && !ytId(url) && social) { const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Lädt Vorschau …'; } const lp = SHORT_RE.test(url) ? await resolveLink(url) : await linkPreview(url); if (lp) p.lp = lp; if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } }
     if (PAUDIO) {
       if (!social) { toast('Musik posten geht, sobald du angemeldet bist.'); return; }
       const sb = f.querySelector('button[type=submit]'); if (sb) sb.disabled = true;
