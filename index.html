@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0cef459fd288';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='761ef7d9d218';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1188,6 +1188,10 @@ const ITEMS = [
   {id:'l_stulpen_kurz',cat:'legw',name:'Gerüschte kurze Stulpen',c:'#2a2a30',g:'w'},
   {id:'l_stulpen_fell',cat:'legw',name:'Flauschige Stulpen',c:'#ecebe7',g:'w'},
   {id:'l_stulpen_schnuer',cat:'legw',name:'Stulpen mit Schnürung',c:'#141218',g:'w'},
+  {id:'l_fell_oesen',cat:'legw',name:'Dicke Fellstulpen mit Ösenriemen',c:'#141218'},
+  {id:'l_fell_kreuz',cat:'legw',name:'Fellstulpen mit Schnallen und Kreuz',c:'#141218'},
+  {id:'l_fell_wolf',cat:'legw',name:'Wolfsfell-Stulpen mit Schnürung',c:'#6a6458'},
+  {id:'l_fell_lagen',cat:'legw',name:'Gestufte Fellstulpen',c:'#141218'},
   {id:'u_kein',cat:'bottom',name:'Keine Hose'},
   {id:'x_hacc',cat:'hacc',name:'Keine Kopfbedeckung',none:1},
   {id:'x_acc',cat:'acc',name:'Keine Accessoires',none:1},
@@ -2619,6 +2623,23 @@ Object.assign(IBOT, {
 });
 Object.assign(IBOTC, {m_baggy:'#2a2a30', m_baggyk:'#141218', m_baggyc:'#3d4430'});
 IWIDE.push('m_baggy', 'm_baggyk', 'm_baggyc');
+
+// ---- Dicke Fellstulpen (Inaya, 2026-10-11): zottelig, unten weit über dem Schuh, mit Riemen; liegen über Schuh und Hose ----
+const ifurBand = (X, c, i, y0, y1, w0, w1, seed) => { const B = X.B, L = [], R = [], n = Math.max(6, Math.round((y1 - y0) / 12));
+  for (let k = 0; k <= n; k++) { const y = y0 + (y1 - y0) * k / n, t = k / n, [a, b] = ilegE(B, i, Math.min(y, B.ay)), w = w0 + (w1 - w0) * t * t, j = k % 2 ? 6 + shR(seed, k) * 14 : 0; L.push(`${f1(a - w - j)} ${f1(y + (k % 2 ? 6 : 0))}`); R.push(`${f1(b + w + j)} ${f1(y + (k % 2 ? 8 : 0))}`); }
+  const [ab, bb] = ilegE(B, i, Math.min(y1, B.ay)), wb = w1, bot = []; for (let k = 1; k < 15; k++) bot.push(`${f1(bb + wb - (bb - ab + 2 * wb) * k / 15)} ${f1(y1 + (k % 2 ? 10 + shR(seed + 1, k) * 18 : 0))}`);
+  const [at, bt] = ilegE(B, i, y0), top = []; for (let k = 1; k < 11; k++) top.push(`${f1(at - w0 + (bt - at + 2 * w0) * k / 11)} ${f1(y0 - (k % 2 ? 8 + shR(seed + 2, k) * 12 : 0))}`);
+  const d = 'M' + L.join('L') + 'L' + bot.join('L') + 'L' + R.reverse().join('L') + 'L' + top.reverse().join('L') + 'Z';
+  const dk = shade(c, isLight(c) ? .7 : .55), lt = shade(c, isLight(c) ? 1.1 : 2.4);
+  const hairs = Array.from({length:Math.round((y1 - y0) * 1.1)}, (_, k) => { const y = y0 + shR(seed + 6, k) * (y1 - y0), t = (y - y0) / (y1 - y0), [a, b] = ilegE(B, i, Math.min(y, B.ay)), w = w0 + (w1 - w0) * t * t, x = a - w + shR(seed + 3, k) * (b - a + 2 * w); return `M${f1(x)} ${f1(y)}q${f1((shR(seed + 4, k) - .5) * 14)} 14 ${f1((x - (a + b) / 2) * .06 + (shR(seed + 5, k) - .5) * 10)} ${f1(26 + shR(seed + 7, k) * 16)}`; }), h1 = hairs.filter((_, k) => k % 3 === 0).join(''), h2 = hairs.filter((_, k) => k % 3 === 1).join(''), h3 = hairs.filter((_, k) => k % 3 === 2).join('');
+  return X.P(d, shade(c, isLight(c) ? .9 : 1.15)) + X.LN(h1, dk, 2.2, .7) + X.LN(h2, lt, 1.4, .45) + X.LN(h3, shade(c, isLight(c) ? .82 : 1.6), 1.8, .6) + X.LN(d, IOL, 1.2, .5); };
+const ifurStrap = (X, i, y, w, eyes=true) => { const [a, b] = ilegE(X.B, i, Math.min(y, X.B.ay)); return `<path d="M${f1(a - w)} ${y}L${f1(b + w)} ${y - 8}L${f1(b + w)} ${y + 8}L${f1(a - w)} ${y + 16}Z" fill="#0e0d10" ${IO} stroke-width="1.6"/>` + (eyes ? [1, 2, 3].map(k => `<circle cx="${f1(a - w + (b - a + 2 * w) * k / 4)}" cy="${f1(y + 8 - 8 * k / 4)}" r="3.4" fill="#0e0d10" stroke="#c9c9cf" stroke-width="1.8"/>`).join('') : ''); };
+const ILEGW_OVER = {
+  l_fell_oesen:(X, c) => [0, 1].map(i => { const B = X.B; return ifurBand(X, c, i, B.ky + 30, B.ay + 50, 14, 38, 3 + i) + [B.ky + 110, B.ky + 230, B.ay - 30].map((y, k) => ifurStrap(X, i, y, 26 + k * 10)).join(''); }).join(''),
+  l_fell_kreuz:(X, c) => [0, 1].map(i => { const B = X.B, [a, b] = ilegE(B, i, B.ky + 200), m = (a + b) / 2; return ifurBand(X, c, i, B.ky - 40, B.ay + 50, 16, 40, 7 + i) + ifurStrap(X, i, B.ky - 10, 28) + ifurStrap(X, i, B.ky + 26, 30) + `<rect x="${f1(B.cx > m ? b - 22 : a + 4)}" y="${B.ky - 20}" width="16" height="44" fill="none" stroke="#c9c9cf" stroke-width="3"/>` + `<path d="M${f1(m - 24)} ${B.ky + 70}L${f1(m + 24)} ${B.ky + 70}L${f1(m + 30)} ${B.ay - 50}L${f1(m)} ${B.ay - 10}L${f1(m - 30)} ${B.ay - 50}Z" fill="#0a0a0c" ${IO}/>` + X.LN(`M${f1(m - 14)} ${B.ky + 100}Q${f1(m - 18)} ${B.ky + 200} ${f1(m - 22)} ${B.ay - 70}`, '#fff', 3, .3) + `<path d="M${f1(m - 5)} ${B.ky + 90}h10v40h22v10h-22v110h-10v-110h-22v-10h22Z" fill="#6a1420" ${IO} stroke-width="1.2"/>` + istuds(X, [0, 1, 2, 3].map(k => [m - 26 + k * 2, B.ky + 110 + k * 50]).concat([0, 1, 2, 3].map(k => [m + 26 - k * 2, B.ky + 110 + k * 50])), 2.6); }).join(''),
+  l_fell_wolf:(X, c) => [0, 1].map(i => { const B = X.B, [a, b] = ilegE(B, i, B.ky + 40); return ifurBand(X, c, i, B.ky + 20, B.ay + 54, 16, 40, 11 + i) + ifurStrap(X, i, B.ky + 40, 26, false) + X.LN(`M${f1(i ? b + 20 : a - 20)} ${B.ky + 40}C${f1(i ? b + 60 : a - 60)} ${B.ky + 80} ${f1(i ? b + 10 : a - 10)} ${B.ky + 180} ${f1(i ? b + 50 : a - 50)} ${B.ky + 260}M${f1(i ? b + 20 : a - 20)} ${B.ky + 40}C${f1(i ? b + 40 : a - 40)} ${B.ky + 120} ${f1(i ? b + 70 : a - 70)} ${B.ky + 160} ${f1(i ? b + 60 : a - 60)} ${B.ky + 230}`, '#141218', 2.4) + `<rect x="${f1((i ? b + 50 : a - 50) - 3)}" y="${B.ky + 258}" width="6" height="12" rx="2" fill="#c9c9cf"/><rect x="${f1((i ? b + 60 : a - 60) - 3)}" y="${B.ky + 228}" width="6" height="12" rx="2" fill="#c9c9cf"/>` + X.LN(`M${f1(a - 30)} ${B.ky + 170}L${f1(b + 34)} ${B.ky + 120}M${f1(a - 40)} ${B.ay - 20}L${f1(b + 40)} ${B.ay - 50}`, '#141218', 9); }).join(''),
+  l_fell_lagen:(X, c) => [0, 1].map(i => { const B = X.B, h = (B.ay + 50 - B.ky) / 3; return [2, 1, 0].map(k => ifurBand(X, c, i, B.ky + k * h - 10, B.ky + (k + 1) * h + 10, 14 + k * 8, 26 + k * 10, 21 + i * 3 + k)).join(''); }).join(''),
+};
 const IARMCLIP = {};
 const MCROP = new Set(['m_raglan', 'm_netztank', 'tank', 'netz', 'mesharm', 'sterne']); // bauchfreie Männer-Oberteile
 function avatarI(o0, view='full', pose='', lite=false){
@@ -2682,6 +2703,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const shoes = ISHOE[o.shoes] ? ISHOE[o.shoes](X, o.shoesC || ISHOEC[o.shoes] || '#141218') : '';
   const bot = IBOT[o.bottom] ? IBOT[o.bottom](X, o.bottomC || IBOTC[o.bottom] || '#141218') : '';
   body += IWIDE.includes(o.bottom) ? shoes + bot : bot + shoes;
+  for (const k in (o.legw || {})) if (ILEGW_OVER[k]) body += ILEGW_OVER[k](X, o.legw[k] && o.legw[k] !== 'auto' ? o.legw[k] : (ITEMS.find(i => i.id === k)?.c || '#141218')); // Fellstulpen über Schuh und Hose
   if ((o.acc || {}).kette) body += IACC_FRONT.kette(X, AC('kette'));
   const lower = body; // Hose, Rock, Strümpfe, Schuhe, Gürtel: bleiben bei Arm-Posen an ihrem Platz
   if (!IARMCLIP[B.k]) IARMCLIP[B.k] = iarmClip(B);
