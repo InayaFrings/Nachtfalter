@@ -791,7 +791,7 @@ footer.foot .lnk{color:var(--muted)}
   .rposes button{min-height:44px;border-radius:999px;padding:8px 16px}
   .rscroll{margin-inline:-12px}
   .rscroll > .room{width:100%}
-  .rwrap{display:flex;flex-direction:column}.rstage{display:contents}.rstage>.rlog{order:3}.rwrap>.rmform{order:1}.saystack{max-width:46%;gap:3px}.say{font-size:12.5px;padding:3px 8px}.say:not(:last-child){font-size:11.5px}.rwrap>.rposes{order:2}.rwrap>p.note{order:2}
+  .rwrap{display:flex;flex-direction:column}.rstage{display:contents}.rstage>.rlog{order:3}.rwrap>.rmform{order:1}.saystack{max-width:46%;gap:3px}.say{font-size:12.5px;padding:3px 8px}.say:not(:last-child){font-size:11.5px}.rwrap>.rposes{order:4}.rwrap>p.note{order:4}
   .rstage > .chat.rlog{position:static;width:auto;max-height:120px;min-height:64px;margin-top:8px;background:#0000002e;backdrop-filter:none}
   .rstick .rscroll > .room{width:100%}
   .wardrobe .mirror-card{padding-top:14px}
@@ -5372,8 +5372,8 @@ function paintVisitors(v, owner){
 let rPoseOpen = false;
 function poseBar(){
   const cur = RM.me.pose || 'gerade';
-  // nur ein kleines Männchen; antippen zeigt die Posen (Inaya, 2026-10-11)
-  return `<div class="rposes${rPoseOpen ? ' open' : ''}" role="group" aria-label="Pose im Zimmer"><button type="button" class="rpbtn" data-act="rposeopen" aria-expanded="${rPoseOpen}" aria-label="Posen" title="Posen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.2"/><path d="M12 7.5v7M12 14.5l-3.5 6M12 14.5l3.5 6M6 10.5l6-1.5 6 1.5"/></svg></button>${rPoseOpen ? POSES.filter(x => ROOM_POSES.includes(x[0])).map(([k, l]) => `<button type="button" data-act="rpose" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('') : ''}</div>`;
+  // Posen immer sichtbar unter dem Chat, ohne Männchen-Knopf (Inaya, 2026-10-11)
+  return `<div class="rposes open" role="group" aria-label="Pose im Zimmer">${POSES.filter(x => ROOM_POSES.includes(x[0])).map(([k, l]) => `<button type="button" data-act="rpose" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>`;
 }
 function roomMove(){ if (RM.g) RM.g.presence({u:social.uid, ...RM.me}).catch?.(() => {}); const v = document.getElementById('roomvis'); if (v && RM.owner) paintVisitors(v, RM.owner); }
 document.addEventListener('click', e => {
@@ -5435,13 +5435,15 @@ function drawRoomMsgs(){
   box.scrollTop = box.scrollHeight;
   sayBubbles();
 }
-/* Sprechblasen über den Köpfen: die letzten 3 Nachrichten jeder Person stehen über ihrem Avatar (Inaya, 2026-10-11) */
-const SAID = new Set(), RMAX = 80;
+/* Sprechblasen über den Köpfen: die letzten 3 Nachrichten jeder Person stehen über ihrem Avatar und verschwinden nach 10 Sekunden (Inaya, 2026-10-11) */
+const SAID = new Set(), RMAX = 80, SAYMS = 10000; let sayT = 0;
 function sayBubbles(){
   const lay = document.getElementById('roomsay'); if (!lay) return;
   const room = lay.parentElement, R = room.getBoundingClientRect(); if (!R.width) return;
   const by = {};
-  roomLive().forEach(m => { if (m.from && m.text) (by[m.from] = by[m.from] || []).push(m); });
+  const now = Date.now(); let next = Infinity;
+  roomLive().forEach(m => { const age = now - (m.ts || 0); if (m.from && m.text && age < SAYMS) { (by[m.from] = by[m.from] || []).push(m); next = Math.min(next, SAYMS - age); } });
+  clearTimeout(sayT); if (next < Infinity) sayT = setTimeout(sayBubbles, next + 50);
   let html = '';
   for (const [from, list] of Object.entries(by)) {
     const av = from === RM.owner ? room.querySelector('.ritem.av:not(.vis)') : room.querySelector(`.ritem.vis[data-uid="${CSS.escape(from)}"]`);
