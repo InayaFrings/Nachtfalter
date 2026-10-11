@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='376f48d9cb86';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='085815290607';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1134,6 +1134,8 @@ textarea.sttxt{top:44%}
 .stsch b{font-size:19px;line-height:1.1;text-shadow:none;color:inherit}.stsch small{font:600 11px -apple-system,'Helvetica Neue',Arial,sans-serif;letter-spacing:.02em}
 .stouts button,.stcols .stseg button{font:600 14px -apple-system,'Helvetica Neue',Arial,sans-serif;letter-spacing:0}
 .stbgl{font:600 13px -apple-system,'Helvetica Neue',Arial,sans-serif}
+
+.stback svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round}.stback{display:grid;place-items:center}
 </style>
 
 <div id="app"></div>
@@ -5355,14 +5357,14 @@ function stEditorHTML(){
     ${n.tb ? `<div class="sttbg" style="background-color:${esc(n.tb.c)};background-image:${stTbPat(n.tb)}"><i style="background:${esc(n.tb.c)}"></i></div>` : n.vid ? stImgHTML(n.vid.url, n.f, '', 'loop') : stImgHTML(n.img, n.f, 'Deine Story')}
     <div class="sttexts">${n.texts.map((x, i) => i === n.edit ? '' : `<div ${stTxtAttrs(x, i)}>${esc(x.t)}</div>`).join('')}</div>
     <div class="stfname" id="stfname"${n.hint ? '' : ' hidden'}>${n.hint ? 'Wisch übers Foto für Filter' : esc(fx[1])}</div>
-    ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-cancel" aria-label="Abbrechen">${ico.x}</button></div>
+    ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-back" aria-label="Zurück">${ico.x}</button></div>
     <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button><button class="stic${n.song ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button>${n.tb ? `<button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>` : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}<button class="stic" data-act="st-tag" aria-label="Jemanden markieren">${ico.tag}</button></div>
     ${n.tb ? '' : `<button class="stfarrow l" data-act="st-fstep" data-v="-1" aria-label="Vorheriger Filter">‹</button><button class="stfarrow r" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">›</button>`}
     ${n.song ? `<button class="stsong" data-act="st-music">♪ Spotify-Song</button>` : ''}
     <div class="sttrash" id="sttrash" hidden>${ico.tr}</div>
     ${n.tb ? '' : `<span class="stfcur">${esc(fx[1])}</span>`}`}
     ${e ? `<div class="stedov">
-      <div class="stedtop"><div class="sttoprow"><div class="strow scroll ststyles" role="group" aria-label="Schrift">${STXT.map(([k, l]) => `<button class="stsch" data-act="st-tstyle" data-v="${k}" aria-pressed="${e.st === k}" aria-label="Schrift ${l}"><b class="st-${k}">Aa</b><small>${{neon:'Schnörkel', schreib:'Maschine'}[k] || l}</small></button>`).join('')}</div><button class="stat" data-act="st-at" aria-label="Jemanden markieren">@</button><button class="stdone" data-act="st-tdone">Fertig</button></div>
+      <div class="stedtop"><div class="sttoprow"><button class="stat stback" data-act="st-tback" aria-label="Zurück">${NFI.x}</button><div class="strow scroll ststyles" role="group" aria-label="Schrift">${STXT.map(([k, l]) => `<button class="stsch" data-act="st-tstyle" data-v="${k}" aria-pressed="${e.st === k}" aria-label="Schrift ${l}"><b class="st-${k}">Aa</b><small>${{neon:'Schnörkel', schreib:'Maschine'}[k] || l}</small></button>`).join('')}</div><button class="stat" data-act="st-at" aria-label="Jemanden markieren">@</button><button class="stdone" data-act="st-tdone">Fertig</button></div>
         ${n.tb ? `<div class="strow scroll stbgrow" role="group" aria-label="Hintergrundfarbe"><span class="stbgl">Farbe</span>${STBGC.map(c => `<button data-act="st-bgc" data-v="${c}" style="background:${c}" aria-label="Hintergrund ${c}" aria-pressed="${n.tb.c === c}"></button>`).join('')}</div>
         <div class="strow scroll stpatrow" role="group" aria-label="Muster am Rand"><span class="stbgl">Muster</span>${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="st-bgp" data-v="${k}" aria-pressed="${(n.tb.p || '') === k}" title="${l}" aria-label="Muster ${l}"><i style="background-color:${esc(n.tb.c)};background-image:${stTbPat({c:n.tb.c, p:k})}"></i></button>`).join('')}</div>` : ''}</div>
       <input class="stsize" id="st-size" type="range" min="4" max="16" step=".5" value="${e.s}" aria-label="Schriftgröße">
@@ -5417,7 +5419,7 @@ function stEditWire(){
   const up = e => {
     if (!d) return; const dd = d; d = null; fr.classList.remove('dragging'); const tr = document.getElementById('sttrash'); if (tr) tr.hidden = true;
     if (dd.t) {
-      if (!dd.moved) { if (!n.texts[dd.i].u) { n.edit = dd.i; storyPaint(); } return; }
+      if (!dd.moved) { if (!n.texts[dd.i].u) { n.edit = dd.i; n.editOld = {...n.texts[dd.i]}; storyPaint(); } return; }
       const x = n.texts[dd.i]; if (dd.ny > 86 && Math.abs(dd.nx - 50) < 16) { n.texts.splice(dd.i, 1); storyPaint(); return; }
       x.x = dd.nx; x.y = dd.ny; return;
     }
@@ -5428,7 +5430,7 @@ function stEditWire(){
   fr.addEventListener('pointerup', up); fr.addEventListener('pointercancel', () => { d = null; });
   const so = document.getElementById('st-song'); if (so) so.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.querySelector('[data-act=st-songok]')?.click(); } });
 }
-function stNewText(y){ const n = stNew; n.tool = null; n.texts.push({t:'', x:50, y:y || 40, s:8, c:'#ffffff', st:(n.texts[n.texts.length - 1] || {}).st || 'klassisch', bg:0}); n.edit = n.texts.length - 1; storyPaint(); }
+function stNewText(y){ const n = stNew; n.tool = null; n.editOld = null; n.texts.push({t:'', x:50, y:y || 40, s:8, c:'#ffffff', st:(n.texts[n.texts.length - 1] || {}).st || 'klassisch', bg:0}); n.edit = n.texts.length - 1; storyPaint(); }
 function stFStep(dir){
   const n = stNew; if (!n) return; const i = STF.findIndex(x => x[0] === n.f); n.f = STF[(i + dir + STF.length) % STF.length][0]; n.hint = false;
   const fr = document.getElementById('stfr'), img = fr?.querySelector('.stimg'); if (!img) return storyPaint();
@@ -5443,7 +5445,7 @@ function storyArchHTML(){
 }
 document.addEventListener('change', async e => {
   if (!['st-file', 'st-cap'].includes(e.target.id)) return; const f = e.target.files[0]; e.target.value = ''; if (!f) return;
-  if (/^video\//.test(f.type)) return stVideo(f);
+  if (/^video\//.test(f.type) || /\.(mov|mp4|m4v|webm|3gp|hevc)$/i.test(f.name || '')) return stVideo(f);
   try { const d = await resizeImage(f, 2000, .9); stCamStop(); stCam = {facing:stCam?.facing || 'environment', mode:'crop', img:d, zoom:1, ox:null, oy:null}; storyPaint(); }
   catch { toast('Das Foto ließ sich nicht öffnen.'); }
 });
@@ -5619,30 +5621,35 @@ function composeHTML(){
 const VID_MAX = 9 * 1024 * 1024, VID_SEC = 90, VID_CHUNK = 900000;
 function vidPoster(v){ const c = document.createElement('canvas'), k = Math.min(1, 360 / Math.max(v.videoWidth, v.videoHeight)); c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .6); }
 async function prepVideo(file, onProg){
-  const url = URL.createObjectURL(file), v = document.createElement('video'); v.src = url; v.playsInline = true; v.preload = 'auto'; v.muted = true;
+  const url = URL.createObjectURL(file), v = document.createElement('video'); v.playsInline = true; v.setAttribute('playsinline', ''); v.muted = true; v.defaultMuted = true; v.preload = 'auto';
+  v.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(v); // iPhone spielt nur Videos im Dokument ab
+  v.src = url; v.load();
   try {
-    await new Promise((ok, no) => { v.onloadeddata = ok; v.onerror = () => no(new Error('lesen')); setTimeout(() => no(new Error('lesen')), 15000); });
+    await new Promise((ok, no) => { v.onloadedmetadata = ok; v.onerror = () => no(new Error('lesen')); setTimeout(() => no(new Error('lesen')), 20000); });
     if (v.duration > VID_SEC + .5) throw new Error('lang');
-    await new Promise(ok => { v.onseeked = ok; v.currentTime = Math.min(.5, v.duration / 3); setTimeout(ok, 2000); });
-    const poster = vidPoster(v);
+    if (v.readyState < 2) { try { await v.play(); } catch {} await new Promise(ok => { if (v.readyState >= 2) return ok(); v.oncanplay = ok; setTimeout(ok, 4000); }); v.pause(); }
+    await new Promise(ok => { v.onseeked = ok; try { v.currentTime = Math.min(.5, v.duration / 3); } catch { ok(); } setTimeout(ok, 2500); });
+    let poster = ''; try { poster = v.videoWidth ? vidPoster(v) : ''; } catch {}
+    if (!poster) { const c = document.createElement('canvas'); c.width = 202; c.height = 360; const g = c.getContext('2d'); g.fillStyle = '#131314'; g.fillRect(0, 0, 202, 360); poster = c.toDataURL('image/jpeg', .6); }
     if (file.size <= VID_MAX) return {blob:file, type:file.type || 'video/mp4', poster};
     // zu groß: in Echtzeit neu aufnehmen, kleiner und mit weniger Bitrate
     const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
     const mt = window.MediaRecorder && types.find(t => MediaRecorder.isTypeSupported(t)); if (!mt) throw new Error('gross');
     const k = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas'); c.width = Math.round(v.videoWidth * k / 2) * 2; c.height = Math.round(v.videoHeight * k / 2) * 2;
     const g = c.getContext('2d'), stream = c.captureStream(30);
-    try { const AC = window.AudioContext || window.webkitAudioContext, ac = new AC(), src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination(); src.connect(dst); dst.stream.getAudioTracks().forEach(t => stream.addTrack(t)); v.muted = false; } catch {}
+    try { const AC = window.AudioContext || window.webkitAudioContext, ac = new AC(); ac.resume?.().catch(() => {}); const src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination(); src.connect(dst); dst.stream.getAudioTracks().forEach(t => stream.addTrack(t)); v.muted = false; } catch {}
     const rec = new MediaRecorder(stream, {mimeType:mt, videoBitsPerSecond:Math.min(2500000, Math.floor(VID_MAX * 8 * .85 / Math.max(1, v.duration))), audioBitsPerSecond:96000}), parts = [];
     rec.ondataavailable = e => e.data.size && parts.push(e.data);
     const done = new Promise(ok => rec.onstop = ok);
     v.currentTime = 0; await new Promise(ok => { v.onseeked = ok; setTimeout(ok, 1500); });
     let live = true; const draw = () => { if (!live) return; g.drawImage(v, 0, 0, c.width, c.height); onProg?.(v.currentTime / v.duration); requestAnimationFrame(draw); };
-    rec.start(1000); draw(); await v.play();
+    rec.start(1000); draw();
+    try { await v.play(); } catch { v.muted = true; await v.play(); } // ohne Freigabe für Ton: dann stumm weiter
     await new Promise(ok => { v.onended = ok; });
     live = false; rec.stop(); await done;
     const blob = new Blob(parts, {type:mt.split(';')[0]}); if (blob.size > VID_MAX) throw new Error('gross');
     return {blob, type:mt.split(';')[0], poster};
-  } finally { URL.revokeObjectURL(url); v.removeAttribute('src'); }
+  } finally { URL.revokeObjectURL(url); v.removeAttribute('src'); v.remove(); }
 }
 document.addEventListener('change', e => { if (e.target.id === 'prights') PRIGHTS = e.target.checked; else if (e.target.id === 'e-songrights') SONGRIGHTS = e.target.checked; });
 let SONGRIGHTS = false;
@@ -7471,6 +7478,10 @@ document.addEventListener('click', async e => {
     if (x.m && x.m.length === 1 && x.t.trim() === '@' + x.m[0].n) { x.u = x.m[0].id; x.t = x.m[0].n; delete x.m; x.s = Math.min(x.s, 6); } // nur ein @Name: wird zur Namensblase
     if (!x.t.trim() || x.t.trim() === '@') n.texts.splice(n.edit, 1); n.edit = null; storyPaint(); }
   else if (a === 'st-cancel' || a === 'st-close') stClose();
+  else if (a === 'st-back') { stNew = null; stCreate(); } // zurück zur Auswahl, falls man doch keine Story will (Inaya)
+  else if (a === 'st-tback') { const n = stNew; if (!n || n.edit == null) return; const x = n.texts[n.edit];
+    if (n.editOld) n.texts[n.edit] = n.editOld; else n.texts.splice(n.edit, 1); n.edit = null; n.editOld = null;
+    if (n.tb && !n.texts.length) { stNew = null; stCreate(); return; } storyPaint(); }
   else if (a === 'st-share') stShare();
   else if (a === 'st-prof') { STV = null; storyPaint(); go('profile', id); window.scrollTo(0, 0); } // Name in der Story führt zum Profil (Inaya, 2026-10-11)
   else if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); }
