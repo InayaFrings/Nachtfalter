@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='64bd42c9c76e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0cef459fd288';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1064,6 +1064,17 @@ const ITEMS = [
   {id:'afrol',cat:'back',name:'Afro lang',st:'Rock'},
   {id:'cornk',cat:'back',name:'Cornrows kurz',st:'Punk'},
   {id:'cornl',cat:'back',name:'Cornrows lang',st:'Punk'},
+  // Neue Frisuren (Inaya, 2026-10-11): eigene Entwürfe nach ihren Bildern, je kurz und lang
+  {id:'hx_cyberk',cat:'back',name:'Cyber-Falls kurz',st:'Cyber'},
+  {id:'hx_cyberl',cat:'back',name:'Cyber-Falls lang',st:'Cyber'},
+  {id:'hx_woll_k',cat:'back',name:'Wolldread-Zöpfe kurz',st:'Cyber'},
+  {id:'hx_woll_l',cat:'back',name:'Wolldread-Zöpfe lang',st:'Cyber'},
+  {id:'hx_racoonk',cat:'back',name:'Scene-Hair mit Streifen kurz',st:'Scene'},
+  {id:'hx_racoonl',cat:'back',name:'Scene-Hair mit Streifen lang',st:'Scene'},
+  {id:'hx_maehnek',cat:'back',name:'Toupierte Goth-Mähne kurz',st:'Goth'},
+  {id:'hx_maehnel',cat:'back',name:'Toupierte Goth-Mähne lang',st:'Goth'},
+  {id:'hx_nietenk',cat:'back',name:'Glatt mit Nieten kurz',st:'Punk'},
+  {id:'hx_nietenl',cat:'back',name:'Glatt mit Nieten lang',st:'Punk'},
   {id:'p_kein',cat:'front',name:'Kein Pony'},
   {id:'p_seitlich',cat:'front',name:'Seitlicher Scene-Pony',st:'Scene'},
   {id:'p_lang',cat:'front',name:'Langer Pony übers Auge',st:'Emo'},
@@ -1549,7 +1560,7 @@ function normOutfit(o){
   if (!['e_leer','e_mandel','e_katze','e_kuller','e_muede','e_zu','e_x','e_herz','e_stern','e_knopf','e_spirale'].includes(o.eyeform)) o.eyeform = 'e_rund'; if (!o.beard) o.beard = 'b_kein'; if (!o.lips) o.lips = 'l_laecheln';
   return o;
 }
-const SHORT_BACK = ['dutt','kurz','mod','iro','spikes','bob','scenek','gothzopf','dreadk','afrok','cornk','afrol'];
+const SHORT_BACK = ['hx_cyberk','hx_woll_k','hx_racoonk','hx_maehnek','hx_nietenk','dutt','kurz','mod','iro','spikes','bob','scenek','gothzopf','dreadk','afrok','cornk','afrol'];
 const CORN = ['cornk','cornl']; // Cornrows liegen eng am Kopf: ohne Pony
 
 
@@ -1763,7 +1774,8 @@ function iHair(o, X){ // gibt {back, front} zurück
       X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
     if (h.side && (IPONY[o.front] || ISPECP[o.front])) front += iboF(`<path d="M44 96L84 96L76 150L66 188L44 188Z" fill="${hf}"/>`); // Schläfe zwischen Pony und Strähne schließen
     if (h.side) { const s = h.flat ? `M48 70L48 170L46 ${h.side}L100 ${h.side}L102 236Q100 150 82 88L70 66Z` : ISIDE(h.side), sk = s.replace('M48 70L', 'M').replace(/L70 66Z$/, ''); front += iboF(`<path d="${s}" fill="${hf}"/>` + X.LN(sk, IOL, 2.6) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
-    if (h.fx) front += h.fx(X, hf, dk, HC); // eigene Zusatzlagen (z. B. Stufen beim Scene-Hair)
+    if (h.fx) front += h.fx(X, hf, dk, HC, FC);
+    if (h.bx) back += h.bx(X, hf, dk, HC, FC); // eigene Lagen hinter dem Körper (z. B. Falls) // eigene Zusatzlagen (z. B. Stufen beim Scene-Hair)
     if (h.f) front += P(h.f, hf) + lines(h.ln);
     if (h.shave) front = `<path d="${ICAP}" fill="${shade(HC, .5)}" opacity=".18"/>` + front;
     if (h.braids) { const br = `M104 34Q70 70 62 130Q58 190 60 230Q40 290 56 340Q36 400 54 470Q40 520 56 560`; /* Zöpfe ab Haaransatz */ front += iboF(X.LN(br, IOL, 34) + X.LN(br, HC, 28) + X.LN(br, dk, 26, .5).replace('stroke-linecap="round"', 'stroke-dasharray="10 12" stroke-linecap="round"') + `<path d="M44 556L68 556L62 590L50 590Z" fill="${HC}" ${IO}/><rect x="44" y="548" width="24" height="10" rx="4" fill="#e05aa0" ${IO}/>`); }
@@ -2429,6 +2441,43 @@ Object.assign(IHAIR, {
     side:330, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150M124 -60Q108 -20 110 20',
     fx:ISCENE_FX([[160, 256, 10], [236, 340, 14]])},
 });
+
+const shR = (seed, k) => { const x = Math.sin(seed * 91.7 + k * 12.9898) * 43758.5453; return x - Math.floor(x); }; // feste Zufallszahlen
+// ---- Neue Frisuren (Inaya, 2026-10-11): Cyber-Falls, Wolldreads, Scene mit Streifen, toupierte Mähne, glatt mit Nieten ----
+const hxC2 = (HC, FC) => FC && FC !== HC ? FC : (isLight(HC) ? '#141218' : '#ecebe7'); // zweite Farbe = Pony-Farbe, sonst Kontrast
+// Falls: Bündel oben an beiden Seiten, Schläuche (cyber) oder dicke Wolldreads (woll) hängen bis y1
+const ifalls = (kind, y1) => ({cap:1, b:y1 < 400 ? 'M44 170Q26 -30 172 -34Q318 -30 300 170L306 286Q172 300 38 286Z' : 'M40 170Q20 -40 172 -44Q324 -40 304 170L314 420Q172 440 30 420Z', side:y1 < 400 ? 280 : 400, flat:1, ln:'',
+  bx:(X, hf, dk, HC, FC) => { const C2 = hxC2(HC, FC), cols = kind === 'cyber' ? [HC, '#141218', shade(HC, isLight(HC) ? .8 : 1.5), HC, '#141218'] : [HC, C2, HC, C2, shade(HC, .7)]; let s = '';
+    for (let k = 0; k < 11; k++) { const t = k / 10, dx = -150 + t * 150, ye = y1 - 40 + shR(kind === 'cyber' ? 5 : 9, k) * 80, c = cols[k % cols.length], w = kind === 'cyber' ? 11 : 19;
+      const d = `M44 10C${f1(44 + dx * .6)} -10 ${f1(44 + dx)} ${f1(ye * .3)} ${f1(44 + dx * .8 + Math.sin(k) * 14)} ${f1(ye)}`;
+      if (kind === 'cyber') s += iboF(X.LN(d, IOL, w + 4) + X.LN(d, c, w) + (c === '#141218' ? X.LN(d, shade(HC, 1.8), w - 3, .7).replace('stroke-linecap="round"', 'stroke-dasharray="2 5"') : X.LN(d, shade(c, isLight(c) ? .7 : 1.6), w - 4, .6).replace('stroke-linecap="round"', 'stroke-dasharray="3 6"')) + X.LN(d, '#fff', 2, .35));
+      else s += iboF(X.LN(d, IOL, w + 5) + X.LN(d, c, w) + X.LN(d, shade(c, isLight(c) ? .75 : 1.5), w * .6, .8).replace('stroke-linecap="round"', 'stroke-dasharray="4 7"') + `<ellipse cx="${f1(44 + dx * .8 + Math.sin(k) * 14)}" cy="${f1(ye)}" rx="${f1(w / 2)}" ry="${f1(w / 2 + 3)}" fill="${c}" ${IO} stroke-width="2"/>`); }
+    if (kind === 'cyber') s += iboF(X.LN(`M44 10C-60 0 -90 ${f1(y1 * .5)} -40 ${f1(y1 * .62)}C-10 ${f1(y1 * .7)} 30 ${f1(y1 * .4)} 44 10`, IOL, 14) + X.LN(`M44 10C-60 0 -90 ${f1(y1 * .5)} -40 ${f1(y1 * .62)}C-10 ${f1(y1 * .7)} 30 ${f1(y1 * .4)} 44 10`, HC, 10, .9));
+    return s; },
+  fx:(X, hf, dk, HC, FC) => iboF(kind === 'cyber' ? `<ellipse cx="44" cy="12" rx="26" ry="16" fill="#141218" ${IO}/>` + X.LN('M26 8Q44 20 62 8', shade(HC, 1.6), 3, .8) + `<path d="M96 40l26 -10M100 28l18 16" stroke="${hxC2(HC, FC) === '#141218' ? shade(HC, 1.4) : hxC2(HC, FC)}" stroke-width="7" stroke-linecap="round"/>`
+    : `<path d="M44 12L0 -26L4 34Z M44 12L90 -30L84 36Z" fill="#141218" ${IO}/><circle cx="44" cy="12" r="11" fill="#141218" ${IO}/>` + `<g transform="translate(68 52) rotate(-20)"><rect x="-4" y="-16" width="8" height="32" rx="3" fill="#ecebe7" ${IO} stroke-width="1.4"/>${[-1, 1].map(j => `<path d="M-4 ${j * 10}h8" stroke="#141218" stroke-width="1.6"/>`).join('')}</g>`)});
+// Toupierte Mähne: wilde Spitzen rundherum, unten kurz (Schulter) oder lang
+const imaehne = (y1) => { const P = [], n = 76; for (let i = 0; i <= n; i++) { const a = Math.PI * (.5 + 2 * i / n), lo = Math.sin(a) > 0, out = i % 2 ? 1.06 + shR(13, i) * (lo ? .14 : .32) : .9 + shR(7, i) * .06, rx = 170 + shR(3, i) * 24, ry = lo ? y1 - 130 : 200; const j = (shR(19, i) - .5) * .16; P.push(`${f1(172 + Math.cos(a + j) * rx * out)} ${f1(130 + Math.sin(a + j) * ry * out)}`); } return 'M' + P.join('L') + 'Z'; };
+const IMAEHNE_LN = (X, dk, y1) => X.LN(Array.from({length:40}, (_, k) => { const a = Math.PI * (.75 + k * 1.5 / 39) + (shR(23, k) - .5) * .2, r = 150 + shR(17, k) * 70, sy = Math.sin(a) > 0 ? (y1 - 130) / 200 : 1; return `M${f1(172 + Math.cos(a) * 70)} ${f1(130 + Math.sin(a) * 60)}Q${f1(172 + Math.cos(a + .15) * r * .7)} ${f1(130 + Math.sin(a + .15) * r * .6 * sy)} ${f1(172 + Math.cos(a) * r)} ${f1(130 + Math.sin(a) * r * sy)}`; }).join(''), dk, 2, .6);
+// Nieten-Kegel im Haar, zeigen nach außen
+const ihairSpike = (x, y, deg, r=1) => `<path d="M${f1(-7 * r)} 0L0 ${f1(-20 * r)}L${f1(7 * r)} 0Z" transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(deg)})" fill="#d4d4da" ${IO} stroke-width="1.2"/><path d="M${f1(-2 * r)} -2L0 ${f1(-14 * r)}" stroke="#fff" stroke-width="1.6" opacity=".6" transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(deg)})"/>`;
+const ihairStripes = (X, d, sc, id, y0=150) => `<clipPath id="${X.u}${id}"><path d="${d}"/></clipPath><g clip-path="url(#${X.u}${id})">` + Array.from({length:12}, (_, k) => `<path d="M-60 ${y0 + k * 58}L420 ${y0 + k * 58 - 10}L420 ${y0 + k * 58 + 6}L-60 ${y0 + k * 58 + 16}Z" fill="${sc}" opacity=".95"/>`).join('') + `</g>`;
+const RACOON_K = [[34, 60], [22, 160], [40, 140], [20, 236], [42, 214], [30, 300], [56, 276], [54, 340], [80, 306], [96, 352], [110, 310], [124, 336], [130, 296]];
+const RACOON_L = [[34, 60], [22, 160], [40, 140], [18, 246], [40, 220], [20, 336], [44, 306], [26, 426], [50, 396], [36, 510], [60, 476], [54, 586], [82, 540], [96, 616], [112, 556], [124, 600], [130, 540]];
+Object.assign(IHAIR, {
+  hx_cyberk:ifalls('cyber', 330), hx_cyberl:ifalls('cyber', 640),
+  hx_woll_k:ifalls('woll', 340), hx_woll_l:ifalls('woll', 680),
+  hx_racoonk:{b:ISCENE_B(RACOON_K), side:240, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', bx:(X, hf, dk, HC, FC) => ihairStripes(X, ISCENE_B(RACOON_K), hxC2(HC, FC), 'rk', 200), fx:(X, hf, dk, HC, FC) => iboF(ihairStripes(X, ISIDE(240), hxC2(HC, FC), 'rs', 196))},
+  hx_racoonl:{b:ISCENE_B(RACOON_L), side:330, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', bx:(X, hf, dk, HC, FC) => ihairStripes(X, ISCENE_B(RACOON_L), hxC2(HC, FC), 'rk', 200), fx:(X, hf, dk, HC, FC) => iboF(ihairStripes(X, ISIDE(330), hxC2(HC, FC), 'rs', 196))},
+  hx_maehnek:{b:imaehne(380), side:300, cap:1, ln:'', bx:(X, hf, dk) => IMAEHNE_LN(X, dk, 380)},
+  hx_maehnel:{b:imaehne(640), side:460, cap:1, ln:'', bx:(X, hf, dk) => IMAEHNE_LN(X, dk, 640)},
+  hx_nietenk:{b:'M40 170Q20 -40 172 -44Q324 -40 304 170L312 360L290 348L282 372L252 354L92 354L62 372L54 348L32 360Z', side:340, flat:1, cap:1, ln:'M56 220Q44 290 56 350M288 220Q300 290 288 350',
+    bx:() => [[24, 250, -100], [30, 320, -96], [320, 250, 100], [314, 320, 96]].map(([x, y, a]) => ihairSpike(x, y, a)).join(''),
+    fx:() => Array.from({length:9}, (_, k) => { const a = Math.PI * (1.08 + k * .84 / 8); return ihairSpike(172 + Math.cos(a) * 126, 70 + Math.sin(a) * 96, a * 180 / Math.PI + 90, 1.1); }).join('') + iboF(ihairSpike(46, 230, -90) + ihairSpike(48, 300, -90, .9))},
+  hx_nietenl:{b:'M40 170Q20 -40 172 -44Q324 -40 304 170L318 700L290 680L280 712L250 690L94 690L64 712L54 680L26 700Z', side:640, flat:1, cap:1, ln:'M56 220Q40 440 56 680M288 220Q304 440 288 680',
+    bx:() => [[24, 260, -100], [22, 380, -94], [26, 500, -92], [30, 620, -90], [320, 260, 100], [322, 380, 94], [318, 500, 92], [314, 620, 90]].map(([x, y, a]) => ihairSpike(x, y, a)).join(''),
+    fx:() => Array.from({length:9}, (_, k) => { const a = Math.PI * (1.08 + k * .84 / 8); return ihairSpike(172 + Math.cos(a) * 126, 70 + Math.sin(a) * 96, a * 180 / Math.PI + 90, 1.1); }).join('') + iboF(ihairSpike(46, 240, -90) + ihairSpike(44, 360, -90, .9) + ihairSpike(46, 480, -90) + ihairSpike(48, 590, -90, .9))},
+});
 // ---- Jungs-Kleidung (Inaya, 2026-10-10) ----
 const ILEGLINE = (X, i, t, y0, y1) => { const P = []; for (let y = y0; y <= y1; y += 30) { const [a, b] = ilegE(X.B, i, y); P.push(`${f1(a + (b - a) * t)} ${y}`); } return 'M' + P.join('L'); };
 Object.assign(ITOP, {
@@ -2507,7 +2556,6 @@ Object.assign(IJACK, {
 Object.assign(IJACKC, {m_trench:'#0c0b0e'});
 
 // ---- Zerfetzte Jacken (Inaya, 2026-10-11): ausgefranste Säume, lange Fetzen-Ärmel, Reißverschlüsse, Schnallen ----
-const shR = (seed, k) => { const x = Math.sin(seed * 91.7 + k * 12.9898) * 43758.5453; return x - Math.floor(x); };
 // Fetzen-Saum: gezackte Lappen zwischen x0 und x1 ab Höhe y, bis len tief
 const ishred = (X, c, x0, x1, y, len, n, seed) => { let d = `M${f1(x0)} ${y - 4}`; for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n; d += `L${f1(x)} ${f1(i % 2 ? y + len * (.45 + shR(seed, i) * .7) : y + 4 + shR(seed, i) * 10)}`; } return X.G(d + `L${f1(x1)} ${y - 4}Z`, c); };
 // Fetzen am Ärmelende (k 0 = links im Bild, 1 = rechts)
