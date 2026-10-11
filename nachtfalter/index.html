@@ -4585,8 +4585,7 @@ function postHTML(p){
   if (p.audio) body += audioHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
-  if (p.type !== 'gedanke' && p.type !== 'neu' && p.type !== 'teilen' && p.text) body += `<p class="caption">${etx(p.text)}</p>`;
-  if (p.type === 'teilen' && p.text) body = `<p class="caption">${etx(p.text)}</p>` + body;
+  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body = `<p class="caption">${etx(p.text)}</p>` + body; // Text immer über Bild oder Anhang (Inaya, 2026-10-11)
   const reacts = REACTIONS.map(r => {
     const who = p.reactions[r] || [], on = who.includes(S.me);
     return `<button data-act="react" data-id="${p.id}" data-r="${r}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${who.length || ''}</button>`;
