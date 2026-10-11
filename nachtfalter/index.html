@@ -505,6 +505,8 @@ footer.foot .lnk{color:var(--muted)}
 .rhop{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 8px;border:1px solid var(--line, #3a3a40);border-radius:999px;background:transparent;color:var(--fg);font:400 14px var(--f-display);letter-spacing:.03em;cursor:pointer;min-height:0}.rhop:hover{background:rgba(255,255,255,.06)}.rhop svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .rchat{margin-top:10px;display:grid;gap:6px}.rchat .ropen{margin:0}.rchat .rcount{margin:0}.rchat .cform{margin:0}
 .rwrap{position:relative;min-width:0;max-width:100%}.rstage{position:relative}.rwrap>.rposes{max-width:100%;margin-top:8px}
+.bestbtn{margin-top:10px}.bestpick{margin-top:10px;border:1px solid var(--p-line,var(--line));padding:10px 12px;display:grid;gap:10px;background:var(--p-panel,transparent)}
+.bestrow{width:100%;background:none;border:1px solid var(--p-line,var(--line));color:inherit;font:inherit;padding:6px 10px;cursor:pointer;text-align:left}.bestrow[aria-pressed="true"]{border-color:currentColor}.bestrow:disabled{opacity:.45;cursor:default}.bestmark{font-size:20px;width:28px;text-align:center}
 .rposes .rpbtn{width:44px;height:44px;padding:0!important;border-radius:50%!important;display:grid;place-items:center;flex:none}.rposes .rpbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.rposes .rpbtn[aria-expanded="true"]{background:var(--fg);color:var(--ink)}
 .rlog .bubble{font-size:15px;padding:4px 10px;max-width:92%}.rlog .bubble .meta,.rlog .bubble small.t{font-size:11px}.rlog{gap:5px!important}
 .rstage > .chat.rlog{position:absolute;left:10px;bottom:10px;width:min(46%,380px);max-height:42%;min-height:0;margin:0;padding:8px;z-index:6;background:#0a0a0bcc;border:1px solid var(--line-soft);backdrop-filter:blur(2px)}
@@ -4582,6 +4584,12 @@ async function loadFriendsOf(uid){
   softRender();
 }
 const PF_ASK = new Set();
+let bestOpen = false;
+function bestPicker(){
+  const fr = Object.values(S.users).filter(f => f.remote && isFriend(f.id)).sort((a, b) => a.name.localeCompare(b.name)), best = S.best || [];
+  return `<div class="bestpick"><div class="rsheet-h"><b>Beste Freunde (${best.length} von 4)</b><button type="button" class="lnk" data-act="best-open">Fertig</button></div>
+    ${fr.length ? `<div class="rslist">${fr.map(f => { const on = best.includes(f.id); return `<button type="button" class="rsrow bestrow" data-act="best-tog" data-id="${esc(f.id)}" aria-pressed="${on}" ${!on && best.length >= 4 ? 'disabled' : ''}><span class="cameo">${avatar(f.outfit, 'head')}</span><span class="rsname">${esc(f.name)}<small>@${esc(f.handle)}</small></span><span class="bestmark">${on ? '✓' : '+'}</span></button>`; }).join('')}</div>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</div>`;
+}
 function profFriends(u, others){
   if (u.helper) return '';
   let list;
@@ -4592,11 +4600,13 @@ function profFriends(u, others){
   }
   const n = list ? list.filter(f => !f.helper).length : 0;
   // Nur angepinnte Freunde (höchstens 4) stehen auf dem Profil (Inaya, 2026-10-10)
-  if (list) { const pins = (u.remote ? u.pins : S.pinF) || [], have = new Set(u.remote ? (FRL[u.id]?.ids || []) : list.map(f => f.id));
+  if (list) { const pins = (u.remote ? u.pins : S.best) || [], have = new Set(u.remote ? (FRL[u.id]?.ids || []) : list.map(f => f.id));
     list = pins.filter(id => have.has(id)).slice(0, 4).map(id => u.remote ? (id === social?.uid ? me() : profUser(id) || (PF_ASK.has(id) ? null : (PF_ASK.add(id), loadProf(id).then(softRender), null))) : list.find(f => f.id === id)).filter(Boolean); }
-  const none = u.remote ? '' : '<p class="note" style="margin:0">Pinne bis zu 4 Freunde an, dann stehen sie hier. Unter „Freunde“ lange auf einen Namen drücken (am PC Rechtsklick) und „Anpinnen“ wählen.</p>';
-  if (list && !list.length && (u.remote || !n)) return ''; // nur die angepinnten Freunde, ohne Überschrift (Inaya, 2026-10-10)
-  return `<div class="pfr">${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : n ? none : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}</div>`;
+  // Beste Freunde (höchstens 4) wählt man direkt auf dem eigenen Profil, unabhängig von angepinnten Chats (Inaya, 2026-10-11)
+  const own = !u.remote && u.id === S.me && social, none = '';
+  const add = own ? `<button type="button" class="btn ghost bestbtn" data-act="best-open" aria-expanded="${bestOpen}">${(S.best || []).length ? 'Beste Freunde ändern' : '＋ Beste Freunde hinzufügen'}</button>${bestOpen ? bestPicker() : ''}` : '';
+  if (list && !list.length) return own ? `<div class="pfr">${add}</div>` : ''; // nur die angepinnten Freunde, ohne Überschrift (Inaya, 2026-10-10)
+  return `<div class="pfr">${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : n ? none : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}${add}</div>`;
 }
 // Links auf dem Profil: Spotify, Snapchat, Instagram, TikTok, Discord (Inaya, 2026-10-10)
 const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link']]; // Discord entfernt (Inaya, 2026-10-11)
@@ -4951,7 +4961,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.pinF || []).slice(0, 4), songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -6073,6 +6083,8 @@ document.addEventListener('click', async e => {
     u.points -= i.price; u.owned.push(id); wearItem(u.outfit, i); trial = null;
     save(); render(); toast(`${i.name} gekauft. Es liegt jetzt in deiner Garderobe.`);
   }
+  else if (a === 'best-open') { bestOpen = !bestOpen; render(); }
+  else if (a === 'best-tog') { const l = S.best || []; S.best = l.includes(id) ? l.filter(x => x !== id) : l.length < 4 ? [...l, id] : l; save(); publishProfile(); render(); }
   else if (a === 'rposeopen') { rPoseOpen = !rPoseOpen; render(); }
   else if (a === 'rpose') {
     RM.me.pose = b.dataset.v; document.querySelectorAll('[data-act=rpose]').forEach(x => x.setAttribute('aria-pressed', x === b));
