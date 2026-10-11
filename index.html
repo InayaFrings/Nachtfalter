@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d3d1c2dd2fc3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a9caff66b967';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -270,11 +270,7 @@ label.f{display:grid;gap:4px}
 .clist.pubg{display:flex;flex-direction:row;align-items:center;gap:10px}.pubgt{flex:1;min-width:0;display:grid}.pubg .btn{flex:none}
 .cname{all:unset;cursor:pointer;font:inherit;font-weight:600}.cname:hover,.cname:focus-visible{text-decoration:underline}
 .cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
-.cform:has(.pcre){flex-wrap:wrap}
-#kbbar{position:fixed;left:0;right:0;top:calc(var(--vvt,0px) + var(--vvh,100vh));transform:translateY(-100%);z-index:2100;background:#141218;color:#ecebe7;border-top:1px solid #3b3b3f;padding:8px 10px;display:grid;gap:6px}#kbbar[hidden]{display:none}
-#kbbar .kbrow{display:flex;gap:8px;margin:0}#kbbar input{flex:1;min-width:0;font-size:16px;background:#1d1b21;color:#ecebe7;border:1px solid #3b3b3f;padding:10px}#kbbar .btn{flex:none;padding-inline:12px}
-#kbbar .kbre{font:italic 14px var(--f-ital);color:#cfcdc8}#kbbar .kbre:empty{display:none}#kbbar .kbre .lnk{color:inherit;font-size:16px;margin-left:4px}
-body.kbbar .mobnav{display:none}
+.cform:has(.pcre){flex-wrap:wrap}[data-form=pcomment] .pcre{order:-2}
 #rw-file{display:block;margin:4px 0}#rw-file:empty{display:none}#rw-file .pcthumb,#rw-file .pcthumb img{width:64px;height:64px}
 .cthread .bub{cursor:pointer}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
 .bub{position:relative;background:var(--paper-2,#1c1c20);border:1px solid var(--line);border-radius:16px;padding:7px 13px 6px;min-width:0;max-width:calc(100% - 48px);overflow-wrap:anywhere;font-size:16px;line-height:1.35}
@@ -4576,53 +4572,15 @@ document.addEventListener('click', e => {
   const re = t.closest('[data-act="pc-re"]') || (!t.closest('button,a,input,label,img') ? t.closest('.cthread .bub')?.querySelector('[data-act="pc-re"]') : null);
   if (!re) return; e.preventDefault(); e.stopPropagation();
   const k = re.dataset.k, box = re.closest('[data-pi]'); CMRE[k] = {d:re.dataset.d, u:re.dataset.u}; piDraw(k);
-  if (kbbOpen(k)) return;
   const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] input[type=text]`); if (i) { i.focus({preventScroll:true}); kbSoon(); }
 }, true);
 document.addEventListener('input', e => { if (e.target.id !== 'pubg-q') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#pubg-list .pubg').forEach(el => { el.hidden = !!q && !el.dataset.n.includes(q); }); });
-// Handy: Kommentieren und Antworten über eine eigene Leiste direkt über der Tastatur, wie im Chat. Nichts scrollt (Inaya, 2026-10-11)
-const KBB = {k:null};
-function kbbName(k){ const r = CMRE[k]; if (!r) return ''; return r.u === social?.uid ? me().name : S.users[r.u]?.name || (PROF[r.u] ? profUser(r.u)?.name : '') || PI[k]?.list.find(x => x.did === r.d)?.name || 'Jemand'; }
-function kbbPaint(){
-  const bar = document.getElementById('kbbar'), k = KBB.k; if (!bar || !k) return; const n = kbbName(k);
-  bar.querySelector('.kbre').innerHTML = (n ? `Antwort an ${esc(n)} <button type="button" class="lnk" data-kbx="1" aria-label="Antworten abbrechen">×</button>` : '') + (PCIMG[k] ? `${n ? ' · ' : ''}Foto angehängt` : '');
-  document.getElementById('kbb-in').placeholder = n ? 'Antwort an ' + n + '…' : 'Etwas dazu schreiben…';
-}
-function kbbClose(){
-  const bar = document.getElementById('kbbar'); if (!bar || bar.hidden) return; const i = document.getElementById('kbb-in'), p = KBB.k && document.getElementById('pc-' + KBB.k);
-  if (p) p.value = i.value; bar.hidden = true; document.body.classList.remove('kbbar'); KBB.k = null; i.blur();
-}
-function kbbOpen(k){
-  if (!isMob() || !k) return false;
-  let bar = document.getElementById('kbbar');
-  if (!bar) {
-    bar = document.createElement('div'); bar.id = 'kbbar'; bar.hidden = true;
-    bar.innerHTML = `<div class="kbre"></div><form class="kbrow"><input type="text" id="kbb-in" maxlength="300" autocomplete="off" aria-label="Kommentar"><button class="btn" type="submit">Senden</button><button class="btn ghost" type="button" data-kbclose="1" aria-label="Schließen">×</button></form>`;
-    document.body.appendChild(bar);
-    bar.addEventListener('pointerdown', e => { if (e.target.closest('button')) e.preventDefault(); }); // Tastatur bleibt offen
-    bar.addEventListener('click', e => { if (e.target.closest('[data-kbx]')) { const k = KBB.k; delete CMRE[k]; piDraw(k); kbbPaint(); document.getElementById('kbb-in').focus(); } else if (e.target.closest('[data-kbclose]')) kbbClose(); });
-    bar.querySelector('form').addEventListener('submit', e => {
-      e.preventDefault(); const k = KBB.k, i = document.getElementById('kbb-in'), p = k && document.getElementById('pc-' + k); if (!p) return kbbClose();
-      const text = i.value; if (!text.trim() && !PCIMG[k]) return; kbbClose(); i.value = ''; p.value = text; const f = p.closest('form'); f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
-    });
-    document.getElementById('kbb-in').addEventListener('blur', () => setTimeout(() => { if (document.activeElement?.id !== 'kbb-in') kbbClose(); }, 250));
-  }
-  const i = document.getElementById('kbb-in'); if (KBB.k !== k) i.value = document.getElementById('pc-' + k)?.value || '';
-  KBB.k = k; vvFit(); kbbPaint(); bar.hidden = false; document.body.classList.add('kbbar'); i.focus(); return true;
-}
-// Tippen ins Kommentarfeld am Handy öffnet die Leiste statt das Feld im Beitrag
-let pcT0 = null; document.addEventListener('touchstart', e => { const t = e.touches[0]; pcT0 = t ? [t.clientX, t.clientY] : null; }, {capture:true, passive:true});
-const pcTap = e => { const t = e.target; if (!isMob() || !t.matches?.('form[data-form="pcomment"] input[type=text]')) return;
-  if (e.type === 'touchend') { const c = e.changedTouches[0]; if (pcT0 && c && Math.hypot(c.clientX - pcT0[0], c.clientY - pcT0[1]) > 10) return; } // war ein Wischen, kein Tippen
-  e.preventDefault(); e.stopPropagation(); kbbOpen(t.closest('form').dataset.k); };
-document.addEventListener('touchend', pcTap, {capture:true, passive:false});
-document.addEventListener('click', pcTap, true);
 const PCIMG = {}, CMOPEN = new Set(), CMRE = {}, CMT_THREADS = 1791723600000; // ab hier gibt es Antworten auf Kommentare
 document.addEventListener('change', async e => {
   if (!e.target.classList?.contains('pcfile')) return;
   const k = e.target.dataset.k, f = e.target.files[0]; if (!f) return;
   try { PCIMG[k] = await resizeImage(f, 480, .7); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; }
-  piDraw(k); if (!kbbOpen(k)) document.getElementById('pc-' + k)?.focus();
+  piDraw(k); document.getElementById('pc-' + k)?.focus();
 });
 function piDraw(k){
   const w = PI[k]; if (!w) return;
@@ -4630,7 +4588,7 @@ function piDraw(k){
     const inp = el.querySelector('input[type=text]'), val0 = inp?.value || '', foc = inp && document.activeElement === inp;
     el.innerHTML = piInner(w.p);
     const cm = el.querySelector('.cmts'); if (cm) cm.scrollTop = cm.scrollHeight; // neueste Kommentare unten sichtbar
-    const n = el.querySelector('input[type=text]'); if (n) { n.value = val0; if (foc) n.focus(); }
+    const n = el.querySelector('input[type=text]'); if (n) { n.value = val0; if (foc) { n.focus({preventScroll:true}); kbDone = n; } }
   });
 }
 /* ---------- Mitteilungen (Glocke): wer auf deine Beiträge reagiert, kommentiert, ins Gästebuch schreibt oder dich als Freund will (Inaya, 2026-10-10) ---------- */
@@ -6214,20 +6172,19 @@ const vvFit = () => { const v = window.visualViewport, r = document.documentElem
 if (window.visualViewport) { visualViewport.addEventListener('resize', vvFit); visualViewport.addEventListener('scroll', vvFit); }
 const chatKb = el => isMob() && ['cm-in','hc-in'].includes(el?.id) && !!el.closest('.chatmain');
 // Raumchat und Kommentare: Eingabefeld sitzt direkt über der Tastatur (Inaya, 2026-10-11)
-const KB_FORMS = '[data-form="rmsg"],[data-form="comment"],[data-form="wall"],[data-form="rwall"]';
+const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"],[data-form="wall"],[data-form="rwall"]';
+// Tastatur hängt direkt am Eingabefeld: einmal ausrichten, wenn die Tastatur fertig offen ist, danach nichts mehr (sonst ruckelt iOS hin und her) (Inaya, 2026-10-11)
 function kbAlign(){
   const el = document.activeElement, v = window.visualViewport;
-  if (!v || !isMob() || !isTyping(el) || chatKb(el)) return; const f = el.closest(KB_FORMS); if (!f || v.height > Math.max(innerHeight, screen.height * .85) - 100) return;
-  const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (d > 4 || d < -50) window.scrollBy(0, d);
+  if (!v || !isMob() || !isTyping(el) || chatKb(el)) return false; if (!el.closest(KB_FORMS) || v.height > Math.max(innerHeight, screen.height * .85) - 100) return false;
+  const d = el.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 4; if (Math.abs(d) > 3) window.scrollTo(0, window.scrollY + d); return true;
 }
-// iOS schiebt das Feld beim Öffnen der Tastatur selbst irgendwohin: mehrmals nachrichten, bis die Tastatur fertig aufgegangen ist (Inaya, 2026-10-11)
-// Nur wenige ruhige Korrekturen, kein Hin und Her (Inaya, 2026-10-11)
-let kbT = 0;
-const kbLater = (ms=180) => { clearTimeout(kbT); kbT = setTimeout(kbAlign, ms); };
-const kbSoon = () => { kbLater(450); setTimeout(() => kbLater(0), 900); };
-if (window.visualViewport) visualViewport.addEventListener('resize', () => kbLater(200));
+let kbT = 0, kbDone = null;
+const kbArm = (ms=350) => { clearTimeout(kbT); kbT = setTimeout(() => { const a = document.activeElement; if (kbDone !== a && kbAlign()) kbDone = a; }, ms); };
+const kbSoon = () => { kbDone = null; kbArm(350); };
+if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (kbDone !== document.activeElement) kbArm(250); }); // nur solange die Tastatur noch aufgeht
 document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
-document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) document.body.classList.remove('kbopen'); if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
+document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) { document.body.classList.remove('kbopen'); kbDone = null; } if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
   const n = document.getElementById('g-name'); if (n) g.name = n.value;
