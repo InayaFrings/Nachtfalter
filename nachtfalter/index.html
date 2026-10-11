@@ -6023,14 +6023,15 @@ function profileView(id){
   </section>`;
   }
   let panel = '';
-  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge']]; // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
+  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['reposts','Reposts']]; // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
   if (!tabs.some(([k]) => k === profTab)) profTab = tabs[0][0];
   if (profTab === 'rules') panel = `<div class="rules">${esc(u.about)}</div>`;
   if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="feed insta pfeed">${n.map(x => postHTML(x)).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
   if (profTab === 'chat') panel = chatHTML(u);
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
   if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
-  if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.length ? `<div class="feed insta pfeed">${(pinCtx = true, posts.filter(p => !p.arch).sort(pinSort).map(x => postHTML(x)).join(''))}</div>` + (pinCtx = false, '') : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
+  if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.some(p => p.type !== 'teilen') ? `<div class="feed insta pfeed">${(pinCtx = true, posts.filter(p => !p.arch && p.type !== 'teilen').sort(pinSort).map(x => postHTML(x)).join(''))}</div>` + (pinCtx = false, '') : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
+  if (profTab === 'reposts') { const rp = posts.filter(p => !p.arch && p.type === 'teilen').sort((a, b) => b.ts - a.ts); panel = rp.length ? `<div class="feed insta pfeed">${rp.map(x => postHTML(x)).join('')}</div>` : `<p class="muted" style="margin:0">${own ? 'Du hast noch nichts repostet. Unter jedem Beitrag von anderen kannst du auf „Teilen“ tippen.' : 'Noch keine Reposts.'}</p>`; }
   // Steckbrief steht direkt unter dem Profilkopf (Inayas Wunsch), nicht mehr als Reiter
   const sf = (k,v) => `<div><dt>${k}</dt><dd>${esc(v) || '–'}</dd></div>`;
   const steckHTML = u.helper ? '' : `<div class="psteck"><h3 class="lbl">Steckbrief</h3><div class="steck2"><dl class="steck">${sf('Über mich',u.about)}</dl><dl class="steck">${sf('Musik',u.music)}${sf('Filme',u.films)}${sf('Hobbys',u.hobbies)}${sf('Spiele',u.games2)}</dl></div></div>`;
