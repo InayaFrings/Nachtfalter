@@ -158,6 +158,7 @@ label.f{display:grid;gap:4px}
 .pcx{position:absolute;top:-6px;right:-7px;width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:#0a0a0b;color:#ecebe7;font-size:13px;line-height:15px;padding:0;cursor:pointer}
 .cmt.mom{display:flex;gap:10px;align-items:flex-start;border-top:0;padding-top:0}.cmts{gap:10px}
 .cmh{width:38px;height:38px;padding:0;cursor:pointer}
+.clist.pubg{display:flex;flex-direction:row;align-items:center;gap:10px}.pubgt{flex:1;min-width:0;display:grid}.pubg .btn{flex:none}
 .cname{all:unset;cursor:pointer;font:inherit;font-weight:600}.cname:hover,.cname:focus-visible{text-decoration:underline}
 .cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
 .cform:has(.pcre){flex-wrap:wrap}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
@@ -2479,6 +2480,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const motif = o.motifC || (/^[sm]d_/.test(o.top) ? motifDef : 0) || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
   const XL = B.long ? {...X, B:{...B, hem:B.long}} : X; // Männer: lange Oberteile und passende Jacken
   if (ITOP[o.top]) body += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif);
+  if (bot && isDress({id:o.top || ''}) && isSkirt({id:o.bottom || ''})) body += bot; // Rock liegt über dem Kleid (Inaya, 2026-10-11)
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
   body += belts;
   const JK = Object.keys(J).sort((a, b) => /^(st|h)_/.test(b) - /^(st|h)_/.test(a)); // Armstulpen und Handschuhe zuerst, Armbänder darüber, die Jacke liegt über beidem (Inaya, 2026-10-10)
@@ -5293,7 +5295,7 @@ async function clearRoomChat(){ // alte Raumchat-Nachrichten wegräumen (Markier
 let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz unten (Inaya, 2026-10-10)
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].filter(c => !!c.group === (chatTab === 'group')).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
+  const list = [...CH.list].filter(c => !!c.group === (chatTab === 'group')).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -5301,10 +5303,10 @@ function chatsView(){
     const c = CH.list.find(x => x.id === CH.open), cand = c ? friends.filter(f => !c.members.includes(f.id)) : [];
     const mems = c ? c.members.filter(m => m !== social.uid) : []; // Mitglieder wieder entfernen (Inaya, 2026-10-10)
     right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
-      <div class="gmems">${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}</span>${gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
+      <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : esc(chatWho(c.createdBy))}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
       <h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
       ${cand.length ? cand.map(f => `<label class="allg"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}
-      <div class="row"><button class="btn ghost" type="button" data-act="chat-open" data-id="${esc(CH.open || '')}">Zurück</button><span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
+      <div class="row"><button class="btn ghost" type="button" data-act="chat-open" data-id="${esc(CH.open || '')}">Zurück</button>${c && !gAdmin(c) ? '<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button>' : ''}<span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
   }
   if (CH.mode === 'helper' && S.users[CH.helper]) {
     const h = S.users[CH.helper];
@@ -5318,7 +5320,7 @@ function chatsView(){
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
       <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle"><b class="ch-name">${esc(chatName(c))}</b><small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small><small class="typing" id="chtyping" hidden></small></div>
-        ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
+        ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs">${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
@@ -5330,6 +5332,7 @@ function chatsView(){
         <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats']].map(([k, l]) => { const n = CH.list.filter(c => !!c.group === (k === 'group') && unread(c)).length + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}">${l}${n ? ' <i class="dot" aria-label="neu"></i>' : ''}</button>`; }).join('')}</div>
         ${social ? `<div class="row">${chatTab === 'group' ? '<button class="btn" data-act="chat-group">＋ Neue Gruppe</button>' : '<button class="btn" data-act="chat-new">＋ Neuer Chat</button>'}</div>` : ''}
         ${social ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
+        ${social && chatTab === 'group' ? (() => { loadPubGroups(); const l = PUBG.filter(c => !(c.members || []).includes(social.uid)); return `<p class="lbl" style="margin:14px 0 0">Öffentliche Gruppen</p>${l.length ? l.map(c => `<div class="pubg clist" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''}><span class="pubgt"><b>${esc(c.name || 'Gruppe')}</b><small>${(c.members || []).length === 1 ? "1 Person" : (c.members || []).length + " Leute"}</small></span><button class="btn ghost" data-act="pubg-join" data-id="${esc(c.id)}">Beitreten</button></div>`).join('') : '<p class="note">Gerade gibt es keine weiteren öffentlichen Gruppen. Mach selbst eine auf!</p>'}`; })() : ''}
         ${chatTab === 'priv' ? `<p class="lbl" style="margin:14px 0 0">Helfer</p>
         ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}` : ''}
       </div>
@@ -5339,6 +5342,13 @@ function chatsView(){
   </div></div>`;
 }
 document.addEventListener('input', e => { if (e.target.id !== 'g-name') return; const n = document.getElementById('g-prevname'); if (n) n.textContent = e.target.value || 'Eure Gruppe'; });
+// Öffentliche Gruppen: jeder kann beitreten; Name, Farbe und Entfernen nur für den Admin (Ersteller) (Inaya, 2026-10-11)
+const gAdmin = c => !c?.pub || !c.createdBy || c.createdBy === social?.uid;
+let PUBG = [], pubgAt = 0;
+async function loadPubGroups(force){
+  if (!social || (!force && Date.now() - pubgAt < 20000)) return; pubgAt = Date.now();
+  try { const snap = await social.db.collection('chats').where('pub', '==', true).limit(60).get(); PUBG = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(c => c.group).sort((a, b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); if (V.name === 'chats') softRender(); } catch {}
+}
 let gDelAsk = false, gRmAsk = null; // Gruppen löschen / Mitglieder entfernen (Inaya, 2026-10-10)
 function groupForm(friends){
   const g = CH.gdraft;
@@ -5350,7 +5360,8 @@ function groupForm(friends){
     </section></div>`;
   return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : 'Neue Gruppe'}</h3>${prev}
     ${g.dm ? '' : `<label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>`}
-    ${g.id ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
+    ${g.dm ? '' : `<label class="allg"><input type="checkbox" id="g-pub" ${g.pub ? 'checked' : ''}> Öffentliche Gruppe: jeder kann beitreten. Name und Farbe ändern und Leute entfernen kannst dann nur du als Admin.</label>`}
+    ${g.id ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?${g.pub ? ' (freiwillig)' : ''}</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Schrift</legend><div class="chips">${FONT_OPTS.map(([v,l]) => `<button type="button" data-act="gopt" data-k="font" data-v="${v}" aria-pressed="${g.theme.font===v}">${l}</button>`).join('')}</div></fieldset>
@@ -6056,6 +6067,7 @@ document.addEventListener('focusout', () => setTimeout(() => { const a = documen
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
   const n = document.getElementById('g-name'); if (n) g.name = n.value;
+  const pb = document.getElementById('g-pub'); if (pb) g.pub = pb.checked;
   const boxes = [...document.querySelectorAll('.g-mem')]; if (boxes.length) { const shown = new Set(boxes.map(x => x.value)); g.members = [...g.members.filter(m => !shown.has(m)), ...boxes.filter(x => x.checked).map(x => x.value)]; } // Mitglieder, die nicht in meiner Freundesliste stehen, bleiben drin
 }
 document.addEventListener('click', async e => {
@@ -6072,18 +6084,25 @@ document.addEventListener('click', async e => {
   else if (a === 'salon-mode') { S.salonMode = b.dataset.v === 'pub' ? 'pub' : 'fr'; save(); if (S.salonMode === 'pub') loadPubFeed(true); render(); }
   else if (a === 'helper-chat') { chatTab = 'priv'; go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
   else if (a === 'chat-tab') { chatTab = b.dataset.v === 'group' ? 'group' : 'priv'; render(); }
+  else if (a === 'pubg-join') {
+    if (!social) return; b.disabled = true;
+    try { const ref = social.db.doc('chats/' + id), d = await ref.get(); const c = d.data(); if (!d.exists || !c?.pub) { toast('Die Gruppe gibt es nicht mehr.'); pubgAt = 0; loadPubGroups(); return; }
+      await ref.update({members:[...new Set([...(c.members || []), social.uid])]}); await sendMsg(id, `${me().name} ist der Gruppe beigetreten.`);
+      PUBG = PUBG.filter(x => x.id !== id); setTimeout(() => openChat(id), 600); toast('Du bist jetzt in der Gruppe'); }
+    catch { b.disabled = false; toast('Beitreten hat nicht geklappt. Versuch es nochmal.'); }
+  }
   else if (a === 'chat-add') { gRmAsk = null; CH.mode = 'gadd'; render(); }
   else if (a === 'grm') { gRmAsk = b.dataset.id; render(); }
   else if (a === 'grm-no') { gRmAsk = null; render(); }
   else if (a === 'grm-yes') {
-    const id = b.dataset.id, cid = CH.open, c = CH.list.find(x => x.id === cid); gRmAsk = null; if (!c) return;
+    const id = b.dataset.id, cid = CH.open, c = CH.list.find(x => x.id === cid); gRmAsk = null; if (!c || !gAdmin(c)) return;
     try { await sendMsg(cid, `${me().name} hat ${PROF[id]?.name || S.users[id]?.name || 'jemanden'} entfernt.`);
       await social.db.doc('chats/' + cid).update({members:c.members.filter(m => m !== id)});
       c.members = c.members.filter(m => m !== id); render(); toast('Entfernt'); }
     catch { toast('Das hat nicht geklappt. Versuch es nochmal.'); render(); }
   }
-  else if (a === 'chat-edit') { gDelAsk = false; const c = CH.list.find(x => x.id === CH.open); CH.gdraft = {id:c.id, dm:!c.group, name:c.name || '', members:c.members.filter(m => m !== social.uid), theme:{...BLANK_THEME(), ...(c.theme || {})}}; CH.mode = 'group'; render(); }
-  else if (a === 'chat-del') { grabGroupDraft(); gDelAsk = true; render(); }
+  else if (a === 'chat-edit') { gDelAsk = false; const c = CH.list.find(x => x.id === CH.open); if (!gAdmin(c)) return; CH.gdraft = {id:c.id, dm:!c.group, pub:!!c.pub, name:c.name || '', members:c.members.filter(m => m !== social.uid), theme:{...BLANK_THEME(), ...(c.theme || {})}}; CH.mode = 'group'; render(); }
+  else if (a === 'chat-del') { if (!gAdmin(CH.list.find(x => x.id === CH.gdraft?.id))) return; grabGroupDraft(); gDelAsk = true; render(); }
   else if (a === 'chat-del-no') { gDelAsk = false; render(); }
   else if (a === 'chat-del-yes') {
     const cid = CH.gdraft?.id; gDelAsk = false; if (!cid) return;
@@ -6092,8 +6111,9 @@ document.addEventListener('click', async e => {
     if (CH.unsub) { CH.unsub(); CH.unsub = null; } CH.list = CH.list.filter(x => x.id !== cid); CH.mode = null; CH.open = null; CH.gdraft = null; render(); toast('Gruppe gelöscht');
   }
   else if (a === 'chat-leave') {
-    const c = CH.list.find(x => x.id === CH.gdraft?.id); if (!c) return;
+    const c = CH.list.find(x => x.id === (CH.mode === 'gadd' ? CH.open : CH.gdraft?.id)); if (!c) return;
     try { await social.db.doc('chats/' + c.id).update({members:c.members.filter(m => m !== social.uid)}); } catch {}
+    pubgAt = 0;
     CH.mode = null; CH.open = null; render(); toast('Du hast die Gruppe verlassen');
   }
   else if (a === 'gopt') { grabGroupDraft(); CH.gdraft.theme[b.dataset.k] = b.dataset.v; render(); }
@@ -6752,8 +6772,10 @@ document.addEventListener('submit', async e => {
       return;
     }
     if (!g.name.trim()) return toast('Gib der Gruppe einen Namen.');
-    if (!g.members.length) return toast('Such mindestens eine Person aus.');
-    const data = {group:true, name:g.name.trim().slice(0, 40), members:[social.uid, ...g.members], theme:{box:g.theme.box, pattern:g.theme.pattern, font:g.theme.font}};
+    if (!g.members.length && !g.pub && !g.id) return toast('Such mindestens eine Person aus.');
+    const data = {group:true, pub:!!g.pub, name:g.name.trim().slice(0, 40), members:[social.uid, ...g.members], theme:{box:g.theme.box, pattern:g.theme.pattern, font:g.theme.font}};
+    if (g.id) { const c = CH.list.find(x => x.id === g.id); if (!gAdmin(c)) return; data.members = [...new Set([...(c?.members || []), social.uid])]; } // beim Bearbeiten niemanden verlieren
+    pubgAt = 0;
     try {
       if (g.id) { await social.db.doc('chats/' + g.id).update(data); CH.mode = 'chat'; CH.open = g.id; render(); toast('Gruppe gespeichert'); }
       else { const cid = 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); await social.db.doc('chats/' + cid).set({...data, createdBy:social.uid, ts:Date.now()}); openChat(cid); toast('Gruppe erstellt'); }
