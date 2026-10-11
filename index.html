@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='757e94bb59ed';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1f3bd50b1ede';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -578,7 +578,9 @@ footer.foot .lnk{color:var(--muted)}
   body.chatfull .mback{display:none}
   body .chback{display:inline-grid!important}
 }
-.chback{display:none!important}.icell{display:grid;place-items:center;align-content:center;gap:6px;aspect-ratio:1;font:400 15px var(--f-display)}.icell svg{width:40%;height:auto;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.chback{display:none!important}
+.rsheet{border:1px solid var(--line);background:var(--panel,#121214);padding:12px 14px;margin:0 0 12px;display:grid;gap:10px}.rsheet-h{display:flex;justify-content:space-between;align-items:center}.rslist{display:grid;gap:8px;max-height:300px;overflow-y:auto}
+.rsrow{display:flex;align-items:center;gap:10px}.rsrow .cameo{width:40px;height:40px;flex:none}.rsname{flex:1;min-width:0;display:grid}.rsname small{color:var(--muted);font:italic 13px var(--f-ital)}.icell{display:grid;place-items:center;align-content:center;gap:6px;aspect-ratio:1;font:400 15px var(--f-display)}.icell svg{width:40%;height:auto;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .gb .entry.wentry.tp{background:linear-gradient(var(--p-bg),var(--p-bg)) padding-box,var(--pp-pat) border-box border-box,var(--p-bg);border:9px solid transparent;border-radius:10px;color:var(--p-fg);box-shadow:0 0 0 1px var(--p-line)}
 .wentry.tp .meta,.wentry.tp .muted{color:var(--p-muted)}.wentry.tp .lnk,.wentry.tp .cdel{color:var(--p-fg)}.wentry.tp .vid{color:var(--p-fg);border-color:var(--p-line)}
 /* Gästebuch und Kommentare: feste Höhe, drinnen scrollen (Inaya, 2026-10-11) */
@@ -3366,8 +3368,9 @@ function roomView(){
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
   const head = `<div class="rhead"><h2 class="card-h">Mein Zimmer</h2><div class="ricons">
       ${roomMode === 'edit' ? '<button class="btn rdone" data-act="rmode" data-v="edit">✓ Fertig</button>' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
+      ${u.roomOpen && social ? `<button class="ricon ${rShare ? 'on' : ''}" data-act="rshare" aria-pressed="${rShare}" aria-label="Freunde einladen" title="Freunde einladen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7"/><path d="M12 15V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/></svg></button>` : ''}
       ${ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
-    </div></div>`;
+    </div></div>${rShare && u.roomOpen ? roomShareSheet() : ''}`;
   // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
   // Raumchat direkt im Zimmer (wie bei Momio/MSP): Verlauf und Eingabe gleich unter dem Raum
   const chatOn = roomMode === 'chat' || !!u.roomOpen;
@@ -5572,14 +5575,21 @@ function roomChatInline(isMine){ // Eingabe direkt unter dem Raum
     <form class="cform" data-form="rmsg" ${RM.g && roomStart() != null ? '' : 'hidden'}><input type="text" id="rm-in" maxlength="500" placeholder="In den Raum schreiben …" aria-label="Nachricht in den Raumchat" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
   </div>`;
 }
+// Offener Raum: kleines Teilen-Symbol oben, darüber Freunde einladen (Inaya, 2026-10-11)
+let rShare = false; const RINV = new Set();
+function roomShareSheet(){
+  const friends = Object.values(S.users).filter(u => u.remote).sort((a, b) => (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
+  return `<div class="rsheet"><div class="rsheet-h"><b>Freunde einladen</b><button class="lnk" data-act="rshare">Schließen</button></div>
+    ${friends.length ? `<div class="rslist">${friends.map(f => `<div class="rsrow"><span class="cameo">${avatar(f.outfit, 'head')}</span><span class="rsname">${esc(f.name)}<small>${esc(onlineState(f)[1])}</small></span>${RINV.has(f.id) ? '<span class="muted">Eingeladen ✓</span>' : `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">Einladen</button>`}</div>`).join('')}</div>
+    ${friends.some(f => !RINV.has(f.id)) ? '<div class="row"><button class="btn" data-act="room-invite-all">Alle einladen</button></div>' : ''}` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</div>`;
+}
 function roomChatExtra(){ // Einstellungen zum eigenen Raumchat: schließen und Freunde einladen
   if (!social) return '';
   const friends = Object.values(S.users).filter(u => u.remote), ro = me().roomOpen;
   return `<div class="card"><h2 class="card-h">Raumchat</h2><div class="card-in">
     ${ro ? `<div class="ropen"><span>🕯 Dein Raumchat ist offen (<b>${roomKind(ro)}</b>). ${ro.pub ? 'Alle aus Nachtfalter sehen ihn in der Liste der offenen Raumchats und können reinkommen.' : 'Nur deine Freunde können reinkommen.'}</span><button class="btn ghost" data-act="room-close">Raumchat schließen</button></div>
     <fieldset class="opt"><legend class="lbl">Wer darf rein?</legend><div class="row"><button class="btn ${ro.pub ? 'ghost' : ''}" data-act="room-kind" data-v="friends" aria-pressed="${!ro.pub}">Nur Freunde</button><button class="btn ${ro.pub ? '' : 'ghost'}" data-act="room-kind" data-v="pub" aria-pressed="${!!ro.pub}">Öffentlich</button></div></fieldset>` : ''}
-    <fieldset class="opt"><legend class="lbl">Freunde einladen</legend>${friends.length ? `<div class="invlist">${friends.map(f => `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">${esc(f.name)} einladen</button>`).join('')}</div>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}
-      <p class="note">Befreundete können auch ohne Einladung über dein Profil reinkommen. Höchstens ${ROOM_MAX} Leute passen gleichzeitig ins Zimmer.</p></fieldset>
+    <p class="note">Freunde lädst du über den Pfeil oben am Zimmer ein. Befreundete können auch ohne Einladung über dein Profil reinkommen. Höchstens ${ROOM_MAX} Leute passen gleichzeitig ins Zimmer.</p>
   </div></div>`;
 }
 function visitView(){
@@ -5886,11 +5896,16 @@ document.addEventListener('click', async e => {
     if (!l.length) toast('Gerade sind keine anderen Raumchats offen.'); else { const id = l[Math.floor(Math.random() * l.length)]; if (id === S.me) go('room'); else go('visit', id); } }
   else if (a === 'room-open') { me().roomOpen = {pub:b.dataset.v === 'pub', ts:Date.now()}; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'open'}); render(); toast(me().roomOpen.pub ? 'Dein öffentlicher Raumchat ist offen' : 'Dein Raumchat für Freunde ist offen'); }
   else if (a === 'room-kind') { const ro = me().roomOpen; if (ro) { ro.pub = b.dataset.v === 'pub'; save(); render(); toast(ro.pub ? 'Jetzt öffentlich' : 'Jetzt nur für Freunde'); } }
-  else if (a === 'room-invite') {
-    const cid = 'dm_' + [social.uid, id].sort().join('_');
-    if (!CH.list.some(c => c.id === cid)) try { await social.db.doc('chats/' + cid).set({group:false, members:[social.uid, id].sort(), ts:Date.now()}); } catch {}
-    if (await sendMsg(cid, 'Komm in mein Zimmer! 🕯', {kind:'invite'})) toast('Einladung verschickt');
+  else if (a === 'room-invite' || a === 'room-invite-all') {
+    const ids = a === 'room-invite' ? [id] : Object.values(S.users).filter(u => u.remote && !RINV.has(u.id)).map(u => u.id); let n = 0;
+    for (const fid of ids) {
+      const cid = 'dm_' + [social.uid, fid].sort().join('_');
+      if (!CH.list.some(c => c.id === cid)) try { await social.db.doc('chats/' + cid).set({group:false, members:[social.uid, fid].sort(), ts:Date.now()}); } catch {}
+      if (await sendMsg(cid, 'Komm in mein Zimmer! 🕯', {kind:'invite'})) { RINV.add(fid); n++; }
+    }
+    if (n) { toast(n > 1 ? n + ' Einladungen verschickt' : 'Einladung verschickt'); render(); }
   }
+  else if (a === 'rshare') { rShare = !rShare; render(); }
   else if (a === 'music-toggle') { if (songPlaying) { songOff = id; songPause(); } else { songOff = null; if (YTP || songAudio) songPlay(); else { syncSong(); songErr && toast(songErr); } } }
   else if (a === 'music-edit') { musicEdit = !musicEdit; render(); document.getElementById('m-url')?.focus(); }
   else if (a === 'music-remove') { me().songUrl = ''; musicEdit = false; save(); render(); toast('Musik entfernt'); }
