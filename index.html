@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4ed75821d551';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5e1d8c2a606d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -3651,7 +3651,7 @@ function bannerHTML(b, name, handle=''){ // im Bannerkasten steht der Nutzername
   if (!b) return '';
   const t = handle, span = t ? `<span style="font-family:${FONTS[b.font]}">${esc(t)}</span>` : '';
   if (b.img) return `<div class="pbanner img" style="background-image:url('${b.img}');color:#ecebe7">${span}</div>`;
-  const day = b.mode === 'tag', bbg = b.bg || (day ? '#eeece7' : '#0e0e10'), fg = readFg(bbg, b.fg) || autoFg(bbg);
+  const day = b.mode === 'tag', bbg = b.bg || (day ? '#eeece7' : '#0e0e10'), fg = /^#[0-9a-f]{6}$/i.test(b.fg || '') ? b.fg : autoFg(bbg); // gewählte Schriftfarbe gilt immer (Inaya, 2026-10-11)
   return `<div class="pbanner" style="background-color:${b.bg || (day ? '#eeece7' : '#0e0e10')};background-image:${patternURL(b.pattern, b.mode, b.fg ? .32 : .14, b.fg || '')};color:${fg}">${span}</div>`;
 }
 const BANNER_FG = [['#ecebe7','Weiß'],['#c9c9cf','Silber'],['#8a8a92','Grau'],['#151515','Schwarz'],['#c8324e','Rot'],['#e98fa6','Rosa'],['#9a6fd0','Lila'],['#6fa8dc','Blau'],['#5fae6b','Grün'],['#d4af37','Gold']];
@@ -6552,7 +6552,7 @@ document.addEventListener('submit', async e => {
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
-    u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; // Banner-Funktion entfernt (Inayas Wunsch) u.banner = {...mdraft.banner};
+    u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; u.banner = {...mdraft.banner}; // Nutzernamen-Kasten wird wieder gespeichert (Inaya, 2026-10-11)
     const first = obDesign; obDesign = false;
     save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert');
   }
@@ -6573,6 +6573,7 @@ const cloudReady = cloudInit();
   st.textContent = `input.cpick[data-ctype]{padding:3px;background-clip:content-box;color:transparent;font-size:0;-webkit-appearance:none;appearance:none}
 .cgrid-bg{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s ease-out;-webkit-tap-highlight-color:transparent}
 .cgrid-bg.on{opacity:1}
+.cgrid-bg[hidden]{display:none}
 .cgrid{width:min(440px,100%);background:var(--paper-2);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(24px);transition:transform .18s ease-out;will-change:transform;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
 .cgrid-bg.on .cgrid{transform:none}
 @media (min-width:700px){.cgrid-bg{align-items:center}.cgrid{border-radius:14px;border-bottom:1px solid var(--line)}}
