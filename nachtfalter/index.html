@@ -1027,6 +1027,12 @@ textarea.sttxt{top:44%}
 .stbgl{font:600 13px -apple-system,'Helvetica Neue',Arial,sans-serif}
 
 .stback svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round}.stback{display:grid;place-items:center}
+
+/* Story deckt alles ab, auch wenn das iPhone beim Tippen die Seite verschiebt */
+body.stopen{position:fixed;left:0;right:0;overflow:hidden}
+.storyov{box-shadow:0 0 0 200vmax #000}
+html:has(body.stopen){background:#000}
+.stcbg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(24px) brightness(.55);pointer-events:none}
 </style>
 
 <div id="app"></div>
@@ -5064,10 +5070,12 @@ function storyImg(uid, id, local, thumb){
   return '';
 }
 function stSpotify(url){ const e = url && embedOf(url); return e && e.k === 'sp' ? `<div class="stmusic"><iframe src="${esc(e.src)}?theme=0" height="80" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" title="Song zur Story"></iframe></div>` : ''; }
+let stScrollY = 0;
 function storyPaint(){
   let ov = document.getElementById('storyov');
-  if (!stNew && !STV && !stCam) { if (ov) ov.remove(); document.body.classList.remove('stopen'); clearTimeout(stTimer); return; }
+  if (!stNew && !STV && !stCam) { if (ov) ov.remove(); if (document.body.classList.contains('stopen')) { document.body.classList.remove('stopen'); document.body.style.top = ''; window.scrollTo(0, stScrollY); } clearTimeout(stTimer); return; }
   if (!ov) { ov = document.createElement('div'); ov.id = 'storyov'; ov.className = 'storyov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); document.body.appendChild(ov); }
+  if (!document.body.classList.contains('stopen')) { stScrollY = window.scrollY; document.body.style.top = -stScrollY + 'px'; } // Seite dahinter festhalten
   document.body.classList.add('stopen');
   if (stCam || stNew) stSpStop();
   if (stCam) { ov.innerHTML = stCamHTML(); stCamWire(); return; }
@@ -5198,7 +5206,7 @@ function stCamHTML(){
     ${ph.length ? `<div class="stprow"><b>Aus deinem Salon</b></div><div class="stpgrid">${ph.map(p => `<button class="stpph" data-act="stc-pick" data-id="${esc(p.id)}" aria-label="Dieses Foto nehmen"><img src="${p.img}" alt="" draggable="false"></button>`).join('')}</div>` : ''}
   </div></div>`; }
   if (c.mode === 'crop') return `<div class="stbox edit"><div class="stframe stcrop" id="stcr">
-    <img id="stcimg" src="${c.img}" alt="Dein Foto" draggable="false"><div class="stgridl" aria-hidden="true"></div>
+    <div class="stcbg" style="background-image:url('${c.img}')" aria-hidden="true"></div><img id="stcimg" src="${c.img}" alt="Dein Foto" draggable="false"><div class="stgridl" aria-hidden="true"></div>
     <div class="sttop"><button class="stic" data-act="stc-back" aria-label="Zurück">${STC_ICO.x}</button><span class="sp"></span><span class="stchint">Ziehen und zoomen zum Zuschneiden</span></div>
     <input class="stzoom" id="stc-zoom" type="range" min="1" max="4" step=".01" value="${c.zoom}" aria-label="Zoom">
     <div class="stbottom"><span class="sp"></span><button class="stshare" data-act="stc-next">Weiter <span aria-hidden="true">›</span></button></div></div></div>`;
@@ -5216,11 +5224,14 @@ function stCamWire(){
   if (c.mode !== 'crop') return;
   const fr = document.getElementById('stcr'), im = document.getElementById('stcimg'), zr = document.getElementById('stc-zoom');
   const lay = () => { const W = fr.clientWidth, H = fr.clientHeight, iw = im.naturalWidth, ih = im.naturalHeight; if (!iw) return;
+    const fit = Math.min(W / iw, H / ih) / Math.max(W / iw, H / ih); c.fit = fit; zr.min = fit.toFixed(3);
+    if (c.ox == null) c.zoom = fit; // erst ganz sichtbar, dann kann man reinzoomen
+    zr.value = c.zoom;
     const sc = Math.max(W / iw, H / ih) * c.zoom, w = iw * sc, h = ih * sc;
     if (c.ox == null) { c.ox = (W - w) / 2; c.oy = (H - h) / 2; }
-    c.ox = Math.min(0, Math.max(W - w, c.ox)); c.oy = Math.min(0, Math.max(H - h, c.oy));
+    c.ox = Math.min(Math.max(0, W - w), Math.max(Math.min(0, W - w), c.ox)); c.oy = Math.min(Math.max(0, H - h), Math.max(Math.min(0, H - h), c.oy));
     Object.assign(im.style, {width:w + 'px', height:h + 'px', left:c.ox + 'px', top:c.oy + 'px'}); c.sc = sc; c.W = W; c.H = H; };
-  const zoomTo = (z, cx, cy) => { const W = fr.clientWidth, H = fr.clientHeight; cx = cx ?? W / 2; cy = cy ?? H / 2; const old = c.sc || 1; z = Math.min(4, Math.max(1, z)); c.zoom = z; const iw = im.naturalWidth, ih = im.naturalHeight, ns = Math.max(W / iw, H / ih) * z; c.ox = cx - (cx - c.ox) * ns / old; c.oy = cy - (cy - c.oy) * ns / old; zr.value = z; lay(); };
+  const zoomTo = (z, cx, cy) => { const W = fr.clientWidth, H = fr.clientHeight; cx = cx ?? W / 2; cy = cy ?? H / 2; const old = c.sc || 1; z = Math.min(4, Math.max(c.fit || 1, z)); c.zoom = z; const iw = im.naturalWidth, ih = im.naturalHeight, ns = Math.max(W / iw, H / ih) * z; c.ox = cx - (cx - c.ox) * ns / old; c.oy = cy - (cy - c.oy) * ns / old; zr.value = z; lay(); };
   if (im.complete) lay(); else im.onload = lay;
   zr.addEventListener('input', () => zoomTo(+zr.value));
   fr.addEventListener('wheel', e => { e.preventDefault(); const r = fr.getBoundingClientRect(); zoomTo(c.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08), e.clientX - r.left, e.clientY - r.top); }, {passive:false});
@@ -5235,7 +5246,12 @@ function stCamWire(){
 async function stCropDone(){
   const c = stCam, im = document.getElementById('stcimg'); if (!c || !im || !c.sc) return;
   const cv = document.createElement('canvas'); cv.width = 720; cv.height = Math.min(1600, Math.round(720 * c.H / c.W)); // genau der Ausschnitt, den man im Feld sieht
-  cv.getContext('2d').drawImage(im, -c.ox / c.sc, -c.oy / c.sc, c.W / c.sc, c.H / c.sc, 0, 0, cv.width, cv.height);
+  const x = cv.getContext('2d'), k = cv.width / c.W, iw = im.naturalWidth, ih = im.naturalHeight;
+  // Rand: verschwommene, dunklere Kopie des Fotos (wo das nicht geht: Durchschnittsfarbe)
+  const t = document.createElement('canvas'); t.width = t.height = 1; const tg = t.getContext('2d'); tg.drawImage(im, 0, 0, 1, 1); const [r, g, bl] = tg.getImageData(0, 0, 1, 1).data;
+  x.fillStyle = `rgb(${r * .55 | 0},${g * .55 | 0},${bl * .55 | 0})`; x.fillRect(0, 0, cv.width, cv.height);
+  if ('filter' in x) { try { const cs = Math.max(cv.width / iw, cv.height / ih) * 1.1; x.filter = 'blur(28px) brightness(.55)'; x.drawImage(im, (cv.width - iw * cs) / 2, (cv.height - ih * cs) / 2, iw * cs, ih * cs); x.filter = 'none'; } catch {} }
+  x.drawImage(im, c.ox * k, c.oy * k, iw * c.sc * k, ih * c.sc * k);
   let d = cv.toDataURL('image/jpeg', .8); if (d.length > 700000) d = cv.toDataURL('image/jpeg', .68);
   stCam = null; stNew = {img:d, thumb:await storyThumb(d), f:'normal', song:'', texts:[], edit:null, tool:null, hint:true}; storyPaint();
 }
