@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9950b6c69422';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='4ed75821d551';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5515,6 +5515,7 @@ function paintRoom(){
 // Raumchat schließt sich von selbst, wenn 10 Minuten lang niemand reingeschrieben hat (Inaya, 2026-10-10)
 function roomAlive(ro){ return !!ro && Date.now() - (ro.last || ro.ts || 0) < 600000; }
 function roomStart(){
+  if (RM.owner && RM.owner === social?.uid && !me().roomOpen) return null; // eigener Chat zu = sofort zu
   const marks = RM.msgs.filter(m => m.from === RM.owner && (m.kind === 'open' || m.kind === 'close'));
   const last = marks[marks.length - 1];
   let st;
@@ -5567,7 +5568,8 @@ function sayBubbles(){
   lay.querySelectorAll('.saystack').forEach(st => { const over = R.top + 2 - st.getBoundingClientRect().top; if (over > 0) st.style.top = `calc(${st.style.top} + ${over}px)`; });
 }
 addEventListener('resize', () => sayBubbles());
-function closeRoomChat(auto){ delete me().roomOpen; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); if (RW) { RW(); RW = null; } render(); toast(auto ? 'Dein Raumchat hat sich geschlossen, weil 10 Minuten keiner geschrieben hat.' : 'Raumchat geschlossen'); }
+function closeRoomChat(auto){ delete me().roomOpen; if (roomMode === 'chat') roomMode = ''; rShare = false; save(); // sofort zu, Auswahl erst beim nächsten Öffnen (Inaya, 2026-10-11)
+  if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); if (RW) { RW(); RW = null; } render(); toast(auto ? 'Dein Raumchat hat sich geschlossen, weil 10 Minuten keiner geschrieben hat.' : 'Raumchat geschlossen'); }
 // Kleine Ja/Nein-Frage als eigenes Fenster
 function askYesNo(q, yes='Ja', no='Nein'){
   return new Promise(res => {

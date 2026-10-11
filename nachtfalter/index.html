@@ -5406,6 +5406,7 @@ function paintRoom(){
 // Raumchat schließt sich von selbst, wenn 10 Minuten lang niemand reingeschrieben hat (Inaya, 2026-10-10)
 function roomAlive(ro){ return !!ro && Date.now() - (ro.last || ro.ts || 0) < 600000; }
 function roomStart(){
+  if (RM.owner && RM.owner === social?.uid && !me().roomOpen) return null; // eigener Chat zu = sofort zu
   const marks = RM.msgs.filter(m => m.from === RM.owner && (m.kind === 'open' || m.kind === 'close'));
   const last = marks[marks.length - 1];
   let st;
@@ -5458,7 +5459,8 @@ function sayBubbles(){
   lay.querySelectorAll('.saystack').forEach(st => { const over = R.top + 2 - st.getBoundingClientRect().top; if (over > 0) st.style.top = `calc(${st.style.top} + ${over}px)`; });
 }
 addEventListener('resize', () => sayBubbles());
-function closeRoomChat(auto){ delete me().roomOpen; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); if (RW) { RW(); RW = null; } render(); toast(auto ? 'Dein Raumchat hat sich geschlossen, weil 10 Minuten keiner geschrieben hat.' : 'Raumchat geschlossen'); }
+function closeRoomChat(auto){ delete me().roomOpen; if (roomMode === 'chat') roomMode = ''; rShare = false; save(); // sofort zu, Auswahl erst beim nächsten Öffnen (Inaya, 2026-10-11)
+  if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); if (RW) { RW(); RW = null; } render(); toast(auto ? 'Dein Raumchat hat sich geschlossen, weil 10 Minuten keiner geschrieben hat.' : 'Raumchat geschlossen'); }
 // Kleine Ja/Nein-Frage als eigenes Fenster
 function askYesNo(q, yes='Ja', no='Nein'){
   return new Promise(res => {
