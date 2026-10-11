@@ -161,7 +161,8 @@ label.f{display:grid;gap:4px}
 .clist.pubg{display:flex;flex-direction:row;align-items:center;gap:10px}.pubgt{flex:1;min-width:0;display:grid}.pubg .btn{flex:none}
 .cname{all:unset;cursor:pointer;font:inherit;font-weight:600}.cname:hover,.cname:focus-visible{text-decoration:underline}
 .cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
-.cform:has(.pcre){flex-wrap:wrap}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
+.cform:has(.pcre){flex-wrap:wrap}@media (max-width:760px){.kbopen form[data-form="pcomment"]:focus-within{position:fixed;left:0;right:0;top:calc(var(--vvt,0px) + var(--vvh,100vh));transform:translateY(-100%);z-index:1500;margin:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:var(--p-bg,#141218);color:var(--p-fg,#ecebe7);border-top:1px solid var(--p-line,#333);flex-wrap:wrap}}
+.cthread .bub{cursor:pointer}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
 .bub{position:relative;background:var(--paper-2,#1c1c20);border:1px solid var(--line);border-radius:16px;padding:7px 13px 6px;min-width:0;max-width:calc(100% - 48px);overflow-wrap:anywhere;font-size:16px;line-height:1.35}
 .bub:before{content:'';position:absolute;left:-6px;top:13px;width:10px;height:10px;background:inherit;border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
 .bub b{display:block;font-size:14px;font-weight:600}.bub .btx{display:block;white-space:pre-wrap}.bub .meta{display:block;font-size:12px;margin-top:2px}.bub .lnk{font-size:12px}
@@ -267,7 +268,8 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .pincancel{justify-content:center;border-top:1px solid var(--line-soft)!important;color:var(--muted)!important}.pinpop.at .pincancel{display:none!important}
 .gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
 .nbtns{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nbtns .nlink{margin:0!important;width:100%;padding-inline:8px;white-space:nowrap}
-.ctabs2{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line-soft);margin-bottom:4px}.ctabs2 button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.ctabs2 button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+@media (max-width:760px){.ctabs2 button{font-size:14px!important;line-height:1.2}}
+.ctabs2{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line-soft);margin-bottom:4px}.ctabs2 button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.ctabs2 button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
 .gmems{display:grid;gap:6px}.gmem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line-soft);min-width:0}.gmem>span:first-child{min-width:0;overflow-wrap:anywhere}
 .iconb,.btn.iconb{width:46px;padding:0;min-width:0;display:inline-grid;place-items:center;align-self:stretch;min-height:40px}.iconb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.gdel{border:1px solid var(--fg);padding:12px;display:grid;gap:10px}
 .pz{display:flex;flex-wrap:wrap;gap:16px}.pfr .pz{justify-content:center}.pfr .pz .m{text-align:center}@media (max-width:760px){.plinks{justify-content:center}}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
@@ -1177,7 +1179,7 @@ function previewOutfit(o, i){
   if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_zunge' ? {lips:'l_offen'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
-const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? (/^ko_/.test(i.id) ? 'top' : 'belt') : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
+const thumbView = i => i.cat === 'top' && isDress(i) ? 'dress' : i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? (/^ko_/.test(i.id) ? 'top' : 'belt') : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 ITEMS.push(
   {id:'m_fliege',cat:'top',name:'Hemd mit Fliege',st:'Viktorianisch',g:'m'},
   {id:'m_offen',cat:'top',name:'Offenes Karohemd über Shirt',st:'Grunge',g:'m'},
@@ -1334,15 +1336,6 @@ ITEMS.push(
   {id:'ko_ringel',cat:'jewel',sub:'guertel',name:'Ringel-Korsett'},
   {id:'ko_schnuer',cat:'jewel',sub:'guertel',name:'Schnür-Korsett'},
   {id:'ko_unter',cat:'jewel',sub:'guertel',name:'Unterbrust-Korsett'},
-  // Scene-Kleider (Inaya, 2026-10-11)
-  {id:'sd_leo',cat:'top',name:'Scene-Kleid Leo',st:'Scene',g:'w'},
-  {id:'sd_ringel',cat:'top',name:'Scene-Kleid Ringel',st:'Scene',g:'w'},
-  {id:'sd_zebra',cat:'top',name:'Scene-Kleid Zebra',st:'Scene',g:'w'},
-  {id:'sd_schach',cat:'top',name:'Scene-Kleid Schachbrett',st:'Scene',g:'w'},
-  {id:'sd_herz',cat:'top',name:'Scene-Kleid Herzchen',st:'Scene',g:'w'},
-  {id:'sd_blau',cat:'top',name:'Scene-Kleid Leo Blau',st:'Scene',g:'w'},
-  {id:'sd_rosen',cat:'top',name:'Scene-Kleid Rosen',st:'Scene',g:'w'},
-  {id:'sd_doppel',cat:'top',name:'Scene-Kleid mit Doppelrüschen',st:'Scene',g:'w'},
   // Scene-Minikleider (Inaya, 2026-10-11)
   {id:'md_leo',cat:'top',name:'Scene-Minikleid Leo',st:'Scene',g:'w'},
   {id:'md_ringel',cat:'top',name:'Scene-Minikleid Ringel',st:'Scene',g:'w'},
@@ -1409,6 +1402,7 @@ function normOutfit(o){
   if (o.jewel && typeof o.jewel === 'object' && 'armreif' in o.jewel) { o.jewel = {...o.jewel}; delete o.jewel.armreif; } // Nietenarmband entfernt, Stachelarmband bleibt (Inaya, 2026-10-10)
   if (o.acc && typeof o.acc === 'object' && 'buch' in o.acc) { o.acc = {...o.acc}; delete o.acc.buch; } // Zauberbuch entfernt (Inaya, 2026-10-10)
   if (o.acc === 'schleife' || o.acc === 'ohren') { o.hacc[o.acc] = HACC_C[o.acc]; o.acc = 'none'; }
+  if (/^sd_/.test(o.top || '')) o.top = 'md_' + o.top.slice(3); // nur noch Minikleider (Inaya, 2026-10-11)
   if (o.top === 'k_spitze') o.top = 'k_spitzerand'; // gleiche ID wie der Spitzen-Choker, Oberteil ließ sich nicht anziehen (Inaya, 2026-10-11)
   if (!o.body || o.body === 'a') o.body = 'w'; // „Androgyn“ gibt es nicht mehr (Inaya)
   if (o.face === 'lippen') { o.face = 'liner'; if (!o.lipC) o.lipC = '#3a0a18'; }
@@ -1496,8 +1490,8 @@ IB.m.torso = [[470,95,307],[480,97,306],[500,102,300],[520,108,295],[540,112,291
 for (const k in IB) { const D = IFIG_DATA[IB[k].k]; IB[k].W = D.W; IB[k].H = D.H; IB[k].arm = D.arm; IB[k].legs = D.legs; }
 const IBODY = o => (o?.body === 'm' ? IB.m : IB.w);
 const IVIEWS = {
-  w:{full:'-243 -115 830 1660', head:'-10 -50 365 365', hair:'-60 -140 465 465', bust:'-53 -64 450 578', face:'70 92 210 210', mouth:'136 196 82 94', ear:'36 136 66 82', neck:'108 248 134 166', navel:'118 523 110 110', hand:'-34 736 170 170', belt:'78 515 194 194', top:'-22 276 392 448', bottom:'-42 560 434 644', legs:'-90 720 530 795', shoes:'30 1236 290 254'},
-  m:{full:'-218 -115 830 1660', head:'37 -44 321 321', hair:'-8 -128 410 410', bust:'-25 -64 450 578', face:'108 81 185 185', mouth:'166 172 72 83', ear:'76 120 58 72', neck:'134 230 132 165', navel:'145 511 110 110', hand:'-34 742 170 170', belt:'103 501 194 194', top:'2 266 396 453', bottom:'-20 548 440 653', legs:'-60 760 520 780', shoes:'50 1258 300 263'},
+  w:{dress:'-73 262 490 580', full:'-243 -115 830 1660', head:'-10 -50 365 365', hair:'-60 -140 465 465', bust:'-53 -64 450 578', face:'70 92 210 210', mouth:'136 196 82 94', ear:'36 136 66 82', neck:'108 248 134 166', navel:'118 523 110 110', hand:'-34 736 170 170', belt:'78 515 194 194', top:'-22 276 392 448', bottom:'-42 560 434 644', legs:'-90 720 530 795', shoes:'30 1236 290 254'},
+  m:{dress:'-45 252 490 580', full:'-218 -115 830 1660', head:'37 -44 321 321', hair:'-8 -128 410 410', bust:'-25 -64 450 578', face:'108 81 185 185', mouth:'166 172 72 83', ear:'76 120 58 72', neck:'134 230 132 165', navel:'145 511 110 110', hand:'-34 742 170 170', belt:'103 501 194 194', top:'2 266 396 453', bottom:'-20 548 440 653', legs:'-60 760 520 780', shoes:'50 1258 300 263'},
 };
 const IOL = '#1f1b1f';
 const IO = `stroke="${IOL}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
@@ -4013,7 +4007,7 @@ HELPER_POSTS.push( // Neuigkeiten immer mit Bild der Neuerung und passendem Knop
   {id:'n-privat-neu',at:1791711818000,author:'juliet',type:'neu',text:'Neu: Ihr könnt euer Profil jetzt auf privat stellen! Das geht in den Einstellungen.',show:{priv:1,btn:['Zu den Einstellungen','settings','']},reactions:{},comments:[],age:.002},
   {id:'n-chat-neu',at:1791706668000,author:'juliet',type:'neu',text:'Neue Chat-Funktionen! Schickt euch Fotos, MP3s und Links, gebt jedem Chat mit dem Stift eure eigene Farbe und seht, wenn jemand gerade schreibt.',show:{chat:1,btn:['Zu den Chats','nav','chats']},reactions:{},comments:[],age:.005},
   {id:'n-scene-okt',at:1791675141000,author:'andy',type:'neu',text:'Neue Scene-Shirts für alle! Dinos, Monster, Neon-Sterne und mehr. Ab in die Garderobe!',show:{wear:['top:sz_dino','top:sz_monster','top:sz_sterne','top:sz_zombie','top:sz_katzen','top:sz_rawr']},reactions:{},comments:[],age:.01},
-  {id:'n-korsett-okt',at:1791714838000,author:'andy',type:'neu',text:'Neu in der Garderobe: Scene-Kleider und Korsetts!',show:{wear:['top:sd_leo','top:sd_ringel','top:sd_zebra','top:sd_blau','jewel:ko_zebra','jewel:ko_schnallen','jewel:ko_rosen','jewel:ko_leo','jewel:ko_ringel']},reactions:{},comments:[],age:.001},
+  {id:'n-korsett-okt',at:1791714838000,author:'andy',type:'neu',text:'Neu in der Garderobe: Scene-Kleider und Korsetts!',show:{wear:['top:md_leo','top:md_ringel','top:md_zebra','top:md_blau','jewel:ko_zebra','jewel:ko_schnallen','jewel:ko_rosen','jewel:ko_leo','jewel:ko_ringel']},reactions:{},comments:[],age:.001},
   {id:'n-pony-okt',at:1791649319000,author:'andy',type:'neu',text:'Neue Ponys für Dreads und Cornrows. Probiert sie aus!',show:{wear:['front:p_dread|back=dreadk','front:p_corn|back=cornk','back:zoepfe|front=p_gerade']},reactions:{},comments:[],age:.2},
 );
 const OLD_DEMO = ['nyx','matze','jule','kaspar'];
@@ -4458,9 +4452,18 @@ function piInner(p){
     return `<div class="cthread">${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
   }).join('');
   const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
-  return `<div class="reacts">${reacts}</div>${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}"><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label>${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
+  return `<div class="reacts">${reacts}</div>${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label><span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
 }
 // Fotos in Kommentaren: klein, weniger als halb so groß wie im Beitrag (Inaya, 2026-10-11)
+// Antworten: auf „antworten“ oder direkt auf die Sprechblase tippen; Fokus sofort, damit die Tastatur aufgeht (Inaya, 2026-10-11)
+document.addEventListener('click', e => {
+  const t = e.target; if (!t.closest) return;
+  const re = t.closest('[data-act="pc-re"]') || (!t.closest('button,a,input,label,img') ? t.closest('.cthread .bub')?.querySelector('[data-act="pc-re"]') : null);
+  if (!re) return; e.preventDefault(); e.stopPropagation();
+  const k = re.dataset.k, box = re.closest('[data-pi]'); CMRE[k] = {d:re.dataset.d, u:re.dataset.u}; piDraw(k);
+  const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] input[type=text]`); if (i) { i.focus(); setTimeout(kbAlign, 350); }
+}, true);
+document.addEventListener('input', e => { if (e.target.id !== 'pubg-q') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#pubg-list .pubg').forEach(el => { el.hidden = !!q && !el.dataset.n.includes(q); }); });
 const PCIMG = {}, CMOPEN = new Set(), CMRE = {}, CMT_THREADS = 1791723600000; // ab hier gibt es Antworten auf Kommentare
 document.addEventListener('change', async e => {
   if (!e.target.classList?.contains('pcfile')) return;
@@ -5267,7 +5270,7 @@ function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
-  CH.open = id; CH.mode = 'chat'; CH.msgs = []; { const c = CH.list.find(x => x.id === id); chatTab = c ? (c.group ? 'group' : 'priv') : id.startsWith('g') ? 'group' : 'priv'; }
+  CH.open = id; CH.mode = 'chat'; CH.msgs = []; { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
   CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot(snap => {
     CH.msgs = snap.docs.map(d => ({...d.data(), id:d.id})).reverse(); markSeen(); drawMsgs();
   }, () => {});
@@ -5294,10 +5297,11 @@ async function clearRoomChat(){ // alte Raumchat-Nachrichten wegräumen (Markier
     for (const d of snap.docs) { const m = d.data(); if (m.kind !== 'close') await social.db.doc('chats/zimmer_' + social.uid + '/m/' + d.id).delete().catch(() => {}); }
   } catch {}
 }
+const ctabOf = c => !c.group ? 'priv' : c.pub ? 'pub' : 'group'; // Öffentliche Gruppen haben einen eigenen Reiter (Inaya, 2026-10-11)
 let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz unten (Inaya, 2026-10-10)
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].filter(c => !!c.group === (chatTab === 'group')).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
+  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${c.id}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -5331,10 +5335,10 @@ function chatsView(){
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
     <div class="chatwrap ${CH.mode ? 'open' : ''}">
       <div class="chatside">
-        <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats']].map(([k, l]) => { const n = CH.list.filter(c => !!c.group === (k === 'group') && unread(c)).length + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}">${l}${n ? ' <i class="dot" aria-label="neu"></i>' : ''}</button>`; }).join('')}</div>
-        ${social ? `<div class="row">${chatTab === 'group' ? '<button class="btn" data-act="chat-group">＋ Neue Gruppe</button>' : '<button class="btn" data-act="chat-new">＋ Neuer Chat</button>'}</div>` : ''}
-        ${social ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
-        ${social && chatTab === 'group' ? (() => { loadPubGroups(); const l = PUBG.filter(c => !(c.members || []).includes(social.uid)); return `<p class="lbl" style="margin:14px 0 0">Öffentliche Gruppen</p>${l.length ? l.map(c => `<div class="pubg clist" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''}><span class="pubgt"><b>${esc(c.name || 'Gruppe')}</b><small>${(c.members || []).length === 1 ? "1 Person" : (c.members || []).length + " Leute"}</small></span><button class="btn ghost" data-act="pubg-join" data-id="${esc(c.id)}">Beitreten</button></div>`).join('') : '<p class="note">Gerade gibt es keine weiteren öffentlichen Gruppen. Mach selbst eine auf!</p>'}`; })() : ''}
+        <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats'],['pub','Öffentliche Gruppen']].map(([k, l]) => { const n = CH.list.filter(c => ctabOf(c) === k && unread(c)).length + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}">${l}${n ? ' <i class="dot" aria-label="neu"></i>' : ''}</button>`; }).join('')}</div>
+        ${social ? `<div class="row">${chatTab === 'group' ? '<button class="btn" data-act="chat-group">＋ Neue Gruppe</button>' : chatTab === 'pub' ? '<button class="btn" data-act="chat-group" data-v="pub">＋ Neue öffentliche Gruppe</button>' : '<button class="btn" data-act="chat-new">＋ Neuer Chat</button>'}</div>` : ''}
+        ${social ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : chatTab === 'pub' ? 'Du bist noch in keiner öffentlichen Gruppe. Stöber unten und tritt einer bei!' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>'}
+        ${social && chatTab === 'pub' ? (() => { loadPubGroups(); const l = PUBG.filter(c => !(c.members || []).includes(social.uid)); return `<p class="lbl" style="margin:14px 0 0">Stöbern: Gruppen zum Beitreten</p>${l.length > 4 ? `<input type="search" id="pubg-q" placeholder="Gruppe suchen …" aria-label="Öffentliche Gruppe suchen" autocomplete="off">` : ''}<div id="pubg-list">${l.length ? l.map(c => `<div class="pubg clist" data-n="${esc((c.name || '').toLowerCase())}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''}><span class="pubgt"><b>${esc(c.name || 'Gruppe')}</b><small>${(c.members || []).length === 1 ? '1 Person' : (c.members || []).length + ' Leute'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></span><button class="btn ghost" data-act="pubg-join" data-id="${esc(c.id)}">Beitreten</button></div>`).join('') : '<p class="note">Gerade gibt es keine weiteren öffentlichen Gruppen. Mach selbst eine auf!</p>'}</div>`; })() : ''}
         ${chatTab === 'priv' ? `<p class="lbl" style="margin:14px 0 0">Helfer</p>
         ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}` : ''}
       </div>
@@ -5360,9 +5364,9 @@ function groupForm(friends){
       <header class="ch-head"><div><b class="ch-name" id="g-prevname">${esc(g.dm ? (who[0] || 'Freund') : (g.name || 'Eure Gruppe'))}</b><small class="muted">${g.dm ? 'Privater Chat' : esc(['Du', ...who].join(', '))}</small></div></header>
       <div class="chat msgs"><div class="bubble them">${g.dm ? '' : `<small class="who">${esc(who[0] || 'Freundin')}</small>`}${etx('Wer kommt heute Abend mit auf den Friedhof? :lach:')}<small class="meta">vor 2 Min.</small></div><div class="bubble me">Ich bin dabei!<small class="meta">gerade eben</small></div></div>
     </section></div>`;
-  return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : 'Neue Gruppe'}</h3>${prev}
+  return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
     ${g.dm ? '' : `<label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>`}
-    ${g.dm ? '' : `<label class="allg"><input type="checkbox" id="g-pub" ${g.pub ? 'checked' : ''}> Öffentliche Gruppe: jeder kann beitreten. Name und Farbe ändern und Leute entfernen kannst dann nur du als Admin.</label>`}
+    ${g.pub && !g.id ? '<p class="note">Öffentliche Gruppe: Jeder kann sie finden und beitreten. Name und Farbe ändern und Leute entfernen kannst nur du als Admin.</p>' : ''}
     ${g.id ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?${g.pub ? ' (freiwillig)' : ''}</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
@@ -6069,7 +6073,6 @@ document.addEventListener('focusout', () => setTimeout(() => { const a = documen
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
   const n = document.getElementById('g-name'); if (n) g.name = n.value;
-  const pb = document.getElementById('g-pub'); if (pb) g.pub = pb.checked;
   const boxes = [...document.querySelectorAll('.g-mem')]; if (boxes.length) { const shown = new Set(boxes.map(x => x.value)); g.members = [...g.members.filter(m => !shown.has(m)), ...boxes.filter(x => x.checked).map(x => x.value)]; } // Mitglieder, die nicht in meiner Freundesliste stehen, bleiben drin
 }
 document.addEventListener('click', async e => {
@@ -6080,17 +6083,17 @@ document.addEventListener('click', async e => {
   else if (a === 'fr-ignore') { S.ignoredReq = [...new Set([...(S.ignoredReq || []), id])]; save(); render(); }
   else if (a === 'chat-open') openChat(id);
   else if (a === 'chat-new') { CH.mode = 'new'; render(); }
-  else if (a === 'chat-group') { CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
+  else if (a === 'chat-group') { CH.gdraft = {pub:b.dataset.v === 'pub', name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
   else if (a === 'set-priv') { me().priv = b.dataset.v === '1' ? 1 : 0; save(); publishProfile(); render(); toast(me().priv ? 'Dein Profil ist jetzt privat' : 'Dein Profil ist jetzt öffentlich'); }
   else if (a === 'salon-mode') { S.salonMode = b.dataset.v === 'pub' ? 'pub' : 'fr'; save(); if (S.salonMode === 'pub') loadPubFeed(true); render(); }
   else if (a === 'helper-chat') { chatTab = 'priv'; go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
-  else if (a === 'chat-tab') { chatTab = b.dataset.v === 'group' ? 'group' : 'priv'; render(); }
+  else if (a === 'chat-tab') { chatTab = ['group', 'pub'].includes(b.dataset.v) ? b.dataset.v : 'priv'; if (chatTab === 'pub') pubgAt = 0; render(); }
   else if (a === 'pubg-join') {
     if (!social) return; b.disabled = true;
     try { const ref = social.db.doc('chats/' + id), d = await ref.get(); const c = d.data(); if (!d.exists || !c?.pub) { toast('Die Gruppe gibt es nicht mehr.'); pubgAt = 0; loadPubGroups(); return; }
       await ref.update({members:[...new Set([...(c.members || []), social.uid])]}); await sendMsg(id, `${me().name} ist der Gruppe beigetreten.`);
-      PUBG = PUBG.filter(x => x.id !== id); setTimeout(() => openChat(id), 600); toast('Du bist jetzt in der Gruppe'); }
+      PUBG = PUBG.filter(x => x.id !== id); chatTab = 'pub'; setTimeout(() => openChat(id), 600); toast('Du bist jetzt in der Gruppe'); }
     catch { b.disabled = false; toast('Beitreten hat nicht geklappt. Versuch es nochmal.'); }
   }
   else if (a === 'chat-add') { gRmAsk = null; CH.mode = 'gadd'; render(); }
@@ -6496,7 +6499,7 @@ document.addEventListener('click', async e => {
     try { if (on) await ref.delete(); else await ref.set({kind:'r', r, by:uid, ts:Date.now()}); } catch { toast('Das hat gerade nicht geklappt.'); }
   }
   else if (a === 'pc-img-x') { delete PCIMG[b.dataset.k]; piDraw(b.dataset.k); }
-  else if (a === 'pc-re') { CMRE[b.dataset.k] = {d:b.dataset.d, u:b.dataset.u}; piDraw(b.dataset.k); document.getElementById('pc-' + b.dataset.k)?.focus(); }
+  else if (a === 'pc-re-old') { CMRE[b.dataset.k] = {d:b.dataset.d, u:b.dataset.u}; piDraw(b.dataset.k); document.getElementById('pc-' + b.dataset.k)?.focus(); }
   else if (a === 'pc-re-x') { delete CMRE[b.dataset.k]; piDraw(b.dataset.k); }
   else if (a === 'pc-more') { const x = b.dataset.k + '/' + b.dataset.d; CMOPEN.has(x) ? CMOPEN.delete(x) : CMOPEN.add(x); piDraw(b.dataset.k); }
   else if (a === 'pc-del') { try { await social.db.doc('chats/pi_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch {} }
