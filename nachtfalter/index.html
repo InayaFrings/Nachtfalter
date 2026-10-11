@@ -469,7 +469,7 @@ footer.foot .lnk{color:var(--muted)}
   body.chatfull .mback{display:none}
   body .chback{display:inline-grid!important}
 }
-.chback{display:none!important}.typing{font:italic 15px var(--f-ital);color:var(--p-fg);animation:typb 1.2s ease-in-out infinite}@keyframes typb{50%{opacity:.45}}.chtitle{min-width:0}.chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chback{display:none!important}.wname{font:inherit;font-weight:700;color:inherit}.typing{font:italic 15px var(--f-ital);color:var(--p-fg);animation:typb 1.2s ease-in-out infinite}@keyframes typb{50%{opacity:.45}}.chtitle{min-width:0}.chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .attbtn{flex:none;width:42px;min-height:42px;border:1px solid var(--p-line);border-radius:50%;background:transparent;color:var(--p-fg);display:grid;place-items:center;cursor:pointer;align-self:center}.attbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;transition:transform .15s}.attbtn[aria-expanded="true"] svg{transform:rotate(45deg)}
 .attsheet{display:flex;gap:10px;justify-content:flex-start;padding:4px 0}
 .attopt{display:grid;justify-items:center;gap:4px;background:transparent;border:0;color:var(--p-fg);font:400 14px var(--f-display);cursor:pointer;padding:0;min-width:64px}
@@ -5230,7 +5230,7 @@ function mediaHTML(c){
 function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
-  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry"><b>${esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
+  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
     : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
 // Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
