@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f967d09d693b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='880cd49e738a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -614,6 +614,7 @@ footer.foot .lnk{color:var(--muted)}
 .rhop{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 8px;border:1px solid var(--line, #3a3a40);border-radius:999px;background:transparent;color:var(--fg);font:400 14px var(--f-display);letter-spacing:.03em;cursor:pointer;min-height:0}.rhop:hover{background:rgba(255,255,255,.06)}.rhop svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .rchat{margin-top:10px;display:grid;gap:6px}.rchat .ropen{margin:0}.rchat .rcount{margin:0}.rchat .cform{margin:0}
 .rwrap{position:relative;min-width:0;max-width:100%}.rstage{position:relative}.rwrap>.rposes{max-width:100%;margin-top:8px}
+.rposes .rpbtn{width:44px;height:44px;padding:0!important;border-radius:50%!important;display:grid;place-items:center;flex:none}.rposes .rpbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.rposes .rpbtn[aria-expanded="true"]{background:var(--fg);color:var(--ink)}
 .rlog .bubble{font-size:15px;padding:4px 10px;max-width:92%}.rlog .bubble .meta,.rlog .bubble small.t{font-size:11px}.rlog{gap:5px!important}
 .rstage > .chat.rlog{position:absolute;left:10px;bottom:10px;width:min(46%,380px);max-height:42%;min-height:0;margin:0;padding:8px;z-index:6;background:#0a0a0bcc;border:1px solid var(--line-soft);backdrop-filter:blur(2px)}
 .visitors{position:absolute;inset:0;pointer-events:none}
@@ -5464,10 +5465,11 @@ function paintVisitors(v, owner){
     if (o && (host.dataset.sig || '') !== pose) { host.dataset.sig = pose; host.innerHTML = avatar(o, 'full', pose); setMv(host, pose); }
   }
 }
+let rPoseOpen = false;
 function poseBar(){
   const cur = RM.me.pose || 'gerade';
-  return `<div class="rposes" role="group" aria-label="Pose im Zimmer"><span class="lbl">Pose</span>${POSES.filter(x => ROOM_POSES.includes(x[0])).map(([k, l]) => `<button type="button" data-act="rpose" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>
-    <p class="note" style="margin:6px 0 0">Tipp auf den Boden, dann läuft dein Avatar dorthin.</p>`;
+  // nur ein kleines Männchen; antippen zeigt die Posen (Inaya, 2026-10-11)
+  return `<div class="rposes${rPoseOpen ? ' open' : ''}" role="group" aria-label="Pose im Zimmer"><button type="button" class="rpbtn" data-act="rposeopen" aria-expanded="${rPoseOpen}" aria-label="Posen" title="Posen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.2"/><path d="M12 7.5v7M12 14.5l-3.5 6M12 14.5l3.5 6M6 10.5l6-1.5 6 1.5"/></svg></button>${rPoseOpen ? POSES.filter(x => ROOM_POSES.includes(x[0])).map(([k, l]) => `<button type="button" data-act="rpose" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('') : ''}</div>`;
 }
 function roomMove(){ if (RM.g) RM.g.presence({u:social.uid, ...RM.me}).catch?.(() => {}); const v = document.getElementById('roomvis'); if (v && RM.owner) paintVisitors(v, RM.owner); }
 document.addEventListener('click', e => {
@@ -6180,6 +6182,7 @@ document.addEventListener('click', async e => {
     u.points -= i.price; u.owned.push(id); wearItem(u.outfit, i); trial = null;
     save(); render(); toast(`${i.name} gekauft. Es liegt jetzt in deiner Garderobe.`);
   }
+  else if (a === 'rposeopen') { rPoseOpen = !rPoseOpen; render(); }
   else if (a === 'rpose') {
     RM.me.pose = b.dataset.v; document.querySelectorAll('[data-act=rpose]').forEach(x => x.setAttribute('aria-pressed', x === b));
     if (V.name === 'room' && !RM.g) { const host = document.querySelector('[data-rav]'); if (host) { host.innerHTML = avatar(me().outfit, 'full', RM.me.pose); host.dataset.sig = RM.me.pose; setMv(host, RM.me.pose); } }
