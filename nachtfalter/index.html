@@ -161,7 +161,7 @@ label.f{display:grid;gap:4px}
 .clist.pubg{display:flex;flex-direction:row;align-items:center;gap:10px}.pubgt{flex:1;min-width:0;display:grid}.pubg .btn{flex:none}
 .cname{all:unset;cursor:pointer;font:inherit;font-weight:600}.cname:hover,.cname:focus-visible{text-decoration:underline}
 .cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
-.cform:has(.pcre){flex-wrap:wrap}@media (max-width:760px){.kbopen form[data-form="pcomment"]:focus-within{position:fixed;left:0;right:0;top:calc(var(--vvt,0px) + var(--vvh,100vh));transform:translateY(-100%);z-index:1500;margin:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:var(--p-bg,#141218);color:var(--p-fg,#ecebe7);border-top:1px solid var(--p-line,#333);flex-wrap:wrap}}
+.cform:has(.pcre){flex-wrap:wrap}
 .cthread .bub{cursor:pointer}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
 .bub{position:relative;background:var(--paper-2,#1c1c20);border:1px solid var(--line);border-radius:16px;padding:7px 13px 6px;min-width:0;max-width:calc(100% - 48px);overflow-wrap:anywhere;font-size:16px;line-height:1.35}
 .bub:before{content:'';position:absolute;left:-6px;top:13px;width:10px;height:10px;background:inherit;border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
@@ -4461,7 +4461,7 @@ document.addEventListener('click', e => {
   const re = t.closest('[data-act="pc-re"]') || (!t.closest('button,a,input,label,img') ? t.closest('.cthread .bub')?.querySelector('[data-act="pc-re"]') : null);
   if (!re) return; e.preventDefault(); e.stopPropagation();
   const k = re.dataset.k, box = re.closest('[data-pi]'); CMRE[k] = {d:re.dataset.d, u:re.dataset.u}; piDraw(k);
-  const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] input[type=text]`); if (i) { i.focus(); setTimeout(kbAlign, 350); }
+  const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] input[type=text]`); if (i) { i.focus({preventScroll:true}); kbSoon(); }
 }, true);
 document.addEventListener('input', e => { if (e.target.id !== 'pubg-q') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#pubg-list .pubg').forEach(el => { el.hidden = !!q && !el.dataset.n.includes(q); }); });
 const PCIMG = {}, CMOPEN = new Set(), CMRE = {}, CMT_THREADS = 1791723600000; // ab hier gibt es Antworten auf Kommentare
@@ -5306,12 +5306,12 @@ function chatsView(){
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
   if (CH.mode === 'gadd') { // Jedes Mitglied darf nach dem Erstellen noch Freunde dazuholen (Inaya, 2026-10-10)
-    const c = CH.list.find(x => x.id === CH.open), cand = c ? friends.filter(f => !c.members.includes(f.id)) : [];
+    const c = CH.list.find(x => x.id === CH.open), cand = c && !c.pub ? friends.filter(f => !c.members.includes(f.id)) : [];
     const mems = c ? c.members.filter(m => m !== social.uid) : []; // Mitglieder wieder entfernen (Inaya, 2026-10-10)
     right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
       <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : esc(chatWho(c.createdBy))}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
-      <h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
-      ${cand.length ? cand.map(f => `<label class="allg"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}
+      ${c?.pub ? '<p class="note">In öffentliche Gruppen kann man niemanden hinzufügen. Jeder tritt selbst bei.</p>' : `<h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
+      ${cand.length ? cand.map(f => `<label class="allg"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}`}
       <div class="row"><button class="btn ghost" type="button" data-act="chat-open" data-id="${esc(CH.open || '')}">Zurück</button>${c && !gAdmin(c) ? '<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button>' : ''}<span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
   }
   if (CH.mode === 'helper' && S.users[CH.helper]) {
@@ -5367,7 +5367,7 @@ function groupForm(friends){
   return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
     ${g.dm ? '' : `<label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>`}
     ${g.pub && !g.id ? '<p class="note">Öffentliche Gruppe: Jeder kann sie finden und beitreten. Name und Farbe ändern und Leute entfernen kannst nur du als Admin.</p>' : ''}
-    ${g.id ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?${g.pub ? ' (freiwillig)' : ''}</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
+    ${g.id || g.pub ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Schrift</legend><div class="chips">${FONT_OPTS.map(([v,l]) => `<button type="button" data-act="gopt" data-k="font" data-v="${v}" aria-pressed="${g.theme.font===v}">${l}</button>`).join('')}</div></fieldset>
@@ -6064,11 +6064,14 @@ const chatKb = el => isMob() && ['cm-in','hc-in'].includes(el?.id) && !!el.close
 const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"],[data-form="wall"],[data-form="rwall"]';
 function kbAlign(){
   const el = document.activeElement, v = window.visualViewport;
-  if (!v || !isMob() || !isTyping(el) || chatKb(el)) return; const f = el.closest(KB_FORMS); if (!f || v.height > innerHeight - 100) return;
+  if (!v || !isMob() || !isTyping(el) || chatKb(el)) return; const f = el.closest(KB_FORMS); if (!f || v.height > Math.max(innerHeight, screen.height * .85) - 100) return;
   const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (Math.abs(d) > 4) window.scrollBy(0, d);
 }
-if (window.visualViewport) visualViewport.addEventListener('resize', () => setTimeout(kbAlign, 60));
-document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); setTimeout(kbAlign, 350); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
+// iOS schiebt das Feld beim Öffnen der Tastatur selbst irgendwohin: mehrmals nachrichten, bis die Tastatur fertig aufgegangen ist (Inaya, 2026-10-11)
+let kbUntil = 0;
+const kbSoon = () => { kbUntil = Date.now() + 1500; [80, 250, 450, 700, 1000, 1400].forEach(t => setTimeout(kbAlign, t)); };
+if (window.visualViewport) { visualViewport.addEventListener('resize', () => setTimeout(kbAlign, 60)); visualViewport.addEventListener('scroll', () => { if (Date.now() < kbUntil) setTimeout(kbAlign, 30); }); }
+document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) document.body.classList.remove('kbopen'); if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
@@ -6764,6 +6767,7 @@ document.addEventListener('submit', async e => {
     sendMsg('zimmer_' + RM.owner, text);
   } else if (t === 'gadd') {
     const ids = [...document.querySelectorAll('.ga-mem')].filter(x => x.checked).map(x => x.value), cid = CH.open;
+    if (CH.list.find(x => x.id === cid)?.pub) return;
     if (!ids.length) return toast('Such mindestens eine Person aus.');
     try { await social.db.doc('chats/' + cid).update({members:[...new Set([...(CH.list.find(x => x.id === cid)?.members || [social.uid]), ...ids])]});
       await sendMsg(cid, `${me().name} hat ${ids.map(id => S.users[id]?.name || PROF[id]?.name || 'jemanden').join(', ')} hinzugefügt.`);
@@ -6777,6 +6781,7 @@ document.addEventListener('submit', async e => {
       return;
     }
     if (!g.name.trim()) return toast('Gib der Gruppe einen Namen.');
+    if (g.pub && !g.id) g.members = []; // öffentliche Gruppen: niemand wird hinzugefügt (Inaya, 2026-10-11)
     if (!g.members.length && !g.pub && !g.id) return toast('Such mindestens eine Person aus.');
     const data = {group:true, pub:!!g.pub, name:g.name.trim().slice(0, 40), members:[social.uid, ...g.members], theme:{box:g.theme.box, pattern:g.theme.pattern, font:g.theme.font}};
     if (g.id) { const c = CH.list.find(x => x.id === g.id); if (!gAdmin(c)) return; data.members = [...new Set([...(c?.members || []), social.uid])]; } // beim Bearbeiten niemanden verlieren
