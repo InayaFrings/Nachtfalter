@@ -4466,6 +4466,11 @@ document.addEventListener('click', e => {
   const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] input[type=text]`); if (i) { i.focus({preventScroll:true}); kbSoon(); }
 }, true);
 document.addEventListener('input', e => { if (e.target.id !== 'pubg-q') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#pubg-list .pubg').forEach(el => { el.hidden = !!q && !el.dataset.n.includes(q); }); });
+// Versehentlich auf „antworten“ getippt: Tastatur ohne Text wegdrücken hebt die Antwort wieder auf (Inaya, 2026-10-11)
+document.addEventListener('focusout', e => {
+  const f = e.target.closest?.('form[data-form="pcomment"]'); if (!f || !CMRE[f.dataset.k]) return; const k = f.dataset.k;
+  setTimeout(() => { if (document.activeElement?.closest?.(`form[data-k="${k}"]`)) return; const i = document.querySelector(`form[data-k="${k}"] input[type=text]`); if (i && i.value.trim()) return; delete CMRE[k]; piDraw(k); }, 250);
+});
 const PCIMG = {}, CMOPEN = new Set(), CMRE = {}, CMT_THREADS = 1791723600000; // ab hier gibt es Antworten auf Kommentare
 document.addEventListener('change', async e => {
   if (!e.target.classList?.contains('pcfile')) return;
