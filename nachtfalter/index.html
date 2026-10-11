@@ -1126,6 +1126,15 @@ html:has(body.stopen){background:#000}
 .mutwin{position:absolute;top:-3px;bottom:-3px;border:3px solid var(--p-fg,#eeedf2);border-radius:7px;background:color-mix(in srgb,var(--p-fg,#eeedf2) 18%,transparent);pointer-events:none}
 .mutlbl{font:14px -apple-system,'Helvetica Neue',Arial,sans-serif;font-variant-numeric:tabular-nums;opacity:.75}
 .emus{display:grid;gap:8px}.mmu{display:grid;gap:6px}
+
+/* Sprachnachrichten im Chat (Inaya, 2026-10-11) */
+.micbtn{flex:none;width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line,#ffffff40);border-radius:50%;background:transparent;color:inherit;cursor:pointer;padding:0}
+.micbtn svg,.mvoice .ainfo b svg,.aname svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mvoice .ainfo b,.aname{display:inline-flex;align-items:center;gap:6px}
+.vrbar{display:flex;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid var(--line,#ffffff30)}
+.vrx{width:40px;height:40px;border-radius:50%;border:1px solid var(--line,#ffffff40);background:transparent;color:inherit;font-size:18px;cursor:pointer}
+.vrdot{width:12px;height:12px;border-radius:50%;background:#e0303a;animation:vrdot 1s ease-in-out infinite}@keyframes vrdot{50%{opacity:.25}}
+.vrbar b{font-variant-numeric:tabular-nums}
 </style>
 
 <div id="app"></div>
@@ -6390,7 +6399,7 @@ function chatsView(){
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
-      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
+      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button><button class="btn" type="submit">Senden</button></form>
     </section>`;
   }
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
@@ -6462,6 +6471,35 @@ function groupForm(friends){
   </form>`;
 }
 async function chBgSave(cid, g){ if (!g.bgNew || !g.theme.bg) return; await social.db.doc('chats/' + cid + '/bg/img').set({img:g.bgNew, by:social.uid, ts:Date.now()}); CHBG[cid + ':' + g.theme.bg.v] = g.bgNew; delete g.bgNew; }
+// Sprachnachrichten in privaten Chats, Gruppen und öffentlichen Gruppen (Inaya, 2026-10-11)
+let VREC = null; const VMAX = 120;
+async function voiceStart(){
+  if (VREC || !CH.open || !social) return;
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast('Dein Browser kann hier keine Sprachnachrichten aufnehmen.');
+  let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); } catch { return toast('Erlaube bitte den Zugriff aufs Mikrofon, dann kannst du Sprachnachrichten aufnehmen.'); }
+  if (VREC || !CH.open) { stream.getTracks().forEach(t => t.stop()); return; }
+  const mt = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+  let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:48000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); return toast('Die Aufnahme ließ sich nicht starten.'); }
+  const v = VREC = {rec, stream, parts:[], t0:Date.now(), cid:CH.open, type:(mt || rec.mimeType || 'audio/mp4').split(';')[0]};
+  rec.ondataavailable = e => { if (e.data.size) v.parts.push(e.data); };
+  rec.start(500); voicePaint();
+  v.timer = setInterval(() => { const s = (Date.now() - v.t0) / 1000, el = document.getElementById('vrtime'); if (el) el.textContent = stTime(s); if (s >= VMAX) voiceStop(true); }, 250);
+}
+function voiceStop(send){
+  const v = VREC; if (!v) return; VREC = null; clearInterval(v.timer); const dur = Math.round((Date.now() - v.t0) / 1000);
+  v.rec.onstop = async () => { v.stream.getTracks().forEach(t => t.stop()); voicePaint(); if (!send) return;
+    if (dur < 1 || !v.parts.length) return toast('Die Aufnahme war zu kurz.');
+    const blob = new Blob(v.parts, {type:v.type}); if (blob.size > SONG_MAX) return toast('Die Sprachnachricht ist zu lang.');
+    const k = 'v' + Date.now().toString(36); toast('Sprachnachricht wird gesendet …');
+    try { const au = await uploadPostAudio(new File([blob], 'Sprachnachricht', {type:v.type}), k); await sendMsg(v.cid, '', {audio:{...au, type:v.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:dur}}); }
+    catch { toast('Die Sprachnachricht ging nicht raus. Versuch es nochmal.'); } };
+  try { v.rec.stop(); } catch { v.stream.getTracks().forEach(t => t.stop()); voicePaint(); }
+}
+function voicePaint(){
+  const f = document.querySelector('[data-form="cmsg"]'), bar = document.getElementById('vrbar');
+  if (VREC && f && CH.open === VREC.cid) { f.hidden = true; if (!bar) f.insertAdjacentHTML('afterend', `<div class="vrbar" id="vrbar" role="group" aria-label="Sprachnachricht wird aufgenommen"><button type="button" class="vrx" data-act="voice-x" aria-label="Aufnahme verwerfen">✕</button><i class="vrdot" aria-hidden="true"></i><span>Aufnahme <b id="vrtime">${stTime((Date.now() - VREC.t0) / 1000)}</b></span><span class="sp"></span><button type="button" class="btn vrsend" data-act="voice-send">Senden</button></div>`); }
+  else { if (VREC) voiceStop(false); if (f) f.hidden = false; bar?.remove(); }
+}
 async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
@@ -6613,6 +6651,7 @@ let chatAttach = false;
 function msgMedia(m){
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
   if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
+  if (m.audio && m.audio.n && m.audio.voice) return `<div class="apost maud mvoice"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht anhören"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>Sprachnachricht</b><span class="muted">${m.audio.d ? stTime(+m.audio.d) + ' · ' : ''}Zum Anhören antippen</span></div></div>`;
   if (m.audio && m.audio.n) return `<div class="apost maud"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(m.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
   return '';
 }
@@ -7301,7 +7340,8 @@ function scrollXs(root){
   });
   return out;
 }
-function render(){
+function render(){ renderInner(); if (VREC || document.getElementById('vrbar')) voicePaint(); }
+function renderInner(){
   if (softT) { clearTimeout(softT); softT = null; }
   const app = document.getElementById('app');
   // Waagerechte Leisten (Reiter, Posen, Möbel, Zimmer) bleiben beim Antippen, wo sie gerade stehen
@@ -7478,6 +7518,9 @@ document.addEventListener('click', async e => {
   if (a === 'wcol') { wColOpen = !wColOpen; render(); return; }
   if (a === 'mob-more') { mobMore = !mobMore; render(); return; }
   if (a === 'chat-back') { typingNow(false); CH.open = null; CH.mode = null; chatAttach = false; render(); return; }
+  if (a === 'voice-rec') { voiceStart(); return; }
+  if (a === 'voice-x') { voiceStop(false); return; }
+  if (a === 'voice-send') { voiceStop(true); return; }
   if (a === 'att-toggle') { chatAttach = !chatAttach; const keep = document.getElementById('cm-in')?.value || ''; render(); const i = document.getElementById('cm-in'); if (i) i.value = keep; return; }
   if (a === 'att-link') { chatAttach = false; render(); const i = document.getElementById('cm-in'); if (i) { if (!/https?:\/\//.test(i.value)) i.value = (i.value ? i.value + ' ' : '') + 'https://'; i.focus(); } return; }
   if (a === 'mimg-open') { const img = b.querySelector('img'); if (!img) return; const o = document.createElement('div'); o.className = 'mview'; o.innerHTML = `<img src="${img.src}" alt="Foto"><button class="btn ghost" type="button">Schließen</button>`; o.addEventListener('click', () => o.remove()); document.body.appendChild(o); return; }
@@ -7508,7 +7551,7 @@ document.addEventListener('click', async e => {
   if (a === 'maplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
     b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
-    songURL(m.from, m.audio, 'pa_' + m.audio.k).then(src => { if (box) box.innerHTML = `<b class="aname">♪ ${esc(m.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${src.url}"></audio>`; })
+    songURL(m.from, m.audio, 'pa_' + m.audio.k).then(src => { if (box) box.innerHTML = `<b class="aname">${m.audio.voice ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>Sprachnachricht' : '♪ ' + esc(m.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${src.url}"></audio>`; })
       .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
     return;
   }
