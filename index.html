@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='aa23c77b890c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9324de465a2c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1440,14 +1440,14 @@ ITEMS.push(
   {id:'r_stein',cat:'jewel',sub:'ring',name:'Ring mit Stein',c:'#6a3a8a'},
   {id:'g_herz',cat:'jewel',sub:'guertel',name:'Gürtel mit Herzschnalle'},
   {id:'g_stern',cat:'jewel',sub:'guertel',name:'Sternengürtel'},
-  // Scene-Korsetts unter Gürtel, liegen über dem Oberteil (Inaya, 2026-10-11)
-  {id:'ko_zebra',cat:'jewel',sub:'guertel',name:'Zebra-Korsett mit Rüschen'},
-  {id:'ko_schnallen',cat:'jewel',sub:'guertel',name:'Zebra-Korsett mit Schnallen'},
-  {id:'ko_rosen',cat:'jewel',sub:'guertel',name:'Rosen-Korsett mit Seitenschnürung'},
-  {id:'ko_leo',cat:'jewel',sub:'guertel',name:'Leo-Korsett mit Schleife'},
-  {id:'ko_ringel',cat:'jewel',sub:'guertel',name:'Ringel-Korsett'},
-  {id:'ko_schnuer',cat:'jewel',sub:'guertel',name:'Schnür-Korsett'},
-  {id:'ko_unter',cat:'jewel',sub:'guertel',name:'Unterbrust-Korsett'},
+  // Scene-Korsetts bei den Oberteilen (Inaya, 2026-10-11: erst unter Gürtel, dann zu Oberteile)
+  {id:'ko_zebra',cat:'top',st:'Scene',name:'Zebra-Korsett mit Rüschen'},
+  {id:'ko_schnallen',cat:'top',st:'Scene',name:'Zebra-Korsett mit Schnallen'},
+  {id:'ko_rosen',cat:'top',st:'Scene',name:'Rosen-Korsett mit Seitenschnürung'},
+  {id:'ko_leo',cat:'top',st:'Scene',name:'Leo-Korsett mit Schleife'},
+  {id:'ko_ringel',cat:'top',st:'Scene',name:'Ringel-Korsett'},
+  {id:'ko_schnuer',cat:'top',st:'Scene',name:'Schnür-Korsett'},
+  {id:'ko_unter',cat:'top',st:'Scene',name:'Unterbrust-Korsett'},
   // Scene-Minikleider (Inaya, 2026-10-11)
   {id:'md_leo',cat:'top',name:'Scene-Minikleid Leo',st:'Scene',g:'w'},
   {id:'md_ringel',cat:'top',name:'Scene-Minikleid Ringel',st:'Scene',g:'w'},
@@ -1515,6 +1515,7 @@ function normOutfit(o){
   if (o.acc && typeof o.acc === 'object' && 'buch' in o.acc) { o.acc = {...o.acc}; delete o.acc.buch; } // Zauberbuch entfernt (Inaya, 2026-10-10)
   if (o.acc === 'schleife' || o.acc === 'ohren') { o.hacc[o.acc] = HACC_C[o.acc]; o.acc = 'none'; }
   if (/^sd_/.test(o.top || '')) o.top = 'md_' + o.top.slice(3); // nur noch Minikleider (Inaya, 2026-10-11)
+  if (o.jewel && typeof o.jewel === 'object') for (const k of Object.keys(o.jewel)) if (/^ko_/.test(k)) { o.top = k; if (/^#/.test(o.jewel[k])) o.topC = o.jewel[k]; o.jewel = {...o.jewel}; delete o.jewel[k]; } // Korsetts von Gürtel zu Oberteile (Inaya, 2026-10-11)
   if (o.top === 'k_spitze') o.top = 'k_spitzerand'; // gleiche ID wie der Spitzen-Choker, Oberteil ließ sich nicht anziehen (Inaya, 2026-10-11)
   if (!o.body || o.body === 'a') o.body = 'w'; // „Androgyn“ gibt es nicht mehr (Inaya)
   if (o.face === 'lippen') { o.face = 'liner'; if (!o.lipC) o.lipC = '#3a0a18'; }
@@ -2367,6 +2368,7 @@ Object.assign(IBELT, {
   ko_schnuer:(X, c) => { const B = X.B; return ikorsett(X, c) + ilaceup(X, B.cx, B.chest + 6, B.wy + 30, 12, itrim(c)); },
   ko_unter:(X, c) => { const B = X.B; return ikorsett(X, c, {under:1}) + ilaceup(X, B.cx, B.chest + 60, B.wy + 26, 10, itrim(c)); },
 });
+for (const k in IBELT) if (/^ko_/.test(k)) { ITOP[k] = IBELT[k]; ITOPC[k] = [HACC_C[k]]; delete IBELT[k]; } // Korsetts sind jetzt Oberteile (Inaya, 2026-10-11)
 Object.assign(IBOTC, {hot_glatt:'#141218', hot_ripped:'#2a3a5a', hot_hw:'#1c1a28', lw_jeans:'#1c1a28', lw_baggy:'#3a3a42', hw_jeans:'#2a3a5a', hw_marlene:'#141218', lw_mini:'#141218', lw_falten:'#47474c', hw_bleistift:'#141218', hw_korsage:'#141218'});
 IWIDE.push('lw_baggy','hw_marlene');
 // Grüner Hunde-Hoodie im GIR-Stil (Inaya, 2026-10-10): eigene Zeichnung, Kapuze hinten mit zwei schwarzen Schlappohren auf den Schultern, durchgehender Reißverschluss mit großem Zipper
@@ -4119,7 +4121,7 @@ HELPER_POSTS.push( // Neuigkeiten immer mit Bild der Neuerung und passendem Knop
   {id:'n-privat-neu',at:1791711818000,author:'juliet',type:'neu',text:'Neu: Ihr könnt euer Profil jetzt auf privat stellen! Das geht in den Einstellungen.',show:{priv:1,btn:['Zu den Einstellungen','settings','']},reactions:{},comments:[],age:.002},
   {id:'n-chat-neu',at:1791706668000,author:'juliet',type:'neu',text:'Neue Chat-Funktionen! Schickt euch Fotos, MP3s und Links, gebt jedem Chat mit dem Stift eure eigene Farbe und seht, wenn jemand gerade schreibt.',show:{chat:1,btn:['Zu den Chats','nav','chats']},reactions:{},comments:[],age:.005},
   {id:'n-scene-okt',at:1791675141000,author:'andy',type:'neu',text:'Neue Scene-Shirts für alle! Dinos, Monster, Neon-Sterne und mehr. Ab in die Garderobe!',show:{wear:['top:sz_dino','top:sz_monster','top:sz_sterne','top:sz_zombie','top:sz_katzen','top:sz_rawr']},reactions:{},comments:[],age:.01},
-  {id:'n-korsett-okt',at:1791714838000,author:'andy',type:'neu',text:'Neu in der Garderobe: Scene-Kleider und Korsetts!',show:{wear:['top:md_leo','top:md_ringel','top:md_zebra','top:md_blau','jewel:ko_zebra','jewel:ko_schnallen','jewel:ko_rosen','jewel:ko_leo','jewel:ko_ringel']},reactions:{},comments:[],age:.001},
+  {id:'n-korsett-okt',at:1791714838000,author:'andy',type:'neu',text:'Neu in der Garderobe: Scene-Kleider und Korsetts!',show:{wear:['top:md_leo','top:md_ringel','top:md_zebra','top:md_blau','top:ko_zebra','top:ko_schnallen','top:ko_rosen','top:ko_leo','top:ko_ringel']},reactions:{},comments:[],age:.001},
   {id:'n-pony-okt',at:1791649319000,author:'andy',type:'neu',text:'Neue Ponys für Dreads und Cornrows. Probiert sie aus!',show:{wear:['front:p_dread|back=dreadk','front:p_corn|back=cornk','back:zoepfe|front=p_gerade']},reactions:{},comments:[],age:.2},
 );
 const OLD_DEMO = ['nyx','matze','jule','kaspar'];
