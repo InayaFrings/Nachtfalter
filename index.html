@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9112ef1bc8b0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5d34260c2a45';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -579,6 +579,8 @@ footer.foot .lnk{color:var(--muted)}
   body .chback{display:inline-grid!important}
 }
 .chback{display:none!important}
+.gb .entry.wentry.tp{background:linear-gradient(var(--p-bg),var(--p-bg)) padding-box,var(--pp-pat) border-box border-box,var(--p-bg);border:9px solid transparent;border-radius:10px;color:var(--p-fg);box-shadow:0 0 0 1px var(--p-line)}
+.wentry.tp .meta,.wentry.tp .muted{color:var(--p-muted)}.wentry.tp .lnk,.wentry.tp .cdel{color:var(--p-fg)}.wentry.tp .vid{color:var(--p-fg);border-color:var(--p-line)}
 /* Gästebuch und Kommentare: feste Höhe, drinnen scrollen (Inaya, 2026-10-11) */
 #rwall{max-height:420px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px}.cmts{max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px}.wname{font:inherit;font-weight:700;color:inherit}.typing{font:italic 15px var(--f-ital);color:var(--p-fg);animation:typb 1.2s ease-in-out infinite}@keyframes typb{50%{opacity:.45}}.chtitle{min-width:0}.chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .attbtn{flex:none;width:42px;min-height:42px;border:1px solid var(--p-line);border-radius:50%;background:transparent;color:var(--p-fg);display:grid;place-items:center;cursor:pointer;align-self:center}.attbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;transition:transform .15s}.attbtn[aria-expanded="true"] svg{transform:rotate(45deg)}
@@ -4824,7 +4826,7 @@ function profileView(id){
         <div class="row"><span class="sp"></span><button class="btn" type="submit">Kommentieren</button></div></form>`
         : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
   else if (!u.helper) wallP = (own && social ? `<div class="gb"><h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3><div id="rwall"></div></div>` : '') + `<div class="gb">
-      ${u.wall.length ? u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('') : '<p class="muted" style="margin:0">Noch keine Einträge.</p>'}
+      ${u.wall.length ? u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry tp" style="${postTheme(normTheme({...u.theme}))}">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('') : '<p class="muted" style="margin:0">Noch keine Einträge.</p>'}
       <form class="cform" data-form="wall" data-id="${id}">
         <input type="text" id="w-${id}" placeholder="${own ? 'Etwas in dein Gästebuch schreiben…' : 'Hinterlass ' + esc(u.name) + ' ein paar Zeilen…'}" maxlength="300" aria-label="Gästebuch-Eintrag">
         <button class="btn ghost" type="submit">Eintragen</button>
@@ -5342,7 +5344,8 @@ function mediaHTML(c){
 function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
-  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
+  const wt = (WL.uid === social?.uid ? me() : profUser(WL.uid))?.theme, wst = wt ? postTheme(normTheme({...wt})) : ''; // Einträge in Farbe und Muster des Profils (Inaya, 2026-10-11)
+  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry${wst ? ' tp' : ''}" style="${wst}"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
     : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
 // Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
