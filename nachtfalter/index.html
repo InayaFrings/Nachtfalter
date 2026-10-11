@@ -163,6 +163,7 @@ label.f{display:grid;gap:4px}
 .cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
 .cform:has(.pcre){flex-wrap:wrap}[data-form=pcomment] .pcre{order:-2}
 #rw-file{display:block;margin:4px 0}#rw-file:empty{display:none}#rw-file .pcthumb,#rw-file .pcthumb img{width:64px;height:64px}
+.bubble .memb{width:min(320px,68vw);max-width:100%;margin-top:6px}.bubble .memb .emb,.bubble .memb .vframe{width:100%;margin:0}
 .cthread .bub{cursor:pointer}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
 .bub{position:relative;background:var(--paper-2,#1c1c20);border:1px solid var(--line);border-radius:16px;padding:7px 13px 6px;min-width:0;max-width:calc(100% - 48px);overflow-wrap:anywhere;font-size:16px;line-height:1.35}
 .bub:before{content:'';position:absolute;left:-6px;top:13px;width:10px;height:10px;background:inherit;border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
@@ -4471,6 +4472,8 @@ document.addEventListener('focusout', e => {
   const f = e.target.closest?.('form[data-form="pcomment"]'); if (!f || !CMRE[f.dataset.k]) return; const k = f.dataset.k;
   setTimeout(() => { if (document.activeElement?.closest?.(`form[data-k="${k}"]`)) return; const i = document.querySelector(`form[data-k="${k}"] input[type=text]`); if (i && i.value.trim()) return; delete CMRE[k]; piDraw(k); }, 250);
 });
+// Link einfügen, wenn schon „https://“ im Feld steht: nicht doppelt (Inaya, 2026-10-11)
+document.addEventListener('input', e => { const t = e.target; if (!t || !('value' in t) || typeof t.value !== 'string' || !/https?:\/\/\s*https?:\/\//i.test(t.value)) return; const p = t.selectionStart, n = t.value.length; t.value = t.value.replace(/https?:\/\/\s*(https?:\/\/)/gi, '$1'); try { const q = Math.max(0, p - (n - t.value.length)); t.setSelectionRange(q, q); } catch {} });
 const PCIMG = {}, CMOPEN = new Set(), CMRE = {}, CMT_THREADS = 1791723600000; // ab hier gibt es Antworten auf Kommentare
 document.addEventListener('change', async e => {
   if (!e.target.classList?.contains('pcfile')) return;
@@ -4863,9 +4866,9 @@ function profFriends(u, others){
   return `<div class="pfr">${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : n ? none : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}${add}</div>`;
 }
 // Links auf dem Profil: Spotify, Snapchat, Instagram, TikTok, Discord (Inaya, 2026-10-10)
-const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link']]; // Discord entfernt (Inaya, 2026-10-11)
+const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link'],['web','Webseite','z. B. nachtfalter.de']]; // eigene Webseite (Inaya, 2026-10-11) // Discord entfernt (Inaya, 2026-10-11)
 // App-Zeichen für die Links, in der Schriftfarbe des Profils (Inaya, 2026-10-11)
-const PLICON = {
+const PLICON = {web:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>',
   insta:'<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" class="f"/>',
   spotify:'<circle cx="12" cy="12" r="9"/><path d="M7.2 9.6c3.3-1 6.9-.7 9.8.9M7.8 12.7c2.7-.8 5.6-.5 8 .8M8.4 15.6c2.1-.6 4.3-.4 6.2.6"/>',
   snap:'<path d="M12 3.5c-3 0-5 2.2-5 5.2v2.1l-1.6.4c-.5.1-.5.8 0 1l1.4.6c-.5 1.5-1.6 2.7-3 3.3-.4.2-.3.7.1.8l1.8.4.3 1.2c.1.3.4.4.7.3l1.2-.3c1.3 0 2.2 1.5 4.1 1.5s2.8-1.5 4.1-1.5l1.2.3c.3.1.6 0 .7-.3l.3-1.2 1.8-.4c.4-.1.5-.6.1-.8-1.4-.6-2.5-1.8-3-3.3l1.4-.6c.5-.2.5-.9 0-1l-1.6-.4V8.7c0-3-2-5.2-5-5.2z"/>',
@@ -4875,6 +4878,7 @@ function plinkURL(k, v){
   v = String(v || '').trim(); if (!v) return '';
   if (/^https?:\/\//i.test(v)) return v;
   const h = v.replace(/^@/, '');
+  if (k === 'web') return /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(h) ? 'https://' + h : '';
   return k === 'snap' ? 'https://www.snapchat.com/add/' + encodeURIComponent(h) : k === 'insta' ? 'https://www.instagram.com/' + encodeURIComponent(h) : k === 'tiktok' ? 'https://www.tiktok.com/@' + encodeURIComponent(h) : '';
 }
 function plinksHTML(u){
@@ -5539,6 +5543,7 @@ function msgMedia(m){
 function msgLink(t){
   const u = (String(t || '').match(/https?:\/\/[^\s<>"]+/i) || [])[0]; if (!u) return '';
   const v = ytId(u); let host = ''; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; }
+  if (v || embedOf(u) || SHORT_RE.test(u)) return `<div class="memb">${linkHTML(u, null, false)}</div>`; // Video-Vorschau wie bei Beiträgen (Inaya, 2026-10-11)
   return v ? `<a class="mlink yt" href="${esc(u)}" target="_blank" rel="noopener"><span class="mthumb"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></span><span class="mhost">YouTube · antippen zum Ansehen</span></a>`
     : `<a class="mlink" href="${esc(u)}" target="_blank" rel="noopener"><span class="mico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><span class="mhost">${esc(host)}<small>Link öffnen</small></span></a>`;
 }
