@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7a47518ee8fb';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1009b2dfaaa4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -6175,12 +6175,14 @@ const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"
 function kbAlign(){
   const el = document.activeElement, v = window.visualViewport;
   if (!v || !isMob() || !isTyping(el) || chatKb(el)) return; const f = el.closest(KB_FORMS); if (!f || v.height > Math.max(innerHeight, screen.height * .85) - 100) return;
-  const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (Math.abs(d) > 4) window.scrollBy(0, d);
+  const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (d > 4 || d < -50) window.scrollBy(0, d);
 }
 // iOS schiebt das Feld beim Öffnen der Tastatur selbst irgendwohin: mehrmals nachrichten, bis die Tastatur fertig aufgegangen ist (Inaya, 2026-10-11)
-let kbUntil = 0;
-const kbSoon = () => { kbUntil = Date.now() + 1500; [80, 250, 450, 700, 1000, 1400].forEach(t => setTimeout(kbAlign, t)); };
-if (window.visualViewport) { visualViewport.addEventListener('resize', () => setTimeout(kbAlign, 60)); visualViewport.addEventListener('scroll', () => { if (Date.now() < kbUntil) setTimeout(kbAlign, 30); }); }
+// Nur wenige ruhige Korrekturen, kein Hin und Her (Inaya, 2026-10-11)
+let kbT = 0;
+const kbLater = (ms=180) => { clearTimeout(kbT); kbT = setTimeout(kbAlign, ms); };
+const kbSoon = () => { kbLater(450); setTimeout(() => kbLater(0), 900); };
+if (window.visualViewport) visualViewport.addEventListener('resize', () => kbLater(200));
 document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) document.body.classList.remove('kbopen'); if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
 function grabGroupDraft(){

@@ -6066,12 +6066,14 @@ const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"
 function kbAlign(){
   const el = document.activeElement, v = window.visualViewport;
   if (!v || !isMob() || !isTyping(el) || chatKb(el)) return; const f = el.closest(KB_FORMS); if (!f || v.height > Math.max(innerHeight, screen.height * .85) - 100) return;
-  const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (Math.abs(d) > 4) window.scrollBy(0, d);
+  const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (d > 4 || d < -50) window.scrollBy(0, d);
 }
 // iOS schiebt das Feld beim Öffnen der Tastatur selbst irgendwohin: mehrmals nachrichten, bis die Tastatur fertig aufgegangen ist (Inaya, 2026-10-11)
-let kbUntil = 0;
-const kbSoon = () => { kbUntil = Date.now() + 1500; [80, 250, 450, 700, 1000, 1400].forEach(t => setTimeout(kbAlign, t)); };
-if (window.visualViewport) { visualViewport.addEventListener('resize', () => setTimeout(kbAlign, 60)); visualViewport.addEventListener('scroll', () => { if (Date.now() < kbUntil) setTimeout(kbAlign, 30); }); }
+// Nur wenige ruhige Korrekturen, kein Hin und Her (Inaya, 2026-10-11)
+let kbT = 0;
+const kbLater = (ms=180) => { clearTimeout(kbT); kbT = setTimeout(kbAlign, ms); };
+const kbSoon = () => { kbLater(450); setTimeout(() => kbLater(0), 900); };
+if (window.visualViewport) visualViewport.addEventListener('resize', () => kbLater(200));
 document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) document.body.classList.remove('kbopen'); if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
 function grabGroupDraft(){
