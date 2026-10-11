@@ -146,7 +146,7 @@ label.f{display:grid;gap:4px}
 .pcimg{flex:none;width:38px;height:38px;border:1px solid var(--line,#444);border-radius:999px;display:inline-grid;place-items:center;cursor:pointer;color:var(--fg)}.pcimg svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pcimg input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.pcimg:hover,.pcimg:focus-within{border-color:#ecebe7}
 .post.tp .pcimg{color:var(--p-fg);border-color:var(--p-line)}.cbtns{display:flex;flex-wrap:wrap;gap:8px}.cbtn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px}.cbtn svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.cbtn i{font-style:normal}.cbtn.on{border-color:var(--fg);background:#ffffff14}.patts{display:grid;gap:8px}.patts:empty{display:none}.patt{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pattimg{max-width:160px;max-height:160px;border:1px solid var(--line);border-radius:6px}.pattmp3{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 12px;min-width:0;overflow-wrap:anywhere}.pattmp3 svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7}.pattlink input{flex:1 1 180px;min-width:0;width:auto}[data-form=post]{min-width:0}[data-form=post]>*{min-width:0}
 @media (max-width:760px){.cbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.cbtn .cbx{display:none}.cbtn{flex-direction:column;gap:4px;padding:10px 4px;font-size:13px;text-align:center;justify-content:center}}
-.pcfield{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--input-bg,#0d0d0e);padding:0 0 0 6px}.post.tp .pcfield{background:var(--p-panel);border-color:var(--p-line)}.pcfield input{flex:1;min-width:0;border:0!important;background:transparent!important}.pcfield:not(:has(.pcthumb)){padding:0}.pcthumb{position:relative;flex:none;width:34px;height:34px}.pcthumb img{width:34px;height:34px;object-fit:cover;border-radius:5px;display:block}@media (max-width:760px){[data-form=pcomment]{flex-wrap:wrap}[data-form=pcomment] .pcfield{flex:1 1 100%;order:-1;min-height:44px}[data-form=pcomment] .btn[type=submit]{margin-left:auto}}
+.pcfield{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--input-bg,#0d0d0e);padding:0 0 0 6px}.post.tp .pcfield{background:var(--p-panel);border-color:var(--p-line)}.pcfield input{flex:1;min-width:0;border:0!important;background:transparent!important}.pcfield:not(:has(.pcthumb)){padding:0}.pcthumb{position:relative;flex:none;width:34px;height:34px}.pcthumb img{width:34px;height:34px;object-fit:cover;border-radius:5px;display:block}@media (max-width:760px){[data-form=comment]{flex-wrap:wrap}[data-form=comment] input[type=text]{flex:1 1 100%;order:-1;min-height:44px}[data-form=comment] .btn[type=submit]{margin-left:auto}[data-form=pcomment]{flex-wrap:wrap}[data-form=pcomment] .pcfield{flex:1 1 100%;order:-1;min-height:44px}[data-form=pcomment] .btn[type=submit]{margin-left:auto}}
 .pcx{position:absolute;top:-6px;right:-7px;width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:#0a0a0b;color:#ecebe7;font-size:13px;line-height:15px;padding:0;cursor:pointer}
 .cmt.mom{display:flex;gap:10px;align-items:flex-start;border-top:0;padding-top:0}.cmts{gap:10px}
 .cmh{width:38px;height:38px;padding:0;cursor:pointer}
@@ -4452,12 +4452,26 @@ function ntStart(){
 function ntWatch(){ // die eigenen letzten Beiträge beobachten, auch wenn sie gerade nicht auf dem Bildschirm sind
   if (!social) return; ntStart();
   S.posts.filter(p => p.author === S.me).sort((a, b) => b.ts - a.ts).slice(0, 25).forEach(piWatch);
+  Object.values(S.cmted || {}).forEach(c => c && c.p && piWatch(c.p)); // Beiträge anderer, die ich kommentiert habe (Inaya, 2026-10-11)
+}
+// Merkt sich Beiträge anderer, unter die ich geschrieben habe, damit die Glocke weitere Kommentare dort meldet
+function ntRemember(k){
+  const w = PI[k]; if (!w || !social || postOwner(w.p) === social.uid) return;
+  const p = w.p; S.cmted = S.cmted || {};
+  if (!S.cmted[k]) S.cmted[k] = {ts:Date.now(), p:{id:p.id, author:p.author, remote:true, type:p.type, text:String(p.text || '').slice(0, 60), pub:p.pub ? 1 : 0, ...(p.img && p.img.length < 30000 ? {img:p.img} : {})}};
+  const ks = Object.keys(S.cmted).sort((a, b) => S.cmted[b].ts - S.cmted[a].ts); ks.slice(30).forEach(x => delete S.cmted[x]);
+  save();
 }
 function notifs(){
   if (!social) return [];
   const uid = social.uid, out = [];
   for (const [k, w] of Object.entries(PI)) {
-    if (postOwner(w.p) !== uid) continue;
+    if (postOwner(w.p) !== uid) { // fremder Beitrag: andere Kommentare nach meinem ersten Kommentar melden
+      const mine = w.list.filter(x => x.kind === 'c' && x.by === uid).map(x => x.ts || 0); if (!mine.length) continue;
+      const first = Math.min(...mine), ow = postOwner(w.p);
+      for (const x of w.list) if (x.kind === 'c' && x.by && x.by !== uid && (x.ts || 0) > first) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:x.by === ow ? 'hat auf den Beitrag geantwortet, den du kommentiert hast:' : 'hat auch einen Beitrag kommentiert, den du kommentiert hast:', quote:x.text, go:'opost', oid:ow, k, p:w.p});
+      continue;
+    }
     for (const x of w.list) {
       if (!x.by || x.by === uid) continue;
       if (x.kind === 'r' && REACTIONS.includes(x.r)) out.push({ts:x.ts || 0, uid:x.by, ico:RICON[x.r], kind:'r', text:'hat auf deinen Beitrag reagiert', go:'post', k, p:w.p});
@@ -4482,10 +4496,10 @@ function ntName(id){
 const ntAgo = ts => { const m = Math.max(1, Math.round((Date.now() - ts) / 60000)); return m < 60 ? m + ' Min.' : m < 1440 ? Math.round(m / 60) + ' Std.' : m < 10080 ? Math.round(m / 1440) + ' T.' : Math.round(m / 10080) + ' W.'; };
 const NT_BADGE = {c:'<path d="M4 5h16v11H9l-5 4z"/>', w:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>', q:'<circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c.8-4 3.4-6 6.5-6s5.7 2 6.5 6"/><path d="M19 8v6M16 11h6"/>'};
 function ntHead(id){ const u = S.users[id] || (PROF[id] ? profUser(id) : null); return u?.outfit ? avatar(u.outfit, 'head') : ''; }
-function ntThumb(p){
+function ntThumb(p, v='post', oid=''){
   if (!p) return '';
   const inner = p.img ? `<img src="${esc(p.img)}" alt="">` : p.bigimg ? `<img data-pimg="${esc(p.author + '/' + p.id)}" alt="">` : `<span>${esc(String(p.text || '').slice(0, 40))}</span>`;
-  return `<button type="button" class="nt-th" data-act="nt-go" data-v="post" aria-label="Beitrag ansehen">${inner}</button>`;
+  return `<button type="button" class="nt-th" data-act="nt-go" data-v="${v}" data-id="${esc(oid)}" aria-label="Beitrag ansehen">${inner}</button>`;
 }
 function notifView(){
   const raw = notifs(), seen = S.notifSeen || 0;
@@ -4504,10 +4518,10 @@ function notifView(){
     const many = g.uids.length > 1;
     const text = g.kind === 'r' ? (many ? 'haben auf deinen Beitrag reagiert' : 'hat auf deinen Beitrag reagiert') + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
     const badge = g.kind === 'r' ? '' : `<i class="nt-badge"><svg viewBox="0 0 24 24" aria-hidden="true">${NT_BADGE[g.kind] || ''}</svg></i>`;
-    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p) : '';
+    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p) : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid) : '';
     return `<li class="nt${g.ts > seen ? ' new' : ''}">
       <button type="button" class="nt-av${many ? ' two' : ''}" data-act="profile" data-id="${esc(g.uids[0])}" aria-label="${esc(ntName(g.uids[0]))}"><span class="cameo">${ntHead(g.uids[0])}</span>${many ? `<span class="cameo">${ntHead(g.uids[1])}</span>` : ''}${badge}</button>
-      <button type="button" class="nt-txt" data-act="nt-go" data-v="${g.go}">${who(g)} ${text}${g.quote ? ` <span class="nt-q">${etx(String(g.quote).slice(0, 80))}${String(g.quote).length > 80 ? '…' : ''}</span>` : ''} <span class="nt-t">${ntAgo(g.ts)}</span></button>
+      <button type="button" class="nt-txt" data-act="nt-go" data-v="${g.go}" data-id="${esc(g.oid || '')}">${who(g)} ${text}${g.quote ? ` <span class="nt-q">${etx(String(g.quote).slice(0, 80))}${String(g.quote).length > 80 ? '…' : ''}</span>` : ''} <span class="nt-t">${ntAgo(g.ts)}</span></button>
       ${right}</li>`;
   };
   let html = '', last = '';
@@ -6142,7 +6156,7 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
     return;
   }
-  if (a === 'nt-go') { const v = b.dataset.v; if (v === 'req') go('friends'); else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
+  if (a === 'nt-go') { const v = b.dataset.v; if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') go('profile', id);
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
@@ -6447,7 +6461,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'pcomment') {
     const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k]; if ((!text && !img) || !social) return;
     inp.value = ''; delete PCIMG[k];
-    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), by:social.uid, name:me().name, ts:Date.now()}); } catch { inp.value = text; if (img) PCIMG[k] = img; toast('Das hat gerade nicht geklappt.'); }
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { inp.value = text; if (img) PCIMG[k] = img; toast('Das hat gerade nicht geklappt.'); }
     piDraw(k);
   } else if (t === 'comment') {
     const id = f.dataset.id, text = val('c-' + id); if (!text) return;
