@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9d1601d74ae0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8c5401ecf57f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1074,7 +1074,7 @@ video.stimg{object-fit:cover}
 .ptagb::before{content:'';position:absolute;left:50%;top:-6px;transform:translateX(-50%);border:6px solid transparent;border-top:0;border-bottom-color:#fff}
 .ptagwrap .ptagb{opacity:0;pointer-events:none;transition:opacity .15s}.ptagwrap.on .ptagb{opacity:1;pointer-events:auto}
 .ptagi{position:absolute;left:10px;bottom:10px;width:30px;height:30px;border-radius:50%;background:#0a0a0bcc;display:grid;place-items:center;pointer-events:none}.ptagi svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.ptags,.ptagpick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ptags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ptagpick{display:grid;gap:8px;justify-items:start}.ptagpick .f,.ptagpick .mnlist{width:100%;margin:0}
 .ptagc{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line,#3b3b3f);padding:3px 4px 3px 10px;font-size:15px}.ptagc.cur{border-color:var(--fg,#eeedf2)}.ptagc button{background:none;border:0;color:inherit;cursor:pointer;padding:2px 6px}
 .ptagpick button[data-act=ptag-add]{display:inline-flex;align-items:center;gap:8px;background:none;border:1px solid var(--line,#3b3b3f);color:inherit;padding:4px 10px 4px 4px;cursor:pointer;font:inherit}
 .ptagpick .cameo{width:28px;height:28px;border-radius:50%;overflow:hidden;display:block}.ptagpick .cameo svg{width:100%;height:100%}
@@ -1109,6 +1109,10 @@ textarea.sttxt{top:44%}
 .stpats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:30vh;overflow-y:auto;margin-bottom:10px}
 .stpats button{display:grid;gap:3px;justify-items:center;background:none;border:1px solid #3b3b3f;border-radius:2px;color:#eeedf2;padding:4px;cursor:pointer}.stpats button[aria-pressed=true]{border-color:#eeedf2}
 .stpats i{width:100%;height:34px;display:block}.stpats small{font-size:12px}
+
+/* Story-Song spielt automatisch, Player liegt unten in der Story */
+.stspw{position:fixed;z-index:3001}.stspw[hidden]{display:none}.stspw iframe{width:100%;border:0;border-radius:12px;display:block}
+.stviewc{display:contents}
 </style>
 
 <div id="app"></div>
@@ -5098,10 +5102,10 @@ const stOut = x => { const o = +x.o || 0; if (!o) return ''; const c = /^#[0-9a-
 const stFriends = () => FR.mine.filter(isFriend).map(id => S.users[id] || profUser(id)).filter(u => u && u.name);
 // @-Markieren wie bei Insta (Inaya, 2026-10-11): @ tippen, Nutzername eingeben, Profil antippen
 function mentionPool(){ const ids = [...new Set([...FR.mine.filter(isFriend), ...Object.keys(S.users).filter(id => S.users[id].remote), ...Object.keys(PROF)])].filter(id => id !== S.me); return ids.map(id => S.users[id] || profUser(id)).filter(u => u && u.name); }
-function mentionFind(q){ q = String(q || '').toLowerCase(); const fr = new Set(FR.mine.filter(isFriend));
-  return mentionPool().filter(u => !q || (u.handle || '').toLowerCase().startsWith(q) || u.name.toLowerCase().includes(q)).sort((a, b) => fr.has(b.id) - fr.has(a.id)).slice(0, 6); }
+function mentionFind(q){ q = String(q || '').toLowerCase(); if (!q) return []; const fr = new Set(FR.mine.filter(isFriend)); // erst ab dem ersten Buchstaben, nur Namen die so anfangen (Inaya)
+  return mentionPool().filter(u => (u.handle || '').toLowerCase().startsWith(q) || u.name.toLowerCase().split(/\s+/).some(w => w.startsWith(q)) || u.name.toLowerCase().startsWith(q)).sort((a, b) => fr.has(b.id) - fr.has(a.id)).slice(0, 6); }
 const mentionQ = (v, pos) => { const m = String(v).slice(0, pos ?? String(v).length).match(/(?:^|\s)@([^\s@]{0,30})$/); return m ? m[1] : null; };
-const mentionList = (l, act) => l.length ? l.map(u => `<button type="button" class="mnu" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head', '', true)}</span><span><b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}</span></button>`).join('') : '<p class="mnone">Niemand gefunden.</p>';
+const mentionList = (l, act, q) => !q ? '' : l.length ? l.map(u => `<button type="button" class="mnu" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head', '', true)}</span><span><b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}</span></button>`).join('') : '<p class="mnone">Niemand gefunden.</p>';
 const mentionHTML = (html, l, act) => (l || []).reduce((h, m) => m && m.n ? h.split('@' + esc(m.n)).join(`<button type="button" class="lnk stmen" data-act="${act}" data-id="${esc(m.id)}">@${esc(m.n)}</button>`) : h, html);
 const NFI = { // eigene Symbole im Nachtfalter-Stil
   x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
@@ -5151,35 +5155,65 @@ function storyPaint(){
   if (!stNew && !STV && !stCam) { if (ov) ov.remove(); document.body.classList.remove('stopen'); clearTimeout(stTimer); return; }
   if (!ov) { ov = document.createElement('div'); ov.id = 'storyov'; ov.className = 'storyov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); document.body.appendChild(ov); }
   document.body.classList.add('stopen');
+  if (stCam || stNew) stSpStop();
   if (stCam) { ov.innerHTML = stCamHTML(); stCamWire(); return; }
   if (stNew) { ov.innerHTML = stEditorHTML(); stEditWire(); stVV(); return; }
   const g = STV.list[STV.ui], st = g && g.items[STV.ii]; if (!st) { stClose(); return; }
   const u = profUser(g.uid) || me(), own = g.uid === S.me, src = storyImg(g.uid, st.id, st.img, st.thumb);
   let vsrc = ''; if (st.vid && st.vid.n && social) { const k = g.uid + '/' + st.id; vsrc = STVID[k] || ''; if (STVID[k] === undefined) { STVID[k] = ''; songURL(own ? social.uid : g.uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; storyPaint(); }).catch(() => { delete STVID[k]; }); } }
   S.stSeen = S.stSeen || {}; if (!STV.arch && !S.stSeen[g.uid + '_' + st.id]) { S.stSeen[g.uid + '_' + st.id] = Date.now(); for (const k in S.stSeen) if (Date.now() - S.stSeen[k] > 2 * STORY_H) delete S.stSeen[k]; }
-  ov.innerHTML = `<div class="stbox view"><div class="stframe">
+  let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div>'; vc = ov.firstChild; }
+  vc.innerHTML = `<div class="stbox view"><div class="stframe" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
     <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class="cameo">${avatar(u.outfit, 'head', '', true)}</span><b>${esc(own ? 'Deine Story' : u.name)}</b></button><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${vsrc ? stImgHTML(vsrc, st.f, '', true) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${stTextsHTML(stTexts(st))}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
-    ${stSpotify(st.song)}</div></div>`;
+    </div></div>`;
+  stSpPlay(st.song, g.uid + '/' + st.id); stSwipeWire();
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
   if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; const sb = ov.querySelector('.stsnd'); if (sb) sb.innerHTML = NFI.mute; ve.play().catch(() => {}); }); if (!STV.arch) ve.onended = () => stStep(1); }
-  else if (!st.vid && !st.song && !STV.arch) stTimer = setTimeout(() => stStep(1), 7000); // mit Song: weiter erst beim Tippen
+  else if (!st.vid && !STV.arch) stTimer = setTimeout(() => stStep(1), st.song ? 15000 : 7000); // mit Song 15 Sekunden wie bei Insta
 }
-function stOpen(uid){
-  const ids = [uid, ...(uid === S.me ? [] : Object.values(S.users).filter(u => u.remote && u.id !== uid && storiesOf(u.id).length).map(u => u.id))];
+function storyOrder(){ // gleiche Reihenfolge wie die Story-Leiste: erst du, dann ungesehene, dann gesehene
+  const fr = Object.values(S.users).filter(u => u.remote && storiesOf(u.id).length).sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
+  return [...(myStories().length ? [S.me] : []), ...fr.map(u => u.id)];
+}
+const stFirst = g => Math.max(0, g.items.findIndex(st => !(S.stSeen || {})[g.uid + '_' + st.id]));
+function stOpen(uid){ // durch alle Leute mit Story tippen und wischen (Inaya, 2026-10-11)
+  let ids = storyOrder(); if (!ids.includes(uid)) ids = [uid, ...ids];
   const list = ids.map(id => ({uid:id, items:storiesOf(id)})).filter(g => g.items.length); if (!list.length) return;
-  const g0 = list[0]; STV = {list, ui:0, ii:Math.max(0, g0.items.findIndex(st => !(S.stSeen || {})[g0.uid + '_' + st.id]))}; storyPaint();
+  const ui = Math.max(0, list.findIndex(g => g.uid === uid)); STV = {list, ui, ii:stFirst(list[ui])}; storyPaint();
 }
+function stJump(d){ if (!STV) return; const ui = STV.ui + d; if (ui < 0) { STV.ii = 0; return storyPaint(); } if (ui >= STV.list.length) return stClose(); STV.ui = ui; STV.ii = stFirst(STV.list[ui]); storyPaint(); }
+function stSwipeWire(){ // nach links/rechts wischen = nächste/vorige Person
+  const fr = document.getElementById('stvfr'); if (!fr || STV?.arch) return; let x0 = null, y0 = 0;
+  fr.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; });
+  fr.addEventListener('pointerup', e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) { stSwiped = Date.now(); stJump(dx < 0 ? 1 : -1); } });
+  fr.addEventListener('pointercancel', () => { x0 = null; });
+}
+let stSwiped = 0;
+// Story-Song spielt automatisch (Spotify-Player-Schnittstelle); der Player bleibt stehen, solange dieselbe Story offen ist
+let SPAPI = null, SPAPIP = null, stSp = null;
+function spApi(){ if (SPAPI) return Promise.resolve(SPAPI); if (!SPAPIP) SPAPIP = new Promise((ok, no) => { window.onSpotifyIframeApiReady = api => { SPAPI = api; ok(api); }; const sc = document.createElement('script'); sc.src = 'https://open.spotify.com/embed/iframe-api/v1'; sc.async = true; sc.onerror = no; document.head.appendChild(sc); setTimeout(() => no(new Error('timeout')), 8000); }); return SPAPIP; }
+function stSpStop(){ try { stSp?.c?.destroy(); } catch {} stSp = null; const w = document.getElementById('stspw'); if (w) { w.innerHTML = ''; w.hidden = true; } }
+function stSpPlace(){ const w = document.getElementById('stspw'), fr = document.getElementById('stvfr'); if (!w || !fr) return; const r = fr.getBoundingClientRect(); Object.assign(w.style, {left:r.left + r.width * .04 + 'px', width:r.width * .92 + 'px', top:r.bottom - r.height * .03 - 80 + 'px'}); }
+function stSpPlay(song, key){
+  const w = document.getElementById('stspw'), id = String(song || '').match(/track\/([A-Za-z0-9]+)/)?.[1];
+  if (!w) return; if (!id) { stSpStop(); return; }
+  w.hidden = false; stSpPlace(); if (stSp && stSp.key === key && w.childElementCount) return;
+  stSpStop(); w.hidden = false; const el = document.createElement('div'); w.appendChild(el); const me = stSp = {key};
+  spApi().then(api => { if (stSp !== me) return; api.createController(el, {uri:'spotify:track:' + id, width:'100%', height:80}, c => { if (stSp !== me) { try { c.destroy(); } catch {} return; } me.c = c; c.addListener('ready', () => { try { c.play(); } catch {} }); }); })
+    .catch(() => { if (stSp === me) w.innerHTML = stSpotify(song); }); // ohne Schnittstelle: normaler Player zum Antippen
+}
+window.addEventListener('resize', stSpPlace);
 function stOpenArch(id){ const items = [...(S.storyArch || [])].sort((a, b) => a.ts - b.ts), i = items.findIndex(x => x.id === id); if (i < 0) return; STV = {list:[{uid:S.me, items}], ui:0, ii:i, arch:true}; storyPaint(); }
 function stStep(d){ if (!STV) return; const g = STV.list[STV.ui]; STV.ii += d;
   if (STV.ii >= g.items.length) { STV.ui++; STV.ii = 0; if (STV.ui >= STV.list.length) return stClose(); }
   if (STV.ii < 0) { if (STV.ui === 0) STV.ii = 0; else { STV.ui--; STV.ii = STV.list[STV.ui].items.length - 1; } }
   storyPaint(); }
-function stClose(){ stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
+function stClose(){ stSpStop(); stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
 async function stShare(){
   const n = stNew; if (!n) return;
   stTaCommit(); n.song = (n.song || '').trim();
@@ -5332,7 +5366,7 @@ function stEditWire(){
   const fr = document.getElementById('stfr'), n = stNew; if (!fr) return;
   const ta = document.getElementById('st-ta');
   if (ta) { stTaFit(); ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch {}
-    const sug = document.getElementById('stmsug'), showSug = () => { const q = mentionQ(ta.value, ta.selectionEnd); sug.hidden = q == null; if (q != null) sug.innerHTML = mentionList(mentionFind(q), 'st-mention'); };
+    const sug = document.getElementById('stmsug'), showSug = () => { const q = mentionQ(ta.value, ta.selectionEnd); sug.hidden = q == null; if (q != null) sug.innerHTML = mentionList(mentionFind(q), 'st-mention', q); sug.hidden = !q; };
     ta.addEventListener('input', () => { n.texts[n.edit].t = ta.value; stTaFit(); showSug(); });
     showSug();
     document.querySelectorAll('.stedov button, .stedov .stmsug').forEach(x => x.addEventListener('mousedown', e => e.preventDefault())); // Tastatur bleibt offen
@@ -5520,7 +5554,7 @@ const CICO = {tag:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.8 3-5.8 6-
 function composeAtt(){
   const url = document.getElementById('purl')?.value || '';
   const tagUI = `${PTAGS.length ? `<div class="ptags"><span class="lbl">Markiert:</span>${PTAGS.map((t, i) => `<span class="ptagc${i === PTAGS.length - 1 && postCrop ? ' cur' : ''}">${esc(t.n)}<button type="button" data-act="ptag-x" data-i="${i}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('')}</div>` : ''}
-    ${PTAGP ? `<div class="ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="ptagq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="ptagres">${mentionList(mentionFind('').filter(u => !PTAGS.some(t => t.id === u.id)), 'ptag-add')}</div><button type="button" class="lnk" data-act="ptag-close">Fertig</button></div>` : ''}`;
+    ${PTAGP ? `<div class="ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="ptagq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="ptagres"></div><button type="button" class="lnk" data-act="ptag-close">Fertig</button></div>` : ''}`;
   return `${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
     ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${PVIDEO.poster}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
@@ -5529,8 +5563,8 @@ function composeAtt(){
     ${PLINK ? `<div class="patt pattlink"><input id="purl" type="url" placeholder="https:// Link zu YouTube, Spotify, TikTok …" aria-label="Link" value="${esc(url)}"><button type="button" class="lnk" data-act="patt-x" data-v="video">Link entfernen</button></div>` : ''}`;
 }
 document.addEventListener('input', e => {
-  if (e.target.id === 'ptext') { const sg = document.getElementById('pmsug'); if (!sg) return; const q = social ? mentionQ(e.target.value, e.target.selectionEnd) : null; sg.hidden = q == null; if (q != null) sg.innerHTML = mentionList(mentionFind(q), 'pmention'); }
-  else if (e.target.id === 'ptagq') { const r = document.getElementById('ptagres'); if (r) r.innerHTML = mentionList(mentionFind(e.target.value.replace(/^@/, '')).filter(u => !PTAGS.some(t => t.id === u.id)), 'ptag-add'); }
+  if (e.target.id === 'ptext') { const sg = document.getElementById('pmsug'); if (!sg) return; const q = social ? mentionQ(e.target.value, e.target.selectionEnd) : null; sg.hidden = q == null; if (q != null) sg.innerHTML = mentionList(mentionFind(q), 'pmention', q); sg.hidden = !q; }
+  else if (e.target.id === 'ptagq') { const r = document.getElementById('ptagres'); if (r) { const q = e.target.value.replace(/^@/, '').trim(); r.innerHTML = mentionList(mentionFind(q).filter(u => !PTAGS.some(t => t.id === u.id)), 'ptag-add', q); } }
 });
 document.addEventListener('mousedown', e => { if (e.target.closest?.('#pmsug,#stmsug')) e.preventDefault(); });
 document.addEventListener('click', e => {
@@ -7405,8 +7439,8 @@ document.addEventListener('click', async e => {
   else if (a === 'st-cancel' || a === 'st-close') stClose();
   else if (a === 'st-share') stShare();
   else if (a === 'st-prof') { STV = null; storyPaint(); go('profile', id); window.scrollTo(0, 0); } // Name in der Story führt zum Profil (Inaya, 2026-10-11)
-  else if (a === 'st-next') stStep(1);
-  else if (a === 'st-prev') stStep(-1);
+  else if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); }
+  else if (a === 'st-prev') { if (Date.now() - stSwiped > 400) stStep(-1); }
   else if (a === 'st-del') { const st = STV?.list[STV.ui]?.items[STV.ii]; if (!st) return; S.stories = (S.stories || []).filter(x => x.id !== st.id); if (social) social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; save(); toast('Story gelöscht'); stStep(1); }
   else if (a === 'st-restore') { const st = (S.storyArch || []).find(x => x.id === b.dataset.id); if (!st) return; S.storyArch = S.storyArch.filter(x => x !== st); const {archTs, ...r} = st; S.stories = [...(S.stories || []), {...r, ts:Date.now()}]; if (STV) { STV = null; storyPaint(); } save(); render(); toast('Die Story ist wieder 24 Stunden für deine Freunde sichtbar.'); }
   else if (a === 'mood-emo') { const inp = document.getElementById('e-mood'); if (!inp) return; const c = ':' + b.dataset.v + ':'; if ((inp.value + c).length > 120) return; inp.value += c; inp.dispatchEvent(new Event('input', {bubbles:true})); toast('Totenkopf hinzugefügt'); }
