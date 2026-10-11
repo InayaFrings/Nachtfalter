@@ -134,6 +134,7 @@ label.f{display:grid;gap:4px}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
 .shared{border:1px solid var(--line-soft);padding:12px;display:grid;gap:10px;background:#ffffff06}.sh-h{display:flex;gap:10px;align-items:center}.sh-h>span{display:grid;min-width:0}.sh-ico{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.pshare{display:inline-flex;gap:6px;align-items:center}.pshare svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdel{margin-left:auto;align-self:start}.ph>div{min-width:0;flex:1}.ph .pdel{flex-wrap:nowrap;white-space:nowrap;gap:14px;flex:none}.pi .cmt .lnk{font-size:12px}
+.mvclip{width:min(260px,70vw);min-height:120px}.mvclip img,.mvclip video{max-height:360px}
 .vclip{aspect-ratio:auto;min-height:200px;max-height:560px}.vclip img{position:relative;inset:auto;width:100%;height:auto;max-height:560px;object-fit:contain;filter:none}.vclip .play{position:absolute}.vclip.on{display:block;cursor:auto;min-height:0}.vclip video{display:block;width:100%;max-height:600px;background:#000}.pattvid{position:relative;display:inline-block}.pattvid img{max-width:160px;max-height:200px;display:block;border:1px solid var(--line)}.pattvid i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:#fff;text-shadow:0 0 6px #000}
 .prep svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}.repopts{display:grid;gap:8px}.replist{list-style:none;margin:0;padding:0;display:grid;gap:12px}.rep{display:grid;gap:6px;border-bottom:1px solid var(--line-soft);padding-bottom:10px}.rep .row{gap:14px}
 .pdelask{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);padding:10px 12px}.post.tp .pdelask{border-color:var(--p-line)}.pdelask .row{gap:8px}
@@ -5297,7 +5298,7 @@ function chatsView(){
       <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle"><b class="ch-name">${esc(chatName(c))}</b><small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small><small class="typing" id="chtyping" hidden></small></div>
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs">${msgsHTML()}</div>
-      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
+      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
     </section>`;
   }
@@ -5339,7 +5340,7 @@ async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
-    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.img ? '📷 Foto' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
+    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
     return true;
   } catch { toast('Die Nachricht ging nicht raus. Hast du Schreibrechte für Nachtfalter?'); return false; }
 }
@@ -5485,6 +5486,7 @@ function drawWall(){
 let chatAttach = false;
 function msgMedia(m){
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
+  if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
   if (m.audio && m.audio.n) return `<div class="apost maud"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(m.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
   return '';
 }
@@ -5496,7 +5498,7 @@ function msgLink(t){
 }
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid;
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta">${ago(m.ts)}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta">${ago(m.ts)}</small></div>`;
 }
 
 /* ---------- Wer ist gerade da (online) ---------- */
@@ -6226,12 +6228,18 @@ function batTick(){
 }
 function batPaint(){ const st = document.getElementById('batstat'); if (st && GM.bat) st.textContent = GM.bat.running ? `Treffer: ${GM.bat.score} · noch ${GM.bat.left} s` : `Zeit um! ${GM.bat.score} Treffer.`; }
 document.addEventListener('change', async e => {
-  const id = e.target.id; if ((id !== 'cm-img' && id !== 'cm-aud') || !CH.open || !social) return;
+  const id = e.target.id; if ((id !== 'cm-img' && id !== 'cm-aud' && id !== 'cm-vid') || !CH.open || !social) return;
   const f = e.target.files[0], cid = CH.open; if (!f) return;
   chatAttach = false; render();
   if (id === 'cm-img') {
     try { let d = await resizeImage(f, 1080, .78); if (d.length > 650000) d = await resizeImage(f, 800, .7); if (d.length > 900000) return toast('Das Foto ist zu groß.'); toast('Foto wird gesendet …'); await sendMsg(cid, '', {img:d}); }
     catch { toast('Das Foto ließ sich nicht öffnen.'); }
+  } else if (id === 'cm-vid') { // Videos im Chat, einzeln und in Gruppen (Inaya, 2026-10-11)
+    const k = 'c' + Date.now().toString(36); toast('Video wird vorbereitet …');
+    let v; try { v = await prepVideo(f); } catch (err) { return toast(err.message === 'lang' ? `Das Video ist zu lang. Höchstens ${VID_SEC} Sekunden gehen.` : err.message === 'gross' ? 'Das Video ist zu groß. Kürz es bitte etwas.' : 'Dieses Video ließ sich nicht lesen. Versuch ein MP4 oder MOV.'); }
+    toast('Video wird gesendet …');
+    try { const cl = await uploadPostVideo(v, k); await sendMsg(cid, '', {clip:{...cl, k}}); }
+    catch { toast('Das Video ging nicht raus. Versuch es nochmal.'); }
   } else {
     if (f.size > SONG_MAX) return toast('Die Datei ist zu groß. Höchstens 5 MB.');
     const k = 'c' + Date.now().toString(36); toast('MP3 lädt hoch …');
@@ -6298,6 +6306,13 @@ document.addEventListener('click', async e => {
   if (a === 'att-toggle') { chatAttach = !chatAttach; const keep = document.getElementById('cm-in')?.value || ''; render(); const i = document.getElementById('cm-in'); if (i) i.value = keep; return; }
   if (a === 'att-link') { chatAttach = false; render(); const i = document.getElementById('cm-in'); if (i) { if (!/https?:\/\//.test(i.value)) i.value = (i.value ? i.value + ' ' : '') + 'https://'; i.focus(); } return; }
   if (a === 'mimg-open') { const img = b.querySelector('img'); if (!img) return; const o = document.createElement('div'); o.className = 'mview'; o.innerHTML = `<img src="${img.src}" alt="Foto"><button class="btn ghost" type="button">Schließen</button>`; o.addEventListener('click', () => o.remove()); document.body.appendChild(o); return; }
+  if (a === 'mvplay') {
+    const m = CH.msgs.find(x => x.id === id); if (!m?.clip || !social) return;
+    b.disabled = true; b.querySelector('.play').textContent = '…';
+    songURL(m.from, m.clip, 'pv_' + m.clip.k).then(src => { b.outerHTML = `<div class="vframe vclip mvclip on"><video controls autoplay playsinline src="${src.url}"></video></div>`; })
+      .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
+    return;
+  }
   if (a === 'maplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
     b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
