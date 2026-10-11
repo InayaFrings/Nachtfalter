@@ -4549,8 +4549,8 @@ function showHTML(hs){
   const btn = ([l, a, v]) => `<button class="btn ghost nlink" data-act="${a}" ${a === 'profile' || a === 'helper-chat' ? 'data-id' : 'data-v'}="${v}">${l}</button>`;
   let grid = '', b = hs.btn;
   if (hs.wear) { // feste Vorführ-Figur: die Bilder bleiben gleich, egal welchen Look man selbst trägt (Inaya, 2026-10-10); Schmuck und Gesicht ohne Haare
-    const base = me()?.outfit?.body === 'm' ? NEWS_MODEL_M : NEWS_MODEL;
-    const list = hs.wear.map(x => { const [main, ...ex] = x.split('|'), [c, id] = main.split(':'), i = ITEMS.find(i => i.id === id && i.cat === c), o = {...base, ...(i && !/^ko_/.test(i.id) && ['jewel','face','eyeform','lips','beard'].includes(i.cat) ? {back:'h_kein', front:'p_kein'} : {})}; /* Schmuck und Gesicht ohne Haare (Inaya) */ ex.forEach(e => { const [k, v] = e.split('='); o[k] = v; }); return i && {i, o}; }).filter(Boolean).slice(0, 9);
+    const base = i => i && (i.g === 'm' || i.cat === 'beard') ? NEWS_MODEL_M : NEWS_MODEL; // alle sehen dieselben Bilder, egal welcher Körper (Inaya, 2026-10-11)
+    const list = hs.wear.map(x => { const [main, ...ex] = x.split('|'), [c, id] = main.split(':'), i = ITEMS.find(i => i.id === id && i.cat === c), o = {...base(i), ...(i && !/^ko_/.test(i.id) && ['jewel','face','eyeform','lips','beard'].includes(i.cat) ? {back:'h_kein', front:'p_kein'} : {})}; /* Schmuck und Gesicht ohne Haare (Inaya) */ ex.forEach(e => { const [k, v] = e.split('='); o[k] = v; }); return i && {i, o}; }).filter(Boolean).slice(0, 9);
     const h0 = [...hs.wear.join('')].reduce((a, ch) => a + ch.charCodeAt(0), 0); /* bunte Haare, je Bild eine andere Farbe, fest pro Post; Pony immer gleiche Farbe wie hinten (Inaya) */
     grid = list.map(({i, o}, k) => `<div class="ncell" title="${esc(i.name)}">${avatar((t => { delete t.frontC; return t; })(previewOutfit({...o, hairC:NEWS_HAIR[(h0 + k) % NEWS_HAIR.length]}, i)), i.cat === 'front' || i.cat === 'back' ? 'bust' : i.cat === 'acc' ? 'bottom' : thumbView(i), '', true)}</div>`).join(''); b = b || ['Zur Garderobe', 'nav', 'wardrobe'];
   }
