@@ -6071,6 +6071,14 @@ function kbAlign(){
   const d = el.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 4; if (Math.abs(d) > 3) window.scrollTo(0, window.scrollY + d); return true;
 }
 let kbT = 0, kbDone = null;
+// Direkt ins Feld tippen: so fokussieren wie beim Antworten (ohne iOS-Eigenscrollen), dann einmal ausrichten (Inaya, 2026-10-11)
+let kbT0 = null;
+document.addEventListener('touchstart', e => { const t = e.touches[0]; kbT0 = t ? [t.clientX, t.clientY] : null; }, {capture:true, passive:true});
+document.addEventListener('touchend', e => {
+  const el = e.target; if (!isMob() || !isTyping(el) || el === document.activeElement || chatKb(el) || !el.closest?.(KB_FORMS)) return;
+  const c = e.changedTouches[0]; if (kbT0 && c && Math.hypot(c.clientX - kbT0[0], c.clientY - kbT0[1]) > 10) return; // Wischen, kein Tippen
+  e.preventDefault(); el.focus({preventScroll:true});
+}, {capture:true, passive:false});
 const kbArm = (ms=350) => { clearTimeout(kbT); kbT = setTimeout(() => { const a = document.activeElement; if (kbDone !== a && kbAlign()) kbDone = a; }, ms); };
 const kbSoon = () => { kbDone = null; kbArm(350); };
 if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (kbDone !== document.activeElement) kbArm(250); }); // nur solange die Tastatur noch aufgeht
