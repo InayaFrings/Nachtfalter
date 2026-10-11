@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5f9db5a8607d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='672748310a31';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -244,6 +244,7 @@ label.f{display:grid;gap:4px}
 .shared{border:1px solid var(--line-soft);padding:12px;display:grid;gap:10px;background:#ffffff06}.sh-h{display:flex;gap:10px;align-items:center}.sh-h>span{display:grid;min-width:0}.sh-ico{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.pshare{display:inline-flex;gap:6px;align-items:center}.pshare svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdel{margin-left:auto;align-self:start}.ph>div{min-width:0;flex:1}.ph .pdel{flex-wrap:nowrap;white-space:nowrap;gap:14px;flex:none}.pi .cmt .lnk{font-size:12px}
 .vclip{aspect-ratio:auto;min-height:200px;max-height:560px}.vclip img{position:relative;inset:auto;width:100%;height:auto;max-height:560px;object-fit:contain;filter:none}.vclip .play{position:absolute}.vclip.on{display:block;cursor:auto;min-height:0}.vclip video{display:block;width:100%;max-height:600px;background:#000}.pattvid{position:relative;display:inline-block}.pattvid img{max-width:160px;max-height:200px;display:block;border:1px solid var(--line)}.pattvid i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:#fff;text-shadow:0 0 6px #000}
+.rights{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.35;color:var(--muted);cursor:pointer}.rights input{flex:none;margin-top:2px;width:18px;height:18px}.msp{display:grid;gap:6px}.msp .emb{max-width:420px}
 .emb{width:100%;border:1px solid var(--line-soft);background:#0b0b0d;overflow:hidden}.emb iframe{display:block;width:100%;border:0}.emb-tt{max-width:340px;margin-inline:auto}.emb-sp,.emb-am,.emb-dz{border-radius:12px;background:transparent}
 .lcard{display:grid;border:1px solid var(--line);color:var(--fg);text-decoration:none;overflow:hidden;background:#ffffff06}.lcard>img{width:100%;max-height:260px;object-fit:cover;display:block;border-bottom:1px solid var(--line-soft)}.lc-t{display:grid;gap:4px;padding:10px 12px;min-width:0}.lc-t b{font-weight:600;line-height:1.3}.lc-t small{color:var(--muted);word-break:break-word}.lc-h{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted);text-transform:lowercase}.lc-h img{width:16px;height:16px;border-radius:3px}.post.tp .lcard{color:var(--p-fg);border-color:var(--p-line)}.post.tp .lc-t small,.post.tp .lc-h{color:var(--p-muted)}
 .vid{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:12px;color:var(--fg);text-decoration:none;word-break:break-all;background:repeating-linear-gradient(90deg,transparent 0 14px,#ffffff08 14px 16px)}
@@ -3888,9 +3889,10 @@ document.addEventListener('change', async e => {
   const file = e.target.files[0], out = document.getElementById('e-songname'); if (!file) return;
   if (!social) { toast('Eigene Songs gehen nur, wenn du mit Nachtfalter verbunden bist.'); return; }
   if (file.size > SONG_MAX) { toast('Der Song ist zu groß. Höchstens 5 MB.'); e.target.value = ''; return; }
+  if (!SONGRIGHTS) { toast('Bitte bestätige erst, dass du den Song teilen darfst.'); e.target.value = ''; document.getElementById('e-songrights')?.focus(); return; }
   e.target.disabled = true;
   try {
-    const f = await uploadSong(file, (k, n) => { if (out) out.textContent = `Lädt hoch … ${Math.round(k / n * 100)} %`; });
+    const f = {...await uploadSong(file, (k, n) => { if (out) out.textContent = `Lädt hoch … ${Math.round(k / n * 100)} %`; }), ok:Date.now()};
     me().songFile = f; songOff = null; save(); if (out) out.textContent = '♪ ' + f.name; toast('Dein Song ist auf deinem Profil');
   } catch { toast('Der Song ließ sich nicht hochladen. Versuch es nochmal.'); if (out) out.textContent = ''; }
   e.target.disabled = false;
@@ -4074,7 +4076,7 @@ const HELPERS = {
   juliet:{id:'juliet',name:'Juliet',handle:'juliet',helper:'Helferin',outfit:{body:'w',back:'wellen',front:'p_gerade',hacc:{blume:'#8a1020',haarreif:'#141218'},eyeform:'e_katze',lips:'l_schmoll',lipC:'#3a0a18',face:'liner',top:'korsett',bottom:'langrock',shoes:'plateau',acc:'sfluegel',jewel:{perlen:'#ecebe7',ohrringe:'#c9c9cf'},hairC:'#1c1b20'},
     theme:{box:'#0e0e10',pattern:'spitze',frame:'ornament',shape:'oval',font:'hand',page:'#4a0f1c',pagePattern:'fluegel'},banner:{pattern:'sterne',mode:'nacht',font:'hand',text:'Juliets Salon'},points:999,
     mood:'immer für dich da',headline:'Ich passe auf, dass sich hier alle wohlfühlen.',
-    about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Nachtfalter. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Nachtfalter ist ein Ort für Freunde. Jeder kann sich anmelden. Nimm nur Freundschaftsanfragen von Leuten an, die du magst, und stell dein Profil auf privat, wenn nur Freunde es sehen sollen.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n4. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n5. Wenn dich etwas stört, schreib Andy oder mir im Chat.',
+    about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Nachtfalter. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Nachtfalter ist ein Ort für Freunde. Jeder kann sich anmelden. Nimm nur Freundschaftsanfragen von Leuten an, die du magst, und stell dein Profil auf privat, wenn nur Freunde es sehen sollen.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n4. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n5. Lade nur Musik und Videos hoch, die du selbst gemacht hast oder für die du die Rechte hast. Songs von anderen Künstlern teilst du bitte als Spotify-Link. Was gegen fremde Rechte verstößt, wird gelöscht.\n6. Wenn dich etwas stört, schreib Andy oder mir im Chat.',
     music:'Siouxsie and the Banshees, Lana Del Rey',films:'Crimson Peak, Wednesday',hobbies:'Briefe schreiben, Friedhofsspaziergänge, Nähen'},
   andy:{id:'andy',name:'Andy',handle:'andy',helper:'Helfer',outfit:{body:'m',back:'lang',front:'p_lang',hacc:{},eyeform:'e_muede',lips:'l_neutral',face:'smokey',top:'band',jacket:'leder',bottom:'bondage',shoes:'creeper',acc:'kette',jewel:{halsband:'#0b0b0f',kreuz:'#c9c9cf'},hairC:'#1c1b20'},
     theme:{box:'#0e0e10',pattern:'fledermaus',frame:'dornen',shape:'bogen',font:'fraktur',page:'#8a1020',pagePattern:'kreuze'},banner:{pattern:'kreuze',mode:'nacht',font:'fraktur',text:'Andys Nachtwache'},points:999,
@@ -4744,13 +4746,14 @@ function postHTML(p){
 let postAud = null, composeOpen = false, profEdit = false, designTab = 'look';
 const aud = () => postAud || (amOwner ? 'pub' : 'fr'); // jeder wählt: öffentlich oder nur für Freunde (Inaya, 2026-10-10)
 // Ein Feld „Beitrag erstellen“, darunter Foto, MP3 und Link als Knöpfe; die Art ergibt sich beim Teilen (Inaya, 2026-10-11)
-let PAUDIO = null, PLINK = false, PVIDEO = null; // PVIDEO: {blob, poster, name}
+let PAUDIO = null, PLINK = false, PVIDEO = null, PRIGHTS = false; // PRIGHTS: Häkchen „Ich habe die Rechte“ bei MP3 und Video (Inaya, 2026-10-11) // PVIDEO: {blob, poster, name}
 const CICO = {foto:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>', musik:'<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>', video:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>', clip:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>'};
 function composeAtt(){
   const url = document.getElementById('purl')?.value || '';
   return `${postCrop ? `<div class="patt"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto"><button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
     ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${PVIDEO.poster}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
+    ${PAUDIO || (PVIDEO && !PVIDEO.busy) ? `<label class="rights"><input type="checkbox" id="prights" ${PRIGHTS ? 'checked' : ''}><span>${PAUDIO ? 'Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte als Spotify-Link teilen.' : 'Ich habe dieses Video selbst gemacht oder darf es teilen, auch die Musik darin.'}</span></label>` : ''}
     ${PLINK ? `<div class="patt pattlink"><input id="purl" type="url" placeholder="https:// Link zu YouTube, Spotify, TikTok …" aria-label="Link" value="${esc(url)}"><button type="button" class="lnk" data-act="patt-x" data-v="video">Link entfernen</button></div>` : ''}`;
 }
 function paintCompose(){
@@ -4796,6 +4799,8 @@ async function prepVideo(file, onProg){
     return {blob, type:mt.split(';')[0], poster};
   } finally { URL.revokeObjectURL(url); v.removeAttribute('src'); }
 }
+document.addEventListener('change', e => { if (e.target.id === 'prights') PRIGHTS = e.target.checked; else if (e.target.id === 'e-songrights') SONGRIGHTS = e.target.checked; });
+let SONGRIGHTS = false;
 document.addEventListener('change', async e => {
   if (e.target.id !== 'pvideo') return;
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
@@ -4854,6 +4859,8 @@ ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</
 let musicEdit = false;
 function musicHTML(u, mine){
   if (!u.id) return '';
+  const sp = u.songSp && embedOf(u.songSp);
+  if (sp) return `<div class="music msp">${linkHTML(u.songSp)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
   const vid = u.songFile ? 'file' : '', playing = vid && songPlaying && V.name === 'profile';
   if (!mine) return vid ? `<div class="music"><button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button></div>` : '';
   // Songs nur noch als MP3-Datei (Inaya, 2026-10-10): hochladen unter „Profil bearbeiten“
@@ -5086,7 +5093,9 @@ function designView(){
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
-          <div class="f"><span class="lbl">♪ Song auf deinem Profil (MP3, höchstens 5 MB, freiwillig)</span>
+          <label class="f" for="e-songsp"><span class="lbl">♪ Song auf deinem Profil als Spotify-Link (freiwillig)</span><input id="e-songsp" type="url" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="https://open.spotify.com/track/…" value="${esc(u.songSp || '')}"><span class="note">In Spotify beim Song auf „Teilen“ und „Link kopieren“ tippen. So darf jeder Song auf dein Profil.</span></label>
+          <div class="f"><span class="lbl">♪ Oder eigener Song als MP3 (höchstens 5 MB, freiwillig)</span>
+            <label class="rights"><input type="checkbox" id="e-songrights" ${SONGRIGHTS ? 'checked' : ''}><span>Ich habe diesen Song selbst gemacht oder darf ihn teilen.</span></label>
             <div class="row"><label class="btn ghost filebtn">${me().songFile ? 'Anderen Song wählen' : 'Song hochladen'}<input type="file" accept="audio/*,.mp3,.m4a" id="e-songfile"></label>${me().songFile ? `<span class="note" id="e-songname">♪ ${esc(me().songFile.name)}</span><button type="button" class="lnk" data-act="songfile-del">Entfernen</button>` : '<span class="note" id="e-songname"></span>'}</div>
             <p class="note" style="margin:0">Der Song spielt, wenn jemand dein Profil öffnet.</p></div>
           <div class="row"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
@@ -5192,7 +5201,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
-    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
+    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
@@ -5250,7 +5259,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -5908,7 +5917,7 @@ document.addEventListener('pointerdown', e => {
 }, true);
 function syncSong(){
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
-  const file = u && u.songFile && social ? u.songFile : null, vid = '';
+  const file = u && u.songFile && !u.songSp && social ? u.songFile : null, vid = ''; // Spotify-Song hat Vorrang
   const dock = document.getElementById('songdock'); if (!dock) return;
   if (!vid && !file) { if (dock.dataset.v) { songKill(); dock.innerHTML = ''; dock.dataset.v = ''; } return; }
   const key = (file ? 'f' + file.v : vid) + u.id;
@@ -6642,6 +6651,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'post') {
     const url = (document.getElementById('purl')?.value || '').trim(), text = val('ptext');
     if (PVIDEO?.busy) { toast('Das Video wird noch vorbereitet.'); return; }
+    if ((PAUDIO || PVIDEO) && !PRIGHTS) { toast(PAUDIO ? 'Bitte bestätige erst, dass du den Song teilen darfst.' : 'Bitte bestätige erst, dass du das Video teilen darfst.'); document.getElementById('prights')?.focus(); return; }
     const type = PAUDIO ? 'musik' : PVIDEO ? 'clip' : postCrop ? 'foto' : url ? 'video' : 'gedanke';
     if (type === 'gedanke' && !text) { toast('Schreib etwas oder füg ein Foto, eine MP3 oder einen Link hinzu.'); document.getElementById('ptext')?.focus(); return; }
     if (url && !/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
@@ -6652,18 +6662,18 @@ document.addEventListener('submit', async e => {
     if (PAUDIO) {
       if (!social) { toast('Musik posten geht, sobald du angemeldet bist.'); return; }
       const sb = f.querySelector('button[type=submit]'); if (sb) sb.disabled = true;
-      try { p.audio = await uploadPostAudio(PAUDIO, p.id, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.round(i / n * 100)} %`; }); }
+      try { p.audio = {...await uploadPostAudio(PAUDIO, p.id, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.round(i / n * 100)} %`; }), ok:Date.now()}; }
       catch { toast('Das Lied ging nicht hoch. Versuch es nochmal.'); if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } return; }
     }
     if (PVIDEO) {
       const sb = f.querySelector('button[type=submit]'); if (sb) sb.disabled = true;
-      try { p.clip = await uploadPostVideo(PVIDEO, p.id, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.round(i / n * 100)} %`; }); }
+      try { p.clip = {...await uploadPostVideo(PVIDEO, p.id, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.round(i / n * 100)} %`; }), ok:Date.now()}; }
       catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } return; }
     }
     if (social) { postAud = val('paud') === 'pub' ? 'pub' : 'fr'; if (postAud === 'pub') p.pub = 1; } // Beitrag öffentlich oder nur für Freunde
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
-    composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PLINK = false; save(); render();
+    composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PRIGHTS = false; PLINK = false; save(); render();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
@@ -6776,6 +6786,7 @@ document.addEventListener('submit', async e => {
       u.handle = nh; claimHandle(nh);
     }
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
+    { const sp = val('e-songsp'); if (sp && !/open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|album|playlist|episode|artist)\//i.test(sp)) { toAbout(); toast('Das ist kein Spotify-Link. Er beginnt mit https://open.spotify.com/'); document.getElementById('e-songsp')?.focus(); return; } u.songSp = sp; } // Profilsong über Spotify (Inaya, 2026-10-11)
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; u.banner = {...mdraft.banner}; // Nutzernamen-Kasten wird wieder gespeichert (Inaya, 2026-10-11)
