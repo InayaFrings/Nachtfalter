@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8a2d2754f36a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='cffffd16c231';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1269,7 +1269,7 @@ function previewOutfit(o, i){
   if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_zunge' ? {lips:'l_offen'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
-const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? 'belt' : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
+const thumbView = i => i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? (/^ko_/.test(i.id) ? 'top' : 'belt') : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 ITEMS.push(
   {id:'m_fliege',cat:'top',name:'Hemd mit Fliege',st:'Viktorianisch',g:'m'},
   {id:'m_offen',cat:'top',name:'Offenes Karohemd über Shirt',st:'Grunge',g:'m'},
@@ -1418,6 +1418,23 @@ ITEMS.push(
   {id:'r_stein',cat:'jewel',sub:'ring',name:'Ring mit Stein',c:'#6a3a8a'},
   {id:'g_herz',cat:'jewel',sub:'guertel',name:'Gürtel mit Herzschnalle'},
   {id:'g_stern',cat:'jewel',sub:'guertel',name:'Sternengürtel'},
+  // Scene-Korsetts unter Gürtel, liegen über dem Oberteil (Inaya, 2026-10-11)
+  {id:'ko_zebra',cat:'jewel',sub:'guertel',name:'Zebra-Korsett mit Rüschen'},
+  {id:'ko_schnallen',cat:'jewel',sub:'guertel',name:'Zebra-Korsett mit Schnallen'},
+  {id:'ko_rosen',cat:'jewel',sub:'guertel',name:'Rosen-Korsett mit Seitenschnürung'},
+  {id:'ko_leo',cat:'jewel',sub:'guertel',name:'Leo-Korsett mit Schleife'},
+  {id:'ko_ringel',cat:'jewel',sub:'guertel',name:'Ringel-Korsett'},
+  {id:'ko_schnuer',cat:'jewel',sub:'guertel',name:'Schnür-Korsett'},
+  {id:'ko_unter',cat:'jewel',sub:'guertel',name:'Unterbrust-Korsett'},
+  // Scene-Kleider (Inaya, 2026-10-11)
+  {id:'sd_leo',cat:'top',name:'Scene-Kleid Leo',st:'Scene',g:'w'},
+  {id:'sd_ringel',cat:'top',name:'Scene-Kleid Ringel',st:'Scene',g:'w'},
+  {id:'sd_zebra',cat:'top',name:'Scene-Kleid Zebra',st:'Scene',g:'w'},
+  {id:'sd_schach',cat:'top',name:'Scene-Kleid Schachbrett',st:'Scene',g:'w'},
+  {id:'sd_herz',cat:'top',name:'Scene-Kleid Herzchen',st:'Scene',g:'w'},
+  {id:'sd_blau',cat:'top',name:'Scene-Kleid Leo Blau',st:'Scene',g:'w'},
+  {id:'sd_rosen',cat:'top',name:'Scene-Kleid Rosen',st:'Scene',g:'w'},
+  {id:'sd_doppel',cat:'top',name:'Scene-Kleid mit Doppelrüschen',st:'Scene',g:'w'},
   {id:'p_augenbraue',cat:'jewel',sub:'pierc',name:'Eyebrow (Stab)',c:'#d8d8de'},
   {id:'p_kinn',cat:'jewel',sub:'pierc',name:'Vertical Labret',c:'#d8d8de'},
   {id:'tutu',cat:'bottom',name:'Tütü',st:'Scene',g:'w'},
@@ -1463,7 +1480,7 @@ ITEMS.push(
   {id:'pluschfleder',cat:'acc',name:'Plüschfledermaus',st:'Scene'},
   {id:'girplusch',cat:'acc',name:'Grünes Kuscheltier',st:'Scene'},
 );
-const HACC_C = {g_nieten:'#ece6f0', g_schach:'#141218', g_leder:'#2a1d18', g_pyramide:'#141218', g_kette:'#d8d8de', g_doppel:'#141218', g_schnalle:'#141218', straehnen:'#e05aa0', schleife:'#141218', spangen:'#ecebe7', blume:'#8a1020', haarreif:'#141218', ohren:'#141218', krone:'#c9c9cf', totenkopf:'#ecebe7', hoerner:'#9a1f2a', schleier:'#141218', herzchoker:'#141218', rosenkranz:'#c9c9cf', muetze:'#2a2a30', kopfhoerer:'#1d1b22', zylinder:'#141218', hut:'#141218', halo:'#e9e9ef', halsband:'#0b0b0f', kreuz:'#c9c9cf', perlen:'#ecebe7', ohrringe:'#c9c9cf', armreif:'#141218', piercing:'#e2e2e2'};
+const HACC_C = {ko_zebra:'#e8336a', ko_schnallen:'#2ab0b8', ko_rosen:'#c8327a', ko_leo:'#5ab4e6', ko_ringel:'#e8336a', ko_schnuer:'#141218', ko_unter:'#141218', g_nieten:'#ece6f0', g_schach:'#141218', g_leder:'#2a1d18', g_pyramide:'#141218', g_kette:'#d8d8de', g_doppel:'#141218', g_schnalle:'#141218', straehnen:'#e05aa0', schleife:'#141218', spangen:'#ecebe7', blume:'#8a1020', haarreif:'#141218', ohren:'#141218', krone:'#c9c9cf', totenkopf:'#ecebe7', hoerner:'#9a1f2a', schleier:'#141218', herzchoker:'#141218', rosenkranz:'#c9c9cf', muetze:'#2a2a30', kopfhoerer:'#1d1b22', zylinder:'#141218', hut:'#141218', halo:'#e9e9ef', halsband:'#0b0b0f', kreuz:'#c9c9cf', perlen:'#ecebe7', ohrringe:'#c9c9cf', armreif:'#141218', piercing:'#e2e2e2'};
 Object.assign(HACC_C, {g_herz:'#141218', g_stern:'#141218', beret:'#141218', kappe:'#141218', fascinator:'#141218', tiara:'#c9c9cf', bandana:'#141218', hasenohren:'#141218', kranz:'#7a1020'});
 for (const i of ITEMS) if (i.c && !HACC_C[i.id]) HACC_C[i.id] = i.c;
 for (const i of ITEMS) if (i.cat === 'acc' && !HACC_C[i.id]) HACC_C[i.id] = 'auto'; // Accessoires: 'auto' = Originalfarbe
@@ -2282,6 +2299,49 @@ Object.assign(IBOT, {
   hw_bleistift:(X, c) => ihwTop(X, c, IHIGH(X.B)) + X.G(`M${f1(ihipX(X.B, X.B.wy, 4)[0])} ${X.B.wy}L${f1(ihipX(X.B, X.B.wy, 4)[1])} ${X.B.wy}L${f1(ilegE(X.B, 1, X.B.ky)[1] + 6)} ${X.B.ky - 10}L${f1(ilegE(X.B, 0, X.B.ky)[0] - 6)} ${X.B.ky - 10}Z`, c) + X.LN(`M${X.B.cx} ${X.B.ky - 70}V${X.B.ky - 10}`, shade(c, isLight(c) ? .7 : 2), 2),
   hw_korsage:(X, c) => ihwTop(X, c, IHIGH(X.B) - 10) + X.G(iskirt(X.B, X.B.ky + 60, 180, X.B.wy, 0), c) + ilace(X, IHIGH(X.B), X.B.wy + 4, '#c9c9cf') + X.LN(`M${X.B.cx - 60} ${X.B.wy + 30}L${X.B.cx - 110} ${X.B.ky + 50}M${X.B.cx + 60} ${X.B.wy + 30}L${X.B.cx + 110} ${X.B.ky + 50}`, '#000', 2.4, .35),
 });
+// ---- Scene-Kleider und Korsetts (Inaya, 2026-10-11): eigene Entwürfe im Stil ihrer Bilder ----
+// Rumpfform von y0 bis y1 (oben Herzausschnitt, unten flach oder spitz)
+const icorset = (B, y0, y1, out=6, point=18) => { const L = [], R = []; for (let y = y0 + 10; ; y = Math.min(y + 12, y1)) { const [a, b] = y <= B.wy ? (r => [r[2] - out, r[3] + out])(iarm(B, Math.max(y, B.pit))) : ihipX(B, y, out); L.push(`${f1(a)} ${y}`); R.push(`${f1(b)} ${y}`); if (y >= y1) break; } return `M${L[0]}Q${B.cx - 40} ${y0 - 18} ${B.cx} ${y0 + 12}Q${B.cx + 40} ${y0 - 18} ${R[0]}L${R.join('L')}${point ? `L${B.cx} ${y1 + point}` : ''}L${L.reverse().join('L')}Z`; };
+// Streifen an der Seite (für Spitzen- und Schnürteile)
+const iside = (B, k, y0, y1, w, out=6) => { const P = [], Q = []; for (let y = y0; ; y = Math.min(y + 12, y1)) { const [a, b] = y <= B.wy ? (r => [r[2] - out, r[3] + out])(iarm(B, Math.max(y, B.pit))) : ihipX(B, y, out); const x = k ? b : a; P.push(`${f1(x)} ${y}`); Q.push(`${f1(k ? x - w : x + w)} ${y}`); if (y >= y1) break; } return `M${P.join('L')}L${Q.reverse().join('L')}Z`; };
+// Totenkopf mit Schleife
+const iskullBow = (x, y, s, fill, bow) => `<g transform="translate(${x - 12 * s} ${y - 12 * s}) scale(${s})"><path d="${SKULL}" fill="${fill}" stroke="${IOL}" stroke-width="${1.4 / s}"/><circle cx="9" cy="11" r="2.2" fill="${bow === fill ? '#ecebe7' : '#141218'}"/><circle cx="15" cy="11" r="2.2" fill="${bow === fill ? '#ecebe7' : '#141218'}"/><path d="M15 3.4l4.6-2.4v5zM15 3.4l-4.4-2.6v5.2z" fill="${bow}" stroke="${IOL}" stroke-width="${1 / s}"/><circle cx="15" cy="3.4" r="1.3" fill="${bow}"/><path d="M2 22L22 30M22 22L2 30" stroke="${fill}" stroke-width="2.6" stroke-linecap="round"/></g>`;
+const ilaceup = (X, x, y0, y1, w, c) => { let d = ''; for (let y = y0; y < y1 - 8; y += 20) d += `M${x - w} ${y}L${x + w} ${y + 18}M${x + w} ${y}L${x - w} ${y + 18}`; return X.LN(d, c, 2.6) + [y0, y1].map(() => '').join('') + Array.from({length: Math.floor((y1 - y0) / 20) + 1}, (_, k) => `<circle cx="${x - w}" cy="${y0 + k * 20}" r="3" fill="none" stroke="#c9c9cf" stroke-width="1.6"/><circle cx="${x + w}" cy="${y0 + k * 20}" r="3" fill="none" stroke="#c9c9cf" stroke-width="1.6"/>`).join(''); };
+const ibowAt = (x, y, k, c) => `<path d="M${x} ${y}L${x - 18 * k} ${y - 11 * k}L${x - 18 * k} ${y + 11 * k}ZM${x} ${y}L${x + 18 * k} ${y - 11 * k}L${x + 18 * k} ${y + 11 * k}Z" fill="${c}" ${IO}/><circle cx="${x}" cy="${y}" r="${4 * k}" fill="${c}" ${IO}/><path d="M${x - 2} ${y + 3}l-8 ${24 * k}M${x + 2} ${y + 3}l8 ${24 * k}" stroke="${c}" stroke-width="${4 * k}" stroke-linecap="round"/>`;
+function isceneDress(X, c, m, fill, o={}){
+  const B = X.B, top = B.chest - 26, ruf = B.wy + 70, hem = B.ky - 60, acc = m || '#141218';
+  const [ra, rb] = ihipX(B, ruf, 6);
+  let s = X.G(iskirt(B, hem, 150, B.wy - 6, 0), fill) + X.G(icorset(B, top, B.wy + 4, 5, 0), fill);
+  s += [0, 1].map(k => X.P(iside(B, k, top + 34, ruf, 24, 5), X.pat('lace', acc))).join('');
+  s += X.G(icorset(B, top, B.chest + 30, 7, 0).replace(/L[^L]*Z$/, 'Z'), acc);
+  s += X.LN(`M${B.cx - 56} ${top + 4}L${B.nl + 2} ${B.ny - 4}Q${B.cx} ${B.ny - 20} ${B.nr - 2} ${B.ny - 4}L${B.cx + 56} ${top + 4}`, acc, 6).replace('stroke-linecap="round"', 'stroke-linecap="round" stroke-dasharray="10 4"');
+  s += irband(X, ra - 4, rb + 4, ruf, 34, acc);
+  if (o.hem) s += irband(X, ...ihipX(B, hem - 30, 8), hem - 30, 28, acc);
+  if (!o.noSkull) s += iskullBow(B.cx + 34, B.wy - 20, 2.6, acc === '#141218' || !isLight(acc) ? '#141218' : acc, '#ecebe7');
+  return s;
+}
+Object.assign(ITOP, {
+  sd_leo:(X, c, m) => isceneDress(X, c, m, X.pat('leo', c, shade(c, .45))),
+  sd_ringel:(X, c, m) => isceneDress(X, c, m, X.pat('stripe', c, m || '#141218', 26)),
+  sd_zebra:(X, c, m) => isceneDress(X, c, m, X.pat('zebra', c, m || '#141218')),
+  sd_schach:(X, c, m) => isceneDress(X, c, m, X.pat('check', c, '#141218', 26)),
+  sd_herz:(X, c, m) => isceneDress(X, c, m, X.pat('motif', c, 'herz', 26)),
+  sd_blau:(X, c, m) => isceneDress(X, c, m, X.pat('leo', c, '#141218')),
+  sd_rosen:(X, c, m) => isceneDress(X, c, m, X.pat('rose', c, m || '#141218')),
+  sd_doppel:(X, c, m) => isceneDress(X, c, m, X.pat('stripe', c, m || '#141218', 22), {hem:1}),
+});
+Object.assign(ITOPC, {sd_leo:['#ef7ac0','#141218'], sd_ringel:['#ecebe7','#141218'], sd_zebra:['#ecebe7','#141218'], sd_schach:['#e05aa0','#141218'], sd_herz:['#f2a0c8','#141218'], sd_blau:['#5ab4e6','#141218'], sd_rosen:['#c8327a','#141218'], sd_doppel:['#e8336a','#141218']});
+// Korsetts: über dem Oberteil, Herzausschnitt bis über die Hüfte
+const ikorsett = (X, fill, o={}) => { const B = X.B, y0 = o.under ? B.chest + 40 : B.chest - 24, y1 = B.wy + 34; let s = X.G(o.under ? iboff(B, y0, y1, 8, `Q${B.cx} ${y0 + 20} `) : icorset(B, y0, y1, 8, 16), fill); s += X.LN([-1, 1].map(k => `M${B.cx + k * 46} ${y0 + 30}Q${B.cx + k * 36} ${B.wy - 30} ${B.cx + k * 44} ${y1 + 4}`).join(''), shade(typeof fill === 'string' && fill[0] === '#' ? fill : '#141218', 1.8), 1.6); return s; };
+Object.assign(IBELT, {
+  ko_zebra:(X, c) => { const B = X.B, y1 = B.wy + 34; return ikorsett(X, X.pat('zebra', '#ecebe7', '#141218')) + X.LN(`M${B.cx - 70} ${B.chest - 6}Q${B.cx - 40} ${B.chest - 30} ${B.cx} ${B.chest - 8}Q${B.cx + 40} ${B.chest - 30} ${B.cx + 70} ${B.chest - 6}`, c, 6) + X.LN(`M${B.cx - 40} ${B.chest}V${y1}M${B.cx + 40} ${B.chest}V${y1}`, c, 3) + irband(X, ...ihipX(B, y1, 6), y1, 26, '#141218') + ibowAt(B.cx - 40, y1 + 4, .9, c) + ibowAt(B.cx + 40, y1 + 4, .9, c); },
+  ko_schnallen:(X, c) => { const B = X.B, y1 = B.wy + 34; return ikorsett(X, X.pat('zebra', c, '#141218')) + X.LN(`M${B.cx} ${B.chest}V${y1 + 14}`, '#c9c9cf', 3).replace('stroke-linecap="round"', 'stroke-dasharray="3 3"') + [0, 1, 2, 3].map(k => { const y = B.chest + 20 + k * (y1 - B.chest - 30) / 3; return [-1, 1].map(sd => `<rect x="${sd < 0 ? B.cx - 74 : B.cx + 8}" y="${f1(y - 8)}" width="66" height="16" fill="#141218" ${IO}/>` + [0, 1, 2].map(j => `<circle cx="${f1((sd < 0 ? B.cx - 62 : B.cx + 22) + j * 14)}" cy="${f1(y)}" r="3" fill="#c9c9cf"/>`).join('')).join(''); }).join(''); },
+  ko_rosen:(X, c) => { const B = X.B, y0 = B.chest - 24, y1 = B.wy + 34; return ikorsett(X, X.pat('rose', c, '#141218')) + [0, 1].map(k => X.P(iside(B, k, y0 + 30, y1, 30, 8), '#141218') + ilaceup(X, f1(k ? iarm(B, B.wy)[3] - 7 : iarm(B, B.wy)[2] + 7), y0 + 40, y1 - 6, 7, '#141218')).join('') + X.LN(`M${B.cx} ${B.chest}V${y1 + 14}`, '#c9c9cf', 3).replace('stroke-linecap="round"', 'stroke-dasharray="3 3"') + `<path d="${heartPath(B.cx, B.chest + 6, 3)}" fill="none" stroke="#c9c9cf" stroke-width="2.4"/>`; },
+  ko_leo:(X, c) => { const B = X.B, y0 = B.chest - 24, y1 = B.wy + 34; return ikorsett(X, X.pat('leo', c, '#141218')) + X.P(`M${B.cx - 24} ${B.chest + 10}H${B.cx + 24}V${y1 + 10}H${B.cx - 24}Z`, '#141218') + ilaceup(X, B.cx, B.chest + 22, y1, 12, '#ecebe7') + ibowAt(B.cx, B.chest - 2, 1.3, '#141218') + X.LN(`M${B.cx - 70} ${y0 + 8}Q${B.cx - 40} ${y0 - 14} ${B.cx} ${y0 + 12}Q${B.cx + 40} ${y0 - 14} ${B.cx + 70} ${y0 + 8}`, '#ecebe7', 4).replace('stroke-linecap="round"', 'stroke-dasharray="4 3"'); },
+  ko_ringel:(X, c) => { const B = X.B; return ikorsett(X, X.pat('stripe', c, '#141218', 22)) + ilaceup(X, B.cx, B.chest + 6, B.chest + 90, 8, '#141218') + ibowAt(B.cx, B.chest - 4, .9, '#141218'); },
+  ko_schnuer:(X, c) => { const B = X.B; return ikorsett(X, c) + ilaceup(X, B.cx, B.chest + 6, B.wy + 30, 12, itrim(c)); },
+  ko_unter:(X, c) => { const B = X.B; return ikorsett(X, c, {under:1}) + ilaceup(X, B.cx, B.chest + 60, B.wy + 26, 10, itrim(c)); },
+});
 Object.assign(IBOTC, {hot_glatt:'#141218', hot_ripped:'#2a3a5a', hot_hw:'#1c1a28', lw_jeans:'#1c1a28', lw_baggy:'#3a3a42', hw_jeans:'#2a3a5a', hw_marlene:'#141218', lw_mini:'#141218', lw_falten:'#47474c', hw_bleistift:'#141218', hw_korsage:'#141218'});
 IWIDE.push('lw_baggy','hw_marlene');
 // Grüner Hunde-Hoodie im GIR-Stil (Inaya, 2026-10-10): eigene Zeichnung, Kapuze hinten mit zwei schwarzen Schlappohren auf den Schultern, durchgehender Reißverschluss mit großem Zipper
@@ -2444,6 +2504,9 @@ function avatarI(o0, view='full', pose='', lite=false){
     else if (kind === 'net') body = `<path d="M0 0L${s} ${s}M${s} 0L0 ${s}" stroke="${a}" stroke-width="${w}"/>`;
     else if (kind === 'motif') { const c2 = b === 'herz' ? (isLight(a) ? '#9a1f2a' : '#e05aa0') : ICON(a); body = `<rect width="${s}" height="${s}" fill="${a}" opacity=".65"/>` + (b === 'herz' ? `<path d="${heartPath(s / 2, s / 2, 3.4)}" fill="${c2}"/>` : b === 'stern' ? `<path d="${pentPath(s / 2, s / 2, 9)}" fill="${c2}"/>` : `<path d="M${s / 2 - 3} ${s / 2 - 12}h6v8h8v6h-8v14h-6v-14h-8v-6h8Z" fill="${c2}"/>`); }
     else if (kind === 'lace') { s = 22; body = `<rect width="22" height="22" fill="${a}"/><circle cx="11" cy="11" r="5" fill="none" stroke="${shade(a, isLight(a) ? .7 : 2.4)}" stroke-width="1.6"/><circle cx="0" cy="0" r="3" fill="${shade(a, isLight(a) ? .7 : 2.4)}"/><circle cx="22" cy="22" r="3" fill="${shade(a, isLight(a) ? .7 : 2.4)}"/>`; }
+    else if (kind === 'zebra') { s = 48; body = `<rect width="48" height="48" fill="${a}"/><path d="M-4 6Q10 0 20 8T52 6M-4 20Q8 14 22 22T52 18M-4 34Q12 28 24 36T52 32M-4 46Q10 40 22 48T52 44" fill="none" stroke="${b}" stroke-width="4.5" stroke-linecap="round"/><path d="M14 12l8 4M30 26l9 4M6 40l8 3" stroke="${b}" stroke-width="3" stroke-linecap="round"/>`; }
+    else if (kind === 'leo') { s = 44; body = `<rect width="44" height="44" fill="${a}"/>` + [[10,10,6],[32,8,5],[22,26,7],[6,34,5],[38,34,6]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * .8}" fill="${shade(a, isLight(a) ? .8 : 1.4)}" stroke="${b}" stroke-width="2.6" stroke-dasharray="5 3"/>`).join(''); }
+    else if (kind === 'rose') { s = 40; body = `<rect width="40" height="40" fill="${a}"/>` + [[12,12],[32,30]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7" fill="${b}"/><path d="M${x - 3} ${y}q3 -4 5 0t-4 3" fill="none" stroke="${a}" stroke-width="1.4"/><path d="M${x + 6} ${y + 6}q6 2 7 7q-6 0 -7 -7Z" fill="${b}"/>`).join(''); }
     else if (kind === 'fur') { s = 24; body = `<rect width="24" height="24" fill="${a}"/><path d="M4 8q4 -6 8 0M14 18q4 -6 8 0M-2 20q4 -6 8 0" fill="none" stroke="${shade(a, isLight(a) ? .78 : 1.7)}" stroke-width="2"/>`; }
     return def(k, `<pattern id="ID" width="${s}" height="${s}" patternUnits="userSpaceOnUse">${body}</pattern>`);
   };
@@ -2496,7 +2559,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const tc = ITOPC[o.top] || ['#141218'], topC = o.topC || tc[0], motifDef = tc[1] || ICON(topC);
   const grey = h => { const n = parseInt((h || '#000').slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return Math.max(r, g, b) - Math.min(r, g, b) < 34; };
   // Motiv automatisch: Schwarz/Weiß-Motive immer im Kontrast zum Stoff (weißes Shirt -> schwarzes Motiv), eigene Motivfarbe hat Vorrang
-  const motif = o.motifC || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
+  const motif = o.motifC || (/^sd_/.test(o.top) ? motifDef : 0) || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
   const XL = B.long ? {...X, B:{...B, hem:B.long}} : X; // Männer: lange Oberteile und passende Jacken
   if (ITOP[o.top]) body += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif);
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
@@ -4631,7 +4694,7 @@ function postHTML(p){
   if (p.audio) body += audioHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
-  if (p.type !== 'gedanke' && p.type !== 'neu' && p.type !== 'teilen' && p.text) body += `<p class="caption"><b>${esc(a.name)}</b>${etx(p.text)}</p>`;
+  if (p.type !== 'gedanke' && p.type !== 'neu' && p.type !== 'teilen' && p.text) body += `<p class="caption">${etx(p.text)}</p>`;
   if (p.type === 'teilen' && p.text) body = `<p class="caption">${etx(p.text)}</p>` + body;
   const reacts = REACTIONS.map(r => {
     const who = p.reactions[r] || [], on = who.includes(S.me);
@@ -4644,7 +4707,7 @@ function postHTML(p){
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
-      <div class="row"><button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" data-act="post-edit-no">Abbrechen</button></div></form>` : ''}
+      <div class="row" style="align-items:flex-end">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="pe-aud-${p.id}" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${p.pub ? 'selected' : ''}>Öffentlich</option><option value="fr" ${p.pub ? '' : 'selected'}>Nur Freunde</option></select></label>` : ''}<button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" data-act="post-edit-no">Abbrechen</button></div></form>` : ''}
     ${body}
     ${piKey(p) ? `<div class="pi" data-pi="${piKey(p)}">${piInner(p)}</div>` : `
     ${p.remote ? '' : `<div class="reacts">${reacts}</div>`}
@@ -6483,6 +6546,7 @@ document.addEventListener('submit', async e => {
     const text = val('pe-' + p.id);
     if (p.type === 'video') { const url = val('pe-url-' + p.id); if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; } p.url = url; }
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
+    if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
   } else if (t === 'pcomment') {
     const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k]; if ((!text && !img) || !social) return;
