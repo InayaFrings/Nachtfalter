@@ -1152,6 +1152,21 @@ html:has(body.stopen){background:#000}
 .vprep{position:fixed;inset:0;z-index:4000;display:grid;place-items:center;padding:16px;background:#000000c8}
 .vprep>div{display:grid;gap:10px;width:min(420px,100%);padding:16px;background:#131314;border:1px solid #ffffff40;border-radius:6px;color:#eeedf2}
 .vprep b{font:19px var(--f-display)}.vprep p{margin:0;line-height:1.4}.vprepp{font-variant-numeric:tabular-nums;font-weight:600}
+
+/* Video-Zuschnitt wie in der Apple-Galerie (Inaya, 2026-10-11) */
+.vtr{display:flex;align-items:stretch;gap:0;height:56px;background:#3a3a3e;border-radius:8px;overflow:hidden}
+.vtrplay{flex:none;width:52px;display:grid;place-items:center;border:0;border-right:1px solid #0a0a0b;background:transparent;color:#fff;cursor:pointer}
+.vtrplay svg{width:24px;height:24px;fill:currentColor}
+.vtrs{position:relative;flex:1;min-width:0;margin:0 18px;touch-action:none;cursor:pointer}
+.vtrf{position:absolute;inset:4px 0;display:flex;overflow:hidden;background:#141416}.vtrf i{flex:1;background-size:cover;background-position:center}
+.vtrdim{position:absolute;top:4px;bottom:4px;background:#0a0a0bb8;pointer-events:none}.vtrdim.l{left:0}.vtrdim.r{right:0}
+.vtrwin{position:absolute;top:0;bottom:0;border:3px solid #f2f2f2;border-left:0;border-right:0;box-sizing:border-box;cursor:grab}
+.vtrh{position:absolute;top:-3px;bottom:-3px;width:18px;display:grid;place-items:center;background:#f2f2f2;color:#0a0a0b;font:700 20px -apple-system,Arial,sans-serif;cursor:ew-resize;touch-action:none}
+.vtrh.l{left:-18px;border-radius:6px 0 0 6px}.vtrh.r{right:-18px;border-radius:0 6px 6px 0}
+.vtrh::after{content:'';position:absolute;inset:-6px -10px}
+.vtrph{position:absolute;top:-2px;bottom:-2px;width:3px;margin-left:-1.5px;background:#fff;border-radius:2px;box-shadow:0 0 3px #000;pointer-events:none}
+.stsndhint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid #ffffff60;border-radius:22px;background:#0a0a0bcc;color:#fff;font:600 14px -apple-system,Arial,sans-serif;cursor:pointer}
+.stsndhint svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
 </style>
 
 <div id="app"></div>
@@ -5131,7 +5146,7 @@ const STF = [['normal','Normal',''],
   ['blut','Blutmond','grayscale(1) sepia(1) saturate(4) hue-rotate(-42deg) contrast(1.15) brightness(.85)','radial-gradient(circle,transparent 45%,rgba(30,0,0,.5))','normal']];
 const stF = f => STF.find(x => x[0] === f) || STF[0];
 const stFilter = f => stF(f)[2] || 'none';
-const stImgHTML = (src, f, alt='', vid) => { const x = stF(f); return `${vid ? `<video class="stimg stvid" src="${src}" playsinline autoplay ${vid === 'loop' ? 'loop muted' : ''} style="filter:${x[2] || 'none'}"></video>` : `<img class="stimg" draggable="false" src="${src}" alt="${esc(alt)}" style="filter:${x[2] || 'none'}">`}${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`; };
+const stImgHTML = (src, f, alt='', vid) => { const x = stF(f); return `${vid ? `<video class="stimg stvid" src="${src}" playsinline autoplay ${vid === 'loop' ? 'loop muted' : vid === 'loopsnd' ? 'loop' : ''} style="filter:${x[2] || 'none'}"></video>` : `<img class="stimg" draggable="false" src="${src}" alt="${esc(alt)}" style="filter:${x[2] || 'none'}">`}${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`; };
 // Texte frei platzierbar: {t, x, y in %, s = Größe, c = Farbe, st = Schrift, bg = 0 ohne, 1 Kasten, 2 halbdurchsichtig}
 const STXT = [['klassisch','Klassisch'],['modern','Modern'],['neon','Neon'],['schreib','Schreibmaschine'],['fett','Fett'],['gotisch','Gotisch']];
 const STFR = [[0,'Ohne'],[1,'Kasten'],[2,'Schatten'],[3,'Umriss'],[4,'Kreis'],[5,'Rahmen'],[6,'Blase'],[7,'Band']]; // alte Textrahmen, nur noch zum Anzeigen alter Storys
@@ -5291,7 +5306,8 @@ function storyPaint(){
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
   if (ve && STV.delAsk) ve.pause();
-  else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; const sb = ov.querySelector('.stsnd'); if (sb) sb.innerHTML = NFI.mute; ve.play().catch(() => {}); }); if (!STV.arch) ve.onended = () => stStep(1); }
+  else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
+    ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1); }
   else if (!st.vid && !STV.arch && !STV.delAsk) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
 }
 function storyOrder(){ // gleiche Reihenfolge wie die Story-Leiste: erst du, dann ungesehene, dann gesehene
@@ -5396,8 +5412,36 @@ function stTrimPaint(){ const c = stCam; if (!c || c.mode !== 'vtrim') return; c
   if (!c.dur) return; const mx = Math.min(ST_VMAX, c.dur); c.len = Math.min(c.len, mx); c.start = Math.min(c.start, Math.max(0, c.dur - c.len));
   if (s0) { s0.max = Math.max(0, c.dur - c.len).toFixed(1); s0.value = c.start; s0.disabled = c.dur <= c.len + .05; }
   if (l0) { l0.max = mx.toFixed(1); l0.value = c.len; }
-  if (lb) lb.textContent = `${stTime(c.start)} – ${stTime(c.start + c.len)} · ${Math.round(c.len)} Sekunden`;
-  if (nt) nt.hidden = c.dur <= ST_VMAX + .5; }
+  if (lb) lb.textContent = `${stTime(c.start)} – ${stTime(c.start + c.len)} · ${Math.round(c.len)} ${Math.round(c.len) === 1 ? "Sekunde" : "Sekunden"}`;
+  if (nt) nt.hidden = c.dur <= ST_VMAX + .5;
+  const pc = x => (x / c.dur * 100) + '%', w = document.getElementById('stv-win'), dl = document.getElementById('stv-dl'), dr = document.getElementById('stv-dr');
+  if (w) { w.style.left = pc(c.start); w.style.width = pc(c.len); dl.style.width = pc(c.start); dr.style.left = pc(c.start + c.len); } }
+function stTrimPh(){ const c = stCam, v = document.getElementById('stcimg'), ph = document.getElementById('stv-ph'); if (!c || c.mode !== 'vtrim' || !ph || !v || !c.dur) return;
+  ph.style.left = (v.currentTime / c.dur * 100) + '%'; const b = document.querySelector('.vtrplay'); if (b) { const on = !v.paused && !v.muted; b.classList.toggle('on', on); b.innerHTML = on ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>'; b.setAttribute('aria-label', on ? 'Anhalten' : 'Abspielen mit Ton'); } }
+async function stTrimFrames(c){ // kleine Vorschaubilder für den Streifen
+  const box = document.getElementById('stv-frames'); if (!box || c.framesOn) return; c.framesOn = true;
+  const n = Math.max(6, Math.min(12, Math.round(box.clientWidth / 34))), v = document.createElement('video'); v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.src = c.url;
+  v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none'; document.body.appendChild(v);
+  try { await new Promise(ok => { v.onloadeddata = ok; setTimeout(ok, 4000); }); try { await v.play(); v.pause(); } catch {}
+    const cv = document.createElement('canvas'); cv.height = 96; cv.width = Math.round(96 * (v.videoWidth || 9) / (v.videoHeight || 16)); const g = cv.getContext('2d');
+    box.innerHTML = Array.from({length:n}, () => '<i></i>').join('');
+    for (let i = 0; i < n && stCam === c; i++) { await new Promise(ok => { v.onseeked = ok; try { v.currentTime = Math.min(c.dur - .05, (i + .5) * c.dur / n); } catch { ok(); } setTimeout(ok, 1500); });
+      try { g.drawImage(v, 0, 0, cv.width, cv.height); box.children[i].style.backgroundImage = `url('${cv.toDataURL('image/jpeg', .55)}')`; } catch {} }
+  } finally { v.removeAttribute('src'); v.remove(); }
+}
+function stTrimWire(c, im){ // Balken ziehen wie in der Apple-Galerie
+  const st = document.getElementById('stv-strip'); if (!st) return; let drag = null;
+  st.addEventListener('pointerdown', e => { if (!c.dur) return; const h = e.target.closest('[data-h]')?.dataset.h || (e.target.closest('#stv-win') ? 'm' : 'p'); st.setPointerCapture?.(e.pointerId); drag = {h, x:e.clientX, s:c.start, l:c.len}; e.preventDefault();
+    if (h === 'p') { const r = st.getBoundingClientRect(), t = (e.clientX - r.left) / r.width * c.dur; c.start = Math.max(0, Math.min(c.dur - c.len, t - c.len / 2)); drag.s = c.start; drag.x = e.clientX; drag.h = 'm'; stTrimSet(c, im); } });
+  st.addEventListener('pointermove', e => { if (!drag) return; const r = st.getBoundingClientRect(), dt = (e.clientX - drag.x) / r.width * c.dur, mx = Math.min(ST_VMAX, c.dur), mn = Math.min(1, c.dur);
+    if (drag.h === 'l') { const end = drag.s + drag.l; c.start = Math.max(0, Math.max(end - mx, Math.min(end - mn, drag.s + dt))); c.len = end - c.start; }
+    else if (drag.h === 'r') c.len = Math.max(mn, Math.min(mx, c.dur - drag.s, drag.l + dt));
+    else c.start = Math.max(0, Math.min(c.dur - c.len, drag.s + dt));
+    stTrimSet(c, im, drag.h === 'r' ? c.start + c.len - .05 : c.start); });
+  const end = () => { if (!drag) return; drag = null; try { im.currentTime = c.start; } catch {} }; st.addEventListener('pointerup', end); st.addEventListener('pointercancel', end);
+  im.addEventListener('timeupdate', stTrimPh); im.addEventListener('play', stTrimPh); im.addEventListener('pause', stTrimPh); im.addEventListener('volumechange', stTrimPh);
+}
+function stTrimSet(c, im, at){ c.moved = c.moved || false; const s0 = document.getElementById('stv-start'), l0 = document.getElementById('stv-len'); if (s0) s0.value = c.start; if (l0) l0.value = c.len; stTrimPaint(); try { im.currentTime = at ?? c.start; } catch {} stTrimPh(); }
 async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehmen
   const c = stCam, v = document.getElementById('stcimg'); if (!c || !v || !c.dur) return;
   const plain = !c.moved && !c.bgSet && c.start < .05 && c.len >= c.dur - .1 && c.file.size <= VID_MAX;
@@ -5407,7 +5451,7 @@ async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehm
     if (plain) r = await prepVideo(c.file);
     else { // jetzt im Antippen: Ton freigeben, dann den gewählten Teil im Bildausschnitt aufnehmen
       let ac = null; try { const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); ac.resume?.().catch(() => {}); } catch {}
-      v.loop = false; v.muted = false; try { v.currentTime = c.start; } catch {}
+      v.loop = false; v.muted = false; v.pause(); try { v.currentTime = c.start; } catch {}
       c.playP = v.play().catch(() => { v.muted = true; return v.play(); }); // im Antippen starten, sonst bleibt das iPhone stumm
       r = await stRecVideo(v, ac, c, q => { busy.textContent = `Video wird zugeschnitten … ${Math.round(q * 100)} %`; });
     }
@@ -5415,19 +5459,33 @@ async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehm
     stNew = {img:r.poster, vid:{...r, url:URL.createObjectURL(r.blob)}, thumb:await storyThumb(r.poster), f:'normal', song:'', texts:[], edit:null, tool:null, hint:true}; storyPaint();
   } catch (err) { busy.remove(); toast(err.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : err.message === 'kein' ? 'Dein Handy kann hier keine Videos zuschneiden. Nimm ein Video unter 1 Minute.' : 'Das Video ließ sich nicht vorbereiten.'); }
 }
+// Tonspur einer Videodatei als AudioBuffer (Inaya, 2026-10-11: hochgeladene Videos hatten keinen Ton)
+const VABUF = new WeakMap();
+function vidAudioBuf(file){
+  if (!file || file.size > 160 * 1024 * 1024) return Promise.resolve(null); if (VABUF.has(file)) return VABUF.get(file);
+  const pr = (async () => { try { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; const ab = await file.arrayBuffer(), ac = new AC();
+    const buf = await new Promise((ok, no) => { const r = ac.decodeAudioData(ab, ok, no); r?.then?.(ok, no); }); ac.close?.().catch(() => {}); return buf; } catch { return null; } })();
+  VABUF.set(file, pr); return pr;
+}
+function vidAudioRoute(ac, v, buf, stream){ // Ton in die Aufnahme: Datei-Tonspur, sonst über das Video-Element
+  const dst = ac.createMediaStreamDestination(); dst.stream.getAudioTracks().forEach(t => stream.addTrack(t));
+  if (buf) { v.muted = true; let src = null; return {buf:true, start(at){ try { src = ac.createBufferSource(); src.buffer = buf; src.connect(dst); src.start(0, Math.max(0, at)); } catch {} }, stop(){ try { src?.stop(); } catch {} }}; }
+  try { ac.createMediaElementSource(v).connect(dst); } catch {} return {start(){}, stop(){}};
+}
 async function stRecVideo(v, ac, c, onProg){
   const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
   const mt = window.MediaRecorder && types.find(t => MediaRecorder.isTypeSupported(t)); if (!mt) throw new Error('kein');
   const cv = document.createElement('canvas'); cv.width = 720; cv.height = 1280; const g = cv.getContext('2d'), stream = cv.captureStream(30), k = cv.width / c.W;
-  if (ac) { try { const src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination(); src.connect(dst); dst.stream.getAudioTracks().forEach(t => stream.addTrack(t)); } catch {} }
+  let aud = null; if (ac) { try { aud = vidAudioRoute(ac, v, await Promise.race([vidAudioBuf(c.file), new Promise(ok => setTimeout(() => ok(null), 8000))]), stream); } catch {} }
   const rec = new MediaRecorder(stream, {mimeType:mt, videoBitsPerSecond:Math.min(2500000, Math.floor(VID_MAX * 8 * .85 / Math.max(1, c.len))), audioBitsPerSecond:96000}), parts = [];
   rec.ondataavailable = e => e.data.size && parts.push(e.data); const done = new Promise(ok => rec.onstop = ok);
   const end = c.start + c.len; let live = true, poster = '', bgc = null; stBgCanvas(c.bg || stcBgDef(c), cv.width, cv.height).then(x => { bgc = x; }).catch(() => {});
   const draw = () => { if (!live) return; if (bgc) g.drawImage(bgc, 0, 0); else { g.fillStyle = '#000'; g.fillRect(0, 0, cv.width, cv.height); } if (v.paused && !v.ended && v.currentTime < end) v.play().catch(() => {}); g.drawImage(v, c.ox * k, c.oy * k, v.videoWidth * c.sc * k, v.videoHeight * c.sc * k);
     if (!poster && v.currentTime > c.start + .3) { try { const pc = document.createElement('canvas'); pc.width = 202; pc.height = 360; pc.getContext('2d').drawImage(cv, 0, 0, 202, 360); poster = pc.toDataURL('image/jpeg', .6); } catch {} }
-    onProg?.(Math.min(1, Math.max(0, (v.currentTime - c.start) / c.len))); if (v.currentTime >= end || v.ended) { live = false; v.pause(); rec.stop(); return; } requestAnimationFrame(draw); };
+    onProg?.(Math.min(1, Math.max(0, (v.currentTime - c.start) / c.len))); if (v.currentTime >= end || v.ended) { live = false; v.pause(); aud?.stop(); rec.stop(); return; } requestAnimationFrame(draw); };
   try { await (c.playP || v.play()); } catch { v.muted = true; await v.play(); }
-  rec.start(1000); draw(); await done;
+  if (aud?.buf) { v.pause(); await new Promise(ok => { v.onseeked = ok; try { v.currentTime = c.start; } catch { ok(); } setTimeout(ok, 1500); }); try { await v.play(); } catch {} } // Tonspur und Bild gemeinsam ab dem Anfang
+  try { ac?.resume?.(); } catch {} aud?.start(v.currentTime); rec.start(1000); draw(); await done;
   const blob = new Blob(parts, {type:mt.split(';')[0]}); if (blob.size > VID_MAX) throw new Error('gross');
   if (!poster) { const pc = document.createElement('canvas'); pc.width = 202; pc.height = 360; const x = pc.getContext('2d'); x.fillStyle = '#131314'; x.fillRect(0, 0, 202, 360); poster = pc.toDataURL('image/jpeg', .6); }
   return {blob, type:mt.split(';')[0], poster};
@@ -5466,11 +5524,12 @@ function stCamHTML(){
     <div class="stcbg" id="stcbg" style="${stcBgStyle(c)}" aria-hidden="true"></div><video id="stcimg" src="${c.url}" muted playsinline autoplay loop preload="auto"></video><div class="stgridl" aria-hidden="true"></div>
     <div class="sttop"><button class="stic" data-act="stc-back" aria-label="Zurück">${STC_ICO.x}</button><span class="sp"></span><span class="stchint">Video zuschneiden</span></div>
     <input class="stzoom" id="stc-zoom" type="range" min="1" max="4" step=".01" value="${c.zoom}" aria-label="Zoom">
-    <div class="stvtrim"><p id="stv-note" hidden>Dein Video ist länger als 1 Minute. Wähle den Teil, der in deine Story soll.</p>
+    <div class="stvtrim"><p id="stv-note" hidden>Dein Video ist länger als 1 Minute. Zieh die Balken auf den Teil, der in deine Story soll.</p>
+      <div class="vtr"><button type="button" class="vtrplay" data-act="stv-play" aria-label="Abspielen mit Ton">${NFI.play || '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>'}</button>
+        <div class="vtrs" id="stv-strip" role="group" aria-label="Video zuschneiden"><div class="vtrf" id="stv-frames"></div><i class="vtrdim l" id="stv-dl"></i><i class="vtrdim r" id="stv-dr"></i>
+          <div class="vtrwin" id="stv-win"><b class="vtrh l" data-h="l" aria-label="Anfang ziehen">‹</b><b class="vtrh r" data-h="r" aria-label="Ende ziehen">›</b></div><i class="vtrph" id="stv-ph"></i></div></div>
       <b id="stv-lbl">Video wird geladen …</b>
-      <label><span>Start</span><input type="range" id="stv-start" min="0" max="0" step=".1" value="0"></label>
-      <label><span>Länge</span><input type="range" id="stv-len" min="1" max="${ST_VMAX}" step=".5" value="${ST_VMAX}"></label>
-      <small>Ziehen und zoomen für den Bildausschnitt</small></div>
+      <input type="range" id="stv-start" min="0" max="0" step=".1" value="0" hidden><input type="range" id="stv-len" min="1" max="${ST_VMAX}" step=".5" value="${ST_VMAX}" hidden></div>
     ${stcBgPanel(c)}
     <div class="stbottom"><button class="stcbgbtn" data-act="stc-bgopen">${NFI.gal}<span>Rand</span></button><span class="sp"></span><button class="stshare" data-act="stc-vnext">Weiter <span aria-hidden="true">›</span></button></div></div></div>`;
   if (c.mode === 'crop') return `<div class="stbox edit"><div class="stframe stcrop" id="stcr">
@@ -5503,7 +5562,8 @@ function stCamWire(){
     Object.assign(im.style, {width:w + 'px', height:h + 'px', left:c.ox + 'px', top:c.oy + 'px'}); c.sc = sc; c.W = W; c.H = H; };
   const zoomTo = (z, cx, cy) => { const W = fr.clientWidth, H = fr.clientHeight; cx = cx ?? W / 2; cy = cy ?? H / 2; const old = c.sc || 1; z = Math.min(4, Math.max(c.zmin || c.fit || 1, z)); c.zoom = z; c.moved = true; const iw = nw(), ih = nh(), ns = Math.max(W / iw, H / ih) * z; c.ox = cx - (cx - c.ox) * ns / old; c.oy = cy - (cy - c.oy) * ns / old; zr.value = z; lay(); };
   if (c.vid) { const meta = () => { const d = im.duration; if (!isFinite(d) || !d) return; if (!c.dur) { c.dur = d; c.len = Math.min(ST_VMAX, d); } lay(); stTrimPaint(); };
-    if (im.readyState >= 1) meta(); ['loadedmetadata', 'durationchange', 'loadeddata', 'canplay'].forEach(ev => im.addEventListener(ev, meta));
+    if (im.readyState >= 1) meta(); ['loadedmetadata', 'durationchange', 'loadeddata', 'canplay'].forEach(ev => im.addEventListener(ev, () => { meta(); if (c.dur) stTrimFrames(c); }));
+    stTrimWire(c, im); vidAudioBuf(c.file);
     im.play?.().catch(() => {}); setTimeout(() => { if (stCam === c && !c.dur) { try { im.load(); im.play().catch(() => {}); } catch {} } }, 2500);
     setTimeout(() => { if (stCam === c && !c.dur) { const lb = document.getElementById('stv-lbl'); if (lb) lb.textContent = 'Das Video lässt sich hier nicht lesen. Versuch ein anderes oder ein kürzeres.'; } }, 9000);
     im.addEventListener('timeupdate', () => { if (c.dur && im.loop && (im.currentTime > c.start + c.len || im.currentTime < c.start - .3)) { try { im.currentTime = c.start; } catch {} } });
@@ -5536,11 +5596,11 @@ function stEditorHTML(){
   const ico0 = {aa:'<b class="staa">Aa</b>', mu:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>', x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', tr:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg>'};
   const ico = {...ico0, ...NFI}; ico.fx0 = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
   return `<div class="stbox edit ed2"><div class="stframe sted${e ? ' editing' : ''}" id="stfr">
-    ${n.tb ? `<div class="sttbg" style="background-color:${esc(n.tb.c)};background-image:${stTbPat(n.tb)}"><i style="background:${esc(n.tb.c)}"></i></div>` : n.vid ? stImgHTML(n.vid.url, n.f, '', 'loop') : stImgHTML(n.img, n.f, 'Deine Story')}
+    ${n.tb ? `<div class="sttbg" style="background-color:${esc(n.tb.c)};background-image:${stTbPat(n.tb)}"><i style="background:${esc(n.tb.c)}"></i></div>` : n.vid ? stImgHTML(n.vid.url, n.f, '', n.snd ? 'loopsnd' : 'loop') : stImgHTML(n.img, n.f, 'Deine Story')}
     <div class="sttexts">${n.texts.map((x, i) => i === n.edit ? '' : `<div ${stTxtAttrs(x, i)}>${esc(x.t)}</div>`).join('')}</div>
     <div class="stfname" id="stfname"${n.hint ? '' : ' hidden'}>${n.hint ? 'Wisch übers Foto für Filter' : esc(fx[1])}</div>
     ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-back" aria-label="Zurück">${ico.x}</button></div>
-    <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button><button class="stic${n.song || n.mu ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button>${n.tb ? `<button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>` : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}<button class="stic" data-act="st-tag" aria-label="Jemanden markieren">${ico.tag}</button></div>
+    <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button>${n.vid ? `<button class="stic${n.snd ? ' on' : ''}" data-act="st-esnd" aria-label="${n.snd ? 'Ton aus' : 'Ton an'}">${n.snd ? NFI.snd : NFI.mute}</button>` : ''}<button class="stic${n.song || n.mu ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button>${n.tb ? `<button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>` : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}<button class="stic" data-act="st-tag" aria-label="Jemanden markieren">${ico.tag}</button></div>
     ${n.tb ? '' : `<button class="stfarrow l" data-act="st-fstep" data-v="-1" aria-label="Vorheriger Filter">‹</button><button class="stfarrow r" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">›</button>`}
     ${n.mu ? stMuHTML(n.mu, n.mp, true, n.muSel) : n.song ? `<button class="stsong" data-act="st-music">♪ Spotify-Song</button>` : ''}
     ${n.mu && n.muSel ? `<input class="stsize" id="st-musz" type="range" min="40" max="96" step="1" value="${+n.mp.w}" aria-label="Größe der Musikleiste"><button class="stmux" data-act="st-songx" aria-label="Song entfernen">${NFI.x}</button>` : ''}
@@ -5850,20 +5910,20 @@ async function prepVideo(file, onProg){
     const prog = ov.querySelector('.vprepp');
     const k = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas'); c.width = Math.round(v.videoWidth * k / 2) * 2; c.height = Math.round(v.videoHeight * k / 2) * 2;
     const g = c.getContext('2d'), stream = c.captureStream(30);
-    let ac = null; try { const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); const src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination(); src.connect(dst); dst.stream.getAudioTracks().forEach(t => stream.addTrack(t)); } catch {}
+    let ac = null, aud = null; try { const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); aud = vidAudioRoute(ac, v, await vidAudioBuf(file), stream); } catch {}
     const rec = new MediaRecorder(stream, {mimeType:mt, videoBitsPerSecond:Math.min(2500000, Math.floor(VID_MAX * 8 * .85 / Math.max(1, v.duration))), audioBitsPerSecond:96000}), parts = [];
     rec.ondataavailable = e => e.data.size && parts.push(e.data);
     const done = new Promise(ok => rec.onstop = ok);
     v.currentTime = 0; await new Promise(ok => { v.onseeked = ok; setTimeout(ok, 1500); });
     const playP = await new Promise((ok, no) => ov.addEventListener('click', e => { const t = e.target.closest('[data-vp]'); if (!t) return;
       if (t.dataset.vp === 'x') return no(new Error('abbr'));
-      ov.querySelector('.row').hidden = true; try { ac?.resume?.(); } catch {} v.muted = false; ok(v.play().catch(() => { v.muted = true; return v.play(); })); })); // im Antippen: mit Ton
+      ov.querySelector('.row').hidden = true; try { ac?.resume?.(); } catch {} if (!aud?.buf) v.muted = false; ok(v.play().catch(() => { v.muted = true; return v.play(); })); })); // im Antippen: mit Ton
     let live = true, fin; const finished = new Promise(ok => { fin = ok; v.onended = ok; });
     const draw = () => { if (!live) return; g.drawImage(v, 0, 0, c.width, c.height); const q = v.currentTime / v.duration; onProg?.(q); prog.textContent = `Wird kleiner gemacht … ${Math.round(q * 100)} %`;
       if (v.currentTime >= v.duration - .05) fin(); else if (v.paused && !v.ended) v.play().catch(() => {}); requestAnimationFrame(draw); };
     rec.start(1000); draw();
     try { await playP; } catch { v.muted = true; await v.play(); }
-    await finished;
+    aud?.start(v.currentTime); await finished; aud?.stop();
     live = false; rec.stop(); await done;
     const blob = new Blob(parts, {type:mt.split(';')[0]}); if (blob.size > VID_MAX) throw new Error('gross');
     return {blob, type:mt.split(';')[0], poster};
@@ -7719,6 +7779,9 @@ document.addEventListener('click', async e => {
   else if (a === 'stc-flip') { stCam.facing = stCam.facing === 'user' ? 'environment' : 'user'; stCamStart(); }
   else if (a === 'stc-shot') stCamShot();
   else if (a === 'stc-vnext') stVidDone();
+  else if (a === 'st-esnd') { const n = stNew; if (!n) return; n.snd = !n.snd; const v = document.querySelector('#stfr video.stvid'); if (v) { v.muted = !n.snd; v.play().catch(() => {}); } b.classList.toggle('on', n.snd); b.innerHTML = n.snd ? NFI.snd : NFI.mute; b.setAttribute('aria-label', n.snd ? 'Ton aus' : 'Ton an'); }
+  else if (a === 'stv-play') { const v = document.getElementById('stcimg'), c = stCam; if (!v || !c) return; // im Antippen: mit Ton
+    if (v.paused || v.muted) { v.muted = false; if (v.currentTime < c.start || v.currentTime > c.start + c.len) { try { v.currentTime = c.start; } catch {} } v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); } else v.pause(); stTrimPh(); }
   else if (a === 'stc-bgopen') { const pn = document.getElementById('stcbgp'); if (!pn) return; pn.hidden = !pn.hidden; const tr = document.querySelector('.stvtrim'); if (tr) tr.hidden = !pn.hidden; }
   else if (a === 'stc-bgdone') { const pn = document.getElementById('stcbgp'); if (pn) pn.hidden = true; const tr = document.querySelector('.stvtrim'); if (tr) tr.hidden = false; }
   else if (a === 'stc-bg' || a === 'stc-bgp') { const c = stCam; if (!c) return; const cur = c.bg || stcBgDef(c), v = b.dataset.v; c.bgSet = true;
@@ -7765,7 +7828,7 @@ document.addEventListener('click', async e => {
   else if (a === 'e-mux') { if (!mdraft) return; mdraft.songMu = null; mdraft.songSpX = true; stAuStop(); render(); }
   else if (a === 'st-tagadd') { const n = stNew, u = stFriends().find(x => x.id === b.dataset.id); if (!n || !u) return; if (!n.texts.some(x => x.u === u.id)) n.texts.push({t:u.name, u:u.id, x:50, y:62 + (n.texts.filter(x => x.u).length % 4) * 6, s:5, c:'#111111', st:'modern', bg:0}); n.tool = null; storyPaint(); }
   else if (a === 'st-tagprof') { const uid = b.dataset.id; stClose(); go('profile', uid); }
-  else if (a === 'st-snd') { stMute = !stMute; const v = document.querySelector('#storyov video.stvid'); if (v) { v.muted = stMute; v.play().catch(() => {}); } if (stAuSrc) { stAu.muted = stMute; stAu.play().catch(() => {}); } stSndMark(); }
+  else if (a === 'st-snd') { document.querySelectorAll('.stsndhint').forEach(x => x.remove()); stMute = !stMute; const v = document.querySelector('#storyov video.stvid'); if (v) { v.muted = stMute; v.play().catch(() => {}); } if (stAuSrc) { stAu.muted = stMute; stAu.play().catch(() => {}); } stSndMark(); }
   else if (a === 'st-tdone') { const n = stNew; if (!n || n.edit == null) return; stTaCommit(); const x = n.texts[n.edit];
     if (x.m) x.m = x.m.filter(m => x.t.includes('@' + m.n));
     if (x.m && x.m.length === 1 && x.t.trim() === '@' + x.m[0].n) { x.u = x.m[0].id; x.t = x.m[0].n; delete x.m; x.s = Math.min(x.s, 6); } // nur ein @Name: wird zur Namensblase
