@@ -4822,10 +4822,11 @@ function musicHTML(u, mine){
   if (!u.id) return '';
   const sp = u.songSp && embedOf(u.songSp);
   if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
-  const vid = u.songFile ? 'file' : '', playing = vid && songPlaying && V.name === 'profile';
+  const vid = '', playing = // MP3-Song auf dem Profil entfernt, nur noch Spotify (Inaya, 2026-10-11)
+    vid && songPlaying && V.name === 'profile';
   if (!mine) return vid ? `<div class="music"><button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button></div>` : '';
-  // Songs nur noch als MP3-Datei (Inaya, 2026-10-10): hochladen unter „Profil bearbeiten“
-  return `<div class="music">${vid ? `<button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button> <button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : `<button class="btn ghost" data-act="nav" data-v="design">♪ Song hochladen (MP3)</button>`}</div>`;
+  // Profilsong nur noch als Spotify-Link (Inaya, 2026-10-11)
+  return `<div class="music">${vid ? `<button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button> <button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : `<button class="btn ghost" data-act="nav" data-v="design">♪ Spotify-Song hinzufügen</button>`}</div>`;
 }
 // Auf jedem Profil sieht man, mit wem die Person befreundet ist, auch bei anderen (Inaya, 2026-10-10)
 const FRL = {};
@@ -5056,10 +5057,6 @@ function designView(){
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
           <label class="f" for="e-songsp"><span class="lbl">♪ Song auf deinem Profil als Spotify-Link (freiwillig)</span><input id="e-songsp" type="url" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="https://open.spotify.com/track/…" value="${esc(u.songSp || '')}"><span class="note">In Spotify beim Song auf „Teilen“ und „Link kopieren“ tippen. So darf jeder Song auf dein Profil.</span></label>
-          <div class="f"><span class="lbl">♪ Oder eigener Song als MP3 (höchstens 5 MB, freiwillig)</span>
-            <label class="rights"><input type="checkbox" id="e-songrights" ${SONGRIGHTS ? 'checked' : ''}><span>Ich habe diesen Song selbst gemacht oder darf ihn teilen.</span></label>
-            <div class="row"><label class="btn ghost filebtn">${me().songFile ? 'Anderen Song wählen' : 'Song hochladen'}<input type="file" accept="audio/*,.mp3,.m4a" id="e-songfile"></label>${me().songFile ? `<span class="note" id="e-songname">♪ ${esc(me().songFile.name)}</span><button type="button" class="lnk" data-act="songfile-del">Entfernen</button>` : '<span class="note" id="e-songname"></span>'}</div>
-            <p class="note" style="margin:0">Der Song spielt, wenn jemand dein Profil öffnet.</p></div>
           <div class="row"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
         </form>
       </div></div>
@@ -5913,7 +5910,7 @@ document.addEventListener('pointerdown', e => {
 }, true);
 function syncSong(){
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
-  const file = u && u.songFile && !u.songSp && social ? u.songFile : null, vid = ''; // Spotify-Song hat Vorrang
+  const file = null, vid = ''; // MP3-Song auf dem Profil entfernt (Inaya, 2026-10-11) // Spotify-Song hat Vorrang
   const dock = document.getElementById('songdock'); if (!dock) return;
   if (!vid && !file) { if (dock.dataset.v) { songKill(); dock.innerHTML = ''; dock.dataset.v = ''; } return; }
   const key = (file ? 'f' + file.v : vid) + u.id;
