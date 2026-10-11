@@ -1119,6 +1119,13 @@ html:has(body.stopen){background:#000}
 .pmup{justify-self:start;margin-top:4px;cursor:pointer}
 .stmus .stmres{max-height:min(42vh,340px)}
 .pform{grid-template-columns:minmax(0,1fr)}.pform>*,.patts,.patts>*{min-width:0}.pmus{grid-template-columns:minmax(0,1fr)}
+
+/* Song-Ausschnitt wählen (Inaya, 2026-10-11) */
+.mutrim{display:grid;gap:8px;margin-top:12px}.mutrim b{font:600 15px -apple-system,'Helvetica Neue',Arial,sans-serif}
+.mutbar{position:relative;height:46px;border-radius:6px;cursor:grab;touch-action:none;background:var(--p-panel,#26262b);background-image:repeating-linear-gradient(90deg,transparent 0 3px,color-mix(in srgb,var(--p-fg,#eeedf2) 35%,transparent) 3px 5px);background-size:100% 60%;background-position:center;background-repeat:no-repeat;border:1px solid var(--p-line,#ffffff2a)}
+.mutwin{position:absolute;top:-3px;bottom:-3px;border:3px solid var(--p-fg,#eeedf2);border-radius:7px;background:color-mix(in srgb,var(--p-fg,#eeedf2) 18%,transparent);pointer-events:none}
+.mutlbl{font:14px -apple-system,'Helvetica Neue',Arial,sans-serif;font-variant-numeric:tabular-nums;opacity:.75}
+.emus{display:grid;gap:8px}.mmu{display:grid;gap:6px}
 </style>
 
 <div id="app"></div>
@@ -4666,6 +4673,7 @@ function go(name, arg=null){
   if (name !== 'chats' && CH.mode === 'helper') { CH.mode = null; CH.helper = null; }
   if (name !== 'chats' && CH.unsub) { CH.unsub(); CH.unsub = null; CH.open = null; CH.mode = null; }
   roomSel = null;
+  if (stAuSrc && !STV && !stNew) stAuStop(); for (const k in profMuStarted) delete profMuStarted[k];
   V = {name, arg}; trial = null; draft = null; mdraft = null; render(); window.scrollTo(0,0);
   if (name === 'profile' && arg && S.users[arg]?.remote && social) loadProf(arg).then(() => { // Freundesprofil frisch laden
     if (PROF[arg] && S.users[arg]?.remote && isFriend(arg)) { S.users[arg] = remoteUser(arg, PROF[arg]); if (V.name === 'profile' && V.arg === arg) softRender(); } });
@@ -5169,8 +5177,13 @@ function stAuUnlock(){ if (stAuSrc) return; try { stAu.src = ST_SILENT; stAu.mut
 const SPRES = {}; // Spotify-Link -> gefundene Hörprobe
 function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; SPRES[url] = 0; stSongSearch(url, true).then(l => { SPRES[url] = l && l[0] ? {...l[0], sp:url} : null; if (SPRES[url] && STV) storyPaint(); }); return null; }
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
-function stAuPlay(mu, restart){ const pv = stMuPv(mu); if (!pv) return stAuStop();
-  if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; } else if (restart) { try { stAu.currentTime = 0; } catch {} }
+const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
+let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
+stAu.addEventListener('timeupdate', () => { if (stAuWin && (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5)) { try { stAu.currentTime = stAuWin.s; } catch {} } });
+function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} }; if (stAu.readyState >= 1) go(); else stAu.addEventListener('loadedmetadata', go, {once:true}); }
+function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop();
+  const s0 = Math.max(0, Math.min(MU_LEN - MU_WIN, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + MU_WIN} : null;
+  if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
   stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(() => { if (stAuSrc !== pv) return; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
 function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.removeAttribute('src'); try { stAu.load(); } catch {} }
 const stMuHTML = (mu, mp, edit, sel) => { mp = mp || {x:50, y:80, w:72}; const art = stMuArt(mu);
@@ -5194,20 +5207,31 @@ async function stSongSearch(q, quiet){
 const MU_CHIPS = ['Gothic Rock', 'Emo', 'Metalcore', 'Darkwave', 'Post-Punk', 'Witch House'];
 const MU_SRCH = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>';
 const MU_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>', MU_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
-const muSearchHTML = (id, val='') => `<label class="musearch">${MU_SRCH}<input id="${id}" type="search" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="Song oder Band suchen …" aria-label="Song oder Band suchen" value="${esc(val)}"></label><div class="muchips" role="group" aria-label="Vorschläge">${MU_CHIPS.map(c => `<button type="button" data-act="mu-chip" data-q="${esc(c)}" data-for="${id}">${esc(c)}</button>`).join('')}</div>`;
+const muSearchHTML = (id, val='') => `<label class="musearch">${MU_SRCH}<input id="${id}" type="search" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="Song oder Band suchen …" aria-label="Song oder Band suchen" value="${esc(val)}"></label>`;
 const muArtHTML = r => stMuArt(r) ? `<img src="${esc(r.art)}" alt="" loading="lazy">` : '<i class="stmuno">♪</i>';
 function muRows(act){ return STMRES.map((r, i) => `<div class="murow"><button type="button" class="mupick" data-act="${act}" data-i="${i}">${muArtHTML(r)}<span><b>${esc(r.t)}</b><small>${esc(r.a)}${r.d ? ' · ' + stTime(r.d) : ''}</small></span></button><button type="button" class="muprev" data-act="mu-prev" data-i="${i}" aria-label="Reinhören">${stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`).join(''); }
 function stMsShow(l, msg, id='st-msres'){ const box = document.getElementById(id); if (!box) return;
-  if (l) STMRES = l; box.innerHTML = msg ? `<p class="stmsmsg">${esc(msg)}</p>` : muRows(id === 'pmres' ? 'pmu-pick' : 'st-mpick'); }
+  if (l) STMRES = l; box.innerHTML = msg ? `<p class="stmsmsg">${esc(msg)}</p>` : muRows(id === 'pmres' ? 'pmu-pick' : id === 'e-msres' ? 'e-mpick' : 'st-mpick'); }
 function muMarkPrev(){ document.querySelectorAll('.muprev').forEach(b => { const r = STMRES[+b.dataset.i]; b.innerHTML = r && stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY; });
   document.querySelectorAll('[data-act=pmu-play]').forEach(b => { b.innerHTML = stAuSrc === b.dataset.pv && !stAu.paused ? MU_PAUSE : MU_PLAY; }); }
 stAu.addEventListener('pause', () => setTimeout(muMarkPrev)); stAu.addEventListener('play', () => setTimeout(muMarkPrev));
 document.addEventListener('input', e => { // Musiksuche in Story und Beitrag
-  const id = e.target.id; if (id !== 'st-msq' && id !== 'pmq') return; const mq = e.target, box = id === 'pmq' ? 'pmres' : 'st-msres';
+  const id = e.target.id; if (id !== 'st-msq' && id !== 'pmq' && id !== 'e-msq') return; const mq = e.target, box = id === 'pmq' ? 'pmres' : id === 'e-msq' ? 'e-msres' : 'st-msres';
   clearTimeout(stMsT); const q = mq.value; if (!q.trim()) return stMsShow([], 'Tippe einen Song oder eine Band ein.', box); stMsShow(null, 'Suche …', box);
   stMsT = setTimeout(async () => { const l = await stSongSearch(q); if (mq.value !== q) return; stMsShow(l || [], l == null ? 'Die Suche hat gerade nicht geklappt. Versuch es gleich nochmal.' : l.length ? '' : 'Nichts gefunden.', box); }, 400);
 });
-const pmuHTML = (mu, own) => `<div class="pmu">${muArtHTML(mu)}<span><b>${esc(mu.t)}</b><small>${esc(mu.a)}</small></span><button type="button" class="muprev" data-act="pmu-play" data-pv="${esc(stMuPv(mu))}" data-t="${esc(mu.t)}" aria-label="Song anhören">${stAuSrc && stAuSrc === stMuPv(mu) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`;
+const muTrimHTML = (mu, k) => { const s0 = Math.max(0, Math.min(MU_LEN - MU_WIN, +mu.s || 0));
+  return `<div class="mutrim"><b>Wähle die Stelle für deine ${k === 'prof' ? 'Profil-Musik' : 'Story'}</b><div class="mutbar" data-k="${k}" role="slider" aria-label="Ausschnitt des Songs" aria-valuemin="0" aria-valuemax="${MU_LEN - MU_WIN}" aria-valuenow="${s0}" tabindex="0"><div class="mutwin" style="left:${s0 / MU_LEN * 100}%;width:${MU_WIN / MU_LEN * 100}%"></div></div><small class="mutlbl">${stTime(s0)} – ${stTime(s0 + MU_WIN)}</small></div>`; };
+const muTarget = k => k === 'prof' ? mdraft?.songMu : stNew?.mu;
+function muTrimSet(bar, x){ const mu = muTarget(bar.dataset.k); if (!mu) return; const r = bar.getBoundingClientRect(), w = MU_WIN / MU_LEN;
+  const f = Math.max(0, Math.min(1 - w, (x - r.left) / r.width - w / 2)); mu.s = Math.round(f * MU_LEN * 2) / 2;
+  bar.firstElementChild.style.left = (mu.s / MU_LEN * 100) + '%'; bar.setAttribute('aria-valuenow', mu.s); const l = bar.parentElement.querySelector('.mutlbl'); if (l) l.textContent = `${stTime(mu.s)} – ${stTime(mu.s + MU_WIN)}`; }
+let muDrag = null;
+document.addEventListener('pointerdown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar) return; e.preventDefault(); muDrag = bar; bar.setPointerCapture?.(e.pointerId); muTrimSet(bar, e.clientX); });
+document.addEventListener('pointermove', e => { if (muDrag) muTrimSet(muDrag, e.clientX); });
+document.addEventListener('pointerup', () => { if (!muDrag) return; const mu = muTarget(muDrag.dataset.k); muDrag = null; if (mu) { stAu.loop = true; stMute = false; stAuPlay(mu, true, true); } });
+document.addEventListener('keydown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar || !/^Arrow(Left|Right)$/.test(e.key)) return; const mu = muTarget(bar.dataset.k); if (!mu) return; e.preventDefault(); const r = bar.getBoundingClientRect(); muTrimSet(bar, r.left + ((+mu.s || 0) + (e.key === 'ArrowRight' ? 1 : -1) + MU_WIN / 2) / MU_LEN * r.width); stAuPlay(mu, true, true); });
+const pmuHTML = (mu, own) => `<div class="pmu">${muArtHTML(mu)}<span><b>${esc(mu.t)}</b><small>${esc(mu.a)}</small></span><button type="button" class="muprev" data-act="pmu-play" data-pv="${esc(stMuPv(mu))}" data-s="${mu.s != null ? +mu.s : ''}" data-t="${esc(mu.t)}" aria-label="Song anhören">${stAuSrc && stAuSrc === stMuPv(mu) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`;
 function storyPaint(){
   let ov = document.getElementById('storyov');
   if (!stNew && !STV && !stCam) { if (ov) ov.remove(); if (document.body.classList.contains('stopen')) { document.body.classList.remove('stopen'); document.body.style.top = ''; window.scrollTo(0, stScrollY); } clearTimeout(stTimer); return; }
@@ -5236,7 +5260,7 @@ function storyPaint(){
   const skey = g.uid + '/' + st.id, fresh = STV.key !== skey; if (fresh) { STV.key = skey; STV.t0 = Date.now(); }
   const dur = st.mu || st.song ? 15000 : 7000, gone = Date.now() - STV.t0; // Song-Storys 15 Sekunden, dann nächste Person oder zu
   const nb = ov.querySelector('.stbars i.now'); if (nb && !st.vid) { nb.style.animationDuration = dur + 'ms'; nb.style.animationDelay = -gone + 'ms'; if (STV.delAsk) nb.style.animationPlayState = 'paused'; }
-  if (mu) { stAu.loop = true; if (STV.delAsk) stAu.pause(); else stAuPlay(mu, fresh); } else stAuStop();
+  if (mu) { stAu.loop = true; if (STV.delAsk) stAu.pause(); else stAuPlay(mu, fresh, true); } else stAuStop();
   stSpPlay(mu ? '' : st.song, g.uid + '/' + st.id); stSwipeWire();
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
@@ -5283,22 +5307,23 @@ function stStep(d){ if (!STV) return; const g = STV.list[STV.ui]; STV.ii += d;
   if (STV.ii < 0) { if (STV.ui === 0) STV.ii = 0; else { STV.ui--; STV.ii = STV.list[STV.ui].items.length - 1; } }
   storyPaint(); }
 function stClose(){ stSpStop(); stAuStop(); stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
-async function stShare(){
-  const n = stNew; if (!n) return;
+async function stShare(){ // nur einmal posten, Fenster schließt sofort, hochgeladen wird im Hintergrund (Inaya, 2026-10-11)
+  const n = stNew; if (!n || n.posting) return; n.posting = true;
+  document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = true);
   stTaCommit(); n.song = (n.song || '').trim();
+  if (n.vid && !social) { n.posting = false; document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = false); toast('Videos in der Story gehen, sobald du angemeldet bist.'); return; }
   if (n.tb) { n.img = await stTbRender(n.tb); n.thumb = await storyThumb(n.img); }
-  if (n.song && !/open\.spotify\.com\/(?:intl-[\w-]+\/)?track\//i.test(n.song)) { toast('Das ist kein Spotify-Song-Link. Er beginnt mit https://open.spotify.com/track/'); return; }
-  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, song:n.song, ...(n.mu ? {mu:n.mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10})), thumb:n.thumb}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
+  const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0} : null;
+  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10})), thumb:n.thumb}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
+  if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
+  if (n.vid || social) toast('Deine Story wird gepostet …');
   if (n.vid) {
-    if (!social) { toast('Videos in der Story gehen, sobald du angemeldet bist.'); return; }
-    const sb = document.querySelector('.starrow'); if (sb) sb.disabled = true;
-    try { const {poster, ...m} = await uploadPostVideo(n.vid, st.id, (i, k) => { const l = document.querySelector('.starrow span'); if (l) l.textContent = Math.round(i / k * 100) + ' %'; }, 'sv_' + st.id); st.vid = m; }
-    catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); if (sb) sb.disabled = false; return; }
+    try { const {poster, ...m} = await uploadPostVideo(n.vid, st.id, null, 'sv_' + st.id); st.vid = m; }
+    catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); return; }
     STVID[S.me + '/' + st.id] = n.vid.url;
   }
-  S.stories = [...(S.stories || []), st].slice(-12);
-  if (social) { try { await social.db.doc('profiles/' + social.uid + '/story/' + st.id).set({img:n.img, ts:st.ts}); } catch { toast('Die Story ließ sich gerade nicht hochladen.'); S.stories = S.stories.filter(x => x !== st); return; } }
-  STIMG[S.me + '/' + st.id] = n.img; stNew = null; stAuStop(); storyPaint(); save(); render(); toast('Deine Story ist 24 Stunden für deine Freunde sichtbar.');
+  if (social) { try { await social.db.doc('profiles/' + social.uid + '/story/' + st.id).set({img:n.img, ts:st.ts}); } catch { toast('Die Story ließ sich gerade nicht hochladen.'); return; } }
+  STIMG[S.me + '/' + st.id] = n.img; S.stories = [...(S.stories || []), st].slice(-12); save(); render(); toast('Deine Story ist 24 Stunden für deine Freunde sichtbar.');
 }
 /* ---------- Story erstellen wie bei Insta (Inaya, 2026-10-11): erst Kamera (aufnehmen oder aus der Galerie hochladen), dann im selben Feld zuschneiden, dann der Editor ---------- */
 let stCam = null;
@@ -5489,7 +5514,8 @@ function stEditorHTML(){
       <textarea id="st-ta" ${stTxtAttrs({...e, x:50, y:44})} rows="1" maxlength="200" placeholder="Text …">${esc(e.t)}</textarea>
     </div>` : ''}
     ${n.tool === 'bg' && n.tb && !e ? `<div class="stmpanel stbgp"><b class="sttagh">Hintergrund</b><div class="strow stcols">${STBGC.map(c => `<button data-act="st-bgc" data-v="${c}" style="background:${c}" aria-label="Farbe ${c}" aria-pressed="${n.tb.c === c}"></button>`).join('')}</div><b class="sttagh">Muster am Rand</b><div class="stpats">${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="st-bgp" data-v="${k}" aria-pressed="${(n.tb.p || '') === k}"><i style="background-color:${esc(n.tb.c)};background-image:${stTbPat({c:n.tb.c, p:k})}"></i><small>${l}</small></button>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-    ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)}</p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
+    ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
+    ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
   </div>${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class="cameo">${avatar(me().outfit, 'head', '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
 function stVV(){ // X und Fertig bleiben oben in der Ecke, die Werkzeugleiste sitzt direkt über der Tastatur (Inaya, 2026-10-11)
@@ -5715,7 +5741,7 @@ function composeAtt(){
     ${PTAGP ? `<div class="ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="ptagq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="ptagres"></div><button type="button" class="lnk" data-act="ptag-close">Fertig</button></div>` : ''}`;
   return `${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
     ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${PVIDEO.poster}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
-    ${PMUP && !PMU && !PAUDIO ? `<div class="patt pmus"><div class="pmush"><b>Musik</b><button type="button" class="lnk" data-act="pmu-open">Schließen</button></div>${muSearchHTML('pmq', document.getElementById('pmq')?.value || '')}<div class="stmres" id="pmres">${STMRES.length && document.getElementById('pmq')?.value ? muRows('pmu-pick') : '<p class="stmsmsg">Such nach einem Song oder einer Band, oder tipp auf einen Vorschlag.</p>'}</div><label class="lnk pmup"><input id="paudio" type="file" accept="audio/*,.mp3" hidden>Oder eigene MP3 hochladen</label></div>` : ''}
+    ${PMUP && !PMU && !PAUDIO ? `<div class="patt pmus"><div class="pmush"><b>Musik</b><button type="button" class="lnk" data-act="pmu-open">Schließen</button></div>${muSearchHTML('pmq', document.getElementById('pmq')?.value || '')}<div class="stmres" id="pmres">${STMRES.length && document.getElementById('pmq')?.value ? muRows('pmu-pick') : '<p class="stmsmsg">Such nach einem Song oder einer Band.</p>'}</div><label class="lnk pmup"><input id="paudio" type="file" accept="audio/*,.mp3" hidden>Oder eigene MP3 hochladen</label></div>` : ''}
     ${PMU ? `<div class="patt">${pmuHTML(PMU)}<button type="button" class="lnk" data-act="patt-x" data-v="pmu">Musik entfernen</button></div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
     ${PAUDIO || (PVIDEO && !PVIDEO.busy) ? `<label class="rights"><input type="checkbox" id="prights" ${PRIGHTS ? 'checked' : ''}><span>${PAUDIO ? 'Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.' : 'Ich habe dieses Video selbst gemacht oder darf es teilen, auch die Musik darin.'}</span></label>` : ''}
@@ -5843,13 +5869,14 @@ ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</
 let musicEdit = false;
 function musicHTML(u, mine){
   if (!u.id) return '';
+  if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(u.songMu)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
   const sp = u.songSp && embedOf(u.songSp);
   if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
   const vid = '', playing = // MP3-Song auf dem Profil entfernt, nur noch Spotify (Inaya, 2026-10-11)
     vid && songPlaying && V.name === 'profile';
   if (!mine) return vid ? `<div class="music"><button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button></div>` : '';
   // Profilsong nur noch als Spotify-Link (Inaya, 2026-10-11)
-  return `<div class="music">${vid ? `<button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button> <button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : `<button class="btn ghost" data-act="nav" data-v="design">♪ Spotify-Song hinzufügen</button>`}</div>`;
+  return `<div class="music">${vid ? `<button class="btn ghost" data-act="music-toggle" data-id="${esc(u.id)}" aria-pressed="${!!playing}">♪ Musik ${playing ? 'aus' : 'an'}</button> <button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : `<button class="btn ghost" data-act="nav" data-v="design">♪ Musik hinzufügen</button>`}</div>`;
 }
 // Auf jedem Profil sieht man, mit wem die Person befreundet ist, auch bei anderen (Inaya, 2026-10-10)
 const FRL = {};
@@ -6051,7 +6078,7 @@ function previewHTML(){
 function designView(){
   const u = me();
   draft = draft || normTheme({...u.theme});
-  mdraft = mdraft || {cover:u.cover || null, pic:u.pic || null, banner:{...(u.banner || {pattern:'damast',mode:'nacht',font:'fell',text:''})}};
+  mdraft = mdraft || {songMu:u.songMu ? {...u.songMu} : null, cover:u.cover || null, pic:u.pic || null, banner:{...(u.banner || {pattern:'damast',mode:'nacht',font:'fell',text:''})}};
   const f = (id,label,val,area) => `<label class="f" for="e-${id}"><span class="lbl">${label}</span>${area
     ? `<textarea id="e-${id}" maxlength="800">${esc(val)}</textarea>`
     : `<input id="e-${id}" type="text" maxlength="120" value="${esc(val)}">`}</label>`;
@@ -6079,7 +6106,9 @@ function designView(){
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
-          <label class="f" for="e-songsp"><span class="lbl">♪ Song auf deinem Profil als Spotify-Link (freiwillig)</span><input id="e-songsp" type="url" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="https://open.spotify.com/track/…" value="${esc(u.songSp || '')}"><span class="note">In Spotify beim Song auf „Teilen“ und „Link kopieren“ tippen. So darf jeder Song auf dein Profil.</span></label>
+          <fieldset class="opt emus"><legend class="lbl">♪ Musik auf deinem Profil (freiwillig)</legend>
+            ${mdraft?.songMu ? `${pmuHTML(mdraft.songMu)}${muTrimHTML(mdraft.songMu, 'prof')}<div class="row"><button type="button" class="lnk" data-act="e-mux">Musik entfernen</button></div>` : `${u.songSp && !mdraft?.songSpX ? `<p class="note">Gerade: Spotify-Song. Such unten einen Song, um ihn zu ersetzen. <button type="button" class="lnk" data-act="e-mux">Entfernen</button></p>` : ''}${muSearchHTML('e-msq')}<div class="stmres" id="e-msres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div>`}
+          </fieldset>
           <div class="row"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
         </form>
       </div></div>
@@ -6183,7 +6212,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
-    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
+    music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songMu:p.songMu && typeof p.songMu === 'object' ? p.songMu : null, songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
@@ -6241,7 +6270,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -6951,9 +6980,11 @@ function songPause(){
   if (songAudio) songAudio.pause();
   songMark(false);
 }
+const profMuStarted = {};
 // Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite
 document.addEventListener('pointerdown', e => {
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
+  if (u && u.songMu && stMuPv(u.songMu) && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=pmu-play],[data-act=music-toggle]') && (stAuSrc !== stMuPv(u.songMu) || stAu.paused) && !profMuStarted[u.id]) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(u.songMu, true, true); setTimeout(muMarkPrev, 50); return; }
   if (!u || songOff === u.id || songPlaying || songErr || e.target.closest?.('[data-act=music-toggle]')) return;
   songPlay();
 }, true);
@@ -7582,15 +7613,16 @@ document.addEventListener('click', async e => {
   else if (a === 'story-view') stOpen(id);
   else if (a === 'st-fstep') stFStep(+b.dataset.v);
   else if (a === 'st-aa') stNewText(40);
-  else if (a === 'st-music') { if (!stNew) return; stNew.tool = stNew.tool === 'music' ? null : 'music'; storyPaint(); }
+  else if (a === 'st-music') { if (!stNew) return; stNew.tool = stNew.tool === 'music' || (stNew.tool === 'mutrim' && b.classList.contains('stic')) ? null : 'music'; storyPaint(); }
+  else if (a === 'st-mutrim') { if (!stNew?.mu) return; stNew.tool = 'mutrim'; storyPaint(); stAu.loop = true; stAuPlay(stNew.mu, true, true); }
   else if (a === 'st-songok') { if (!stNew) return; const v = (document.getElementById('st-song')?.value || '').trim(); if (v && !/open\.spotify\.com\/(?:intl-[\w-]+\/)?track\//i.test(v)) { toast('Das ist kein Spotify-Song-Link. Er beginnt mit https://open.spotify.com/track/'); return; } stNew.song = v; stNew.tool = null; storyPaint(); }
   else if (a === 'st-songx') { if (!stNew) return; stNew.song = ''; stNew.mu = null; stNew.muSel = false; stNew.tool = null; stAuStop(); storyPaint(); }
   else if (a === 'mu-chip') { const inp = document.getElementById(b.dataset.for); if (inp) { inp.value = b.dataset.q; inp.dispatchEvent(new Event('input', {bubbles:true})); } }
   else if (a === 'mu-prev') { const r = STMRES[+b.dataset.i]; if (!r) return; if (stAuSrc === stMuPv(r) && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay(r, true); } muMarkPrev(); }
-  else if (a === 'pmu-play') { const pv = stMuPv({pv:b.dataset.pv}); if (!pv) return; if (stAuSrc === pv && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay({pv}, stAuSrc !== pv || stAu.ended); } muMarkPrev(); }
+  else if (a === 'pmu-play') { const pv = stMuPv({pv:b.dataset.pv}), win = b.dataset.s !== ''; if (!pv) return; if (stAuSrc === pv && !stAu.paused) { stAu.pause(); if (V.name === 'profile') songOff = V.arg || S.me; } else { stAu.loop = win; stMute = false; stAuPlay({pv, s:+b.dataset.s || 0}, stAuSrc !== pv || stAu.ended, win); } muMarkPrev(); }
   else if (a === 'pmu-open') { PMUP = !PMUP; paintCompose(); if (PMUP) document.getElementById('pmq')?.focus(); }
   else if (a === 'pmu-pick') { const r = STMRES[+b.dataset.i]; if (!r) return; PMU = {...r}; PMUP = false; PAUDIO = null; stAuStop(); paintCompose(); }
-  else if (a === 'st-mpick') { const n = stNew, r = STMRES[+b.dataset.i]; if (!n || !r) return; n.mu = {...r, ...(stMsSp ? {sp:stMsSp.slice(0, 300)} : {})}; n.mp = n.mp || {x:50, y:78, w:72}; n.song = ''; n.tool = null; n.muSel = false; storyPaint(); stAu.loop = true; stAuPlay(n.mu, true); }
+  else if (a === 'st-mpick') { const n = stNew, r = STMRES[+b.dataset.i]; if (!n || !r) return; n.mu = {...r, ...(stMsSp ? {sp:stMsSp.slice(0, 300)} : {})}; n.mp = n.mp || {x:50, y:78, w:72}; n.mu.s = 0; n.song = ''; n.tool = 'mutrim'; n.muSel = false; storyPaint(); stAu.loop = true; stAuPlay(n.mu, true, true); }
   else if (a === 'st-tstyle' || a === 'st-tcol' || a === 'st-tbg' || a === 'st-tout' || a === 'st-ctgt' || a === 'st-ocol') { const n = stNew; if (!n || n.edit == null) return; stTaCommit(); const x = n.texts[n.edit], v = b.dataset.v;
     if (a === 'st-tstyle') x.st = v; else if (a === 'st-tbg') x.bg = +v || 0; else if (a === 'st-ctgt') n.ctgt = v;
     else if (a === 'st-tcol') x.c = v; else if (a === 'st-ocol') x.oc = v;
@@ -7610,6 +7642,8 @@ document.addEventListener('click', async e => {
     const x = n.texts[n.edit]; x.t = ta.value; x.m = [...(x.m || []).filter(m => m.id !== u.id), {id:u.id, n:u.name}].slice(0, 10);
     try { ta.setSelectionRange(head.length, head.length); } catch {} ta.focus(); stTaFit(); const sg = document.getElementById('stmsug'); if (sg) sg.hidden = true; }
   else if (a === 'st-tagx') { if (stNew) { stNew.tool = null; storyPaint(); } }
+  else if (a === 'e-mpick') { const r = STMRES[+b.dataset.i]; if (!r || !mdraft) return; mdraft.songMu = {...r, s:0}; render(); stAu.loop = true; stMute = false; stAuPlay(mdraft.songMu, true, true); }
+  else if (a === 'e-mux') { if (!mdraft) return; mdraft.songMu = null; mdraft.songSpX = true; stAuStop(); render(); }
   else if (a === 'st-tagadd') { const n = stNew, u = stFriends().find(x => x.id === b.dataset.id); if (!n || !u) return; if (!n.texts.some(x => x.u === u.id)) n.texts.push({t:u.name, u:u.id, x:50, y:62 + (n.texts.filter(x => x.u).length % 4) * 6, s:5, c:'#111111', st:'modern', bg:0}); n.tool = null; storyPaint(); }
   else if (a === 'st-tagprof') { const uid = b.dataset.id; stClose(); go('profile', uid); }
   else if (a === 'st-snd') { stMute = !stMute; const v = document.querySelector('#storyov video.stvid'); if (v) { v.muted = stMute; v.play().catch(() => {}); } if (stAuSrc) { stAu.muted = stMute; stAu.play().catch(() => {}); } stSndMark(); }
@@ -8005,7 +8039,7 @@ document.addEventListener('submit', async e => {
       u.handle = nh; claimHandle(nh);
     }
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
-    { const sp = val('e-songsp'); if (sp && !/open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|album|playlist|episode|artist)\//i.test(sp)) { toAbout(); toast('Das ist kein Spotify-Link. Er beginnt mit https://open.spotify.com/'); document.getElementById('e-songsp')?.focus(); return; } u.songSp = sp; } // Profilsong über Spotify (Inaya, 2026-10-11)
+    if (mdraft) { if (mdraft.songMu) { const m = mdraft.songMu; u.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:+m.s || 0}; u.songSp = ''; } else { delete u.songMu; if (mdraft.songSpX) u.songSp = ''; } } // Profil-Musik aus der Suche (Inaya, 2026-10-11)
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; u.banner = {...mdraft.banner}; // Nutzernamen-Kasten wird wieder gespeichert (Inaya, 2026-10-11)
