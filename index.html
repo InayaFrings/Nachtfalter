@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='606e203d51bf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='73104439abcd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -613,7 +613,7 @@ footer.foot .lnk{color:var(--muted)}
 .invlist{display:flex;flex-wrap:wrap;gap:8px}
 .rhop{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 8px;border:1px solid var(--line, #3a3a40);border-radius:999px;background:transparent;color:var(--fg);font:400 14px var(--f-display);letter-spacing:.03em;cursor:pointer;min-height:0}.rhop:hover{background:rgba(255,255,255,.06)}.rhop svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .rchat{margin-top:10px;display:grid;gap:6px}.rchat .ropen{margin:0}.rchat .rcount{margin:0}.rchat .cform{margin:0}
-.rwrap{position:relative;min-width:0;max-width:100%}.rstage{position:relative}.rwrap>.rposes{max-width:100%;margin-top:8px}
+.rwrap{position:relative;min-width:0;max-width:100%}.rwrap>.rmform{margin:8px 0 0}.rmfield{position:relative;flex:1;min-width:0;display:flex}.rmfield input{flex:1;min-width:0;padding-right:38px}.rmleft{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted,#8a8a8a);pointer-events:none;font-variant-numeric:tabular-nums}.rmleft.low{color:#ecebe7;font-weight:600}.rstage{position:relative}.rwrap>.rposes{max-width:100%;margin-top:8px}
 .bestbtn{margin-top:10px}.bestpick{margin-top:10px;border:1px solid var(--p-line,var(--line));padding:10px 12px;display:grid;gap:10px;background:var(--p-panel,transparent)}
 .bestrow{width:100%;background:none;border:1px solid var(--p-line,var(--line));color:inherit;font:inherit;padding:6px 10px;cursor:pointer;text-align:left}.bestrow[aria-pressed="true"]{border-color:currentColor}.bestrow:disabled{opacity:.45;cursor:default}.bestmark{font-size:20px;width:28px;text-align:center}
 .rposes .rpbtn{width:44px;height:44px;padding:0!important;border-radius:50%!important;display:grid;place-items:center;flex:none}.rposes .rpbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.rposes .rpbtn[aria-expanded="true"]{background:var(--fg);color:var(--ink)}
@@ -621,10 +621,12 @@ footer.foot .lnk{color:var(--muted)}
 .rstage > .chat.rlog{position:absolute;left:10px;bottom:10px;width:min(46%,380px);max-height:42%;min-height:0;margin:0;padding:8px;z-index:6;background:#0a0a0bcc;border:1px solid var(--line-soft);backdrop-filter:blur(2px)}
 .visitors{position:absolute;inset:0;pointer-events:none}
 .says{position:absolute;inset:0;pointer-events:none;z-index:300}
-.say{position:absolute;transform:translate(-50%,-100%);max-width:34%;width:max-content;background:#ecebe7;color:#0a0a0b;border:1px solid #0a0a0b;border-radius:14px;padding:5px 10px;font:14px/1.3 var(--f-body,inherit);box-shadow:0 2px 8px #0008;overflow-wrap:anywhere;animation:sayin .25s ease-out;transition:opacity .5s}
-.say::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#ecebe7}
-.say.gone{opacity:0}
-@keyframes sayin{from{opacity:0;transform:translate(-50%,-80%)}to{opacity:1;transform:translate(-50%,-100%)}}
+.saystack{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px;width:max-content;max-width:34%;padding-bottom:7px}
+.say{position:relative;max-width:100%;background:#ecebe7;color:#0a0a0b;border:1px solid #0a0a0b;border-radius:14px;padding:4px 10px;font:14px/1.3 var(--f-body,inherit);box-shadow:0 2px 8px #0008;overflow-wrap:anywhere;text-align:center}
+.say:not(:last-child){opacity:.78;font-size:13px}
+.say.new{animation:sayin .25s ease-out}
+.say:last-child::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#ecebe7}
+@keyframes sayin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .ritem.vis{width:13%;pointer-events:none}.vname{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);font:italic 12px var(--f-ital);background:#0a0a0bcc;color:#ecebe7;padding:0 6px;white-space:nowrap}
 .songdock{position:fixed;left:0;bottom:0;width:200px;height:113px;opacity:0;pointer-events:none;z-index:-1;overflow:hidden}
 .songdock iframe{width:200px;height:113px;border:0;display:block}
@@ -898,7 +900,7 @@ footer.foot .lnk{color:var(--muted)}
   .rposes button{min-height:44px;border-radius:999px;padding:8px 16px}
   .rscroll{margin-inline:-12px}
   .rscroll > .room{width:100%}
-  .rwrap{display:flex;flex-direction:column}.rstage{display:contents}.rstage>.rlog{order:3}.rwrap>.rposes{order:2}.rwrap>p.note{order:2}
+  .rwrap{display:flex;flex-direction:column}.rstage{display:contents}.rstage>.rlog{order:3}.rwrap>.rmform{order:1}.saystack{max-width:46%;gap:3px}.say{font-size:12.5px;padding:3px 8px}.say:not(:last-child){font-size:11.5px}.rwrap>.rposes{order:2}.rwrap>p.note{order:2}
   .rstage > .chat.rlog{position:static;width:auto;max-height:120px;min-height:64px;margin-top:8px;background:#0000002e;backdrop-filter:none}
   .rstick .rscroll > .room{width:100%}
   .wardrobe .mirror-card{padding-top:14px}
@@ -5124,7 +5126,8 @@ function paintTyping(){
   el.hidden = !who.length; if (sub) sub.hidden = !!who.length;
 }
 setInterval(paintTyping, 1000);
-document.addEventListener('input', e => { if (e.target.id === 'cm-in') typingNow(!!e.target.value.trim()); });
+document.addEventListener('input', e => { if (e.target.id === 'cm-in') typingNow(!!e.target.value.trim()); if (e.target.id === 'rm-in') rmLeft(); });
+function rmLeft(){ const i = document.getElementById('rm-in'), l = document.getElementById('rmleft'); if (!i || !l) return; const n = RMAX - [...i.value].length; l.textContent = n; l.classList.toggle('low', n <= 10); }
 function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
@@ -5490,7 +5493,7 @@ document.addEventListener('click', e => {
   const x = Math.max(-2, Math.min(92, (e.clientX - rc.left) / rc.width * 100 - w / 2)), y = Math.max(20, Math.min(78, (e.clientY - rc.top) / rc.height * 100 - h));
   RM.me.x = Math.round(x * 10) / 10; RM.me.y = Math.round(y * 10) / 10;
   if (own) { me().room.av = {x:RM.me.x, y:RM.me.y}; const host = room.querySelector('[data-rav]'); host.style.left = RM.me.x + '%'; host.style.top = RM.me.y + '%'; host.style.zIndex = 10 + Math.round(RM.me.y + 45); clearTimeout(roomMove.t); roomMove.t = setTimeout(save, 900); }
-  roomMove();
+  roomMove(); sayBubbles();
 });
 function roomCountText(){
   if (RM.full) return 'Das Zimmer ist gerade voll (6 von 6). Versuch es später nochmal.';
@@ -5505,6 +5508,7 @@ function paintRoom(){
   if (v && RM.owner) { if (RM.full) v.innerHTML = ''; else paintVisitors(v, RM.owner); }
   if (c) c.textContent = roomCountText();
   const f = document.querySelector('[data-form="rmsg"]'); if (f) f.hidden = !RM.g || roomStart() == null;
+  sayBubbles();
 }
 /* Raumchat ist kurzlebig: es zählen nur Nachrichten seit dem letzten Öffnen; geschlossen = leer */
 // Raumchat schließt sich von selbst, wenn 10 Minuten lang niemand reingeschrieben hat (Inaya, 2026-10-10)
@@ -5540,34 +5544,26 @@ function drawRoomMsgs(){
   box.scrollTop = box.scrollHeight;
   sayBubbles();
 }
-/* Sprechblasen über den Köpfen: neue Raumchat-Nachrichten erscheinen kurz über dem Avatar */
-const SAID = new Set(), SAYT = {};
+/* Sprechblasen über den Köpfen: die letzten 3 Nachrichten jeder Person stehen über ihrem Avatar (Inaya, 2026-10-11) */
+const SAID = new Set(), RMAX = 80;
 function sayBubbles(){
   const lay = document.getElementById('roomsay'); if (!lay) return;
-  const now = Date.now();
-  roomLive().forEach(m => {
-    const key = m.from + ':' + m.ts;
-    if (SAID.has(key)) return; SAID.add(key);
-    if (!m.from || !m.text || now - (m.ts || 0) > 9000) return;
-    sayOne(lay, m);
-  });
+  const room = lay.parentElement, R = room.getBoundingClientRect(); if (!R.width) return;
+  const by = {};
+  roomLive().forEach(m => { if (m.from && m.text) (by[m.from] = by[m.from] || []).push(m); });
+  let html = '';
+  for (const [from, list] of Object.entries(by)) {
+    const av = from === RM.owner ? room.querySelector('.ritem.av:not(.vis)') : room.querySelector(`.ritem.vis[data-uid="${CSS.escape(from)}"]`);
+    if (!av) continue;
+    const A = av.getBoundingClientRect();
+    const x = ((A.left + A.width / 2 - R.left) / R.width * 100).toFixed(2), y = Math.max(2, (A.top - R.top) / R.height * 100 + 3).toFixed(2);
+    html += `<div class="saystack" style="left:${x}%;top:${y}%">${list.slice(-3).map(m => { const k = m.from + ':' + m.ts, isNew = !SAID.has(k); SAID.add(k); return `<div class="say${isNew ? ' new' : ''}">${etx(m.text.length > RMAX ? m.text.slice(0, RMAX - 1) + '…' : m.text)}</div>`; }).join('')}</div>`;
+  }
+  lay.innerHTML = html;
+  // Wenn der Stapel oben aus dem Zimmer ragen würde, rutscht er nach unten (kleines Zimmer am Handy)
+  lay.querySelectorAll('.saystack').forEach(st => { const over = R.top + 2 - st.getBoundingClientRect().top; if (over > 0) st.style.top = `calc(${st.style.top} + ${over}px)`; });
 }
-function sayOne(lay, m){
-  const room = lay.parentElement;
-  const av = m.from === RM.owner ? room.querySelector('.ritem.av:not(.vis)') : room.querySelector(`.ritem.vis[data-uid="${CSS.escape(m.from)}"]`);
-  if (!av) return;
-  const R = room.getBoundingClientRect(), A = av.getBoundingClientRect();
-  if (!R.width) return;
-  lay.querySelector(`[data-from="${CSS.escape(m.from)}"]`)?.remove();
-  clearTimeout(SAYT[m.from]);
-  const b = document.createElement('div');
-  b.className = 'say'; b.dataset.from = m.from;
-  b.style.left = ((A.left + A.width / 2 - R.left) / R.width * 100).toFixed(2) + '%';
-  b.style.top = Math.max(2, (A.top - R.top) / R.height * 100 + 3).toFixed(2) + '%';
-  b.innerHTML = etx(m.text.length > 90 ? m.text.slice(0, 88) + '…' : m.text);
-  lay.appendChild(b);
-  SAYT[m.from] = setTimeout(() => { b.classList.add('gone'); setTimeout(() => b.remove(), 600); }, 4500 + Math.min(m.text.length, 90) * 60);
-}
+addEventListener('resize', () => sayBubbles());
 function closeRoomChat(auto){ delete me().roomOpen; save(); if (social) sendMsg('zimmer_' + social.uid, '', {kind:'close'}).then(clearRoomChat); if (RW) { RW(); RW = null; } render(); toast(auto ? 'Dein Raumchat hat sich geschlossen, weil 10 Minuten keiner geschrieben hat.' : 'Raumchat geschlossen'); }
 // Kleine Ja/Nein-Frage als eigenes Fenster
 function askYesNo(q, yes='Ja', no='Nein'){
@@ -5580,14 +5576,15 @@ function askYesNo(q, yes='Ja', no='Nein'){
   });
 }
 // Zimmer mit Chatverlauf: am PC liegt der Verlauf unten links im Raum (wie bei MSP), am Handy direkt darunter
-const roomWithChat = (html, on, pose='') => on && social ? `<div class="rwrap"><div class="rstage">${html}<div class="chat msgs rlog" id="rmsgs"></div></div>${pose}</div>` : html + pose; // Posen immer direkt unter dem Raum (Inaya, 2026-10-11)
+// Schreibleiste fest direkt unter dem Raum, darunter Posen; höchstens RMAX Zeichen pro Sprechblase (Inaya, 2026-10-11)
+const rmForm = () => `<form class="cform rmform" data-form="rmsg" ${RM.g && roomStart() != null ? '' : 'hidden'}><span class="rmfield"><input type="text" id="rm-in" maxlength="${RMAX}" placeholder="In den Raum schreiben …" aria-label="Nachricht in den Raumchat" autocomplete="off"><small class="rmleft" id="rmleft" aria-live="polite">${RMAX}</small></span><button class="btn" type="submit">Senden</button></form>`;
+const roomWithChat = (html, on, pose='') => on && social ? `<div class="rwrap"><div class="rstage">${html}<div class="chat msgs rlog" id="rmsgs"></div></div>${rmForm()}${pose}</div>` : html + pose;
 function roomChatInline(isMine){ // Eingabe direkt unter dem Raum
   if (!social) return '<p class="note">Freunde ins Zimmer holen und im Raumchat schreiben geht, sobald du in der geteilten Nachtfalter-Seite angemeldet bist.</p>';
   const ro = me().roomOpen;
   const openForm = isMine && !ro ? `<div class="ropen rinl rkind"><span class="lbl">Raumchat öffnen: Wer darf rein?</span><div class="row"><button class="btn" data-act="room-open" data-v="friends">Nur Freunde</button><button class="btn" data-act="room-open" data-v="pub">Öffentlich</button></div><p class="note">Öffentlich: Alle aus Nachtfalter sehen dein Zimmer in der Liste und können reinkommen, auch ohne Freundschaft.</p></div>` : '';
   return `<div class="rchat">${openForm}
     <p class="lbl rcount" id="roomcount">${isMine && ro ? `🕯 Raumchat ${roomKind(ro)} · ` : ''}${esc(roomCountText())}</p>
-    <form class="cform" data-form="rmsg" ${RM.g && roomStart() != null ? '' : 'hidden'}><input type="text" id="rm-in" maxlength="500" placeholder="In den Raum schreiben …" aria-label="Nachricht in den Raumchat" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
   </div>`;
 }
 // Offener Raum: kleines Teilen-Symbol oben, darüber Freunde einladen (Inaya, 2026-10-11)
@@ -6486,8 +6483,8 @@ document.addEventListener('submit', async e => {
     if (url) extra.url = url;
     if (await sendMsg('wall_' + WL.uid, text, extra)) { toast('Kommentar gepostet'); render(); }
   } else if (t === 'rmsg') {
-    const text = val('rm-in'); if (!text || !RM.g || roomStart() == null) return;
-    document.getElementById('rm-in').value = '';
+    const text = [...val('rm-in')].slice(0, RMAX).join('').trim(); if (!text || !RM.g || roomStart() == null) return;
+    document.getElementById('rm-in').value = ''; rmLeft();
     sendMsg('zimmer_' + RM.owner, text);
   } else if (t === 'gadd') {
     const ids = [...document.querySelectorAll('.ga-mem')].filter(x => x.checked).map(x => x.value), cid = CH.open;
