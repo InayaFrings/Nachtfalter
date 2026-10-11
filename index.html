@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5d34260c2a45';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='757e94bb59ed';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -578,11 +578,11 @@ footer.foot .lnk{color:var(--muted)}
   body.chatfull .mback{display:none}
   body .chback{display:inline-grid!important}
 }
-.chback{display:none!important}
+.chback{display:none!important}.icell{display:grid;place-items:center;align-content:center;gap:6px;aspect-ratio:1;font:400 15px var(--f-display)}.icell svg{width:40%;height:auto;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .gb .entry.wentry.tp{background:linear-gradient(var(--p-bg),var(--p-bg)) padding-box,var(--pp-pat) border-box border-box,var(--p-bg);border:9px solid transparent;border-radius:10px;color:var(--p-fg);box-shadow:0 0 0 1px var(--p-line)}
 .wentry.tp .meta,.wentry.tp .muted{color:var(--p-muted)}.wentry.tp .lnk,.wentry.tp .cdel{color:var(--p-fg)}.wentry.tp .vid{color:var(--p-fg);border-color:var(--p-line)}
 /* Gästebuch und Kommentare: feste Höhe, drinnen scrollen (Inaya, 2026-10-11) */
-#rwall{max-height:420px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px}.cmts{max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px}.wname{font:inherit;font-weight:700;color:inherit}.typing{font:italic 15px var(--f-ital);color:var(--p-fg);animation:typb 1.2s ease-in-out infinite}@keyframes typb{50%{opacity:.45}}.chtitle{min-width:0}.chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rwall,.wscroll{max-height:420px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px}.wscroll #rwall{max-height:none;overflow:visible;padding:0}.wscroll{display:grid;gap:10px;margin-bottom:12px}.wscroll #rwall:empty{display:none}.cmts{max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding-right:6px}.wname{font:inherit;font-weight:700;color:inherit}.typing{font:italic 15px var(--f-ital);color:var(--p-fg);animation:typb 1.2s ease-in-out infinite}@keyframes typb{50%{opacity:.45}}.chtitle{min-width:0}.chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .attbtn{flex:none;width:42px;min-height:42px;border:1px solid var(--p-line);border-radius:50%;background:transparent;color:var(--p-fg);display:grid;place-items:center;cursor:pointer;align-self:center}.attbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;transition:transform .15s}.attbtn[aria-expanded="true"] svg{transform:rotate(45deg)}
 .attsheet{display:flex;gap:10px;justify-content:flex-start;padding:4px 0}
 .attopt{display:grid;justify-items:center;gap:4px;background:transparent;border:0;color:var(--p-fg);font:400 14px var(--f-display);cursor:pointer;padding:0;min-width:64px}
@@ -4004,6 +4004,7 @@ HELPER_POSTS.push( // Neuigkeiten immer mit Bild der Neuerung und passendem Knop
   {id:'n-chat',author:'juliet',type:'neu',text:'Neu: Schreib Andy und mir, wenn du Hilfe brauchst!',show:{helpers:1,btns:[['Juliet schreiben','helper-chat','juliet'],['Andy schreiben','helper-chat','andy']]},reactions:{},comments:[],age:1},
   {id:'n-garderobe-okt',author:'andy',type:'neu',text:'Neue Teile in der Garderobe! Ich hoffe, ihr liebt sie so wie ich.',show:{wear:['top:b_puff','top:k_spitze','top:c_ruesche','top:s_bandeau','bottom:hot_ripped','bottom:lw_baggy','bottom:hw_marlene','back:scenestl','acc:girplusch']},reactions:{},comments:[],age:.5},
   {id:'n-schlaf-okt',author:'juliet',type:'neu',text:'Neue Möbel fürs Schlafzimmer. Macht es euch gemütlich!',show:{furn:['himmelbett','kommode','spieluhr','mondlampe','girplusch']},reactions:{},comments:[],age:.4},
+  {id:'n-chat-neu',author:'juliet',type:'neu',text:'Neue Chat-Funktionen! Schickt euch Fotos, MP3s und Links, gebt jedem Chat mit dem Stift eure eigene Farbe und seht, wenn jemand gerade schreibt.',show:{chat:1,btn:['Zu den Chats','nav','chats']},reactions:{},comments:[],age:.005},
   {id:'n-scene-okt',author:'andy',type:'neu',text:'Neue Scene-Shirts für alle! Dinos, Monster, Neon-Sterne und mehr. Ab in die Garderobe!',show:{wear:['top:sz_dino','top:sz_monster','top:sz_sterne','top:sz_zombie','top:sz_katzen','top:sz_rawr']},reactions:{},comments:[],age:.01},
   {id:'n-pony-okt',author:'andy',type:'neu',text:'Neue Ponys für Dreads und Cornrows. Probiert sie aus!',show:{wear:['front:p_dread|back=dreadk','front:p_corn|back=cornk','back:zoepfe|front=p_gerade']},reactions:{},comments:[],age:.2},
 );
@@ -4547,6 +4548,7 @@ function showHTML(hs){
   }
   if (hs.furn) { grid = hs.furn.filter(k => FURN[k]).map(k => `<div class="ncell fcell" title="${esc(FURN[k].name)}">${furnSVG(k)}</div>`).join(''); b = b || ['Zu meinem Zimmer', 'nav', 'room']; }
   if (hs.theme) grid = hs.theme.map(([box, pat]) => `<div class="ncell themed tcell" style="${themeStyle({...BLANK_THEME(), box, pattern:pat})}"><span>${esc((PATTERN_OPTS.find(x => x[0] === pat) || [0, pat])[1])}</span></div>`).join('');
+  if (hs.chat) grid = [['<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>','Fotos'],['<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>','MP3s'],['<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>','Links'],['<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>','Farben']].map(([d, l]) => `<div class="ncell icell"><svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg><span>${l}</span></div>`).join('');
   if (hs.helpers) grid = ['juliet', 'andy'].map(id => `<div class="ncell" title="${esc(HELPERS[id].name)}">${avatar(HELPERS[id].outfit, 'bust')}</div>`).join('');
   const n = (grid.match(/class="ncell/g) || []).length;
   return (grid ? `<div class="newgrid${n === 2 || n === 4 ? ' g2' : ''}">${grid}</div>` : '') + (hs.btns ? `<div class="row nbtns">${hs.btns.map(btn).join('')}</div>` : b ? btn(b) : '');
@@ -4825,12 +4827,14 @@ function profileView(id){
         <span id="rw-file" class="note"></span>
         <div class="row"><span class="sp"></span><button class="btn" type="submit">Kommentieren</button></div></form>`
         : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
-  else if (!u.helper) wallP = (own && social ? `<div class="gb"><h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3><div id="rwall"></div></div>` : '') + `<div class="gb">
-      ${u.wall.length ? u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry tp" style="${postTheme(normTheme({...u.theme}))}">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('') : '<p class="muted" style="margin:0">Noch keine Einträge.</p>'}
+  else if (!u.helper) { // eigene Kommentare und die von Juliet und Andy scrollen zusammen in einem Kasten (Inaya, 2026-10-11)
+    const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry tp" style="${postTheme(normTheme({...u.theme}))}">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
+    wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
       <form class="cform" data-form="wall" data-id="${id}">
         <input type="text" id="w-${id}" placeholder="${own ? 'Etwas in dein Gästebuch schreiben…' : 'Hinterlass ' + esc(u.name) + ' ein paar Zeilen…'}" maxlength="300" aria-label="Gästebuch-Eintrag">
         <button class="btn ghost" type="submit">Eintragen</button>
       </form></div>`;
+  }
   return `<section class="themed" style="${themeStyle(u.theme)}">
     ${bannerHTML(u.banner, u.name, u.handle || '')}
     ${own ? `<div class="editbar"><span class="note">So sehen andere dein Profil.</span><button class="btn" data-act="nav" data-v="design">✎ Profil bearbeiten</button></div>` : ''}
