@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5e1d8c2a606d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='08c5b865882c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -4846,7 +4846,7 @@ function profileView(id){
         <div class="row"><span class="sp"></span><button class="btn" type="submit">Kommentieren</button></div></form>`
         : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
   else if (!u.helper) { // eigene Kommentare und die von Juliet und Andy scrollen zusammen in einem Kasten (Inaya, 2026-10-11)
-    const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry tp" style="${postTheme(normTheme({...u.theme}))}">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
+    const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry${wTheme(c.author) ? ' tp' : ''}" style="${wTheme(c.author)}">${ulink(c.author)} ${etx(c.text)} <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
     wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
       <form class="cform" data-form="wall" data-id="${id}">
         <input type="text" id="w-${id}" placeholder="${own ? 'Etwas in dein Gästebuch schreiben…' : 'Hinterlass ' + esc(u.name) + ' ein paar Zeilen…'}" maxlength="300" aria-label="Gästebuch-Eintrag">
@@ -5366,11 +5366,12 @@ function mediaHTML(c){
   if (c.url && /^https?:\/\//i.test(c.url)) { const v = ytId(c.url); h += v ? `<a class="wvid" href="${esc(c.url)}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt="Video"><span class="play" aria-hidden="true">▶</span></a>` : `<a class="vid p" href="${esc(c.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Video ansehen</span></a>`; }
   return h;
 }
+// Jeder Gästebuch-Eintrag in Farbe und Muster vom Profil der Person, die ihn geschrieben hat (Inaya, 2026-10-11)
+function wTheme(id){ const t = id && (id === S.me || id === social?.uid ? me() : PROF[id]?.theme ? PROF[id] : profUser(id))?.theme; return t ? postTheme(normTheme({...t})) : ''; }
 function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
-  const wt = (WL.uid === social?.uid ? me() : profUser(WL.uid))?.theme, wst = wt ? postTheme(normTheme({...wt})) : ''; // Einträge in Farbe und Muster des Profils (Inaya, 2026-10-11)
-  box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry${wst ? ' tp' : ''}" style="${wst}"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
+  box.innerHTML = WL.list.length ? WL.list.map(c => { const wst = wTheme(c.from === social?.uid ? S.me : c.from); return `<div class="entry wentry${wst ? ' tp' : ''}" style="${wst}"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`; }).join('')
     : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
 // Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
