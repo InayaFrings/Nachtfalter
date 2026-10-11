@@ -134,7 +134,7 @@ label.f{display:grid;gap:4px}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
 .shared{border:1px solid var(--line-soft);padding:12px;display:grid;gap:10px;background:#ffffff06}.sh-h{display:flex;gap:10px;align-items:center}.sh-h>span{display:grid;min-width:0}.sh-ico{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.pshare{display:inline-flex;gap:6px;align-items:center}.pshare svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdel{margin-left:auto;align-self:start}.ph>div{min-width:0;flex:1}.ph .pdel{flex-wrap:nowrap;white-space:nowrap;gap:14px;flex:none}.pi .cmt .lnk{font-size:12px}
-#repmodal{z-index:2000}.bubble .meta .lnk{font-size:inherit;color:inherit;opacity:.8}.mdel{white-space:nowrap}.bubble.me .mdel,.bubble.me .mdelb{color:#141218;opacity:.8}.mdel .lnk{font-weight:700;opacity:1}
+#repmodal{z-index:2000}.bubble .meta .lnk{font-size:inherit;color:inherit;opacity:.8}.mdel{white-space:nowrap}.bubble .mdel,.bubble .mdelb{color:inherit;opacity:1}.mdel .lnk{font-weight:700;opacity:1}
 .mvclip{width:min(260px,70vw);min-height:120px}.mvclip img,.mvclip video{max-height:360px}
 .vclip{aspect-ratio:auto;min-height:200px;max-height:560px}.vclip img{position:relative;inset:auto;width:100%;height:auto;max-height:560px;object-fit:contain;filter:none}.vclip .play{position:absolute}.vclip.on{display:block;cursor:auto;min-height:0}.vclip video{display:block;width:100%;max-height:600px;background:#000}.pattvid{position:relative;display:inline-block}.pattvid img{max-width:160px;max-height:200px;display:block;border:1px solid var(--line)}.pattvid i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:#fff;text-shadow:0 0 6px #000}
 .prep svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}.repopts{display:grid;gap:8px}.replist{list-style:none;margin:0;padding:0;display:grid;gap:12px}.rep{display:grid;gap:6px;border-bottom:1px solid var(--line-soft);padding-bottom:10px}.rep .row{gap:14px}
@@ -158,6 +158,9 @@ label.f{display:grid;gap:4px}
 .pcx{position:absolute;top:-6px;right:-7px;width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:#0a0a0b;color:#ecebe7;font-size:13px;line-height:15px;padding:0;cursor:pointer}
 .cmt.mom{display:flex;gap:10px;align-items:flex-start;border-top:0;padding-top:0}.cmts{gap:10px}
 .cmh{width:38px;height:38px;padding:0;cursor:pointer}
+.cname{all:unset;cursor:pointer;font:inherit;font-weight:600}.cname:hover,.cname:focus-visible{text-decoration:underline}
+.cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
+.cform:has(.pcre){flex-wrap:wrap}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:italic;opacity:.85;flex-basis:100%}
 .bub{position:relative;background:var(--paper-2,#1c1c20);border:1px solid var(--line);border-radius:16px;padding:7px 13px 6px;min-width:0;max-width:calc(100% - 48px);overflow-wrap:anywhere;font-size:16px;line-height:1.35}
 .bub:before{content:'';position:absolute;left:-6px;top:13px;width:10px;height:10px;background:inherit;border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
 .bub b{display:block;font-size:14px;font-weight:600}.bub .btx{display:block;white-space:pre-wrap}.bub .meta{display:block;font-size:12px;margin-top:2px}.bub .lnk{font-size:12px}
@@ -902,7 +905,7 @@ const BOTTOM_SUB = [['bottom','Hosen','hose'],['bottom','Röcke','rock'],['legw'
 let bottomSub = 'hose';
 // Kleider haben einen eigenen Reiter in der Garderobe (Inaya, 2026-10-11)
 let topSub = 'ober';
-const isDress = i => /kleid|^sd_/.test(i.id);
+const isDress = i => /kleid|^sd_|^md_/.test(i.id);
 const isSkirt = i => /rock|tutu|tuell|kilt|^lw_mini|^lw_falten|^hw_bleistift|^hw_korsage/.test(i.id);
 const inBottom = c => BOTTOM_SUB.some(([k]) => k === c);
 let wearTimer = null;
@@ -1339,6 +1342,15 @@ ITEMS.push(
   {id:'sd_blau',cat:'top',name:'Scene-Kleid Leo Blau',st:'Scene',g:'w'},
   {id:'sd_rosen',cat:'top',name:'Scene-Kleid Rosen',st:'Scene',g:'w'},
   {id:'sd_doppel',cat:'top',name:'Scene-Kleid mit Doppelrüschen',st:'Scene',g:'w'},
+  // Scene-Minikleider (Inaya, 2026-10-11)
+  {id:'md_leo',cat:'top',name:'Scene-Minikleid Leo',st:'Scene',g:'w'},
+  {id:'md_ringel',cat:'top',name:'Scene-Minikleid Ringel',st:'Scene',g:'w'},
+  {id:'md_zebra',cat:'top',name:'Scene-Minikleid Zebra',st:'Scene',g:'w'},
+  {id:'md_schach',cat:'top',name:'Scene-Minikleid Schachbrett',st:'Scene',g:'w'},
+  {id:'md_herz',cat:'top',name:'Scene-Minikleid Herzchen',st:'Scene',g:'w'},
+  {id:'md_blau',cat:'top',name:'Scene-Minikleid Leo Blau',st:'Scene',g:'w'},
+  {id:'md_rosen',cat:'top',name:'Scene-Minikleid Rosen',st:'Scene',g:'w'},
+  {id:'md_doppel',cat:'top',name:'Scene-Minikleid mit Doppelrüschen',st:'Scene',g:'w'},
   {id:'p_augenbraue',cat:'jewel',sub:'pierc',name:'Eyebrow (Stab)',c:'#d8d8de'},
   {id:'p_kinn',cat:'jewel',sub:'pierc',name:'Vertical Labret',c:'#d8d8de'},
   {id:'tutu',cat:'bottom',name:'Tütü',st:'Scene',g:'w'},
@@ -2213,28 +2225,29 @@ const iskullBow = (x, y, s, fill, bow) => `<g transform="translate(${x - 12 * s}
 const ilaceup = (X, x, y0, y1, w, c) => { let d = ''; for (let y = y0; y < y1 - 8; y += 20) d += `M${x - w} ${y}L${x + w} ${y + 18}M${x + w} ${y}L${x - w} ${y + 18}`; return X.LN(d, c, 2.6) + [y0, y1].map(() => '').join('') + Array.from({length: Math.floor((y1 - y0) / 20) + 1}, (_, k) => `<circle cx="${x - w}" cy="${y0 + k * 20}" r="3" fill="none" stroke="#c9c9cf" stroke-width="1.6"/><circle cx="${x + w}" cy="${y0 + k * 20}" r="3" fill="none" stroke="#c9c9cf" stroke-width="1.6"/>`).join(''); };
 const ibowAt = (x, y, k, c) => `<path d="M${x} ${y}L${x - 18 * k} ${y - 11 * k}L${x - 18 * k} ${y + 11 * k}ZM${x} ${y}L${x + 18 * k} ${y - 11 * k}L${x + 18 * k} ${y + 11 * k}Z" fill="${c}" ${IO}/><circle cx="${x}" cy="${y}" r="${4 * k}" fill="${c}" ${IO}/><path d="M${x - 2} ${y + 3}l-8 ${24 * k}M${x + 2} ${y + 3}l8 ${24 * k}" stroke="${c}" stroke-width="${4 * k}" stroke-linecap="round"/>`;
 function isceneDress(X, c, m, fill, o={}){
-  const B = X.B, top = B.chest - 26, ruf = B.wy + 70, hem = B.ky - 60, acc = m || '#141218';
+  const B = X.B, top = B.chest - 26, hem = o.mini ? Math.round(B.wy + (B.ky - 60 - B.wy) * .5) : B.ky - 60, ruf = o.mini ? hem - 30 : B.wy + 70, acc = m || '#141218';
   const [ra, rb] = ihipX(B, ruf, 6);
-  let s = X.G(iskirt(B, hem, 150, B.wy - 6, 0), fill) + X.G(icorset(B, top, B.wy + 4, 5, 0), fill);
+  let s = X.G(iskirt(B, hem, o.mini ? 110 : 150, B.wy - 6, 0), fill) + X.G(icorset(B, top, B.wy + 4, 5, 0), fill);
   s += [0, 1].map(k => X.P(iside(B, k, top + 34, ruf, 24, 5), X.pat('lace', acc))).join('');
   s += X.G(icorset(B, top, B.chest + 30, 7, 0).replace(/L[^L]*Z$/, 'Z'), acc);
   s += X.LN(`M${B.cx - 56} ${top + 4}L${B.nl + 2} ${B.ny - 4}Q${B.cx} ${B.ny - 20} ${B.nr - 2} ${B.ny - 4}L${B.cx + 56} ${top + 4}`, acc, 6).replace('stroke-linecap="round"', 'stroke-linecap="round" stroke-dasharray="10 4"');
   s += irband(X, ra - 4, rb + 4, ruf, 34, acc);
-  if (o.hem) s += irband(X, ...ihipX(B, hem - 30, 8), hem - 30, 28, acc);
+  if (o.hem && !o.mini) s += irband(X, ...ihipX(B, hem - 30, 8), hem - 30, 28, acc);
   if (!o.noSkull) s += iskullBow(B.cx + 34, B.wy - 20, 2.6, acc === '#141218' || !isLight(acc) ? '#141218' : acc, '#ecebe7');
   return s;
 }
 Object.assign(ITOP, {
-  sd_leo:(X, c, m) => isceneDress(X, c, m, X.pat('leo', c, shade(c, .45))),
-  sd_ringel:(X, c, m) => isceneDress(X, c, m, X.pat('stripe', c, m || '#141218', 26)),
-  sd_zebra:(X, c, m) => isceneDress(X, c, m, X.pat('zebra', c, m || '#141218')),
-  sd_schach:(X, c, m) => isceneDress(X, c, m, X.pat('check', c, '#141218', 26)),
-  sd_herz:(X, c, m) => isceneDress(X, c, m, X.pat('motif', c, 'herz', 26)),
-  sd_blau:(X, c, m) => isceneDress(X, c, m, X.pat('leo', c, '#141218')),
-  sd_rosen:(X, c, m) => isceneDress(X, c, m, X.pat('rose', c, m || '#141218')),
-  sd_doppel:(X, c, m) => isceneDress(X, c, m, X.pat('stripe', c, m || '#141218', 22), {hem:1}),
+  sd_leo:(X, c, m, mini) => isceneDress(X, c, m, X.pat('leo', c, shade(c, .45)), {mini}),
+  sd_ringel:(X, c, m, mini) => isceneDress(X, c, m, X.pat('stripe', c, m || '#141218', 26), {mini}),
+  sd_zebra:(X, c, m, mini) => isceneDress(X, c, m, X.pat('zebra', c, m || '#141218'), {mini}),
+  sd_schach:(X, c, m, mini) => isceneDress(X, c, m, X.pat('check', c, '#141218', 26), {mini}),
+  sd_herz:(X, c, m, mini) => isceneDress(X, c, m, X.pat('motif', c, 'herz', 26), {mini}),
+  sd_blau:(X, c, m, mini) => isceneDress(X, c, m, X.pat('leo', c, '#141218'), {mini}),
+  sd_rosen:(X, c, m, mini) => isceneDress(X, c, m, X.pat('rose', c, m || '#141218'), {mini}),
+  sd_doppel:(X, c, m, mini) => isceneDress(X, c, m, X.pat('stripe', c, m || '#141218', 22), {hem:1, mini}),
 });
-Object.assign(ITOPC, {sd_leo:['#ef7ac0','#141218'], sd_ringel:['#ecebe7','#141218'], sd_zebra:['#ecebe7','#141218'], sd_schach:['#e05aa0','#141218'], sd_herz:['#f2a0c8','#141218'], sd_blau:['#5ab4e6','#141218'], sd_rosen:['#c8327a','#141218'], sd_doppel:['#e8336a','#141218']});
+for (const k of ['leo','ringel','zebra','schach','herz','blau','rosen','doppel']) { ITOP['md_' + k] = (X, c, m) => ITOP['sd_' + k](X, c, m, true); }
+Object.assign(ITOPC, {md_leo:['#ef7ac0','#141218'], md_ringel:['#ecebe7','#141218'], md_zebra:['#ecebe7','#141218'], md_schach:['#e05aa0','#141218'], md_herz:['#f2a0c8','#141218'], md_blau:['#5ab4e6','#141218'], md_rosen:['#c8327a','#141218'], md_doppel:['#e8336a','#141218'], sd_leo:['#ef7ac0','#141218'], sd_ringel:['#ecebe7','#141218'], sd_zebra:['#ecebe7','#141218'], sd_schach:['#e05aa0','#141218'], sd_herz:['#f2a0c8','#141218'], sd_blau:['#5ab4e6','#141218'], sd_rosen:['#c8327a','#141218'], sd_doppel:['#e8336a','#141218']});
 // Korsetts: über dem Oberteil, Herzausschnitt bis über die Hüfte
 const ikorsett = (X, fill, o={}) => { const B = X.B, y0 = o.under ? B.chest + 40 : B.chest - 24, y1 = B.wy + 34; let s = X.G(o.under ? iboff(B, y0, y1, 8, `Q${B.cx} ${y0 + 20} `) : icorset(B, y0, y1, 8, 16), fill); s += X.LN([-1, 1].map(k => `M${B.cx + k * 46} ${y0 + 30}Q${B.cx + k * 36} ${B.wy - 30} ${B.cx + k * 44} ${y1 + 4}`).join(''), shade(typeof fill === 'string' && fill[0] === '#' ? fill : '#141218', 1.8), 1.6); return s; };
 Object.assign(IBELT, {
@@ -2463,7 +2476,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const tc = ITOPC[o.top] || ['#141218'], topC = o.topC || tc[0], motifDef = tc[1] || ICON(topC);
   const grey = h => { const n = parseInt((h || '#000').slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return Math.max(r, g, b) - Math.min(r, g, b) < 34; };
   // Motiv automatisch: Schwarz/Weiß-Motive immer im Kontrast zum Stoff (weißes Shirt -> schwarzes Motiv), eigene Motivfarbe hat Vorrang
-  const motif = o.motifC || (/^sd_/.test(o.top) ? motifDef : 0) || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
+  const motif = o.motifC || (/^[sm]d_/.test(o.top) ? motifDef : 0) || (grey(motifDef) || Math.abs(lum(topC) - lum(motifDef)) < .25 ? ICON(topC) : motifDef);
   const XL = B.long ? {...X, B:{...B, hem:B.long}} : X; // Männer: lange Oberteile und passende Jacken
   if (ITOP[o.top]) body += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif);
   let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
@@ -4420,10 +4433,10 @@ function piWatch(p){
 }
 // Kommentare wie bei Momio: kleiner Avatar-Kopf und daneben eine Sprechblase (Inaya, 2026-10-10)
 const CMH = {};
-function cbub(uid, name, text, ts, del, k, img=''){
+function cbub(uid, name, text, ts, del, k, img='', extra=''){
   const u = uid === social?.uid ? me() : S.users[uid] || (PROF[uid] ? profUser(uid) : null);
   if (!u && uid && social && !CMH[uid]) { CMH[uid] = 1; loadProf(uid).then(() => k ? piDraw(k) : softRender()); }
-  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><div class="bub"><b>${esc(name)}${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${etx(text)}</span>` : ''}${img && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div></div>`;
+  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${etx(text)}</span>` : ''}${img && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
 }
 function piInner(p){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
@@ -4432,11 +4445,19 @@ function piInner(p){
     const n = list.filter(x => x.kind === 'r' && x.r === r).length, on = list.some(x => x.kind === 'r' && x.r === r && x.by === uid);
     return can ? `<button data-act="preact" data-k="${k}" data-i="${i}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${n || ''}</button>` : n ? `<span class="muted">${RICON[r]} ${n}</span>` : '';
   }).join('');
-  const cm = list.filter(x => x.kind === 'c').sort((a, b) => a.ts - b.ts).map(c => cbub(c.by, c.name || 'Jemand', c.text, c.ts, c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : '', k, c.img)).join('');
-  return `<div class="reacts">${reacts}</div>${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}"><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label><span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
+  const all = list.filter(x => x.kind === 'c').sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
+  // Alte Kommentare (vor den Antworten) zählen als Antworten auf den ersten Kommentar (Inaya, 2026-10-11)
+  const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
+  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img);
+  const cm = all.filter(c => !reOf(c)).map(c => {
+    const rs = all.filter(r => reOf(r) === c.did), open = CMOPEN.has(k + '/' + c.did);
+    return `<div class="cthread">${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
+  }).join('');
+  const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
+  return `<div class="reacts">${reacts}</div>${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}"><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label>${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
 }
 // Fotos in Kommentaren: klein, weniger als halb so groß wie im Beitrag (Inaya, 2026-10-11)
-const PCIMG = {};
+const PCIMG = {}, CMOPEN = new Set(), CMRE = {}, CMT_THREADS = 1791723600000; // ab hier gibt es Antworten auf Kommentare
 document.addEventListener('change', async e => {
   if (!e.target.classList?.contains('pcfile')) return;
   const k = e.target.dataset.k, f = e.target.files[0]; if (!f) return;
@@ -4476,14 +4497,14 @@ function notifs(){
   if (!social) return [];
   const uid = social.uid, out = [];
   for (const [k, w] of Object.entries(PI)) {
-    if (postOwner(w.p) !== uid) { // fremder Beitrag: andere Kommentare nach meinem ersten Kommentar melden
-      const mine = w.list.filter(x => x.kind === 'c' && x.by === uid).map(x => x.ts || 0); if (!mine.length) continue;
-      const first = Math.min(...mine), ow = postOwner(w.p);
-      for (const x of w.list) if (x.kind === 'c' && x.by && x.by !== uid && (x.ts || 0) > first) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:x.by === ow ? 'hat auf den Beitrag geantwortet, den du kommentiert hast:' : 'hat auch einen Beitrag kommentiert, den du kommentiert hast:', quote:x.text, go:'opost', oid:ow, k, p:w.p});
+    if (postOwner(w.p) !== uid) { // fremder Beitrag: nur Antworten auf meine Kommentare melden (Inaya, 2026-10-11)
+      const ow = postOwner(w.p);
+      for (const x of w.list) if (x.kind === 'c' && x.by && x.by !== uid && x.to === uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'opost', oid:ow, k, p:w.p});
       continue;
     }
     for (const x of w.list) {
       if (!x.by || x.by === uid) continue;
+      if (x.kind === 'c' && x.to === uid) { out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'post', k, p:w.p}); continue; }
       if (x.kind === 'r' && REACTIONS.includes(x.r)) out.push({ts:x.ts || 0, uid:x.by, ico:RICON[x.r], kind:'r', text:'hat auf deinen Beitrag reagiert', go:'post', k, p:w.p});
       else if (x.kind === 'c') out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deinen Beitrag kommentiert:', quote:x.text, go:'post', k, p:w.p});
     }
@@ -6316,7 +6337,13 @@ document.addEventListener('click', async e => {
     try {
       await social.db.doc(`chats/${cid}/m/${id}`).delete();
       for (const [x, base] of [[m.audio, 'pa_'], [m.clip, 'pv_']]) if (x?.k) for (let i = 0; i < x.n; i++) social.db.doc(`profiles/${social.uid}/${base}${x.k}/c${i}`).delete().catch(() => {});
-      if (CH.msgs[CH.msgs.length - 1]?.id === id && !cid.startsWith('zimmer_')) social.db.doc('chats/' + cid).update({lastText:'Nachricht gelöscht'}).catch(() => {});
+      const rest = CH.msgs.filter(x => x.id !== id).sort((x, y) => (x.ts || 0) - (y.ts || 0)), prev = rest[rest.length - 1];
+      if ((m.ts || 0) >= (prev?.ts || 0) && !cid.startsWith('zimmer_') && !cid.startsWith('wall_')) {
+        const lt = prev ? (prev.text || (prev.img ? '📷 Foto' : prev.clip ? '🎬 Video' : prev.audio ? '♪ ' + (prev.audio.name || 'Lied') : '')).slice(0, 60) : '';
+        const upd = {lastText:lt, lastFrom:prev?.from || ''}; if (prev?.ts) upd.last = prev.ts;
+        social.db.doc('chats/' + cid).update(upd).catch(() => {});
+        const c = CH.list.find(x => x.id === cid); if (c) Object.assign(c, upd);
+      }
     } catch { toast('Die Nachricht ließ sich nicht löschen.'); drawMsgs(); }
     return;
   }
@@ -6447,6 +6474,9 @@ document.addEventListener('click', async e => {
     try { if (on) await ref.delete(); else await ref.set({kind:'r', r, by:uid, ts:Date.now()}); } catch { toast('Das hat gerade nicht geklappt.'); }
   }
   else if (a === 'pc-img-x') { delete PCIMG[b.dataset.k]; piDraw(b.dataset.k); }
+  else if (a === 'pc-re') { CMRE[b.dataset.k] = {d:b.dataset.d, u:b.dataset.u}; piDraw(b.dataset.k); document.getElementById('pc-' + b.dataset.k)?.focus(); }
+  else if (a === 'pc-re-x') { delete CMRE[b.dataset.k]; piDraw(b.dataset.k); }
+  else if (a === 'pc-more') { const x = b.dataset.k + '/' + b.dataset.d; CMOPEN.has(x) ? CMOPEN.delete(x) : CMOPEN.add(x); piDraw(b.dataset.k); }
   else if (a === 'pc-del') { try { await social.db.doc('chats/pi_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch {} }
   else if (a === 'react') {
     const p = S.posts.find(x => x.id === id), r = b.dataset.r;
@@ -6662,8 +6692,9 @@ document.addEventListener('submit', async e => {
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
   } else if (t === 'pcomment') {
     const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k]; if ((!text && !img) || !social) return;
-    inp.value = ''; delete PCIMG[k];
-    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { inp.value = text; if (img) PCIMG[k] = img; toast('Das hat gerade nicht geklappt.'); }
+    const rp = CMRE[k]; inp.value = ''; delete PCIMG[k]; delete CMRE[k];
+    if (rp) CMOPEN.add(k + '/' + rp.d);
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { inp.value = text; if (img) PCIMG[k] = img; toast('Das hat gerade nicht geklappt.'); }
     piDraw(k);
   } else if (t === 'comment') {
     const id = f.dataset.id, text = val('c-' + id); if (!text) return;
