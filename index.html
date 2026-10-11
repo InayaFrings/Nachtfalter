@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0bbafd1e9469';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='82314a47f3a7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -344,7 +344,7 @@ ul.zlist small{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 @media (max-width:760px){.brgrid{grid-template-columns:repeat(2,1fr)}}
 .apost{display:flex;gap:14px;align-items:center;border:1px solid var(--line-soft);padding:12px 14px;background:#ffffff06;flex-wrap:wrap}.apost audio{width:100%}.aname{width:100%}
 .aplay{width:52px;height:52px;border-radius:50%;border:1px solid var(--fg);background:var(--fg);color:var(--bg);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}.aplay svg{width:22px;height:22px;fill:currentColor;margin-left:3px}.ainfo{display:grid;min-width:0;flex:1}.ainfo b{overflow-wrap:anywhere}.ainfo .muted{font-size:14px}
-.plinks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.plink{display:inline-grid;gap:0;padding:5px 12px;border:1px solid var(--p-line,var(--line));color:inherit;text-decoration:none;line-height:1.2}.plink b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.plink span{font-size:15px;overflow-wrap:anywhere}a.plink:hover{border-color:var(--fg)}
+.plinks{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.plink.pic{width:44px;height:44px;padding:0;display:grid;place-items:center;border-radius:50%;border-color:currentColor;color:var(--p-fg,var(--fg))}.plink.pic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.plink.pic svg .f{fill:currentColor;stroke:none}.plink.pic:hover{background:color-mix(in srgb,currentColor 12%,transparent)}.plink{display:inline-grid;gap:0;padding:5px 12px;border:1px solid var(--p-line,var(--line));color:inherit;text-decoration:none;line-height:1.2}.plink b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.plink span{font-size:15px;overflow-wrap:anywhere}a.plink:hover{border-color:var(--fg)}
 .pinm{flex:none;display:grid;place-items:center;color:var(--muted);padding:0 4px}.pinm svg{width:16px;height:16px;fill:currentColor;stroke:currentColor;stroke-width:1.4;transform:rotate(35deg)}
 .clrow,.fprow{position:relative;-webkit-touch-callout:none;user-select:none}.clrow{display:flex;gap:0;align-items:stretch}.clrow .clist{flex:1;min-width:0}.clrow .pinm{position:absolute;right:10px;top:10px}
 .pinmore{position:absolute;right:6px;bottom:6px;width:28px;height:28px;display:none;place-items:center;padding:0;background:var(--paper-2,#151517);border:1px solid var(--line);color:var(--fg);cursor:pointer}.pinmore svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
@@ -568,11 +568,29 @@ footer.foot .lnk{color:var(--muted)}
 .clist{display:grid;text-align:left;gap:2px;background:transparent;border:1px solid var(--line);color:var(--fg);padding:9px 12px;font:inherit;cursor:pointer;width:100%}
 .clist:hover,.clist.on{border-color:var(--fg)}
 .clist.ctheme{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.clist.ctheme small{color:var(--p-muted)}.clist.ctheme.on,.clist.ctheme:hover{border-color:var(--p-fg)}
-@media (max-width:760px){body.kbopen .mobnav{display:none}
-  /* Tastatur offen im Chat: Chat füllt genau den sichtbaren Bereich bis zur Tastatur, wie bei WhatsApp (Inaya, 2026-10-10) */
-  body.chatkb .chatmain>.chatpanel{position:fixed;left:0;right:0;top:var(--vvt,0px);height:var(--vvh,100%)!important;min-height:0;z-index:1200;margin:0;border-left:0;border-right:0;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 8px;gap:8px}
-  body.chatkb .chatmain>.chatpanel .ch-head{padding-bottom:6px}
-} /* Tastatur offen: Leiste weg, damit die Tastatur direkt unter dem Eingabefeld sitzt (Inaya) */.clist small{color:var(--muted);font:italic 14px var(--f-ital);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:760px){body.kbopen .mobnav{display:none}body.kbopen:not(.chatfull) #app{padding-bottom:60vh}
+  /* Handy: offener Chat füllt genau den sichtbaren Bildschirm (mit Tastatur bis zur Tastatur), wie bei WhatsApp (Inaya, 2026-10-10) */
+  body.chatfull{overflow:hidden}
+  body.chatfull .chatmain>.chatpanel{position:fixed;left:0;right:0;top:var(--vvt,0px);height:var(--vvh,100dvh)!important;min-height:0;z-index:1200;margin:0;border:0;padding:calc(8px + env(safe-area-inset-top,0px)) 10px calc(8px + env(safe-area-inset-bottom,0px));gap:8px}
+  body.chatfull.chatkb .chatmain>.chatpanel{padding-bottom:8px}
+  body.chatfull .chatmain>.chatpanel .ch-head{padding-bottom:8px;justify-content:flex-start}
+  body.chatfull .chatmain>.chatpanel .chtitle{flex:1}
+  body.chatfull .mback{display:none}
+  body .chback{display:inline-grid!important}
+}
+.chback{display:none!important}.typing{font:italic 15px var(--f-ital);color:var(--p-fg);animation:typb 1.2s ease-in-out infinite}@keyframes typb{50%{opacity:.45}}.chtitle{min-width:0}.chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attbtn{flex:none;width:42px;min-height:42px;border:1px solid var(--p-line);border-radius:50%;background:transparent;color:var(--p-fg);display:grid;place-items:center;cursor:pointer;align-self:center}.attbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;transition:transform .15s}.attbtn[aria-expanded="true"] svg{transform:rotate(45deg)}
+.attsheet{display:flex;gap:10px;justify-content:flex-start;padding:4px 0}
+.attopt{display:grid;justify-items:center;gap:4px;background:transparent;border:0;color:var(--p-fg);font:400 14px var(--f-display);cursor:pointer;padding:0;min-width:64px}
+.atti{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--p-fg);color:var(--p-bg)}.atti svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bubble.media{padding:4px 4px 6px}.bubble.media>.meta,.bubble.media>.who{padding-inline:8px}
+.mimg{display:block;border:0;padding:0;background:none;cursor:zoom-in;width:100%}.mimg img{display:block;width:100%;max-width:260px;max-height:320px;object-fit:cover}
+.maud{border:0;background:transparent;padding:6px 8px;gap:10px}.maud .aplay{width:40px;height:40px}
+.mlink{display:flex;gap:10px;align-items:center;margin-top:6px;padding:8px;border:1px solid var(--p-line);background:var(--p-bg);color:var(--p-fg);text-decoration:none;max-width:260px}
+.mlink.yt{display:grid;padding:0;gap:0}.mthumb{position:relative;display:block}.mthumb img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}.mthumb .play{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;color:#fff;text-shadow:0 0 8px #000}
+.mlink.yt .mhost{padding:6px 8px}.mhost{display:grid;font:400 15px var(--f-display);overflow-wrap:anywhere}.mhost small{font:italic 13px var(--f-ital);opacity:.75}
+.mico{width:36px;height:36px;flex:none;display:grid;place-items:center;border:1px solid var(--p-line);border-radius:50%}.mico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.mview{position:fixed;inset:0;z-index:2000;background:#000e;display:grid;place-items:center;align-content:center;gap:14px;padding:16px}.mview img{max-width:100%;max-height:80vh;object-fit:contain} /* Tastatur offen: Leiste weg, damit die Tastatur direkt unter dem Eingabefeld sitzt (Inaya) */.clist small{color:var(--muted);font:italic 14px var(--f-ital);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chatmain{display:grid;gap:10px;min-width:0}
 .hpanel{border:1px solid #333}
 .chatpanel{padding:14px;display:grid;gap:10px;background-image:var(--p-pattern);background-color:var(--p-bg);color:var(--p-fg);font-family:var(--p-font)}
@@ -4678,7 +4696,14 @@ function profFriends(u, others){
   return `<div class="pfr">${!list ? '<p class="muted" style="margin:0">Wird geladen …</p>' : list.length ? `<div class="pz">${list.map(f => `<div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div>`).join('')}</div>` : n ? none : '<p class="muted" style="margin:0">Noch keine Freunde.</p>'}</div>`;
 }
 // Links auf dem Profil: Spotify, Snapchat, Instagram, TikTok, Discord (Inaya, 2026-10-10)
-const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link'],['discord','Discord','Discord-Name']];
+const PLINKS = [['spotify','Spotify','Link zu deinem Spotify-Profil oder einer Playlist'],['snap','Snapchat','Snapchat-Name'],['insta','Instagram','Instagram-Name oder Link'],['tiktok','TikTok','TikTok-Name oder Link']]; // Discord entfernt (Inaya, 2026-10-11)
+// App-Zeichen für die Links, in der Schriftfarbe des Profils (Inaya, 2026-10-11)
+const PLICON = {
+  insta:'<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" class="f"/>',
+  spotify:'<circle cx="12" cy="12" r="9"/><path d="M7.2 9.6c3.3-1 6.9-.7 9.8.9M7.8 12.7c2.7-.8 5.6-.5 8 .8M8.4 15.6c2.1-.6 4.3-.4 6.2.6"/>',
+  snap:'<path d="M12 3.5c-3 0-5 2.2-5 5.2v2.1l-1.6.4c-.5.1-.5.8 0 1l1.4.6c-.5 1.5-1.6 2.7-3 3.3-.4.2-.3.7.1.8l1.8.4.3 1.2c.1.3.4.4.7.3l1.2-.3c1.3 0 2.2 1.5 4.1 1.5s2.8-1.5 4.1-1.5l1.2.3c.3.1.6 0 .7-.3l.3-1.2 1.8-.4c.4-.1.5-.6.1-.8-1.4-.6-2.5-1.8-3-3.3l1.4-.6c.5-.2.5-.9 0-1l-1.6-.4V8.7c0-3-2-5.2-5-5.2z"/>',
+  tiktok:'<path d="M13.5 3.5v11.2a3.3 3.3 0 1 1-3.3-3.3"/><path d="M13.5 3.5c.4 2.6 2.2 4.4 4.8 4.6"/>'
+};
 function plinkURL(k, v){
   v = String(v || '').trim(); if (!v) return '';
   if (/^https?:\/\//i.test(v)) return v;
@@ -4688,8 +4713,8 @@ function plinkURL(k, v){
 function plinksHTML(u){
   const L = u.links || {}, has = PLINKS.filter(([k]) => L[k]);
   if (!has.length) return '';
-  return `<div class="plinks">${has.map(([k, l]) => { const url = plinkURL(k, L[k]), shown = /^https?:/i.test(L[k]) ? 'Öffnen ↗' : (k === 'discord' ? '' : '@') + String(L[k]).replace(/^@/, '');
-    return url ? `<a class="plink" href="${esc(url)}" target="_blank" rel="noopener"><b>${l}</b><span>${esc(shown)}</span></a>` : `<span class="plink"><b>${l}</b><span>${esc(String(L[k]))}</span></span>`; }).join('')}</div>`;
+  return `<div class="plinks">${has.map(([k, l]) => { const url = plinkURL(k, L[k]), ic = `<svg viewBox="0 0 24 24" aria-hidden="true">${PLICON[k] || ''}</svg>`;
+    return url ? `<a class="plink pic" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${l} öffnen" title="${l}">${ic}</a>` : `<span class="plink pic" title="${l}: ${esc(String(L[k]))}">${ic}</span>`; }).join('')}</div>`;
 }
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
@@ -5061,19 +5086,37 @@ const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id))
 const chatName = c => c.group ? (c.name || 'Gruppe') : (PROF[c.members.find(m => m !== social?.uid)]?.name || 'Chat');
 const chatWho = id => id === social?.uid ? 'Du' : PROF[id]?.name || 'Jemand';
 const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last > ((S.seen || {})[c.id] || 0);
+// „… schreibt“: jede Person setzt chats/<id>/t/<uid> beim Tippen (Inaya, 2026-10-11)
+let typLast = 0;
+function typingNow(on){
+  if (!social || !CH.open || CH.mode !== 'chat') return; const ref = social.db.doc('chats/' + CH.open + '/t/' + social.uid);
+  if (on) { if (Date.now() - typLast < 2500) return; typLast = Date.now(); ref.set({ts:Date.now()}).catch(() => {}); }
+  else if (typLast) { typLast = 0; ref.delete().catch(() => {}); }
+}
+function paintTyping(){
+  const el = document.getElementById('chtyping'), sub = el?.previousElementSibling; if (!el) return;
+  const who = Object.entries(CH.typing || {}).filter(([u, ts]) => u !== social?.uid && Date.now() - ts < 6000).map(([u]) => chatWho(u));
+  el.textContent = who.length ? (who.length > 1 ? who.join(', ') + ' schreiben …' : (CH.list.find(c => c.id === CH.open)?.group ? who[0] + ' schreibt …' : 'schreibt …')) : '';
+  el.hidden = !who.length; if (sub) sub.hidden = !!who.length;
+}
+setInterval(paintTyping, 1000);
+document.addEventListener('input', e => { if (e.target.id === 'cm-in') typingNow(!!e.target.value.trim()); });
 function openChat(id){
   if (CH.unsub) CH.unsub();
+  if (CH.tunsub) CH.tunsub(); CH.typing = {};
+  CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; { const c = CH.list.find(x => x.id === id); chatTab = c ? (c.group ? 'group' : 'priv') : id.startsWith('g') ? 'group' : 'priv'; }
   CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot(snap => {
-    CH.msgs = snap.docs.map(d => d.data()).reverse(); markSeen(); drawMsgs();
+    CH.msgs = snap.docs.map(d => ({...d.data(), id:d.id})).reverse(); markSeen(); drawMsgs();
   }, () => {});
   go('chats');
 }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
 function drawMsgs(){
   const box = document.getElementById('msgs'); if (!box) return;
-  box.innerHTML = msgsHTML(); box.scrollTop = box.scrollHeight;
+  box.innerHTML = msgsHTML(); box.scrollTop = box.scrollHeight; msgImgs(box);
 }
+const msgImgs = box => box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = box.scrollHeight; }, {once:true}); });
 function msgsHTML(){
   const c = CH.list.find(x => x.id === CH.open);
   return CH.msgs.length ? CH.msgs.map(m => bubbleHTML(m, c?.group)).join('')
@@ -5108,7 +5151,7 @@ function chatsView(){
   if (CH.mode === 'helper' && S.users[CH.helper]) {
     const h = S.users[CH.helper];
     right = `<section class="chatpanel hpanel">
-      <header class="ch-head"><div><b class="ch-name">${esc(h.name)}${hmark(h)}</b><small class="muted">${esc(h.helper)} · immer für dich da</small></div>
+      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle"><b class="ch-name">${esc(h.name)}${hmark(h)}</b><small class="muted">${esc(h.helper)} · immer für dich da</small></div>
         <button class="btn ghost" data-act="profile" data-id="${h.id}">Profil</button></header>
       ${chatHTML(h)}
     </section>`;
@@ -5116,10 +5159,11 @@ function chatsView(){
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
-      <header class="ch-head"><div><b class="ch-name">${esc(chatName(c))}</b><small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small></div>
+      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle"><b class="ch-name">${esc(chatName(c))}</b><small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small><small class="typing" id="chtyping" hidden></small></div>
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs">${msgsHTML()}</div>
-      <form class="cform" data-form="cmsg"><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
+      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
+      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button class="btn" type="submit">Senden</button></form>
     </section>`;
   }
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
@@ -5160,7 +5204,7 @@ async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
-    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:text.slice(0, 60), lastFrom:social.uid});
+    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.img ? '📷 Foto' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
     return true;
   } catch { toast('Die Nachricht ging nicht raus. Hast du Schreibrechte für Nachtfalter?'); return false; }
 }
@@ -5298,9 +5342,22 @@ function drawWall(){
   box.innerHTML = WL.list.length ? WL.list.map(c => `<div class="entry wentry"><b>${esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`).join('')
     : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
+// Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
+let chatAttach = false;
+function msgMedia(m){
+  if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
+  if (m.audio && m.audio.n) return `<div class="apost maud"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(m.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
+  return '';
+}
+function msgLink(t){
+  const u = (String(t || '').match(/https?:\/\/[^\s<>"]+/i) || [])[0]; if (!u) return '';
+  const v = ytId(u); let host = ''; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; }
+  return v ? `<a class="mlink yt" href="${esc(u)}" target="_blank" rel="noopener"><span class="mthumb"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></span><span class="mhost">YouTube · antippen zum Ansehen</span></a>`
+    : `<a class="mlink" href="${esc(u)}" target="_blank" rel="noopener"><span class="mico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><span class="mhost">${esc(host)}<small>Link öffnen</small></span></a>`;
+}
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid;
-  return `<div class="bubble ${mine ? 'me' : 'them'}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${etx(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta">${ago(m.ts)}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta">${ago(m.ts)}</small></div>`;
 }
 
 /* ---------- Wer ist gerade da (online) ---------- */
@@ -5759,7 +5816,15 @@ const isTyping = el => el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPU
 const vvFit = () => { const v = window.visualViewport, r = document.documentElement.style; r.setProperty('--vvh', (v ? v.height : innerHeight) + 'px'); r.setProperty('--vvt', (v ? v.offsetTop : 0) + 'px'); };
 if (window.visualViewport) { visualViewport.addEventListener('resize', vvFit); visualViewport.addEventListener('scroll', vvFit); }
 const chatKb = el => isMob() && ['cm-in','hc-in'].includes(el?.id) && !!el.closest('.chatmain');
-document.addEventListener('focusin', e => { if (isTyping(e.target)) document.body.classList.add('kbopen'); if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
+// Raumchat und Kommentare: Eingabefeld sitzt direkt über der Tastatur (Inaya, 2026-10-11)
+const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"],[data-form="wall"],[data-form="rwall"]';
+function kbAlign(){
+  const el = document.activeElement, v = window.visualViewport;
+  if (!v || !isMob() || !isTyping(el) || chatKb(el)) return; const f = el.closest(KB_FORMS); if (!f || v.height > innerHeight - 100) return;
+  const d = f.getBoundingClientRect().bottom - (v.offsetTop + v.height) + 6; if (Math.abs(d) > 4) window.scrollBy(0, d);
+}
+if (window.visualViewport) visualViewport.addEventListener('resize', () => setTimeout(kbAlign, 60));
+document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); setTimeout(kbAlign, 350); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) document.body.classList.remove('kbopen'); if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
@@ -5884,7 +5949,9 @@ function render(){
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
   syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
   restoreX();
-  const mb = document.getElementById('msgs'); if (mb) mb.scrollTop = mb.scrollHeight;
+  const mb = document.getElementById('msgs'); if (mb) { mb.scrollTop = mb.scrollHeight; msgImgs(mb); }
+  // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
+  const full = isMob() && V.name === 'chats' && ((CH.mode === 'chat' && CH.open) || CH.mode === 'helper'); document.body.classList.toggle('chatfull', full); if (full) vvFit(); else document.body.classList.remove('chatkb');
 }
 
 
@@ -5951,6 +6018,20 @@ function batTick(){
   if (grid) grid.querySelectorAll('.batc').forEach((el, i) => { el.classList.toggle('up', i === g.cur); el.innerHTML = i === g.cur ? BAT : ''; });
 }
 function batPaint(){ const st = document.getElementById('batstat'); if (st && GM.bat) st.textContent = GM.bat.running ? `Treffer: ${GM.bat.score} · noch ${GM.bat.left} s` : `Zeit um! ${GM.bat.score} Treffer.`; }
+document.addEventListener('change', async e => {
+  const id = e.target.id; if ((id !== 'cm-img' && id !== 'cm-aud') || !CH.open || !social) return;
+  const f = e.target.files[0], cid = CH.open; if (!f) return;
+  chatAttach = false; render();
+  if (id === 'cm-img') {
+    try { let d = await resizeImage(f, 1080, .78); if (d.length > 650000) d = await resizeImage(f, 800, .7); if (d.length > 900000) return toast('Das Foto ist zu groß.'); toast('Foto wird gesendet …'); await sendMsg(cid, '', {img:d}); }
+    catch { toast('Das Foto ließ sich nicht öffnen.'); }
+  } else {
+    if (f.size > SONG_MAX) return toast('Die Datei ist zu groß. Höchstens 5 MB.');
+    const k = 'c' + Date.now().toString(36); toast('MP3 lädt hoch …');
+    try { const au = await uploadPostAudio(f, k); await sendMsg(cid, '', {audio:{...au, k}}); }
+    catch { toast('Die MP3 ging nicht hoch. Versuch es nochmal.'); }
+  }
+});
 document.addEventListener('change', e => { if (e.target.id === 'rw-img') { const f = e.target.files[0], n = document.getElementById('rw-file'); if (n) n.textContent = f ? 'Foto: ' + f.name : ''; } });
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
@@ -6006,7 +6087,17 @@ document.addEventListener('click', async e => {
   if (a === 'fp-newgroup') { fpNew = false; go('chats'); CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); return; }
   if (a === 'wcol') { wColOpen = !wColOpen; render(); return; }
   if (a === 'mob-more') { mobMore = !mobMore; render(); return; }
-  if (a === 'chat-back') { CH.open = null; CH.mode = null; render(); return; }
+  if (a === 'chat-back') { typingNow(false); CH.open = null; CH.mode = null; chatAttach = false; render(); return; }
+  if (a === 'att-toggle') { chatAttach = !chatAttach; const keep = document.getElementById('cm-in')?.value || ''; render(); const i = document.getElementById('cm-in'); if (i) i.value = keep; return; }
+  if (a === 'att-link') { chatAttach = false; render(); const i = document.getElementById('cm-in'); if (i) { if (!/https?:\/\//.test(i.value)) i.value = (i.value ? i.value + ' ' : '') + 'https://'; i.focus(); } return; }
+  if (a === 'mimg-open') { const img = b.querySelector('img'); if (!img) return; const o = document.createElement('div'); o.className = 'mview'; o.innerHTML = `<img src="${img.src}" alt="Foto"><button class="btn ghost" type="button">Schließen</button>`; o.addEventListener('click', () => o.remove()); document.body.appendChild(o); return; }
+  if (a === 'maplay') {
+    const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
+    b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
+    songURL(m.from, m.audio, 'pa_' + m.audio.k).then(src => { if (box) box.innerHTML = `<b class="aname">♪ ${esc(m.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${src.url}"></audio>`; })
+      .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
+    return;
+  }
   if (a === 'nt-go') { const v = b.dataset.v; if (v === 'req') go('friends'); else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') go('profile', id);
@@ -6340,7 +6431,7 @@ document.addEventListener('submit', async e => {
     await searchPeople(val('fs-q')); render(); document.getElementById('fs-q')?.focus();
   } else if (t === 'cmsg') {
     const text = val('cm-in'); if (!text || !CH.open) return;
-    document.getElementById('cm-in').value = '';
+    document.getElementById('cm-in').value = ''; typingNow(false);
     sendMsg(CH.open, text);
   } else if (t === 'rwall') {
     const inp = document.getElementById('rw-in'), text = inp.value.trim(), file = document.getElementById('rw-img')?.files[0], url = val('rw-url');
