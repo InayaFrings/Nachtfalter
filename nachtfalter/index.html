@@ -5165,12 +5165,18 @@ function piWatch(p){
 const CMH = {};
 // @ in Kommentaren: Vorschläge über dem Feld, Namen werden verlinkt (Inaya, 2026-10-12)
 const CMEN = {};
+function cmMentNotify(k, men, text){ // Markierte bekommen eine Mitteilung in der Glocke (Inaya, 2026-10-12)
+  const w = PI[k]; if (!w || !social || !men?.length) return; const p = w.p, oid = postOwner(p), ts = Date.now();
+  const mini = {id:p.id, author:p.author, remote:true, type:p.type || '', text:String(p.text || '').slice(0, 60), pub:p.pub ? 1 : 0, ...(p.img && p.img.length < 30000 ? {img:p.img} : {})};
+  for (const m of men) if (m.id && m.id !== social.uid) social.db.collection('chats/ment_' + m.id + '/m').add({by:social.uid, name:me().name, text:String(text).slice(0, 300), k, oid, p:mini, ts}).catch(() => {});
+}
 document.addEventListener('input', e => {
   const f = e.target.closest?.('form[data-form="pcomment"]'); if (!f || e.target.tagName !== 'INPUT') return;
   const q = social ? mentionQ(e.target.value, e.target.selectionEnd) : null; let box = f.querySelector('.cmsug');
-  if (!q) { box?.remove(); return; }
+  if (q == null) { box?.remove(); return; }
+  const fr = new Set(FR.mine.filter(isFriend)), l = q ? mentionFind(q) : mentionPool().sort((a, b) => fr.has(b.id) - fr.has(a.id)).slice(0, 8); // schon nach dem @ Vorschläge zeigen (Inaya, 2026-10-12)
   if (!box) { box = document.createElement('div'); box.className = 'mnlist cmsug'; f.prepend(box); }
-  box.innerHTML = mentionList(mentionFind(q), 'cmention', q);
+  box.innerHTML = mentionList(l, 'cmention', q || ' ');
 });
 document.addEventListener('pointerdown', e => { if (e.target.closest?.('.cmsug')) e.preventDefault(); }, true);
 document.addEventListener('mousedown', e => { if (e.target.closest?.('.cmsug')) e.preventDefault(); }, true);
@@ -5260,11 +5266,12 @@ function piDraw(k){
   });
 }
 /* ---------- Mitteilungen (Glocke): wer auf deine Beiträge reagiert, kommentiert, ins Gästebuch schreibt oder dich als Freund will (Inaya, 2026-10-10) ---------- */
-const NT = {wall:[], on:false, last:-1, asked:{}};
+const NT = {ment:[], wall:[], on:false, last:-1, asked:{}};
 function ntStart(){
   if (NT.on || !social) return; NT.on = true;
   if (S.notifSeen == null) { S.notifSeen = Date.now(); save(); } // Altes gilt beim ersten Mal als gelesen
   social.db.collection('chats/wall_' + social.uid + '/m').orderBy('ts', 'desc').limit(30).onSnapshot(snap => { NT.wall = snap.docs.map(d => ({mid:d.id, ...d.data()})); ntPing(); }, () => {});
+  social.db.collection('chats/ment_' + social.uid + '/m').orderBy('ts', 'desc').limit(30).onSnapshot(snap => { NT.ment = snap.docs.map(d => d.data()); ntPing(); }, () => {}); // @-Erwähnungen in Kommentaren
 }
 function ntWatch(){ // die eigenen letzten Beiträge beobachten, auch wenn sie gerade nicht auf dem Bildschirm sind
   if (!social) return; ntStart();
@@ -5298,6 +5305,7 @@ function notifs(){
     }
   }
   for (const st of myStories()) for (const x of STC[uid + '_' + st.id]?.list || []) if (x.by && x.by !== uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deine Story kommentiert:', quote:x.text, go:'story', sid:st.id, th:st.thumb || st.img || ''});
+  for (const m of NT.ment) if (m.by && m.by !== uid && m.k) out.push({ts:m.ts || 0, uid:m.by, kind:'c', text:'hat dich in einem Kommentar erwähnt:', quote:m.text, go:m.oid === uid ? 'post' : 'opost', oid:m.oid, k:m.k, p:m.p || {}});
   for (const m of NT.wall) if (m.from && m.from !== uid) out.push({ts:m.ts || 0, uid:m.from, kind:'w', text:'hat dir ins Gästebuch geschrieben:', quote:m.text, go:'wall'});
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
   let ch = false; S.notifReq = S.notifReq || {};
@@ -9013,7 +9021,7 @@ document.addEventListener('submit', async e => {
     const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k]; if ((!text && !img) || !social) return;
     const rp = CMRE[k], men = (CMEN[k] || []).filter((m, i, l) => text.includes('@' + m.n) && l.findIndex(x => x.id === m.id) === i).slice(0, 10); inp.value = ''; delete PCIMG[k]; delete CMRE[k]; delete CMEN[k]; f.querySelector('.cmsug')?.remove();
     if (rp) CMOPEN.add(k + '/' + rp.d);
-    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), ...(men.length ? {men} : {}), ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { inp.value = text; if (img) PCIMG[k] = img; toast('Das hat gerade nicht geklappt.'); }
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), ...(men.length ? {men} : {}), ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); cmMentNotify(k, men, text); } catch { inp.value = text; if (img) PCIMG[k] = img; toast('Das hat gerade nicht geklappt.'); }
     piDraw(k);
   } else if (t === 'comment') {
     const id = f.dataset.id, text = val('c-' + id); if (!text) return;
