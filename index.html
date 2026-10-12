@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d8a8b768f6b6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9a4e301039e6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -239,7 +239,7 @@ label.f{display:grid;gap:4px}
 .meta{display:block;font:italic 14px var(--f-ital);color:var(--muted)}
 .thought{margin:0;font:italic 24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
 .caption{margin:0;white-space:pre-wrap;word-break:break-word}
-.photo{width:100%;display:block;border:1px solid var(--line-soft);aspect-ratio:4/5;object-fit:cover;background:#0b0b0d}
+.photo{width:100%;display:block;border:1px solid var(--line-soft);height:auto;max-height:90vh;object-fit:contain;background:#0b0b0d}.photo[data-pimg]:not([src]){aspect-ratio:4/5}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
 .shared{border:1px solid var(--line-soft);padding:12px;display:grid;gap:10px;background:#ffffff06}.sh-h{display:flex;gap:10px;align-items:center}.sh-h>span{display:grid;min-width:0}.sh-ico{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.pshare{display:inline-flex;gap:6px;align-items:center}.pshare svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdel{margin-left:auto;align-self:start}.ph>div{min-width:0;flex:1}.ph .pdel{flex-wrap:nowrap;white-space:nowrap;gap:14px;flex:none}.pi .cmt .lnk{font-size:12px}
@@ -1070,8 +1070,10 @@ video.stimg{object-fit:cover}
 /* Leute markieren in Beiträgen (Inaya, 2026-10-11) */
 .ptagbox{position:relative;display:inline-block;max-width:100%;cursor:crosshair}.ptagbox .pattimg{display:block}
 .ptagwrap{position:relative;cursor:pointer}.ptagwrap .photo{display:block}
-.ptagb{position:absolute;transform:translate(-50%,8px);background:#fff;color:#111;border:0;border-radius:6px;padding:4px 9px;font:600 13px -apple-system,'Helvetica Neue',Arial,sans-serif;white-space:nowrap;cursor:pointer;z-index:2}
-.ptagb::before{content:'';position:absolute;left:50%;top:-6px;transform:translateX(-50%);border:6px solid transparent;border-top:0;border-bottom-color:#fff}
+.ptagb{position:absolute;transform:translate(-50%,8px);background:#0a0a0b73;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);color:#fff;text-shadow:0 1px 2px #000;border:0;border-radius:6px;padding:4px 9px;font:600 13px -apple-system,'Helvetica Neue',Arial,sans-serif;white-space:nowrap;cursor:pointer;z-index:2}
+.ptagb::before{content:'';position:absolute;left:50%;top:-6px;transform:translateX(-50%);border:6px solid transparent;border-top:0;border-bottom-color:#0a0a0b73}
+.pcrtg{display:inline-flex;align-items:center;gap:2px;padding:4px 2px 4px 10px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}.pcrtgx{background:none;border:0;color:#fff;font:600 14px -apple-system,sans-serif;padding:2px 7px;cursor:pointer;min-width:26px;min-height:26px}
+.pcrstage{overflow:hidden;padding:20px 0!important}.pcrframe{overflow:visible!important;outline:1.5px solid #ffffffd9;outline-offset:0}.pcrdots{z-index:2}.pcrmask{position:absolute;inset:0;pointer-events:none;box-shadow:0 0 0 100vmax #060607b8;z-index:1}.pcrframe .pcrgrid3{z-index:1}
 .ptagwrap .ptagb{opacity:0;pointer-events:none;transition:opacity .15s}.ptagwrap.on .ptagb{opacity:1;pointer-events:auto}
 .ptagi{position:absolute;left:10px;bottom:10px;width:30px;height:30px;border-radius:50%;background:#0a0a0bcc;display:grid;place-items:center;pointer-events:none}.ptagi svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .ptags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ptagpick{display:grid;gap:8px;justify-items:start}.ptagpick .f,.ptagpick .mnlist{width:100%;margin:0}
@@ -6497,7 +6499,8 @@ function composeHTML(){
 // PCR = {step, items, cur, ar}; Foto {t:'i', src, a (Breite/Höhe), x, y, z}; Video {t:'v', file, url, a, dur, s, l, x, y, z, poster}
 let PCR = null;
 const PCR_MAX = 10, PCR_AR = [['45', 'Hochformat', 4 / 5], ['11', 'Quadrat', 1], ['169', 'Querformat', 16 / 9]];
-const pcrR = k => (PCR_AR.find(x => x[0] === k) || PCR_AR[0])[2];
+const pcrR = k => /^o[\d.]+$/.test(k || '') ? Math.max(.4, Math.min(2.5, parseFloat(k.slice(1)) || 1)) : (PCR_AR.find(x => x[0] === k) || PCR_AR[0])[2];
+const pcrOrig = it => 'o' + (Math.round(Math.max(.4, Math.min(2.5, +it.a || 1)) * 1000) / 1000); // ganzes Bild: der Beitrag bekommt das Format des Fotos (Inaya, 2026-10-12)
 // kleinster Zoom = ganzes Foto passt in den Rahmen (Inaya, 2026-10-12: „das vollständige Foto anzeigen lassen“)
 const pcrZmin = (it, R) => Math.min(1, (+it.a || 1) / R, R / (+it.a || 1));
 function pcrAuto(it){ // erstes Foto bestimmt das Format; schneidet das Füllen zu viel weg, zuerst ganz zeigen
@@ -6542,10 +6545,10 @@ function pcrHTML(){
   const med = it.t === 'v' ? `<video id="pcrmed" src="${it.url}" playsinline muted autoplay loop class="stvid" data-s="${+it.s || 0}" data-l="${+it.l || 0}" style="${galPos(it, R)}"></video>` : `<img id="pcrmed" src="${it.src}" alt="" draggable="false" style="${galPos(it, R)}">`;
   const trim = it.t === 'v' ? `<div class="pcrtrim"><label><span>Anfang <b id="pcr-s-l">${stTime(it.s)}</b></span><input type="range" id="pcr-s" min="0" max="${Math.max(0, it.dur - it.l).toFixed(1)}" step=".1" value="${it.s}"${it.dur > it.l + .05 ? '' : ' disabled'}></label><label><span>Länge <b id="pcr-l-l">${Math.round(it.l)} s</b></span><input type="range" id="pcr-l" min="1" max="${Math.min(VID_SEC, it.dur || VID_SEC).toFixed(1)}" step=".5" value="${it.l}"></label>${it.dur > VID_SEC + .5 ? `<small class="note">Dein Video ist länger als ${VID_SEC} Sekunden. Wähl den Teil, der in den Beitrag soll.</small>` : ''}</div>` : '';
   return `<div class="pcrbox">${head}<div class="pcrbody pcred">
-    <div class="pcrstage"><div class="pcrframe${P.tag ? ' tagm' : ''}" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrgrid3" aria-hidden="true"></i>${it.t === 'i' ? (it.tg || []).map((t, j) => `<button type="button" class="ptagb pcrtg" style="left:${t.x}%;top:${t.y}%" data-act="pcr-tag-x" data-j="${j}" aria-label="${esc(t.n)} entfernen"${P.tag ? '' : ' hidden'}>${esc(t.n)} <span aria-hidden="true">✕</span></button>`).join('') : ''}${P.tp ? `<i class="pcrtp" style="left:${P.tp.x}%;top:${P.tp.y}%" aria-hidden="true"></i>` : ''}${it.t === 'i' && it.tg?.length && !P.tag ? `<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>
+    <div class="pcrstage"><div class="pcrframe${P.tag ? ' tagm' : ''}" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrmask" aria-hidden="true"></i><i class="pcrgrid3" aria-hidden="true"></i>${it.t === 'i' ? (it.tg || []).map((t, j) => `<span class="ptagb pcrtg" style="left:${t.x}%;top:${t.y}%" data-j="${j}"${P.tag ? '' : ' hidden'}>${esc(t.n)}<button type="button" class="pcrtgx" data-act="pcr-tag-x" data-j="${j}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('') : ''}${P.tp ? `<i class="pcrtp" style="left:${P.tp.x}%;top:${P.tp.y}%" aria-hidden="true"></i>` : ''}${it.t === 'i' && it.tg?.length && !P.tag ? `<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>
       ${n > 1 ? `<button type="button" class="pcrnav l" data-act="pcr-go" data-v="-1" aria-label="Vorheriges"${P.cur ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" class="pcrnav r" data-act="pcr-go" data-v="1" aria-label="Nächstes"${P.cur < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button><span class="pcrdots" aria-hidden="true">${P.items.map((_, i) => `<i${i === P.cur ? ' class="on"' : ''}></i>`).join('')}</span>` : ''}</div>
     ${pcrBar(it)}
-    <div class="pcrtools"><span class="pcrars" role="group" aria-label="Format für alle">${PCR_AR.map(([k, l]) => `<button type="button" data-act="pcr-ar" data-v="${k}" aria-pressed="${P.ar === k}">${l}</button>`).join('')}</span><input type="range" id="pcr-z" min="${pcrZmin(it, R).toFixed(3)}" max="4" step=".01" value="${it.z}" aria-label="Größe"></div>
+    <div class="pcrtools"><span class="pcrars" role="group" aria-label="Format für alle">${PCR_AR.map(([k, l]) => `<button type="button" data-act="pcr-ar" data-v="${k}" aria-pressed="${P.ar === k}">${l}</button>`).join('')}<button type="button" data-act="pcr-ar" data-v="${pcrOrig(it)}" aria-pressed="${P.ar[0] === 'o'}">Original</button></span><input type="range" id="pcr-z" min="${pcrZmin(it, R).toFixed(3)}" max="4" step=".01" value="${it.z}" aria-label="Größe"></div>
     ${trim}
     <div class="pcrstrip">${P.items.map((x, i) => `<button type="button" class="pcrsth${i === P.cur ? ' on' : ''}" data-act="pcr-go" data-i="${i}" aria-label="${x.t === 'v' ? 'Video' : 'Foto'} ${i + 1}">${pcrThumb(x)}</button>`).join('')}${n < PCR_MAX ? add : ''}</div>
     <div class="row pcrrow"><button type="button" class="lnk" data-act="pcr-del" data-i="${P.cur}">Dieses ${it.t === 'v' ? 'Video' : 'Foto'} entfernen</button><span class="sp"></span>${n > 1 ? `<button type="button" class="lnk" data-act="pcr-mv" data-i="${P.cur}" data-v="-1"${P.cur ? '' : ' disabled'}>‹ nach vorn</button><button type="button" class="lnk" data-act="pcr-mv" data-i="${P.cur}" data-v="1"${P.cur < n - 1 ? '' : ' disabled'}>nach hinten ›</button>` : ''}</div>
@@ -6553,13 +6556,13 @@ function pcrHTML(){
 }
 const PCR_TI = {full:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>', fill:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>'};
 function pcrBar(it){ // Werkzeuge direkt unter der Vorschau, wie bei Insta
-  const P = PCR, full = it.z <= pcrZmin(it, pcrR(P.ar)) + .005, one = Math.abs(pcrZmin(it, pcrR(P.ar)) - 1) < .01;
+  const P = PCR, full = it.z <= pcrZmin(it, pcrR(P.ar)) + .005, one = false;
   const tool = (act, ico, l, on, dis) => `<button type="button" class="pcrtool${on ? ' on' : ''}" data-act="${act}"${dis ? ' disabled' : ''} aria-pressed="${!!on}">${ico}<span>${l}</span></button>`;
-  let h = `<div class="pcrbar">${tool('pcr-full', full && !one ? PCR_TI.fill : PCR_TI.full, full && !one ? 'Füllen' : 'Ganzes Bild', false, one)}${it.t === 'i' ? tool('pcr-tag', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.tag}</svg>`, it.tg?.length ? `Markiert ${it.tg.length}` : 'Markieren', P.tag) : ''}${tool('pcr-mu', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>`, PMU ? 'Musik ändern' : 'Musik', P.mu)}</div>`;
+  let h = `<div class="pcrbar">${tool('pcr-full', full ? PCR_TI.fill : PCR_TI.full, full ? 'Ausschnitt' : 'Ganzes Bild', false, one)}${it.t === 'i' ? tool('pcr-tag', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.tag}</svg>`, it.tg?.length ? `Markiert ${it.tg.length}` : 'Markieren', P.tag) : ''}${tool('pcr-mu', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>`, PMU ? 'Musik ändern' : 'Musik', P.mu)}</div>`;
   if (PMU && !P.mu) h += `<div class="pcrpan"><div class="pcrmu">${pmuHTML(PMU)}<button type="button" class="pcric" data-act="pcr-mu-x" aria-label="Musik entfernen">${PCR_ICO.x}</button></div>${muTrimHTML(PMU, 'post')}</div>`;
   if (P.mu) h += `<div class="pcrpan pmus"><div class="pmush"><b>Musik zum Beitrag</b><button type="button" class="lnk" data-act="pcr-mu">Schließen</button></div>${muSearchHTML('pmq', '')}<div class="stmres" id="pmres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div></div>`;
   if (P.tag && it.t === 'i') h += P.tp ? `<div class="pcrpan ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="pcrtq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="pcrtres"></div><button type="button" class="lnk" data-act="pcr-tp-x">Abbrechen</button></div>`
-    : `<p class="pcrhint">Tipp aufs Foto, wo die Person ist. Auf einen Namen tippen entfernt ihn.</p>`;
+    : `<p class="pcrhint">Tipp aufs Foto, wo die Person ist. Namen kannst du verschieben, mit ✕ entfernen.</p>`;
   else if (!P.mu) h += `<p class="pcrhint">Mit einem Finger verschieben, mit zwei Fingern größer und kleiner</p>`;
   return h; }
 function pcrPaint(){
@@ -6574,8 +6577,11 @@ function pcrWire(){
   const put = () => { const b = galBox(it, R); Object.assign(el.style, {left:b.l + '%', top:b.t + '%', width:b.w + '%', height:b.h + '%'}); const z = document.getElementById('pcr-z'); if (z) z.value = it.z; };
   const pts = new Map(); let base = null, t0 = null; const zmin = pcrZmin(it, R), setF = () => { it.f = it.z <= zmin + .005 ? 1 : 0; };
   if (PCR.tag && it.t === 'i') { // Markieren: tippen setzt den Punkt, das Bild bleibt wie es ist
-    fr.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; t0 = {x:e.clientX, y:e.clientY}; });
-    fr.addEventListener('pointerup', e => { if (!t0 || Math.hypot(e.clientX - t0.x, e.clientY - t0.y) > 10) { t0 = null; return; } t0 = null; const r = fr.getBoundingClientRect();
+    let tg = null;
+    fr.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; const g = e.target.closest('.pcrtg'); if (g) { tg = {el:g, t:it.tg[+g.dataset.j]}; try { fr.setPointerCapture(e.pointerId); } catch {} e.preventDefault(); return; } t0 = {x:e.clientX, y:e.clientY}; });
+    fr.addEventListener('pointermove', e => { if (!tg) return; const r = fr.getBoundingClientRect(); tg.t.x = Math.round(Math.max(2, Math.min(98, (e.clientX - r.left) / r.width * 100))); tg.t.y = Math.round(Math.max(0, Math.min(92, (e.clientY - r.top - 20) / r.height * 100))); tg.el.style.left = tg.t.x + '%'; tg.el.style.top = tg.t.y + '%'; });
+    fr.addEventListener('pointercancel', () => { tg = null; });
+    fr.addEventListener('pointerup', e => { if (tg) { tg = null; return; } if (!t0 || Math.hypot(e.clientX - t0.x, e.clientY - t0.y) > 10) { t0 = null; return; } t0 = null; const r = fr.getBoundingClientRect();
       PCR.tp = {x:Math.round(Math.max(3, Math.min(97, (e.clientX - r.left) / r.width * 100))), y:Math.round(Math.max(3, Math.min(90, (e.clientY - r.top) / r.height * 100)))}; pcrPaint(); setTimeout(() => document.getElementById('pcrtq')?.focus(), 30); });
     return; }
   const snap = () => { const v = [...pts.values()]; base = {x:it.x, y:it.y, z:it.z, p:v.length > 1 ? {x:(v[0].x + v[1].x) / 2, y:(v[0].y + v[1].y) / 2, d:Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y) || 1} : {...v[0], d:1}}; };
@@ -8581,8 +8587,11 @@ document.addEventListener('click', async e => {
   else if (a === 'pcr-del') { if (!PCR) return; const [x] = PCR.items.splice(+b.dataset.i, 1); if (x?.url) URL.revokeObjectURL(x.url); if (!PCR.items.length) { pcrClear(); paintCompose(); return; } pcrPaint(); paintCompose(); }
   else if (a === 'pcr-mv') { if (!PCR) return; const i = +b.dataset.i, j = i + +b.dataset.v; if (j < 0 || j >= PCR.items.length) return; [PCR.items[i], PCR.items[j]] = [PCR.items[j], PCR.items[i]]; if (PCR.cur === i) PCR.cur = j; pcrPaint(); paintCompose(); }
   else if (a === 'pcr-go') { if (!PCR) return; PCR.tp = null; PCR.cur = b.dataset.i != null ? +b.dataset.i : PCR.cur + +b.dataset.v; pcrPaint(); }
-  else if (a === 'pcr-ar') { if (!PCR) return; PCR.ar = b.dataset.v; PCR.arSet = true; const R = pcrR(PCR.ar); PCR.items.forEach(x => { const m = pcrZmin(x, R); if (x.f || x.z < m) x.z = m; }); pcrPaint(); }
-  else if (a === 'pcr-full') { const it = PCR?.items[PCR.cur]; if (!it) return; const m = pcrZmin(it, pcrR(PCR.ar)); if (it.z <= m + .005) { it.z = 1; it.f = 0; } else { it.z = m; it.f = 1; it.x = 50; it.y = 50; } pcrPaint(); }
+  else if (a === 'pcr-ar') { if (!PCR) return; if (b.dataset.v[0] === 'o' && PCR.ar[0] !== 'o') PCR.arPrev = PCR.ar; PCR.ar = b.dataset.v; PCR.arSet = true; const R = pcrR(PCR.ar); PCR.items.forEach(x => { const m = pcrZmin(x, R); if (x.f || x.z < m) x.z = m; }); pcrPaint(); }
+  else if (a === 'pcr-full') { const it = PCR?.items[PCR.cur]; if (!it) return; const m = pcrZmin(it, pcrR(PCR.ar));
+    if (it.z <= m + .005) { if (PCR.ar[0] === 'o') { PCR.ar = PCR.arPrev || '45'; } it.z = 1; it.f = 0; } // zurück zum Ausschnitt
+    else { if (PCR.ar[0] !== 'o') PCR.arPrev = PCR.ar; PCR.ar = pcrOrig(it); PCR.arSet = true; it.z = 1; it.f = 1; it.x = 50; it.y = 50; } // ganzes Bild: Rahmen bekommt das Format des Fotos, nichts wird abgeschnitten
+    const R = pcrR(PCR.ar); PCR.items.forEach(x => { const mm = pcrZmin(x, R); if (x !== it && (x.f || x.z < mm)) x.z = mm; if (x === it && x.f) x.z = Math.max(mm, Math.min(1, x.z)); }); pcrPaint(); }
   else if (a === 'pcr-tag') { if (!PCR) return; PCR.tag = !PCR.tag; PCR.mu = false; PCR.tp = null; pcrPaint(); }
   else if (a === 'pcr-mu') { if (!PCR) return; PCR.mu = !PCR.mu; PCR.tag = false; PCR.tp = null; PMUP = false; pcrPaint(); if (PCR.mu) document.getElementById('pmq')?.focus(); }
   else if (a === 'pcr-mu-x') { PMU = null; stAuStop(); pcrPaint(); paintCompose(); }
