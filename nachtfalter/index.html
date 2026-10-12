@@ -132,7 +132,7 @@ label.f{display:grid;gap:4px}
 .ph{display:flex;gap:12px;align-items:center}
 .who{font:400 18px var(--f-display)}
 .meta{display:block;font:14px var(--f-ital);color:var(--muted)}
-.post .thought,.post .thought.sm,.thought.sm{font-size:16px;line-height:1.45} /* alle Beiträge gleich groß (Inaya, 2026-10-12) */.post .thought{background:color-mix(in srgb,currentColor 7%,transparent);padding:10px 14px 10px 16px} /* Textkasten: hell etwas dunkler, dunkel etwas heller (Inaya, 2026-10-12) */.thought{margin:0;font:24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
+.post .thought,.post .thought.sm,.thought.sm{font-size:16px;line-height:1.45}.mp3art{display:grid;place-items:center;background:#ffffff14}.mp3art svg{width:55%;height:55%;fill:none;stroke:currentColor;stroke-width:1.6} /* alle Beiträge gleich groß (Inaya, 2026-10-12) */.post .thought{background:color-mix(in srgb,currentColor 7%,transparent);padding:10px 14px 10px 16px} /* Textkasten: hell etwas dunkler, dunkel etwas heller (Inaya, 2026-10-12) */.thought{margin:0;font:24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
 .caption{margin:0;white-space:pre-wrap;word-break:break-word}
 .photo{width:100%;display:block;border:1px solid var(--line-soft);height:auto;max-height:90vh;object-fit:contain;background:#0b0b0d}.photo[data-pimg]:not([src]){aspect-ratio:4/5}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
@@ -4517,7 +4517,7 @@ document.addEventListener('change', async e => {
   e.target.disabled = true;
   try {
     const f = {...await uploadSong(file, (k, n) => { if (out) out.textContent = `Lädt hoch … ${Math.round(k / n * 100)} %`; }), ok:Date.now()};
-    me().songFile = f; songOff = null; save(); if (out) out.textContent = '♪ ' + f.name; toast('Dein Song ist auf deinem Profil');
+    const u0 = me(); u0.songFile = f; delete u0.songMu; u0.songSp = ''; if (mdraft) { mdraft.songMu = null; mdraft.songSpX = true; mdraft.songFileX = false; } songOff = null; save(); toast('Deine MP3 ist auf deinem Profil'); render(); return;
   } catch { toast('Der Song ließ sich nicht hochladen. Versuch es nochmal.'); if (out) out.textContent = ''; }
   e.target.disabled = false;
 });
@@ -6670,11 +6670,25 @@ function vidMuWire(v, mu){ if (!v) return; const pv = stMuPv(mu); v.muted = true
   if (!v.paused) on(); }
 function pspStop(){ try { PSP?.c?.destroy(); } catch {} PSP = null; const w = document.getElementById('pspw'); if (w) w.innerHTML = ''; pspMark(); }
 function pspMark(){ document.querySelectorAll('.phmu[data-sp]').forEach(b => b.classList.toggle('on', !!(PSP && PSP.url === b.dataset.sp && PSP.playing))); pvolMark(); document.querySelectorAll('[data-act=psp-play]').forEach(b => { b.innerHTML = PSP && PSP.url === b.dataset.sp && PSP.playing ? MU_PAUSE : MU_PLAY; }); }
+let PSF = null;
+function psfStop(){ if (PSF) { PSF.a.pause(); PSF = null; } psfMark(); }
+function psfMark(){ document.querySelectorAll('[data-act=psf-play]').forEach(b => { b.innerHTML = PSF && PSF.uid === b.dataset.u && !PSF.a.paused ? MU_PAUSE : MU_PLAY; }); }
+async function psfToggle(b){
+  const uid = b.dataset.u, u = profUser(uid), f = u?.songFile; if (!f) return;
+  if (PSF && PSF.uid === uid) { PSF.a.paused ? PSF.a.play().catch(() => {}) : PSF.a.pause(); return psfMark(); }
+  psfStop(); try { stAuStop(); } catch {} try { pspStop(); } catch {}
+  if (!social) { toast('Eigene Songs gehen nur, wenn du mit Nachtfalter verbunden bist.'); return; }
+  b.disabled = true;
+  try { const src = await songURL(uid, f); const a = new Audio(src.url); a.loop = true; PSF = {uid, a}; a.onpause = a.onplay = psfMark; await a.play(); }
+  catch { toast('Der Song ließ sich gerade nicht laden.'); PSF = null; }
+  b.disabled = false; psfMark();
+}
 function musicHTML(u, mine){
   if (!u.id) return '';
   if (!profMu(u) && u.songSp && /track\//.test(u.songSp)) { const m = spOe(u.songSp);
     if (m) return `<div class="music mmu"><div class="pmu">${m.art ? `<img class="muart" src="${esc(m.art)}" alt="">` : ''}<span><b>${esc(m.t)}</b><small>Spotify</small></span><button type="button" class="muprev2" data-act="psp-play" data-sp="${esc(u.songSp)}" aria-label="Song anhören">${PSP && PSP.url === u.songSp && PSP.playing ? MU_PAUSE : MU_PLAY}</button></div>${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
     if (SPOE[u.songSp] !== null) return `<div class="music mmu"><p class="muted mulade">Musik lädt …</p></div>`; }
+  if (!profMu(u) && !u.songSp && u.songFile?.n) return `<div class="music mmu"><div class="pmu"><span class="muart mp3art" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.musik}</svg></span><span><b>${esc(u.songFile.name || 'Eigene MP3')}</b><small>Eigene MP3</small></span><button type="button" class="muprev2" data-act="psf-play" data-u="${esc(u.id)}" aria-label="Song anhören">${PSF && PSF.uid === u.id && !PSF.a.paused ? MU_PAUSE : MU_PLAY}</button></div>${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`; // eigene MP3 auf dem Profil (Inaya, 2026-10-12)
   if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(u.songMu)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
   const sp = u.songSp && embedOf(u.songSp);
   if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
@@ -6917,7 +6931,7 @@ function designView(){
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
           <fieldset class="opt emus"><legend class="lbl">♪ Musik auf deinem Profil (freiwillig)</legend>
-            ${mdraft?.songMu ? `${pmuHTML(mdraft.songMu)}${muTrimHTML(mdraft.songMu, 'prof')}<div class="row"><button type="button" class="lnk" data-act="e-mux">Musik entfernen</button></div>` : `${u.songSp && !mdraft?.songSpX ? `<p class="note">Gerade: Spotify-Song. Such unten einen Song, um ihn zu ersetzen. <button type="button" class="lnk" data-act="e-mux">Entfernen</button></p>` : ''}${muSearchHTML('e-msq')}<div class="stmres" id="e-msres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div>`}
+            ${mdraft?.songMu ? `${pmuHTML(mdraft.songMu)}${muTrimHTML(mdraft.songMu, 'prof')}<div class="row"><button type="button" class="lnk" data-act="e-mux">Musik entfernen</button></div>` : `${u.songSp && !mdraft?.songSpX ? `<p class="note">Gerade: Spotify-Song. Such unten einen Song, um ihn zu ersetzen. <button type="button" class="lnk" data-act="e-mux">Entfernen</button></p>` : ''}${u.songFile && !mdraft?.songFileX ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(u.songFile.name || 'Eigene MP3')}</span><button type="button" class="lnk" data-act="e-sfx">MP3 entfernen</button></div><p class="note" style="margin:0">Oder such unten einen Song, um sie zu ersetzen.</p>` : ''}${muSearchHTML('e-msq')}<div class="stmres" id="e-msres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div>${u.songFile && !mdraft?.songFileX ? '' : `<label class="rights"><input type="checkbox" id="e-songrights" ${SONGRIGHTS ? 'checked' : ''}><span>Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.</span></label><label class="lnk pmup"><input id="e-songfile" type="file" accept="audio/*,.mp3,.m4a" hidden>Oder eigene MP3 hochladen</label><span class="note" id="e-songname"></span>`}`} <!-- eigene MP3 aufs Profil wie bei Beiträgen (Inaya, 2026-10-12) -->
           </fieldset>
           <div class="row"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
         </form>
@@ -8634,6 +8648,8 @@ document.addEventListener('click', async e => {
     try { ta.setSelectionRange(head.length, head.length); } catch {} ta.focus(); stTaFit(); const sg = document.getElementById('stmsug'); if (sg) sg.hidden = true; }
   else if (a === 'st-tagx') { if (stNew) { stNew.tool = null; storyPaint(); } }
   else if (a === 'e-mpick') { const r = STMRES[+b.dataset.i]; if (!r || !mdraft) return; mdraft.songMu = {...r, s:0, l:MU_WIN}; render(); stAu.loop = true; stMute = false; stAuPlay(mdraft.songMu, true, true); }
+  else if (a === 'e-sfx') { if (!mdraft) return; mdraft.songFileX = true; psfStop(); render(); }
+  else if (a === 'psf-play') psfToggle(b);
   else if (a === 'e-mux') { if (!mdraft) return; mdraft.songMu = null; mdraft.songSpX = true; stAuStop(); render(); }
   else if (a === 'st-tagadd') { const n = stNew, u = stFriends().find(x => x.id === b.dataset.id); if (!n || !u) return; if (!n.texts.some(x => x.u === u.id)) n.texts.push({t:u.name, u:u.id, x:50, y:62 + (n.texts.filter(x => x.u).length % 4) * 6, s:5, c:'#111111', st:'modern', bg:0}); n.tool = null; storyPaint(); }
   else if (a === 'st-tagprof') { const uid = b.dataset.id; stClose(); go('profile', uid); }
@@ -9062,6 +9078,7 @@ document.addEventListener('submit', async e => {
       u.handle = nh; claimHandle(nh);
     }
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
+    if (mdraft && (mdraft.songMu || mdraft.songFileX) && u.songFile) { const f = u.songFile; if (social) for (let i = 0; i < f.n; i++) social.db.doc(`profiles/${social.uid}/song/c${i}`).delete().catch(() => {}); delete u.songFile; }
     if (mdraft) { if (mdraft.songMu) { const m = mdraft.songMu; u.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:+m.s || 0, l:Math.min(MU_WIN, muL(m))}; u.songSp = ''; } else { delete u.songMu; if (mdraft.songSpX) u.songSp = ''; } } // Profil-Musik aus der Suche (Inaya, 2026-10-11)
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
