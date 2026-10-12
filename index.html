@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4a7d0f0afdb4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f52e746f8bb7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -6749,7 +6749,7 @@ function pubPosts(){
 }
 function homeView(){
   const pubMode = social && S.salonMode === 'pub';
-  const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).sort((a,b) => b.ts - a.ts);
+  const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).filter(p => p.type !== 'teilen').sort((a,b) => b.ts - a.ts); // Reposts nur auf dem Profil, nicht im Salon (Inaya, 2026-10-12)
   const compose = isMob() && !homeCompose ? `<button class="btn mcompose" data-act="hcompose">＋ Beitrag erstellen</button>` : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;

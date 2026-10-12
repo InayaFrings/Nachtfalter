@@ -6640,7 +6640,7 @@ function pubPosts(){
 }
 function homeView(){
   const pubMode = social && S.salonMode === 'pub';
-  const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).sort((a,b) => b.ts - a.ts);
+  const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).filter(p => p.type !== 'teilen').sort((a,b) => b.ts - a.ts); // Reposts nur auf dem Profil, nicht im Salon (Inaya, 2026-10-12)
   const compose = isMob() && !homeCompose ? `<button class="btn mcompose" data-act="hcompose">＋ Beitrag erstellen</button>` : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
