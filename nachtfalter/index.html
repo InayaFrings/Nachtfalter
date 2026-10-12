@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='debc858f0666';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9e9f2d9d93e5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1644,6 +1644,13 @@ body.cmvopen{overflow:hidden}
 .stfname.hint{font-size:17px;padding:0 40px;line-height:1.3}
 .ststkp{max-height:66%;grid-template-rows:1fr auto;min-height:0}
 .ststkl{overflow-y:auto;min-height:0;display:grid;gap:8px;touch-action:pan-y;overscroll-behavior:contain}
+/* Sticker und GIFs aus dem Sticker-Menü in Storys und Beiträgen (Inaya, 2026-10-12) */
+.stsgtabs{display:flex;gap:6px}.stsgtabs button{flex:1;border:1px solid #ffffff2e;background:none;color:#cfcfd6;border-radius:999px;padding:7px 10px;font:600 13px 'Space Grotesk',Inter,sans-serif;cursor:pointer}.stsgtabs button[aria-pressed=true]{background:#eeedf2;color:#0b0b0d;border-color:#eeedf2}
+.ststkp:has(>.stsgtabs){grid-template-rows:auto 1fr auto}.stsgw{grid-template-rows:auto 1fr;height:min(420px,62%);max-height:none}.stsgw .sgp{height:auto;min-height:0;border:0;background:none;border-radius:0}
+.ststk.stsg{filter:drop-shadow(0 2px 6px #0007)}.ststk.stsg.gif{aspect-ratio:auto}.ststk.stsg img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;-webkit-user-drag:none}.ststk.stsg.gif img{height:auto;border-radius:6px}.ststk.stsg .sgemo{width:100%;height:100%}
+.psg{display:grid;place-items:center;padding:12px 0;background:none}.psg img,.psg svg{width:min(48%,200px);height:auto;aspect-ratio:1;object-fit:contain;display:block}.psg.gif{padding:0}.psg.gif img{width:100%;max-width:100%;aspect-ratio:auto;height:auto}
+.patt .psg{justify-content:start;padding:4px 0}.patt .psg img,.patt .psg svg{width:110px}.patt .psg.gif img{width:min(240px,100%)}
+.pcsgp{height:min(330px,48vh);border:1px solid #ffffff1f;border-radius:12px;overflow:hidden}
 .ststkg{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:4px}
 .ststkg button{aspect-ratio:1;background:none;border:0;padding:6px;border-radius:10px;cursor:pointer}.ststkg button:active,.ststkg button:hover{background:#ffffff14}
 .ststkg svg{width:100%;height:100%;display:block}
@@ -1704,6 +1711,7 @@ body.pcropen{overflow:hidden}
 .pgcnt{position:absolute;top:8px;right:8px;background:#000b;color:#fff;font:600 12px system-ui,sans-serif;padding:3px 8px;border-radius:999px;pointer-events:none}
 .pgnav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:#000a;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.pgnav[hidden]{display:none}.pgnav.l{left:8px}.pgnav.r{right:8px}.pgnav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .pgbox{position:relative}.pgbox>.pvol{z-index:3}
+.pvolw.ptxv>.thought{padding-right:54px;min-height:44px}.pvolw.ptxv>.pvol{right:6px;bottom:6px}
 .pgdots{display:flex;gap:5px;justify-content:center;margin-top:7px}.pgdots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25}.pgdots i.on{opacity:.85}
 </style>
 
@@ -5869,8 +5877,10 @@ function stkSVG(k){ // jeder Sticker bekommt eigene ids, damit Verläufe und der
 }
 
 const STK_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M9 11.5v.5M15 11.5v.5"/><path d="M8.5 15c1.8 1.6 5.2 1.6 7 0"/></svg>';
-const stStkHTML = (l, edit, ctx) => (Array.isArray(l) ? l : []).map((x, i) => STI_K[x.k] ? stIHTML(x, i, edit, ctx) : STK[x.k] ? `<div class="ststk"${edit ? ` data-si="${i}"` : ''} style="left:${+x.x}%;top:${+x.y}%;width:${+x.w}%;--tr:${+x.r || 0}">${stkSVG(x.k)}</div>` : '').join('');
-const stStkPanel = () => `<div class="stmpanel ststkp"><div class="ststkl"><b class="sttagh">Interaktiv</b><div class="stiadd"><button type="button" data-act="st-iadd" data-v="poll">${STIC.poll}<span>Umfrage</span></button><button type="button" data-act="st-iadd" data-v="sld">${emoSVG('verliebt')}<span>Regler</span></button><label class="stiaddl">${STIC.pho}<span>Foto</span><input type="file" accept="image/*" id="st-phf" hidden></label></div>${STK_CAT.map(([c, l]) => `<b class="sttagh">${l}</b><div class="ststkg">${Object.keys(STK).filter(k => STK[k][1] === c).map(k => `<button data-act="st-stkadd" data-v="${k}" aria-label="Sticker ${esc(STK[k][0])}">${stkSVG(k)}</button>`).join('')}</div>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>`;
+const stSgIn = (x, i, ctx) => { if (x.s) return sgItemHTML(x.s, true); const src = x.p || (ctx && SPH[ctx.key]?.[i]) || ''; return sgOkImg(src) ? `<img src="${esc(src)}" alt="Sticker" draggable="false">` : ''; }; // Sticker und GIFs aus dem Sticker-Menü (Inaya, 2026-10-12)
+const stStkHTML = (l, edit, ctx) => (Array.isArray(l) ? l : []).map((x, i) => x.k === 'sg' ? `<div class="ststk stsg${x.s?.u ? ' gif' : ''}"${edit ? ` data-si="${i}"` : ''} style="left:${+x.x}%;top:${+x.y}%;width:${+x.w}%;--tr:${+x.r || 0}">${stSgIn(x, i, ctx)}</div>` : STI_K[x.k] ? stIHTML(x, i, edit, ctx) : STK[x.k] ? `<div class="ststk"${edit ? ` data-si="${i}"` : ''} style="left:${+x.x}%;top:${+x.y}%;width:${+x.w}%;--tr:${+x.r || 0}">${stkSVG(x.k)}</div>` : '').join('');
+const stSgTabs = n => `<div class="stsgtabs" role="tablist"><button type="button" data-act="st-sgtab" data-v="" aria-pressed="${!n?.sgTab}">Story-Sticker</button><button type="button" data-act="st-sgtab" data-v="sg" aria-pressed="${!!n?.sgTab}">Sticker &amp; GIFs</button></div>`;
+const stStkPanel = n => n?.sgTab && (SG.tgt = 'story') ? `<div class="stmpanel ststkp stsgw">${stSgTabs(n)}<div id="sgp" class="sgp stsgp" role="dialog" aria-label="Sticker und GIFs">${sgPanelHTML()}</div></div>` : `<div class="stmpanel ststkp">${stSgTabs(n)}<div class="ststkl"><b class="sttagh">Interaktiv</b><div class="stiadd"><button type="button" data-act="st-iadd" data-v="poll">${STIC.poll}<span>Umfrage</span></button><button type="button" data-act="st-iadd" data-v="sld">${emoSVG('verliebt')}<span>Regler</span></button><label class="stiaddl">${STIC.pho}<span>Foto</span><input type="file" accept="image/*" id="st-phf" hidden></label></div>${STK_CAT.map(([c, l]) => `<b class="sttagh">${l}</b><div class="ststkg">${Object.keys(STK).filter(k => STK[k][1] === c).map(k => `<button data-act="st-stkadd" data-v="${k}" aria-label="Sticker ${esc(STK[k][0])}">${stkSVG(k)}</button>`).join('')}</div>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>`;
 /* ---------- Interaktive Story-Sticker wie bei Insta (Inaya, 2026-10-12): Umfrage, Totenkopf-Regler, Fotosticker mit Formen ---------- */
 const STI_K = {poll:1, sld:1, pho:1}, SPH = {}, SQ = {};
 const PHSH = ['heart', 'star', 'sq', 'orig', 'circ', 'tri'], PHSH_L = {heart:'Herz', star:'Stern', sq:'Quadrat', orig:'Original', circ:'Kreis', tri:'Dreieck'};
@@ -5911,7 +5921,7 @@ const stSlUp = e => { if (!STSL || e.pointerId !== STSL.id) return; const s = ST
 document.addEventListener('pointerup', stSlUp, true); document.addEventListener('pointercancel', stSlUp, true);
 // Fotosticker: Foto aus der Galerie, klein gerechnet, damit die Story leicht bleibt
 document.addEventListener('change', async e => { if (e.target.id !== 'st-phf') return; const f = e.target.files?.[0], n = stNew; e.target.value = ''; if (!f || !n) return;
-  if ((n.stk || []).filter(x => x.k === 'pho').length >= 3) return toast('Höchstens 3 Fotosticker pro Story.');
+  if ((n.stk || []).filter(x => x.p).length >= 3) return toast('Höchstens 3 Fotosticker pro Story.');
   try { const url = URL.createObjectURL(f), im = await stLoadImg(url), s = Math.min(1, 420 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
     c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s)); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
     n.stk = n.stk || []; n.stk.push({k:'pho', p:c.toDataURL('image/jpeg', .78), sh:'orig', ar:Math.round(c.height / c.width * 1000) / 1000, x:50, y:42, w:44, r:0}); n.tool = null; n.hint = false; storyPaint(); }
@@ -6423,8 +6433,8 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
   const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0, l:Math.min(MU_WIN, muL(n.mu))} : null;
   const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.cf ? {cf:1} : n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
   if (n.stk?.length) st.stk = n.stk.slice(0, 20).map(x => ({k:x.k, x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, w:Math.round(x.w * 10) / 10, r:Math.round(+x.r || 0),
-    ...(x.k === 'poll' ? {q:String(x.q || '').slice(0, 80), o:(x.o || []).slice(0, 4).map(o => String(o).slice(0, 40))} : x.k === 'sld' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'pho' ? {sh:x.sh || 'orig', ar:+x.ar || 1, p:x.p} : {})}));
-  const ph = {}; (st.stk || []).forEach((x, i) => { if (x.k === 'pho' && x.p) ph[i] = x.p; });
+    ...(x.k === 'poll' ? {q:String(x.q || '').slice(0, 80), o:(x.o || []).slice(0, 4).map(o => String(o).slice(0, 40))} : x.k === 'sld' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'pho' ? {sh:x.sh || 'orig', ar:+x.ar || 1, p:x.p} : x.k === 'sg' ? (x.s ? {s:sgClean(x.s)} : {p:x.p}) : {})}));
+  const ph = {}; (st.stk || []).forEach((x, i) => { if ((x.k === 'pho' || x.k === 'sg') && x.p) ph[i] = x.p; });
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
   if (n.vid || social) toast('Deine Story wird gepostet …');
   if (n.vid) {
@@ -6810,7 +6820,7 @@ function stEditorHTML(){
       <textarea id="st-ta" ${stTxtAttrs({...e, x:50, y:44, r:0})} rows="1" maxlength="200" placeholder="Text …">${esc(e.t)}</textarea>
     </div>` : ''}
     ${n.tool === 'bg' && n.tb && !e ? `<div class="stmpanel stbgp"><b class="sttagh">Hintergrund</b><div class="strow stcols">${STBGC.map(c => `<button data-act="st-bgc" data-v="${c}" style="background:${c}" aria-label="Farbe ${c}" aria-pressed="${n.tb.c === c}"></button>`).join('')}</div><b class="sttagh">Muster am Rand</b><div class="stpats">${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="st-bgp" data-v="${k}" aria-pressed="${(n.tb.p || '') === k}"><i style="background-color:${esc(n.tb.c)};background-image:${stTbPat({c:n.tb.c, p:k})}"></i><small>${l}</small></button>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-    ${n.tool === 'bg' && !n.tb && !e ? stMBgPanel(n) : ''}${n.tool === 'stk' && !e ? stStkPanel() : ''}
+    ${n.tool === 'bg' && !n.tb && !e ? stMBgPanel(n) : ''}${n.tool === 'stk' && !e ? stStkPanel(n) : ''}
     ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
   </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${stAudV() === '1' ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${stAudV() === '0' ? '' : ' ghost'}" data-act="st-aud" data-v="0">Nur Freunde</button></span>${stSetG().cf.length ? `<button class="btn${stAudV() === 'cf' ? '' : ' ghost'}" data-act="st-aud" data-v="cf">Enge Freunde (${stSetG().cf.length})</button>` : ''}<button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-audopen" aria-label="Deine Story, wird gesehen von ${stAudL()}, ändern"><span class=\"cameo\">${headPic(me(), '', true)}</span><span class="stmet">Deine Story${social ? `<small>Wird gesehen von: ${stAudL()}</small>` : ''}</span></button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
@@ -7001,15 +7011,18 @@ function postHTML(p){
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
+  else if (p.sgi && (p.img || p.bigimg)) body += volw(`<div class="psg"><img class="psgi" ${p.img ? `src="${esc(sgOkImg(p.img) ? p.img : '')}"` : `data-pimg="${esc(p.author + '/' + p.id)}"`} alt="Sticker" draggable="false"></div>`); // eigener Sticker im Beitrag (Inaya, 2026-10-12)
   else if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
   else if (p.bigimg) body += twrap(volw(`<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`));
+  if (!p.gal?.length && !p.sgi && sgClean(p.sg)) body += volw(`<div class="psg${sgIsGif(sgClean(p.sg)) ? ' gif' : ''}">${sgItemHTML(p.sg, true)}</div>`); // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
   if (p.url && !spT) body += linkHTML(p.url, p.lp);
   else if (p.type === 'gedanke' || p.type === 'neu') { const tu = String(p.text || '').match(/https?:\/\/[^\s<>"']+/i)?.[0]; if (tu && (ytId(tu) || embedOf(tu))) body += linkHTML(tu); } // Link im Text: auch gleich ansehen
   if (p.audio) body += audioHTML(p);
   if (p.clip && !p.gal) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show, sm = body || hs ? txt.replace('class="thought"', 'class="thought sm"') : txt; // mit Foto/Video: Text kleiner, reine Gedanken groß (Inaya, 2026-10-12)
-  if (hs) body += showHTML(hs, sm); else body += sm;
+  const noMed = !p.gal?.length && !p.img && !p.bigimg && !p.audio && !p.clip && !sgClean(p.sg); // reiner Text-Beitrag mit Musik: Lautsprecher-Knopf am Text (Inaya, 2026-10-12)
+  if (hs) body += showHTML(hs, sm); else body += noMed && pmuv && sm ? `<div class="pvolw ptxv">${sm}${pvolHTML(pmuv, p.mu)}</div>` : sm;
   const onPic = tpos || (p.gal || []).some(x => x.tg?.length); // auf dem Foto markiert: kein „mit …“ darunter (Inaya, 2026-10-12)
   const lt = String(p.text || '').toLowerCase(), wt = tags.filter(t => !lt.includes('@' + String(t.n || '').toLowerCase()) && !(S.users[t.id]?.handle && lt.includes('@' + S.users[t.id].handle.toLowerCase()))); // mit @ erwähnt: kein „mit …“ darunter (Inaya, 2026-10-12)
   if (wt.length && !onPic) body += `<p class="pwith">mit ${wt.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
@@ -7050,9 +7063,12 @@ const pinSort = (a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (b.pin || 0) - (a
 let postAud = null, composeOpen = false, profEdit = false, designTab = 'look';
 const aud = () => postAud || (amOwner ? 'pub' : 'fr'); // jeder wählt: öffentlich oder nur für Freunde (Inaya, 2026-10-10)
 // Ein Feld „Beitrag erstellen“, darunter Foto, MP3 und Link als Knöpfe; die Art ergibt sich beim Teilen (Inaya, 2026-10-11)
+let PSG = null, PSGP = false; // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
+function pcSgAdd(p){ if (p.img && p.img.length > 300000) return toast('Dieser Sticker ist zu groß.'); PSG = p; PSGP = false; SG.tgt = null; paintCompose(); }
+function pcSgClose(){ PSGP = false; SG.tgt = null; paintCompose(); }
 let PMU = null, PMUP = false; // Musik aus der Suche im Beitrag (Inaya, 2026-10-11)
 let PAUDIO = null, PLINK = false, PVIDEO = null, PRIGHTS = false; // PRIGHTS: Häkchen „Ich habe die Rechte“ bei MP3 und Video (Inaya, 2026-10-11) // PVIDEO: {blob, poster, name}
-const CICO = {tag:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.8 3-5.8 6-5.8s5.4 2 6 5.8"/><path d="M15.5 4.5h5.5v4h-3.2L16.5 10V8.5h-1z"/>', foto:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>', musik:'<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>', video:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>', clip:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>'};
+const CICO = {stk:'<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M9 11.5v.5M15 11.5v.5"/><path d="M8.5 15c1.8 1.6 5.2 1.6 7 0"/>', tag:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.8 3-5.8 6-5.8s5.4 2 6 5.8"/><path d="M15.5 4.5h5.5v4h-3.2L16.5 10V8.5h-1z"/>', foto:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>', musik:'<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>', video:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>', clip:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>'};
 function composeAtt(){
   const url = document.getElementById('purl')?.value || '';
   const tagUI = `${PTAGS.length ? `<div class="ptags"><span class="lbl">Markiert:</span>${PTAGS.map((t, i) => `<span class="ptagc${i === PTAGS.length - 1 && postCrop ? ' cur' : ''}">${esc(t.n)}<button type="button" data-act="ptag-x" data-i="${i}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('')}</div>` : ''}
@@ -7064,6 +7080,8 @@ function composeAtt(){
     ${PMU ? `<div class="patt">${pmuHTML(PMU)}${muTrimHTML(PMU, 'post')}<button type="button" class="lnk" data-act="patt-x" data-v="pmu">Musik entfernen</button></div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
     ${PAUDIO || (PVIDEO && !PVIDEO.busy) || PCR?.items.some(x => x.t === 'v') ? `<label class="rights"><input type="checkbox" id="prights" ${PRIGHTS ? 'checked' : ''}><span>${PAUDIO ? 'Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.' : 'Ich habe dieses Video selbst gemacht oder darf es teilen, auch die Musik darin.'}</span></label>` : ''}
+    ${PSGP && !PSG ? `<div class="patt psgpick"><div id="sgp" class="sgp pcsgp" role="dialog" aria-label="Sticker und GIFs">${sgPanelHTML()}</div></div>` : ''}
+    ${PSG ? `<div class="patt"><div class="psg${sgIsGif(PSG) ? ' gif' : ''}">${sgItemHTML(PSG, true)}</div><button type="button" class="lnk" data-act="patt-x" data-v="psg">${sgIsGif(PSG) ? 'GIF' : 'Sticker'} entfernen</button></div>` : ''}
     ${tagUI}
     ${PLINK ? `<div class="patt pattlink"><input id="purl" type="url" placeholder="https:// Link zu YouTube, TikTok, Instagram …" aria-label="Link" value="${esc(url)}"><button type="button" class="lnk" data-act="patt-x" data-v="video">Link entfernen</button></div>` : ''}`;
 }
@@ -7081,7 +7099,7 @@ document.addEventListener('click', e => {
 });
 function paintCompose(){
   const box = document.getElementById('patts'); if (box) box.innerHTML = composeAtt();
-  document.querySelectorAll('.cbtn').forEach(x => x.classList.toggle('on', x.dataset.v === 'foto' ? !!postCrop || !!PCR?.items.some(y => y.t === 'i') : x.dataset.v === 'clip' ? !!PVIDEO || !!PCR?.items.some(y => y.t === 'v') : x.dataset.v === 'musik' ? !!(PAUDIO || PMU) : x.dataset.v === 'tag' ? PTAGS.length > 0 : PLINK));
+  document.querySelectorAll('.cbtn').forEach(x => x.classList.toggle('on', x.dataset.v === 'foto' ? !!postCrop || !!PCR?.items.some(y => y.t === 'i') : x.dataset.v === 'clip' ? !!PVIDEO || !!PCR?.items.some(y => y.t === 'v') : x.dataset.v === 'musik' ? !!(PAUDIO || PMU) : x.dataset.v === 'tag' ? PTAGS.length > 0 : x.dataset.v === 'stk' ? !!PSG : PLINK));
 }
 // Handy: nur ein Feld mit Plus, Tippen öffnet den Editor als eigene Seite über den ganzen Bildschirm (Inaya, 2026-10-12)
 const pcPlus = act => { const bx = /^#[0-9a-f]{6}$/i.test(me()?.theme?.box || '') ? me().theme.box : ''; return `<button type="button" class="pcplus" data-act="${act}" aria-label="Beitrag erstellen"${bx ? ` style="background:${bx};color:${autoFg(bx)};border:1px solid ${autoFg(bx)}33;border-style:solid"` : ''}><span aria-hidden="true">+</span></button>`; }; // Farbe vom eigenen Profil, Plus hell oder dunkel je nach Untergrund (Inaya, 2026-10-12)
@@ -7091,14 +7109,14 @@ function pcFit(){ const el = document.querySelector('.pcfull'), vv = window.visu
 window.visualViewport?.addEventListener('resize', pcFit); window.visualViewport?.addEventListener('scroll', pcFit);
 new MutationObserver(() => { if (document.querySelector('.pcfull:not([data-fit])')) { document.querySelectorAll('.pcfull').forEach(x => x.dataset.fit = 1); pcFit(); } }).observe(document.documentElement, {childList:true, subtree:true});
 function composeHTML(){
-  const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'foto' ? postCrop || PCR?.items.some(x => x.t === 'i') : k === 'clip' ? PVIDEO || PCR?.items.some(x => x.t === 'v') : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
+  const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'stk' ? PSG : k === 'foto' ? postCrop || PCR?.items.some(x => x.t === 'i') : k === 'clip' ? PVIDEO || PCR?.items.some(x => x.t === 'v') : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : k === 'stk' ? 'data-act="psg-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" class="pform${pt ? ' tp' : ''}" style="display:grid;gap:12px;${pt}">
         <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b><small>${social ? (aud() === 'pub' ? 'öffentlich' : 'nur Freunde') : ''}</small></div>
         <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text"></textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
-        <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('video', 'Link')}</div>
+        <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('stk', 'Sticker')}${b('video', 'Link')}</div>
         <div class="row">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${aud() === 'pub' ? 'selected' : ''}>Öffentlich</option><option value="fr" ${aud() === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
@@ -7801,7 +7819,7 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me && !p.arch).sort(pinSort).slice(0, 15)
-      .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k, ...(x.tg ? {tg:x.tg} : {})} : x) : null, gar:p.gar || ''}));
+      .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], sg:sgClean(p.sg), sgi:p.sgi ? 1 : 0, gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k, ...(x.tg ? {tg:x.tg} : {})} : x) : null, gar:p.gar || ''}));
     let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
@@ -8191,7 +8209,7 @@ function sgPaint(keepQ){ const el = document.getElementById('sgp'); if (!el) ret
 async function sgOpen(btn){
   const f = btn.closest('form'); if (!f) return; const ex = document.getElementById('sgp');
   if (ex && SG.form === f) return sgClose();
-  ex?.remove(); SG.form = f; document.querySelectorAll('.emopop').forEach(x => x.remove());
+  ex?.remove(); SG.form = f; SG.tgt = null; document.querySelectorAll('.emopop').forEach(x => x.remove());
   const el = document.createElement('div'); el.id = 'sgp'; el.className = 'sgp'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Sticker und GIFs');
   SG.el = el; f.insertAdjacentElement('afterend', el); f.classList.add('sgopen'); btn.setAttribute('aria-expanded', 'true');
   if (isMob()) document.activeElement?.blur?.(); // wie bei WhatsApp: das Menü ersetzt die Tastatur
@@ -8212,8 +8230,12 @@ async function sgSearch(){
   } catch { if (my !== SG.qn) return; SG.res = []; SG.err = 'GIFs konnten gerade nicht geladen werden.'; }
   SG.busy = false; sgPaint(true);
 }
+function stSgAdd(p){ const n = stNew; if (!n) return; n.stk = n.stk || []; if (n.stk.length >= 20) return toast('Höchstens 20 Sticker pro Story.');
+  if (p.img && n.stk.filter(x => x.p).length >= 3) return toast('Höchstens 3 Bildsticker pro Story.');
+  n.stk.push({...(p.k ? {k:p.k} : p.img ? {k:'sg', p:p.img} : {k:'sg', s:p}), x:50, y:45, w:p.u ? 46 : 34, r:0}); n.tool = null; n.hint = false; storyPaint(); }
 async function sgSend(p){
-  p = sgClean(p); const f = SG.form; if (!p || !f || !social) return; const kind = sgIsGif(p) ? 'gif' : 'stk';
+  p = sgClean(p); if (p && SG.tgt === 'story') return stSgAdd(p); if (p && SG.tgt === 'post') return pcSgAdd(p);
+  const f = SG.form; if (!p || !f || !social) return; const kind = sgIsGif(p) ? 'gif' : 'stk';
   if (f.dataset.form === 'cmsg') { if (CH.open) await sendMsg(CH.open, '', {[kind]:p}); return; }
   if (f.dataset.form === 'pcomment') { const k = f.dataset.k; if (!k) return;
     try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text:'', [kind]:p, by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { toast('Das hat nicht geklappt. Versuch es nochmal.'); }
@@ -9495,7 +9517,7 @@ document.addEventListener('click', async e => {
   else if (a === 'ptag-x') { PTAGS.splice(+b.dataset.i, 1); paintCompose(); }
   else if (a === 'ptag-show') { b.classList.toggle('on'); }
   else if (a === 'plink') { PLINK = true; paintCompose(); document.getElementById('purl')?.focus(); }
-  else if (a === 'patt-x') { const v = b.dataset.v; if (v === 'foto') postCrop = null; else if (v === 'clip') PVIDEO = null; else if (v === 'musik') PAUDIO = null; else if (v === 'pmu') { PMU = null; stAuStop(); } else PLINK = false; paintCompose(); }
+  else if (a === 'patt-x') { const v = b.dataset.v; if (v === 'foto') postCrop = null; else if (v === 'clip') PVIDEO = null; else if (v === 'musik') PAUDIO = null; else if (v === 'pmu') { PMU = null; stAuStop(); } else if (v === 'psg') PSG = null; else PLINK = false; paintCompose(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
   else if (a === 'try' && isMob()) mobWear(id);
@@ -9590,7 +9612,9 @@ document.addEventListener('click', async e => {
   else if (a === 'st-bg') { if (stNew) { stNew.tool = stNew.tool === 'bg' ? null : 'bg'; storyPaint(); } }
   else if (a === 'st-stk') { if (stNew) { stNew.tool = stNew.tool === 'stk' ? null : 'stk'; storyPaint(); } }
   else if (a === 'sg-open') { sgOpen(b); }
-  else if (a === 'sg-close') { sgClose(); }
+  else if (a === 'sg-close') { if (SG.tgt === 'story' && stNew) { stNew.tool = null; stNew.sgTab = false; SG.tgt = null; storyPaint(); } else if (SG.tgt === 'post') pcSgClose(); else sgClose(); }
+  else if (a === 'psg-open') { if (SG.form) sgClose(); PSGP = !PSGP; SG.tgt = PSGP ? 'post' : null; paintCompose(); if (PSGP) { await sgLoad(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); } }
+  else if (a === 'st-sgtab') { const n = stNew; if (!n) return; n.sgTab = !!b.dataset.v; if (n.sgTab) { if (SG.form) sgClose(); SG.tgt = 'story'; } storyPaint(); if (n.sgTab) { await sgLoad(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); } }
   else if (a === 'sg-mode') { SG.mode = b.dataset.v; sgPaint(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
   else if (a === 'sg-sub') { SG.sub = b.dataset.v; sgPaint(); }
   else if (a === 'sg-gsub') { SG.gsub = b.dataset.v; sgPaint(); if (SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
@@ -9920,7 +9944,7 @@ document.addEventListener('submit', async e => {
     if (gal && gal.items.length === 1 && gal.items[0].t === 'i') { try { postCrop = await galBake(gal.items[0], pcrR(gal.ar)); } catch { toast('Das Foto ließ sich nicht vorbereiten.'); return; } } // ein Foto: wie bisher
     const multi = gal && !(gal.items.length === 1 && gal.items[0].t === 'i');
     const type = PAUDIO || PMU ? 'musik' : multi ? (gal.items.some(x => x.t === 'i') ? 'foto' : 'clip') : PVIDEO ? 'clip' : postCrop ? 'foto' : url ? 'video' : 'gedanke';
-    if (type === 'gedanke' && !text) { toast('Schreib etwas oder füg ein Foto, ein Video, Musik oder einen Link hinzu.'); document.getElementById('ptext')?.focus(); return; }
+    if (type === 'gedanke' && !text && !PSG) { toast('Schreib etwas oder füg ein Foto, ein Video, Musik oder einen Link hinzu.'); document.getElementById('ptext')?.focus(); return; }
     if (url && !/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
     const p = {id:'p' + Date.now().toString(36), author:S.me, type, text, ts:Date.now(), reactions:{}, comments:[]};
     if (postCrop) p.img = postCrop;
@@ -9929,6 +9953,7 @@ document.addEventListener('submit', async e => {
       const all = [...(multi ? gt.map(t => ({id:t.id, n:t.n})) : gt), ...PTAGS.map(t => postCrop && !gal ? t : {id:t.id, n:t.n})].filter((t, i, l) => l.findIndex(y => y.id === t.id) === i);
       if (all.length) p.tags = ptagsClean(all); }
     if (url) p.url = url;
+    if (PSG && !multi && !postCrop && !PVIDEO) { if (PSG.img) { p.img = PSG.img; p.sgi = 1; } else p.sg = sgClean(PSG); }
     if (url && !ytId(url) && social) { const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Lädt Vorschau …'; } const lp = SHORT_RE.test(url) ? await resolveLink(url) : await linkPreview(url); if (lp) p.lp = lp; if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } }
     if (PAUDIO) {
       if (!social) { toast('Musik posten geht, sobald du angemeldet bist.'); return; }
@@ -9949,7 +9974,7 @@ document.addEventListener('submit', async e => {
     if (social) { postAud = val('paud') === 'pub' ? 'pub' : 'fr'; if (postAud === 'pub') p.pub = 1; } // Beitrag öffentlich oder nur für Freunde
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
-    pcrClear(); composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PMU = null; PMUP = false; stAuStop(); PRIGHTS = false; PLINK = false; PTAGS = []; PTAGP = false; save(); render();
+    pcrClear(); composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PMU = null; PMUP = false; stAuStop(); PRIGHTS = false; PLINK = false; PTAGS = []; PTAGP = false; PSG = null; PSGP = false; save(); render();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
