@@ -1208,6 +1208,20 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .likebtn{display:inline-flex!important;align-items:center;gap:6px;flex:none!important}.likebtn .lheart{width:22px;height:22px;stroke:currentColor;stroke-width:1.7}
 .likebtn[aria-pressed="true"] .lheart{color:#c8283a}.post.tp .likebtn[aria-pressed="true"] .lheart{color:#c8283a}
 .nt-ico .lheart{width:16px;height:16px;color:#c8283a;stroke:currentColor;stroke-width:1.7;vertical-align:-3px}
+
+/* Story: antworten und liken, öffentlich oder nur Freunde (Inaya, 2026-10-12) */
+.streply{position:absolute;left:10px;right:10px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;align-items:center;gap:8px}
+.streply input{flex:1;min-width:0;height:44px;padding:0 16px;border:1px solid #ffffffa0;border-radius:22px;background:#0000004d;color:#fff;font:16px -apple-system,'Helvetica Neue',Arial,sans-serif}
+.streply input::placeholder{color:#ffffffc0}
+.strsend,.stlike{flex:none;width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:#fff;cursor:pointer}
+.strsend{display:none;background:#fff;color:#0a0a0b}.streply.typed .strsend{display:grid}.streply.typed .stlike{display:none}
+.strsend svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stlike .lheart{width:30px;height:30px;stroke:currentColor;stroke-width:1.6;filter:drop-shadow(0 1px 3px #0008)}.stlike[aria-pressed="true"]{color:#e0303a}
+.stlike.pop .lheart{animation:stpop .35s ease}@keyframes stpop{40%{transform:scale(1.35)}}
+.stlikes{position:absolute;left:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #ffffff60;border-radius:18px;background:#0000006b;color:#fff;font:600 14px -apple-system,Arial,sans-serif;cursor:pointer}
+.stlikes .lheart{width:20px;height:20px;stroke:currentColor;stroke-width:1.7}.stlikes.on .lheart{color:#e0303a}
+.staud>div{display:grid;gap:12px;justify-items:center}.staud .row{gap:10px}
+.mstory{display:grid;gap:4px;margin-bottom:6px}.mstory img{width:74px;height:130px;object-fit:cover;border-radius:6px;border:1px solid var(--line,#ffffff40)}.mstory small{opacity:.75;font-size:12px}
 </style>
 
 <div id="app"></div>
@@ -5234,13 +5248,18 @@ function storySweep(){ // abgelaufene eigene Storys ins Story-Archiv
 const myStories = () => (S.stories || []).filter(st => Date.now() - st.ts < STORY_H).sort((a, b) => a.ts - b.ts);
 function storiesOf(id){
   if (id === S.me) return myStories();
-  const u = S.users[id] || (PROF[id] ? profUser(id) : null); if (!u || !u.remote || !isFriend(id)) return [];
-  return (u.stories || []).filter(st => Date.now() - st.ts < STORY_H).sort((a, b) => a.ts - b.ts);
+  const u = S.users[id] || (PROF[id] ? profUser(id) : null); if (!u || !u.remote) return []; const fr = isFriend(id); if (!fr && PROF[id]?.priv) return [];
+  return (u.stories || []).filter(st => Date.now() - st.ts < STORY_H && (fr || st.pub)).sort((a, b) => a.ts - b.ts); // Nicht-Freunde sehen nur öffentliche Storys (Inaya, 2026-10-12)
 }
 const stSeen = (id, l) => l.every(st => (S.stSeen || {})[id + '_' + st.id]);
+function storyUsers(){ // Freunde und alle mit öffentlicher Story
+  if (social) loadPubFeed(); const m = new Map(); Object.values(S.users).filter(u => u.remote).forEach(u => m.set(u.id, u));
+  PUBF.ids.forEach(id => { if (!m.has(id) && id !== social?.uid) { const u = profUser(id); if (u) m.set(id, u); } });
+  return [...m.values()].filter(u => storiesOf(u.id).length);
+}
 function storyBar(){
   if (!S.me) return ''; storySweep();
-  const mine = myStories(), fr = Object.values(S.users).filter(u => u.remote && storiesOf(u.id).length).sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
+  const mine = myStories(), fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
   const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${!l.length && u.id === S.me ? '<i class="sadd" aria-hidden="true">+</i>' : ''}<small>${esc(label)}</small></button>`;
   return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${mine.length ? '<button class="sring splus" data-act="story-new" aria-label="Neue Story"><span class="sava">＋</span><small>Neu</small></button>' : ''}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
 }
@@ -5341,6 +5360,7 @@ function storyPaint(){
     ${stTextsHTML(stTexts(st))}
     ${st.mu ? stMuHTML(st.mu, st.mp) : st.song && SPRES[st.song] ? stMuHTML(SPRES[st.song], {x:50, y:84, w:76}) : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
+    ${STV.arch || !social ? '' : own ? stLikesHTML(social.uid, st.id) : `<form class="streply" data-form="streply" data-u="${esc(g.uid)}" data-id="${esc(st.id)}"><input id="st-rin" maxlength="500" placeholder="Antworten …" aria-label="Auf die Story antworten" autocomplete="off" enterkeyhint="send"><button type="submit" class="strsend" aria-label="Antwort senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="stlike" data-act="st-like" data-u="${esc(g.uid)}" data-id="${esc(st.id)}" aria-pressed="${stLiked(g.uid, st.id)}" aria-label="Gefällt mir">${HEART(stLiked(g.uid, st.id))}</button></form>`}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
     </div></div>`;
   const mu = st.mu || (st.song ? stSpMu(st.song) : null);
@@ -5354,10 +5374,24 @@ function storyPaint(){
   if (ve && STV.delAsk) ve.pause();
   else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
     ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1); }
-  else if (!st.vid && !STV.arch && !STV.delAsk) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
+  else if (!st.vid && !STV.arch && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
 }
+// Story-Likes: chats/sl_<besitzer>_<story>/m/<uid> (Inaya, 2026-10-12)
+const SLK = {};
+function stLk(uid, sid){ const k = uid + '_' + sid; if (!SLK[k] && social) { SLK[k] = {by:new Set(), ok:false}; social.db.collection('chats/sl_' + k + '/m').get().then(q => { q.forEach(d => SLK[k].by.add(d.id)); SLK[k].ok = true; stLkPaint(uid, sid); }).catch(() => {}); } return SLK[k] || {by:new Set()}; }
+const stLiked = (uid, sid) => stLk(uid, sid).by.has(social?.uid);
+function stLikesHTML(uid, sid){ const n = stLk(uid, sid).by.size; return `<button class="stlikes${n ? ' on' : ''}" data-act="st-likes" data-u="${esc(uid)}" data-id="${esc(sid)}" aria-label="${n} Likes">${HEART(n > 0)}<span>${n || ''}</span></button>`; }
+function stLkPaint(uid, sid){ const ov = document.getElementById('storyov'); if (!ov) return;
+  const l = ov.querySelector(`.stlike[data-u="${CSS.escape(uid)}"][data-id="${CSS.escape(sid)}"]`); if (l) { const on = stLiked(uid, sid); l.setAttribute('aria-pressed', on); l.innerHTML = HEART(on); }
+  const m = ov.querySelector(`.stlikes[data-u="${CSS.escape(uid)}"][data-id="${CSS.escape(sid)}"]`); if (m) m.outerHTML = stLikesHTML(uid, sid); }
+function stHold(on){ if (!STV) return; const ov = document.getElementById('storyov'), ve = ov?.querySelector('video.stvid'), nb = ov?.querySelector('.stbars i.now');
+  if (on) { if (STV.hold) return; STV.hold = Date.now(); clearTimeout(stTimer); if (nb) nb.style.animationPlayState = 'paused'; ve?.pause(); stAu.pause(); }
+  else if (STV.hold) { STV.t0 += Date.now() - STV.hold; STV.hold = null; storyPaint(); } }
+document.addEventListener('focusin', e => { if (e.target.id === 'st-rin') stHold(true); });
+document.addEventListener('focusout', e => { if (e.target.id === 'st-rin') setTimeout(() => { if (document.activeElement?.id !== 'st-rin') stHold(false); }, 150); });
+document.addEventListener('input', e => { if (e.target.id === 'st-rin') e.target.closest('form')?.classList.toggle('typed', !!e.target.value.trim()); });
 function storyOrder(){ // gleiche Reihenfolge wie die Story-Leiste: erst du, dann ungesehene, dann gesehene
-  const fr = Object.values(S.users).filter(u => u.remote && storiesOf(u.id).length).sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
+  const fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
   return [...(myStories().length ? [S.me] : []), ...fr.map(u => u.id)];
 }
 const stFirst = g => Math.max(0, g.items.findIndex(st => !(S.stSeen || {})[g.uid + '_' + st.id]));
@@ -5402,7 +5436,7 @@ async function stShare(){ // nur einmal posten, Fenster schließt sofort, hochge
   if (n.vid && !social) { n.posting = false; document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = false); toast('Videos in der Story gehen, sobald du angemeldet bist.'); return; }
   if (n.tb) { n.img = await stTbRender(n.tb); n.thumb = await storyThumb(n.img); }
   const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0} : null;
-  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10})), thumb:n.thumb}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
+  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10})), thumb:n.thumb}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
   if (n.vid || social) toast('Deine Story wird gepostet …');
   if (n.vid) {
@@ -5688,7 +5722,7 @@ function stEditorHTML(){
     ${n.tool === 'bg' && n.tb && !e ? `<div class="stmpanel stbgp"><b class="sttagh">Hintergrund</b><div class="strow stcols">${STBGC.map(c => `<button data-act="st-bgc" data-v="${c}" style="background:${c}" aria-label="Farbe ${c}" aria-pressed="${n.tb.c === c}"></button>`).join('')}</div><b class="sttagh">Muster am Rand</b><div class="stpats">${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="st-bgp" data-v="${k}" aria-pressed="${(n.tb.p || '') === k}"><i style="background-color:${esc(n.tb.c)};background-image:${stTbPat({c:n.tb.c, p:k})}"></i><small>${l}</small></button>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-  </div>${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class=\"cameo\">${headPic(me(), '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
+  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${S.stPub ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${S.stPub ? ' ghost' : ''}" data-act="st-aud" data-v="0">Nur Freunde</button></span><button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class=\"cameo\">${headPic(me(), '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
 function stVV(){ // X und Fertig bleiben oben in der Ecke, die Werkzeugleiste sitzt direkt über der Tastatur (Inaya, 2026-10-11)
   const fr = document.getElementById('stfr'), ed = fr?.querySelector('.stedov'); if (!ed) return;
@@ -6450,7 +6484,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts)), ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.cover = null;
@@ -6898,6 +6932,7 @@ async function vmPlay(id, at){
   finally { document.querySelectorAll('.vmplay.busy').forEach(x => x.classList.remove('busy')); vmPaint(); }
 }
 function msgMedia(m){
+  if (m.story) { const mine = m.from === social?.uid; return `<div class="mstory">${m.story.th ? `<img src="${esc(m.story.th)}" alt="">` : ''}<small>${mine ? 'Antwort auf die Story' : 'Antwort auf deine Story'}</small></div>`; }
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
   if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
   if (m.audio && m.audio.n && m.audio.voice) return vmsgHTML(m);
@@ -7960,7 +7995,13 @@ document.addEventListener('click', async e => {
   else if (a === 'st-tback') { const n = stNew; if (!n || n.edit == null) return; const x = n.texts[n.edit];
     if (n.editOld) n.texts[n.edit] = n.editOld; else n.texts.splice(n.edit, 1); n.edit = null; n.editOld = null;
     if (n.tb && !n.texts.length) { stNew = null; stCreate(); return; } storyPaint(); }
-  else if (a === 'st-share') stShare();
+  else if (a === 'st-share') { if (stNew && social && !stNew.audOk) { stNew.askAud = true; storyPaint(); } else stShare(); }
+  else if (a === 'st-like') { const uid = b.dataset.u, sid = b.dataset.id, me_ = social?.uid; if (!me_) return; const l = stLk(uid, sid), on = l.by.has(me_), ref = social.db.doc('chats/sl_' + uid + '_' + sid + '/m/' + me_);
+    if (on) l.by.delete(me_); else l.by.add(me_); stLkPaint(uid, sid); if (!on) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+    try { if (on) await ref.delete(); else await ref.set({kind:'like', by:me_, ts:Date.now()}); } catch { if (on) l.by.add(me_); else l.by.delete(me_); stLkPaint(uid, sid); toast('Das hat gerade nicht geklappt.'); } }
+  else if (a === 'st-likes') { const l = stLk(b.dataset.u, b.dataset.id); if (!l.by.size) return toast('Noch keine Likes.'); toast('Gefällt ' + [...l.by].map(id => PROF[id]?.name || 'Jemand').join(', ')); [...l.by].filter(id => !PROF[id]).forEach(id => loadProf(id)); }
+  else if (a === 'st-aud') { if (!stNew) return; stNew.pub = b.dataset.v === '1'; stNew.audOk = true; stNew.askAud = false; S.stPub = stNew.pub ? 1 : 0; save(); stShare(); }
+  else if (a === 'st-audx') { if (stNew) { stNew.askAud = false; storyPaint(); } }
   else if (a === 'st-prof') { STV = null; storyPaint(); go('profile', id); window.scrollTo(0, 0); } // Name in der Story führt zum Profil (Inaya, 2026-10-11)
   else if ((a === 'st-next' || a === 'st-prev') && !stAuSrc) { stAuUnlock(); if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); } else if (Date.now() - stSwiped > 400) stStep(-1); }
   else if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); }
@@ -8281,6 +8322,12 @@ document.addEventListener('submit', async e => {
     if (file) { try { extra.img = await resizeImage(file, 560, .7); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; } }
     if (url) extra.url = url;
     if (await sendMsg('wall_' + WL.uid, text, extra)) { toast('Kommentar gepostet'); render(); }
+  } else if (t === 'streply') {
+    const i = document.getElementById('st-rin'), text = i?.value.trim(), uid = f.dataset.u, sid = f.dataset.id; if (!text || !social || !uid) return;
+    const st = storiesOf(uid).find(x => x.id === sid), a2 = [social.uid, uid].sort(), cid = 'dm_' + a2.join('_'); i.value = ''; f.classList.remove('typed'); i.blur();
+    try { if (!CH.list.some(c => c.id === cid)) await social.db.doc('chats/' + cid).set({group:false, members:a2, ts:Date.now()}, {merge:true});
+      if (await sendMsg(cid, text, {story:{u:uid, id:sid, th:/^data:image\//.test(st?.thumb || '') && st.thumb.length < 60000 ? st.thumb : ''}})) toast('Deine Antwort ist im Chat.'); }
+    catch { toast('Die Antwort ging gerade nicht raus.'); }
   } else if (t === 'rmsg') {
     const text = [...val('rm-in')].slice(0, RMAX).join('').trim(); if (!text || !RM.g || roomStart() == null) return;
     document.getElementById('rm-in').value = ''; rmLeft();
