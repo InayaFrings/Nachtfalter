@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ddec31bc7f95';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7368cee8e999';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5468,7 +5468,7 @@ const PIMG_UP = new Set();
 const NEWS_MODEL = {...DEFAULT_OUTFIT, body:'w', back:'lang', front:'p_gerade', hairC:'#1c1b20', eyeform:'e_katze', face:'liner', top:'band', jacket:'j_kein', bottom:'jeans', shoes:'springer', hacc:{}, acc:{}, jewel:{}, legw:{}};
 const NEWS_HAIR = ['#c0182a','#e05aa0','#7a3aa0','#3a6ad0','#2aa0a0','#3a9a4a','#e8d23a','#e07a20','#9a1f2a','#5ad0e0','#b070e0','#f0a0c8'];
 const NEWS_MODEL_M = {...NEWS_MODEL, body:'m', back:'kurz', front:'p_zerzaust', eyeform:'e_rund'};
-function showHTML(hs){
+function showHTML(hs, mid=''){
   const btn = ([l, a, v]) => `<button class="btn ghost nlink" data-act="${a}" ${a === 'profile' || a === 'helper-chat' ? 'data-id' : 'data-v'}="${v}">${l}</button>`;
   let grid = '', b = hs.btn;
   if (hs.wear) { // feste Vorführ-Figur: die Bilder bleiben gleich, egal welchen Look man selbst trägt (Inaya, 2026-10-10); Schmuck und Gesicht ohne Haare
@@ -5484,7 +5484,7 @@ function showHTML(hs){
   if (hs.priv) grid = [['<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>','Öffentlich'],['<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>','Privat']].map(([d, l]) => `<div class="ncell icell"><svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg><span>${l}</span></div>`).join('');
   if (hs.helpers) grid = ['juliet', 'andy'].map(id => `<div class="ncell" title="${esc(HELPERS[id].name)}">${avatar(HELPERS[id].outfit, 'bust')}</div>`).join('');
   const n = (grid.match(/class="ncell/g) || []).length;
-  return (grid ? `<div class="newgrid${n === 2 || n === 4 ? ' g2' : ''}">${grid}</div>` : '') + (hs.btns ? `<div class="row nbtns">${hs.btns.map(btn).join('')}</div>` : b ? btn(b) : '');
+  return (grid ? `<div class="newgrid${n === 2 || n === 4 ? ' g2' : ''}">${grid}</div>` : '') + mid + (hs.btns ? `<div class="row nbtns">${hs.btns.map(btn).join('')}</div>` : b ? btn(b) : '');
 }
 // Vom Owner gelöschte Beiträge anderer (site/hidden), für alle ausgeblendet
 const HIDDEN = new Set(); let HIDW = false;
@@ -6380,11 +6380,10 @@ function sharedHTML(sh){
   const u = S.users[sh.a] || (PROF[sh.a] ? profUser(sh.a) : null);
   if (!u && sh.a && social && !CMH[sh.a]) { CMH[sh.a] = 1; loadProf(sh.a).then(softRender); }
   let b = '';
-  if (sh.type === 'gedanke' || sh.type === 'neu') b = `<blockquote class="thought">${etx(sh.text || '')}</blockquote>`;
   if (sh.img) b += `<img class="photo" src="${esc(sh.img)}" alt="Bild von ${esc(sh.name || '')}">`;
   else if (sh.bigk) b += `<img class="photo" data-pimg="${esc(sh.bigk)}" alt="Bild von ${esc(sh.name || '')}">`;
   if (sh.url) b += linkHTML(sh.url, sh.lp);
-  if (sh.type !== 'gedanke' && sh.type !== 'neu' && sh.text) b += `<p class="caption">${etx(sh.text)}</p>`;
+  if (sh.text) b += `<blockquote class="thought">${etx(sh.text)}</blockquote>`; // wie alle Beiträge: Text mit Strich unter dem Bild
   const mark = hmark(u || (sh.a === OWNER ? {id:sh.a, remote:true} : null));
   return `<div class="shared"><div class="sh-h"><svg class="sh-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(sh.a)}" aria-label="${esc(sh.name || '')}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><span><span class="uname"><button class="lnk" data-act="profile" data-id="${esc(sh.a)}">${esc(u?.name || sh.name || 'Jemand')}</button>${mark}</span><span class="meta">${KIND[sh.type] || 'Beitrag'} · ${ago(sh.ts)}</span></span></div>${b}</div>`;
 }
@@ -6409,7 +6408,7 @@ function postHTML(p){
   const a = profUser(p.author); if (!a) return '';
   let body = '';
   const tags = ptagsClean(p.tags), spT = p.url && /open\.spotify\.com\/(?:intl-[\w-]+\/)?track\//i.test(p.url) ? p.url : '';
-  if (p.type === 'gedanke' || p.type === 'neu') body = `<blockquote class="thought">${mentionHTML(etx(p.text), tags, 'profile')}</blockquote>`;
+  const txt = p.text ? `<blockquote class="thought">${mentionHTML(etx(p.text), tags, 'profile')}</blockquote>` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
@@ -6420,8 +6419,7 @@ function postHTML(p){
   if (p.audio) body += audioHTML(p);
   if (p.clip && !p.gal) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
-  const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
-  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) { const cap = `<p class="caption">${mentionHTML(etx(p.text), tags, 'profile')}</p>`; body = p.gal?.length || p.img || p.bigimg || p.clip ? body + cap : cap + body; } // wie Insta: Bild direkt unter dem Namen, Text darunter (Inaya, 2026-10-12)
+  const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs, txt); else body += txt;
   const onPic = tpos || (p.gal || []).some(x => x.tg?.length); // auf dem Foto markiert: kein „mit …“ darunter (Inaya, 2026-10-12)
   if (tags.length && !onPic) body += `<p class="pwith">mit ${tags.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
   const lk = new Set(Object.values(p.reactions || {}).flat()), reacts = likeBtn(`data-act="react" data-id="${p.id}"`, lk.has(S.me), lk.size);
