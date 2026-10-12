@@ -8546,7 +8546,7 @@ document.addEventListener('click', async e => {
   if (a === 'nt-go' && b.dataset.v === 'opost' && /^helper-/.test(b.dataset.id || '')) { go('home'); return; } // Antwort unter einem Helfer-Beitrag: der steht im Salon
   if (a === 'nt-go') { const v = b.dataset.v; if (b.dataset.k && (v === 'post' || v === 'opost')) { ntOpenPost(b.dataset.k, v === 'opost' ? b.dataset.id : S.me, b.dataset.c === '1'); return; } if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
-  else if (a === 'profile') go('profile', id);
+  else if (a === 'profile') { if (CMV || document.getElementById('cmv')) cmvClose(true); go('profile', social && id === social.uid ? S.me : id); } // auch aus dem Kommentarfenster heraus (Inaya, 2026-10-12)
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
   else if (a === 'rwall-del') { if (social && WL.uid) { markDel(id); WL.list = WL.list.filter(x => x.mid !== id); drawWall(); social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => { markDel(id, false); toast('Löschen ging nicht.'); }); } }
   else if (a === 'pose') { // ohne neu zu zeichnen, damit Eingaben im Formular bleiben
