@@ -1271,6 +1271,11 @@ body.cmvopen{overflow:hidden}
 .cmvpi .pbar{padding-top:10px;border-top:1px solid var(--line-soft,#333)}.post.tp .cmvpi .pbar{border-color:var(--p-line)}
 .cmvnone{margin:20px 0;text-align:center;font-style:italic}
 @media (max-width:760px){.cmv{place-items:stretch}.cmvback{display:none}.cmvbox{width:100vw;height:100dvh;height:100svh;max-height:none;min-height:0;border-radius:0;border:0!important;box-shadow:none;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}.cmvbox::before,.cmvbox::after{display:none!important}.cmvpost{display:none}.cmvh{padding:8px 6px;min-height:52px}.cmvpi{padding:0 12px 10px}.cmvpi .cform .pcfield{min-height:46px}.cmvpi input[type=text]{font-size:16px}}
+/* Musikkarte so breit wie bei Inaya; Beitrags-Musik klein unter dem Namen (Inaya, 2026-10-12) */
+.music.mmu{justify-items:stretch;width:100%}.music.mmu .pmu{width:100%;box-sizing:border-box}.music.mmu .lnk{justify-self:start}.pmu .muart{width:56px;height:56px;object-fit:cover;border-radius:4px;flex:none}.pmu>span{flex:1;min-width:0;display:grid;text-align:left}.pmu>span b,.pmu>span small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.muprev2{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-line,#ffffff4d);background:transparent;color:var(--p-fg,#eeedf2);cursor:pointer;padding:0}.muprev2 svg{width:18px;height:18px;fill:currentColor}
+.pspw{position:fixed;left:-10000px;top:0;width:300px;height:80px;opacity:0;pointer-events:none}
+.phmu{display:flex;align-items:center;gap:6px;background:none;border:0;padding:2px 0 0;margin:0;color:inherit;font:500 12.5px/1.25 system-ui,-apple-system,sans-serif;cursor:pointer;max-width:100%;min-width:0;text-align:left}.phmu .steq i{background:currentColor;animation-play-state:paused}.phmu.on .steq i{animation-play-state:running}.ph>div{min-width:0}
 </style>
 
 <div id="app"></div>
@@ -5043,13 +5048,17 @@ function asideHTML(){
 /* ---------- Beiträge: Reaktionen und Kommentare von Freunden (geteilt über die Datenbank) ---------- */
 const PI = {}, PIMG = {};
 let postDelAsk = null, postEdit = null;
-const postOwner = p => p.remote ? p.author : (social && p.author === S.me ? social.uid : null);
+const postOwner = p => p.remote ? p.author : social && p.author === S.me ? social.uid : social && S.users[p.author]?.helper ? 'helper-' + p.author : null;
 // vor dem Anmelden bei Firebase gibt es noch keine geteilten Reaktionen
 function piKey(p){ if (!social) return null; const o = postOwner(p); return o && /^[\w-]+$/.test(p.id) ? o + '_' + p.id : null; }
+// eigene alte Kommentare auf Helfer-Beiträgen (lagen nur auf dem eigenen Gerät) einmal in die geteilten Kommentare übernehmen
+function helperCmMig(p, k){ S.hcMig = S.hcMig || {}; if (S.hcMig[k]) return; const mine = (p.comments || []).filter(c => c.author === S.me && c.text); S.hcMig[k] = 1; if (!mine.length) { save(); return; }
+  Promise.all(mine.map(c => social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text:String(c.text).slice(0, 300), by:social.uid, name:me().name, ts:c.ts || Date.now()}))).then(() => save()).catch(() => { delete S.hcMig[k]; }); }
 function piWatch(p){
   const k = piKey(p); if (!k) return null;
   if (!PI[k]) {
     PI[k] = {list:[], p};
+    if (k.startsWith('helper-')) helperCmMig(p, k);
     PI[k].unsub = social.db.collection('chats/pi_' + k + '/m').onSnapshot(snap => { PI[k].list = snap.docs.map(d => ({did:d.id, ...d.data()})); piDraw(k); ntPing(); }, () => {});
   }
   PI[k].p = p; return PI[k];
@@ -5063,10 +5072,11 @@ function cbub(uid, name, text, ts, del, k, img='', extra=''){
 }
 function piInner(p, full){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
-  const can = owner === uid || isFriend(owner) || !!p.pub; // öffentliche Beiträge: jeder darf reagieren
+  const can = owner === uid || isFriend(owner) || !!p.pub || owner.startsWith('helper-'); // öffentliche Beiträge: jeder darf reagieren
   const likers = new Set(list.filter(x => x.kind === 'r' && LIKE_IN(x.r)).map(x => x.by)); // alte Totenkopf-Reaktionen zählen als Like (Inaya, 2026-10-12)
   const reacts = likeBtn(`data-act="plike" data-k="${k}"`, likers.has(uid), likers.size, can);
-  const all = list.filter(x => x.kind === 'c').sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
+  const hloc = owner.startsWith('helper-') ? (p.comments || []).filter(c => S.users[c.author]?.helper).map((c, i) => ({kind:'c', by:c.author, name:S.users[c.author].name, text:c.text, ts:c.ts || 0, did:'h' + i})) : [];
+  const all = list.filter(x => x.kind === 'c').concat(hloc).sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
   // Alte Kommentare (vor den Antworten) zählen als Antworten auf den ersten Kommentar (Inaya, 2026-10-11)
   const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
   const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img);
@@ -5075,7 +5085,7 @@ function piInner(p, full){
     return `<div class="cthread">${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
   }).join('');
   const nC = all.length, bar = `<div class="reacts pbar">${reacts}<button type="button" class="cmbtn" data-act="cmv-open" data-k="${k}" aria-label="Kommentare ansehen">${CMV_ICO}<span>${nC || ''}</span></button>${repostBtn(p)}</div>`;
-  if (!full) return bar + (nC ? `<button type="button" class="lnk cmvall" data-act="cmv-open" data-k="${k}">${nC === 1 ? '1 Kommentar ansehen' : 'Alle ' + nC + ' Kommentare ansehen'}</button>` : '');
+  if (!full) return bar;
   const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
   return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
 }
@@ -5392,7 +5402,8 @@ const muArtHTML = r => stMuArt(r) ? `<img src="${esc(r.art)}" alt="" loading="la
 function muRows(act){ return STMRES.map((r, i) => `<div class="murow"><button type="button" class="mupick" data-act="${act}" data-i="${i}">${muArtHTML(r)}<span><b>${esc(r.t)}</b><small>${esc(r.a)}${r.d ? ' · ' + stTime(r.d) : ''}</small></span></button><button type="button" class="muprev" data-act="mu-prev" data-i="${i}" aria-label="Reinhören">${stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`).join(''); }
 function stMsShow(l, msg, id='st-msres'){ const box = document.getElementById(id); if (!box) return;
   if (l) STMRES = l; box.innerHTML = msg ? `<p class="stmsmsg">${esc(msg)}</p>` : muRows(id === 'pmres' ? 'pmu-pick' : id === 'e-msres' ? 'e-mpick' : 'st-mpick'); }
-function muMarkPrev(){ document.querySelectorAll('.muprev').forEach(b => { const r = STMRES[+b.dataset.i]; b.innerHTML = r && stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY; });
+const phMuHTML = mu => `<button type="button" class="phmu${stAuSrc === stMuPv(mu) && !stAu.paused ? ' on' : ''}" data-act="phmu-play" data-pv="${esc(stMuPv(mu))}" aria-label="Song anhören: ${esc(mu.t)}">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}</span></button>`;
+function muMarkPrev(){ document.querySelectorAll('.phmu').forEach(b => b.classList.toggle('on', stAuSrc === b.dataset.pv && !stAu.paused)); document.querySelectorAll('.muprev').forEach(b => { const r = STMRES[+b.dataset.i]; b.innerHTML = r && stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY; });
   document.querySelectorAll('[data-act=pmu-play]').forEach(b => { b.innerHTML = stAuSrc === b.dataset.pv && !stAu.paused ? MU_PAUSE : MU_PLAY; }); }
 stAu.addEventListener('pause', () => setTimeout(muMarkPrev)); stAu.addEventListener('play', () => setTimeout(muMarkPrev));
 document.addEventListener('input', e => { // Musiksuche in Story und Beitrag
@@ -6051,7 +6062,6 @@ function postHTML(p){
   if (p.url) body += linkHTML(p.url, p.lp);
   else if (p.type === 'gedanke' || p.type === 'neu') { const tu = String(p.text || '').match(/https?:\/\/[^\s<>"']+/i)?.[0]; if (tu && (ytId(tu) || embedOf(tu))) body += linkHTML(tu); } // Link im Text: auch gleich ansehen
   if (p.audio) body += audioHTML(p);
-  if (p.mu && stMuPv(p.mu)) body += pmuHTML(p.mu);
   if (p.clip) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
@@ -6061,7 +6071,7 @@ function postHTML(p){
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
   return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}</span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span>${p.mu && stMuPv(p.mu) ? phMuHTML(p.mu) : ''}</div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}</span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
@@ -6242,14 +6252,29 @@ ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</
     <section class="salon"><h2 class="salon-h">Salon</h2>${social ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${posts.length ? posts.map(postHTML).join('') : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`}</div></section>`;
 }
 let musicEdit = false;
-// Alte Spotify-Profilmusik wird zur gleichen Song-Karte wie die neue Profilmusik (Inaya, 2026-10-12); in Beiträgen bleibt alles wie es war
-const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : u.songSp ? stSpMu(u.songSp) : null;
-function profMuMigrate(u){ if (u.id !== S.me || u.songMu || !u.songSp) return; const m = SPRES[u.songSp]; if (!m) return;
-  setTimeout(() => { const x = me(); if (!x || x.songMu || x.songSp !== u.songSp) return; x.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:0}; x.songSp = ''; save(); }, 0); }
+// Alte Spotify-Profilmusik: gleiche Song-Karte wie die neue Profilmusik, Titel/Bild/Ton direkt von Spotify, damit der Song stimmt (Inaya, 2026-10-12)
+const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : null;
+const SPOE = {};
+function spOe(url){ if (SPOE[url] !== undefined) return SPOE[url] || null; SPOE[url] = 0;
+  (async () => { const j = await jget('https://open.spotify.com/oembed?url=' + encodeURIComponent(url)).catch(() => null) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(url)).catch(() => null);
+    SPOE[url] = j && j.title ? {t:String(j.title).slice(0, 120), art:/^https:\/\/[\w.-]+\.(scdn\.co|spotifycdn\.com)\//.test(j.thumbnail_url || '') ? j.thumbnail_url : ''} : null; softRender(); })(); return null; }
+let PSP = null; // {url, c, playing}
+function pspToggle(url){
+  const id = String(url).match(/track\/([A-Za-z0-9]+)/)?.[1]; if (!id) return;
+  if (PSP && PSP.url === url && PSP.c) { try { PSP.c.togglePlay(); } catch {} return; }
+  pspStop(); try { stAu.pause(); } catch {}
+  let w = document.getElementById('pspw'); if (!w) { w = document.createElement('div'); w.id = 'pspw'; w.className = 'pspw'; document.body.appendChild(w); }
+  const el = document.createElement('div'); w.appendChild(el); const me = PSP = {url};
+  spApi().then(api => api.createController(el, {uri:'spotify:track:' + id, width:300, height:80}, c => { if (PSP !== me) { try { c.destroy(); } catch {} return; } me.c = c;
+    c.addListener('playback_update', ev => { me.playing = !ev.data.isPaused; pspMark(); }); c.addListener('ready', () => { try { c.play(); } catch {} }); })).catch(() => { window.open(url, '_blank'); });
+}
+function pspStop(){ try { PSP?.c?.destroy(); } catch {} PSP = null; const w = document.getElementById('pspw'); if (w) w.innerHTML = ''; pspMark(); }
+function pspMark(){ document.querySelectorAll('[data-act=psp-play]').forEach(b => { b.innerHTML = PSP && PSP.url === b.dataset.sp && PSP.playing ? MU_PAUSE : MU_PLAY; }); }
 function musicHTML(u, mine){
   if (!u.id) return '';
-  if (!u.songMu && u.songSp) { const m = profMu(u); if (m && stMuPv(m)) { profMuMigrate(u); return `<div class="music mmu">${pmuHTML(m)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`; }
-    if (SPRES[u.songSp] !== null) return `<div class="music mmu"><p class="muted mulade">Musik lädt …</p></div>`; }
+  if (!profMu(u) && u.songSp && /track\//.test(u.songSp)) { const m = spOe(u.songSp);
+    if (m) return `<div class="music mmu"><div class="pmu">${m.art ? `<img class="muart" src="${esc(m.art)}" alt="">` : ''}<span><b>${esc(m.t)}</b><small>Spotify</small></span><button type="button" class="muprev2" data-act="psp-play" data-sp="${esc(u.songSp)}" aria-label="Song anhören">${PSP && PSP.url === u.songSp && PSP.playing ? MU_PAUSE : MU_PLAY}</button></div>${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
+    if (SPOE[u.songSp] !== null) return `<div class="music mmu"><p class="muted mulade">Musik lädt …</p></div>`; }
   if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(u.songMu)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
   const sp = u.songSp && embedOf(u.songSp);
   if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
@@ -8012,6 +8037,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (a === 'nt-go' && b.dataset.v === 'story') { const sid = b.dataset.id, items = myStories(), i = items.findIndex(x => x.id === sid); if (i < 0) return toast('Diese Story ist schon abgelaufen.'); stAuUnlock(); STV = {list:[{uid:S.me, items}], ui:0, ii:i, cOpen:true}; storyPaint(); stHold(true); return; }
+  if (a === 'nt-go' && b.dataset.v === 'opost' && /^helper-/.test(b.dataset.id || '')) { go('home'); return; } // Antwort unter einem Helfer-Beitrag: der steht im Salon
   if (a === 'nt-go') { const v = b.dataset.v; if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') go('profile', id);
@@ -8128,6 +8154,8 @@ document.addEventListener('click', async e => {
   else if (a === 'st-songx') { if (!stNew) return; stNew.song = ''; stNew.mu = null; stNew.muSel = false; stNew.tool = null; stAuStop(); storyPaint(); }
   else if (a === 'mu-chip') { const inp = document.getElementById(b.dataset.for); if (inp) { inp.value = b.dataset.q; inp.dispatchEvent(new Event('input', {bubbles:true})); } }
   else if (a === 'mu-prev') { const r = STMRES[+b.dataset.i]; if (!r) return; if (stAuSrc === stMuPv(r) && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay(r, true); } muMarkPrev(); }
+  else if (a === 'psp-play') { pspToggle(b.dataset.sp); }
+  else if (a === 'phmu-play') { const pv = stMuPv({pv:b.dataset.pv}); if (!pv) return; if (stAuSrc === pv && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay({pv, s:0}, stAuSrc !== pv || stAu.ended, false); } muMarkPrev(); }
   else if (a === 'pmu-play') { const pv = stMuPv({pv:b.dataset.pv}), win = b.dataset.s !== ''; if (!pv) return; if (stAuSrc === pv && !stAu.paused) { stAu.pause(); if (V.name === 'profile') songOff = V.arg || S.me; } else { stAu.loop = win; stMute = false; stAuPlay({pv, s:+b.dataset.s || 0}, stAuSrc !== pv || stAu.ended, win); } muMarkPrev(); }
   else if (a === 'pmu-open') { PMUP = !PMUP; paintCompose(); if (PMUP) document.getElementById('pmq')?.focus(); }
   else if (a === 'pmu-pick') { const r = STMRES[+b.dataset.i]; if (!r) return; PMU = {...r}; PMUP = false; PAUDIO = null; stAuStop(); paintCompose(); }
