@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ade790bea45b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f6d1057f6954';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1053,6 +1053,7 @@ footer.foot .lnk{color:var(--muted)}
 .stfcur{font:15px var(--f-ital);color:#eeedf2;text-shadow:0 1px 4px #000}
 .stme{border-radius:2px;background:#0a0a0b;border:1px solid #3b3b3f;font:16px var(--f-display);letter-spacing:.04em;padding:5px 14px 5px 5px}
 .stme .cameo{border-radius:2px}
+.stmet{display:grid;text-align:left;line-height:1.15}.stmet small{font:400 11px Inter,-apple-system,Arial,sans-serif;letter-spacing:0;opacity:.7;margin-top:2px}
 .starrow{width:auto;height:44px;border-radius:2px;padding:0 16px 0 8px;display:flex;align-items:center;gap:6px;background:#eeedf2;color:#0a0a0b;font:17px var(--f-display);letter-spacing:.05em}
 .starrow .stmoth{width:40px;height:24px}.starrow .stmoth{--fg:#0a0a0b;--bg:#eeedf2}
 .starrow[disabled]{opacity:.7}
@@ -1382,6 +1383,16 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .stshi .lheart{width:20px;height:20px;color:#e0303a;flex:none}
 /* Interaktive Story-Sticker und Aktivitäten (Inaya, 2026-10-12) */
 .stbox.view .stnav{z-index:1}
+@media (min-width:761px){ /* Freunde-Karten am PC: gleiche Höhe, Text bleibt in der Karte (Inaya, 2026-10-12) */
+.zgrid{align-items:stretch}
+.zgrid>*{min-width:0;height:100%}
+.zgrid .zcard{height:100%;box-sizing:border-box;grid-template-rows:auto 1fr;align-content:stretch;min-width:0}
+.zcard>div:last-child{display:flex;flex-direction:column;align-items:center;min-width:0;width:100%}
+.zcard .phandle,.zcard .pname{overflow-wrap:anywhere;max-width:100%}
+.zcard .onl{display:block;margin:4px 0 0;white-space:normal;text-align:center;max-width:100%}.zcard .onl>*{display:inline-block;vertical-align:middle;margin-right:6px}
+.zcard .btn{margin-top:auto}
+.zcard .phl{margin-bottom:12px}
+}
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
 .pbar .shbtn{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;padding:0;color:inherit;cursor:pointer;margin-left:auto}
@@ -5951,6 +5962,9 @@ function storyBar(){
   const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' + (STUP ? ' upl' : '') : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${nameFont(u)}>${esc(label)}</small></button>`;
   return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
 }
+// Sichtbarkeit der neuen Story: letzte Wahl merken, klein unter „Deine Story“ anzeigen (Inaya, 2026-10-12)
+const stAudV = () => { const v = stNew?.audOk ? (stNew.cf ? 'cf' : stNew.pub ? '1' : '0') : (S.stAud || (S.stPub ? '1' : '0')); return v === 'cf' && !stSetG().cf.length ? '0' : v; };
+const stAudL = () => ({'1':'Öffentlich', '0':'Nur Freunde', cf:'Enge Freunde'})[stAudV()];
 function storyThumb(d){ return new Promise(ok => { const img = new Image(); img.onerror = () => ok(''); img.onload = () => { const c = document.createElement('canvas'); c.width = 108; c.height = 192; c.getContext('2d').drawImage(img, 0, 0, 108, 192); ok(c.toDataURL('image/jpeg', .6)); }; img.src = d; }); }
 function storyImg(uid, id, local, thumb){
   if (local) return local; if (!social) return thumb || ''; const k = uid + '/' + id;
@@ -6733,7 +6747,7 @@ function stEditorHTML(){
     ${n.tool === 'bg' && !n.tb && !e ? stMBgPanel(n) : ''}${n.tool === 'stk' && !e ? stStkPanel() : ''}
     ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${S.stPub ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${S.stPub ? ' ghost' : ''}" data-act="st-aud" data-v="0">Nur Freunde</button></span>${stSetG().cf.length ? `<button class="btn ghost" data-act="st-aud" data-v="cf">Enge Freunde (${stSetG().cf.length})</button>` : '<small class="note">Enge Freunde legst du in deiner Story unter „Mehr“ → „Story-Einstellungen“ fest.</small>'}<button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class=\"cameo\">${headPic(me(), '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
+  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${stAudV() === '1' ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${stAudV() === '0' ? '' : ' ghost'}" data-act="st-aud" data-v="0">Nur Freunde</button></span>${stSetG().cf.length ? `<button class="btn${stAudV() === 'cf' ? '' : ' ghost'}" data-act="st-aud" data-v="cf">Enge Freunde (${stSetG().cf.length})</button>` : ''}<button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-audopen" aria-label="Deine Story, sichtbar für ${stAudL()}, ändern"><span class=\"cameo\">${headPic(me(), '', true)}</span><span class="stmet">Deine Story${social ? `<small>Sichtbar für: ${stAudL()}</small>` : ''}</span></button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
 function stVV(){ // X und Fertig bleiben oben in der Ecke, die Werkzeugleiste sitzt direkt über der Tastatur (Inaya, 2026-10-11)
   const fr = document.getElementById('stfr'), ed = fr?.querySelector('.stedov'); if (!ed) return;
@@ -9389,13 +9403,14 @@ document.addEventListener('click', async e => {
   else if (a === 'st-tback') { const n = stNew; if (!n || n.edit == null) return; const x = n.texts[n.edit];
     if (n.editOld) n.texts[n.edit] = n.editOld; else n.texts.splice(n.edit, 1); n.edit = null; n.editOld = null;
     if (n.tb && !n.texts.length) { stNew = null; stCreate(); return; } storyPaint(); }
-  else if (a === 'st-share') { if (stNew && social && !stNew.audOk) { stNew.askAud = true; storyPaint(); } else stShare(); }
+  else if (a === 'st-share') { if (stNew && social && !stNew.audOk) { const v = stAudV(); stNew.cf = v === 'cf'; stNew.pub = v === '1'; stNew.audOk = true; } stShare(); }
+  else if (a === 'st-audopen') { if (stNew && social) { stNew.askAud = true; storyPaint(); } }
   else if (a === 'stc-del') { try { await social.db.doc('chats/sc_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch { toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'st-like') { const uid = b.dataset.u, sid = b.dataset.id, me_ = social?.uid; if (!me_) return; const l = stLk(uid, sid), on = l.by.has(me_), ref = social.db.doc('chats/sl_' + uid + '_' + sid + '/m/' + me_);
     if (on) l.by.delete(me_); else l.by.add(me_); stLkPaint(uid, sid); if (!on) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
     try { if (on) await ref.delete(); else await ref.set({kind:'like', by:me_, ts:Date.now()}); } catch { if (on) l.by.add(me_); else l.by.delete(me_); stLkPaint(uid, sid); toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'st-likes') { const l = stLk(b.dataset.u, b.dataset.id); if (!l.by.size) return toast('Noch keine Likes.'); toast('Gefällt ' + [...l.by].map(id => PROF[id]?.name || 'Jemand').join(', ')); [...l.by].filter(id => !PROF[id]).forEach(id => loadProf(id)); }
-  else if (a === 'st-aud') { if (!stNew) return; stNew.cf = b.dataset.v === 'cf'; stNew.pub = b.dataset.v === '1'; stNew.audOk = true; stNew.askAud = false; S.stPub = stNew.pub ? 1 : 0; save(); stShare(); }
+  else if (a === 'st-aud') { if (!stNew) return; stNew.cf = b.dataset.v === 'cf'; stNew.pub = b.dataset.v === '1'; stNew.audOk = true; stNew.askAud = false; S.stPub = stNew.pub ? 1 : 0; S.stAud = b.dataset.v; save(); storyPaint(); }
   else if (a === 'st-audx') { if (stNew) { stNew.askAud = false; storyPaint(); } }
   else if (a === 'st-prof' && e.target.closest?.('.sthmu') && stSp?.c) { try { stSp.c.togglePlay(); } catch {} } // Tippen auf den Song: Spotify-Ton an/aus
   else if (a.startsWith('st-m-') || a.startsWith('stsh-') || a.startsWith('stset-') || ['st-views','st-vote','st-actt','st-actgo','st-actnew','st-men','st-send','st-more','st-menadd','st-menx','st-sendsel','st-sendgo','st-hladd','hl-rm','hl-open','st-opensh','stlp-x','stlp-view','stlp-new'].includes(a)) stAct(a, b);
