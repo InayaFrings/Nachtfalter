@@ -1336,6 +1336,11 @@ body.pcropen{overflow:hidden}
 .pcrgrid3{position:absolute;inset:0;pointer-events:none;opacity:.3;background:linear-gradient(90deg,transparent calc(33.33% - .5px),#fff calc(33.33% - .5px) calc(33.33% + .5px),transparent 0,transparent calc(66.66% - .5px),#fff calc(66.66% - .5px) calc(66.66% + .5px),transparent 0),linear-gradient(transparent calc(33.33% - .5px),#fff calc(33.33% - .5px) calc(33.33% + .5px),transparent 0,transparent calc(66.66% - .5px),#fff calc(66.66% - .5px) calc(66.66% + .5px),transparent 0)}
 .pcrnav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:0;background:#000b;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;z-index:2}.pcrnav.l{left:8px}.pcrnav.r{right:8px}.pcrnav:disabled{opacity:.25}
 .pcrdots{position:absolute;bottom:14px;left:0;right:0;display:flex;gap:5px;justify-content:center;pointer-events:none}.pcrdots i{width:6px;height:6px;border-radius:50%;background:#fff6}.pcrdots i.on{background:#fff}
+.pcrbody{grid-auto-rows:max-content}#pcr-z{accent-color:#eeedf2}.pcrgrid3{display:none}.pcrframe.drag .pcrgrid3{display:block}.stframe.vtr0{cursor:default}
+.pcrbar{display:flex;gap:8px;flex-wrap:wrap}.pcrtool{flex:1 1 0;min-width:96px;white-space:nowrap;min-height:44px;display:flex;align-items:center;justify-content:center;gap:7px;padding:6px 10px;border:1px solid #ffffff40;background:none;color:#eeedf2;font:15px var(--f-body);cursor:pointer}.pcrtool.on{background:#fff;color:#0b0b0c;border-color:#fff}.pcrtool:disabled{opacity:.35;cursor:default}.pcrtool svg{width:19px;height:19px;flex:none}
+.pcrmu{display:flex;align-items:center;gap:8px}.pcrmu .pmu{flex:1;min-width:0}.pcrpan{display:grid;gap:8px;border:1px solid #2a2a2e;padding:10px;background:#111113}.pcrpan .stmres{max-height:34vh;overflow-y:auto}.pmush{display:flex;justify-content:space-between;align-items:center}
+.pcrframe.tagm{cursor:crosshair}.pcrframe .ptagb{z-index:3;pointer-events:auto}.pcrtp{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #0008;pointer-events:none;z-index:3}
+.pcrframe .ptagi{z-index:2}.pgcell.ptagwrap{cursor:pointer}
 .pcrhint{margin:0;text-align:center;font:italic 14px var(--f-ital);color:#8d8d96}
 .pcrtools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pcrars{display:flex;gap:6px}.pcrars button{min-height:38px;padding:4px 10px;border:1px solid #ffffff40;background:none;color:#ddd;font:15px var(--f-body);cursor:pointer}.pcrars [aria-pressed=true]{background:#fff;color:#0b0b0c;border-color:#fff}
 #pcr-z{flex:1;min-width:120px}
@@ -5982,13 +5987,13 @@ function stCamHTML(){
     <div class="stptiles"><label class="stpwide"><input type="file" id="st-file" accept="image/*" hidden>${NFI.gal}<span>Foto hochladen</span></label><label class="stpwide"><input type="file" id="st-vfile" accept="video/*" hidden>${NFI.vid}<span>Video hochladen</span></label>${camT}<button data-act="stc-text">${NFI.aa}<span>Nur Text</span></button></div>
     ${ph.length ? `<div class="stprow"><b>Aus deinem Salon</b></div><div class="stpgrid">${ph.map(p => `<button class="stpph" data-act="stc-pick" data-id="${esc(p.id)}" aria-label="Dieses Foto nehmen"><img src="${p.img}" alt="" draggable="false"></button>`).join('')}</div>` : ''}
   </div></div>`; }
-  if (c.mode === 'vtrim') return `<div class="stbox edit"><div class="stframe stcrop" id="stcr">
-    <div class="stcbg" id="stcbg" style="${stcBgStyle(c)}" aria-hidden="true"></div><video id="stcimg" src="${c.url}" muted playsinline autoplay loop preload="auto"></video><div class="stgridl" aria-hidden="true"></div>
+  if (c.mode === 'vtrim') return `<div class="stbox edit"><div class="stframe stcrop vtr0" id="stcr">
+    <video id="stcimg" src="${c.url}" muted playsinline autoplay loop preload="auto"></video>
     <div class="sttop"><button class="stic" data-act="stc-back" aria-label="Zurück">${STC_ICO.x}</button><span class="sp"></span><span class="stchint">Video kürzen</span></div>
-    <input class="stzoom" id="stc-zoom" type="range" min="1" max="4" step=".01" value="${c.zoom}" aria-label="Zoom" hidden>
+    <input id="stc-zoom" type="hidden" value="1">
     <div class="stvtrim"><p id="stv-note" hidden>Dein Video ist länger als 30 Sekunden. Zieh die Balken auf den Teil, der in deine Story soll.</p>
       <div class="vtr"><button type="button" class="vtrplay" data-act="stv-play" aria-label="Abspielen mit Ton">${NFI.play || '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>'}</button>
-        <div class="vtrs" id="stv-strip" role="group" aria-label="Video zuschneiden"><div class="vtrf" id="stv-frames"></div><i class="vtrdim l" id="stv-dl"></i><i class="vtrdim r" id="stv-dr"></i>
+        <div class="vtrs" id="stv-strip" role="group" aria-label="Videolänge wählen"><div class="vtrf" id="stv-frames"></div><i class="vtrdim l" id="stv-dl"></i><i class="vtrdim r" id="stv-dr"></i>
           <div class="vtrwin" id="stv-win"><b class="vtrh l" data-h="l" aria-label="Anfang ziehen">‹</b><b class="vtrh r" data-h="r" aria-label="Ende ziehen">›</b></div><i class="vtrph" id="stv-ph"></i></div></div>
       <b id="stv-lbl">Video wird geladen …</b>
       <input type="range" id="stv-start" min="0" max="0" step=".1" value="0" hidden><input type="range" id="stv-len" min="1" max="${ST_VMAX}" step=".5" value="${ST_VMAX}" hidden></div>
@@ -6340,6 +6345,7 @@ function composeAtt(){
 }
 document.addEventListener('input', e => {
   if (e.target.id === 'ptext') { const sg = document.getElementById('pmsug'); if (!sg) return; const q = social ? mentionQ(e.target.value, e.target.selectionEnd) : null; sg.hidden = q == null; if (q != null) sg.innerHTML = mentionList(mentionFind(q), 'pmention', q); sg.hidden = !q; }
+  else if (e.target.id === 'pcrtq') { const r = document.getElementById('pcrtres'), it = PCR?.items[PCR.cur]; if (r) { const q = e.target.value.replace(/^@/, '').trim(); r.innerHTML = mentionList(mentionFind(q).filter(u => !(it?.tg || []).some(t => t.id === u.id)), 'pcr-tag-add', q); } }
   else if (e.target.id === 'ptagq') { const r = document.getElementById('ptagres'); if (r) { const q = e.target.value.replace(/^@/, '').trim(); r.innerHTML = mentionList(mentionFind(q).filter(u => !PTAGS.some(t => t.id === u.id)), 'ptag-add', q); } }
 });
 document.addEventListener('mousedown', e => { if (e.target.closest?.('#pmsug,#stmsug')) e.preventDefault(); });
@@ -6369,6 +6375,11 @@ function composeHTML(){
 let PCR = null;
 const PCR_MAX = 10, PCR_AR = [['45', 'Hochformat', 4 / 5], ['11', 'Quadrat', 1], ['169', 'Querformat', 16 / 9]];
 const pcrR = k => (PCR_AR.find(x => x[0] === k) || PCR_AR[0])[2];
+// kleinster Zoom = ganzes Foto passt in den Rahmen (Inaya, 2026-10-12: „das vollständige Foto anzeigen lassen“)
+const pcrZmin = (it, R) => Math.min(1, (+it.a || 1) / R, R / (+it.a || 1));
+function pcrAuto(it){ // erstes Foto bestimmt das Format; schneidet das Füllen zu viel weg, zuerst ganz zeigen
+  if (!PCR.arSet && PCR.items[0] === it) PCR.ar = PCR_AR.reduce((b, x) => Math.abs(Math.log(it.a / x[2])) < Math.abs(Math.log(it.a / b[2])) ? x : b)[0];
+  const m = pcrZmin(it, pcrR(PCR.ar)); if (m < .66) { it.z = m; it.f = 1; } }
 // Ausschnitt: Bild füllt den Rahmen (cover), z = Zoom, x/y = wohin geschoben (0–100 %), wie object-position
 function galBox(it, R){ const ia = +it.a || 1, w = 100 * (+it.z || 1) * Math.max(1, ia / R), h = 100 * (+it.z || 1) * Math.max(1, R / ia);
   return {w, h, l:(100 - w) * (it.x ?? 50) / 100, t:(100 - h) * (it.y ?? 50) / 100}; }
@@ -6381,9 +6392,9 @@ async function pcrAddFiles(files){
   for (const f of list) {
     const vid = /^video\//.test(f.type) || /\.(mov|mp4|m4v|webm|3gp)$/i.test(f.name || '');
     if (vid && !social) { toast('Videos posten geht, sobald du angemeldet bist.'); continue; }
-    if (!vid) { try { const d = await resizeImage(f, 1600, .9), im = await stLoadImg(d); PCR.items.push({t:'i', src:d, a:im.naturalWidth / im.naturalHeight, x:50, y:50, z:1}); } catch { toast('Ein Bild ließ sich nicht lesen.'); } pcrPaint(); continue; }
+    if (!vid) { try { const d = await resizeImage(f, 1600, .9), im = await stLoadImg(d); const it = {t:'i', src:d, a:im.naturalWidth / im.naturalHeight, x:50, y:50, z:1, tg:[]}; PCR.items.push(it); pcrAuto(it); } catch { toast('Ein Bild ließ sich nicht lesen.'); } pcrPaint(); continue; }
     const it = {t:'v', file:f, url:URL.createObjectURL(f), a:9 / 16, dur:0, s:0, l:VID_SEC, x:50, y:50, z:1, poster:''}; PCR.items.push(it); pcrPaint();
-    try { await pcrVidMeta(it); } catch { PCR.items = PCR.items.filter(x => x !== it); URL.revokeObjectURL(it.url); toast('Ein Video ließ sich nicht lesen. Versuch ein MP4 oder MOV.'); }
+    try { await pcrVidMeta(it); pcrAuto(it); } catch { PCR.items = PCR.items.filter(x => x !== it); URL.revokeObjectURL(it.url); toast('Ein Video ließ sich nicht lesen. Versuch ein MP4 oder MOV.'); }
     pcrPaint();
   }
 }
@@ -6408,15 +6419,26 @@ function pcrHTML(){
   const med = it.t === 'v' ? `<video id="pcrmed" src="${it.url}" playsinline muted autoplay loop class="stvid" data-s="${+it.s || 0}" data-l="${+it.l || 0}" style="${galPos(it, R)}"></video>` : `<img id="pcrmed" src="${it.src}" alt="" draggable="false" style="${galPos(it, R)}">`;
   const trim = it.t === 'v' ? `<div class="pcrtrim"><label><span>Anfang <b id="pcr-s-l">${stTime(it.s)}</b></span><input type="range" id="pcr-s" min="0" max="${Math.max(0, it.dur - it.l).toFixed(1)}" step=".1" value="${it.s}"${it.dur > it.l + .05 ? '' : ' disabled'}></label><label><span>Länge <b id="pcr-l-l">${Math.round(it.l)} s</b></span><input type="range" id="pcr-l" min="1" max="${Math.min(VID_SEC, it.dur || VID_SEC).toFixed(1)}" step=".5" value="${it.l}"></label>${it.dur > VID_SEC + .5 ? `<small class="note">Dein Video ist länger als ${VID_SEC} Sekunden. Wähl den Teil, der in den Beitrag soll.</small>` : ''}</div>` : '';
   return `<div class="pcrbox">${head}<div class="pcrbody pcred">
-    <div class="pcrstage"><div class="pcrframe" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrgrid3" aria-hidden="true"></i></div>
+    <div class="pcrstage"><div class="pcrframe${P.tag ? ' tagm' : ''}" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrgrid3" aria-hidden="true"></i>${it.t === 'i' ? (it.tg || []).map((t, j) => `<button type="button" class="ptagb pcrtg" style="left:${t.x}%;top:${t.y}%" data-act="pcr-tag-x" data-j="${j}" aria-label="${esc(t.n)} entfernen"${P.tag ? '' : ' hidden'}>${esc(t.n)} <span aria-hidden="true">✕</span></button>`).join('') : ''}${P.tp ? `<i class="pcrtp" style="left:${P.tp.x}%;top:${P.tp.y}%" aria-hidden="true"></i>` : ''}${it.t === 'i' && it.tg?.length && !P.tag ? `<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>
       ${n > 1 ? `<button type="button" class="pcrnav l" data-act="pcr-go" data-v="-1" aria-label="Vorheriges"${P.cur ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" class="pcrnav r" data-act="pcr-go" data-v="1" aria-label="Nächstes"${P.cur < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button><span class="pcrdots" aria-hidden="true">${P.items.map((_, i) => `<i${i === P.cur ? ' class="on"' : ''}></i>`).join('')}</span>` : ''}</div>
-    <p class="pcrhint">Mit einem Finger verschieben, mit zwei Fingern größer und kleiner</p>
-    <div class="pcrtools"><span class="pcrars" role="group" aria-label="Format für alle">${PCR_AR.map(([k, l]) => `<button type="button" data-act="pcr-ar" data-v="${k}" aria-pressed="${P.ar === k}">${l}</button>`).join('')}</span><input type="range" id="pcr-z" min="1" max="4" step=".01" value="${it.z}" aria-label="Größe"></div>
+    ${pcrBar(it)}
+    <div class="pcrtools"><span class="pcrars" role="group" aria-label="Format für alle">${PCR_AR.map(([k, l]) => `<button type="button" data-act="pcr-ar" data-v="${k}" aria-pressed="${P.ar === k}">${l}</button>`).join('')}</span><input type="range" id="pcr-z" min="${pcrZmin(it, R).toFixed(3)}" max="4" step=".01" value="${it.z}" aria-label="Größe"></div>
     ${trim}
     <div class="pcrstrip">${P.items.map((x, i) => `<button type="button" class="pcrsth${i === P.cur ? ' on' : ''}" data-act="pcr-go" data-i="${i}" aria-label="${x.t === 'v' ? 'Video' : 'Foto'} ${i + 1}">${pcrThumb(x)}</button>`).join('')}${n < PCR_MAX ? add : ''}</div>
     <div class="row pcrrow"><button type="button" class="lnk" data-act="pcr-del" data-i="${P.cur}">Dieses ${it.t === 'v' ? 'Video' : 'Foto'} entfernen</button><span class="sp"></span>${n > 1 ? `<button type="button" class="lnk" data-act="pcr-mv" data-i="${P.cur}" data-v="-1"${P.cur ? '' : ' disabled'}>‹ nach vorn</button><button type="button" class="lnk" data-act="pcr-mv" data-i="${P.cur}" data-v="1"${P.cur < n - 1 ? '' : ' disabled'}>nach hinten ›</button>` : ''}</div>
   </div></div>`;
 }
+const PCR_TI = {full:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>', fill:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>'};
+function pcrBar(it){ // Werkzeuge direkt unter der Vorschau, wie bei Insta
+  const P = PCR, full = it.z <= pcrZmin(it, pcrR(P.ar)) + .005, one = Math.abs(pcrZmin(it, pcrR(P.ar)) - 1) < .01;
+  const tool = (act, ico, l, on, dis) => `<button type="button" class="pcrtool${on ? ' on' : ''}" data-act="${act}"${dis ? ' disabled' : ''} aria-pressed="${!!on}">${ico}<span>${l}</span></button>`;
+  let h = `<div class="pcrbar">${tool('pcr-full', full && !one ? PCR_TI.fill : PCR_TI.full, full && !one ? 'Füllen' : 'Ganzes Bild', false, one)}${it.t === 'i' ? tool('pcr-tag', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.tag}</svg>`, it.tg?.length ? `Markiert ${it.tg.length}` : 'Markieren', P.tag) : ''}${tool('pcr-mu', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>`, PMU ? 'Musik ändern' : 'Musik', P.mu)}</div>`;
+  if (PMU && !P.mu) h += `<div class="pcrmu">${pmuHTML(PMU)}<button type="button" class="pcric" data-act="pcr-mu-x" aria-label="Musik entfernen">${PCR_ICO.x}</button></div>`;
+  if (P.mu) h += `<div class="pcrpan pmus"><div class="pmush"><b>Musik zum Beitrag</b><button type="button" class="lnk" data-act="pcr-mu">Schließen</button></div>${muSearchHTML('pmq', '')}<div class="stmres" id="pmres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div></div>`;
+  if (P.tag && it.t === 'i') h += P.tp ? `<div class="pcrpan ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="pcrtq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="pcrtres"></div><button type="button" class="lnk" data-act="pcr-tp-x">Abbrechen</button></div>`
+    : `<p class="pcrhint">Tipp aufs Foto, wo die Person ist. Auf einen Namen tippen entfernt ihn.</p>`;
+  else if (!P.mu) h += `<p class="pcrhint">Mit einem Finger verschieben, mit zwei Fingern größer und kleiner</p>`;
+  return h; }
 function pcrPaint(){
   let ov = document.getElementById('pcrov');
   if (!PCR || !PCR.open) { ov?.remove(); document.body.classList.remove('pcropen'); return; }
@@ -6427,21 +6449,28 @@ function pcrPaint(){
 function pcrWire(){
   const fr = document.getElementById('pcrfr'), el = document.getElementById('pcrmed'), it = PCR.items[PCR.cur], R = pcrR(PCR.ar); if (!fr || !el || !it) return;
   const put = () => { const b = galBox(it, R); Object.assign(el.style, {left:b.l + '%', top:b.t + '%', width:b.w + '%', height:b.h + '%'}); const z = document.getElementById('pcr-z'); if (z) z.value = it.z; };
-  const pts = new Map(); let base = null;
+  const pts = new Map(); let base = null, t0 = null; const zmin = pcrZmin(it, R), setF = () => { it.f = it.z <= zmin + .005 ? 1 : 0; };
+  if (PCR.tag && it.t === 'i') { // Markieren: tippen setzt den Punkt, das Bild bleibt wie es ist
+    fr.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; t0 = {x:e.clientX, y:e.clientY}; });
+    fr.addEventListener('pointerup', e => { if (!t0 || Math.hypot(e.clientX - t0.x, e.clientY - t0.y) > 10) { t0 = null; return; } t0 = null; const r = fr.getBoundingClientRect();
+      PCR.tp = {x:Math.round(Math.max(3, Math.min(97, (e.clientX - r.left) / r.width * 100))), y:Math.round(Math.max(3, Math.min(90, (e.clientY - r.top) / r.height * 100)))}; pcrPaint(); setTimeout(() => document.getElementById('pcrtq')?.focus(), 30); });
+    return; }
   const snap = () => { const v = [...pts.values()]; base = {x:it.x, y:it.y, z:it.z, p:v.length > 1 ? {x:(v[0].x + v[1].x) / 2, y:(v[0].y + v[1].y) / 2, d:Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y) || 1} : {...v[0], d:1}}; };
-  fr.addEventListener('pointerdown', e => { pts.set(e.pointerId, {x:e.clientX, y:e.clientY}); try { fr.setPointerCapture(e.pointerId); } catch {} snap(); e.preventDefault(); });
+  fr.addEventListener('pointerdown', e => { pts.set(e.pointerId, {x:e.clientX, y:e.clientY}); try { fr.setPointerCapture(e.pointerId); } catch {} snap(); fr.classList.add('drag'); e.preventDefault(); });
   fr.addEventListener('pointermove', e => { if (!pts.has(e.pointerId) || !base) return; pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
     const v = [...pts.values()], q = v.length > 1 ? {x:(v[0].x + v[1].x) / 2, y:(v[0].y + v[1].y) / 2, d:Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y) || 1} : v[0];
-    if (v.length > 1) it.z = Math.min(4, Math.max(1, base.z * q.d / base.p.d));
+    if (v.length > 1) { it.z = Math.min(4, Math.max(zmin, base.z * q.d / base.p.d)); setF(); }
     const r = fr.getBoundingClientRect(), b = galBox({...it, x:50, y:50}, R), ow = r.width * (b.w - 100) / 100, oh = r.height * (b.h - 100) / 100;
     it.x = ow > .5 ? Math.min(100, Math.max(0, base.x - (q.x - base.p.x) / ow * 100)) : 50; it.y = oh > .5 ? Math.min(100, Math.max(0, base.y - (q.y - base.p.y) / oh * 100)) : 50; put(); });
-  const end = e => { pts.delete(e.pointerId); if (pts.size) snap(); else base = null; }; fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
-  fr.addEventListener('wheel', e => { e.preventDefault(); it.z = Math.min(4, Math.max(1, it.z * (e.deltaY < 0 ? 1.06 : 1 / 1.06))); put(); }, {passive:false});
-  document.getElementById('pcr-z')?.addEventListener('input', e => { it.z = +e.target.value; put(); });
+  const end = e => { pts.delete(e.pointerId); if (pts.size) snap(); else { base = null; fr.classList.remove('drag'); pcrBarSync(); } }; fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
+  fr.addEventListener('wheel', e => { e.preventDefault(); it.z = Math.min(4, Math.max(zmin, it.z * (e.deltaY < 0 ? 1.06 : 1 / 1.06))); setF(); put(); clearTimeout(fr._w); fr._w = setTimeout(pcrBarSync, 250); }, {passive:false});
+  document.getElementById('pcr-z')?.addEventListener('input', e => { it.z = +e.target.value; setF(); put(); });
+  document.getElementById('pcr-z')?.addEventListener('change', pcrBarSync);
   // Wischen auf dem Bild wechselt nicht (das verschiebt den Ausschnitt), dafür Pfeile, Punkte und Leiste unten
   if (it.t === 'v') { const s0 = document.getElementById('pcr-s'), l0 = document.getElementById('pcr-l'), sync = () => { it.l = Math.min(it.l, it.dur || it.l); it.s = Math.min(it.s, Math.max(0, it.dur - it.l)); s0.max = Math.max(0, it.dur - it.l).toFixed(1); s0.value = it.s; s0.disabled = !(it.dur > it.l + .05); document.getElementById('pcr-s-l').textContent = stTime(it.s); document.getElementById('pcr-l-l').textContent = Math.round(it.l) + ' s'; el.dataset.s = it.s; el.dataset.l = it.l; delete el.dataset.done; try { el.currentTime = it.s; } catch {} el.play().catch(() => {}); };
     s0.addEventListener('input', () => { it.s = +s0.value; sync(); }); l0.addEventListener('input', () => { it.l = +l0.value; sync(); }); }
 }
+function pcrBarSync(){ const it = PCR?.items[PCR.cur], b = document.querySelector('.pcrbar'); if (!it || !b) return; const t = document.createElement('div'); t.innerHTML = pcrBar(it); b.replaceWith(t.firstElementChild); }
 function pcrOpen(step){ if (!PCR) return; PCR.open = true; if (step) PCR.step = step; pcrPaint(); }
 function pcrClose(){ if (PCR) PCR.open = false; pcrPaint(); paintCompose(); }
 function pcrClear(){ if (PCR) PCR.items.forEach(x => x.url && URL.revokeObjectURL(x.url)); PCR = null; pcrPaint(); }
@@ -6457,8 +6486,8 @@ async function galBuild(p, onStep){ // lädt alles hoch, gibt die Liste für den
   const R = pcrR(PCR.ar), out = [], n = PCR.items.length;
   for (let i = 0; i < n; i++) { const it = PCR.items[i]; onStep?.(i, n);
     if (it.t === 'i') { const d = await galBake(it, R), k = p.id + '_' + i;
-      if (social) { await social.db.doc('chats/pimg_' + social.uid + '/m/' + k).set({img:d, by:social.uid, ts:p.ts}); PIMG[social.uid + '/' + k] = d; PIMG[S.me + '/' + k] = d; out.push({t:'i', k}); }
-      else out.push({t:'i', img:d}); continue; }
+      if (social) { await social.db.doc('chats/pimg_' + social.uid + '/m/' + k).set({img:d, by:social.uid, ts:p.ts}); PIMG[social.uid + '/' + k] = d; PIMG[S.me + '/' + k] = d; out.push({t:'i', k, ...(it.tg?.length ? {tg:ptagsClean(it.tg)} : {})}); }
+      else out.push({t:'i', img:d, ...(it.tg?.length ? {tg:ptagsClean(it.tg)} : {})}); continue; }
     const v = await galVidBlob(it, q => onStep?.(i + q, n)), clip = await uploadPostVideo({...v, poster:it.poster}, p.id, null, 'pv_' + p.id + '_' + i);
     out.push({t:'v', clip:{n:clip.n, v:clip.v, type:clip.type, poster:it.poster}, s:Math.round(v.s * 10) / 10, l:Math.round(v.l * 10) / 10, a:Math.round(it.a * 1000) / 1000, x:Math.round(it.x), y:Math.round(it.y), z:Math.round(it.z * 100) / 100}); }
   return out;
@@ -6467,7 +6496,7 @@ async function galBuild(p, onStep){ // lädt alles hoch, gibt die Liste für den
 function galHTML(p){
   const R = pcrR(p.gar), o = postOwner(p) || p.author, n = p.gal.length;
   const cell = (x, i) => x.t === 'v' ? `<button type="button" class="pgcell vclip" data-act="gclip" data-u="${esc(o)}" data-id="${esc(p.id)}" data-i="${i}" aria-label="Video abspielen"><img src="${esc(x.clip?.poster || '')}" alt="" style="${galPos(x, R)}"><span class="play" aria-hidden="true">▶</span></button>`
-    : `<div class="pgcell"><img class="photo" ${x.img ? `src="${esc(x.img)}"` : PIMG[o + '/' + x.k] ? `src="${PIMG[o + '/' + x.k]}"` : `data-pimg="${esc(o + '/' + x.k)}"`} alt="Bild ${i + 1} von ${n}" draggable="false"></div>`;
+    : `<div class="pgcell${x.tg?.length ? ' ptagwrap" data-act="ptag-show" role="button" tabindex="0' : ''}"><img class="photo" ${x.img ? `src="${esc(x.img)}"` : PIMG[o + '/' + x.k] ? `src="${PIMG[o + '/' + x.k]}"` : `data-pimg="${esc(o + '/' + x.k)}"`} alt="Bild ${i + 1} von ${n}" draggable="false">${x.tg?.length ? `${ptagBubbles(ptagsClean(x.tg), true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>`;
   return `<div class="pgal" style="--ar:${R}"><div class="pgtrack" data-n="${n}">${p.gal.map(cell).join('')}</div>${n > 1 ? `<span class="pgcnt" aria-hidden="true">1/${n}</span><button type="button" class="pgnav l" data-act="pg-nav" data-v="-1" aria-label="Vorheriges" hidden>${PCR_ICO.l}</button><button type="button" class="pgnav r" data-act="pg-nav" data-v="1" aria-label="Nächstes">${PCR_ICO.r}</button><span class="pgdots" aria-hidden="true">${p.gal.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span>` : ''}</div>`;
 }
 function pgSync(tr){ const g = tr.closest('.pgal'), n = +tr.dataset.n || 1, i = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth));
@@ -7008,7 +7037,7 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me && !p.arch).sort(pinSort).slice(0, 15)
-      .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k} : x) : null, gar:p.gar || ''}));
+      .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k, ...(x.tg ? {tg:x.tg} : {})} : x) : null, gar:p.gar || ''}));
     let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
@@ -8428,8 +8457,15 @@ document.addEventListener('click', async e => {
   else if (a === 'pcr-edit') { if (!PCR) return; PCR.cur = +b.dataset.i; pcrOpen(2); }
   else if (a === 'pcr-del') { if (!PCR) return; const [x] = PCR.items.splice(+b.dataset.i, 1); if (x?.url) URL.revokeObjectURL(x.url); if (!PCR.items.length) { pcrClear(); paintCompose(); return; } pcrPaint(); paintCompose(); }
   else if (a === 'pcr-mv') { if (!PCR) return; const i = +b.dataset.i, j = i + +b.dataset.v; if (j < 0 || j >= PCR.items.length) return; [PCR.items[i], PCR.items[j]] = [PCR.items[j], PCR.items[i]]; if (PCR.cur === i) PCR.cur = j; pcrPaint(); paintCompose(); }
-  else if (a === 'pcr-go') { if (!PCR) return; PCR.cur = b.dataset.i != null ? +b.dataset.i : PCR.cur + +b.dataset.v; pcrPaint(); }
-  else if (a === 'pcr-ar') { if (!PCR) return; PCR.ar = b.dataset.v; pcrPaint(); }
+  else if (a === 'pcr-go') { if (!PCR) return; PCR.tp = null; PCR.cur = b.dataset.i != null ? +b.dataset.i : PCR.cur + +b.dataset.v; pcrPaint(); }
+  else if (a === 'pcr-ar') { if (!PCR) return; PCR.ar = b.dataset.v; PCR.arSet = true; const R = pcrR(PCR.ar); PCR.items.forEach(x => { const m = pcrZmin(x, R); if (x.f || x.z < m) x.z = m; }); pcrPaint(); }
+  else if (a === 'pcr-full') { const it = PCR?.items[PCR.cur]; if (!it) return; const m = pcrZmin(it, pcrR(PCR.ar)); if (it.z <= m + .005) { it.z = 1; it.f = 0; } else { it.z = m; it.f = 1; it.x = 50; it.y = 50; } pcrPaint(); }
+  else if (a === 'pcr-tag') { if (!PCR) return; PCR.tag = !PCR.tag; PCR.mu = false; PCR.tp = null; pcrPaint(); }
+  else if (a === 'pcr-mu') { if (!PCR) return; PCR.mu = !PCR.mu; PCR.tag = false; PCR.tp = null; PMUP = false; pcrPaint(); if (PCR.mu) document.getElementById('pmq')?.focus(); }
+  else if (a === 'pcr-mu-x') { PMU = null; stAuStop(); pcrPaint(); paintCompose(); }
+  else if (a === 'pcr-tp-x') { if (PCR) PCR.tp = null; pcrPaint(); }
+  else if (a === 'pcr-tag-add') { const it = PCR?.items[PCR.cur], u = mentionPool().find(x => x.id === b.dataset.id); if (!it || !u || !PCR.tp) return; it.tg = (it.tg || []).filter(t => t.id !== u.id); it.tg.push({id:u.id, n:u.name, x:PCR.tp.x, y:PCR.tp.y}); PCR.tp = null; pcrPaint(); }
+  else if (a === 'pcr-tag-x') { const it = PCR?.items[PCR.cur]; if (!it?.tg) return; it.tg.splice(+b.dataset.j, 1); pcrPaint(); }
   else if (a === 'pg-nav') { const tr = b.closest('.pgal')?.querySelector('.pgtrack'); tr?.scrollBy({left:+b.dataset.v * tr.clientWidth, behavior:'smooth'}); }
   else if (a === 'gclip') {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === b.dataset.id && (postOwner(x) || x.author) === b.dataset.u), i = +b.dataset.i, x = p?.gal?.[i];
@@ -8533,7 +8569,7 @@ document.addEventListener('click', async e => {
   else if (a === 'phmu-play') { stAu.muted = false; const pv = stMuPv({pv:b.dataset.pv}); if (!pv) return; if (stAuSrc === pv && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay({pv, s:0}, stAuSrc !== pv || stAu.ended, false); } muMarkPrev(); }
   else if (a === 'pmu-play') { const pv = stMuPv({pv:b.dataset.pv}), win = b.dataset.s !== ''; if (!pv) return; if (stAuSrc === pv && !stAu.paused) { stAu.pause(); if (V.name === 'profile') songOff = V.arg || S.me; } else { stAu.loop = win; stMute = false; stAuPlay({pv, s:+b.dataset.s || 0}, stAuSrc !== pv || stAu.ended, win); } muMarkPrev(); }
   else if (a === 'pmu-open') { PMUP = !PMUP; paintCompose(); if (PMUP) document.getElementById('pmq')?.focus(); }
-  else if (a === 'pmu-pick') { const r = STMRES[+b.dataset.i]; if (!r) return; PMU = {...r}; PMUP = false; PAUDIO = null; stAuStop(); paintCompose(); }
+  else if (a === 'pmu-pick') { const r = STMRES[+b.dataset.i]; if (!r) return; PMU = {...r}; PMUP = false; PAUDIO = null; stAuStop(); paintCompose(); if (PCR?.open) { PCR.mu = false; pcrPaint(); } }
   else if (a === 'st-mpick') { const n = stNew, r = STMRES[+b.dataset.i]; if (!n || !r) return; n.mu = {...r, ...(stMsSp ? {sp:stMsSp.slice(0, 300)} : {})}; n.mp = n.mp || {x:50, y:78, w:72}; n.mu.s = 0; n.song = ''; n.tool = 'mutrim'; n.muSel = false; storyPaint(); stAu.loop = true; stAuPlay(n.mu, true, true); }
   else if (a === 'st-tstyle' || a === 'st-tcol' || a === 'st-tbg' || a === 'st-tout' || a === 'st-ctgt' || a === 'st-ocol') { const n = stNew; if (!n || n.edit == null) return; stTaCommit(); const x = n.texts[n.edit], v = b.dataset.v;
     if (a === 'st-tstyle') x.st = v; else if (a === 'st-tbg') x.bg = +v || 0; else if (a === 'st-ctgt') n.ctgt = v;
@@ -8839,7 +8875,9 @@ document.addEventListener('submit', async e => {
     const p = {id:'p' + Date.now().toString(36), author:S.me, type, text, ts:Date.now(), reactions:{}, comments:[]};
     if (postCrop) p.img = postCrop;
     if (PMU && !PAUDIO) p.mu = {t:PMU.t, a:PMU.a, art:PMU.art, pv:PMU.pv};
-    if (PTAGS.length) p.tags = ptagsClean(PTAGS.map(t => postCrop ? t : {id:t.id, n:t.n}));
+    { const gt = gal ? gal.items.flatMap(x => x.t === 'i' ? x.tg || [] : []) : []; // Markierungen aus der Vorschau, ein Foto mit Platz, mehrere je Bild
+      const all = [...(multi ? gt.map(t => ({id:t.id, n:t.n})) : gt), ...PTAGS.map(t => postCrop && !gal ? t : {id:t.id, n:t.n})].filter((t, i, l) => l.findIndex(y => y.id === t.id) === i);
+      if (all.length) p.tags = ptagsClean(all); }
     if (url) p.url = url;
     if (url && !ytId(url) && social) { const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Lädt Vorschau …'; } const lp = SHORT_RE.test(url) ? await resolveLink(url) : await linkPreview(url); if (lp) p.lp = lp; if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } }
     if (PAUDIO) {
