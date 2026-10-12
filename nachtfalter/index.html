@@ -6091,7 +6091,7 @@ function stEditorHTML(){
   return `<div class="stbox edit ed2"><div class="stframe sted v2${e ? ' editing' : ''}" id="stfr">
     <div class="stcv" id="stcv">${n.tb ? `<div class="sttbg" style="background-color:${esc(n.tb.c)};background-image:${stTbPat(n.tb)}"><i style="background:${esc(n.tb.c)}"></i></div>` : stMedHTML(n)}
     <div class="sttexts">${stStkHTML(n.stk, true)}${n.texts.map((x, i) => i === n.edit ? '' : `<div ${stTxtAttrs(x, i)}>${esc(x.t)}</div>`).join('')}</div></div>
-    <div class="stfname${n.hint ? ' hint' : ''}" id="stfname"${n.hint && !n.tb ? '' : ' hidden'}>${n.hint ? 'Mit zwei Fingern größer, kleiner und drehen, mit einem verschieben' : esc(fx[1])}</div>
+    <div class="stfname${n.hint ? ' hint' : ''}" id="stfname"${n.hint && !n.tb ? '' : ' hidden'}>${n.hint ? 'Mit einem Finger wischen für Filter, mit zwei Fingern verschieben, größer, kleiner und drehen' : esc(fx[1])}</div>
     ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-back" aria-label="Zurück">${ico.x}</button></div>
     <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button><button class="stic${n.tool === 'stk' ? ' on' : ''}" data-act="st-stk" aria-label="Sticker">${STK_ICO}</button>${n.vid ? `<button class="stic${n.snd ? ' on' : ''}" data-act="st-esnd" aria-label="${n.snd ? 'Ton aus' : 'Ton an'}">${n.snd ? NFI.snd : NFI.mute}</button>` : ''}<button class="stic${n.song || n.mu ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button><button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>${n.tb ? '' : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}</div>
     ${n.tb ? '' : `<button class="stfarrow l" data-act="st-fstep" data-v="-1" aria-label="Vorheriger Filter">‹</button><button class="stfarrow r" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">›</button>`}
@@ -6168,13 +6168,14 @@ function stEditWire(){
   fr.addEventListener('pointerdown', e => {
     if (e.target.closest('button,input,textarea,.stmpanel,.stmusic,.stemu,.stedov')) return;
     pts.set(e.pointerId, {x:e.clientX, y:e.clientY}); try { fr.setPointerCapture(e.pointerId); } catch {}
-    if (pts.size === 1) d = {g:tgtOf(e.target), x0:e.clientX, y0:e.clientY, moved:false}; else if (d) d.moved = true;
+    if (pts.size === 1) d = {g:tgtOf(e.target), x0:e.clientX, y0:e.clientY, moved:false}; else if (d) { d.moved = true; d.two = true; }
     base();
   });
   fr.addEventListener('pointermove', e => {
     if (!d || !pts.has(e.pointerId)) return; pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
     if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 6) d.moved = true;
     if (!d.moved || !d.g) return;
+    if (d.g.k === 'm' && pts.size < 2) return; // ein Finger auf dem Bild = wischen für Filter (Inaya, 2026-10-12); verschieben mit zwei Fingern
     const R = cvEl.getBoundingClientRect(); let v;
     if (pts.size >= 2) { const q = two(); v = {x:d.s.x + (q.x - d.p.x) / R.width * 100, y:d.s.y + (q.y - d.p.y) / R.height * 100, z:d.s.z * q.dist / d.p.dist, r:d.s.r + q.ang - d.p.ang}; }
     else v = {...d.s, x:d.s.x + (e.clientX - d.p.x) / R.width * 100, y:d.s.y + (e.clientY - d.p.y) / R.height * 100};
@@ -6189,7 +6190,7 @@ function stEditWire(){
     if (e.type === 'pointercancel') return;
     const g = dd.g;
     if (g && g.k !== 'm' && dd.over) { (g.k === 's' ? n.stk : n.texts).splice(g.i, 1); storyPaint(); return; }
-    if (dd.moved) return;
+    if (dd.moved) { const dx = e.clientX - dd.x0, dy = e.clientY - dd.y0; if (!dd.two && (!g || g.k === 'm') && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) stFStep(dx < 0 ? 1 : -1); return; }
     if (g?.k === 't') { if (!n.texts[g.i].u) { n.edit = g.i; n.editOld = {...n.texts[g.i]}; storyPaint(); } return; }
     if (g?.k === 's') { if (g.i < n.stk.length - 1) { n.stk.push(n.stk.splice(g.i, 1)[0]); storyPaint(); } return; } // antippen = nach vorn
     if (n.tool) { n.tool = null; storyPaint(); return; }
