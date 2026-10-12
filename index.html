@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4f1439621d74';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f70e4ea4325b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -432,6 +432,8 @@ body.stopen{overflow:hidden}.storyov{position:fixed;inset:0;z-index:3000;backgro
 .ptabs{display:flex;gap:22px;border-bottom:1px solid var(--p-line);flex-wrap:wrap}
 .ptabs button{background:none;border:0;border-bottom:2px solid transparent;padding:6px 0;font:400 18px var(--f-display);color:var(--p-muted)}
 .ptabs button[aria-selected="true"]{color:var(--p-fg);border-bottom-color:var(--p-fg)}
+.ptabs:has(.pti){gap:0;flex-wrap:nowrap;justify-content:space-between}.ptabs .pti{flex:1 1 0;display:grid;place-items:center;padding:10px 0 9px;cursor:pointer;opacity:.6}.ptabs .pti[aria-selected="true"]{opacity:1}
+.ptabs .pti svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.ptabs .pti[aria-selected="true"] svg{stroke-width:2.2}
 .ppanel{display:grid;gap:14px}
 .tiles{columns:2 220px;column-gap:14px}
 .themed .pfeed{margin-inline:calc(6px - var(--tp));max-width:640px}.pfeed .reacts{flex-wrap:nowrap}.pfeed .reacts button{flex:1 1 0;min-width:0;justify-content:center;padding-inline:4px}@media (min-width:761px){.themed .pfeed{margin-inline:0}}
@@ -7224,6 +7226,7 @@ function roomOpenHTML(u, own){ // „Raumchat offen“ auf dem Profil, nur solan
   if (!u.remote || !canEnter(u.id) || !onlineState(u)[0]) return '';
   return `<div class="ropen pro"><span>🕯 ${esc(u.name)} hat einen Raumchat offen (${roomKind(u.roomOpen)}).</span><button class="btn" data-act="room-visit" data-id="${esc(u.id)}">Reingehen</button></div>`;
 }
+const PTICO = {room:'<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/>', posts:'<rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/>', hl:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.3l1.4 2.9 3.2.4-2.4 2.2.6 3.2-2.8-1.6-2.8 1.6.6-3.2-2.4-2.2 3.2-.4z"/>', reposts:'<path d="M17 3.5l3.5 3.5-3.5 3.5"/><path d="M3.5 11V9.5A2.5 2.5 0 0 1 6 7h14.5"/><path d="M7 20.5L3.5 17 7 13.5"/><path d="M20.5 13v1.5A2.5 2.5 0 0 1 18 17H3.5"/>', tagged:'<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M9.5 5.5L12 3l2.5 2.5"/><circle cx="12" cy="11.2" r="2.6"/><path d="M7.5 18c.7-2.3 2.4-3.4 4.5-3.4s3.8 1.1 4.5 3.4"/>'};
 const profUser = id => S.users[id] || (PROF[id] ? remoteUser(id, PROF[id]) : null);
 function profileView(id){
   const u = profUser(id); if (!u) return homeView();
@@ -7239,7 +7242,7 @@ function profileView(id){
   </section>`;
   }
   let panel = '';
-  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['reposts','Reposts'],['tagged','Markiert'],['hl','Highlights']]; // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
+  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['hl','Highlights'],['reposts','Reposts'],['tagged','Markiert']]; // Reihenfolge und Symbole statt Text (Inaya, 2026-10-12) // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
   if (!tabs.some(([k]) => k === profTab)) profTab = tabs[0][0];
   if (profTab === 'rules') panel = `<div class="rules">${esc(u.about)}</div>`;
   if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="feed insta pfeed">${n.map(x => postHTML(x)).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
@@ -7280,7 +7283,7 @@ function profileView(id){
     ${steckHTML}
     ${profFriends(u, others)}
     <div class="ptabs" role="tablist">${tabs.map(([k,l]) =>
-      `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}">${l}</button>`).join('')}</div>
+      `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}"${PTICO[k] ? ` class="pti" aria-label="${l}" title="${l}"` : ''}>${PTICO[k] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${PTICO[k]}</svg>` : l}</button>`).join('')}</div>
     <div class="ppanel">${panel}</div>${(PROF_WALL = wallP, '')}
     ${u.helper ? '' : `<p class="note pjoined">Dabei seit ${new Date(u.joined).toLocaleDateString('de-DE')}</p>`}
   </section>`;
