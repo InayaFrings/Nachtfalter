@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d8c4044e3bf3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d8a8b768f6b6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1239,7 +1239,10 @@ html:has(body.stopen){background:#000}
 /* Song-Ausschnitt wählen (Inaya, 2026-10-11) */
 .mutrim{display:grid;gap:8px;margin-top:12px}.mutrim b{font:600 15px -apple-system,'Helvetica Neue',Arial,sans-serif}
 .mutbar{position:relative;height:46px;border-radius:6px;cursor:grab;touch-action:none;background:var(--p-panel,#26262b);background-image:repeating-linear-gradient(90deg,transparent 0 3px,color-mix(in srgb,var(--p-fg,#eeedf2) 35%,transparent) 3px 5px);background-size:100% 60%;background-position:center;background-repeat:no-repeat;border:1px solid var(--p-line,#ffffff2a)}
-.mutwin{position:absolute;top:-3px;bottom:-3px;border:3px solid var(--p-fg,#eeedf2);border-radius:7px;background:color-mix(in srgb,var(--p-fg,#eeedf2) 18%,transparent);pointer-events:none}
+.mutwin{position:absolute;top:-3px;bottom:-3px;border:3px solid var(--p-fg,#eeedf2);border-radius:7px;background:color-mix(in srgb,var(--p-fg,#eeedf2) 18%,transparent);pointer-events:none;box-sizing:border-box}
+.muth{position:absolute;top:50%;width:14px;height:30px;margin-top:-15px;border-radius:4px;background:var(--p-fg,#eeedf2);box-shadow:0 0 0 2px #0008}.muth.l{left:-9px}.muth.r{right:-9px}.muth::after{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--p-bg,#0b0b0c);opacity:.6}
+.mutph{position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 3px #000;pointer-events:none}.mutbar{margin:0 9px}.mutbar.drag{cursor:grabbing}
+.mutax{display:flex;justify-content:space-between;margin:0 9px;font:12px -apple-system,'Helvetica Neue',Arial,sans-serif;font-variant-numeric:tabular-nums;opacity:.6}.mutnote{font-size:13px;opacity:.65;line-height:1.35}
 .mutlbl{font:14px -apple-system,'Helvetica Neue',Arial,sans-serif;font-variant-numeric:tabular-nums;opacity:.75}
 .emus{display:grid;gap:8px}.mmu{display:grid;gap:6px}
 
@@ -5675,7 +5678,7 @@ let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
 stAu.addEventListener('timeupdate', () => { if (stAuWin && (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5)) { try { stAu.currentTime = stAuWin.s; } catch {} } });
 function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} }; if (stAu.readyState >= 1) go(); else stAu.addEventListener('loadedmetadata', go, {once:true}); }
 function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
-  const s0 = Math.max(0, Math.min(MU_LEN - MU_WIN, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + MU_WIN} : null;
+  const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
   if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
   stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(() => { if (stAuSrc !== pv) return; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
 function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.removeAttribute('src'); try { stAu.load(); } catch {} }
@@ -5709,7 +5712,7 @@ const phMuHTML = mu => `<button type="button" class="phmu${stAuSrc === stMuPv(mu
 const VOL_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>', VOL_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>';
 const phSpHTML = url => { const m = spOe(url); return `<button type="button" class="phmu${PSP && PSP.url === url && PSP.playing ? ' on' : ''}" data-act="phsp-play" data-sp="${esc(url)}" aria-label="Song anhören">${STEQ}<span class="sthmt">${m ? esc(m.t) : 'Spotify-Song'}</span></button>`; };
 const pvolOn = v => v.startsWith('pv:') ? stAuSrc === v.slice(3) && !stAu.paused && !stAu.muted : !!(PSP && PSP.url === v.slice(3) && PSP.playing);
-const pvolHTML = v => `<button type="button" class="pvol" data-act="pvol" data-v="${esc(v)}" aria-label="${pvolOn(v) ? 'Ton aus' : 'Ton an'}">${pvolOn(v) ? VOL_ON : VOL_OFF}</button>`;
+const pvolHTML = (v, mu) => `<button type="button" class="pvol" data-act="pvol" data-v="${esc(v)}"${mu && mu.l ? ` data-s="${+mu.s || 0}" data-l="${+mu.l}"` : ''} aria-label="${pvolOn(v) ? 'Ton aus' : 'Ton an'}">${pvolOn(v) ? VOL_ON : VOL_OFF}</button>`;
 function pvolMark(){ document.querySelectorAll('.pvol').forEach(b => { const on = pvolOn(b.dataset.v); b.innerHTML = on ? VOL_ON : VOL_OFF; b.setAttribute('aria-label', on ? 'Ton aus' : 'Ton an'); }); }
 function muMarkPrev(){ pvolMark(); document.querySelectorAll('.phmu').forEach(b => b.classList.toggle('on', stAuSrc === b.dataset.pv && !stAu.paused)); document.querySelectorAll('.muprev').forEach(b => { const r = STMRES[+b.dataset.i]; b.innerHTML = r && stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY; });
   document.querySelectorAll('[data-act=pmu-play]').forEach(b => { b.innerHTML = stAuSrc === b.dataset.pv && !stAu.paused ? MU_PAUSE : MU_PLAY; }); }
@@ -5719,18 +5722,29 @@ document.addEventListener('input', e => { // Musiksuche in Story und Beitrag
   clearTimeout(stMsT); const q = mq.value; if (!q.trim()) return stMsShow([], 'Tippe einen Song oder eine Band ein.', box); stMsShow(null, 'Suche …', box);
   stMsT = setTimeout(async () => { const l = await stSongSearch(q); if (mq.value !== q) return; stMsShow(l || [], l == null ? 'Die Suche hat gerade nicht geklappt. Versuch es gleich nochmal.' : l.length ? '' : 'Nichts gefunden.', box); }, 400);
 });
-const muTrimHTML = (mu, k) => { const s0 = Math.max(0, Math.min(MU_LEN - MU_WIN, +mu.s || 0));
-  return `<div class="mutrim"><b>Wähle die Stelle für deine ${k === 'prof' ? 'Profil-Musik' : 'Story'}</b><div class="mutbar" data-k="${k}" role="slider" aria-label="Ausschnitt des Songs" aria-valuemin="0" aria-valuemax="${MU_LEN - MU_WIN}" aria-valuenow="${s0}" tabindex="0"><div class="mutwin" style="left:${s0 / MU_LEN * 100}%;width:${MU_WIN / MU_LEN * 100}%"></div></div><small class="mutlbl">${stTime(s0)} – ${stTime(s0 + MU_WIN)}</small></div>`; };
-const muTarget = k => k === 'prof' ? mdraft?.songMu : stNew?.mu;
-function muTrimSet(bar, x){ const mu = muTarget(bar.dataset.k); if (!mu) return; const r = bar.getBoundingClientRect(), w = MU_WIN / MU_LEN;
-  const f = Math.max(0, Math.min(1 - w, (x - r.left) / r.width - w / 2)); mu.s = Math.round(f * MU_LEN * 2) / 2;
-  bar.firstElementChild.style.left = (mu.s / MU_LEN * 100) + '%'; bar.setAttribute('aria-valuenow', mu.s); const l = bar.parentElement.querySelector('.mutlbl'); if (l) l.textContent = `${stTime(mu.s)} – ${stTime(mu.s + MU_WIN)}`; }
+// Song-Ausschnitt frei wählen (Inaya, 2026-10-12): Anfang und Ende ziehen, Fenster verschieben. Die Suche liefert pro Song eine 30-Sekunden-Hörprobe, das ist die ganze Zeitleiste.
+const muMax = k => k === 'post' ? MU_LEN : MU_WIN; // Story und Profil höchstens 15 s, Beitrag bis 30 s
+const muL = mu => Math.max(3, Math.min(MU_LEN, +(mu && mu.l) || MU_WIN));
+const muTrimHTML = (mu, k) => { const L = Math.min(muL(mu), muMax(k)), s0 = Math.max(0, Math.min(MU_LEN - L, +mu.s || 0));
+  return `<div class="mutrim"><b>Wähle den Teil für ${k === 'prof' ? 'deine Profil-Musik' : k === 'post' ? 'deinen Beitrag' : 'deine Story'}</b><div class="mutbar" data-k="${k}" role="slider" aria-label="Ausschnitt des Songs, Pfeiltasten verschieben" aria-valuemin="0" aria-valuemax="${MU_LEN - L}" aria-valuenow="${s0}" tabindex="0"><div class="mutwin" style="left:${s0 / MU_LEN * 100}%;width:${L / MU_LEN * 100}%"><i class="muth l" aria-hidden="true"></i><i class="muth r" aria-hidden="true"></i></div><i class="mutph" aria-hidden="true" hidden></i></div><div class="mutax" aria-hidden="true"><span>0:00</span><span>0:15</span><span>0:30</span></div><small class="mutlbl">${stTime(s0)} – ${stTime(s0 + L)} · ${Math.round(L)} Sekunden</small><small class="mutnote">Die Musiksuche gibt pro Song eine Hörprobe von 30 Sekunden. Zieh die Ränder für Anfang und Ende, oder schieb den ganzen Teil.</small></div>`; };
+const muTarget = k => k === 'prof' ? mdraft?.songMu : k === 'post' ? PMU : stNew?.mu;
+function muTrimPaint(bar, mu){ const L = muL(mu), w = bar.querySelector('.mutwin'); w.style.left = (mu.s / MU_LEN * 100) + '%'; w.style.width = (L / MU_LEN * 100) + '%'; bar.setAttribute('aria-valuenow', mu.s); bar.setAttribute('aria-valuemax', MU_LEN - L);
+  const l = bar.parentElement.querySelector('.mutlbl'); if (l) l.textContent = `${stTime(mu.s)} – ${stTime(mu.s + L)} · ${Math.round(L)} Sekunden`; }
 let muDrag = null;
-document.addEventListener('pointerdown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar) return; e.preventDefault(); muDrag = bar; bar.setPointerCapture?.(e.pointerId); muTrimSet(bar, e.clientX); });
-document.addEventListener('pointermove', e => { if (muDrag) muTrimSet(muDrag, e.clientX); });
-document.addEventListener('pointerup', () => { if (!muDrag) return; const mu = muTarget(muDrag.dataset.k); muDrag = null; if (mu) { stAu.loop = true; stMute = false; stAuPlay(mu, true, true); } });
-document.addEventListener('keydown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar || !/^Arrow(Left|Right)$/.test(e.key)) return; const mu = muTarget(bar.dataset.k); if (!mu) return; e.preventDefault(); const r = bar.getBoundingClientRect(); muTrimSet(bar, r.left + ((+mu.s || 0) + (e.key === 'ArrowRight' ? 1 : -1) + MU_WIN / 2) / MU_LEN * r.width); stAuPlay(mu, true, true); });
-const pmuHTML = (mu, own) => `<div class="pmu">${muArtHTML(mu)}<span><b>${esc(mu.t)}</b><small>${esc(mu.a)}</small></span><button type="button" class="muprev" data-act="pmu-play" data-pv="${esc(stMuPv(mu))}" data-s="${mu.s != null ? +mu.s : ''}" data-t="${esc(mu.t)}" aria-label="Song anhören">${stAuSrc && stAuSrc === stMuPv(mu) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`;
+function muTrimMove(x){ const d = muDrag, mu = muTarget(d.bar.dataset.k); if (!mu) return; const r = d.bar.getBoundingClientRect(), t = Math.max(0, Math.min(MU_LEN, (x - r.left) / r.width * MU_LEN)), mx = muMax(d.bar.dataset.k), q = v => Math.round(v * 2) / 2;
+  if (d.m === 'l') { const e = d.s + d.L; const s = q(Math.max(e - mx, Math.min(e - 3, t))); mu.s = Math.max(0, s); mu.l = e - mu.s; }
+  else if (d.m === 'r') { const e = q(Math.min(MU_LEN, d.s + mx, Math.max(d.s + 3, t))); mu.s = d.s; mu.l = e - d.s; }
+  else { const L = Math.min(muL(mu), mx); mu.l = L; mu.s = q(Math.max(0, Math.min(MU_LEN - L, t - d.off))); }
+  muTrimPaint(d.bar, mu); }
+document.addEventListener('pointerdown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar) return; const mu = muTarget(bar.dataset.k); if (!mu) return; e.preventDefault(); bar.setPointerCapture?.(e.pointerId);
+  const r = bar.getBoundingClientRect(), px = MU_LEN / r.width, t = (e.clientX - r.left) * px, L = Math.min(muL(mu), muMax(bar.dataset.k)), s = Math.max(0, Math.min(MU_LEN - L, +mu.s || 0)), grab = 22 * px;
+  mu.s = s; mu.l = L; const m = Math.abs(t - s) <= grab && t < s + L / 2 ? 'l' : Math.abs(t - (s + L)) <= grab ? 'r' : 'm';
+  muDrag = {bar, m, s, L, off:m === 'm' ? (t >= s && t <= s + L ? t - s : L / 2) : 0}; bar.classList.add('drag'); if (m === 'm') muTrimMove(e.clientX); });
+document.addEventListener('pointermove', e => { if (muDrag) muTrimMove(e.clientX); });
+document.addEventListener('pointerup', () => { if (!muDrag) return; const k = muDrag.bar.dataset.k, mu = muTarget(k); muDrag.bar.classList.remove('drag'); muDrag = null; if (mu) { stAu.loop = true; stMute = false; stAuPlay(mu, true, true); setTimeout(muMarkPrev, 30); } });
+document.addEventListener('keydown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar || !/^Arrow(Left|Right)$/.test(e.key)) return; const mu = muTarget(bar.dataset.k); if (!mu) return; e.preventDefault(); const L = Math.min(muL(mu), muMax(bar.dataset.k)); mu.l = L; mu.s = Math.max(0, Math.min(MU_LEN - L, (+mu.s || 0) + (e.key === 'ArrowRight' ? 1 : -1))); muTrimPaint(bar, mu); stAu.loop = true; stAuPlay(mu, true, true); });
+stAu.addEventListener('timeupdate', () => { document.querySelectorAll('.mutbar').forEach(bar => { const mu = muTarget(bar.dataset.k), ph = bar.querySelector('.mutph'); if (!ph) return; const on = mu && stAuSrc === stMuPv(mu) && !stAu.paused; ph.hidden = !on; if (on) ph.style.left = Math.min(100, stAu.currentTime / MU_LEN * 100) + '%'; }); });
+const pmuHTML = (mu, own) => `<div class="pmu">${muArtHTML(mu)}<span><b>${esc(mu.t)}</b><small>${esc(mu.a)}</small></span><button type="button" class="muprev" data-act="pmu-play" data-pv="${esc(stMuPv(mu))}" data-s="${mu.s != null ? +mu.s : ''}" data-l="${mu.l != null ? +mu.l : ''}" data-t="${esc(mu.t)}" aria-label="Song anhören">${stAuSrc && stAuSrc === stMuPv(mu) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`;
 function storyPaint(){
   let ov = document.getElementById('storyov');
   if (!stNew && !STV && !stCam) { if (ov) ov.remove(); if (document.body.classList.contains('stopen')) { document.body.classList.remove('stopen'); document.body.style.top = ''; window.scrollTo(0, stScrollY); } clearTimeout(stTimer); return; }
@@ -5860,7 +5874,7 @@ async function stShare(){ // nur einmal posten, Fenster schließt sofort, hochge
   if (n.vid && !social) { n.posting = false; document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = false); toast('Videos in der Story gehen, sobald du angemeldet bist.'); return; }
   if (n.tb) { n.img = await stTbRender(n.tb); n.thumb = await storyThumb(n.img); }
   else if (n.m) { try { n.img = await stBake(n); } catch {} n.thumb = await storyThumb(n.img); }
-  const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0} : null;
+  const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0, l:Math.min(MU_WIN, muL(n.mu))} : null;
   const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
   if (n.stk?.length) st.stk = n.stk.slice(0, 20).map(x => ({k:x.k, x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, w:Math.round(x.w * 10) / 10, r:Math.round(+x.r || 0)}));
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
@@ -6386,7 +6400,7 @@ function postHTML(p){
   const tags = ptagsClean(p.tags), spT = p.url && /open\.spotify\.com\/(?:intl-[\w-]+\/)?track\//i.test(p.url) ? p.url : '';
   if (p.type === 'gedanke' || p.type === 'neu') body = `<blockquote class="thought">${mentionHTML(etx(p.text), tags, 'profile')}</blockquote>`;
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
-  const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv)}</div>` : h;
+  const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += volw(galHTML(p));
   else if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
   else if (p.bigimg) body += twrap(volw(`<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`));
@@ -6446,7 +6460,7 @@ function composeAtt(){
   return `${galA}${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
     ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${PVIDEO.poster}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
     ${PMUP && !PMU && !PAUDIO ? `<div class="patt pmus"><div class="pmush"><b>Musik</b><button type="button" class="lnk" data-act="pmu-open">Schließen</button></div>${muSearchHTML('pmq', document.getElementById('pmq')?.value || '')}<div class="stmres" id="pmres">${STMRES.length && document.getElementById('pmq')?.value ? muRows('pmu-pick') : '<p class="stmsmsg">Such nach einem Song oder einer Band.</p>'}</div><label class="lnk pmup"><input id="paudio" type="file" accept="audio/*,.mp3" hidden>Oder eigene MP3 hochladen</label></div>` : ''}
-    ${PMU ? `<div class="patt">${pmuHTML(PMU)}<button type="button" class="lnk" data-act="patt-x" data-v="pmu">Musik entfernen</button></div>` : ''}
+    ${PMU ? `<div class="patt">${pmuHTML(PMU)}${muTrimHTML(PMU, 'post')}<button type="button" class="lnk" data-act="patt-x" data-v="pmu">Musik entfernen</button></div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
     ${PAUDIO || (PVIDEO && !PVIDEO.busy) || PCR?.items.some(x => x.t === 'v') ? `<label class="rights"><input type="checkbox" id="prights" ${PRIGHTS ? 'checked' : ''}><span>${PAUDIO ? 'Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.' : 'Ich habe dieses Video selbst gemacht oder darf es teilen, auch die Musik darin.'}</span></label>` : ''}
     ${tagUI}
@@ -6542,7 +6556,7 @@ function pcrBar(it){ // Werkzeuge direkt unter der Vorschau, wie bei Insta
   const P = PCR, full = it.z <= pcrZmin(it, pcrR(P.ar)) + .005, one = Math.abs(pcrZmin(it, pcrR(P.ar)) - 1) < .01;
   const tool = (act, ico, l, on, dis) => `<button type="button" class="pcrtool${on ? ' on' : ''}" data-act="${act}"${dis ? ' disabled' : ''} aria-pressed="${!!on}">${ico}<span>${l}</span></button>`;
   let h = `<div class="pcrbar">${tool('pcr-full', full && !one ? PCR_TI.fill : PCR_TI.full, full && !one ? 'Füllen' : 'Ganzes Bild', false, one)}${it.t === 'i' ? tool('pcr-tag', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.tag}</svg>`, it.tg?.length ? `Markiert ${it.tg.length}` : 'Markieren', P.tag) : ''}${tool('pcr-mu', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>`, PMU ? 'Musik ändern' : 'Musik', P.mu)}</div>`;
-  if (PMU && !P.mu) h += `<div class="pcrmu">${pmuHTML(PMU)}<button type="button" class="pcric" data-act="pcr-mu-x" aria-label="Musik entfernen">${PCR_ICO.x}</button></div>`;
+  if (PMU && !P.mu) h += `<div class="pcrpan"><div class="pcrmu">${pmuHTML(PMU)}<button type="button" class="pcric" data-act="pcr-mu-x" aria-label="Musik entfernen">${PCR_ICO.x}</button></div>${muTrimHTML(PMU, 'post')}</div>`;
   if (P.mu) h += `<div class="pcrpan pmus"><div class="pmush"><b>Musik zum Beitrag</b><button type="button" class="lnk" data-act="pcr-mu">Schließen</button></div>${muSearchHTML('pmq', '')}<div class="stmres" id="pmres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div></div>`;
   if (P.tag && it.t === 'i') h += P.tp ? `<div class="pcrpan ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="pcrtq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="pcrtres"></div><button type="button" class="lnk" data-act="pcr-tp-x">Abbrechen</button></div>`
     : `<p class="pcrhint">Tipp aufs Foto, wo die Person ist. Auf einen Namen tippen entfernt ihn.</p>`;
@@ -6740,7 +6754,7 @@ function pspToggle(url){
 }
 // Video-Beitrag mit Musik: Originalton aus, der Song läuft mit dem Video (Inaya, 2026-10-12)
 function vidMuWire(v, mu){ if (!v) return; const pv = stMuPv(mu); v.muted = true; v.defaultMuted = true;
-  const on = () => { v.muted = true; stAu.muted = false; stAu.loop = true; stMute = false; if (stAuSrc !== pv || stAu.paused) stAuPlay({pv, s:+mu.s || 0}, stAuSrc !== pv || stAu.ended, false); };
+  const on = () => { v.muted = true; stAu.muted = false; stAu.loop = true; stMute = false; if (stAuSrc !== pv || stAu.paused) stAuPlay({pv, s:+mu.s || 0, l:+mu.l || 0}, stAuSrc !== pv || stAu.ended, !!mu.l); };
   const off = () => { if (stAuSrc === pv) stAu.pause(); };
   v.addEventListener('play', on); v.addEventListener('pause', off); v.addEventListener('ended', off); v.addEventListener('volumechange', () => { if (!v.muted) { v.muted = true; stAu.muted = false; } });
   if (!v.paused) on(); }
@@ -8673,13 +8687,13 @@ document.addEventListener('click', async e => {
   else if (a === 'pvol') { const v = b.dataset.v, x = v.slice(3);
     if (v.startsWith('sp:')) pspToggle(x);
     else if (stAuSrc === x && !stAu.paused) { stAu.muted = !stAu.muted; }
-    else { stAu.muted = false; stAu.loop = false; stMute = false; stAuPlay({pv:x, s:0}, stAuSrc !== x || stAu.ended, false); }
+    else { const w = !!b.dataset.l; stAu.muted = false; stAu.loop = w; stMute = false; stAuPlay({pv:x, s:+b.dataset.s || 0, l:+b.dataset.l || 0}, stAuSrc !== x || stAu.ended, w); }
     setTimeout(muMarkPrev, 30); }
   else if (a === 'phmu-play') { stAu.muted = false; const pv = stMuPv({pv:b.dataset.pv}); if (!pv) return; if (stAuSrc === pv && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay({pv, s:0}, stAuSrc !== pv || stAu.ended, false); } muMarkPrev(); }
-  else if (a === 'pmu-play') { const pv = stMuPv({pv:b.dataset.pv}), win = b.dataset.s !== ''; if (!pv) return; if (stAuSrc === pv && !stAu.paused) { stAu.pause(); if (V.name === 'profile') songOff = V.arg || S.me; } else { stAu.loop = win; stMute = false; stAuPlay({pv, s:+b.dataset.s || 0}, stAuSrc !== pv || stAu.ended, win); } muMarkPrev(); }
+  else if (a === 'pmu-play') { const pv = stMuPv({pv:b.dataset.pv}), win = b.dataset.s !== ''; if (!pv) return; if (stAuSrc === pv && !stAu.paused) { stAu.pause(); if (V.name === 'profile') songOff = V.arg || S.me; } else { stAu.loop = win; stMute = false; stAuPlay({pv, s:+b.dataset.s || 0, l:+b.dataset.l || 0}, stAuSrc !== pv || stAu.ended, win); } muMarkPrev(); }
   else if (a === 'pmu-open') { PMUP = !PMUP; paintCompose(); if (PMUP) document.getElementById('pmq')?.focus(); }
-  else if (a === 'pmu-pick') { const r = STMRES[+b.dataset.i]; if (!r) return; PMU = {...r}; PMUP = false; PAUDIO = null; stAuStop(); paintCompose(); if (PCR?.open) { PCR.mu = false; pcrPaint(); } }
-  else if (a === 'st-mpick') { const n = stNew, r = STMRES[+b.dataset.i]; if (!n || !r) return; n.mu = {...r, ...(stMsSp ? {sp:stMsSp.slice(0, 300)} : {})}; n.mp = n.mp || {x:50, y:78, w:72}; n.mu.s = 0; n.song = ''; n.tool = 'mutrim'; n.muSel = false; storyPaint(); stAu.loop = true; stAuPlay(n.mu, true, true); }
+  else if (a === 'pmu-pick') { const r = STMRES[+b.dataset.i]; if (!r) return; PMU = {...r, s:0, l:MU_LEN}; PMUP = false; PAUDIO = null; paintCompose(); if (PCR?.open) { PCR.mu = false; pcrPaint(); } stAu.loop = true; stMute = false; stAuPlay(PMU, true, true); setTimeout(muMarkPrev, 30); }
+  else if (a === 'st-mpick') { const n = stNew, r = STMRES[+b.dataset.i]; if (!n || !r) return; n.mu = {...r, ...(stMsSp ? {sp:stMsSp.slice(0, 300)} : {})}; n.mp = n.mp || {x:50, y:78, w:72}; n.mu.s = 0; n.mu.l = MU_WIN; n.song = ''; n.tool = 'mutrim'; n.muSel = false; storyPaint(); stAu.loop = true; stAuPlay(n.mu, true, true); }
   else if (a === 'st-tstyle' || a === 'st-tcol' || a === 'st-tbg' || a === 'st-tout' || a === 'st-ctgt' || a === 'st-ocol') { const n = stNew; if (!n || n.edit == null) return; stTaCommit(); const x = n.texts[n.edit], v = b.dataset.v;
     if (a === 'st-tstyle') x.st = v; else if (a === 'st-tbg') x.bg = +v || 0; else if (a === 'st-ctgt') n.ctgt = v;
     else if (a === 'st-tcol') x.c = v; else if (a === 'st-ocol') x.oc = v;
@@ -8702,7 +8716,7 @@ document.addEventListener('click', async e => {
     const x = n.texts[n.edit]; x.t = ta.value; x.m = [...(x.m || []).filter(m => m.id !== u.id), {id:u.id, n:u.name}].slice(0, 10);
     try { ta.setSelectionRange(head.length, head.length); } catch {} ta.focus(); stTaFit(); const sg = document.getElementById('stmsug'); if (sg) sg.hidden = true; }
   else if (a === 'st-tagx') { if (stNew) { stNew.tool = null; storyPaint(); } }
-  else if (a === 'e-mpick') { const r = STMRES[+b.dataset.i]; if (!r || !mdraft) return; mdraft.songMu = {...r, s:0}; render(); stAu.loop = true; stMute = false; stAuPlay(mdraft.songMu, true, true); }
+  else if (a === 'e-mpick') { const r = STMRES[+b.dataset.i]; if (!r || !mdraft) return; mdraft.songMu = {...r, s:0, l:MU_WIN}; render(); stAu.loop = true; stMute = false; stAuPlay(mdraft.songMu, true, true); }
   else if (a === 'e-mux') { if (!mdraft) return; mdraft.songMu = null; mdraft.songSpX = true; stAuStop(); render(); }
   else if (a === 'st-tagadd') { const n = stNew, u = stFriends().find(x => x.id === b.dataset.id); if (!n || !u) return; if (!n.texts.some(x => x.u === u.id)) n.texts.push({t:u.name, u:u.id, x:50, y:62 + (n.texts.filter(x => x.u).length % 4) * 6, s:5, c:'#111111', st:'modern', bg:0}); n.tool = null; storyPaint(); }
   else if (a === 'st-tagprof') { const uid = b.dataset.id; stClose(); go('profile', uid); }
@@ -8983,7 +8997,7 @@ document.addEventListener('submit', async e => {
     if (url && !/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
     const p = {id:'p' + Date.now().toString(36), author:S.me, type, text, ts:Date.now(), reactions:{}, comments:[]};
     if (postCrop) p.img = postCrop;
-    if (PMU && !PAUDIO) p.mu = {t:PMU.t, a:PMU.a, art:PMU.art, pv:PMU.pv};
+    if (PMU && !PAUDIO) p.mu = {t:PMU.t, a:PMU.a, art:PMU.art, pv:PMU.pv, ...(PMU.l ? {s:+PMU.s || 0, l:muL(PMU)} : {})};
     { const gt = gal ? gal.items.flatMap(x => x.t === 'i' ? x.tg || [] : []) : []; // Markierungen aus der Vorschau, ein Foto mit Platz, mehrere je Bild
       const all = [...(multi ? gt.map(t => ({id:t.id, n:t.n})) : gt), ...PTAGS.map(t => postCrop && !gal ? t : {id:t.id, n:t.n})].filter((t, i, l) => l.findIndex(y => y.id === t.id) === i);
       if (all.length) p.tags = ptagsClean(all); }
@@ -9131,7 +9145,7 @@ document.addEventListener('submit', async e => {
       u.handle = nh; claimHandle(nh);
     }
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
-    if (mdraft) { if (mdraft.songMu) { const m = mdraft.songMu; u.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:+m.s || 0}; u.songSp = ''; } else { delete u.songMu; if (mdraft.songSpX) u.songSp = ''; } } // Profil-Musik aus der Suche (Inaya, 2026-10-11)
+    if (mdraft) { if (mdraft.songMu) { const m = mdraft.songMu; u.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:+m.s || 0, l:Math.min(MU_WIN, muL(m))}; u.songSp = ''; } else { delete u.songMu; if (mdraft.songSpX) u.songSp = ''; } } // Profil-Musik aus der Suche (Inaya, 2026-10-11)
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; u.banner = {...mdraft.banner}; // Nutzernamen-Kasten wird wieder gespeichert (Inaya, 2026-10-11)
