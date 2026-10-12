@@ -157,7 +157,7 @@ label.f{display:grid;gap:4px}
 .pcimg{flex:none;width:38px;height:38px;border:1px solid var(--line,#444);border-radius:999px;display:inline-grid;place-items:center;cursor:pointer;color:var(--fg)}.pcimg svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pcimg input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.pcimg:hover,.pcimg:focus-within{border-color:#ecebe7}
 .post.tp .pcimg{color:var(--p-fg);border-color:var(--p-line)}.cbtns{display:flex;flex-wrap:wrap;gap:8px}.cbtn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px}.cbtn svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.cbtn i{font-style:normal}.cbtn.on{border-color:var(--fg);background:#ffffff14}.patts{display:grid;gap:8px}.patts:empty{display:none}.patt{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pattimg{max-width:160px;max-height:160px;border:1px solid var(--line);border-radius:6px}.pattmp3{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 12px;min-width:0;overflow-wrap:anywhere}.pattmp3 svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7}.pattlink input{flex:1 1 180px;min-width:0;width:auto}[data-form=post]{min-width:0}[data-form=post]>*{min-width:0}
 @media (max-width:760px){.cbtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.cbtn .cbx{display:none}.cbtn{flex-direction:column;gap:4px;padding:10px 4px;font-size:13px;text-align:center;justify-content:center}}
-.pcfield{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--input-bg,#0d0d0e);padding:0 0 0 6px}.post.tp .pcfield{background:var(--p-panel);border-color:var(--p-line)}.pcfield input{flex:1;min-width:0;border:0!important;background:transparent!important}.pcfield:not(:has(.pcthumb)){padding:0}.pcthumb{position:relative;flex:none;width:34px;height:34px}.pcthumb img{width:34px;height:34px;object-fit:cover;border-radius:5px;display:block}@media (max-width:760px){[data-form=comment]{flex-wrap:wrap}[data-form=comment] input[type=text]{flex:1 1 100%;order:-1;min-height:44px}[data-form=comment] .btn[type=submit]{margin-left:auto}[data-form=pcomment]{flex-wrap:wrap}[data-form=pcomment] .pcfield{flex:1 1 100%;order:-1;min-height:44px}[data-form=pcomment] .btn[type=submit]{margin-left:auto}}
+.pcfield{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--input-bg,#0d0d0e);padding:0 0 0 6px}.post.tp .pcfield{background:var(--p-panel);border-color:var(--p-line)}.pcfield input{flex:1;min-width:0;border:0!important;background:transparent!important}.pcfield:not(:has(.pcthumb)){padding:0}.pcthumb{position:relative;flex:none;width:34px;height:34px}.pcthumb img{width:34px;height:34px;object-fit:cover;border-radius:5px;display:block}@media (max-width:760px){[data-form=comment] .pcfield,[data-form=pcomment] .pcfield{min-height:44px}}
 .pcx{position:absolute;top:-6px;right:-7px;width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:#0a0a0b;color:#ecebe7;font-size:13px;line-height:15px;padding:0;cursor:pointer}
 .cmt.mom{display:flex;gap:10px;align-items:flex-start;border-top:0;padding-top:0}.cmts{gap:10px}
 .cmh{width:38px;height:38px;padding:0;cursor:pointer}
@@ -1222,6 +1222,26 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .stlikes .lheart{width:20px;height:20px;stroke:currentColor;stroke-width:1.7}.stlikes.on .lheart{color:#e0303a}
 .staud>div{display:grid;gap:12px;justify-items:center}.staud .row{gap:10px}
 .mstory{display:grid;gap:4px;margin-bottom:6px}.mstory img{width:74px;height:130px;object-fit:cover;border-radius:6px;border:1px solid var(--line,#ffffff40)}.mstory small{opacity:.75;font-size:12px}
+
+/* Story-Kommentare zum Hochziehen (Inaya, 2026-10-12) */
+.stcs{position:absolute;left:0;right:0;bottom:0;z-index:7;display:flex;flex-direction:column;gap:6px;padding:0 10px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.stcs>*{pointer-events:auto}
+.stcs .streply{position:static}
+.stch{align-self:center;display:grid;justify-items:center;gap:2px;padding:6px 26px 2px;cursor:grab;touch-action:none;color:#fff;text-shadow:0 1px 3px #000}
+.stch i{display:block;width:44px;height:5px;border-radius:3px;background:#ffffffd0;box-shadow:0 1px 3px #0008}.stch small{font:600 12px -apple-system,Arial,sans-serif;opacity:.9}
+.stcp{display:none;margin:0;min-height:0;padding:10px 12px;border-radius:12px;overflow:hidden}
+.stcs.open{top:22%;background:linear-gradient(#0000,#000a 8%)}.stcs.open .stcp{display:flex;flex:1;flex-direction:column}
+.stcs.open .stch{cursor:grabbing}
+.stcl{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:grid;align-content:start;gap:10px}
+.stcmine:empty{display:none}.stcs.open .stcmine{display:none}
+.stcmine .cmt{max-width:100%}.stcmine .bub{background:#0a0a0bcc;color:#fff;border-color:#ffffff50}
+.stcs[style*="--drag"]{transform:translateY(clamp(-40px,var(--drag),60px))}
+.stframe.cmopen .stnav{pointer-events:none}
+.stcnone{margin:auto;text-align:center}
+/* Like + Repost unter der Kommentarleiste, Kamera und Totenkopf im Feld (Inaya, 2026-10-12) */
+.pcfield .pcimg,.pcfield .emobtn{border:0;width:36px;height:36px;padding:6px;flex:none;background:none;opacity:.85}.pcfield .pcimg:hover,.pcfield .emobtn:hover{opacity:1}.pcfield .emobtn{margin-right:2px}
+.pbar{align-items:center;gap:8px}.pbar .rpbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pbar .rpbtn{gap:6px;color:var(--fg)}.post.tp .pbar .rpbtn{color:var(--p-fg)}
+.pfeed .reacts.pbar{flex-wrap:nowrap}.pfeed .reacts.pbar button{flex:0 0 auto;padding-inline:10px}
 </style>
 
 <div id="app"></div>
@@ -1254,6 +1274,8 @@ const KEY = 'nachtfalter-v2';
 const REACTIONS = ['lach','schock','herz','wein','wut']; // Inayas Totenkopf-Reaktionen (2026-10-10), seit 2026-10-12 nur noch als Likes gezählt
 const LIKE_IN = r => r === 'like' || REACTIONS.includes(r);
 const HEART = on => `<svg class="lheart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z" fill="${on ? 'currentColor' : 'none'}"/></svg>`;
+// Repost neben dem Like, unter der Kommentarleiste (Inaya, 2026-10-12)
+const repostBtn = p => p.author === S.me && !p.remote ? '' : `<button type="button" class="rpbtn" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag reposten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg><span>Repost</span></button>`;
 const likeBtn = (attrs, on, n, can=true) => can ? `<button class="likebtn" ${attrs} aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="likebtn muted">${HEART(false)}<span>${n}</span></span>` : '';
 const RNAME = {lach:'Lachend', schock:'Geschockt', herz:'Herzaugen', wein:'Weinend', wut:'Wütend'};
 // Totenkopf mit Gesichtsausdruck, selbst gezeichnet; Herzen dunkelrot, Tränen hellblau-grau
@@ -5024,7 +5046,7 @@ function piInner(p){
     return `<div class="cthread">${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
   }).join('');
   const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
-  return `<div class="reacts">${reacts}</div>${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label><span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
+  return `${cm ? `<div class="cmts">${cm}</div>` : ''}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}<div class="reacts pbar">${reacts}${repostBtn(p)}</div>`;
 }
 // Fotos in Kommentaren: klein, weniger als halb so groß wie im Beitrag (Inaya, 2026-10-11)
 // Antworten: auf „antworten“ oder direkt auf die Sprechblase tippen; Fokus sofort, damit die Tastatur aufgeht (Inaya, 2026-10-11)
@@ -5069,6 +5091,7 @@ function ntStart(){
 function ntWatch(){ // die eigenen letzten Beiträge beobachten, auch wenn sie gerade nicht auf dem Bildschirm sind
   if (!social) return; ntStart();
   S.posts.filter(p => p.author === S.me).sort((a, b) => b.ts - a.ts).slice(0, 25).forEach(piWatch);
+  myStories().forEach(st => stcWatch(social.uid + '_' + st.id)); // Kommentare unter meinen Storys
   Object.values(S.cmted || {}).forEach(c => c && c.p && piWatch(c.p)); // Beiträge anderer, die ich kommentiert habe (Inaya, 2026-10-11)
 }
 // Merkt sich Beiträge anderer, unter die ich geschrieben habe, damit die Glocke weitere Kommentare dort meldet
@@ -5095,6 +5118,7 @@ function notifs(){
       else if (x.kind === 'c') out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deinen Beitrag kommentiert:', quote:x.text, go:'post', k, p:w.p});
     }
   }
+  for (const st of myStories()) for (const x of STC[uid + '_' + st.id]?.list || []) if (x.by && x.by !== uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deine Story kommentiert:', quote:x.text, go:'story', sid:st.id, th:st.thumb || st.img || ''});
   for (const m of NT.wall) if (m.from && m.from !== uid) out.push({ts:m.ts || 0, uid:m.from, kind:'w', text:'hat dir ins Gästebuch geschrieben:', quote:m.text, go:'wall'});
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
   let ch = false; S.notifReq = S.notifReq || {};
@@ -5135,7 +5159,7 @@ function notifView(){
     const many = g.uids.length > 1;
     const text = g.kind === 'r' ? (many ? 'gefällt dein Beitrag' : 'gefällt dein Beitrag') + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
     const badge = g.kind === 'r' ? '' : `<i class="nt-badge"><svg viewBox="0 0 24 24" aria-hidden="true">${NT_BADGE[g.kind] || ''}</svg></i>`;
-    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p) : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid) : '';
+    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p) : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid) : g.go === 'story' ? ntThumb({img:g.th, text:'Story'}, 'story', g.sid) : '';
     return `<li class="nt${g.ts > seen ? ' new' : ''}">
       <button type="button" class="nt-av${many ? ' two' : ''}" data-act="profile" data-id="${esc(g.uids[0])}" aria-label="${esc(ntName(g.uids[0]))}"><span class="cameo">${ntHead(g.uids[0])}</span>${many ? `<span class="cameo">${ntHead(g.uids[1])}</span>` : ''}${badge}</button>
       <button type="button" class="nt-txt" data-act="nt-go" data-v="${g.go}" data-id="${esc(g.oid || '')}">${who(g)} ${text}${g.quote ? ` <span class="nt-q">${etx(String(g.quote).slice(0, 80))}${String(g.quote).length > 80 ? '…' : ''}</span>` : ''} <span class="nt-t">${ntAgo(g.ts)}</span></button>
@@ -5361,18 +5385,18 @@ function storyPaint(){
     ${stTextsHTML(stTexts(st))}
     ${st.mu ? stMuHTML(st.mu, st.mp) : st.song && SPRES[st.song] ? stMuHTML(SPRES[st.song], {x:50, y:84, w:76}) : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
-    ${STV.arch || !social ? '' : own ? stLikesHTML(social.uid, st.id) : `<form class="streply" data-form="streply" data-u="${esc(g.uid)}" data-id="${esc(st.id)}"><input id="st-rin" maxlength="500" placeholder="Antworten …" aria-label="Auf die Story antworten" autocomplete="off" enterkeyhint="send"><button type="submit" class="strsend" aria-label="Antwort senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="stlike" data-act="st-like" data-u="${esc(g.uid)}" data-id="${esc(st.id)}" aria-pressed="${stLiked(g.uid, st.id)}" aria-label="Gefällt mir">${HEART(stLiked(g.uid, st.id))}</button></form>`}
+    ${STV.arch || !social ? '' : stcSheetHTML(g, st, own, u)}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
     </div></div>`;
   const mu = st.mu || (st.song ? stSpMu(st.song) : null);
   const skey = g.uid + '/' + st.id, fresh = STV.key !== skey; if (fresh) { STV.key = skey; STV.t0 = Date.now(); }
   const dur = st.mu || st.song ? 15000 : 7000, gone = Date.now() - STV.t0; // Song-Storys 15 Sekunden, dann nächste Person oder zu
-  const nb = ov.querySelector('.stbars i.now'); if (nb && !st.vid) { nb.style.animationDuration = dur + 'ms'; nb.style.animationDelay = -gone + 'ms'; if (STV.delAsk) nb.style.animationPlayState = 'paused'; }
-  if (mu) { stAu.loop = true; if (STV.delAsk) stAu.pause(); else stAuPlay(mu, fresh, true); } else stAuStop();
+  const nb = ov.querySelector('.stbars i.now'); if (nb && !st.vid) { nb.style.animationDuration = dur + 'ms'; nb.style.animationDelay = -gone + 'ms'; if (STV.delAsk || STV.hold) nb.style.animationPlayState = 'paused'; }
+  if (mu) { stAu.loop = true; if (STV.delAsk || STV.hold) stAu.pause(); else stAuPlay(mu, fresh, true); } else stAuStop();
   stSpPlay(mu ? '' : st.song, g.uid + '/' + st.id); stSwipeWire();
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
-  if (ve && STV.delAsk) ve.pause();
+  if (ve && (STV.delAsk || STV.hold)) ve.pause();
   else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
     ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1); }
   else if (!st.vid && !STV.arch && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
@@ -5389,8 +5413,40 @@ function stHold(on){ if (!STV) return; const ov = document.getElementById('story
   if (on) { if (STV.hold) return; STV.hold = Date.now(); clearTimeout(stTimer); if (nb) nb.style.animationPlayState = 'paused'; ve?.pause(); stAu.pause(); }
   else if (STV.hold) { STV.t0 += Date.now() - STV.hold; STV.hold = null; storyPaint(); } }
 document.addEventListener('focusin', e => { if (e.target.id === 'st-rin') stHold(true); });
-document.addEventListener('focusout', e => { if (e.target.id === 'st-rin') setTimeout(() => { if (document.activeElement?.id !== 'st-rin') stHold(false); }, 150); });
+document.addEventListener('focusout', e => { if (e.target.id === 'st-rin') setTimeout(() => { if (document.activeElement?.id !== 'st-rin' && !STV?.cOpen) stHold(false); }, 150); });
 document.addEventListener('input', e => { if (e.target.id === 'st-rin') e.target.closest('form')?.classList.toggle('typed', !!e.target.value.trim()); });
+// Story-Kommentare (Inaya, 2026-10-12): chats/sc_<besitzer>_<story>/m; unten Schreibfeld, darüber der eigene Kommentar, hochziehen = alle Kommentare, Story pausiert
+const STC = {};
+function stcWatch(key){ if (!social) return {list:[]}; if (!STC[key]) { const w = STC[key] = {list:[]}; w.unsub = social.db.collection('chats/sc_' + key + '/m').orderBy('ts').limit(300).onSnapshot(q => { w.list = q.docs.map(d => ({did:d.id, ...d.data()})); stcPaint(key); ntPing(); }, () => {}); } return STC[key]; }
+function stcListHTML(key){ const w = STC[key] || {list:[]}, uid = social?.uid, owner = key.split('_')[0];
+  return w.list.length ? w.list.map(c => cbub(c.by, c.name || ntName(c.by), c.text, c.ts, c.by === uid || owner === uid ? `<button class="lnk" data-act="stc-del" data-k="${esc(key)}" data-d="${esc(c.did)}">entfernen</button>` : '')).join('') : '<p class="muted stcnone">Noch keine Kommentare. Schreib den ersten.</p>'; }
+function stcMineHTML(key){ const w = STC[key] || {list:[]}, mine = w.list.filter(c => c.by === social?.uid).at(-1); return mine ? cbub(mine.by, mine.name || me().name, mine.text, mine.ts, '') : ''; }
+function stcSheetHTML(g, st, own, u){
+  const key = (own ? social.uid : g.uid) + '_' + st.id, w = stcWatch(key), n = w.list.length, th = u.theme && u.theme.box ? postTheme(u.theme) : '';
+  return `<div class="stcs${STV.cOpen ? ' open' : ''}" id="stcs" data-k="${esc(key)}">
+    <div class="stch" id="stch" role="button" tabindex="0" aria-expanded="${!!STV.cOpen}" aria-label="Kommentare ${STV.cOpen ? 'schließen' : 'öffnen'}"><i></i><small id="stcn">${n ? n + (n === 1 ? ' Kommentar' : ' Kommentare') : 'Kommentare'}</small></div>
+    <div class="stcp post${th ? ' tp' : ''}"${th ? ` style="${th}"` : ''}><div class="stcl cmts" id="stcl">${STV.cOpen ? stcListHTML(key) : ''}</div></div>
+    <div class="stcmine cmts" id="stcmine">${STV.cOpen ? '' : stcMineHTML(key)}</div>
+    <form class="streply" data-form="streply" data-k="${esc(key)}"><input id="st-rin" maxlength="500" placeholder="Kommentieren …" aria-label="Story kommentieren" autocomplete="off" enterkeyhint="send"><button type="submit" class="strsend" aria-label="Kommentar senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>${own ? stLikesHTML(social.uid, st.id) : `<button type="button" class="stlike" data-act="st-like" data-u="${esc(g.uid)}" data-id="${esc(st.id)}" aria-pressed="${stLiked(g.uid, st.id)}" aria-label="Gefällt mir">${HEART(stLiked(g.uid, st.id))}</button>`}</form>
+  </div>`;
+}
+function stcPaint(key){ const sh = document.getElementById('stcs'); if (!sh || sh.dataset.k !== key) return; const n = (STC[key]?.list || []).length;
+  const l = document.getElementById('stcl'), atEnd = l && l.scrollHeight - l.scrollTop - l.clientHeight < 40; if (STV?.cOpen && l) { l.innerHTML = stcListHTML(key); if (atEnd) l.scrollTop = l.scrollHeight; }
+  const m = document.getElementById('stcmine'); if (m) m.innerHTML = STV?.cOpen ? '' : stcMineHTML(key);
+  const c = document.getElementById('stcn'); if (c) c.textContent = n ? n + (n === 1 ? ' Kommentar' : ' Kommentare') : 'Kommentare'; }
+function stcOpen(on){ if (!STV) return; const sh = document.getElementById('stcs'); STV.cOpen = !!on; if (!sh) return;
+  sh.classList.toggle('open', STV.cOpen); sh.style.removeProperty('--drag'); const h = document.getElementById('stch'); h?.setAttribute('aria-expanded', STV.cOpen); h?.setAttribute('aria-label', 'Kommentare ' + (STV.cOpen ? 'schließen' : 'öffnen'));
+  document.getElementById('stvfr')?.classList.toggle('cmopen', STV.cOpen);
+  if (STV.cOpen) { stHold(true); stcPaint(sh.dataset.k); const l = document.getElementById('stcl'); if (l) l.scrollTop = l.scrollHeight; }
+  else { stcPaint(sh.dataset.k); if (document.activeElement?.id !== 'st-rin') stHold(false); } }
+// Regler ziehen: hoch = öffnen, runter = schließen; antippen = umschalten
+let STCD = null;
+document.addEventListener('pointerdown', e => { const h = e.target.closest?.('#stch'); if (!h) return; STCD = {y:e.clientY, id:e.pointerId, moved:false}; try { h.setPointerCapture(e.pointerId); } catch {} });
+document.addEventListener('pointermove', e => { if (!STCD || e.pointerId !== STCD.id) return; const dy = e.clientY - STCD.y; if (Math.abs(dy) > 6) STCD.moved = true; document.getElementById('stcs')?.style.setProperty('--drag', dy + 'px'); });
+document.addEventListener('pointerup', e => { if (!STCD || e.pointerId !== STCD.id) return; const dy = e.clientY - STCD.y, mv = STCD.moved; STCD = null;
+  if (!mv) stcOpen(!STV?.cOpen); else if (dy < -30) stcOpen(true); else if (dy > 30) stcOpen(false); else stcOpen(STV?.cOpen); });
+document.addEventListener('pointercancel', () => { if (STCD) { STCD = null; stcOpen(STV?.cOpen); } });
+document.addEventListener('keydown', e => { if (e.target.id === 'stch' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); stcOpen(!STV?.cOpen); } });
 function storyOrder(){ // gleiche Reihenfolge wie die Story-Leiste: erst du, dann ungesehene, dann gesehene
   const fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
   return [...(myStories().length ? [S.me] : []), ...fr.map(u => u.id)];
@@ -5405,7 +5461,7 @@ function stOpen(uid){ // durch alle Leute mit Story tippen und wischen (Inaya, 2
 function stJump(d){ if (!STV) return; const ui = STV.ui + d; if (ui < 0) { STV.ii = 0; return storyPaint(); } if (ui >= STV.list.length) return stClose(); STV.ui = ui; STV.ii = stFirst(STV.list[ui]); storyPaint(); }
 function stSwipeWire(){ // nach links/rechts wischen = nächste/vorige Person
   const fr = document.getElementById('stvfr'); if (!fr || STV?.arch) return; let x0 = null, y0 = 0;
-  fr.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; });
+  fr.addEventListener('pointerdown', e => { if (e.target.closest('#stcs')) { x0 = null; return; } x0 = e.clientX; y0 = e.clientY; });
   fr.addEventListener('pointerup', e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) { stSwiped = Date.now(); stJump(dx < 0 ? 1 : -1); } });
   fr.addEventListener('pointercancel', () => { x0 = null; });
 }
@@ -5958,19 +6014,19 @@ function postHTML(p){
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
   return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
-    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}<button class="lnk pshare" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Teilen</button></span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
+    <header class="ph">${cameo(a)}<div><span class="who">${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${KIND[p.type] + ' · ' + ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}${p.author === S.me && social ? (p.pub ? ' · öffentlich' : ' · nur Freunde') : ''}</span></div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}</span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
       <div class="row" style="align-items:flex-end">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="pe-aud-${p.id}" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${p.pub ? 'selected' : ''}>Öffentlich</option><option value="fr" ${p.pub ? '' : 'selected'}>Nur Freunde</option></select></label>` : ''}<button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" data-act="post-edit-no">Abbrechen</button></div></form>` : ''}
     ${body}
     ${piKey(p) ? `<div class="pi" data-pi="${piKey(p)}">${piInner(p)}</div>` : `
-    ${p.remote ? '' : `<div class="reacts">${reacts}</div>`}
     ${cm ? `<div class="cmts">${cm}</div>` : ''}
     ${p.remote ? '' : `<form class="cform" data-form="comment" data-id="${p.id}">
-      <input type="text" id="c-${p.id}" placeholder="Etwas dazu schreiben…" maxlength="300" aria-label="Kommentar">
+      <span class="pcfield"><input type="text" id="c-${p.id}" placeholder="Etwas dazu schreiben…" maxlength="300" aria-label="Kommentar"></span>
       <button class="btn ghost" type="submit">Senden</button>
-    </form>`}`}
+    </form>`}
+    ${p.remote ? '' : `<div class="reacts pbar">${reacts}${repostBtn(p)}</div>`}`}
   </article>`;
 }
 // Anpinnen (bis zu 3 oben auf dem Profil) und Archivieren (Inaya, 2026-10-11)
@@ -6931,7 +6987,7 @@ function addEmoButtons(){
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
     const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>`;
-    if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
+    const pf = f.querySelector('.pcfield'); if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
 new MutationObserver(addEmoButtons).observe(document.documentElement, {childList:true, subtree:true});
@@ -7901,6 +7957,7 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
     return;
   }
+  if (a === 'nt-go' && b.dataset.v === 'story') { const sid = b.dataset.id, items = myStories(), i = items.findIndex(x => x.id === sid); if (i < 0) return toast('Diese Story ist schon abgelaufen.'); stAuUnlock(); STV = {list:[{uid:S.me, items}], ui:0, ii:i, cOpen:true}; storyPaint(); stHold(true); return; }
   if (a === 'nt-go') { const v = b.dataset.v; if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') go('profile', id);
@@ -8055,6 +8112,7 @@ document.addEventListener('click', async e => {
     if (n.editOld) n.texts[n.edit] = n.editOld; else n.texts.splice(n.edit, 1); n.edit = null; n.editOld = null;
     if (n.tb && !n.texts.length) { stNew = null; stCreate(); return; } storyPaint(); }
   else if (a === 'st-share') { if (stNew && social && !stNew.audOk) { stNew.askAud = true; storyPaint(); } else stShare(); }
+  else if (a === 'stc-del') { try { await social.db.doc('chats/sc_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch { toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'st-like') { const uid = b.dataset.u, sid = b.dataset.id, me_ = social?.uid; if (!me_) return; const l = stLk(uid, sid), on = l.by.has(me_), ref = social.db.doc('chats/sl_' + uid + '_' + sid + '/m/' + me_);
     if (on) l.by.delete(me_); else l.by.add(me_); stLkPaint(uid, sid); if (!on) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
     try { if (on) await ref.delete(); else await ref.set({kind:'like', by:me_, ts:Date.now()}); } catch { if (on) l.by.add(me_); else l.by.delete(me_); stLkPaint(uid, sid); toast('Das hat gerade nicht geklappt.'); } }
@@ -8382,11 +8440,10 @@ document.addEventListener('submit', async e => {
     if (url) extra.url = url;
     if (await sendMsg('wall_' + WL.uid, text, extra)) { toast('Kommentar gepostet'); render(); }
   } else if (t === 'streply') {
-    const i = document.getElementById('st-rin'), text = i?.value.trim(), uid = f.dataset.u, sid = f.dataset.id; if (!text || !social || !uid) return;
-    const st = storiesOf(uid).find(x => x.id === sid), a2 = [social.uid, uid].sort(), cid = 'dm_' + a2.join('_'); i.value = ''; f.classList.remove('typed'); i.blur();
-    try { if (!CH.list.some(c => c.id === cid)) await social.db.doc('chats/' + cid).set({group:false, members:a2, ts:Date.now()}, {merge:true});
-      if (await sendMsg(cid, text, {story:{u:uid, id:sid, th:/^data:image\//.test(st?.thumb || '') && st.thumb.length < 60000 ? st.thumb : ''}})) toast('Deine Antwort ist im Chat.'); }
-    catch { toast('Die Antwort ging gerade nicht raus.'); }
+    const i = document.getElementById('st-rin'), text = i?.value.trim(), key = f.dataset.k; if (!text || !social || !key) return;
+    i.value = ''; f.classList.remove('typed');
+    try { await social.db.collection('chats/sc_' + key + '/m').add({kind:'c', by:social.uid, name:me().name, text, ts:Date.now()}); if (!STV?.cOpen) i.blur(); }
+    catch { i.value = text; toast('Der Kommentar ging gerade nicht raus.'); }
   } else if (t === 'rmsg') {
     const text = [...val('rm-in')].slice(0, RMAX).join('').trim(); if (!text || !RM.g || roomStart() == null) return;
     document.getElementById('rm-in').value = ''; rmLeft();
