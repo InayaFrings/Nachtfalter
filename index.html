@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f3d33dfdbd68';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2f973922bb2b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1392,7 +1392,7 @@ body.cmvopen{overflow:hidden}
 .cmvpi .cmts{flex:1;min-height:0;overflow-y:auto;max-height:none!important;padding:12px 2px 6px;display:grid;align-content:start;gap:10px}
 .cmvpi .pbar{padding-top:10px;border-top:1px solid var(--line-soft,#333)}.post.tp .cmvpi .pbar{border-color:var(--p-line)}
 .cmvnone{margin:20px 0;text-align:center;font-style:normal}
-@media (max-width:760px){.cmv{place-items:stretch}.cmvback{display:none}.cmvbox{width:100vw;height:100dvh;height:100svh;max-height:none;min-height:0;border-radius:0;border:0!important;box-shadow:none;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}.cmvbox::before,.cmvbox::after{display:none!important}.cmvpost{display:none}.cmvh{padding:8px 6px;min-height:52px}.cmvpi{padding:0 12px 10px}.cmvpi .cform .pcfield{min-height:46px}.cmvpi input[type=text]{font-size:16px}}
+@media (max-width:760px){.cmv{place-items:stretch}.cmvback{display:none}.cmvbox{width:100vw;height:100dvh;height:100svh;max-height:none;min-height:0;border-radius:0;border:0!important;box-shadow:none;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}.cmvbox::before,.cmvbox::after{display:none!important}.cmv{background:var(--cmvbg,#141416)}.cmv::before,.cmv::after{content:'';position:absolute;left:0;right:0;height:100vh;background:var(--cmvbg,#141416);pointer-events:none}.cmv::before{bottom:100%}.cmv::after{top:100%}.cmvpost{display:none}.cmvh{padding:8px 6px;min-height:52px}.cmvpi{padding:0 12px 10px}.cmvpi .cform .pcfield{min-height:46px}.cmvpi input[type=text]{font-size:16px}}
 /* Musikkarte so breit wie bei Inaya; Beitrags-Musik klein unter dem Namen (Inaya, 2026-10-12) */
 .music.mmu{justify-items:stretch;width:100%}.music.mmu .pmu{width:100%;box-sizing:border-box}.music.mmu .lnk{justify-self:start}.pmu .muart{width:56px;height:56px;object-fit:cover;border-radius:4px;flex:none}.pmu>span{flex:1;min-width:0;display:grid;text-align:left}.pmu>span b,.pmu>span small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .muprev2{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-line,#ffffff4d);background:transparent;color:var(--p-fg,#eeedf2);cursor:pointer;padding:0}.muprev2 svg{width:18px;height:18px;fill:currentColor}
@@ -5347,10 +5347,16 @@ function cmvOpen(k){
   if (art) { const c = art.cloneNode(true); c.querySelectorAll('.pi, .pdel, video[autoplay]').forEach(x => x.remove()); c.querySelectorAll('[id]').forEach(x => x.removeAttribute('id')); post = c.innerHTML; style = art.getAttribute('style') || ''; tp = art.classList.contains('tp') ? ' tp' : ''; }
   const el = document.createElement('div'); el.id = 'cmv'; el.className = 'cmv';
   el.innerHTML = `<div class="cmvback" data-act="cmv-x"></div><div class="cmvbox post${tp}${post ? '' : ' nopost'}" role="dialog" aria-label="Kommentare" style="${esc(style)}">${post ? `<div class="cmvpost">${post}</div>` : ''}<div class="cmvside"><header class="cmvh"><button type="button" class="cmvx" data-act="cmv-x" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b>Kommentare</b><span></span></header><div class="pi cmvpi" data-pi="${k}" data-full>${piInner(w.p, true)}</div></div></div>`;
-  document.body.appendChild(el); document.body.classList.add('cmvopen'); CMV = {k};
+  if (art) { const bg = getComputedStyle(art).backgroundColor; if (bg && !/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) el.style.setProperty('--cmvbg', bg); }
+  document.body.appendChild(el); document.body.classList.add('cmvopen'); CMV = {k}; cmvFit();
   const cm = el.querySelector('.cmvpi .cmts'); if (cm) cm.scrollTop = cm.scrollHeight;
   if (!isMob()) el.querySelector('.cmvpi input[type=text]')?.focus({preventScroll:true});
 }
+// Handy: das Kommentarfenster füllt genau den sichtbaren Bereich über der Tastatur, der Salon scheint nicht durch (Inaya, 2026-10-12)
+function cmvFit(){ const el = document.getElementById('cmv'), vv = window.visualViewport; if (!el || !vv) return; const box = el.querySelector('.cmvbox');
+  if (!isMob()) { el.style.top = el.style.height = ''; if (box) box.style.height = ''; return; }
+  el.style.top = vv.offsetTop + 'px'; el.style.height = vv.height + 'px'; el.style.bottom = 'auto'; if (box) box.style.height = vv.height + 'px'; }
+window.visualViewport?.addEventListener('resize', cmvFit); window.visualViewport?.addEventListener('scroll', cmvFit);
 function cmvClose(quiet){ const el = document.getElementById('cmv'); if (el) el.remove(); document.body.classList.remove('cmvopen'); if (CMV && !quiet) { const k = CMV.k; CMV = null; piDraw(k); } CMV = null; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && CMV) cmvClose(); });
 function piDraw(k){
