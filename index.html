@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9f67eeddb320';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d2cfa8ed1883';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5715,7 +5715,19 @@ let stScrollY = 0;
 // mit der 30-Sekunden-Hörprobe (iTunes-Suche), die beim Antippen der Story sofort losspielt. Platz und Größe wählt man selbst.
 const stAu = new Audio(); stAu.loop = true; stAu.preload = 'auto'; stAu.setAttribute('playsinline', ''); let stAuSrc = '';
 const stOkUrl = (u, re) => typeof u === 'string' && re.test(u) ? u : '';
-const stMuPv = mu => stOkUrl(mu && mu.pv, /^https:\/\/[\w.-]+\.(?:apple\.com|mzstatic\.com|itunes\.com|dzcdn\.net)\//);
+const stMuPv = mu => stOkUrl(mu && mu.pv && pvFresh(mu.pv, mu), /^https:\/\/[\w.-]+\.(?:apple\.com|mzstatic\.com|itunes\.com|dzcdn\.net)\//);
+// Deezer-Hörproben laufen nach ein paar Stunden ab (hdnea=exp=…), dann spielt der Song nirgends mehr (Inaya, 2026-10-12: „NotSupportedError“).
+// Darum wird für abgelaufene Links gleich beim Anzeigen eine frische Hörprobe gesucht, bevorzugt von Apple (die laufen nicht ab).
+const PVFIX = {};
+const pvExpired = pv => { const m = /dzcdn\.net\/.*[?&~]hdnea=exp=(\d+)/.exec(pv) || /dzcdn\.net\/.*exp=(\d+)/.exec(pv); return !!m && +m[1] * 1000 < Date.now() + 120000; };
+function pvFresh(pv, mu){
+  if (PVFIX[pv]) return PVFIX[pv]; if (!pvExpired(pv)) return pv;
+  if (PVFIX[pv] === undefined && mu && mu.t) { PVFIX[pv] = 0; const t = String(mu.t).toLowerCase(), a = String(mu.a || '').toLowerCase();
+    (async () => { const q = [mu.a, mu.t].filter(Boolean).join(' '); const [it, dz] = await Promise.all([stSearchItunes(q).catch(() => null), stSearchDeezer(q).catch(() => null)]);
+      const ok = r => r && r.pv && String(r.t).toLowerCase() === t && (!a || String(r.a).toLowerCase() === a), loose = r => r && r.pv && String(r.t).toLowerCase().includes(t);
+      const hit = (it || []).find(ok) || (dz || []).find(ok) || (it || []).find(loose) || (dz || []).find(loose);
+      PVFIX[pv] = hit ? hit.pv : null; if (!hit) return; if (stAuSrc === pv) stAuStop(); if (STV) storyPaint(); else softRender(); })(); }
+  return pv; }
 const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.com|dzcdn\.net)\//);
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function stAuUnlock(){ if (stAuSrc) return; try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
@@ -5751,8 +5763,8 @@ async function stSongSearch(q, quiet){
     const j = await jget('https://open.spotify.com/oembed?url=' + encodeURIComponent(sp)) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(sp));
     q = [j?.title, j?.author_name].filter(Boolean).join(' ').trim(); if (!q) return null;
   }
-  return await new Promise(ok => { let left = 2, any = false; const got = l => { if (l) any = true; if (l && l.length) { ok(l); left = -9; return; } if (--left === 0) ok(any ? [] : null); };
-    stSearchItunes(q).catch(() => null).then(got); stSearchDeezer(q).catch(() => null).then(got); });
+  const [it, dz] = await Promise.all([stSearchItunes(q).catch(() => null), stSearchDeezer(q).catch(() => null)]); // Apple zuerst: deren Hörproben laufen nicht ab
+  return it && it.length ? it : dz && dz.length ? dz : it || dz ? [] : null;
 }
 const MU_CHIPS = ['Gothic Rock', 'Emo', 'Metalcore', 'Darkwave', 'Post-Punk', 'Witch House'];
 const MU_SRCH = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>';
