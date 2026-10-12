@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='bdd99f0d249a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='99d905da965e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -750,6 +750,7 @@ footer.foot .lnk{color:var(--muted)}
   .tabs::-webkit-scrollbar{display:none}
   .tabs > *,.ptabs > *{flex:none;white-space:nowrap}
   .ptabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .ptabs{gap:0;justify-content:space-between}.ptabs button{font-size:16px;flex:1 1 auto;text-align:center}
   /* Chats: Liste oder Gespräch, nicht beides untereinander */
   .chatwrap.open .chatside{display:none}
   .mback{display:inline-flex;margin-bottom:10px}
@@ -6931,7 +6932,7 @@ function profileView(id){
   </section>`;
   }
   let panel = '';
-  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['reposts','Reposts']]; // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
+  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['reposts','Reposts'],['tagged','Markiert']]; // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
   if (!tabs.some(([k]) => k === profTab)) profTab = tabs[0][0];
   if (profTab === 'rules') panel = `<div class="rules">${esc(u.about)}</div>`;
   if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="feed insta pfeed">${n.map(x => postHTML(x)).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
@@ -6939,6 +6940,9 @@ function profileView(id){
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
   if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
   if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.some(p => p.type !== 'teilen') ? `<div class="feed insta pfeed">${(pinCtx = true, posts.filter(p => !p.arch && p.type !== 'teilen').sort(pinSort).map(x => postHTML(x)).join(''))}</div>` + (pinCtx = false, '') : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
+  if (profTab === 'tagged') { // Beiträge, auf denen man markiert ist (Inaya, 2026-10-12)
+    const seen = new Set(), tg = [...S.posts, ...Object.values(S.users).filter(x => x.remote).flatMap(x => x.posts || []), ...ownerPubPosts()].filter(p => !p.arch && ptagsClean(p.tags).some(t => t.id === u.id) && !seen.has((p.author || '') + '/' + p.id) && seen.add((p.author || '') + '/' + p.id)).sort((a, b) => b.ts - a.ts);
+    panel = tg.length ? `<div class="feed insta pfeed">${tg.map(x => postHTML(x)).join('')}</div>` : `<p class="muted" style="margin:0">${own ? 'Du bist noch auf keinem Beitrag markiert.' : 'Noch auf keinem Beitrag markiert.'}</p>`; }
   if (profTab === 'reposts') { const rp = posts.filter(p => !p.arch && p.type === 'teilen').sort((a, b) => b.ts - a.ts); panel = rp.length ? `<div class="feed insta pfeed">${rp.map(x => postHTML(x)).join('')}</div>` : `<p class="muted" style="margin:0">${own ? 'Du hast noch nichts repostet. Unter jedem Beitrag von anderen kannst du auf „Teilen“ tippen.' : 'Noch keine Reposts.'}</p>`; }
   // Steckbrief steht direkt unter dem Profilkopf (Inayas Wunsch), nicht mehr als Reiter
   const sf = (k,v) => `<div><dt>${k}</dt><dd>${esc(v) || '–'}</dd></div>`;
