@@ -5606,7 +5606,7 @@ const stMuPv = mu => stOkUrl(mu && mu.pv && pvFresh(mu.pv, mu), /^https:\/\/[\w.
 // Darum wird für abgelaufene Links gleich beim Anzeigen eine frische Hörprobe gesucht, bevorzugt von Apple (die laufen nicht ab).
 const PVFIX = {};
 const pvExpired = pv => { const m = /dzcdn\.net\/.*[?&~]hdnea=exp=(\d+)/.exec(pv) || /dzcdn\.net\/.*exp=(\d+)/.exec(pv); return !!m && +m[1] * 1000 < Date.now() + 120000; };
-const PVMU = {}, PVTRIED = {};
+const PVMU = {}, PVTRIED = {}; let stAuNA = false; // Ton blockiert, weil ohne Tippen gestartet
 const muNorm = x => String(x || '').toLowerCase().replace(/\(.*?\)|\[.*?\]/g, ' ').replace(/\s[-–]\s.*$/, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 function pvFresh(pv, mu){
   if (mu && mu.t && !PVMU[pv]) PVMU[pv] = {t:mu.t, a:mu.a};
@@ -5641,7 +5641,7 @@ function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} 
 function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
   const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
   if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
-  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(e => { auDiag('Abspielen: ' + (e?.name || e)); if (stAuSrc !== pv) return; if (e?.name === 'NotSupportedError') { pvRescue(); return; } stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
+  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(e => { auDiag('Abspielen: ' + (e?.name || e)); if (stAuSrc !== pv) return; if (e?.name === 'NotSupportedError') { pvRescue(); return; } if (e?.name === 'NotAllowedError') stAuNA = true; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
 function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.removeAttribute('src'); try { stAu.load(); } catch {} }
 const stMuHTML = (mu, mp, edit, sel) => { mp = mp || {x:50, y:80, w:72}; const art = stMuArt(mu);
   return `<div class="stmu${edit ? ' ed' : ''}${sel ? ' sel' : ''}"${edit ? ' id="stmued"' : ' data-act="st-snd" role="button" tabindex="0" aria-label="Ton an oder aus"'} style="left:${+mp.x}%;top:${+mp.y}%;width:${+mp.w}%;--mw:${+mp.w}">${art ? `<img src="${esc(art)}" alt="">` : '<i class="stmuno">♪</i>'}<span><b>${esc(mu.t || 'Song')}</b><small>${esc(mu.a || '')}</small></span><i class="stmeq" aria-hidden="true"><i></i><i></i><i></i></i></div>`; };
@@ -5718,7 +5718,7 @@ function storyPaint(){
   if (stNew) { ov.innerHTML = stEditorHTML(); stEditWire(); stVV(); return; }
   const g = STV.list[STV.ui], st = g && g.items[STV.ii]; if (!st) { stClose(); return; }
   const u = profUser(g.uid) || me(), own = g.uid === S.me, src = storyImg(g.uid, st.id, st.img, st.thumb);
-  let vsrc = ''; if (st.vid && st.vid.n && social) { const k = g.uid + '/' + st.id; vsrc = STVID[k] || ''; if (STVID[k] === undefined) { STVID[k] = ''; songURL(own ? social.uid : g.uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; storyPaint(); }).catch(() => { delete STVID[k]; }); } }
+  let vsrc = ''; if (st.vid && st.vid.n && social) { const k = g.uid + '/' + st.id; vsrc = STVID[k] || ''; if (STVID[k] === undefined) { STVID[k] = ''; songURL(own ? social.uid : g.uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; storyPaint(); }).catch(() => { STVID[k] = null; storyPaint(); }); } }
   S.stSeen = S.stSeen || {}; if (!STV.arch && !S.stSeen[g.uid + '_' + st.id]) { S.stSeen[g.uid + '_' + st.id] = Date.now(); for (const k in S.stSeen) if (Date.now() - S.stSeen[k] > 2 * STORY_H) delete S.stSeen[k]; }
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe${st.v === 2 ? ' v2' : ''}" id="stvfr">
@@ -5733,15 +5733,18 @@ function storyPaint(){
   const mu = st.mu || null;
   const skey = g.uid + '/' + st.id, fresh = STV.key !== skey; if (fresh) { STV.key = skey; STV.t0 = Date.now(); }
   const dur = st.mu || st.song ? 15000 : 7000, gone = Date.now() - STV.t0; // Song-Storys 15 Sekunden, dann nächste Person oder zu
-  const nb = ov.querySelector('.stbars i.now'); if (nb && !st.vid) { nb.style.animationDuration = dur + 'ms'; nb.style.animationDelay = -gone + 'ms'; if (STV.delAsk || STV.hold) nb.style.animationPlayState = 'paused'; }
+  const vbad = st.vid && STVID[skey] === null; // Video ließ sich nicht laden: wie ein Foto weiterlaufen
+  const nb = ov.querySelector('.stbars i.now'); if (nb && st.vid && !vbad) nb.style.animation = 'none'; // Balken folgt dem Video (Inaya, 2026-10-12: Story so lang wie das Video)
+  if (nb && (!st.vid || vbad)) { nb.style.animationDuration = dur + 'ms'; nb.style.animationDelay = -gone + 'ms'; if (STV.delAsk || STV.hold) nb.style.animationPlayState = 'paused'; }
   if (mu) { stAu.loop = true; if (STV.delAsk || STV.hold) stAu.pause(); else stAuPlay(mu, fresh, true); } else stAuStop();
   stSpPlay(mu ? '' : st.song, g.uid + '/' + st.id); if (stSp?.c) { try { STV.delAsk || STV.hold ? stSp.c.pause() : stSp.c.resume(); } catch {} } stSwipeWire();
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
   if (ve && (STV.delAsk || STV.hold)) ve.pause();
   else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
-    ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1); }
-  else if (!st.vid && !STV.arch && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
+    ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1);
+    ve.ontimeupdate = () => { if (!nb) return; const s0 = +ve.dataset.s || 0, L = +ve.dataset.l || ((ve.duration || 0) - s0); if (L > 0) nb.style.backgroundPosition = (100 - Math.min(1, Math.max(0, (ve.currentTime - s0) / L)) * 100) + '% 0'; }; }
+  else if ((!st.vid || vbad) && !STV.arch && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
 }
 // Story-Likes: chats/sl_<besitzer>_<story>/m/<uid> (Inaya, 2026-10-12)
 const SLK = {};
@@ -5845,7 +5848,8 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
   if (n.vid) {
     if (n.vid.job) { const j = n.vid.job, tick = setInterval(() => toastKeep(`Video wird verkleinert … ${Math.round(j.q * 100)} %`), 400);
       try { const r = await j.p; n.vid = {...n.vid, blob:r.blob, type:r.type, url:URL.createObjectURL(r.blob), s:0, l:0, job:null}; }
-      catch (err) { clearInterval(tick); toastKeep(''); toast(err?.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : 'Das Video ließ sich nicht verkleinern. Versuch es nochmal oder nimm einen kürzeren Teil.'); return; }
+      catch (err) { if (n.vid.file && n.vid.file.size <= VID_HARD) { n.vid = {...n.vid, blob:n.vid.file, type:n.vid.file.type || 'video/mp4', job:null}; } else {
+        clearInterval(tick); toastKeep(''); toast(err?.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : 'Das Video ließ sich nicht verkleinern. Versuch es nochmal oder nimm einen kürzeren Teil.'); return; } }
       clearInterval(tick); toastKeep(''); toast('Deine Story wird gepostet …'); }
     if (n.m) { const f = stMVf(n), r1 = x => Math.round(x * 100) / 100; st.vf = {x:r1(f.x), y:r1(f.y), w:r1(f.w), h:r1(f.h), r:Math.round(f.r), s:r1(n.vid.s || 0), l:r1(n.vid.l || 0), bg:n.bg && n.bg !== 'blur' ? {c:n.bg.c, p:n.bg.p || ''} : null}; }
     try { const {poster, ...m} = await uploadPostVideo(n.vid, st.id, null, 'sv_' + st.id); st.vid = m; }
@@ -5954,7 +5958,7 @@ async function stVidDone(){ // Weiter: nur kürzen (Inaya, 2026-10-12); Größe,
     if (stCam !== c) return; if (!fast && !r.job) URL.revokeObjectURL(c.url); stCam = null;
     if (!frame) frame = r.poster || '';
     const ar = vh / vw;
-    stNew = {v2:1, img:frame, frame, ar, m:stFitM(ar), bg:{c:'#0a0a0b', p:''}, vid:{blob:r.blob, type:r.type, poster:frame, url:fast || r.job ? c.url : URL.createObjectURL(r.blob), s:r.s || 0, l:r.l || 0, job:r.job || null}, thumb:'', f:'normal', song:'', texts:[], stk:[], edit:null, tool:null, hint:true}; storyPaint();
+    stNew = {v2:1, img:frame, frame, ar, m:stFitM(ar), bg:{c:'#0a0a0b', p:''}, vid:{blob:r.blob, type:r.type, poster:frame, url:fast || r.job ? c.url : URL.createObjectURL(r.blob), s:r.s || 0, l:r.l || 0, job:r.job || null, file:r.job ? c.file : null}, thumb:'', f:'normal', song:'', texts:[], stk:[], edit:null, tool:null, hint:true}; storyPaint();
   } catch (err) { busy.remove(); toast(err.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : err.message === 'kein' ? 'Dein Handy kann hier keine Videos zuschneiden. Nimm ein Video unter 1 Minute.' : 'Das Video ließ sich nicht vorbereiten.'); }
 }
 // Tonspur einer Videodatei als AudioBuffer (Inaya, 2026-10-11: hochgeladene Videos hatten keinen Ton)
@@ -5964,6 +5968,20 @@ const WC_LIBS = ['https://cdn.jsdelivr.net/npm/mp4box@0.5.2/dist/mp4box.all.min.
 let wcLibP = null;
 const wcLibs = () => wcLibP = wcLibP || Promise.all(WC_LIBS.map(u => new Promise((ok, no) => { const x = document.createElement('script'); x.src = u; x.async = true; x.onload = ok; x.onerror = () => { wcLibP = null; no(new Error('lib')); }; document.head.appendChild(x); })));
 const wcIdle = () => new Promise(r => setTimeout(r, 4));
+// Fertiges Video prüfen: lässt es sich abspielen, und sind die Bilder nicht graue Flächen oder Streifen (kaputt gerechnet)?
+async function vidCheck(blob){
+  const v = document.createElement('video'), u = URL.createObjectURL(blob); v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto';
+  v.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(v);
+  const seek = t => new Promise(ok => { v.onseeked = ok; try { v.currentTime = t; } catch { ok(); } setTimeout(ok, 2500); });
+  try {
+    await new Promise((ok, no) => { v.onloadeddata = ok; v.onerror = () => no(new Error('kaputt')); setTimeout(() => no(new Error('kaputt')), 8000); v.src = u; });
+    if (!(v.duration > 0) || !v.videoWidth) throw new Error('kaputt');
+    const c = document.createElement('canvas'); c.width = 48; c.height = 48; const g = c.getContext('2d', {willReadFrequently:true});
+    for (const f of [.2, .5, .8]) { await seek(v.duration * f); g.drawImage(v, 0, 0, 48, 48); const d = g.getImageData(0, 0, 48, 48).data; let grey = 0;
+      for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - 128) < 6 && Math.abs(d[i + 1] - 128) < 6 && Math.abs(d[i + 2] - 128) < 6) grey++;
+      if (grey / (d.length / 4) > .3) throw new Error('kaputt'); }
+  } finally { URL.revokeObjectURL(u); v.removeAttribute('src'); v.remove(); }
+}
 async function wcShrink(file, o, onProg){
   // o: {start, len (Sekunden), W, H (Zielgröße), rect(vw, vh) -> [x, y, w, h] im Ziel, bg: Canvas oder null}
   if (!window.VideoDecoder || !window.VideoEncoder || !window.VideoFrame) throw new Error('nowc');
@@ -6007,7 +6025,7 @@ async function wcShrink(file, o, onProg){
   if (aCfg) as.forEach((x, i) => mux.addAudioChunkRaw(x.data, 'key', Math.max(0, Math.round(us(x.cts, at.timescale) - t0 * 1e6)), Math.round(us(x.duration, at.timescale)), i ? undefined : {decoderConfig:aCfg}));
   mux.finalize(); mp4.stop?.();
   const blob = new Blob([tgt.buffer], {type:'video/mp4'}); if (!n) throw new Error('noframes'); if (blob.size > VID_MAX) throw new Error('gross');
-  await new Promise((ok, no) => { const v = document.createElement('video'), u = URL.createObjectURL(blob); v.muted = true; v.preload = 'metadata'; v.onloadedmetadata = () => { URL.revokeObjectURL(u); v.duration > 0 ? ok() : no(new Error('kaputt')); }; v.onerror = () => { URL.revokeObjectURL(u); no(new Error('kaputt')); }; setTimeout(() => no(new Error('kaputt')), 6000); v.src = u; });
+  await vidCheck(blob);
   return {blob, type:'video/mp4', poster};
 }
 document.addEventListener('loadedmetadata', e => { const v = e.target; if (v.matches?.('video.stvid[data-l]') && +v.dataset.s) { try { v.currentTime = +v.dataset.s; } catch {} } }, true);
@@ -6606,7 +6624,8 @@ async function galBake(it, R){ const im = await stLoadImg(it.src), W = 720, H = 
 async function galVidBlob(it, onProg){ // klein genug: die Datei selbst; sonst nur den gewählten Teil kleiner rechnen
   if (it.file.size <= VID_MAX) return {blob:it.file, type:it.file.type || 'video/mp4', s:it.s, l:it.l};
   let W, H; if (it.a >= 1) { W = Math.min(1280, Math.round(720 * it.a)); H = W / it.a; } else { H = Math.min(1280, Math.round(720 / it.a)); W = H * it.a; } W = Math.round(W / 2) * 2; H = Math.round(H / 2) * 2;
-  const r = await wcShrink(it.file, {start:it.s, len:it.l, W, H, rect:() => [0, 0, W, H]}, onProg); return {blob:r.blob, type:r.type, s:0, l:0};
+  try { const r = await wcShrink(it.file, {start:it.s, len:it.l, W, H, rect:() => [0, 0, W, H]}, onProg); return {blob:r.blob, type:r.type, s:0, l:0}; }
+  catch (err) { if (it.file.size <= VID_HARD) return {blob:it.file, type:it.file.type || 'video/mp4', s:it.s, l:it.l}; throw err; }
 }
 async function galBuild(p, onStep){ // lädt alles hoch, gibt die Liste für den Beitrag zurück
   const R = pcrR(PCR.ar), out = [], n = PCR.items.length;
@@ -6634,7 +6653,7 @@ document.addEventListener('change', e => { if (e.target.id !== 'pcr-more' && e.t
   e.stopImmediatePropagation(); const fresh = !PCR || !PCR.items.length; pcrAddFiles(f).then(() => { if (PCR?.items.length) { if (fresh) PCR.step = 1; pcrOpen(); } }); if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'}; PCR.open = true; pcrPaint(); }, true);
 
 // Eigene Videos im Salon (Inaya, 2026-10-11): große Videos werden im Browser kleiner gerechnet (max. 720 px, bis 2,5 Mbit/s)
-const VID_MAX = 9 * 1024 * 1024, VID_SEC = 30, VID_CHUNK = 900000;
+const VID_MAX = 12 * 1024 * 1024, VID_HARD = 24 * 1024 * 1024, VID_SEC = 30, VID_CHUNK = 900000; // bis VID_MAX bleibt das Original; geht das Verkleinern schief, nimmt die Seite bis VID_HARD lieber das Original (Inaya, 2026-10-12: kaputte Videos)
 function vidPoster(v){ const c = document.createElement('canvas'), k = Math.min(1, 360 / Math.max(v.videoWidth, v.videoHeight)); c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .6); }
 async function prepVideo(file, onProg){
   const url = URL.createObjectURL(file), v = document.createElement('video'); v.playsInline = true; v.setAttribute('playsinline', ''); v.muted = true; v.defaultMuted = true; v.preload = 'auto';
@@ -6650,7 +6669,7 @@ async function prepVideo(file, onProg){
     if (file.size <= VID_MAX) return {blob:file, type:file.type || 'video/mp4', poster};
     try { const s0 = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), W = Math.round(v.videoWidth * s0 / 2) * 2, H = Math.round(v.videoHeight * s0 / 2) * 2; // schnell: WebCodecs, sonst wie bisher in Echtzeit
       const r = await wcShrink(file, {start:0, len:v.duration, W, H, rect:() => [0, 0, W, H]}, q => { onProg?.(q); toastKeep(`Video wird verkleinert … ${Math.round(q * 100)} %`); }); toastKeep(''); return {...r, poster:r.poster || poster}; }
-    catch (err) { console.warn('wc', err); toastKeep(''); }
+    catch (err) { console.warn('wc', err); toastKeep(''); if (file.size <= VID_HARD) return {blob:file, type:file.type || 'video/mp4', poster}; }
     // zu groß: in Echtzeit neu aufnehmen, kleiner und mit weniger Bitrate
     const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
     const mt = window.MediaRecorder && types.find(t => MediaRecorder.isTypeSupported(t)); if (!mt) throw new Error('gross');
@@ -6777,7 +6796,7 @@ async function psfStart(uid, quiet){ // der Player wird schon beim Tippen angest
   psfStop(); try { stAuStop(); } catch {} try { pspStop(); } catch {}
   const a = new Audio(); a.loop = true; a.src = ST_SILENT; a.play().catch(() => {}); const me = PSF = {uid, a}; a.onpause = a.onplay = psfMark; psfMark();
   try { const src = await songURL(uid, f); if (PSF !== me) return; a.src = src.url; await a.play(); }
-  catch (e) { if (PSF === me && !quiet && e?.name !== 'NotAllowedError') toast('Der Song ließ sich gerade nicht laden.'); }
+  catch (e) { if (PSF === me && e?.name === 'NotAllowedError') me.blocked = true; else if (PSF === me && !quiet) toast('Der Song ließ sich gerade nicht laden.'); }
   psfMark();
 }
 function musicHTML(u, mine){
@@ -8036,8 +8055,12 @@ function profAuto(){ // Profilmusik von selbst: Suche-Song, eigene MP3 oder Spot
   if (u.songSp && /track\//.test(u.songSp)) { profMuStarted[u.id] = 1; if (!(PSP && PSP.url === u.songSp)) pspToggle(u.songSp); return; }
   if (u.songFile?.n && social) { profMuStarted[u.id] = 1; if (!(PSF && PSF.uid === u.id)) psfStart(u.id, true); }
 }
-// Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite
-document.addEventListener('pointerdown', e => {
+// Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite (iPhone zählt nur das fertige Tippen, nicht pointerdown)
+document.addEventListener('click', e => {
+  if (PSF?.blocked && V.name === 'profile' && !e.target.closest?.('[data-act=psf-play]')) { PSF.blocked = false; PSF.a.play().then(psfMark).catch(() => {}); }
+  if (stAuNA && stAuSrc && !stAu.paused && stAu.muted && !STV && !e.target.closest?.('[data-act=pmu-play],[data-act=pvol],[data-act=phmu-play]')) { stAuNA = false; stMute = false; stAu.muted = false; setTimeout(muMarkPrev, 30); }
+}, true);
+document.addEventListener('click', e => {
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const pm = u && profMu(u);
   if (pm && stMuPv(pm) && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=pmu-play],[data-act=music-toggle]') && (stAuSrc !== stMuPv(pm) || stAu.paused) && !profMuStarted[u.id]) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(pm, true, true); setTimeout(muMarkPrev, 50); return; }
