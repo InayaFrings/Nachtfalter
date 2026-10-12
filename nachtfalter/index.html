@@ -4758,6 +4758,7 @@ function ago(ts){
   return d === 1 ? 'gestern' : `vor ${d} Tagen`;
 }
 let tT;
+function toastKeep(msg){ const t = document.getElementById('toast'); if (!t) return; clearTimeout(tT); if (msg) { t.textContent = msg; t.hidden = false; } else t.hidden = true; }
 function toast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg; t.hidden = false;
@@ -5526,6 +5527,7 @@ function stTrimSet(c, im, at){ c.moved = c.moved || false; const s0 = document.g
 async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehmen
   const c = stCam, v = document.getElementById('stcimg'); if (!c || !v || !c.dur) return;
   const plain = false, fast = c.file.size <= VID_MAX; // klein genug: sofort weiter, nichts neu aufnehmen (Inaya, 2026-10-12)
+  let ac0 = null; if (!fast) { try { const AC = window.AudioContext || window.webkitAudioContext; ac0 = new AC(); ac0.resume?.().catch(() => {}); } catch {} } // im Antippen, falls doch in Echtzeit aufgenommen werden muss
   const busy = document.createElement('p'); busy.className = 'stpbusy stvbusy'; busy.id = 'stbusy'; busy.textContent = 'Video wird vorbereitet …'; document.getElementById('stcr')?.appendChild(busy);
   try {
     let r, vf = null;
@@ -5535,8 +5537,11 @@ async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehm
       try { g.drawImage(await stBgCanvas(vf.bg, pc.width, pc.height), 0, 0); g.drawImage(v, c.ox * k, c.oy * k, vw * c.sc * k, vh * c.sc * k); } catch {}
       r = {blob:c.file, type:c.file.type || 'video/mp4', poster:pc.toDataURL('image/jpeg', .6), vf}; }
     else if (plain) r = await prepVideo(c.file);
+    else if (await (async () => { try { const W = 720, H = Math.round(720 * c.H / c.W / 2) * 2, k = W / c.W; // schnell: WebCodecs
+        r = await wcShrink(c.file, {start:c.start, len:c.len, W, H, bg:await stBgCanvas(c.bg || stcBgDef(c), W, H), rect:(vw, vh) => [c.ox * k, c.oy * k, vw * c.sc * k, vh * c.sc * k]}, q => { busy.textContent = `Video wird verkleinert … ${Math.round(q * 100)} %`; }); return true; }
+      catch (err) { console.warn('wc', err); return false; } })()) {}
     else { // jetzt im Antippen: Ton freigeben, dann den gewählten Teil im Bildausschnitt aufnehmen
-      let ac = null; try { const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); ac.resume?.().catch(() => {}); } catch {}
+      const ac = ac0; try { ac?.resume?.(); } catch {}
       v.loop = false; v.muted = false; v.pause(); try { v.currentTime = c.start; } catch {}
       c.playP = v.play().catch(() => { v.muted = true; return v.play(); }); // im Antippen starten, sonst bleibt das iPhone stumm
       r = await stRecVideo(v, ac, c, q => { busy.textContent = `Video wird zugeschnitten … ${Math.round(q * 100)} %`; });
@@ -5547,6 +5552,57 @@ async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehm
 }
 // Tonspur einer Videodatei als AudioBuffer (Inaya, 2026-10-11: hochgeladene Videos hatten keinen Ton)
 const VABUF = new WeakMap();
+/* ---------- Große Videos schneller als in Echtzeit verkleinern (Inaya, 2026-10-12): Bild mit WebCodecs neu rechnen, Ton unverändert übernehmen ---------- */
+const WC_LIBS = ['https://cdn.jsdelivr.net/npm/mp4box@0.5.2/dist/mp4box.all.min.js', 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js'];
+let wcLibP = null;
+const wcLibs = () => wcLibP = wcLibP || Promise.all(WC_LIBS.map(u => new Promise((ok, no) => { const x = document.createElement('script'); x.src = u; x.async = true; x.onload = ok; x.onerror = () => { wcLibP = null; no(new Error('lib')); }; document.head.appendChild(x); })));
+const wcIdle = () => new Promise(r => setTimeout(r, 4));
+async function wcShrink(file, o, onProg){
+  // o: {start, len (Sekunden), W, H (Zielgröße), rect(vw, vh) -> [x, y, w, h] im Ziel, bg: Canvas oder null}
+  if (!window.VideoDecoder || !window.VideoEncoder || !window.VideoFrame) throw new Error('nowc');
+  await wcLibs(); const MP4Box = window.MP4Box, MX = window.Mp4Muxer; if (!MP4Box || !MX) throw new Error('lib');
+  const mp4 = MP4Box.createFile(); let info = null; const samples = {}; mp4.onError = e => { throw new Error('demux ' + e); };
+  mp4.onReady = i => { info = i; }; mp4.onSamples = (id, u, list) => { (samples[id] = samples[id] || []).push(...list); };
+  const CH = 4 * 1024 * 1024; for (let a = 0; a < file.size; a += CH) { const buf = await file.slice(a, a + CH).arrayBuffer(); buf.fileStart = a; mp4.appendBuffer(buf); }
+  mp4.flush(); if (!info) throw new Error('moov');
+  const vt = info.videoTracks[0], at = info.audioTracks[0]; if (!vt) throw new Error('novid');
+  mp4.setExtractionOptions(vt.id, null, {nbSamples:1e9}); if (at && /^mp4a/.test(at.codec)) mp4.setExtractionOptions(at.id, null, {nbSamples:1e9}); mp4.start(); mp4.flush();
+  const desc = tr => { const t = mp4.getTrackById(tr.id); for (const e of t.mdia.minf.stbl.stsd.entries) { const b = e.avcC || e.hvcC || e.vpcC || e.av1C; if (b) { const DS = MP4Box.DataStream || window.DataStream, ds = new DS(undefined, 0, DS.BIG_ENDIAN); b.write(ds); return new Uint8Array(ds.buffer, 8); } } };
+  const m = vt.matrix || [65536, 0, 0, 0, 65536, 0], rot = ((Math.round(Math.atan2(m[1], m[0]) * 180 / Math.PI) % 360) + 360) % 360;
+  const cw = vt.video.width, ch = vt.video.height, side = rot % 180 ? [ch, cw] : [cw, ch]; // so groß, wie das Video angezeigt wird
+  const t0 = o.start || 0, t1 = t0 + (o.len || vt.duration / vt.timescale), us = (x, ts) => x * 1e6 / ts;
+  const vs = (samples[vt.id] || []).sort((a, b) => a.cts - b.cts); if (!vs.length) throw new Error('nosamples');
+  const dcfg = {codec:vt.codec.startsWith('vp08') ? 'vp8' : vt.codec, codedWidth:cw, codedHeight:ch, description:desc(vt)};
+  if (!(await VideoDecoder.isConfigSupported(dcfg)).supported) throw new Error('nodec ' + vt.codec);
+  let aBytes = 0, as = []; if (at && samples[at.id]) { as = samples[at.id].filter(x => { const t = x.cts / at.timescale; return t >= t0 - .01 && t < t1; }); as.forEach(x => aBytes += x.size); }
+  const W = o.W, H = o.H, abps = aBytes * 8 / Math.max(.5, t1 - t0), bitrate = Math.max(400000, Math.min(2500000, Math.floor((VID_MAX * 8 * .85) / Math.max(1, t1 - t0) - abps)));
+  const ecodec = window.__wcCodec || 'avc1.42001f', ecfg = {codec:ecodec, width:W, height:H, bitrate, framerate:30, ...(ecodec.startsWith('avc') ? {avc:{format:'avc'}} : {})};
+  if (!(await VideoEncoder.isConfigSupported(ecfg)).supported) throw new Error('noenc');
+  let aCfg = null; if (as.length) { try { const e = mp4.getTrackById(at.id).mdia.minf.stbl.stsd.entries[0], dsi = e.esds.esd.descs[0].descs[0].data; aCfg = {codec:at.codec, sampleRate:at.audio.sample_rate, numberOfChannels:at.audio.channel_count, description:dsi}; } catch { aCfg = null; } }
+  const tgt = new MX.ArrayBufferTarget(), mux = new MX.Muxer({target:tgt, video:{codec:ecodec.startsWith('avc') ? 'avc' : ecodec.startsWith('vp09') ? 'vp9' : 'av1', width:W, height:H}, ...(aCfg ? {audio:{codec:'aac', sampleRate:aCfg.sampleRate, numberOfChannels:aCfg.numberOfChannels}} : {}), fastStart:'in-memory', firstTimestampBehavior:'offset'});
+  let fail = null; const enc = new VideoEncoder({output:(c, meta) => mux.addVideoChunk(c, meta), error:e => { fail = e; }}); enc.configure(ecfg);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'); let n = 0, last = -1, poster = '';
+  const [rx, ry, rw, rh] = o.rect(side[0], side[1]);
+  const dec = new VideoDecoder({error:e => { fail = e; }, output:f => { try {
+    const t = f.timestamp / 1e6; if (t < t0 - .001 || t >= t1 || t - last < 1 / 30.5) return; last = t;
+    if (o.bg) g.drawImage(o.bg, 0, 0); else { g.fillStyle = '#000'; g.fillRect(0, 0, W, H); }
+    g.save(); g.translate(rx + rw / 2, ry + rh / 2); g.rotate(rot * Math.PI / 180); const [dw, dh] = rot % 180 ? [rh, rw] : [rw, rh]; g.drawImage(f, -dw / 2, -dh / 2, dw, dh); g.restore();
+    if (!poster) { const pc = document.createElement('canvas'); pc.width = 202; pc.height = Math.round(202 * H / W); pc.getContext('2d').drawImage(cv, 0, 0, pc.width, pc.height); poster = pc.toDataURL('image/jpeg', .6); }
+    const vf = new VideoFrame(cv, {timestamp:Math.round((t - t0) * 1e6), duration:Math.round(1e6 / 30)}); enc.encode(vf, {keyFrame:n % 60 === 0}); vf.close(); n++;
+    onProg?.(Math.min(1, (t - t0) / (t1 - t0)));
+  } finally { f.close(); } }});
+  dec.configure(dcfg);
+  let k = 0; for (let i = 0; i < vs.length; i++) { if (vs[i].is_sync && vs[i].cts / vt.timescale <= t0 + .001) k = i; }
+  for (let i = k; i < vs.length; i++) { const x = vs[i]; if (x.cts / vt.timescale >= t1 + .5) break; if (fail) throw fail;
+    dec.decode(new EncodedVideoChunk({type:x.is_sync ? 'key' : 'delta', timestamp:us(x.cts, vt.timescale), duration:us(x.duration, vt.timescale), data:x.data}));
+    while (dec.decodeQueueSize > 4 || enc.encodeQueueSize > 4) await wcIdle(); }
+  await dec.flush(); await enc.flush(); if (fail) throw fail; dec.close(); enc.close();
+  if (aCfg) as.forEach((x, i) => mux.addAudioChunkRaw(x.data, 'key', Math.max(0, Math.round(us(x.cts, at.timescale) - t0 * 1e6)), Math.round(us(x.duration, at.timescale)), i ? undefined : {decoderConfig:aCfg}));
+  mux.finalize(); mp4.stop?.();
+  const blob = new Blob([tgt.buffer], {type:'video/mp4'}); if (!n) throw new Error('noframes'); if (blob.size > VID_MAX) throw new Error('gross');
+  await new Promise((ok, no) => { const v = document.createElement('video'), u = URL.createObjectURL(blob); v.muted = true; v.preload = 'metadata'; v.onloadedmetadata = () => { URL.revokeObjectURL(u); v.duration > 0 ? ok() : no(new Error('kaputt')); }; v.onerror = () => { URL.revokeObjectURL(u); no(new Error('kaputt')); }; setTimeout(() => no(new Error('kaputt')), 6000); v.src = u; });
+  return {blob, type:'video/mp4', poster};
+}
 document.addEventListener('loadedmetadata', e => { const v = e.target; if (v.matches?.('video.stvid[data-l]') && +v.dataset.s) { try { v.currentTime = +v.dataset.s; } catch {} } }, true);
 document.addEventListener('timeupdate', e => { const v = e.target; if (!v.matches?.('video.stvid[data-l]')) return; const s0 = +v.dataset.s || 0, l = +v.dataset.l || 0; if (!l) return;
   if (v.currentTime < s0 - .4) { try { v.currentTime = s0; } catch {} }
@@ -5992,6 +6048,9 @@ async function prepVideo(file, onProg){
     let poster = ''; try { poster = v.videoWidth ? vidPoster(v) : ''; } catch {}
     if (!poster) { const c = document.createElement('canvas'); c.width = 202; c.height = 360; const g = c.getContext('2d'); g.fillStyle = '#131314'; g.fillRect(0, 0, 202, 360); poster = c.toDataURL('image/jpeg', .6); }
     if (file.size <= VID_MAX) return {blob:file, type:file.type || 'video/mp4', poster};
+    try { const s0 = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), W = Math.round(v.videoWidth * s0 / 2) * 2, H = Math.round(v.videoHeight * s0 / 2) * 2; // schnell: WebCodecs, sonst wie bisher in Echtzeit
+      const r = await wcShrink(file, {start:0, len:v.duration, W, H, rect:() => [0, 0, W, H]}, q => { onProg?.(q); toastKeep(`Video wird verkleinert … ${Math.round(q * 100)} %`); }); toastKeep(''); return {...r, poster:r.poster || poster}; }
+    catch (err) { console.warn('wc', err); toastKeep(''); }
     // zu groß: in Echtzeit neu aufnehmen, kleiner und mit weniger Bitrate
     const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
     const mt = window.MediaRecorder && types.find(t => MediaRecorder.isTypeSupported(t)); if (!mt) throw new Error('gross');
