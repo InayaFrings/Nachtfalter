@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='72960be5517d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2e8007fd1177';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -110,7 +110,7 @@
 <title>Nachtfalter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia&family=Pinyon+Script&family=Bodoni+Moda:ital,wght@0,400;1,400&family=Special+Elite&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia&family=Pinyon+Script&family=Bodoni+Moda:ital,wght@0,400;1,400&family=Special+Elite&family=Space+Grotesk:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
 <style>
 /* Layout: Leseraum mit drei Spalten – Navigationsleiste links, Salon in der Mitte, eigenes Porträt rechts. Nur Schwarz, Grau und Weiß. */
 :root{
@@ -123,9 +123,9 @@
   --muted:#9c9a95;
   --dim:#6b6966;
   --ink:#0a0a0b;
-  --f-display:'IM Fell English SC','IM Fell English',Georgia,serif;
-  --f-ital:'IM Fell English',Georgia,serif;
-  --f-body:'EB Garamond',Garamond,Georgia,serif;
+  --f-display:'Space Grotesk','Inter',system-ui,sans-serif; /* Standardschriften (Inaya, 2026-10-12): Überschriften und wichtige Knöpfe */
+  --f-ital:'Inter',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif; /* Chats, Kommentare, Beiträge, Einstellungen */
   /* Profilfarben (werden im eigenen Profil überschrieben) */
   --p-bg:#131314; --p-panel:#1b1b1d; --p-fg:#ecebe7; --p-muted:#9c9a95; --p-line:#3b3b3f;
   --p-font:'IM Fell English SC',Georgia,serif; --p-pattern:none;
@@ -664,7 +664,7 @@ footer.foot .lnk{color:var(--muted)}
 .mview{position:fixed;inset:0;z-index:2000;background:#000e;display:grid;place-items:center;align-content:center;gap:14px;padding:16px}.mview img{max-width:100%;max-height:80vh;object-fit:contain} /* Tastatur offen: Leiste weg, damit die Tastatur direkt unter dem Eingabefeld sitzt (Inaya) */.clist small{color:var(--muted);font:italic 14px var(--f-ital);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chatmain{display:grid;gap:10px;min-width:0}
 .hpanel{border:1px solid #333}
-.chatpanel{padding:14px;display:grid;gap:10px;background-image:var(--p-pattern);background-color:var(--p-bg);color:var(--p-fg);font-family:var(--p-font)}
+.chatpanel{padding:14px;display:grid;gap:10px;background-image:var(--p-pattern);background-color:var(--p-bg);color:var(--p-fg);font-family:var(--f-body)}
 .ch-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--p-line);padding-bottom:8px}
 .ch-head > div{display:grid}.ch-name{font-size:22px}.ch-h{margin:0 0 8px;font:400 20px var(--f-display)}
 .msgs{min-height:240px;max-height:52vh}
@@ -4698,7 +4698,7 @@ function moonPic(){
 }
 
 /* ---------- Profil-Themen ---------- */
-const BLANK_THEME = () => ({box:'#141416',pattern:'schlicht',frame:'schlicht',shape:'oval',font:'fell',page:'#0a0a0b',pagePattern:'schlicht'});
+const BLANK_THEME = () => ({box:'#141416',pattern:'schlicht',frame:'schlicht',shape:'oval',font:'modern',page:'#0a0a0b',pagePattern:'schlicht'});
 const PRESETS = {
   viktorianisch:{box:'#0e0e10',pattern:'damast',frame:'ornament',shape:'oval',font:'fell',page:'#26262b',pagePattern:'damast'},
   emo:{box:'#0e0e10',pattern:'sterne',frame:'doppel',shape:'oval',font:'maschine',page:'#141f3a',pagePattern:'streifen'},
@@ -4711,12 +4711,13 @@ const PRESETS = {
 };
 const PRESET_INFO = [['viktorianisch','Viktorianisch','Damast, Ornament, Oval'],['emo','Emo','Sterne, Streifen, Nachtblau'],['metal','Metal','Dornen, Kreuze, Fraktur'],['scene','Scene','Herzen, Punkte, Pink'],['engel','Engel','Spitze, Flügel, Eisblau'],['punk','Punk','Karo, Tiger, Orange'],['grusel','Grusel','Spinnennetz, Schädel, Grün'],['vampir','Vampir','Damast, Fledermäuse, Weinrot']];
 const FONTS = {
+  modern:"'Space Grotesk','Inter',system-ui,sans-serif",
   fell:"'IM Fell English SC',Georgia,serif",
   fraktur:"'UnifrakturMaguntia','IM Fell English SC',serif",
   hand:"'Pinyon Script','IM Fell English',cursive",
   maschine:"'Special Elite','Courier New',monospace",
 };
-const FONT_OPTS = [['fell','Viktorianisch'],['fraktur','Fraktur'],['hand','Schönschrift'],['maschine','Schreibmaschine']];
+const FONT_OPTS = [['modern','Modern'],['fell','Viktorianisch'],['fraktur','Fraktur'],['hand','Schönschrift'],['maschine','Schreibmaschine']];
 const PATTERN_OPTS = [['damast','Damast'],['spitze','Spitze'],['streifen','Streifen'],['punkte','Punkte'],['tiger','Tiger'],['leo','Leo'],['karo','Karo'],['schach','Schachbrett'],['fluegel','Engelsflügel'],['kreuze','Kreuze'],['herzen','Herzen'],['sterne','Sterne'],['fledermaus','Fledermäuse'],['schaedel','Schädel'],['netz','Spinnennetz'],['dornen','Dornen'],['schlicht','Schlicht']];
 const BG_COLORS = [['#0e0e10','Schwarz'],['#26262b','Anthrazit'],['#6b6b72','Grau'],['#c9c9cf','Silber'],['#f2f0eb','Weiß'],['#e9e0cc','Pergament'],
   ['#4a0f1c','Weinrot'],['#8a1020','Blutrot'],['#f2b8cc','Rosa'],['#e05aa0','Pink'],['#4a2a6a','Lila'],['#b9a3d9','Flieder'],
@@ -7376,7 +7377,6 @@ function groupForm(friends){
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Hintergrundbild</legend><div class="row"><label class="btn ghost"><input type="file" id="g-bgfile" accept="image/*" hidden>${g.theme.bg ? 'Anderes Foto' : 'Foto hochladen'}</label>${g.theme.bg ? '<button type="button" class="lnk" data-act="g-bgdel">Foto entfernen</button>' : ''}</div><p class="note" style="margin:0">Rand und Sprechblasen behalten die Farbe, die du oben auswählst.</p></fieldset>
-    <fieldset class="opt"><legend class="lbl">Schrift</legend><div class="chips">${FONT_OPTS.map(([v,l]) => `<button type="button" data-act="gopt" data-k="font" data-v="${v}" aria-pressed="${g.theme.font===v}">${l}</button>`).join('')}</div></fieldset>
     ${g.id && gDelAsk ? `<div class="gdel"><span>Gruppe wirklich für alle löschen? Alle Nachrichten sind dann weg.</span><div class="row"><button class="btn" type="button" data-act="chat-del-yes">Ja, löschen</button><button class="btn ghost" type="button" data-act="chat-del-no">Nein</button></div></div>` : ''}
     <div class="row">${g.id && !g.dm ? `<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button><button class="btn ghost" type="button" data-act="chat-del">Gruppe löschen</button>` : ''}<span class="sp"></span><button class="btn" type="submit">${g.id ? 'Speichern' : 'Gruppe erstellen'}</button></div>
   </form>`;
