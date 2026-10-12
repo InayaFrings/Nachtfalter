@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e42038577a11';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='fc2cac5b1c62';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1401,6 +1401,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .zcard .phl{margin-bottom:12px}
 }
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
+.bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
 .pbar .shbtn{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;padding:0;color:inherit;cursor:pointer;margin-left:auto}
 .pbar .rpbtn ~ .shbtn{margin-left:auto}.pbar .rpbtn:has(~ .shbtn){margin-left:0}
@@ -7826,12 +7827,12 @@ function openChat(id){
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
 function drawMsgs(keep){
   const box = document.getElementById('msgs'); if (!box) return; const st0 = box.scrollTop;
-  box.innerHTML = msgsHTML(); box.scrollTop = keep ? st0 : box.scrollHeight; msgImgs(box); voicePend(); vmPrefetch();
+  box.innerHTML = msgsHTML(); box.scrollTop = keep ? st0 : box.scrollHeight; msgImgs(box, keep); voicePend(); vmPrefetch();
 }
 // Sprachnachrichten im Chat schon vorab laden, damit sie beim Antippen sofort spielen (Inaya, 2026-10-12)
 let VMPF = null;
 function vmPrefetch(){ clearTimeout(VMPF); VMPF = setTimeout(async () => { if (!social) return; for (const m of CH.msgs.filter(x => x.audio?.voice && x.audio.n && !x._pend && !(VOICEURL[x.audio.k] && x.from === social.uid)).slice(-8).reverse()) { try { await songURL(m.from, m.audio, 'pa_' + m.audio.k); } catch {} } }, 300); }
-const msgImgs = box => box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = box.scrollHeight; }, {once:true}); });
+const msgImgs = (box, keep) => { const st0 = box.scrollTop; box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = keep ? st0 : box.scrollHeight; }, {once:true}); }); }; // beim Löschen nicht nach unten springen (Inaya, 2026-10-12)
 function msgsHTML(){
   const c = CH.list.find(x => x.id === CH.open);
   return CH.msgs.length ? CH.msgs.map(m => bubbleHTML(m, c?.group)).join('')
