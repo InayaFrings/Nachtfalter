@@ -1173,11 +1173,11 @@ html:has(body.stopen){background:#000}
 
 /* Chat-Schreibleiste: langes Feld mit kleinem Senden-Pfeil darin (Inaya, 2026-10-12) */
 .cinw{position:relative;flex:1;min-width:0;display:flex}
-.cinw input{flex:1;min-width:0;width:100%;padding-right:44px!important}
-.csend{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;opacity:.85}
-.csend:hover,.csend:focus-visible{opacity:1;background:#ffffff1a}
+.cinw input{flex:1;min-width:0;width:100%}
+.csend{display:none;flex:none;width:42px;height:42px;place-items:center;padding:0;border:1px solid var(--line,#ffffff40);border-radius:50%;background:var(--fg,#eeedf2);color:var(--bg,#0a0a0b);cursor:pointer}
+form.typed .csend{display:grid}form.typed .micbtn{display:none}
 .csend svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.post.tp .csend,.chatpanel .csend{color:var(--p-fg,var(--fg))}
+
 </style>
 
 <div id="app"></div>
@@ -6474,7 +6474,9 @@ function paintTyping(){
   el.hidden = !who.length; if (sub) sub.hidden = !!who.length;
 }
 setInterval(paintTyping, 1000);
-document.addEventListener('input', e => { if (e.target.id === 'cm-in') typingNow(!!e.target.value.trim()); if (e.target.id === 'rm-in') rmLeft(); });
+const cmTyped = () => { const i = document.getElementById('cm-in'); i?.closest('form')?.classList.toggle('typed', !!i.value.trim()); }; // wie bei WhatsApp: Mikrofon oder, sobald man tippt, der Pfeil
+new MutationObserver(cmTyped).observe(document.documentElement, {childList:true, subtree:true});
+document.addEventListener('input', e => { if (e.target.id === 'cm-in') { cmTyped(); typingNow(!!e.target.value.trim()); } if (e.target.id === 'rm-in') rmLeft(); });
 function rmLeft(){ const i = document.getElementById('rm-in'), l = document.getElementById('rmleft'); if (!i || !l) return; const n = RMAX - [...i.value].length; l.textContent = n; l.classList.toggle('low', n <= 10); }
 function openChat(id){
   if (CH.unsub) CH.unsub();
@@ -6539,7 +6541,7 @@ function chatsView(){
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
-      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="send"><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></span><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
+      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="send"></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
     </section>`;
   }
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
@@ -6780,7 +6782,7 @@ function addEmoButtons(){
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
     const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>`;
-    if (sub.closest('.cinw')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
+    if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
 new MutationObserver(addEmoButtons).observe(document.documentElement, {childList:true, subtree:true});
@@ -8178,7 +8180,7 @@ document.addEventListener('submit', async e => {
     await searchPeople(val('fs-q')); render(); document.getElementById('fs-q')?.focus();
   } else if (t === 'cmsg') {
     const text = val('cm-in'); if (!text || !CH.open) return;
-    document.getElementById('cm-in').value = ''; typingNow(false);
+    document.getElementById('cm-in').value = ''; cmTyped(); typingNow(false);
     sendMsg(CH.open, text);
   } else if (t === 'rwall') {
     const inp = document.getElementById('rw-in'), text = inp.value.trim(), file = document.getElementById('rw-img')?.files[0], url = val('rw-url');
