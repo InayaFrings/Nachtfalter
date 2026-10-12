@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d1ae467fad18';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='bdd99f0d249a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1474,6 +1474,7 @@ body.pcropen{overflow:hidden}
 .pgcell .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:#000a;display:grid;place-items:center;font-size:22px;border:1px solid #fff8}
 .pgcnt{position:absolute;top:8px;right:8px;background:#000b;color:#fff;font:600 12px system-ui,sans-serif;padding:3px 8px;border-radius:999px;pointer-events:none}
 .pgnav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:#000a;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.pgnav[hidden]{display:none}.pgnav.l{left:8px}.pgnav.r{right:8px}.pgnav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pgbox{position:relative}.pgbox>.pvol{z-index:3}
 .pgdots{display:flex;gap:5px;justify-content:center;margin-top:7px}.pgdots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25}.pgdots i.on{opacity:.85}
 </style>
 
@@ -6406,7 +6407,7 @@ function postHTML(p){
   if (p.type === 'gedanke' || p.type === 'neu') body = `<blockquote class="thought">${mentionHTML(etx(p.text), tags, 'profile')}</blockquote>`;
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
-  if (p.gal?.length) body += volw(galHTML(p));
+  if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
   else if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
   else if (p.bigimg) body += twrap(volw(`<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`));
   if (p.url && !spT) body += linkHTML(p.url, p.lp);
@@ -6416,7 +6417,8 @@ function postHTML(p){
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body = `<p class="caption">${mentionHTML(etx(p.text), tags, 'profile')}</p>` + body; // Text immer über Bild oder Anhang (Inaya, 2026-10-11)
-  if (tags.length) body += `<p class="pwith">mit ${tags.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
+  const onPic = tpos || (p.gal || []).some(x => x.tg?.length); // auf dem Foto markiert: kein „mit …“ darunter (Inaya, 2026-10-12)
+  if (tags.length && !onPic) body += `<p class="pwith">mit ${tags.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
   const lk = new Set(Object.values(p.reactions || {}).flat()), reacts = likeBtn(`data-act="react" data-id="${p.id}"`, lk.has(S.me), lk.size);
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
@@ -6626,11 +6628,11 @@ async function galBuild(p, onStep){ // lädt alles hoch, gibt die Liste für den
   return out;
 }
 // Anzeige im Beitrag: zum Blättern, mit Punkten und Zähler
-function galHTML(p){
+function galHTML(p, over=''){
   const R = pcrR(p.gar), o = postOwner(p) || p.author, n = p.gal.length;
   const cell = (x, i) => x.t === 'v' ? `<button type="button" class="pgcell vclip" data-act="gclip" data-u="${esc(o)}" data-id="${esc(p.id)}" data-i="${i}" aria-label="Video abspielen"><img src="${esc(x.clip?.poster || '')}" alt="" style="${galPos(x, R)}"><span class="play" aria-hidden="true">▶</span></button>`
     : `<div class="pgcell${x.tg?.length ? ' ptagwrap" data-act="ptag-show" role="button" tabindex="0' : ''}"><img class="photo" ${x.img ? `src="${esc(x.img)}"` : PIMG[o + '/' + x.k] ? `src="${PIMG[o + '/' + x.k]}"` : `data-pimg="${esc(o + '/' + x.k)}"`} alt="Bild ${i + 1} von ${n}" draggable="false">${x.tg?.length ? `${ptagBubbles(ptagsClean(x.tg), true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>`;
-  return `<div class="pgal" style="--ar:${R}"><div class="pgtrack" data-n="${n}">${p.gal.map(cell).join('')}</div>${n > 1 ? `<span class="pgcnt" aria-hidden="true">1/${n}</span><button type="button" class="pgnav l" data-act="pg-nav" data-v="-1" aria-label="Vorheriges" hidden>${PCR_ICO.l}</button><button type="button" class="pgnav r" data-act="pg-nav" data-v="1" aria-label="Nächstes">${PCR_ICO.r}</button><span class="pgdots" aria-hidden="true">${p.gal.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span>` : ''}</div>`;
+  return `<div class="pgal" style="--ar:${R}"><div class="pgbox"><div class="pgtrack" data-n="${n}">${p.gal.map(cell).join('')}</div>${over}${n > 1 ? `<span class="pgcnt" aria-hidden="true">1/${n}</span><button type="button" class="pgnav l" data-act="pg-nav" data-v="-1" aria-label="Vorheriges" hidden>${PCR_ICO.l}</button><button type="button" class="pgnav r" data-act="pg-nav" data-v="1" aria-label="Nächstes">${PCR_ICO.r}</button>` : ''}</div>${n > 1 ? `<span class="pgdots" aria-hidden="true">${p.gal.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span>` : ''}</div>`;
 }
 function pgSync(tr){ const g = tr.closest('.pgal'), n = +tr.dataset.n || 1, i = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth));
   g.querySelectorAll('.pgdots i').forEach((d, k) => d.classList.toggle('on', k === i)); const c = g.querySelector('.pgcnt'); if (c) c.textContent = `${i + 1}/${n}`;
