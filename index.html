@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a325e63aa9e8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='fa1aabc1a350';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -241,7 +241,7 @@ label.f{display:grid;gap:4px}
 .ph{display:flex;gap:12px;align-items:center}
 .who{font:400 18px var(--f-display)}
 .meta{display:block;font:14px var(--f-ital);color:var(--muted)}
-.thought{margin:0;font:24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
+.post .thought.sm,.thought.sm{font-size:16px;line-height:1.45}.thought{margin:0;font:24px/1.35 var(--f-ital);padding-left:18px;border-left:1px solid var(--line);white-space:pre-wrap;word-break:break-word;text-wrap:pretty}
 .caption{margin:0;white-space:pre-wrap;word-break:break-word}
 .photo{width:100%;display:block;border:1px solid var(--line-soft);height:auto;max-height:90vh;object-fit:contain;background:#0b0b0d}.photo[data-pimg]:not([src]){aspect-ratio:4/5}
 .vframe{position:relative;width:100%;aspect-ratio:4/5;border:1px solid var(--line-soft);background:#0b0b0d;display:grid;place-items:center;overflow:hidden;padding:0;cursor:pointer;color:var(--fg)}.vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}.vframe .play{position:relative;width:64px;height:64px;border-radius:50%;border:1px solid var(--fg);background:#000a;display:grid;place-items:center;font-size:20px}.vframe iframe{width:100%;aspect-ratio:16/9;border:0}
@@ -6422,7 +6422,8 @@ function postHTML(p){
   if (p.audio) body += audioHTML(p);
   if (p.clip && !p.gal) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
-  const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs, txt); else body += txt;
+  const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show, sm = body || hs ? txt.replace('class="thought"', 'class="thought sm"') : txt; // mit Foto/Video: Text kleiner, reine Gedanken groß (Inaya, 2026-10-12)
+  if (hs) body += showHTML(hs, sm); else body += sm;
   const onPic = tpos || (p.gal || []).some(x => x.tg?.length); // auf dem Foto markiert: kein „mit …“ darunter (Inaya, 2026-10-12)
   if (tags.length && !onPic) body += `<p class="pwith">mit ${tags.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
   const lk = new Set(Object.values(p.reactions || {}).flat()), reacts = likeBtn(`data-act="react" data-id="${p.id}"`, lk.has(S.me), lk.size);
