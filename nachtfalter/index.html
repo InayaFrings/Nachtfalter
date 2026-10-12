@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='58941c463d7b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='356ae4a6d2f9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -424,7 +424,7 @@ body.stopen{overflow:hidden}.storyov{position:fixed;inset:0;z-index:3000;backgro
 .gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
 .nbtns{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nbtns .nlink{margin:0!important;width:100%;padding-inline:8px;white-space:nowrap}
 .ctabs2{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line-soft);margin-bottom:4px}.ctabs2 button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.ctabs2 button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
-.frqw{margin:0 0 10px}.frq{width:100%}
+.frqw{margin:0 0 10px}.srbar{margin:4px 0 0}.srform{margin:0}.srform + #srres .srtabs{margin-top:8px}.frq{width:100%}
 .srtabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line-soft);margin:14px 0 10px}.srtabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.srtabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
 .htlist{display:grid;gap:6px}.htrow{display:flex;align-items:center;gap:12px;padding:8px 10px;background:var(--paper-2);border:1px solid var(--line-soft);color:var(--fg);font:inherit;text-align:left;cursor:pointer;min-width:0}.htsym{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font:500 22px var(--f-display)}.htinfo{display:grid;min-width:0}.htinfo b{overflow-wrap:anywhere}.htinfo small{color:var(--muted)}
 .srhh{display:flex;align-items:center;gap:12px;margin:12px 0 14px}.srhh .htinfo b{font:500 20px var(--f-display)}.srback{flex:none;width:40px;height:40px;display:grid;place-items:center;background:none;border:0;color:var(--fg);cursor:pointer}.srback svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -7542,7 +7542,7 @@ async function searchPeople(q){
   q = normHandle(q); FR.q = q;
   if (!social && typeof socialStart === 'function') socialStart(); // Suche soll auch gehen, wenn die Verbindung gerade erst kommt
   if (!social) { FR.results = null; toast('Die Verbindung wird noch aufgebaut. Versuch es gleich noch mal.'); return; }
-  if (q.length < 2) { FR.results = q.length ? [] : null; return; }
+  if (!q.length) { FR.results = null; return; }
   let docs = [];
   try { docs = (await social.db.collection('profiles').where('handle', '>=', q).where('handle', '<=', q + '').limit(12).get()).docs; }
   catch { try { docs = (await social.db.collection('profiles').where('handle', '==', q).limit(5).get()).docs; } catch {} }
@@ -8557,10 +8557,20 @@ async function htLoad(tag){
 }
 async function srRun(raw){
   const q = String(raw || '').trim(), k = q.replace(/^[#@]+/, '').toLowerCase(); SR.q = q; SR.ht = '';
-  if (q.startsWith('#')) SR.tab = 'h'; else if (q.startsWith('@')) SR.tab = 'u';
+  if (q.startsWith('#')) { SR.tab = 'h'; SR.auto = 1; } else if (q.startsWith('@') || SR.auto) { SR.tab = 'u'; SR.auto = 0; }
   if (!k) { FR.results = null; FR.q = ''; return; }
-  await Promise.all([searchPeople(k), htLoad(k)]);
+  await Promise.all([social ? searchPeople(k) : null, htLoad(k)]);
+  // Vorschläge: dazu alle bekannten Leute, deren Name oder @Name passt; was vorne passt, kommt zuerst (Inaya, 2026-10-12)
+  const ids = new Set(FR.results || []);
+  Object.keys(PROF).forEach(id => { const x = PROF[id]; if (x && id !== social?.uid && !isTestHandle(x.handle) && `${x.name || ''} ${x.handle || ''}`.toLowerCase().includes(k)) ids.add(id); });
+  Object.values(S.users).forEach(u => { if (u.remote && `${u.name || ''} ${u.handle || ''}`.toLowerCase().includes(k)) ids.add(u.id); });
+  const nm = id => { const x = S.users[id] || PROF[id] || {}; return [(x.name || '').toLowerCase(), (x.handle || '').toLowerCase()]; };
+  const rank = id => { const [n, h] = nm(id); return h.startsWith(k) || n.startsWith(k) ? 0 : n.split(/\s+/).some(w => w.startsWith(k)) ? 1 : 2; };
+  FR.q = k; FR.results = [...ids].sort((a, b) => rank(a) - rank(b) || nm(a)[0].localeCompare(nm(b)[0])).slice(0, 30);
 }
+let srT = 0, srSeq = 0;
+document.addEventListener('input', e => { if (e.target.id !== 'fs-q') return; clearTimeout(srT); const v = e.target.value;
+  srT = setTimeout(async () => { const n = ++srSeq; await srRun(v); if (n !== srSeq || V.name !== 'find') return; const r = document.getElementById('srres'); if (r) r.innerHTML = srBody(); }, 220); });
 function htPool(){ // alle Beiträge, die ich sehen darf: eigene, Helfer, Freunde, öffentliche
   const out = [], seen = new Set(), add = p => { if (!p || p.arch || p.type === 'teilen') return; const k = p.author + '_' + p.id; if (!seen.has(k)) { seen.add(k); out.push(p); } };
   S.posts.forEach(p => { if (p.author === S.me || S.users[p.author]?.helper) add(p); });
@@ -8574,8 +8584,7 @@ function htList(k){
   const m = new Map(); htPool().forEach(p => htOf(p.text).forEach(t => { if (t.startsWith(k)) m.set(t, (m.get(t) || 0) + 1); }));
   return [...m].sort((a, b) => (a[0] === k ? -1 : b[0] === k ? 1 : b[1] - a[1] || a[0].localeCompare(b[0]))).slice(0, 30);
 }
-function findView(){ // eine Suche für User und Hashtags (Inaya, 2026-10-12)
-  if (social && amOwner && !FR.newbies) loadNewbies();
+function srBody(){
   const k = SR.q.replace(/^[#@]+/, '').toLowerCase();
   const tab = (v, l) => `<button role="tab" data-act="sr-tab" data-v="${v}" aria-selected="${SR.tab === v}">${l}</button>`;
   let body = '';
@@ -8583,6 +8592,7 @@ function findView(){ // eine Suche für User und Hashtags (Inaya, 2026-10-12)
     const ps = htPosts(SR.ht);
     body = `<div class="srhh"><button type="button" class="srback" data-act="sr-htback" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span class="htsym" aria-hidden="true">#</span><span class="htinfo"><b>#${esc(SR.ht)}</b><small>${ps.length} ${ps.length === 1 ? 'Beitrag' : 'Beiträge'}</small></span></div>`
       + (ps.length ? `<div class="feed insta">${ps.map(p => postHTML(p)).join('')}</div>` : '<p class="note">Noch keine Beiträge mit diesem Hashtag.</p>');
+    return body;
   } else if (SR.tab === 'u') {
     body = (!k ? browseBtn() : FR.results == null ? '' : FR.results.length ? `<div class="plist">${FR.results.map(personRow).join('')}</div>` : `<p class="note">Niemand mit @${esc(k)} gefunden.</p>`)
       + (!k && amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Noctibat</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : '');
@@ -8590,10 +8600,13 @@ function findView(){ // eine Suche für User und Hashtags (Inaya, 2026-10-12)
     const l = k ? htList(k) : [];
     body = !k ? '<p class="note">Gib einen Hashtag ein, zum Beispiel #goth.</p>' : l.length ? `<div class="htlist">${l.map(([t, n]) => `<button type="button" class="htrow" data-act="ht-open" data-v="${esc(t)}"><span class="htsym" aria-hidden="true">#</span><span class="htinfo"><b>#${esc(t)}</b><small>${n} ${n === 1 ? 'Beitrag' : 'Beiträge'}</small></span></button>`).join('')}</div>` : `<p class="note">Kein Hashtag #${esc(k)} gefunden.</p>`;
   }
+  return `<div class="srtabs" role="tablist">${tab('u', 'User')}${tab('h', 'Hashtags')}</div>${body}`;
+}
+function findView(){ // eine Suche für User und Hashtags, Vorschläge schon beim Tippen (Inaya, 2026-10-12)
+  if (social && amOwner && !FR.newbies) loadNewbies();
   return `<div class="card"><h2 class="card-h">Suchen</h2><div class="card-in">
-    <form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="Nutzer oder #Hashtag suchen" value="${esc(SR.q)}" aria-label="Nutzer oder Hashtag suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
-    ${SR.ht ? '' : `<div class="srtabs" role="tablist">${tab('u', 'User')}${tab('h', 'Hashtags')}</div>`}
-    ${body}
+    <form data-form="fsearch" class="srform"><label class="musearch srbar"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.search}</svg><input type="search" id="fs-q" placeholder="Nutzer oder #Hashtag suchen" value="${esc(SR.q)}" aria-label="Nutzer oder Hashtag suchen" autocapitalize="none" spellcheck="false" autocomplete="off" enterkeyhint="search"></label></form>
+    <div id="srres">${srBody()}</div>
   </div></div>`;
 }
 
