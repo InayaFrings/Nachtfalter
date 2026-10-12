@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='eb8f1cf9f018';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='02e74e9f4567';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1383,6 +1383,13 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .stshi .lheart{width:20px;height:20px;color:#e0303a;flex:none}
 /* Interaktive Story-Sticker und Aktivitäten (Inaya, 2026-10-12) */
 .stbox.view .stnav{z-index:1}
+.mshfull{width:min(300px,72vw);cursor:pointer;margin-bottom:2px}
+.mshfull .feed{margin:0;padding:0;gap:0}
+.mshfull article.post{margin:0;pointer-events:none}
+.mshfull .pi,.mshfull .cmts,.mshfull .cform,.mshfull .pbar,.mshfull .pdel,.mshfull .pmore,.mshfull .pflag,.mshfull [data-act=report],.mshfull [data-act=post-del-other]{display:none!important}
+.gmq{margin:4px 0 10px}.gmq svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}.gmq input{flex:1;min-width:0;border:0;background:none;color:inherit;font:inherit;padding:10px 0;outline:none}
+.ico-i{width:1.15em;height:1.15em;vertical-align:-.2em;margin-right:6px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.stcrot{animation:stcrot .45s ease}@keyframes stcrot{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (min-width:761px){ /* Freunde-Karten am PC: gleiche Höhe, Text bleibt in der Karte (Inaya, 2026-10-12) */
 .zgrid{align-items:stretch}
 .zgrid>*{min-width:0;height:100%}
@@ -1403,7 +1410,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .streply.stonly{justify-content:flex-end}
 .mshst,.mshpo{display:grid;align-content:start;gap:0;padding:0;border:1px solid var(--line-soft,#ffffff26);background:var(--paper-2,#151517);color:var(--fg,#eeedf2);font:inherit;text-align:left;cursor:pointer;overflow:hidden;margin-bottom:6px}
 .mshst{position:relative;width:150px;aspect-ratio:9/16;border-radius:16px;background:#111}
-.mshst img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mshst>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .mshst .mshh{position:absolute;left:0;right:0;top:0;z-index:1;padding:8px;background:linear-gradient(#000a,#0000);color:#fff}
 .mshst .mshna{position:absolute;inset:0;display:grid;place-items:center;padding:12px;text-align:center;font-size:13px;opacity:.7}
 .mshpo{width:240px;border-radius:14px}
@@ -6145,7 +6152,10 @@ const STC = {};
 function stcWatch(key){ if (!social) return {list:[]}; if (!STC[key]) { const w = STC[key] = {list:[]}; w.unsub = social.db.collection('chats/sc_' + key + '/m').orderBy('ts').limit(300).onSnapshot(q => { w.list = q.docs.map(d => ({did:d.id, ...d.data()})); stcPaint(key); ntPing(); }, () => {}); } return STC[key]; }
 function stcListHTML(key){ const w = STC[key] || {list:[]}, uid = social?.uid, owner = key.split('_')[0];
   return w.list.length ? w.list.map(c => cbub(c.by, c.name || ntName(c.by), c.text, c.ts, c.by === uid || owner === uid ? `<button class="lnk" data-act="stc-del" data-k="${esc(key)}" data-d="${esc(c.did)}">entfernen</button>` : '')).join('') : '<p class="muted stcnone">Noch keine Kommentare. Schreib den ersten.</p>'; }
-function stcMineHTML(key){ const w = STC[key] || {list:[]}, mine = w.list.filter(c => c.by === social?.uid).at(-1); return mine ? cbub(mine.by, mine.name || me().name, mine.text, mine.ts, '') : ''; }
+// Zugeklappt: alle Kommentare wechseln sich nacheinander ab (Inaya, 2026-10-12)
+let STCI = 0;
+function stcMineHTML(key){ const l = (STC[key] || {list:[]}).list; if (!l.length) return ''; const c = l[STCI % l.length]; return `<div class="stcrot">${cbub(c.by, c.name || (c.by === social?.uid ? me().name : 'Jemand'), c.text, c.ts, '')}</div>`; }
+setInterval(() => { const m = document.getElementById('stcmine'), sh = document.getElementById('stcs'); if (!m || !sh || STV?.cOpen) return; const l = STC[sh.dataset.k]?.list || []; if (l.length < 2) return; STCI++; m.innerHTML = stcMineHTML(sh.dataset.k); }, 2800);
 function stcSheetHTML(g, st, own, u){
   const key = (own ? social.uid : g.uid) + '_' + st.id, th = u.theme && u.theme.box ? postTheme(u.theme) : '';
   const cmOff = !!st.nocm || (own ? !stSetG().cm : u.stcm === 0), rep = own ? 'all' : u.str || 'all', canW = !own && !cmOff && rep !== 'off' && (rep !== 'fr' || isFriend(g.uid));
@@ -6748,7 +6758,7 @@ function stEditorHTML(){
     ${n.tool === 'bg' && !n.tb && !e ? stMBgPanel(n) : ''}${n.tool === 'stk' && !e ? stStkPanel() : ''}
     ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${stAudV() === '1' ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${stAudV() === '0' ? '' : ' ghost'}" data-act="st-aud" data-v="0">Nur Freunde</button></span>${stSetG().cf.length ? `<button class="btn${stAudV() === 'cf' ? '' : ' ghost'}" data-act="st-aud" data-v="cf">Enge Freunde (${stSetG().cf.length})</button>` : ''}<button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-audopen" aria-label="Deine Story, sichtbar für ${stAudL()}, ändern"><span class=\"cameo\">${headPic(me(), '', true)}</span><span class="stmet">Deine Story${social ? `<small>Sichtbar für: ${stAudL()}</small>` : ''}</span></button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
+  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${stAudV() === '1' ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${stAudV() === '0' ? '' : ' ghost'}" data-act="st-aud" data-v="0">Nur Freunde</button></span>${stSetG().cf.length ? `<button class="btn${stAudV() === 'cf' ? '' : ' ghost'}" data-act="st-aud" data-v="cf">Enge Freunde (${stSetG().cf.length})</button>` : ''}<button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-audopen" aria-label="Deine Story, wird gesehen von ${stAudL()}, ändern"><span class=\"cameo\">${headPic(me(), '', true)}</span><span class="stmet">Deine Story${social ? `<small>Wird gesehen von: ${stAudL()}</small>` : ''}</span></button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
 function stVV(){ // X und Fertig bleiben oben in der Ecke, die Werkzeugleiste sitzt direkt über der Tastatur (Inaya, 2026-10-11)
   const fr = document.getElementById('stfr'), ed = fr?.querySelector('.stedov'); if (!ed) return;
@@ -7002,7 +7012,9 @@ function composeAtt(){
     ${tagUI}
     ${PLINK ? `<div class="patt pattlink"><input id="purl" type="url" placeholder="https:// Link zu YouTube, TikTok, Instagram …" aria-label="Link" value="${esc(url)}"><button type="button" class="lnk" data-act="patt-x" data-v="video">Link entfernen</button></div>` : ''}`;
 }
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList?.contains('gmqi')) e.preventDefault(); });
 document.addEventListener('input', e => {
+  if (e.target.classList?.contains('gmqi')) { const q = e.target.value.trim().toLowerCase().replace(/^@/, ''), f = e.target.closest('form'); f?.querySelectorAll('label.allg[data-q]').forEach(l => { l.hidden = !!q && !l.dataset.q.includes(q); }); return; } // Leute in der Gruppe suchen (Inaya, 2026-10-12)
   if (e.target.id === 'ptext') { const sg = document.getElementById('pmsug'); if (!sg) return; const q = social ? mentionQ(e.target.value, e.target.selectionEnd) : null; sg.hidden = q == null; if (q != null) sg.innerHTML = mentionList(mentionFind(q), 'pmention', q); sg.hidden = !q; }
   else if (e.target.id === 'pcrtq') { const r = document.getElementById('pcrtres'), it = PCR?.items[PCR.cur]; if (r) { const q = e.target.value.replace(/^@/, '').trim(); r.innerHTML = mentionList(mentionFind(q).filter(u => !(it?.tg || []).some(t => t.id === u.id)), 'pcr-tag-add', q); } }
   else if (e.target.id === 'ptagq') { const r = document.getElementById('ptagres'); if (r) { const q = e.target.value.replace(/^@/, '').trim(); r.innerHTML = mentionList(mentionFind(q).filter(u => !PTAGS.some(t => t.id === u.id)), 'ptag-add', q); } }
@@ -7469,9 +7481,9 @@ function helperAnswer(h, q){
 function focusChat(){ const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; document.getElementById('hc-in')?.focus(); }
 function roomOpenHTML(u, own){ // „Raumchat offen“ auf dem Profil, nur solange die Person online ist
   if (!u.roomOpen || (!own && !roomAlive(u.roomOpen))) return '';
-  if (own) return `<div class="ropen pro"><span>🕯 Dein Raumchat ist offen (${roomKind(u.roomOpen)}).</span><button class="btn ghost" data-act="nav" data-v="room" data-mode="chat">Zum Raumchat</button></div>`;
+  if (own) return `<div class="ropen pro"><span><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.room}</svg>Dein Raumchat ist offen (${roomKind(u.roomOpen)}).</span><button class="btn ghost" data-act="nav" data-v="room" data-mode="chat">Zum Raumchat</button></div>`;
   if (!u.remote || !canEnter(u.id) || !onlineState(u)[0]) return '';
-  return `<div class="ropen pro"><span>🕯 ${esc(u.name)} hat einen Raumchat offen (${roomKind(u.roomOpen)}).</span><button class="btn" data-act="room-visit" data-id="${esc(u.id)}">Reingehen</button></div>`;
+  return `<div class="ropen pro"><span><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.room}</svg>${esc(u.name)} hat einen Raumchat offen (${roomKind(u.roomOpen)}).</span><button class="btn" data-act="room-visit" data-id="${esc(u.id)}">Reingehen</button></div>`;
 }
 const PTICO = {room:'<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/>', posts:'<rect x="3.5" y="3.5" width="17" height="17"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/>', hl:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.3l1.4 2.9 3.2.4-2.4 2.2.6 3.2-2.8-1.6-2.8 1.6.6-3.2-2.4-2.2 3.2-.4z"/>', reposts:'<path d="M17 3.5l3.5 3.5-3.5 3.5"/><path d="M3.5 11V9.5A2.5 2.5 0 0 1 6 7h14.5"/><path d="M7 20.5L3.5 17 7 13.5"/><path d="M20.5 13v1.5A2.5 2.5 0 0 1 18 17H3.5"/>', tagged:'<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M9.5 5.5L12 3l2.5 2.5"/><circle cx="12" cy="11.2" r="2.6"/><path d="M7.5 18c.7-2.3 2.4-3.4 4.5-3.4s3.8 1.1 4.5 3.4"/>'};
 const profUser = id => S.users[id] || (PROF[id] ? remoteUser(id, PROF[id]) : null);
@@ -7485,7 +7497,7 @@ function profileView(id){
     return `<section class="themed" style="${themeStyle(u.theme)}">
     ${bannerHTML(u.banner, u.name, u.handle || '')}
     <header class="phead"><div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${portrait(u, u.theme)}</div>
-      <div style="min-width:0"><p class="phandle">@${esc(u.handle || '')}</p><p class="note">🔒 Dieses Profil ist privat. Nur Freunde sehen Beiträge und Zimmer.</p>${frReqHTML(u.id)}</div></header>
+      <div style="min-width:0"><p class="phandle">@${esc(u.handle || '')}</p><p class="note"><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Dieses Profil ist privat. Nur Freunde sehen Beiträge und Zimmer.</p>${frReqHTML(u.id)}</div></header>
   </section>`;
   }
   let panel = '';
@@ -7849,7 +7861,7 @@ function chatsView(){
     right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
       <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : esc(chatWho(c.createdBy))}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
       ${c?.pub ? '<p class="note">In öffentliche Gruppen kann man niemanden hinzufügen. Jeder tritt selbst bei.</p>' : `<h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
-      ${cand.length ? cand.map(f => `<label class="allg"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}`}
+      ${cand.length > 1 ? '<label class="musearch gmq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="gmqi" placeholder="User suchen …" aria-label="User suchen" autocomplete="off"></label>' : ''}${cand.length ? cand.map(f => `<label class="allg" data-q="${esc((f.name + ' ' + (f.handle || '')).toLowerCase())}"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}`}
       <div class="row"><button class="btn ghost" type="button" data-act="chat-open" data-id="${esc(CH.open || '')}">Zurück</button>${c && !gAdmin(c) ? '<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button>' : ''}<span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
   }
   if (CH.mode === 'helper' && S.users[CH.helper]) {
@@ -7929,7 +7941,7 @@ function groupForm(friends){
   return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
     ${g.dm ? '' : `<label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>`}
     ${g.pub && !g.id ? '<p class="note">Öffentliche Gruppe: Jeder kann sie finden und beitreten. Name und Farbe ändern und Leute entfernen kannst nur du als Admin.</p>' : ''}
-    ${g.id || g.pub ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length ? friends.map(f => `<label class="allg"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
+    ${g.id || g.pub ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length > 1 ? '<label class="musearch gmq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="gmqi" placeholder="User suchen …" aria-label="User suchen" autocomplete="off"></label>' : ''}${friends.length ? friends.map(f => `<label class="allg" data-q="${esc((f.name + ' ' + (f.handle || '')).toLowerCase())}"><input type="checkbox" class="g-mem" value="${f.id}" ${g.members.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Hintergrundbild</legend><div class="row"><label class="btn ghost"><input type="file" id="g-bgfile" accept="image/*" hidden>${g.theme.bg ? 'Anderes Foto' : 'Foto hochladen'}</label>${g.theme.bg ? '<button type="button" class="lnk" data-act="g-bgdel">Foto entfernen</button>' : ''}</div><p class="note" style="margin:0">Rand und Sprechblasen behalten die Farbe, die du oben auswählst.</p></fieldset>
@@ -8207,7 +8219,11 @@ function msgMedia(m){
   if (m.story && m.story.sh) { const x = m.story, ou = x.u === social?.uid ? me() : profUser(x.u), nm = ou?.name || x.n || 'Jemand', gone = x.ts && Date.now() - x.ts > STORY_H; if (!ou && x.u && social && !NT.asked[x.u]) { NT.asked[x.u] = 1; loadProf(x.u).then(softRender); }
     return `<button type="button" class="mshst" data-act="st-opensh" data-u="${esc(x.u || '')}" data-id="${esc(x.id || '')}" aria-label="Story von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${!gone && x.th ? `<img src="${esc(x.th)}" alt="">` : `<span class="mshna">Story nicht mehr verfügbar</span>`}</button>`; }
   if (m.post) { const x = m.post, ou = x.a === social?.uid ? me() : profUser(x.a), nm = ou?.name || x.n || 'Jemand'; if (!ou && x.a && social && !NT.asked[x.a]) { NT.asked[x.a] = 1; loadProf(x.a).then(softRender); }
-    return `<button type="button" class="mshpo" data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${x.th ? `<img src="${esc(x.th)}" alt="">` : ''}${x.t ? `<span class="mshtx"><b>${esc(nm)}</b> ${etx(x.t)}</span>` : ''}</button>`; }
+    // wie im Salon, in den Farben des Beitrags, ohne Like/Kommentar/Repost (Inaya, 2026-10-12)
+    const op = ou && htPool().find(p => p.author === (x.a === social?.uid ? S.me : x.a) && p.id === x.id), oh = op ? postHTML(op) : '';
+    if (oh) return `<div class="mshfull" role="button" tabindex="0" data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><div class="feed insta">${oh}</div></div>`;
+    const pt = ou?.theme?.box ? postTheme(ou.theme) : '';
+    return `<button type="button" class="mshpo post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''} data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${x.th ? `<img src="${esc(x.th)}" alt="">` : ''}${x.t ? `<span class="mshtx"><b>${esc(nm)}</b> ${etx(x.t)}</span>` : ''}</button>`; }
   if (m.story) { const mine = m.from === social?.uid; return `<div class="mstory">${m.story.th ? `<img src="${esc(m.story.th)}" alt="">` : ''}<small>${mine ? 'Antwort auf die Story' : 'Antwort auf deine Story'}</small></div>`; }
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
   if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
@@ -8431,7 +8447,7 @@ function roomChatInline(isMine){ // Eingabe direkt unter dem Raum
   const ro = me().roomOpen;
   const openForm = isMine && !ro ? `<div class="ropen rinl rkind"><span class="lbl">Raumchat öffnen: Wer darf rein?</span><div class="row"><button class="btn" data-act="room-open" data-v="friends">Nur Freunde</button><button class="btn" data-act="room-open" data-v="pub">Öffentlich</button></div><p class="note">Öffentlich: Alle aus Noctibat sehen dein Zimmer in der Liste und können reinkommen, auch ohne Freundschaft.</p></div>` : '';
   return `<div class="rchat">${openForm}
-    <p class="lbl rcount" id="roomcount">${isMine && ro ? `🕯 Raumchat ${roomKind(ro)} · ` : ''}${esc(roomCountText())}</p>
+    <p class="lbl rcount" id="roomcount">${isMine && ro ? `<svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.room}</svg>Raumchat ${roomKind(ro)} · ` : ''}${esc(roomCountText())}</p>
   </div>`;
 }
 // Offener Raum: kleines Teilen-Symbol oben, darüber Freunde einladen (Inaya, 2026-10-11)
@@ -8446,7 +8462,7 @@ function roomChatExtra(){ // Einstellungen zum eigenen Raumchat: schließen und 
   if (!social) return '';
   const friends = Object.values(S.users).filter(u => u.remote), ro = me().roomOpen;
   return `<div class="card"><h2 class="card-h">Raumchat</h2><div class="card-in">
-    ${ro ? `<div class="ropen"><span>🕯 Dein Raumchat ist offen (<b>${roomKind(ro)}</b>). ${ro.pub ? 'Alle aus Noctibat sehen ihn in der Liste der offenen Raumchats und können reinkommen.' : 'Nur deine Freunde können reinkommen.'}</span><button class="btn ghost" data-act="room-close">Raumchat schließen</button></div>
+    ${ro ? `<div class="ropen"><span><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.room}</svg>Dein Raumchat ist offen (<b>${roomKind(ro)}</b>). ${ro.pub ? 'Alle aus Noctibat sehen ihn in der Liste der offenen Raumchats und können reinkommen.' : 'Nur deine Freunde können reinkommen.'}</span><button class="btn ghost" data-act="room-close">Raumchat schließen</button></div>
     <fieldset class="opt"><legend class="lbl">Wer darf rein?</legend><div class="row"><button class="btn ${ro.pub ? 'ghost' : ''}" data-act="room-kind" data-v="friends" aria-pressed="${!ro.pub}">Nur Freunde</button><button class="btn ${ro.pub ? '' : 'ghost'}" data-act="room-kind" data-v="pub" aria-pressed="${!!ro.pub}">Öffentlich</button></div></fieldset>` : ''}
     <p class="note">Freunde lädst du über den Pfeil oben am Zimmer ein. Befreundete können auch ohne Einladung über dein Profil reinkommen. Höchstens ${ROOM_MAX} Leute passen gleichzeitig ins Zimmer.</p>
   </div></div>`;
