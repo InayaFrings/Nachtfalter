@@ -295,7 +295,7 @@ textarea.sttxt{left:50%;top:40%;width:84%;max-width:84%;background:transparent;b
 .sttile{container-type:inline-size}.sttile .sttxt{pointer-events:none}.sttile .stov{z-index:1}
 @media (max-width:760px){.stbox.edit{width:100%;height:100%}.stbox.edit .stframe.stcam,.stbox.edit .stframe.stcrop,.stbox.edit .stframe.sted{width:100vw;height:100%;max-height:100vh;aspect-ratio:auto;border:0}}
 .stcam,.stcrop{background:#000;touch-action:none;user-select:none;-webkit-user-select:none}.stcam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.stcam video.mirror{transform:scaleX(-1)}.stctitle{color:#fff;font:600 16px -apple-system,'Helvetica Neue',Arial,sans-serif}
-.stcbar{position:absolute;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;z-index:5}.stshut{width:78px;height:78px;border-radius:50%;border:5px solid #fff;background:#ffffff30;cursor:pointer;box-shadow:inset 0 0 0 4px #000}.stshut:active{background:#fff}
+.stcbar{position:absolute;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:1fr auto 1fr;align-items:center;justify-items:center;z-index:5}.stshut{width:78px;height:78px;border-radius:50%;border:5px solid #fff;background:#ffffff30;cursor:pointer;box-shadow:inset 0 0 0 4px #000}.stshut:active{background:#fff}.stshut{position:relative;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .2s}.string{position:absolute;inset:-12px;width:calc(100% + 24px);height:calc(100% + 24px);transform:rotate(-90deg);fill:none;stroke:#e5334f;stroke-width:6;stroke-dasharray:100;stroke-dashoffset:100;opacity:0;pointer-events:none}.stshut.rec{transform:scale(1.18);background:#e5334f66}.stshut.rec .string{opacity:1;animation:strec var(--recs,30s) linear forwards}@keyframes strec{to{stroke-dashoffset:0}}
 .stgal{display:grid;justify-items:center;gap:4px;color:#fff;cursor:pointer;font:12px -apple-system,Arial,sans-serif}.stgal svg{width:44px;height:44px;padding:9px;border:2px solid #fff;border-radius:10px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;background:#0006}
 .stnocam{position:absolute;inset:0;display:grid;align-content:center;justify-items:center;gap:16px;padding:24px;color:#eee;text-align:center}.stnocam p{margin:0 0 6px;font:16px -apple-system,Arial,sans-serif}.stbig{display:flex;align-items:center;gap:12px;width:min(280px,80%);padding:16px 18px;border:1px solid #ffffff60;border-radius:14px;background:#ffffff10;color:#fff;cursor:pointer;font:600 16px -apple-system,Arial,sans-serif}.stbig svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .stcrop{overflow:hidden}#stcimg{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}.stgridl{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent calc(33.33% - .5px),#fff6 33.33%,transparent calc(33.33% + .5px),transparent calc(66.66% - .5px),#fff6 66.66%,transparent calc(66.66% + .5px)),linear-gradient(180deg,transparent calc(33.33% - .5px),#fff6 33.33%,transparent calc(33.33% + .5px),transparent calc(66.66% - .5px),#fff6 66.66%,transparent calc(66.66% + .5px));box-shadow:inset 0 0 0 1px #fff8}
@@ -6021,10 +6021,33 @@ async function stCamStart(){
   if (!stCam) return; stCamStop(); stCam.noCam = false;
   try {
     if (!navigator.mediaDevices?.getUserMedia) throw 0;
-    const st = await navigator.mediaDevices.getUserMedia({video:{facingMode:stCam.facing, width:{ideal:1080}, height:{ideal:1920}}, audio:false});
+    const vc = {facingMode:stCam.facing, width:{ideal:1080}, height:{ideal:1920}}; let st; try { st = await navigator.mediaDevices.getUserMedia({video:vc, audio:true}); } catch { st = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); } // Ton fürs Video beim Gedrückthalten
     if (!stCam || stCam.mode !== 'cam') { st.getTracks().forEach(t => t.stop()); return; }
     stCam.stream = st; const v = document.getElementById('stvid'); if (v) { v.srcObject = st; v.play().catch(() => {}); }
   } catch { if (stCam) { stCam = {facing:stCam.facing, mode:'pick', noCam:true}; storyPaint(); toast('Die Kamera ist hier nicht freigegeben. Tipp nochmal auf Kamera, dann öffnet sich die Handy-Kamera.'); } }
+}
+// Auslöser wie bei der Handy-Kamera: tippen = Foto, gedrückt halten = Video bis 30 Sekunden (Inaya, 2026-10-12)
+let stRec = null;
+document.addEventListener('pointerdown', e => {
+  const b = e.target.closest?.('#stshut'); if (!b || !stCam?.stream) return; e.preventDefault();
+  const t = setTimeout(() => stRecStart(b), 350); stRec = {t, b, on:false};
+});
+document.addEventListener('pointerup', () => { const r = stRec; if (!r) return; clearTimeout(r.t); if (!r.on) { stRec = null; stCamShot(); } else stRecStop(); });
+document.addEventListener('pointercancel', () => { const r = stRec; if (!r) return; clearTimeout(r.t); if (r.on) stRecStop(); else stRec = null; });
+document.addEventListener('contextmenu', e => { if (e.target.closest?.('#stshut')) e.preventDefault(); });
+function stRecStart(b){
+  const r = stRec; if (!r || !stCam?.stream) return;
+  const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'], mt = window.MediaRecorder && types.find(t => MediaRecorder.isTypeSupported(t));
+  if (!mt) { stRec = null; toast('Video aufnehmen geht in diesem Browser nicht. Tipp für ein Foto.'); return; }
+  let rec; try { rec = new MediaRecorder(stCam.stream, {mimeType:mt, videoBitsPerSecond:2500000}); } catch { stRec = null; toast('Video aufnehmen ging gerade nicht.'); return; }
+  r.on = true; r.rec = rec; r.mt = mt.split(';')[0]; r.parts = []; r.t0 = Date.now(); rec.ondataavailable = ev => ev.data.size && r.parts.push(ev.data);
+  rec.onstop = () => stRecDone(r); rec.start(500); b.classList.add('rec'); b.style.setProperty('--recs', ST_VMAX + 's');
+  r.max = setTimeout(() => { if (stRec === r) stRecStop(); }, ST_VMAX * 1000);
+}
+function stRecStop(){ const r = stRec; if (!r?.on) return; stRec = null; clearTimeout(r.max); r.b?.classList.remove('rec'); try { r.rec.stop(); } catch {} }
+function stRecDone(r){
+  const blob = new Blob(r.parts, {type:r.mt}); if (Date.now() - r.t0 < 600 || !blob.size) { toast('Halt den Knopf etwas länger für ein Video.'); return; }
+  stCamStop(); const f = new File([blob], 'story.' + (/mp4/.test(r.mt) ? 'mp4' : 'webm'), {type:r.mt}); stVideo(f);
 }
 function stCamShot(){
   const v = document.getElementById('stvid'); if (!v || !v.videoWidth) return;
@@ -6067,7 +6090,7 @@ function stCamHTML(){
     ${c.noCam ? `<div class="stnocam"><p>Wähle ein Foto für deine Story.</p><label class="stbig"><input type="file" id="st-cap" accept="image/*" capture="environment" hidden>${STC_ICO.cam}<span>Foto aufnehmen</span></label><label class="stbig"><input type="file" id="st-file" accept="image/*" hidden>${STC_ICO.gal}<span>Aus der Galerie hochladen</span></label></div>`
       : `<video id="stvid" class="${c.facing === 'user' ? 'mirror' : ''}" playsinline muted autoplay></video>`}
     <div class="sttop"><button class="stic" data-act="stc-pickback" aria-label="Zurück">${STC_ICO.x}</button><span class="sp"></span><b class="stctitle">Kamera</b><span class="sp"></span>${c.noCam ? '<span style="width:44px"></span>' : `<button class="stic" data-act="stc-flip" aria-label="Kamera wechseln">${STC_ICO.flip}</button>`}</div>
-    ${c.noCam ? '' : `<div class="stcbar">${gal}<button class="stshut" data-act="stc-shot" aria-label="Foto aufnehmen"></button><span class="stgal"></span></div>`}
+    ${c.noCam ? '' : `<div class="stcbar">${gal}<button class="stshut" id="stshut" aria-label="Tippen für ein Foto, gedrückt halten für ein Video"><svg class="string" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="100"/></svg></button><span class="stgal"></span></div>`}
   </div></div>`;
 }
 function stCamWire(){
