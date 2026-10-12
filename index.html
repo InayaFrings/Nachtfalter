@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='cab2e41385ad';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5a9aad38e0ca';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -3366,10 +3366,12 @@ function avatarI(o0, view='full', pose='', lite=false){
   let back = Object.keys(o.acc || {}).filter(k => IACC_BACK[k]).map(k => IACC_BACK[k](X, AC(k))).join('') + (IJACK_BACK[o.jacket] ? IJACK_BACK[o.jacket](X) : '');
   let body = '';
   if (J.p_nabel) body += IRING(B.nav[0], B.nav[1] + 12, J.p_nabel, 6) + IPC(B.nav[0], B.nav[1] - 2, J.p_nabel, 3);
-  for (const k in (o.legw || {})) if (ILEGW[k]) body += ILEGW[k](X, o.legw[k] && o.legw[k] !== 'auto' ? o.legw[k] : '#141218');
+  // Stulpen liegen über den Schuhen, Strumpfhosen und Socken darunter (Inaya, 2026-10-12)
+  let stulp = '';
+  for (const k in (o.legw || {})) if (ILEGW[k]) { const h = ILEGW[k](X, o.legw[k] && o.legw[k] !== 'auto' ? o.legw[k] : '#141218'); if (/stulpen/.test(k)) stulp += h; else body += h; }
   const shoes = ISHOE[o.shoes] ? ISHOE[o.shoes](X, o.shoesC || ISHOEC[o.shoes] || '#141218') : '';
   const bot = IBOT[o.bottom] ? IBOT[o.bottom](X, o.bottomC || IBOTC[o.bottom] || '#141218') : '';
-  body += IWIDE.includes(o.bottom) ? shoes + bot : bot + shoes;
+  body += IWIDE.includes(o.bottom) ? shoes + stulp + bot : bot + shoes + stulp;
   for (const k in (o.legw || {})) if (ILEGW_OVER[k]) body += ILEGW_OVER[k](X, o.legw[k] && o.legw[k] !== 'auto' ? o.legw[k] : (ITEMS.find(i => i.id === k)?.c || '#141218')); // Fellstulpen über Schuh und Hose
   if ((o.acc || {}).kette) body += IACC_FRONT.kette(X, AC('kette'));
   const lower = body; // Hose, Rock, Strümpfe, Schuhe, Gürtel: bleiben bei Arm-Posen an ihrem Platz
