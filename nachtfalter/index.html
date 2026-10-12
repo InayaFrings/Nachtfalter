@@ -1242,6 +1242,15 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .pcfield .pcimg,.pcfield .emobtn{border:0;width:36px;height:36px;padding:6px;flex:none;background:none;opacity:.85}.pcfield .pcimg:hover,.pcfield .emobtn:hover{opacity:1}.pcfield .emobtn{margin-right:2px}
 .pbar{align-items:center;gap:8px}.pbar .rpbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pbar .rpbtn{gap:6px;color:var(--fg)}.post.tp .pbar .rpbtn{color:var(--p-fg)}
 .pfeed .reacts.pbar{flex-wrap:nowrap}.pfeed .reacts.pbar button{flex:0 0 auto;padding-inline:10px}
+/* Profil-Editor: nichts ragt rechts raus; Like links unten, Repost rechts unten (Inaya, 2026-10-12) */
+.design fieldset,.emus{min-width:0;max-width:100%}.emus .murow,.emus .musearch,.emus .stmres{min-width:0;max-width:100%}.mulade{margin:0;font-style:italic}
+.pbar .rpbtn{margin-left:auto}
+/* Story-Musik oben unter dem Namen wie bei Insta (Inaya, 2026-10-12) */
+.stwho{min-width:0;max-width:100%;text-align:left}.stwcol{display:grid;min-width:0;gap:1px}.stwrow{display:flex;align-items:baseline;gap:8px;min-width:0}.sthead{min-width:0}.sthead .stwho{flex:0 1 auto}
+.sthmu{display:flex;align-items:center;gap:6px;font:500 12.5px/1.25 system-ui,-apple-system,sans-serif;min-width:0;opacity:.95}.sthmt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.sthmt b{font-weight:600}
+.steq{display:inline-flex;align-items:flex-end;gap:2px;height:11px;flex:none}.steq i{width:2.5px;background:#fff;border-radius:1px;height:100%;animation:steq .9s ease-in-out infinite}.steq i:nth-child(2){animation-delay:-.3s}.steq i:nth-child(3){animation-delay:-.6s}@keyframes steq{0%,100%{height:35%}50%{height:100%}}
+.stframe.paused .steq i,.stframe.cmopen .steq i{animation-play-state:paused}
+.stemu{position:absolute;top:62px;left:12px;right:62px;z-index:4;display:flex;align-items:center;gap:8px;color:#fff;text-shadow:0 1px 4px #000;background:#0007;border-radius:999px;padding:6px 6px 6px 12px}.stemu .sthmu{flex:1}.stmux2{flex:none;width:28px;height:28px;border-radius:999px;border:0;background:#fff2;color:#fff;display:grid;place-items:center;padding:5px;cursor:pointer}.stmux2 svg{width:16px;height:16px}
 </style>
 
 <div id="app"></div>
@@ -5306,7 +5315,9 @@ const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.co
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function stAuUnlock(){ if (stAuSrc) return; try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
 const SPRES = {}; // Spotify-Link -> gefundene Hörprobe
-function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; SPRES[url] = 0; stSongSearch(url, true).then(l => { SPRES[url] = l && l[0] ? {...l[0], sp:url} : null; if (SPRES[url] && STV) storyPaint(); }); return null; }
+const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
+function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}</span></span>` : ''; }
+function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; SPRES[url] = 0; stSongSearch(url, true).then(l => { SPRES[url] = l && l[0] ? {...l[0], sp:url} : null; if (SPRES[url] && STV) storyPaint(); else if (SPRES[url] && !stNew) softRender(); }); return null; }
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
 let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
@@ -5380,10 +5391,9 @@ function storyPaint(){
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><b>${esc(own ? 'Deine Story' : u.name)}</b></button><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && SPRES[st.song]))}</span></button><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${stTextsHTML(stTexts(st))}
-    ${st.mu ? stMuHTML(st.mu, st.mp) : st.song && SPRES[st.song] ? stMuHTML(SPRES[st.song], {x:50, y:84, w:76}) : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
     ${STV.arch || !social ? '' : stcSheetHTML(g, st, own, u)}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
@@ -5809,8 +5819,7 @@ function stEditorHTML(){
     ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-back" aria-label="Zurück">${ico.x}</button></div>
     <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button>${n.vid ? `<button class="stic${n.snd ? ' on' : ''}" data-act="st-esnd" aria-label="${n.snd ? 'Ton aus' : 'Ton an'}">${n.snd ? NFI.snd : NFI.mute}</button>` : ''}<button class="stic${n.song || n.mu ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button>${n.tb ? `<button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>` : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}<button class="stic" data-act="st-tag" aria-label="Jemanden markieren">${ico.tag}</button></div>
     ${n.tb ? '' : `<button class="stfarrow l" data-act="st-fstep" data-v="-1" aria-label="Vorheriger Filter">‹</button><button class="stfarrow r" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">›</button>`}
-    ${n.mu ? stMuHTML(n.mu, n.mp, true, n.muSel) : n.song ? `<button class="stsong" data-act="st-music">♪ Spotify-Song</button>` : ''}
-    ${n.mu && n.muSel ? `<input class="stsize" id="st-musz" type="range" min="40" max="96" step="1" value="${+n.mp.w}" aria-label="Größe der Musikleiste"><button class="stmux" data-act="st-songx" aria-label="Song entfernen">${NFI.x}</button>` : ''}
+    ${n.mu ? `<div class="stemu">${stHeadMu(n.mu)}<button class="stmux2" data-act="st-songx" aria-label="Song entfernen">${NFI.x}</button></div>` : n.song ? `<button class="stsong" data-act="st-music">♪ Spotify-Song</button>` : ''}
     <div class="sttrash" id="sttrash" hidden>${ico.tr}</div>
     ${n.tb ? '' : `<span class="stfcur">${esc(fx[1])}</span>`}`}
     ${e ? `<div class="stedov">
@@ -6195,8 +6204,14 @@ ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</
     <section class="salon"><h2 class="salon-h">Salon</h2>${social ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${posts.length ? posts.map(postHTML).join('') : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`}</div></section>`;
 }
 let musicEdit = false;
+// Alte Spotify-Profilmusik wird zur gleichen Song-Karte wie die neue Profilmusik (Inaya, 2026-10-12); in Beiträgen bleibt alles wie es war
+const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : u.songSp ? stSpMu(u.songSp) : null;
+function profMuMigrate(u){ if (u.id !== S.me || u.songMu || !u.songSp) return; const m = SPRES[u.songSp]; if (!m) return;
+  setTimeout(() => { const x = me(); if (!x || x.songMu || x.songSp !== u.songSp) return; x.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:0}; x.songSp = ''; save(); }, 0); }
 function musicHTML(u, mine){
   if (!u.id) return '';
+  if (!u.songMu && u.songSp) { const m = profMu(u); if (m && stMuPv(m)) { profMuMigrate(u); return `<div class="music mmu">${pmuHTML(m)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`; }
+    if (SPRES[u.songSp] !== null) return `<div class="music mmu"><p class="muted mulade">Musik lädt …</p></div>`; }
   if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(u.songMu)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
   const sp = u.songSp && embedOf(u.songSp);
   if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
@@ -6395,8 +6410,8 @@ function profileView(id){
 }
 function previewHTML(){
   if (isMob()) { // Handy: links das ganze Profil zum Durchscrollen, mit den Änderungen, die du gerade machst
-    const u = me(), keep = {theme:u.theme, pic:u.pic, banner:u.banner, cover:u.cover}, pt = profTab, pw = PROF_WALL;
-    Object.assign(u, {theme:draft}, mdraft ? {pic:mdraft.pic, banner:mdraft.banner, cover:mdraft.cover} : {});
+    const u = me(), keep = {theme:u.theme, pic:u.pic, banner:u.banner, cover:u.cover, songMu:u.songMu, songSp:u.songSp}, pt = profTab, pw = PROF_WALL;
+    Object.assign(u, {theme:draft}, mdraft ? {pic:mdraft.pic, banner:mdraft.banner, cover:mdraft.cover, songMu:mdraft.songMu || undefined, songSp:mdraft.songSpX ? '' : u.songSp} : {});
     let h = ''; try { h = profileView(u.id); } finally { Object.assign(u, keep); profTab = pt; PROF_WALL = pw; }
     return h.replace(/<div class="editbar">[\s\S]*?<\/div>/, '');
   }
@@ -7422,7 +7437,8 @@ const profMuStarted = {};
 // Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite
 document.addEventListener('pointerdown', e => {
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
-  if (u && u.songMu && stMuPv(u.songMu) && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=pmu-play],[data-act=music-toggle]') && (stAuSrc !== stMuPv(u.songMu) || stAu.paused) && !profMuStarted[u.id]) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(u.songMu, true, true); setTimeout(muMarkPrev, 50); return; }
+  const pm = u && profMu(u);
+  if (pm && stMuPv(pm) && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=pmu-play],[data-act=music-toggle]') && (stAuSrc !== stMuPv(pm) || stAu.paused) && !profMuStarted[u.id]) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(pm, true, true); setTimeout(muMarkPrev, 50); return; }
   if (!u || songOff === u.id || songPlaying || songErr || e.target.closest?.('[data-act=music-toggle]')) return;
   songPlay();
 }, true);
