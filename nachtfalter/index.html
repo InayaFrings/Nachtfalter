@@ -5616,13 +5616,16 @@ function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span cla
 function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; SPRES[url] = 0; stSongSearch(url, true).then(l => { SPRES[url] = l && l[0] ? {...l[0], sp:url} : null; if (SPRES[url] && STV) storyPaint(); else if (SPRES[url] && !stNew) softRender(); }); return null; }
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
+// Fehlersuche Ton (Inaya, 2026-10-12): zeigt kurz, warum ein Song nicht spielt
+let auDiagT = 0; function auDiag(m){ if (Date.now() - auDiagT < 3000 || /AbortError/.test(m)) return; auDiagT = Date.now(); toast('Ton-Fehler: ' + m); }
+stAu.addEventListener('error', () => { if (!stAuSrc) return; const c = stAu.error?.code; auDiag(`Song lädt nicht (Code ${c || '?'}${c === 2 ? ', Netzwerk' : c === 4 ? ', Format/Adresse' : ''}) ` + String(stAuSrc).replace(/^https:\/\/([^/]+).*/, '$1')); });
 let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
 stAu.addEventListener('timeupdate', () => { if (stAuWin && (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5)) { try { stAu.currentTime = stAuWin.s; } catch {} } });
 function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} }; if (stAu.readyState >= 1) go(); else stAu.addEventListener('loadedmetadata', go, {once:true}); }
 function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
   const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
   if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
-  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(() => { if (stAuSrc !== pv) return; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
+  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(e => { auDiag('Abspielen: ' + (e?.name || e)); if (stAuSrc !== pv) return; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
 function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.removeAttribute('src'); try { stAu.load(); } catch {} }
 const stMuHTML = (mu, mp, edit, sel) => { mp = mp || {x:50, y:80, w:72}; const art = stMuArt(mu);
   return `<div class="stmu${edit ? ' ed' : ''}${sel ? ' sel' : ''}"${edit ? ' id="stmued"' : ' data-act="st-snd" role="button" tabindex="0" aria-label="Ton an oder aus"'} style="left:${+mp.x}%;top:${+mp.y}%;width:${+mp.w}%;--mw:${+mp.w}">${art ? `<img src="${esc(art)}" alt="">` : '<i class="stmuno">♪</i>'}<span><b>${esc(mu.t || 'Song')}</b><small>${esc(mu.a || '')}</small></span><i class="stmeq" aria-hidden="true"><i></i><i></i><i></i></i></div>`; };
