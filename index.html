@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0b851d4a74a0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8a4cd5396651';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -147,7 +147,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 .shell{display:grid;grid-template-columns:200px minmax(0,1fr) 270px;gap:28px;max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:28px 56px}
 .rail{position:sticky;top:calc(28px + env(safe-area-inset-top,0px));align-self:start;display:grid;gap:20px}
 .logo{font:400 32px/1 var(--f-display);letter-spacing:.01em;margin:0}
-.rail{container-type:inline-size}.rail .logo{font-size:min(30px,15.5cqi);overflow-wrap:anywhere}.rail .logo-mark{width:min(160px,calc(100% - 46px))}
+.rail{container-type:inline-size}.rail .logo{font-size:min(30px,15.5cqi);overflow-wrap:anywhere}.rail .logo-mark{width:min(150px,calc(100% - 72px))}
 .logo small{display:block;font:15px/1.3 var(--f-ital);color:var(--muted);margin-top:8px;letter-spacing:0}
 .rail ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
 .nl{background:none;border:0;border-left:1px solid var(--line-soft);text-align:left;width:100%;padding:7px 12px;font:400 18px var(--f-display);color:var(--muted)}
@@ -5690,8 +5690,8 @@ function storyUsers(){ // Freunde und alle mit öffentlicher Story
 function storyBar(){
   if (!S.me) return ''; storySweep();
   const mine = myStories(), fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
-  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${!l.length && u.id === S.me ? '<i class="sadd" aria-hidden="true">+</i>' : ''}<small${nameFont(u)}>${esc(label)}</small></button>`;
-  return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${mine.length ? '<button class="sring splus" data-act="story-new" aria-label="Neue Story"><span class="sava">＋</span><small>Neu</small></button>' : ''}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
+  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${nameFont(u)}>${esc(label)}</small></button>`;
+  return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
 }
 function storyThumb(d){ return new Promise(ok => { const img = new Image(); img.onerror = () => ok(''); img.onload = () => { const c = document.createElement('canvas'); c.width = 108; c.height = 192; c.getContext('2d').drawImage(img, 0, 0, 108, 192); ok(c.toDataURL('image/jpeg', .6)); }; img.src = d; }); }
 function storyImg(uid, id, local, thumb){
@@ -5711,14 +5711,23 @@ const stMuPv = mu => stOkUrl(mu && mu.pv && pvFresh(mu.pv, mu), /^https:\/\/[\w.
 // Darum wird für abgelaufene Links gleich beim Anzeigen eine frische Hörprobe gesucht, bevorzugt von Apple (die laufen nicht ab).
 const PVFIX = {};
 const pvExpired = pv => { const m = /dzcdn\.net\/.*[?&~]hdnea=exp=(\d+)/.exec(pv) || /dzcdn\.net\/.*exp=(\d+)/.exec(pv); return !!m && +m[1] * 1000 < Date.now() + 120000; };
+const PVMU = {}, PVTRIED = {};
+const muNorm = x => String(x || '').toLowerCase().replace(/\(.*?\)|\[.*?\]/g, ' ').replace(/\s[-–]\s.*$/, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 function pvFresh(pv, mu){
-  if (PVFIX[pv]) return PVFIX[pv]; if (!pvExpired(pv)) return pv;
-  if (PVFIX[pv] === undefined && mu && mu.t) { PVFIX[pv] = 0; const t = String(mu.t).toLowerCase(), a = String(mu.a || '').toLowerCase();
-    (async () => { const q = [mu.a, mu.t].filter(Boolean).join(' '); const [it, dz] = await Promise.all([stSearchItunes(q).catch(() => null), stSearchDeezer(q).catch(() => null)]);
-      const ok = r => r && r.pv && String(r.t).toLowerCase() === t && (!a || String(r.a).toLowerCase() === a), loose = r => r && r.pv && String(r.t).toLowerCase().includes(t);
-      const hit = (it || []).find(ok) || (dz || []).find(ok) || (it || []).find(loose) || (dz || []).find(loose);
-      PVFIX[pv] = hit ? hit.pv : null; if (!hit) return; if (stAuSrc === pv) stAuStop(); if (STV) storyPaint(); else softRender(); })(); }
-  return pv; }
+  if (mu && mu.t && !PVMU[pv]) PVMU[pv] = {t:mu.t, a:mu.a};
+  if (PVFIX[pv]) return PVFIX[pv]; if (pvExpired(pv) && PVFIX[pv] === undefined) pvRefresh(pv); return pv; }
+function pvRefresh(pv, done){ // frische Hörprobe zum selben Song suchen
+  const mu = PVMU[pv]; if (!mu || !mu.t) return done?.(null); PVFIX[pv] = 0;
+  const t = muNorm(mu.t), a = muNorm(mu.a);
+  (async () => { const q = [mu.a, String(mu.t).replace(/\(.*?\)|\[.*?\]/g, '')].filter(Boolean).join(' '); const [it, dz] = await Promise.all([stSearchItunes(q).catch(() => null), stSearchDeezer(q).catch(() => null)]);
+    const all = [...(it || []), ...(dz || [])].filter(r => r && r.pv && r.pv !== pv), art = r => !a || muNorm(r.a).includes(a) || a.includes(muNorm(r.a));
+    const hit = all.find(r => muNorm(r.t) === t && art(r)) || all.find(r => (muNorm(r.t).includes(t) || t.includes(muNorm(r.t))) && art(r));
+    PVFIX[pv] = hit ? hit.pv : null; if (hit) PVMU[hit.pv] = mu; done?.(PVFIX[pv]); if (!hit || done) return; if (stAuSrc === pv) stAuStop(); if (STV) storyPaint(); else softRender(); })(); }
+function pvRescue(){ // Song lädt nicht (z. B. abgelaufener Link): einmal frisch suchen, dann weiter
+  const bad = stAuSrc, orig = Object.keys(PVFIX).find(k => PVFIX[k] === bad) || bad; if (!bad || PVTRIED[bad] || !PVMU[orig]) return false; PVTRIED[bad] = 1;
+  const w = stAuWin;
+  pvRefresh(orig, np => { if (stAuSrc !== bad) return; stAuStop(); if (np) { stMute = false; stAu.loop = true; stAuPlay({pv:np, s:w ? w.s : 0, l:w ? w.e - w.s : 0}, true, !!w); } if (STV) storyPaint(); else softRender(); setTimeout(muMarkPrev, 50); });
+  return true; }
 const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.com|dzcdn\.net)\//);
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function stAuUnlock(){ if (stAuSrc) return; try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
@@ -5729,15 +5738,15 @@ function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; S
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
 // Fehlersuche Ton (Inaya, 2026-10-12): zeigt kurz, warum ein Song nicht spielt
-let auDiagT = 0; function auDiag(m){ if (Date.now() - auDiagT < 3000 || /AbortError/.test(m)) return; auDiagT = Date.now(); toast('Ton-Fehler: ' + m); }
-stAu.addEventListener('error', () => { if (!stAuSrc) return; const c = stAu.error?.code; auDiag(`Song lädt nicht (Code ${c || '?'}${c === 2 ? ', Netzwerk' : c === 4 ? ', Format/Adresse' : ''}) ` + String(stAuSrc).replace(/^https:\/\/([^/]+).*/, '$1')); });
+function auDiag(m){ try { console.warn('Ton:', m); } catch {} }
+stAu.addEventListener('error', () => { if (!stAuSrc || pvRescue()) return; const c = stAu.error?.code; auDiag(`Song lädt nicht (Code ${c || '?'}${c === 2 ? ', Netzwerk' : c === 4 ? ', Format/Adresse' : ''}) ` + String(stAuSrc).replace(/^https:\/\/([^/]+).*/, '$1')); });
 let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
 stAu.addEventListener('timeupdate', () => { if (stAuWin && (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5)) { try { stAu.currentTime = stAuWin.s; } catch {} } });
 function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} }; if (stAu.readyState >= 1) go(); else stAu.addEventListener('loadedmetadata', go, {once:true}); }
 function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
   const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
   if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
-  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(e => { auDiag('Abspielen: ' + (e?.name || e)); if (stAuSrc !== pv) return; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
+  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(e => { auDiag('Abspielen: ' + (e?.name || e)); if (stAuSrc !== pv) return; if (e?.name === 'NotSupportedError') { pvRescue(); return; } stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
 function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.removeAttribute('src'); try { stAu.load(); } catch {} }
 const stMuHTML = (mu, mp, edit, sel) => { mp = mp || {x:50, y:80, w:72}; const art = stMuArt(mu);
   return `<div class="stmu${edit ? ' ed' : ''}${sel ? ' sel' : ''}"${edit ? ' id="stmued"' : ' data-act="st-snd" role="button" tabindex="0" aria-label="Ton an oder aus"'} style="left:${+mp.x}%;top:${+mp.y}%;width:${+mp.w}%;--mw:${+mp.w}">${art ? `<img src="${esc(art)}" alt="">` : '<i class="stmuno">♪</i>'}<span><b>${esc(mu.t || 'Song')}</b><small>${esc(mu.a || '')}</small></span><i class="stmeq" aria-hidden="true"><i></i><i></i><i></i></i></div>`; };
