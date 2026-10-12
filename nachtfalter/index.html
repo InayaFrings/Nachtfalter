@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2b6fed1225f7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e92a399a76cd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -7084,11 +7084,12 @@ function psfToggle(b){
   if (!social) { toast('Eigene Songs gehen nur, wenn du mit Noctibat verbunden bist.'); return; }
   songOff = null; psfStart(uid, false);
 }
+// eigenes Profil: die MP3 liegt unter der Firebase-ID, nicht unter der lokalen ID (Inaya, 2026-10-12: eigene MP3 spielte nie)
 async function psfStart(uid, quiet){ // der Player wird schon beim Tippen angestoßen, sonst sperrt das iPhone den Ton
   const f = profUser(uid)?.songFile; if (!f) return;
   psfStop(); try { stAuStop(); } catch {} try { pspStop(); } catch {}
   const a = new Audio(); a.loop = true; a.src = ST_SILENT; a.play().catch(() => {}); const me = PSF = {uid, a}; a.onpause = a.onplay = psfMark; psfMark();
-  try { const src = await songURL(uid, f); if (PSF !== me) return; a.src = src.url; await a.play(); }
+  try { const src = await songURL(uid === S.me && social ? social.uid : uid, f); if (PSF !== me) return; a.src = src.url; await a.play(); }
   catch (e) { if (PSF === me && e?.name === 'NotAllowedError') me.blocked = true; else if (PSF === me && !quiet) toast('Der Song ließ sich gerade nicht laden.'); }
   psfMark();
 }
@@ -7127,8 +7128,9 @@ function bestPicker(){
   return `<div class="bestpick"><div class="rsheet-h"><b>Beste Freunde (${best.length} von 4)</b><button type="button" class="lnk" data-act="best-open">Fertig</button></div>
     ${fr.length ? `<div class="rslist">${fr.map(f => { const on = best.includes(f.id); return `<button type="button" class="rsrow bestrow" data-act="best-tog" data-id="${esc(f.id)}" aria-pressed="${on}" ${!on && best.length >= 4 ? 'disabled' : ''}><span class=\"cameo\">${headPic(f)}</span><span class="rsname">${esc(f.name)}<small>@${esc(f.handle)}</small></span><span class="bestmark">${on ? '✓' : '+'}</span></button>`; }).join('')}</div>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</div>`;
 }
+const HELPER_BF = {andy:'juliet', juliet:'andy'}; // Andy und Juliet sind beste Freunde (Inaya, 2026-10-12)
 function profFriends(u, others){
-  if (u.helper) return '';
+  if (u.helper) { const f = S.users[HELPER_BF[u.id]]; return f ? `<div class="pfr"><div class="pz"><div class="m"><button type="button" class="cameo pzc" data-act="profile" data-id="${esc(f.id)}" aria-label="${esc(f.name)}">${avatar(f.outfit, 'head')}</button>${ulink(f.id)}</div></div></div>` : ''; }
   let list;
   if (!u.remote) list = others;
   else {
@@ -7169,7 +7171,7 @@ function plinksHTML(u){
 }
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
-  const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.id !== S.me ? '–' : friendCount();
+  const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
   return `<header class="phead">
     <div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${u.id ? `<button type="button" class="pbtn${storiesOf(u.id).length ? ' hasst' + (stSeen(u.id, storiesOf(u.id)) ? ' seen' : '') : ''}" data-act="pp-tap" data-id="${esc(u.id)}" aria-label="${storiesOf(u.id).length ? 'Story oder Profilbild ansehen' : 'Profilbild ansehen'}">${portrait(u, t, storiesOf(u.id).length ? 'hasring' : '')}</button>` : portrait(u, t)}
       ${mine ? `<div class="row ppic"><label class="btn ghost filebtn">📷 Profilbild ${u.pic ? 'ändern' : 'hochladen'}<input type="file" accept="image/*" id="pp-file"></label>${u.pic ? '<button class="lnk" data-act="pp-clear">Avatar statt Foto</button>' : ''}</div>` : ''}</div>
@@ -7294,7 +7296,7 @@ function profileView(id){
     ${steckHTML}
     ${profFriends(u, others)}
     <div class="ptabs" role="tablist">${tabs.map(([k,l]) =>
-      `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}"${PTICO[k] ? ` class="pti" aria-label="${l}" title="${l}"` : ''}>${PTICO[k] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${PTICO[k]}</svg><span class="ptl">${l}</span>` : l}</button>`).join('')}</div>
+      `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}"${PTICO[k] && !u.helper ? ` class="pti" aria-label="${l}" title="${l}"` : ''}>${PTICO[k] && !u.helper ? `<svg viewBox="0 0 24 24" aria-hidden="true">${PTICO[k]}</svg><span class="ptl">${l}</span>` : l}</button>`).join('')}</div>
     <div class="ppanel">${panel}</div>${(PROF_WALL = wallP, '')}
     ${u.helper ? '' : `<p class="note pjoined">Dabei seit ${new Date(u.joined).toLocaleDateString('de-DE')}</p>`}
   </section>`;
@@ -8286,18 +8288,19 @@ async function linkPreview(url){
 let songOff = null;
 /* Eigene Songs: die Datei liegt in Stücken unter profiles/<uid>/song/c<i> und spielt direkt hier im Player */
 const SONG_MAX = 5 * 1024 * 1024, SONG_CHUNK = 200000, SONGS = {};
+const audType = f => /^audio\/./.test(f.type) && !/x-m4a/.test(f.type) ? f.type : /\.m4a$/i.test(f.name) || /m4a/.test(f.type) ? 'audio/mp4' : /\.wav$/i.test(f.name) ? 'audio/wav' : /\.aac$/i.test(f.name) ? 'audio/aac' : 'audio/mpeg';
 async function uploadSong(file, onStep){
   const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(file); });
   const n = Math.ceil(b64.length / SONG_CHUNK), v = Date.now(), old = me().songFile?.n || 0;
   for (let i = 0; i < n; i++) { await social.db.doc(`profiles/${social.uid}/song/c${i}`).set({v, d:b64.slice(i * SONG_CHUNK, (i + 1) * SONG_CHUNK)}); onStep?.(i + 1, n); }
   for (let i = n; i < old; i++) social.db.doc(`profiles/${social.uid}/song/c${i}`).delete().catch(() => {});
-  return {n, v, type:/^audio\//.test(file.type) ? file.type : 'audio/mpeg', name:file.name.slice(0, 80)};
+  return {n, v, type:audType(file), name:file.name.slice(0, 80)};
 }
 // MP3 im Salon: die Datei liegt in Stücken unter profiles/<uid>/pa_<beitrag>/c<i> (Inaya, 2026-10-10)
 async function uploadPostAudio(file, pid, onStep){
   const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(file); });
   const v = Date.now(), n = await putChunks(`profiles/${social.uid}/pa_${pid}`, b64, SONG_CHUNK, v, onStep);
-  return {n, v, type:/^audio\//.test(file.type) ? file.type : 'audio/mpeg', name:file.name.replace(/\.[a-z0-9]+$/i, '').slice(0, 80)};
+  return {n, v, type:audType(file), name:file.name.replace(/\.[a-z0-9]+$/i, '').slice(0, 80)};
 }
 function audioHTML(p){
   const o = postOwner(p) || '';
