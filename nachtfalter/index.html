@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0007b0748698';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9975a8b24c47';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -424,6 +424,10 @@ body.stopen{overflow:hidden}.storyov{position:fixed;inset:0;z-index:3000;backgro
 .gprev{display:grid;gap:6px}.gprev .chatpanel{pointer-events:none}.gprev .msgs{min-height:0;max-height:none;height:auto;overflow:visible}@media (min-width:761px){.gform .gprev{position:sticky;top:8px;z-index:2}}@media (max-width:760px){.gform .gprev{position:sticky;top:64px;z-index:3;background:var(--paper,#111);padding-bottom:6px}.gprev .bubble{padding:6px 10px}}
 .nbtns{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nbtns .nlink{margin:0!important;width:100%;padding-inline:8px;white-space:nowrap}
 .ctabs2{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line-soft);margin-bottom:4px}.ctabs2 button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.ctabs2 button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.srtabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line-soft);margin:14px 0 10px}.srtabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px;font:400 17px var(--f-display);color:var(--muted);cursor:pointer}.srtabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.htlist{display:grid;gap:6px}.htrow{display:flex;align-items:center;gap:12px;padding:8px 10px;background:var(--paper-2);border:1px solid var(--line-soft);color:var(--fg);font:inherit;text-align:left;cursor:pointer;min-width:0}.htsym{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font:500 22px var(--f-display)}.htinfo{display:grid;min-width:0}.htinfo b{overflow-wrap:anywhere}.htinfo small{color:var(--muted)}
+.srhh{display:flex;align-items:center;gap:12px;margin:12px 0 14px}.srhh .htinfo b{font:500 20px var(--f-display)}.srback{flex:none;width:40px;height:40px;display:grid;place-items:center;background:none;border:0;color:var(--fg);cursor:pointer}.srback svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.htag,.thought .htag{display:inline;font:inherit;font-weight:600;line-height:inherit;vertical-align:baseline;min-height:0;min-width:0;text-decoration:none;color:inherit;padding:0;margin:0;background:none;border:0;cursor:pointer}
 .ctabs2 .ctl{display:none}.ctabs2 button{display:flex;justify-content:center;align-items:center;gap:4px;padding:10px 4px 9px;color:#ecebe7;opacity:.55}.ctabs2 button[aria-selected="true"]{opacity:1}.ctabs2 .cti{display:block!important;width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:760px){.ctabs2 button{font-size:14px!important;line-height:1.2}}
 .gmems{display:grid;gap:6px}.gmem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line-soft);min-width:0}.gmem>span:first-child{min-width:0;overflow-wrap:anywhere}
@@ -5161,7 +5165,7 @@ const railIco = k => `<svg class="nli" viewBox="0 0 24 24" aria-hidden="true">${
 function mobTop(nNew, ntN){ // Handy: Freunde und Chats oben rechts wie bei Momio
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)).length;
   const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
-  return `<div class="mtop">${b('nav', 'notifs', MOB_ICONS.bell, 'Mitteilungen', ntN)}${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', V.name === 'settings' ? 0 : newMembers())}</div>`;
+  return `<div class="mtop">${b('nav', 'notifs', MOB_ICONS.bell, 'Mitteilungen', ntN)}${b('nav', 'find', MOB_ICONS.search, 'Suchen', 0)}${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', V.name === 'settings' ? 0 : newMembers())}</div>`;
 }
 function fitPrev(){ // Handy: links das ganze Profil in Handybreite, verkleinert auf die linke Spalte (transform klappt auch in Safari)
   const sec = document.querySelector('#preview > section'), pv = document.getElementById('preview'); if (!sec || !pv) return;
@@ -5237,7 +5241,7 @@ function fpRow(u, sub, act='profile', extra=''){
 function friendPanel(nNew){
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
   const badge = reqs.length; // Chats haben ihr eigenes Symbol, hier nur Freunde und Freunde finden (Inaya, 2026-10-10)
-  if (fpTab === 'chats') fpTab = 'friends';
+  if (fpTab === 'chats' || isMob()) fpTab = 'friends'; // Handy: Suche hat ihr eigenes Symbol oben (Inaya, 2026-10-12)
   const tab = (k, l) => `<button role="tab" data-act="fp-tab" data-v="${k}" aria-selected="${fpTab === k}">${l}</button>`;
   let body = '';
   if (fpTab === 'friends') {
@@ -5245,7 +5249,7 @@ function friendPanel(nNew){
     fr.sort((a, b) => (a.helper ? 1 : 0) - (b.helper ? 1 : 0) || byPin('f')(a, b) || (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
     body = (reqs.length ? `<button class="btn fpreq" data-act="nav" data-v="friends">${reqs.length === 1 ? '1 Freundschaftsanfrage' : reqs.length + ' Freundschaftsanfragen'}</button>` : '')
       + fr.map(u => fpRow(u, u.helper ? 'Immer für dich da' : onlineState(u)[1], 'profile', u.helper ? '' : pinMark('f', u.id))).join('')
-      + (fr.some(u => !u.helper) ? '' : '<p class="note">Noch keine Freunde. Such sie über „Freunde finden“.</p>');
+      + (fr.some(u => !u.helper) ? '' : `<p class="note">Noch keine Freunde. Such sie über ${isMob() ? 'die Lupe oben' : '„Freunde finden“'}.</p>`);
   } else if (fpTab === 'chats') {
     body = (social ? `<div class="fpnew"><button class="btn fpreq" data-act="fp-newmenu" aria-expanded="${fpNew}">＋ Neuer Chat</button>${fpNew ? `<div class="fpnewopts"><button class="btn ghost" data-act="fp-newchat">Neues Gespräch</button><button class="btn ghost" data-act="fp-newgroup">Gruppenchat erstellen</button></div>` : ''}</div>` : '')
       + `<p class="lbl fplbl">Helfer</p>` + ['juliet', 'andy'].map(id => fpRow(S.users[id], etx(hLast(id)), 'helper-chat')).join('')
@@ -5265,7 +5269,7 @@ function friendPanel(nNew){
   return `<button class="fpbtn ${fpOpen ? 'on' : ''}" data-act="fp-toggle" aria-expanded="${fpOpen}" aria-label="Freunde und Freunde finden"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.friends}</svg>${badge ? `<i class="dot" aria-label="${badge} neu"></i>` : ''}</button>
   ${fpOpen ? `<div class="fpback" data-act="fp-toggle"></div><aside class="fpanel" aria-label="Freunde">
     <div class="fphead"><b>Freunde</b><button class="fpx" data-act="fp-toggle" aria-label="Schließen">✕</button></div>
-    <div class="fptabs" role="tablist">${tab('friends', 'Freunde')}${tab('search', 'Freunde finden')}</div>
+    ${isMob() ? '' : `<div class="fptabs" role="tablist">${tab('friends', 'Freunde')}${tab('search', 'Freunde finden')}</div>`}
     <div class="fpbody">${body}</div>
   </aside>` : ''}`;
 }
@@ -5705,6 +5709,10 @@ function mentionFind(q){ q = String(q || '').toLowerCase(); if (!q) return []; c
   return mentionPool().filter(u => (u.handle || '').toLowerCase().startsWith(q) || u.name.toLowerCase().split(/\s+/).some(w => w.startsWith(q)) || u.name.toLowerCase().startsWith(q)).sort((a, b) => fr.has(b.id) - fr.has(a.id)).slice(0, 6); }
 const mentionQ = (v, pos) => { const m = String(v).slice(0, pos ?? String(v).length).match(/(?:^|\s)@([^\s@]{0,30})$/); return m ? m[1] : null; };
 const mentionList = (l, act, q) => !q ? '' : l.length ? l.map(u => `<button type="button" class="mnu" data-act="${act}" data-id="${esc(u.id)}"><span class=\"cameo\">${headPic(u, '', true)}</span><span><b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}</span></button>`).join('') : '<p class="mnone">Niemand gefunden.</p>';
+// Hashtags in Beiträgen: #wort wird klickbar und führt zur Suche (Inaya, 2026-10-12)
+const HT_RE = /(^|[^\p{L}\p{N}_&#;])#([\p{L}\p{N}_]{1,40})/gu;
+const htOf = t => [...new Set([...String(t || '').matchAll(HT_RE)].map(m => m[2].toLowerCase()))];
+const htHTML = html => html.split(/(<[^>]*>)/).map(x => x[0] === '<' ? x : x.replace(HT_RE, (m, a, t) => `${a}<button type="button" class="lnk htag" data-act="ht-open" data-v="${t.toLowerCase()}">#${t}</button>`)).join('');
 const mentionHTML = (html, l, act) => (l || []).reduce((h, m) => m && m.n ? h.split('@' + esc(m.n)).join(`<button type="button" class="lnk stmen" data-act="${act}" data-id="${esc(m.id)}">@${esc(m.n)}</button>`) : h, html);
 const NFI = { // eigene Symbole im Noctibat-Stil
   x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
@@ -6703,7 +6711,7 @@ function postHTML(p){
   const a = profUser(p.author); if (!a) return '';
   let body = '';
   const tags = ptagsClean(p.tags), spT = p.url && /open\.spotify\.com\/(?:intl-[\w-]+\/)?track\//i.test(p.url) ? p.url : '';
-  const txt = p.text ? `<blockquote class="thought">${mentionHTML(etx(p.text), tags, 'profile')}</blockquote>` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
+  const txt = p.text ? `<blockquote class="thought">${htHTML(mentionHTML(etx(p.text), tags, 'profile'))}</blockquote>` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
@@ -6799,7 +6807,7 @@ function composeHTML(){
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" class="pform${pt ? ' tp' : ''}" style="display:grid;gap:12px;${pt}">
         <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b><small>${social ? (aud() === 'pub' ? 'öffentlich' : 'nur Freunde') : ''}</small></div>
-        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden." aria-label="Text"></textarea></div>
+        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text"></textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
         <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('video', 'Link')}</div>
@@ -7512,7 +7520,7 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r.cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, hts:u.priv ? [] : [...new Set(posts.filter(p => p.pub).flatMap(p => htOf(p.text)))].slice(0, 60), stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r.cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.hl = doc.hl.map(h => ({...h, c:''}));
@@ -8534,13 +8542,50 @@ function browseView(){
     ${!social ? '<p class="note">Stöbern geht, sobald du angemeldet bist.</p>' : !BR.ids ? '<p class="muted">Profile werden geladen …</p>' : BR.ids.length ? `<div class="brgrid">${BR.ids.map(card).join('')}</div>${BR.more ? '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="browse-more">Mehr anzeigen</button></div>' : ''}` : '<p class="note">Noch keine anderen Profile.</p>'}
   </div></div>`;
 }
-function findView(){
+const SR = {q:'', tab:'u', ht:''};
+async function htLoad(tag){
+  if (!social || !tag) return;
+  try { const q = await social.db.collection('profiles').where('hts', 'array-contains', tag).limit(40).get(); q.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || (x.priv && !isFriend(d.id))) return; PROF[d.id] = x; }); } catch {}
+}
+async function srRun(raw){
+  const q = String(raw || '').trim(), k = q.replace(/^[#@]+/, '').toLowerCase(); SR.q = q; SR.ht = '';
+  if (q.startsWith('#')) SR.tab = 'h'; else if (q.startsWith('@')) SR.tab = 'u';
+  if (!k) { FR.results = null; FR.q = ''; return; }
+  await Promise.all([searchPeople(k), htLoad(k)]);
+}
+function htPool(){ // alle Beiträge, die ich sehen darf: eigene, Helfer, Freunde, öffentliche
+  const out = [], seen = new Set(), add = p => { if (!p || p.arch || p.type === 'teilen') return; const k = p.author + '_' + p.id; if (!seen.has(k)) { seen.add(k); out.push(p); } };
+  S.posts.forEach(p => { if (p.author === S.me || S.users[p.author]?.helper) add(p); });
+  Object.values(S.users).filter(u => u.remote).forEach(u => (u.posts || []).forEach(p => { if (p.pub || isFriend(u.id)) add(p); }));
+  Object.keys(PROF).forEach(id => { if (id === social?.uid || S.users[id]) return; const x = PROF[id]; if (!x || (x.priv && !isFriend(id))) return; remoteUser(id, x).posts.forEach(p => { if (p.pub || isFriend(id)) add(p); }); });
+  try { ownerPubPosts().forEach(add); } catch {}
+  return out;
+}
+const htPosts = tag => htPool().filter(p => htOf(p.text).includes(tag)).sort((a, b) => b.ts - a.ts);
+function htList(k){
+  const m = new Map(); htPool().forEach(p => htOf(p.text).forEach(t => { if (t.startsWith(k)) m.set(t, (m.get(t) || 0) + 1); }));
+  return [...m].sort((a, b) => (a[0] === k ? -1 : b[0] === k ? 1 : b[1] - a[1] || a[0].localeCompare(b[0]))).slice(0, 30);
+}
+function findView(){ // eine Suche für User und Hashtags (Inaya, 2026-10-12)
   if (social && amOwner && !FR.newbies) loadNewbies();
-  const results = FR.results == null ? '' : FR.results.length ? FR.results.map(personRow).join('') : `<p class="note">Niemand mit @${esc(FR.q)} gefunden.</p>`;
-  return `<div class="card"><h2 class="card-h">Freunde finden</h2><div class="card-in">
-    ${`<form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="@nutzername suchen" value="${esc(FR.q)}" aria-label="Nach Nutzername suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>${browseBtn()}
-      <div class="plist">${results}</div>
-      ${amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Noctibat</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : ''}`}
+  const k = SR.q.replace(/^[#@]+/, '').toLowerCase();
+  const tab = (v, l) => `<button role="tab" data-act="sr-tab" data-v="${v}" aria-selected="${SR.tab === v}">${l}</button>`;
+  let body = '';
+  if (SR.ht) {
+    const ps = htPosts(SR.ht);
+    body = `<div class="srhh"><button type="button" class="srback" data-act="sr-htback" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><span class="htsym" aria-hidden="true">#</span><span class="htinfo"><b>#${esc(SR.ht)}</b><small>${ps.length} ${ps.length === 1 ? 'Beitrag' : 'Beiträge'}</small></span></div>`
+      + (ps.length ? `<div class="feed insta">${ps.map(p => postHTML(p)).join('')}</div>` : '<p class="note">Noch keine Beiträge mit diesem Hashtag.</p>');
+  } else if (SR.tab === 'u') {
+    body = (!k ? browseBtn() : FR.results == null ? '' : FR.results.length ? `<div class="plist">${FR.results.map(personRow).join('')}</div>` : `<p class="note">Niemand mit @${esc(k)} gefunden.</p>`)
+      + (!k && amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Noctibat</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : '');
+  } else {
+    const l = k ? htList(k) : [];
+    body = !k ? '<p class="note">Gib einen Hashtag ein, zum Beispiel #goth.</p>' : l.length ? `<div class="htlist">${l.map(([t, n]) => `<button type="button" class="htrow" data-act="ht-open" data-v="${esc(t)}"><span class="htsym" aria-hidden="true">#</span><span class="htinfo"><b>#${esc(t)}</b><small>${n} ${n === 1 ? 'Beitrag' : 'Beiträge'}</small></span></button>`).join('')}</div>` : `<p class="note">Kein Hashtag #${esc(k)} gefunden.</p>`;
+  }
+  return `<div class="card"><h2 class="card-h">Suchen</h2><div class="card-in">
+    <form data-form="fsearch" class="cform"><input type="search" id="fs-q" placeholder="Nutzer oder #Hashtag suchen" value="${esc(SR.q)}" aria-label="Nutzer oder Hashtag suchen" autocapitalize="none" spellcheck="false"><button class="btn" type="submit">Suchen</button></form>
+    ${SR.ht ? '' : `<div class="srtabs" role="tablist">${tab('u', 'User')}${tab('h', 'Hashtags')}</div>`}
+    ${body}
   </div></div>`;
 }
 
@@ -8856,6 +8901,9 @@ document.addEventListener('click', async e => {
     return; }
   if (a === 'rmode') { roomMode = roomMode === b.dataset.v ? '' : b.dataset.v; roomSel = null; render(); return; }
   if (a === 'fp-toggle') { fpOpen = !fpOpen; mobMore = false; render(); if (fpOpen && fpTab === 'search') document.getElementById('fp-q')?.focus(); return; }
+  if (a === 'sr-tab') { SR.tab = b.dataset.v; render(); return; }
+  if (a === 'sr-htback') { SR.ht = ''; render(); return; }
+  if (a === 'ht-open') { const t = b.dataset.v; SR.tab = 'h'; SR.ht = t; if (!SR.q) SR.q = '#' + t; if (V.name !== 'find') go('find'); render(); window.scrollTo(0, 0); htLoad(t).then(() => { if (V.name === 'find' && SR.ht === t) softRender(); }); return; }
   if (a === 'fp-tab') { fpTab = b.dataset.v; render(); if (fpTab === 'search') document.getElementById('fp-q')?.focus(); return; }
   if (a === 'fp-chat') { go('chats'); openChat(b.dataset.id); return; }
   if (a === 'fp-newmenu') { fpNew = !fpNew; render(); return; }
@@ -9443,7 +9491,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'fp-search') {
     await searchPeople(val('fp-q')); render(); document.getElementById('fp-q')?.focus();
   } else if (t === 'fsearch') {
-    await searchPeople(val('fs-q')); render(); document.getElementById('fs-q')?.focus();
+    await srRun(val('fs-q')); render(); if (!isMob()) document.getElementById('fs-q')?.focus(); else document.activeElement?.blur?.();
   } else if (t === 'cmsg') {
     const text = val('cm-in'); if (!text || !CH.open) return;
     document.getElementById('cm-in').value = ''; cmTyped(); typingNow(false);
