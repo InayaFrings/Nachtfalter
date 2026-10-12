@@ -1,112 +1,3 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Noctibat</title>
-<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9e9f2d9d93e5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script>window.NF_FIREBASE = {"config": {"apiKey": "AIzaSyBAN0OV756ln_ELGwTgcS6yvHYL3m_VeRQ", "authDomain": "nachtfalter-fe3d1.firebaseapp.com", "projectId": "nachtfalter-fe3d1", "storageBucket": "nachtfalter-fe3d1.firebasestorage.app", "messagingSenderId": "276441792597", "appId": "1:276441792597:web:aa561493db5fbfcd33d4dc"}, "ownerEmail": "InayaFrings@gmail.com"};</script>
-<script>/* Nachtfalter auf eigener Webseite mit Firebase: bildet window.claude.use('db' | 'user' | 'room') auf
-   Firebase Auth + Firestore ab, damit der Seiten-Code derselbe bleibt wie in der Claude-Version.
-   Dazu NF_AUTH für Registrieren, Anmelden und „Passwort vergessen“ per E-Mail.
-   Braucht window.NF_FIREBASE = {config, ownerEmail} und die Firebase-compat-Skripte (app, auth, firestore). */
-(function(){
-  const C = window.NF_FIREBASE;
-  if (!C || !window.firebase) return;
-  firebase.initializeApp(C.config);
-  const auth = firebase.auth(), fs = firebase.firestore();
-  fs.settings({ignoreUndefinedProperties: true, merge: true});
-  auth.languageCode = 'de';
-  let user = null;
-  const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
-  auth.onAuthStateChanged(u => { user = u; });
-
-  /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
-
-  /* ---------- Wer ist angemeldet ---------- */
-  const me = {
-    async id(){ await ready; return user ? user.uid : null; },
-    async isOwner(){ await ready; return !!(user && user.email && C.ownerEmail && user.email.toLowerCase() === C.ownerEmail.toLowerCase()); },
-    async me(){ await ready; return user ? {id: user.uid} : null; },
-    canEdit: () => false
-  };
-
-  /* ---------- Räume: Anwesenheit als kleine Dokumente mit Herzschlag ---------- */
-  const STALE = 70000;
-  function mkRoom(name){
-    const key = Math.random().toString(36).slice(2, 10);
-    const coll = fs.collection('presence').doc(name.replace(/[\/]/g, '_')).collection('p');
-    let state = {}, beat = null, unsub = null, peersCb = null, last = [];
-    const write = () => user && coll.doc(key).set({...state, by: user.uid, t: Date.now()}).catch(() => {});
-    function listen(){
-      if (unsub) return;
-      unsub = coll.onSnapshot(snap => {
-        const now = Date.now();
-        last = snap.docs.map(d => ({peer: d.id, by: d.data().by, presence: d.data()})).filter(p => now - (p.presence.t || 0) < STALE);
-        peersCb && peersCb({peers: last, joined: [], left: [], updated: []});
-      }, () => {});
-    }
-    const refresh = setInterval(() => { if (peersCb && last.length) { const now = Date.now(); const f = last.filter(p => now - (p.presence.t || 0) < STALE); if (f.length !== last.length) { last = f; peersCb({peers: f, joined: [], left: [], updated: []}); } } }, 15000);
-    const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
-    addEventListener('pagehide', bye);
-    return {
-      name,
-      async presence(p){ state = {...state, ...p}; await write(); if (!beat) beat = setInterval(write, 25000); listen(); },
-      onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
-      emit(){}, on(){ return () => {}; },
-      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
-      async join(n){ return mkRoom(n); }
-    };
-  }
-  let lobby = null;
-
-  window.claude = {use: async n => {
-    await ready;
-    if (!user) return null;
-    if (n === 'db') return db;
-    if (n === 'user') return me;
-    if (n === 'room') return lobby || (lobby = mkRoom('lobby'));
-    return null;
-  }};
-
-  /* ---------- Konto ---------- */
-  const de = e => {
-    const c = (e && e.code) || '';
-    if (c.includes('email-already-in-use')) return 'Mit dieser E-Mail gibt es schon ein Konto. Melde dich stattdessen an.';
-    if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-login')) return 'E-Mail oder Passwort stimmen nicht.';
-    if (c.includes('invalid-email')) return 'Das ist keine gültige E-Mail-Adresse.';
-    if (c.includes('weak-password')) return 'Das Passwort ist zu kurz. Nimm mindestens 6 Zeichen.';
-    if (c.includes('too-many-requests')) return 'Zu viele Versuche. Warte kurz und probier es dann nochmal.';
-    if (c.includes('requires-recent-login')) return 'Bitte melde dich einmal neu an und versuch es dann nochmal.';
-    if (c.includes('network')) return 'Keine Verbindung. Prüf dein Internet und probier es nochmal.';
-    return 'Das hat gerade nicht geklappt. Probier es gleich nochmal.';
-  };
-  const back = () => location.origin + location.pathname;
-  window.NF_AUTH = {
-    ready,
-    resetViaMail: true, // Firebase zeigt die Seite zum neuen Passwort selbst an
-    email: () => user ? user.email : null,
-    async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
-    async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    async signOut(){ try { await auth.signOut(); } catch {} user = null; },
-    async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
-    async updatePw(pw){ try { await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
-    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
-    // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
-    async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
-    async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
-    onRecovery(){},
-    get recovering(){ return false; }
-  };
-})();
-</script>
-<style>html,body{margin:0}</style></head><body>
 <title>Noctibat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1651,6 +1542,22 @@ body.cmvopen{overflow:hidden}
 .psg{display:grid;place-items:center;padding:12px 0;background:none}.psg img,.psg svg{width:min(48%,200px);height:auto;aspect-ratio:1;object-fit:contain;display:block}.psg.gif{padding:0}.psg.gif img{width:100%;max-width:100%;aspect-ratio:auto;height:auto}
 .patt .psg{justify-content:start;padding:4px 0}.patt .psg img,.patt .psg svg{width:110px}.patt .psg.gif img{width:min(240px,100%)}
 .pcsgp{height:min(330px,48vh);border:1px solid #ffffff1f;border-radius:12px;overflow:hidden}
+/* Mehrere Accounts (Inaya, 2026-10-12): Auswahl im Look des jeweiligen Profils */
+.acctbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:.12em;font:inherit;color:inherit;border-radius:8px;max-width:100%}.acctbtn svg{width:.62em;height:.62em;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;opacity:.75;margin-left:.08em}.acctbtn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.acctov{position:fixed;inset:0;z-index:1050;display:grid;align-items:end;justify-items:center}.acctbg{position:absolute;inset:0;border:0;background:#000;opacity:0;transition:opacity .2s;cursor:pointer}.acctov.in .acctbg{opacity:.62}
+.acctsh{position:relative;width:min(440px,100%);max-height:82vh;overflow:auto;box-sizing:border-box;background:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border:1px solid var(--p-line);border-bottom:0;border-radius:20px 20px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;transform:translateY(100%);transition:transform .22s ease-out;font-family:Inter,-apple-system,'Helvetica Neue',Arial,sans-serif}.acctov.in .acctsh{transform:none}
+.accth{justify-self:center;width:40px;height:4px;border-radius:9px;background:var(--p-fg);opacity:.35}.acctsh h2{margin:0;text-align:center;font:600 16px 'Space Grotesk',Inter,sans-serif;color:var(--p-fg)}
+.acctl{display:grid;gap:8px}.acctrow{display:flex;align-items:center;gap:6px;background:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border:1px solid var(--p-line);border-radius:14px;padding:4px 6px 4px 4px}.acctrow.on{box-shadow:0 0 0 2px var(--p-fg) inset}
+.acctgo{all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:12px;cursor:pointer;padding:6px 8px;border-radius:12px;min-height:52px}.acctgo:focus-visible{outline:2px solid var(--p-fg)}
+.acctgo .cameo{width:48px;height:48px;flex:none;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--p-panel);border:1px solid var(--p-line)}.acctgo .cameo img,.acctgo .cameo svg{width:100%;height:100%;object-fit:cover}
+.acctn{display:grid;min-width:0}.acctn b{font-weight:400;font-size:20px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.acctn small{color:var(--p-muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acctchk{width:26px;height:26px;flex:none;border-radius:50%;background:var(--p-fg);color:var(--p-bg);display:grid;place-items:center}.acctchk svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.acctrm{flex:none;width:40px;height:40px;border:0;background:none;color:var(--p-muted);border-radius:50%;display:grid;place-items:center;cursor:pointer}.acctrm svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.acctadd{display:flex;align-items:center;gap:12px;border:1px dashed var(--p-line);background:none;color:var(--p-fg);border-radius:14px;padding:10px 12px;min-height:56px;font:600 15px 'Space Grotesk',Inter,sans-serif;cursor:pointer;text-align:left}.acctadd i{width:44px;height:44px;border-radius:50%;border:1px solid var(--p-line);display:grid;place-items:center;margin-left:2px}.acctadd svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.acctsw{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;color:var(--p-fg);animation:acctin .25s ease-out}.acctsw>div{display:grid;justify-items:center;gap:8px}.acctsw .cameo{width:96px;height:96px;border-radius:50%;overflow:hidden;border:2px solid var(--p-fg);background:var(--p-bg);display:grid;place-items:center}.acctsw .cameo img,.acctsw .cameo svg{width:100%;height:100%;object-fit:cover}.acctsw b{font-weight:400;font-size:28px}.acctsw small{opacity:.7}
+@keyframes acctin{from{opacity:0}to{opacity:1}}
+.acctback{margin-top:4px}
+@media (min-width:761px){.acctov{align-items:center}.acctsh{border-radius:18px;border-bottom:1px solid var(--p-line);transform:translateY(16px);opacity:0;transition:transform .2s,opacity .2s}.acctov.in .acctsh{opacity:1}}
 .ststkg{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:4px}
 .ststkg button{aspect-ratio:1;background:none;border:0;padding:6px;border-radius:10px;cursor:pointer}.ststkg button:active,.ststkg button:hover{background:#ffffff14}
 .ststkg svg{width:100%;height:100%;display:block}
@@ -1741,7 +1648,7 @@ setTimeout(() => crashBox('Die Seite hat nach 12 Sekunden nichts angezeigt. ' + 
 <script>
 // Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
 const PUB = !!window.NF_AUTH;
-const KEY = 'nachtfalter-v2';
+const KEY = 'nachtfalter-v2' + (window.NF_AUTH?.slot ? ':' + NF_AUTH.slot : ''); // jeder gespeicherte Account hat seinen eigenen Zwischenspeicher (Inaya, 2026-10-12)
 const REACTIONS = ['lach','schock','herz','wein','wut']; // Inayas Totenkopf-Reaktionen (2026-10-10), seit 2026-10-12 nur noch als Likes gezählt
 const LIKE_IN = r => r === 'like' || REACTIONS.includes(r);
 const HEART = on => `<svg class="lheart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z" fill="${on ? 'currentColor' : 'none'}"/></svg>`;
@@ -5213,7 +5120,7 @@ async function cloudInit(){
     } else if (S.me || S.pending || meta.exists) { cloudQueue(); }
     else { cloud.ok = true; }
     if (me()?.handle) claimHandle(me().handle);
-    refreshFoot();
+    acctRemember(); refreshFoot();
     socialStart(); presenceStart();
   } catch {}
 }
@@ -5304,6 +5211,35 @@ const cameo = u => `<span class="cameo">${headPic(u)}</span>`;
 const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Link',clip:'Video',neu:'Neuigkeit',teilen:'Geteilt',musik:'Musik'};
 
 /* ---------- Ansichten ---------- */
+/* ---------- Mehrere Accounts wie bei Insta (Inaya, 2026-10-12) ----------
+   Jeder Account bleibt eigenständig angemeldet (eigener Platz in NF_AUTH); Wechseln lädt die Seite mit dem anderen Account neu,
+   so mischen sich keine Daten. Die Auswahl sieht aus wie das jeweilige Profil (Kastenfarbe, Schrift, Muster, Bild). */
+const ACCT_ON = () => PUB && !!window.NF_AUTH?.accounts;
+function acctRemember(){ if (!ACCT_ON() || !social) return; const u = me(); if (!u || u.remote || !u.handle) return;
+  const t = u.theme || {}, pic = typeof u.pic === 'string' && /^data:image\//.test(u.pic) && u.pic.length < 90000 ? u.pic : '';
+  NF_AUTH.remember({name:u.name || '', handle:u.handle, pic, outfit:pic ? null : u.outfit || null, theme:{box:t.box || '', fg:t.fg || '', pattern:t.pattern || '', font:t.font || '', page:t.page || '', pagePattern:t.pagePattern || ''}}); }
+const acctTheme = a => normTheme({...(a?.theme || {})});
+const acctPic = a => a?.pic && /^data:image\//.test(a.pic) ? `<img class="cpic" src="${a.pic}" alt="" draggable="false">` : avatar(a?.outfit || {}, 'head');
+function acctBackHTML(){ if (!ACCT_ON()) return ''; const b = NF_AUTH.back(); if (!b || NF_AUTH.accounts().some(x => x.slot === NF_AUTH.slot)) return '';
+  return `<button class="lnk acctback" data-act="acct-go" data-slot="${esc(b.slot)}">Abbrechen, zurück zu @${esc(b.handle || b.name)}</button>`; }
+const ACCT_CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+function acctSheetHTML(){
+  const l = NF_AUTH.accounts(), cur = NF_AUTH.slot, mt = acctTheme(l.find(x => x.slot === cur) || {theme:me()?.theme});
+  const row = a => { const t = acctTheme(a), on = a.slot === cur;
+    return `<div class="acctrow${on ? ' on' : ''}" style="${themeStyle(t)}"><button type="button" class="acctgo" data-act="acct-go" data-slot="${esc(a.slot)}" aria-current="${on}" aria-label="${on ? 'Angemeldet als' : 'Wechseln zu'} @${esc(a.handle)}"><span class="cameo">${acctPic(a)}</span><span class="acctn"><b style="font-family:${FONTS[t.font] || FONTS.fell}">${esc(a.name)}</b><small>@${esc(a.handle)}</small></span>${on ? `<i class="acctchk">${ACCT_CHK}</i>` : ''}</button>${on ? '' : `<button type="button" class="acctrm" data-act="acct-rm" data-slot="${esc(a.slot)}" aria-label="@${esc(a.handle)} aus der Liste entfernen">${SG_ICO.x}</button>`}</div>`; };
+  return `<div class="acctov" id="acctov" role="dialog" aria-modal="true" aria-label="Accounts"><button type="button" class="acctbg" data-act="acct-x" aria-label="Schließen"></button>
+    <div class="acctsh" style="${themeStyle(mt)}"><i class="accth" aria-hidden="true"></i><h2>Accounts</h2>
+      <div class="acctl">${l.map(row).join('')}</div>
+      ${l.length < 8 ? `<button type="button" class="acctadd" data-act="acct-add"><i aria-hidden="true">${SG_ICO.plus}</i><span>Account hinzufügen</span></button>` : '<p class="note">Du kannst höchstens 8 Accounts speichern.</p>'}
+    </div></div>`;
+}
+function acctOpen(){ if (!ACCT_ON()) return; acctRemember(); document.getElementById('acctov')?.remove(); document.body.insertAdjacentHTML('beforeend', acctSheetHTML()); requestAnimationFrame(() => document.getElementById('acctov')?.classList.add('in')); }
+function acctClose(){ const o = document.getElementById('acctov'); if (!o) return; o.classList.remove('in'); setTimeout(() => o.remove(), 220); }
+function acctGo(sl){ const a = NF_AUTH.accounts().find(x => x.slot === sl); if (!a) return; if (sl === NF_AUTH.slot) return acctClose();
+  const t = acctTheme(a); clearTimeout(cloudTimer); try { if (cloud && S.me) { localStorage.setItem(KEY, JSON.stringify(S)); } } catch {}
+  document.body.insertAdjacentHTML('beforeend', `<div class="acctsw" style="${themeStyle(t)};background:${esc(t.page || '#0a0a0b')}"><div><span class="cameo">${acctPic(a)}</span><b style="font-family:${FONTS[t.font] || FONTS.fell}">${esc(a.name)}</b><small>@${esc(a.handle)}</small></div></div>`);
+  const flush = cloud ? Promise.race([(cloudBusy = cloudBusy.then(cloudWrite, cloudWrite)), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve(); // eigenen Stand erst sichern
+  flush.finally(() => setTimeout(() => NF_AUTH.switchTo(sl), 600)); }
 function gateView(){
   const head = `${logoSVG('big')}<div class="orn" style="width:100%">❦</div>`;
   if (recoverMode) return `<div class="gate"><div class="card gate-card">${head}
@@ -5323,7 +5259,7 @@ function gateView(){
       <button class="btn" type="submit">Anmelden</button>
       <button class="lnk" type="button" data-act="forgot" data-v="1">Passwort vergessen?</button>
     </form>`}
-    <button class="lnk" data-act="gmode" data-v="">Zurück</button>
+    <button class="lnk" data-act="gmode" data-v="">Zurück</button>${acctBackHTML()}
   </div></div>`;
   if (gateMode === 'invite') return `<div class="gate"><div class="card gate-card">${head}
     ${inviteCode ? `<p style="margin:0;font:19px/1.4 var(--f-ital)">Du wurdest zu Noctibat eingeladen.</p>
@@ -5344,7 +5280,7 @@ function gateView(){
     <div class="choice">
       <button class="btn" data-act="gmode" data-v="login">Ich habe schon ein Konto</button>
       <button class="btn ghost" data-act="reg-open">Konto erstellen</button>
-    </div>
+    </div>${acctBackHTML()}
   </div></div>`;
 }
 function rail(){
@@ -7492,7 +7428,7 @@ function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
   return `<header class="phead">
-    <div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${u.id ? `<button type="button" class="pbtn${storiesOf(u.id).length ? ' hasst' + (stSeen(u.id, storiesOf(u.id)) ? ' seen' : '') : ''}" data-act="pp-tap" data-id="${esc(u.id)}" aria-label="${storiesOf(u.id).length ? 'Story oder Profilbild ansehen' : 'Profilbild ansehen'}">${portrait(u, t, storiesOf(u.id).length ? 'hasring' : '')}</button>` : portrait(u, t)}
+    <div class="pleft"><h1 class="pname">${u.id === S.me && !u.remote && PUB && NF_AUTH.accounts ? `<button type="button" class="acctbtn" data-act="acct-open" aria-haspopup="dialog" aria-label="Account wechseln oder hinzufügen">${esc(u.name)}${hmark(u)}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>` : `${esc(u.name)}${hmark(u)}`}</h1>${u.id ? `<button type="button" class="pbtn${storiesOf(u.id).length ? ' hasst' + (stSeen(u.id, storiesOf(u.id)) ? ' seen' : '') : ''}" data-act="pp-tap" data-id="${esc(u.id)}" aria-label="${storiesOf(u.id).length ? 'Story oder Profilbild ansehen' : 'Profilbild ansehen'}">${portrait(u, t, storiesOf(u.id).length ? 'hasring' : '')}</button>` : portrait(u, t)}
       ${mine ? `<div class="row ppic"><label class="btn ghost filebtn">📷 Profilbild ${u.pic ? 'ändern' : 'hochladen'}<input type="file" accept="image/*" id="pp-file"></label>${u.pic ? '<button class="lnk" data-act="pp-clear">Avatar statt Foto</button>' : ''}</div>` : ''}</div>
     <div style="min-width:0">
       ${u.id ? `<p class="phandle">${onlineHTML(u)}</p>` : ''}${ownerBadge(u)}${u.helper ? `<span class="badge">${u.helper} · erklärt die Regeln</span>` : ''}
@@ -7814,7 +7750,7 @@ async function setMine(list){
 }
 let deleting = false;
 function publishProfile(){
-  if (!social || deleting) return;
+  if (!social || deleting) return; acctRemember();
   clearTimeout(pubTimer);
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
@@ -8347,7 +8283,7 @@ async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
   if (PUB) {
     if (social) await social.db.doc('profiles/' + social.uid).delete().catch(() => {}); // falls zwischendurch noch gespeichert wurde
     const r = await NF_AUTH.deleteUser(); if (r.error) return r.error;
-    try { localStorage.removeItem(KEY); } catch {}
+    try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.();
     location.reload(); return null;
   }
   const id = S.me;
@@ -9462,7 +9398,7 @@ document.addEventListener('click', async e => {
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
   else if (a === 'delacct') { const m = document.getElementById('delacct'); m.hidden = false; m.querySelector('#del-in').value = ''; m.querySelector('#del-pw').value = ''; m.querySelector('#del-pwl').style.display = PUB ? '' : 'none'; m.querySelector('#del-err').hidden = true; m.querySelector('#del-go').disabled = true; m.querySelector('#del-in').focus(); }
   else if (a === 'delacct-no') document.getElementById('delacct').hidden = true;
-  else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} location.reload(); }); }
+  else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.(); location.reload(); }); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'new-invite') makeInvite();
   else if (a === 'mem-all') { memAll = !memAll; if (memAll) loadMembers(true); render(); }
@@ -9613,6 +9549,11 @@ document.addEventListener('click', async e => {
   else if (a === 'st-stk') { if (stNew) { stNew.tool = stNew.tool === 'stk' ? null : 'stk'; storyPaint(); } }
   else if (a === 'sg-open') { sgOpen(b); }
   else if (a === 'sg-close') { if (SG.tgt === 'story' && stNew) { stNew.tool = null; stNew.sgTab = false; SG.tgt = null; storyPaint(); } else if (SG.tgt === 'post') pcSgClose(); else sgClose(); }
+  else if (a === 'acct-open') acctOpen();
+  else if (a === 'acct-x') acctClose();
+  else if (a === 'acct-go') acctGo(b.dataset.slot);
+  else if (a === 'acct-add') { if (!NF_AUTH.addNew()) toast('Du kannst höchstens 8 Accounts speichern.'); }
+  else if (a === 'acct-rm') { const x = NF_AUTH.accounts().find(y => y.slot === b.dataset.slot); if (!x) return; if (!await askYesNo(`@${x.handle} aus der Liste entfernen? Der Account selbst bleibt bestehen, du wirst dort nur abgemeldet.`, 'Entfernen', 'Abbrechen')) return; await NF_AUTH.remove(x.slot); if (document.getElementById('acctov')) acctOpen(); toast('Account entfernt'); }
   else if (a === 'psg-open') { if (SG.form) sgClose(); PSGP = !PSGP; SG.tgt = PSGP ? 'post' : null; paintCompose(); if (PSGP) { await sgLoad(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); } }
   else if (a === 'st-sgtab') { const n = stNew; if (!n) return; n.sgTab = !!b.dataset.v; if (n.sgTab) { if (SG.form) sgClose(); SG.tgt = 'story'; } storyPaint(); if (n.sgTab) { await sgLoad(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); } }
   else if (a === 'sg-mode') { SG.mode = b.dataset.v; sgPaint(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
@@ -10164,5 +10105,3 @@ const cloudReady = cloudInit();
   paintAll();
 })();
 </script>
-
-</body></html>

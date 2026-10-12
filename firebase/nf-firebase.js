@@ -5,8 +5,19 @@
 (function(){
   const C = window.NF_FIREBASE;
   if (!C || !window.firebase) return;
-  firebase.initializeApp(C.config);
-  const auth = firebase.auth(), fs = firebase.firestore();
+  /* Mehrere Accounts wie bei Insta (Inaya, 2026-10-12): jeder gespeicherte Account hat einen eigenen Platz (eigene Firebase-App mit eigener Anmeldung).
+     nf-acct = aktiver Platz ('' = Standard), nf-accts = Liste zum Anzeigen (keine Passwörter, die Anmeldung verwaltet Firebase selbst). */
+  const LS = {get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} }};
+  const SLOT = /^[a-z0-9]{1,16}$/.test(LS.get('nf-acct') || '') ? LS.get('nf-acct') : '';
+  const appOf = sl => sl ? (firebase.apps.find(a => a.name === 'nf-' + sl) || firebase.initializeApp(C.config, 'nf-' + sl)) : (firebase.apps.find(a => a.name === '[DEFAULT]') || firebase.initializeApp(C.config));
+  const app = appOf(SLOT);
+  const auth = app.auth(), fs = app.firestore();
+  const accts = () => { try { const l = JSON.parse(LS.get('nf-accts') || '[]'); return Array.isArray(l) ? l.filter(x => x && typeof x.slot === 'string' && x.uid) : []; } catch { return []; } };
+  const saveAccts = l => LS.set('nf-accts', JSON.stringify(l.slice(0, 8)));
+  const go = sl => { LS.set('nf-acct', sl || null); location.reload(); };
+  async function dropSlot(sl){ // Anmeldung auf diesem Platz beenden und den zwischengespeicherten Stand löschen
+    try { const a = appOf(sl); await a.auth().signOut(); if (sl) await a.delete(); } catch {}
+    LS.set('nachtfalter-v2' + (sl ? ':' + sl : ''), null); }
   fs.settings({ignoreUndefinedProperties: true, merge: true});
   auth.languageCode = 'de';
   let user = null;
@@ -14,7 +25,7 @@
   auth.onAuthStateChanged(u => { user = u; });
 
   /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p)};
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
 
   /* ---------- Wer ist angemeldet ---------- */
   const me = {
@@ -92,6 +103,19 @@
     // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
     async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
     async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
+    // Mehrere Accounts
+    slot: SLOT,
+    accounts: accts,
+    remember(info){ // Anzeige-Daten des angemeldeten Accounts merken (Name, Bild, Farben)
+      if (!user) return; const l0 = accts();
+      l0.filter(x => x.uid === user.uid && x.slot !== SLOT).forEach(x => dropSlot(x.slot)); // derselbe Account doppelt: nur einmal behalten
+      const l = l0.filter(x => x.uid !== user.uid || x.slot === SLOT), e = {...info, slot: SLOT, uid: user.uid, ts: Date.now()}, i = l.findIndex(x => x.slot === SLOT);
+      if (i < 0) l.push(e); else l[i] = e; saveAccts(l); },
+    switchTo(sl){ if (sl === SLOT || !accts().some(x => x.slot === sl)) return; go(sl); },
+    addNew(){ if (accts().length >= 8) return false; let sl; do { sl = 'a' + Date.now().toString(36).slice(-6) + Math.random().toString(36).slice(2, 4); } while (accts().some(x => x.slot === sl)); go(sl); return true; },
+    async remove(sl){ if (sl === SLOT) return; saveAccts(accts().filter(x => x.slot !== sl)); await dropSlot(sl); },
+    forget(){ const l = accts().filter(x => x.slot !== SLOT); saveAccts(l); LS.set('nf-acct', l[0] ? l[0].slot || null : null); }, // nach Abmelden: zum nächsten gespeicherten Account
+    back(){ const l = accts().filter(x => x.slot !== SLOT); return l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
     onRecovery(){},
     get recovering(){ return false; }
   };
