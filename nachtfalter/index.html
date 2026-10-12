@@ -4981,7 +4981,7 @@ function gateView(){
 function rail(){
   const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
   ntWatch();
-  const tabs = [['home','Salon'],['profile','Mein Profil'],['room','Mein Zimmer'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['find','Freunde finden'],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN ? `⁠<i class="dot" aria-label="${ntN} neu"></i>` : '')],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
+  const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
   const cur = V.name === 'design' ? 'profile' : V.name === 'browse' ? 'find' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
