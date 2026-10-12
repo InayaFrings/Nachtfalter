@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b2b34a982f91';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5f23121afeb7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -7533,10 +7533,17 @@ function emoPick(btn){
   pop.innerHTML = Object.keys(EMOS).map(k => `<button type="button" data-emo="${k}" title="${EMOS[k][0]}">${emoSVG(k)}</button>`).join('');
   document.body.appendChild(pop);
   // fest am Bildschirm, über dem Knopf, wenn unten kein Platz ist (Chat am Handy, Inaya 2026-10-11)
-  const r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, vh = window.visualViewport ? visualViewport.height : innerHeight;
+  // direkt über dem Eingabefeld, auch wenn die Tastatur auf- oder zugeht (Inaya, 2026-10-12)
   pop.style.position = 'fixed';
-  pop.style.left = Math.max(8, Math.min(r.right - w, document.documentElement.clientWidth - w - 8)) + 'px';
-  pop.style.top = (r.bottom + 6 + h > vh && r.top - h - 6 > 0 ? r.top - h - 6 : r.bottom + 6) + 'px';
+  const place = () => { if (!pop.isConnected) return; const box = f.getBoundingClientRect(), r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, vv = window.visualViewport, top0 = vv ? vv.offsetTop : 0, vh = vv ? vv.height : innerHeight;
+    pop.style.left = Math.max(8, Math.min(r.right - w, document.documentElement.clientWidth - w - 8)) + 'px';
+    pop.style.top = (box.top - h - 6 >= top0 + 4 ? box.top - h - 6 : Math.min(box.bottom + 6, top0 + vh - h - 4)) + 'px'; };
+  place(); requestAnimationFrame(place);
+  const vvOn = () => place(); window.visualViewport?.addEventListener('resize', vvOn); window.visualViewport?.addEventListener('scroll', vvOn);
+  new MutationObserver((m, o) => { if (!pop.isConnected) { o.disconnect(); window.visualViewport?.removeEventListener('resize', vvOn); window.visualViewport?.removeEventListener('scroll', vvOn); } }).observe(document.body, {childList:true});
+  pop.addEventListener('pointerdown', e => e.preventDefault()); pop.addEventListener('mousedown', e => e.preventDefault()); // Feld und Tastatur bleiben offen
+  const done = () => setTimeout(() => { if (document.activeElement !== f && !pop.contains(document.activeElement)) pop.remove(); }, 250);
+  f.addEventListener('blur', done); f.form?.addEventListener('submit', () => pop.remove(), {once:true});
   pop.addEventListener('click', e => {
     const b = e.target.closest('[data-emo]'); if (!b) return;
     e.stopPropagation();
@@ -7547,6 +7554,7 @@ function emoPick(btn){
     f.dispatchEvent(new Event('input', {bubbles:true}));
   });
 }
+document.addEventListener('pointerdown', e => { if (e.target.closest?.('.emobtn')) e.preventDefault(); }, true); // Tippen auf den Totenkopf schließt die Tastatur nicht
 document.addEventListener('click', e => {
   const b = e.target.closest('.emobtn');
   if (b) { e.preventDefault(); e.stopPropagation(); const open = document.querySelector('.emopop'); if (open && open.dataset.for === b.dataset.for) { open.remove(); return; } emoPick(b); const p = document.querySelector('.emopop'); if (p) p.dataset.for = b.dataset.for; return; }
