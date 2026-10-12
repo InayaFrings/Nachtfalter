@@ -1188,6 +1188,21 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .vrlock{position:absolute;right:0;bottom:calc(100% + 10px);width:42px;padding:8px 0;display:grid;justify-items:center;gap:2px;border:1px solid var(--line,#ffffff40);border-radius:21px;background:var(--panel,#141416);color:var(--fg,#eeedf2);pointer-events:none}
 .vrlock svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}.vrlock i{font-style:normal;line-height:1;animation:vrup 1s ease-in-out infinite}@keyframes vrup{50%{transform:translateY(-4px)}}
 .vrbar .vrsend{display:grid;margin-left:auto}
+
+/* Profilbild im Kreis */
+.cameo .cpic,.sava .cpic{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
+/* Sprachnachricht wie bei WhatsApp (Inaya, 2026-10-12) */
+.bubble:has(.vmsg){padding:8px 12px 6px;min-width:min(290px,78vw)}
+.vmsg{display:flex;align-items:center;gap:10px}
+.vmav{position:relative;flex:none}.vmav .cameo{width:54px;height:54px;position:static;display:block}
+.vmmic{position:absolute;right:-6px;bottom:-2px;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;opacity:.8}
+.vmplay{flex:none;width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;background:transparent;color:inherit;cursor:pointer}
+.vmplay svg{width:28px;height:28px;fill:currentColor}.vmplay.busy{opacity:.45}
+.vmr{flex:1;min-width:0;display:grid;gap:2px}
+.vmw{position:relative;height:30px;display:flex;align-items:center;gap:2px;cursor:pointer;touch-action:manipulation}
+.vmw i{flex:1;min-width:2px;max-width:4px;border-radius:2px;background:currentColor;opacity:.4}.vmw i.on{opacity:1}
+.vmdot{position:absolute;left:0;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:currentColor;pointer-events:none}
+.vmt{font-size:13px;opacity:.75;font-variant-numeric:tabular-nums}
 </style>
 
 <div id="app"></div>
@@ -4746,7 +4761,9 @@ const isSiteOwner = u => !!u && (u.id === S.me ? amOwner : (u.remote && OWNER ==
 const hmark = u => isSiteOwner(u) ? `<span class="hmark omark" title="Owner von Nachtfalter">${OWNER_BAT}<span class="sr">Owner</span></span>` : u?.helper ? `<span class="hmark" title="${u.helper} von Nachtfalter">${BAT}<span class="sr">${u.helper}</span></span>` : '';
 const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name)}</button>${hmark(u)}</span>`; };
 const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}">${cls.includes('hasring') ? '<i class="pring" aria-hidden="true"></i>' : ''}<div class="pic">${u.pic && !cls.includes('mirror') ? `<img src="${u.pic}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
-const cameo = u => `<span class="cameo">${avatar(u.outfit,'head')}</span>`;
+const headPic = (u, ...a) => u?.pic && /^data:image\//.test(u.pic) ? `<img class="cpic" src="${u.pic}" alt="" draggable="false">` : avatar(u?.outfit, 'head', ...a); // Profilbild, sonst Avatar (Inaya, 2026-10-12)
+const uidUser = id => id === social?.uid ? me() : S.users[id] || (PROF[id] ? profUser(id) : null);
+const cameo = u => `<span class="cameo">${headPic(u)}</span>`;
 const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Link',clip:'Video',neu:'Neuigkeit',teilen:'Geteilt',musik:'Musik'};
 
 /* ---------- Ansichten ---------- */
@@ -4886,7 +4903,7 @@ function pinMenu(el, x, y){
 }
 function fpRow(u, sub, act='profile', extra=''){
   const on = onlineState(u)[0];
-  return `<div class="fprow" ${!u.helper && act === 'profile' ? `data-pk="f" data-pid="${esc(u.id)}" data-pn="${esc(u.name)}"` : ''}><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head')}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
+  return `<div class="fprow" ${!u.helper && act === 'profile' ? `data-pk="f" data-pid="${esc(u.id)}" data-pn="${esc(u.name)}"` : ''}><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class=\"cameo\">${headPic(u)}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
 }
 function friendPanel(nNew){
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
@@ -4908,7 +4925,7 @@ function friendPanel(nNew){
       + CH.list.map(c => {
         const other = c.group ? null : c.members.find(m => m !== social?.uid);
         const ou = other ? (S.users[other] || (PROF[other] && remoteUser(other, PROF[other]))) : null;
-        const pic = ou ? `<span class="cameo">${avatar(ou.outfit, 'head')}</span>` : '<span class="cameo fpgroup">✦</span>';
+        const pic = ou ? `<span class=\"cameo\">${headPic(ou)}</span>` : '<span class="cameo fpgroup">✦</span>';
         return `<div class="fprow"><button class="fpmain" data-act="fp-chat" data-id="${esc(c.id)}">${pic}<span class="fpinfo"><b>${esc(chatName(c))}${unread(c) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${c.lastText ? etx(c.lastText) : c.group ? c.members.length + ' Leute' : 'Privat'}</small></span></button>${ou ? `<button class="fpprof" data-act="profile" data-id="${esc(other)}" aria-label="Profil von ${esc(ou.name)}">Profil</button>` : ''}</div>`;
       }).join('')
       ;
@@ -5074,7 +5091,7 @@ function ntName(id){
 // Mitteilungen wie bei Instagram: Abschnitte nach Zeit, runde Köpfe mit kleinem Zeichen, rechts der Beitrag oder Knöpfe (Inaya, 2026-10-10)
 const ntAgo = ts => { const m = Math.max(1, Math.round((Date.now() - ts) / 60000)); return m < 60 ? m + ' Min.' : m < 1440 ? Math.round(m / 60) + ' Std.' : m < 10080 ? Math.round(m / 1440) + ' T.' : Math.round(m / 10080) + ' W.'; };
 const NT_BADGE = {c:'<path d="M4 5h16v11H9l-5 4z"/>', w:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>', q:'<circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c.8-4 3.4-6 6.5-6s5.7 2 6.5 6"/><path d="M19 8v6M16 11h6"/>'};
-function ntHead(id){ const u = S.users[id] || (PROF[id] ? profUser(id) : null); return u?.outfit ? avatar(u.outfit, 'head') : ''; }
+function ntHead(id){ const u = S.users[id] || (PROF[id] ? profUser(id) : null); return u?.pic || u?.outfit ? headPic(u) : ''; }
 function ntThumb(p, v='post', oid=''){
   if (!p) return '';
   const inner = p.img ? `<img src="${esc(p.img)}" alt="">` : p.bigimg ? `<img data-pimg="${esc(p.author + '/' + p.id)}" alt="">` : `<span>${esc(String(p.text || '').slice(0, 40))}</span>`;
@@ -5183,7 +5200,7 @@ function mentionPool(){ const ids = [...new Set([...FR.mine.filter(isFriend), ..
 function mentionFind(q){ q = String(q || '').toLowerCase(); if (!q) return []; const fr = new Set(FR.mine.filter(isFriend)); // erst ab dem ersten Buchstaben, nur Namen die so anfangen (Inaya)
   return mentionPool().filter(u => (u.handle || '').toLowerCase().startsWith(q) || u.name.toLowerCase().split(/\s+/).some(w => w.startsWith(q)) || u.name.toLowerCase().startsWith(q)).sort((a, b) => fr.has(b.id) - fr.has(a.id)).slice(0, 6); }
 const mentionQ = (v, pos) => { const m = String(v).slice(0, pos ?? String(v).length).match(/(?:^|\s)@([^\s@]{0,30})$/); return m ? m[1] : null; };
-const mentionList = (l, act, q) => !q ? '' : l.length ? l.map(u => `<button type="button" class="mnu" data-act="${act}" data-id="${esc(u.id)}"><span class="cameo">${avatar(u.outfit, 'head', '', true)}</span><span><b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}</span></button>`).join('') : '<p class="mnone">Niemand gefunden.</p>';
+const mentionList = (l, act, q) => !q ? '' : l.length ? l.map(u => `<button type="button" class="mnu" data-act="${act}" data-id="${esc(u.id)}"><span class=\"cameo\">${headPic(u, '', true)}</span><span><b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}</span></button>`).join('') : '<p class="mnone">Niemand gefunden.</p>';
 const mentionHTML = (html, l, act) => (l || []).reduce((h, m) => m && m.n ? h.split('@' + esc(m.n)).join(`<button type="button" class="lnk stmen" data-act="${act}" data-id="${esc(m.id)}">@${esc(m.n)}</button>`) : h, html);
 const NFI = { // eigene Symbole im Nachtfalter-Stil
   x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
@@ -5218,7 +5235,7 @@ const stSeen = (id, l) => l.every(st => (S.stSeen || {})[id + '_' + st.id]);
 function storyBar(){
   if (!S.me) return ''; storySweep();
   const mine = myStories(), fr = Object.values(S.users).filter(u => u.remote && storiesOf(u.id).length).sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
-  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${avatar(u.outfit, 'head', '', true)}</span>${!l.length && u.id === S.me ? '<i class="sadd" aria-hidden="true">+</i>' : ''}<small>${esc(label)}</small></button>`;
+  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${!l.length && u.id === S.me ? '<i class="sadd" aria-hidden="true">+</i>' : ''}<small>${esc(label)}</small></button>`;
   return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${mine.length ? '<button class="sring splus" data-act="story-new" aria-label="Neue Story"><span class="sava">＋</span><small>Neu</small></button>' : ''}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
 }
 function storyThumb(d){ return new Promise(ok => { const img = new Image(); img.onerror = () => ok(''); img.onload = () => { const c = document.createElement('canvas'); c.width = 108; c.height = 192; c.getContext('2d').drawImage(img, 0, 0, 108, 192); ok(c.toDataURL('image/jpeg', .6)); }; img.src = d; }); }
@@ -5313,7 +5330,7 @@ function storyPaint(){
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class="cameo">${avatar(u.outfit, 'head', '', true)}</span><b>${esc(own ? 'Deine Story' : u.name)}</b></button><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><b>${esc(own ? 'Deine Story' : u.name)}</b></button><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${stTextsHTML(stTexts(st))}
     ${st.mu ? stMuHTML(st.mu, st.mp) : st.song && SPRES[st.song] ? stMuHTML(SPRES[st.song], {x:50, y:84, w:76}) : ''}
@@ -5665,7 +5682,7 @@ function stEditorHTML(){
     ${n.tool === 'bg' && n.tb && !e ? `<div class="stmpanel stbgp"><b class="sttagh">Hintergrund</b><div class="strow stcols">${STBGC.map(c => `<button data-act="st-bgc" data-v="${c}" style="background:${c}" aria-label="Farbe ${c}" aria-pressed="${n.tb.c === c}"></button>`).join('')}</div><b class="sttagh">Muster am Rand</b><div class="stpats">${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="st-bgp" data-v="${k}" aria-pressed="${(n.tb.p || '') === k}"><i style="background-color:${esc(n.tb.c)};background-image:${stTbPat({c:n.tb.c, p:k})}"></i><small>${l}</small></button>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-  </div>${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class="cameo">${avatar(me().outfit, 'head', '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
+  </div>${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class=\"cameo\">${headPic(me(), '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
 function stVV(){ // X und Fertig bleiben oben in der Ecke, die Werkzeugleiste sitzt direkt über der Tastatur (Inaya, 2026-10-11)
   const fr = document.getElementById('stfr'), ed = fr?.querySelector('.stedov'); if (!ed) return;
@@ -6055,7 +6072,7 @@ let bestOpen = false;
 function bestPicker(){
   const fr = Object.values(S.users).filter(f => f.remote && isFriend(f.id)).sort((a, b) => a.name.localeCompare(b.name)), best = S.best || [];
   return `<div class="bestpick"><div class="rsheet-h"><b>Beste Freunde (${best.length} von 4)</b><button type="button" class="lnk" data-act="best-open">Fertig</button></div>
-    ${fr.length ? `<div class="rslist">${fr.map(f => { const on = best.includes(f.id); return `<button type="button" class="rsrow bestrow" data-act="best-tog" data-id="${esc(f.id)}" aria-pressed="${on}" ${!on && best.length >= 4 ? 'disabled' : ''}><span class="cameo">${avatar(f.outfit, 'head')}</span><span class="rsname">${esc(f.name)}<small>@${esc(f.handle)}</small></span><span class="bestmark">${on ? '✓' : '+'}</span></button>`; }).join('')}</div>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</div>`;
+    ${fr.length ? `<div class="rslist">${fr.map(f => { const on = best.includes(f.id); return `<button type="button" class="rsrow bestrow" data-act="best-tog" data-id="${esc(f.id)}" aria-pressed="${on}" ${!on && best.length >= 4 ? 'disabled' : ''}><span class=\"cameo\">${headPic(f)}</span><span class="rsname">${esc(f.name)}<small>@${esc(f.handle)}</small></span><span class="bestmark">${on ? '✓' : '+'}</span></button>`; }).join('')}</div>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</div>`;
 }
 function profFriends(u, others){
   if (u.helper) return '';
@@ -6462,7 +6479,7 @@ function personRow(id){
     : FR.mine.includes(id) ? `<span class="muted">Anfrage gesendet</span> <button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button>`
     : FR.inc.includes(id) ? `<button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button> <button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button>`
     : `<button class="btn" data-act="fr-add" data-id="${id}">Hinzufügen</button>`;
-  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="cameo">${avatar(u.outfit, 'head')}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<small class="pstat">Befreundet</small>' : FR.mine.includes(id) ? '<small class="pstat">Anfrage gesendet</small>' : ''}</div></button><div class="pbtns">${btn}</div></div>`;
+  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class=\"cameo\">${headPic(u)}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<small class="pstat">Befreundet</small>' : FR.mine.includes(id) ? '<small class="pstat">Anfrage gesendet</small>' : ''}</div></button><div class="pbtns">${btn}</div></div>`;
 }
 const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id)) ? `<span class="badge owner">✦ Owner · Gründerin von Nachtfalter</span>` : '';
 
@@ -6640,6 +6657,7 @@ document.addEventListener('pointerup', vEnd); document.addEventListener('pointer
 let VHOLDUP = false;
 async function voiceStart(locked){
   if (VREC || !CH.open || !social) return; VHOLDUP = false;
+  let lac = null; try { const AC = window.AudioContext || window.webkitAudioContext; lac = new AC(); lac.resume?.().catch(() => {}); } catch {} // im Antippen, sonst bleibt der Pegel auf dem iPhone stumm
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast('Dein Browser kann hier keine Sprachnachrichten aufnehmen.');
   let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); } catch { return toast('Erlaube bitte den Zugriff aufs Mikrofon, dann kannst du Sprachnachrichten aufnehmen.'); }
   if (VREC || !CH.open) { stream.getTracks().forEach(t => t.stop()); return; }
@@ -6647,19 +6665,26 @@ async function voiceStart(locked){
   let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:32000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); return toast('Die Aufnahme ließ sich nicht starten.'); }
   const v = VREC = {rec, stream, parts:[], t0:Date.now(), cid:CH.open, type:(mt || rec.mimeType || 'audio/mp4').split(';')[0], locked:!!locked || VHOLDUP || !VHOLD}; VHOLDUP = false;
   rec.ondataavailable = e => { if (e.data.size) v.parts.push(e.data); };
+  v.lv = []; v.lac = lac; try { if (lac) { const an = lac.createAnalyser(); an.fftSize = 512; lac.createMediaStreamSource(stream).connect(an); const buf = new Float32Array(an.fftSize);
+    v.lvt = setInterval(() => { an.getFloatTimeDomainData(buf); let q = 0; for (const x of buf) q += x * x; v.lv.push(Math.sqrt(q / buf.length)); }, 100); } } catch {}
   if (/mp4/.test(v.type)) rec.start(); else rec.start(500); v.fast = 1; voicePaint(); // iPhone: mp4 in Stücken wird oft kaputt
   v.timer = setInterval(() => { const s = (Date.now() - v.t0) / 1000, el = document.getElementById('vrtime'); if (el) el.textContent = stTime(s); if (s >= VMAX) voiceStop(true); }, 250);
 }
 function voiceStop(send){
-  const v = VREC; if (!v) return; VREC = null; clearInterval(v.timer); const dur = Math.round((Date.now() - v.t0) / 1000);
+  const v = VREC; if (!v) return; VREC = null; clearInterval(v.timer); clearInterval(v.lvt); try { v.lac?.close(); } catch {} const dur = Math.round((Date.now() - v.t0) / 1000);
   v.rec.onstop = async () => { v.stream.getTracks().forEach(t => t.stop()); voicePaint(); if (!send) return;
     if (dur < 1 || !v.parts.length) return toast('Die Aufnahme war zu kurz.');
     const blob = new Blob(v.parts, {type:v.type}); if (blob.size > SONG_MAX) return toast('Die Sprachnachricht ist zu lang.');
-    voiceSend({cid:v.cid, blob, type:v.type, dur}); };
+    voiceSend({cid:v.cid, blob, type:v.type, dur, w:vWave(v.lv)}); };
   try { v.rec.stop(); } catch { v.stream.getTracks().forEach(t => t.stop()); voicePaint(); }
 }
 // Senden mit sichtbarem Fortschritt im Chat; hängt etwas, steht dort warum und „Nochmal senden“ (Inaya, 2026-10-11)
 const VSEND = []; const vTimeout = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('zeit')), ms))]);
+function vWave(lv, n=36){ // 36 Balken, je 0–9
+  if (!lv?.length) return ''; const mx = Math.max(...lv) || 1, out = [];
+  for (let i = 0; i < n; i++) { const a = Math.floor(i * lv.length / n), b = Math.max(a + 1, Math.floor((i + 1) * lv.length / n)); const m = Math.max(...lv.slice(a, b)); out.push(Math.min(9, Math.round(Math.sqrt(m / mx) * 9))); }
+  return out.join('');
+}
 async function voiceSend(j){
   if (!VSEND.includes(j)) VSEND.push(j); j.err = ''; j.step = 'Wird gesendet …'; voicePend();
   try {
@@ -6668,12 +6693,12 @@ async function voiceSend(j){
       const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(j.blob); });
       const C = 900000, n = Math.ceil(b64.length / C), v = Date.now(), ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6), bt = social.db.batch();
       for (let i = 0; i < n; i++) bt.set(social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`), {v, d:b64.slice(i * C, (i + 1) * C)});
-      bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), {from:social.uid, text:'', ts, audio:{n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur}});
+      bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), {from:social.uid, text:'', ts, audio:{n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur, w:j.w || ''}});
       if (!j.cid.startsWith('zimmer_') && !j.cid.startsWith('wall_')) bt.update(social.db.doc('chats/' + j.cid), {last:ts, lastText:'♪ Sprachnachricht', lastFrom:social.uid});
       await vTimeout(bt.commit(), 30000); VSEND.splice(VSEND.indexOf(j), 1); voicePend(); return;
     }
     const au = await vTimeout(uploadPostAudio(new File([j.blob], 'Sprachnachricht', {type:j.type}), k, (i, n) => { j.step = `Wird gesendet … ${Math.round(i / n * 100)} %`; voicePend(); }), 60000);
-    const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur}}), 30000);
+    const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur, w:j.w || ''}}), 30000);
     if (!ok) throw new Error('recht');
     VSEND.splice(VSEND.indexOf(j), 1); voicePend();
   } catch (e) { j.err = e.message === 'zeit' ? 'Die Verbindung hängt gerade.' : e.message === 'recht' ? 'Nachtfalter durfte die Nachricht nicht speichern.' : 'Das Hochladen hat nicht geklappt.'; voicePend(); }
@@ -6842,10 +6867,37 @@ function drawWall(){
 }
 // Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
 let chatAttach = false;
+function vmBars(m){ let w = String(m.audio.w || ''); if (!/^\d{8,}$/.test(w)) { let h = 0; for (const c of String(m.id || m.audio.k || 'x')) h = (h * 31 + c.charCodeAt(0)) >>> 0; w = Array.from({length:36}, (_, i) => { h = (h * 1103515245 + 12345) >>> 0; return 1 + (h >>> 16) % 8; }).join(''); }
+  return [...w].map(c => `<i style="height:${18 + +c * 9}%"></i>`).join(''); }
+function vmsgHTML(m){
+  const u = uidUser(m.from), d = +m.audio.d || 0;
+  return `<div class="vmsg" data-id="${esc(m.id || '')}"><span class="vmav"><span class="cameo">${headPic(u)}</span><svg class="vmmic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
+    <button type="button" class="vmplay" data-act="vm-play" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg></button>
+    <div class="vmr"><div class="vmw" data-act="vm-seek" data-id="${esc(m.id || '')}" role="slider" aria-label="Stelle in der Sprachnachricht" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0"><b class="vmdot"></b>${vmBars(m)}</div><small class="vmt">${stTime(d)}</small></div></div>`;
+}
+// eine Sprachnachricht spielt zur Zeit; Fortschritt färbt die Balken
+const VMA = new Audio(); let VMID = null; VMA.preload = 'auto';
+function vmPaint(){ document.querySelectorAll('.vmsg').forEach(x => { const on = x.dataset.id === VMID, d = on && isFinite(VMA.duration) && VMA.duration ? VMA.duration : 0, q = on && d ? VMA.currentTime / d : 0;
+  const bars = x.querySelectorAll('.vmw i'); bars.forEach((b, i) => b.classList.toggle('on', i / bars.length < q)); const dot = x.querySelector('.vmdot'); if (dot) dot.style.left = (q * 100) + '%';
+  const pl = x.querySelector('.vmplay'); const playing = on && !VMA.paused; if (pl && pl.dataset.p !== String(playing)) { pl.dataset.p = playing; pl.innerHTML = playing ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>'; pl.setAttribute('aria-label', playing ? 'Anhalten' : 'Sprachnachricht abspielen'); }
+  const t = x.querySelector('.vmt'); const m = CH.msgs.find(y => y.id === x.dataset.id); if (t && m) t.textContent = stTime(on && (VMA.currentTime > 0 || !VMA.paused) ? VMA.currentTime : +m.audio.d || 0); }); }
+['timeupdate', 'play', 'pause', 'ended', 'loadedmetadata'].forEach(ev => VMA.addEventListener(ev, vmPaint));
+VMA.addEventListener('ended', () => { VMA.currentTime = 0; vmPaint(); });
+async function vmPlay(id, at){
+  const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
+  if (VMID === id && VMA.src) { if (at != null && isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; else if (!VMA.paused) return VMA.pause(); VMA.play().catch(() => {}); return; }
+  VMA.pause(); VMID = id; VMA.removeAttribute('src'); vmPaint(); const pl = document.querySelector(`.vmsg[data-id="${CSS.escape(id)}"] .vmplay`); pl?.classList.add('busy');
+  try { VMA.play().catch(() => {}); } catch {} // im Antippen freischalten
+  try { const src = await songURL(m.from, m.audio, 'pa_' + m.audio.k); if (VMID !== id) return; VMA.src = src.url;
+    if (at != null) VMA.addEventListener('loadedmetadata', () => { if (isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; }, {once:true});
+    await VMA.play().catch(() => { VMA.src = src.data; return VMA.play(); }); }
+  catch { toast('Die Sprachnachricht ließ sich gerade nicht laden.'); VMID = null; }
+  finally { document.querySelectorAll('.vmplay.busy').forEach(x => x.classList.remove('busy')); vmPaint(); }
+}
 function msgMedia(m){
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
   if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
-  if (m.audio && m.audio.n && m.audio.voice) return `<div class="apost maud mvoice"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht anhören"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>Sprachnachricht</b><span class="muted">${m.audio.d ? stTime(+m.audio.d) + ' · ' : ''}Zum Anhören antippen</span></div></div>`;
+  if (m.audio && m.audio.n && m.audio.voice) return vmsgHTML(m);
   if (m.audio && m.audio.n) return `<div class="apost maud"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(m.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
   return '';
 }
@@ -7068,7 +7120,7 @@ let rShare = false; const RINV = new Set();
 function roomShareSheet(){
   const friends = Object.values(S.users).filter(u => u.remote).sort((a, b) => (onlineState(b)[0] ? 1 : 0) - (onlineState(a)[0] ? 1 : 0));
   return `<div class="rsheet"><div class="rsheet-h"><b>Freunde einladen</b><button class="lnk" data-act="rshare">Schließen</button></div>
-    ${friends.length ? `<div class="rslist">${friends.map(f => `<div class="rsrow"><span class="cameo">${avatar(f.outfit, 'head')}</span><span class="rsname">${esc(f.name)}<small>${esc(onlineState(f)[1])}</small></span>${RINV.has(f.id) ? '<span class="muted">Eingeladen ✓</span>' : `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">Einladen</button>`}</div>`).join('')}</div>
+    ${friends.length ? `<div class="rslist">${friends.map(f => `<div class="rsrow"><span class=\"cameo\">${headPic(f)}</span><span class="rsname">${esc(f.name)}<small>${esc(onlineState(f)[1])}</small></span>${RINV.has(f.id) ? '<span class="muted">Eingeladen ✓</span>' : `<button class="btn ghost" data-act="room-invite" data-id="${f.id}">Einladen</button>`}</div>`).join('')}</div>
     ${friends.some(f => !RINV.has(f.id)) ? '<div class="row"><button class="btn" data-act="room-invite-all">Alle einladen</button></div>' : ''}` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</div>`;
 }
 function roomChatExtra(){ // Einstellungen zum eigenen Raumchat: schließen und Freunde einladen
@@ -7743,6 +7795,8 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
     return;
   }
+  if (a === 'vm-play') { vmPlay(id); return; }
+  if (a === 'vm-seek') { const r = b.getBoundingClientRect(), q = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); vmPlay(id, q); return; }
   if (a === 'maplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
     b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
