@@ -1308,6 +1308,51 @@ article.post.ntflash{animation:ntfl 1.6s ease}@keyframes ntfl{0%,40%{box-shadow:
 .bubble .meta,.bubble.me .meta,.bubble.media>.meta{display:flex!important;align-items:center;justify-content:flex-end;gap:6px;text-align:right!important;font-size:10.5px}
 .mdelb{border:0;background:none;padding:0;margin:-4px -4px -4px 0;color:inherit;cursor:pointer;display:inline-grid;place-items:center;width:24px;height:24px;opacity:.85}.mdelb svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .mdel{display:inline-flex;gap:4px;align-items:center}.mdyes{border:1px solid #ffffff40;border-radius:999px;background:#151517;color:#fff;font:600 11px/1 inherit;padding:5px 9px;cursor:pointer;white-space:nowrap}.mdno{border:0;background:none;color:inherit;cursor:pointer;padding:2px 4px;font-size:12px}
+/* Beitrag mit mehreren Fotos/Videos (Inaya, 2026-10-12) */
+body.pcropen{overflow:hidden}
+.pcrov{position:fixed;inset:0;z-index:3200;background:#000d;display:grid;place-items:center;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.pcrbox{width:min(560px,100vw);height:min(880px,100%);display:flex;flex-direction:column;background:#0b0b0c;color:#eeedf2;border:1px solid #2a2a2e;overflow:hidden;font-family:var(--f-body)}
+.pcrh{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #2a2a2e}.pcrh b{flex:1;text-align:center;font:400 21px var(--f-display);letter-spacing:.02em}
+.pcric{width:42px;height:42px;border:1px solid #ffffff40;background:#0a0a0bcc;color:#eeedf2;display:grid;place-items:center;cursor:pointer;border-radius:2px;padding:0}
+.pcrov svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pcrnext{min-height:40px}.pcrnext:disabled{opacity:.4}
+.pcrsteps{display:flex;flex-wrap:wrap;gap:4px 8px;justify-content:center;list-style:none;margin:0;padding:8px 12px;font:italic 14px var(--f-ital);color:#8d8d96;border-bottom:1px solid #1e1e22}
+.pcrsteps li{display:flex;align-items:center;gap:5px}.pcrsteps li+li::before{content:'·';margin-right:4px;opacity:.6}
+.pcrsteps b{width:20px;height:20px;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;font:600 11px var(--f-body);font-style:normal}
+.pcrsteps [aria-current]{color:#fff}.pcrsteps [aria-current] b{background:#fff;color:#0b0b0c;border-color:#fff}.pcrsteps .done{color:#c9c9d0}
+.pcrbody{flex:1;min-height:0;overflow-y:auto;padding:12px;display:grid;gap:12px;align-content:start}.pcrbody .note{margin:0;color:#9a9aa2}
+.pcrgrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pcrcell{position:relative;aspect-ratio:1;background:#151517}
+.pcrpick{all:unset;display:block;width:100%;height:100%;cursor:pointer}.pcrpick img{width:100%;height:100%;object-fit:cover;display:block}
+.pcrnum{position:absolute;top:5px;left:5px;width:24px;height:24px;border-radius:50%;background:#fff;color:#0b0b0c;display:grid;place-items:center;font:700 13px var(--f-body);pointer-events:none}
+.pcrx{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:0;background:#000b;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.pcrx svg{width:15px;height:15px}
+.pcrmv{position:absolute;left:4px;right:4px;bottom:4px;display:flex;justify-content:space-between;pointer-events:none}.pcrmv button{pointer-events:auto;width:32px;height:32px;border:0;border-radius:50%;background:#000b;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.pcrmv button:disabled{opacity:.2}.pcrmv svg{width:16px;height:16px}
+.pcrvid{position:absolute;right:6px;top:34px;display:flex;align-items:center;gap:3px;font:600 11px system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px #000;font-style:normal;pointer-events:none}.pcrvid svg{width:12px!important;height:12px!important;fill:#fff!important;stroke:none!important}
+.pcradd{display:grid;place-items:center;align-content:center;gap:4px;width:100%;height:100%;border:1px dashed #ffffff55;color:#ccc;cursor:pointer;font:italic 13px var(--f-ital);box-sizing:border-box}
+.pcrspin{width:22px;height:22px;border:2px solid #fff3;border-top-color:#fff;border-radius:50%;display:block;margin:auto;animation:vmspin .8s linear infinite}
+.pcrstage{position:relative;display:grid;place-items:center;background:#060607;padding:6px 0}
+.pcrframe{position:relative;width:min(100%,calc(54vh * var(--r,1)));overflow:hidden;touch-action:none;background:#000;cursor:grab;user-select:none;-webkit-user-select:none}
+.pcrframe img,.pcrframe video{position:absolute;max-width:none;object-fit:fill;-webkit-user-drag:none;pointer-events:none}
+.pcrgrid3{position:absolute;inset:0;pointer-events:none;opacity:.3;background:linear-gradient(90deg,transparent calc(33.33% - .5px),#fff calc(33.33% - .5px) calc(33.33% + .5px),transparent 0,transparent calc(66.66% - .5px),#fff calc(66.66% - .5px) calc(66.66% + .5px),transparent 0),linear-gradient(transparent calc(33.33% - .5px),#fff calc(33.33% - .5px) calc(33.33% + .5px),transparent 0,transparent calc(66.66% - .5px),#fff calc(66.66% - .5px) calc(66.66% + .5px),transparent 0)}
+.pcrnav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:0;background:#000b;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;z-index:2}.pcrnav.l{left:8px}.pcrnav.r{right:8px}.pcrnav:disabled{opacity:.25}
+.pcrdots{position:absolute;bottom:14px;left:0;right:0;display:flex;gap:5px;justify-content:center;pointer-events:none}.pcrdots i{width:6px;height:6px;border-radius:50%;background:#fff6}.pcrdots i.on{background:#fff}
+.pcrhint{margin:0;text-align:center;font:italic 14px var(--f-ital);color:#8d8d96}
+.pcrtools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pcrars{display:flex;gap:6px}.pcrars button{min-height:38px;padding:4px 10px;border:1px solid #ffffff40;background:none;color:#ddd;font:15px var(--f-body);cursor:pointer}.pcrars [aria-pressed=true]{background:#fff;color:#0b0b0c;border-color:#fff}
+#pcr-z{flex:1;min-width:120px}
+.pcrtrim{display:grid;gap:8px;border-top:1px solid #1e1e22;padding-top:10px}.pcrtrim label{display:grid;gap:4px;font:15px var(--f-body)}.pcrtrim span{display:flex;justify-content:space-between}.pcrtrim .note{color:#9a9aa2}
+.pcrstrip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}.pcrsth{flex:none;width:58px;height:58px;padding:0;border:2px solid transparent;background:#151517;cursor:pointer}.pcrsth.on{border-color:#fff}.pcrsth img{width:100%;height:100%;object-fit:cover;display:block}.pcrstrip .pcradd{flex:none;width:58px;height:58px;font-size:11px}
+.pcrrow{flex-wrap:wrap;gap:10px}.pcrrow .lnk{color:#ddd}
+@media (max-width:760px){.pcrbox{width:100vw;height:100%;border:0}}
+.pgatt{display:grid;gap:8px}.pgatt .pcrsteps{color:inherit;border:0;padding:0;justify-content:flex-start;opacity:.85}.pgatt .pcrsteps [aria-current]{color:inherit;font-weight:700}.pgatt .pcrsteps [aria-current] b{background:none;color:inherit;border-color:currentColor;border-width:2px}
+.pgstrip{display:flex;gap:6px;overflow-x:auto}.pgstrip button{position:relative;flex:none;width:72px;padding:0;border:1px solid var(--line-soft,#444);background:#000;cursor:pointer;overflow:hidden}.pgstrip img{width:100%;height:100%;object-fit:cover;display:block}.pgstrip .pcrvid{top:auto;bottom:4px}
+.pgal{position:relative;margin:6px 0}.pgtrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}.pgtrack::-webkit-scrollbar{display:none}
+.pgcell{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;aspect-ratio:var(--ar);position:relative;overflow:hidden;background:#000;border:0;padding:0;margin:0;display:block;cursor:pointer;color:#fff}
+.pgcell img.photo{width:100%;height:100%;object-fit:cover;display:block;margin:0;max-width:none;border:0}
+.pgcell>img:not(.photo),.pgcell video{position:absolute;max-width:none;object-fit:fill}
+.pgcell .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:#000a;display:grid;place-items:center;font-size:22px;border:1px solid #fff8}
+.pgcnt{position:absolute;top:8px;right:8px;background:#000b;color:#fff;font:600 12px system-ui,sans-serif;padding:3px 8px;border-radius:999px;pointer-events:none}
+.pgnav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:#000a;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.pgnav[hidden]{display:none}.pgnav.l{left:8px}.pgnav.r{right:8px}.pgnav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pgdots{display:flex;gap:5px;justify-content:center;margin-top:7px}.pgdots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25}.pgdots i.on{opacity:.85}
 </style>
 
 <div id="app"></div>
@@ -5232,8 +5277,9 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   if (!p) return '';
   const sh = p.share, q = sh ? {author:sh.a, id:sh.pid, img:sh.img, text:sh.text, url:sh.url, lp:sh.lp} : p;
   const yt = q.url && typeof ytId === 'function' ? ytId(q.url) : '', sp = q.url && /open\.spotify\.com\/track\//.test(q.url) && typeof spOe === 'function' ? spOe(q.url) : null;
-  let inner = '', badge = '';
-  if (q.img) inner = `<img src="${esc(q.img)}" alt="">`;
+  let inner = '', badge = ''; const g0 = !sh && p.gal?.[0];
+  if (g0) { inner = g0.t === 'v' ? `<img src="${esc(g0.clip?.poster || '')}" alt="">` : g0.img ? `<img src="${esc(g0.img)}" alt="">` : `<img data-pimg="${esc((postOwner(p) || p.author) + '/' + g0.k)}" alt="">`; if (g0.t === 'v') badge = 'play'; }
+  else if (q.img) inner = `<img src="${esc(q.img)}" alt="">`;
   else if (sh ? sh.bigk : p.bigimg) inner = `<img data-pimg="${esc(sh ? sh.bigk : p.author + '/' + p.id)}" alt="">`;
   else if (q.clip?.poster) { inner = `<img src="${esc(q.clip.poster)}" alt="">`; badge = 'play'; }
   else if (yt) { inner = `<img src="https://i.ytimg.com/vi/${esc(yt)}/mqdefault.jpg" alt="" onerror="this.remove()">`; badge = 'play'; }
@@ -6207,7 +6253,7 @@ function sharePost(pid, aid){
   const src = (aid === S.me ? S.posts : [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...(typeof ownerPubPosts === 'function' ? ownerPubPosts() : [])]).find(x => x.id === pid && x.author === aid);
   if (!src) { toast('Diesen Beitrag finde ich gerade nicht.'); return; }
   const a = profUser(src.author) || {};
-  const sh = src.share || {a:src.author, name:a.name || '', type:src.type, text:src.text || '', img:src.img && src.img.length < 40000 ? src.img : '', bigk:!src.img && src.bigimg ? postOwner(src) + '/' + src.id : '', url:src.url || '', ...(src.lp ? {lp:src.lp} : {}), pid:src.id, ts:src.ts};
+  const sh = src.share || {a:src.author, name:a.name || '', type:src.type, text:src.text || '', img:src.img && src.img.length < 40000 ? src.img : '', bigk:!src.img && src.bigimg ? postOwner(src) + '/' + src.id : !src.img && src.gal?.[0]?.k ? postOwner(src) + '/' + src.gal[0].k : '', url:src.url || '', ...(src.lp ? {lp:src.lp} : {}), pid:src.id, ts:src.ts};
   if (S.posts.some(x => x.author === S.me && x.share && x.share.a === sh.a && x.share.pid === sh.pid)) { toast('Den hast du schon geteilt.'); return; }
   const p = {id:'p' + Date.now().toString(36), author:S.me, type:'teilen', text:'', ts:Date.now(), reactions:{}, comments:[], share:sh};
   if (amOwner && social) p.pub = 1;
@@ -6227,12 +6273,13 @@ function postHTML(p){
   if (p.type === 'gedanke' || p.type === 'neu') body = `<blockquote class="thought">${mentionHTML(etx(p.text), tags, 'profile')}</blockquote>`;
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv)}</div>` : h;
-  if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
+  if (p.gal?.length) body += volw(galHTML(p));
+  else if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
   else if (p.bigimg) body += twrap(volw(`<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`));
   if (p.url && !spT) body += linkHTML(p.url, p.lp);
   else if (p.type === 'gedanke' || p.type === 'neu') { const tu = String(p.text || '').match(/https?:\/\/[^\s<>"']+/i)?.[0]; if (tu && (ytId(tu) || embedOf(tu))) body += linkHTML(tu); } // Link im Text: auch gleich ansehen
   if (p.audio) body += audioHTML(p);
-  if (p.clip) body += clipHTML(p);
+  if (p.clip && !p.gal) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body = `<p class="caption">${mentionHTML(etx(p.text), tags, 'profile')}</p>` + body; // Text immer über Bild oder Anhang (Inaya, 2026-10-11)
@@ -6281,12 +6328,13 @@ function composeAtt(){
   const url = document.getElementById('purl')?.value || '';
   const tagUI = `${PTAGS.length ? `<div class="ptags"><span class="lbl">Markiert:</span>${PTAGS.map((t, i) => `<span class="ptagc${i === PTAGS.length - 1 && postCrop ? ' cur' : ''}">${esc(t.n)}<button type="button" data-act="ptag-x" data-i="${i}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('')}</div>` : ''}
     ${PTAGP ? `<div class="ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="ptagq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="ptagres"></div><button type="button" class="lnk" data-act="ptag-close">Fertig</button></div>` : ''}`;
-  return `${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
+  const galA = PCR?.items.length ? `<div class="patt pgatt">${pcrSteps(3)}<div class="pgstrip">${PCR.items.map((x, i) => `<button type="button" data-act="pcr-edit" data-i="${i}" aria-label="${x.t === 'v' ? 'Video' : 'Foto'} ${i + 1} bearbeiten" style="aspect-ratio:${pcrR(PCR.ar)}">${pcrThumb(x)}${x.t === 'v' ? `<i class="pcrvid" aria-hidden="true">${PCR_ICO.play}</i>` : ''}</button>`).join('')}</div><span class="row"><button type="button" class="lnk" data-act="pcr-open">‹ Zurück zum Bearbeiten</button><span class="sp"></span><button type="button" class="lnk" data-act="pcr-clear">Alle entfernen</button></span></div>` : '';
+  return `${galA}${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
     ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${PVIDEO.poster}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
     ${PMUP && !PMU && !PAUDIO ? `<div class="patt pmus"><div class="pmush"><b>Musik</b><button type="button" class="lnk" data-act="pmu-open">Schließen</button></div>${muSearchHTML('pmq', document.getElementById('pmq')?.value || '')}<div class="stmres" id="pmres">${STMRES.length && document.getElementById('pmq')?.value ? muRows('pmu-pick') : '<p class="stmsmsg">Such nach einem Song oder einer Band.</p>'}</div><label class="lnk pmup"><input id="paudio" type="file" accept="audio/*,.mp3" hidden>Oder eigene MP3 hochladen</label></div>` : ''}
     ${PMU ? `<div class="patt">${pmuHTML(PMU)}<button type="button" class="lnk" data-act="patt-x" data-v="pmu">Musik entfernen</button></div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
-    ${PAUDIO || (PVIDEO && !PVIDEO.busy) ? `<label class="rights"><input type="checkbox" id="prights" ${PRIGHTS ? 'checked' : ''}><span>${PAUDIO ? 'Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.' : 'Ich habe dieses Video selbst gemacht oder darf es teilen, auch die Musik darin.'}</span></label>` : ''}
+    ${PAUDIO || (PVIDEO && !PVIDEO.busy) || PCR?.items.some(x => x.t === 'v') ? `<label class="rights"><input type="checkbox" id="prights" ${PRIGHTS ? 'checked' : ''}><span>${PAUDIO ? 'Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.' : 'Ich habe dieses Video selbst gemacht oder darf es teilen, auch die Musik darin.'}</span></label>` : ''}
     ${tagUI}
     ${PLINK ? `<div class="patt pattlink"><input id="purl" type="url" placeholder="https:// Link zu YouTube, TikTok, Instagram …" aria-label="Link" value="${esc(url)}"><button type="button" class="lnk" data-act="patt-x" data-v="video">Link entfernen</button></div>` : ''}`;
 }
@@ -6301,21 +6349,135 @@ document.addEventListener('click', e => {
 });
 function paintCompose(){
   const box = document.getElementById('patts'); if (box) box.innerHTML = composeAtt();
-  document.querySelectorAll('.cbtn').forEach(x => x.classList.toggle('on', x.dataset.v === 'foto' ? !!postCrop : x.dataset.v === 'clip' ? !!PVIDEO : x.dataset.v === 'musik' ? !!(PAUDIO || PMU) : x.dataset.v === 'tag' ? PTAGS.length > 0 : PLINK));
+  document.querySelectorAll('.cbtn').forEach(x => x.classList.toggle('on', x.dataset.v === 'foto' ? !!postCrop || !!PCR?.items.some(y => y.t === 'i') : x.dataset.v === 'clip' ? !!PVIDEO || !!PCR?.items.some(y => y.t === 'v') : x.dataset.v === 'musik' ? !!(PAUDIO || PMU) : x.dataset.v === 'tag' ? PTAGS.length > 0 : PLINK));
 }
 function composeHTML(){
-  const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'foto' ? postCrop : k === 'clip' ? PVIDEO : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
+  const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'foto' ? postCrop || PCR?.items.some(x => x.t === 'i') : k === 'clip' ? PVIDEO || PCR?.items.some(x => x.t === 'v') : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" class="pform${pt ? ' tp' : ''}" style="display:grid;gap:12px;${pt}">
         <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b><small>${social ? (aud() === 'pub' ? 'öffentlich' : 'nur Freunde') : ''}</small></div>
         <textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden." aria-label="Text"></textarea>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
-        <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" hidden>')}${b('musik', 'Musik')}${b('video', 'Link')}</div>
+        <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('video', 'Link')}</div>
         <div class="row">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${aud() === 'pub' ? 'selected' : ''}>Öffentlich</option><option value="fr" ${aud() === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
 }
+/* ---------- Beitrag mit mehreren Fotos und Videos wie bei Insta (Inaya, 2026-10-12): 1 Auswahl, 2 Bearbeiten, 3 Text und Teilen ---------- */
+// PCR = {step, items, cur, ar}; Foto {t:'i', src, a (Breite/Höhe), x, y, z}; Video {t:'v', file, url, a, dur, s, l, x, y, z, poster}
+let PCR = null;
+const PCR_MAX = 10, PCR_AR = [['45', 'Hochformat', 4 / 5], ['11', 'Quadrat', 1], ['169', 'Querformat', 16 / 9]];
+const pcrR = k => (PCR_AR.find(x => x[0] === k) || PCR_AR[0])[2];
+// Ausschnitt: Bild füllt den Rahmen (cover), z = Zoom, x/y = wohin geschoben (0–100 %), wie object-position
+function galBox(it, R){ const ia = +it.a || 1, w = 100 * (+it.z || 1) * Math.max(1, ia / R), h = 100 * (+it.z || 1) * Math.max(1, R / ia);
+  return {w, h, l:(100 - w) * (it.x ?? 50) / 100, t:(100 - h) * (it.y ?? 50) / 100}; }
+const galPos = (it, R) => { const b = galBox(it, R); return `left:${b.l.toFixed(2)}%;top:${b.t.toFixed(2)}%;width:${b.w.toFixed(2)}%;height:${b.h.toFixed(2)}%`; };
+const PCR_ICO = {x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', l:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>', r:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>', plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>', play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'};
+function pcrThumb(it){ return it.t === 'v' ? (it.poster ? `<img src="${it.poster}" alt="">` : '<i class="pcrspin" aria-hidden="true"></i>') : `<img src="${it.src}" alt="">`; }
+async function pcrAddFiles(files){
+  if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'};
+  const list = [...files].slice(0, PCR_MAX - PCR.items.length); if (files.length > list.length) toast(`Höchstens ${PCR_MAX} Fotos und Videos pro Beitrag.`);
+  for (const f of list) {
+    const vid = /^video\//.test(f.type) || /\.(mov|mp4|m4v|webm|3gp)$/i.test(f.name || '');
+    if (vid && !social) { toast('Videos posten geht, sobald du angemeldet bist.'); continue; }
+    if (!vid) { try { const d = await resizeImage(f, 1600, .9), im = await stLoadImg(d); PCR.items.push({t:'i', src:d, a:im.naturalWidth / im.naturalHeight, x:50, y:50, z:1}); } catch { toast('Ein Bild ließ sich nicht lesen.'); } pcrPaint(); continue; }
+    const it = {t:'v', file:f, url:URL.createObjectURL(f), a:9 / 16, dur:0, s:0, l:VID_SEC, x:50, y:50, z:1, poster:''}; PCR.items.push(it); pcrPaint();
+    try { await pcrVidMeta(it); } catch { PCR.items = PCR.items.filter(x => x !== it); URL.revokeObjectURL(it.url); toast('Ein Video ließ sich nicht lesen. Versuch ein MP4 oder MOV.'); }
+    pcrPaint();
+  }
+}
+async function pcrVidMeta(it){ // Länge, Größe und ein Standbild
+  const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.src = it.url;
+  v.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(v);
+  try { await new Promise((ok, no) => { v.onloadedmetadata = ok; v.onerror = () => no(new Error('lesen')); setTimeout(() => no(new Error('lesen')), 20000); });
+    it.dur = v.duration || 0; it.a = (v.videoWidth || 9) / (v.videoHeight || 16); it.l = Math.min(VID_SEC, it.dur || VID_SEC);
+    if (v.readyState < 2) { try { await v.play(); } catch {} await new Promise(ok => { if (v.readyState >= 2) return ok(); v.oncanplay = ok; setTimeout(ok, 4000); }); v.pause(); }
+    await new Promise(ok => { v.onseeked = ok; try { v.currentTime = Math.min(.3, it.dur / 3); } catch { ok(); } setTimeout(ok, 2500); });
+    try { it.poster = vidPoster(v); } catch {} if (!it.poster) { const c = document.createElement('canvas'); c.width = 202; c.height = 360; const g = c.getContext('2d'); g.fillStyle = '#131314'; g.fillRect(0, 0, 202, 360); it.poster = c.toDataURL('image/jpeg', .6); }
+  } finally { v.removeAttribute('src'); v.remove(); }
+}
+function pcrSteps(n){ return `<ol class="pcrsteps" aria-label="Schritte">${['Auswahl', 'Bearbeiten', 'Text & Teilen'].map((l, i) => `<li${i + 1 === n ? ' aria-current="step"' : ''}${i + 1 < n ? ' class="done"' : ''}><b>${i + 1}</b>${l}</li>`).join('')}</ol>`; }
+function pcrHTML(){
+  const P = PCR, n = P.items.length, R = pcrR(P.ar);
+  const add = `<label class="pcradd"><input type="file" id="pcr-more" accept="image/*,video/*" multiple hidden>${PCR_ICO.plus}<span>Hinzufügen</span></label>`;
+  const head = `<header class="pcrh"><button type="button" class="pcric" data-act="pcr-back" aria-label="${P.step === 1 ? 'Schließen' : 'Zurück'}">${P.step === 1 ? PCR_ICO.x : PCR_ICO.l}</button><b>Neuer Beitrag</b><button type="button" class="btn pcrnext" data-act="pcr-next"${n && !P.items.some(x => x.t === 'v' && !x.poster) ? '' : ' disabled'}>Weiter</button></header>${pcrSteps(P.step)}`;
+  if (P.step === 1) return `<div class="pcrbox">${head}<div class="pcrbody"><p class="note">Tipp auf die Pfeile, um die Reihenfolge zu ändern. So erscheinen sie später im Beitrag.</p>
+    <ol class="pcrgrid">${P.items.map((it, i) => `<li class="pcrcell"><button type="button" class="pcrpick" data-act="pcr-edit" data-i="${i}" aria-label="${it.t === 'v' ? 'Video' : 'Foto'} ${i + 1} bearbeiten">${pcrThumb(it)}${it.t === 'v' ? `<i class="pcrvid" aria-hidden="true">${PCR_ICO.play}${it.dur ? stTime(Math.min(it.l, it.dur)) : ''}</i>` : ''}</button><b class="pcrnum">${i + 1}</b><button type="button" class="pcrx" data-act="pcr-del" data-i="${i}" aria-label="Entfernen">${PCR_ICO.x}</button><span class="pcrmv"><button type="button" data-act="pcr-mv" data-i="${i}" data-v="-1" aria-label="Nach vorn"${i ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" data-act="pcr-mv" data-i="${i}" data-v="1" aria-label="Nach hinten"${i < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button></span></li>`).join('')}${n < PCR_MAX ? `<li class="pcrcell">${add}</li>` : ''}</ol></div></div>`;
+  const it = P.items[P.cur] || P.items[0];
+  const med = it.t === 'v' ? `<video id="pcrmed" src="${it.url}" playsinline muted autoplay loop class="stvid" data-s="${+it.s || 0}" data-l="${+it.l || 0}" style="${galPos(it, R)}"></video>` : `<img id="pcrmed" src="${it.src}" alt="" draggable="false" style="${galPos(it, R)}">`;
+  const trim = it.t === 'v' ? `<div class="pcrtrim"><label><span>Anfang <b id="pcr-s-l">${stTime(it.s)}</b></span><input type="range" id="pcr-s" min="0" max="${Math.max(0, it.dur - it.l).toFixed(1)}" step=".1" value="${it.s}"${it.dur > it.l + .05 ? '' : ' disabled'}></label><label><span>Länge <b id="pcr-l-l">${Math.round(it.l)} s</b></span><input type="range" id="pcr-l" min="1" max="${Math.min(VID_SEC, it.dur || VID_SEC).toFixed(1)}" step=".5" value="${it.l}"></label>${it.dur > VID_SEC + .5 ? `<small class="note">Dein Video ist länger als ${VID_SEC} Sekunden. Wähl den Teil, der in den Beitrag soll.</small>` : ''}</div>` : '';
+  return `<div class="pcrbox">${head}<div class="pcrbody pcred">
+    <div class="pcrstage"><div class="pcrframe" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrgrid3" aria-hidden="true"></i></div>
+      ${n > 1 ? `<button type="button" class="pcrnav l" data-act="pcr-go" data-v="-1" aria-label="Vorheriges"${P.cur ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" class="pcrnav r" data-act="pcr-go" data-v="1" aria-label="Nächstes"${P.cur < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button><span class="pcrdots" aria-hidden="true">${P.items.map((_, i) => `<i${i === P.cur ? ' class="on"' : ''}></i>`).join('')}</span>` : ''}</div>
+    <p class="pcrhint">Mit einem Finger verschieben, mit zwei Fingern größer und kleiner</p>
+    <div class="pcrtools"><span class="pcrars" role="group" aria-label="Format für alle">${PCR_AR.map(([k, l]) => `<button type="button" data-act="pcr-ar" data-v="${k}" aria-pressed="${P.ar === k}">${l}</button>`).join('')}</span><input type="range" id="pcr-z" min="1" max="4" step=".01" value="${it.z}" aria-label="Größe"></div>
+    ${trim}
+    <div class="pcrstrip">${P.items.map((x, i) => `<button type="button" class="pcrsth${i === P.cur ? ' on' : ''}" data-act="pcr-go" data-i="${i}" aria-label="${x.t === 'v' ? 'Video' : 'Foto'} ${i + 1}">${pcrThumb(x)}</button>`).join('')}${n < PCR_MAX ? add : ''}</div>
+    <div class="row pcrrow"><button type="button" class="lnk" data-act="pcr-del" data-i="${P.cur}">Dieses ${it.t === 'v' ? 'Video' : 'Foto'} entfernen</button><span class="sp"></span>${n > 1 ? `<button type="button" class="lnk" data-act="pcr-mv" data-i="${P.cur}" data-v="-1"${P.cur ? '' : ' disabled'}>‹ nach vorn</button><button type="button" class="lnk" data-act="pcr-mv" data-i="${P.cur}" data-v="1"${P.cur < n - 1 ? '' : ' disabled'}>nach hinten ›</button>` : ''}</div>
+  </div></div>`;
+}
+function pcrPaint(){
+  let ov = document.getElementById('pcrov');
+  if (!PCR || !PCR.open) { ov?.remove(); document.body.classList.remove('pcropen'); return; }
+  if (!ov) { ov = document.createElement('div'); ov.id = 'pcrov'; ov.className = 'pcrov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Neuer Beitrag'); document.body.appendChild(ov); }
+  document.body.classList.add('pcropen'); if (!PCR.items.length && PCR.step === 2) PCR.step = 1; PCR.cur = Math.max(0, Math.min(PCR.cur, PCR.items.length - 1));
+  ov.innerHTML = pcrHTML(); if (PCR.step === 2 && PCR.items.length) pcrWire();
+}
+function pcrWire(){
+  const fr = document.getElementById('pcrfr'), el = document.getElementById('pcrmed'), it = PCR.items[PCR.cur], R = pcrR(PCR.ar); if (!fr || !el || !it) return;
+  const put = () => { const b = galBox(it, R); Object.assign(el.style, {left:b.l + '%', top:b.t + '%', width:b.w + '%', height:b.h + '%'}); const z = document.getElementById('pcr-z'); if (z) z.value = it.z; };
+  const pts = new Map(); let base = null;
+  const snap = () => { const v = [...pts.values()]; base = {x:it.x, y:it.y, z:it.z, p:v.length > 1 ? {x:(v[0].x + v[1].x) / 2, y:(v[0].y + v[1].y) / 2, d:Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y) || 1} : {...v[0], d:1}}; };
+  fr.addEventListener('pointerdown', e => { pts.set(e.pointerId, {x:e.clientX, y:e.clientY}); try { fr.setPointerCapture(e.pointerId); } catch {} snap(); e.preventDefault(); });
+  fr.addEventListener('pointermove', e => { if (!pts.has(e.pointerId) || !base) return; pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    const v = [...pts.values()], q = v.length > 1 ? {x:(v[0].x + v[1].x) / 2, y:(v[0].y + v[1].y) / 2, d:Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y) || 1} : v[0];
+    if (v.length > 1) it.z = Math.min(4, Math.max(1, base.z * q.d / base.p.d));
+    const r = fr.getBoundingClientRect(), b = galBox({...it, x:50, y:50}, R), ow = r.width * (b.w - 100) / 100, oh = r.height * (b.h - 100) / 100;
+    it.x = ow > .5 ? Math.min(100, Math.max(0, base.x - (q.x - base.p.x) / ow * 100)) : 50; it.y = oh > .5 ? Math.min(100, Math.max(0, base.y - (q.y - base.p.y) / oh * 100)) : 50; put(); });
+  const end = e => { pts.delete(e.pointerId); if (pts.size) snap(); else base = null; }; fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
+  fr.addEventListener('wheel', e => { e.preventDefault(); it.z = Math.min(4, Math.max(1, it.z * (e.deltaY < 0 ? 1.06 : 1 / 1.06))); put(); }, {passive:false});
+  document.getElementById('pcr-z')?.addEventListener('input', e => { it.z = +e.target.value; put(); });
+  // Wischen auf dem Bild wechselt nicht (das verschiebt den Ausschnitt), dafür Pfeile, Punkte und Leiste unten
+  if (it.t === 'v') { const s0 = document.getElementById('pcr-s'), l0 = document.getElementById('pcr-l'), sync = () => { it.l = Math.min(it.l, it.dur || it.l); it.s = Math.min(it.s, Math.max(0, it.dur - it.l)); s0.max = Math.max(0, it.dur - it.l).toFixed(1); s0.value = it.s; s0.disabled = !(it.dur > it.l + .05); document.getElementById('pcr-s-l').textContent = stTime(it.s); document.getElementById('pcr-l-l').textContent = Math.round(it.l) + ' s'; el.dataset.s = it.s; el.dataset.l = it.l; delete el.dataset.done; try { el.currentTime = it.s; } catch {} el.play().catch(() => {}); };
+    s0.addEventListener('input', () => { it.s = +s0.value; sync(); }); l0.addEventListener('input', () => { it.l = +l0.value; sync(); }); }
+}
+function pcrOpen(step){ if (!PCR) return; PCR.open = true; if (step) PCR.step = step; pcrPaint(); }
+function pcrClose(){ if (PCR) PCR.open = false; pcrPaint(); paintCompose(); }
+function pcrClear(){ if (PCR) PCR.items.forEach(x => x.url && URL.revokeObjectURL(x.url)); PCR = null; pcrPaint(); }
+// fertige Teile für den Beitrag: Fotos werden im gewählten Format geschnitten, Videos bleiben Videos (Anfang/Länge und Ausschnitt werden beim Abspielen angewendet)
+async function galBake(it, R){ const im = await stLoadImg(it.src), W = 720, H = Math.round(720 / R), cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'), b = galBox(it, R);
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.drawImage(im, b.l / 100 * W, b.t / 100 * H, b.w / 100 * W, b.h / 100 * H); let d = cv.toDataURL('image/jpeg', .85); if (d.length > 400000) d = cv.toDataURL('image/jpeg', .72); return d; }
+async function galVidBlob(it, onProg){ // klein genug: die Datei selbst; sonst nur den gewählten Teil kleiner rechnen
+  if (it.file.size <= VID_MAX) return {blob:it.file, type:it.file.type || 'video/mp4', s:it.s, l:it.l};
+  let W, H; if (it.a >= 1) { W = Math.min(1280, Math.round(720 * it.a)); H = W / it.a; } else { H = Math.min(1280, Math.round(720 / it.a)); W = H * it.a; } W = Math.round(W / 2) * 2; H = Math.round(H / 2) * 2;
+  const r = await wcShrink(it.file, {start:it.s, len:it.l, W, H, rect:() => [0, 0, W, H]}, onProg); return {blob:r.blob, type:r.type, s:0, l:0};
+}
+async function galBuild(p, onStep){ // lädt alles hoch, gibt die Liste für den Beitrag zurück
+  const R = pcrR(PCR.ar), out = [], n = PCR.items.length;
+  for (let i = 0; i < n; i++) { const it = PCR.items[i]; onStep?.(i, n);
+    if (it.t === 'i') { const d = await galBake(it, R), k = p.id + '_' + i;
+      if (social) { await social.db.doc('chats/pimg_' + social.uid + '/m/' + k).set({img:d, by:social.uid, ts:p.ts}); PIMG[social.uid + '/' + k] = d; PIMG[S.me + '/' + k] = d; out.push({t:'i', k}); }
+      else out.push({t:'i', img:d}); continue; }
+    const v = await galVidBlob(it, q => onStep?.(i + q, n)), clip = await uploadPostVideo({...v, poster:it.poster}, p.id, null, 'pv_' + p.id + '_' + i);
+    out.push({t:'v', clip:{n:clip.n, v:clip.v, type:clip.type, poster:it.poster}, s:Math.round(v.s * 10) / 10, l:Math.round(v.l * 10) / 10, a:Math.round(it.a * 1000) / 1000, x:Math.round(it.x), y:Math.round(it.y), z:Math.round(it.z * 100) / 100}); }
+  return out;
+}
+// Anzeige im Beitrag: zum Blättern, mit Punkten und Zähler
+function galHTML(p){
+  const R = pcrR(p.gar), o = postOwner(p) || p.author, n = p.gal.length;
+  const cell = (x, i) => x.t === 'v' ? `<button type="button" class="pgcell vclip" data-act="gclip" data-u="${esc(o)}" data-id="${esc(p.id)}" data-i="${i}" aria-label="Video abspielen"><img src="${esc(x.clip?.poster || '')}" alt="" style="${galPos(x, R)}"><span class="play" aria-hidden="true">▶</span></button>`
+    : `<div class="pgcell"><img class="photo" ${x.img ? `src="${esc(x.img)}"` : PIMG[o + '/' + x.k] ? `src="${PIMG[o + '/' + x.k]}"` : `data-pimg="${esc(o + '/' + x.k)}"`} alt="Bild ${i + 1} von ${n}" draggable="false"></div>`;
+  return `<div class="pgal" style="--ar:${R}"><div class="pgtrack" data-n="${n}">${p.gal.map(cell).join('')}</div>${n > 1 ? `<span class="pgcnt" aria-hidden="true">1/${n}</span><button type="button" class="pgnav l" data-act="pg-nav" data-v="-1" aria-label="Vorheriges" hidden>${PCR_ICO.l}</button><button type="button" class="pgnav r" data-act="pg-nav" data-v="1" aria-label="Nächstes">${PCR_ICO.r}</button><span class="pgdots" aria-hidden="true">${p.gal.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span>` : ''}</div>`;
+}
+function pgSync(tr){ const g = tr.closest('.pgal'), n = +tr.dataset.n || 1, i = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth));
+  g.querySelectorAll('.pgdots i').forEach((d, k) => d.classList.toggle('on', k === i)); const c = g.querySelector('.pgcnt'); if (c) c.textContent = `${i + 1}/${n}`;
+  const l = g.querySelector('.pgnav.l'), r = g.querySelector('.pgnav.r'); if (l) l.hidden = i <= 0; if (r) r.hidden = i >= n - 1;
+  g.querySelectorAll('video').forEach(v => { if (!v.paused && Math.abs(v.closest('.pgcell').offsetLeft - tr.scrollLeft) > 10) v.pause(); }); }
+document.addEventListener('scroll', e => { const t = e.target; if (t.classList?.contains('pgtrack')) pgSync(t); }, true);
+document.addEventListener('change', e => { if (e.target.id !== 'pcr-more' && e.target.id !== 'pfile' && e.target.id !== 'pvideo') return; const f = [...e.target.files]; e.target.value = ''; if (!f.length) return;
+  e.stopImmediatePropagation(); const fresh = !PCR || !PCR.items.length; pcrAddFiles(f).then(() => { if (PCR?.items.length) { if (fresh) PCR.step = 1; pcrOpen(); } }); if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'}; PCR.open = true; pcrPaint(); }, true);
+
 // Eigene Videos im Salon (Inaya, 2026-10-11): große Videos werden im Browser kleiner gerechnet (max. 720 px, bis 2,5 Mbit/s)
 const VID_MAX = 9 * 1024 * 1024, VID_SEC = 30, VID_CHUNK = 900000;
 function vidPoster(v){ const c = document.createElement('canvas'), k = Math.min(1, 360 / Math.max(v.videoWidth, v.videoHeight)); c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .6); }
@@ -6846,7 +7008,7 @@ function publishProfile(){
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
     const posts = S.posts.filter(p => p.author === S.me && !p.arch).sort(pinSort).slice(0, 15)
-      .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || []}));
+      .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k} : x) : null, gar:p.gar || ''}));
     let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
@@ -8259,8 +8421,25 @@ document.addEventListener('click', async e => {
     else { b.dataset.sure = '1'; b.textContent = 'Wirklich alles löschen? Nochmal klicken.'; }
   }
   else if (a === 'ctype') { composeType = b.dataset.t; render(); }
+  else if (a === 'pcr-back') { if (!PCR) return; if (PCR.step === 2) { PCR.step = 1; pcrPaint(); } else { if (!PCR.items.length) pcrClear(); else pcrClose(); } }
+  else if (a === 'pcr-next') { if (!PCR?.items.length) return; if (PCR.step === 1) { PCR.step = 2; PCR.cur = 0; pcrPaint(); } else pcrClose(); }
+  else if (a === 'pcr-open') pcrOpen(2);
+  else if (a === 'pcr-clear') { pcrClear(); paintCompose(); }
+  else if (a === 'pcr-edit') { if (!PCR) return; PCR.cur = +b.dataset.i; pcrOpen(2); }
+  else if (a === 'pcr-del') { if (!PCR) return; const [x] = PCR.items.splice(+b.dataset.i, 1); if (x?.url) URL.revokeObjectURL(x.url); if (!PCR.items.length) { pcrClear(); paintCompose(); return; } pcrPaint(); paintCompose(); }
+  else if (a === 'pcr-mv') { if (!PCR) return; const i = +b.dataset.i, j = i + +b.dataset.v; if (j < 0 || j >= PCR.items.length) return; [PCR.items[i], PCR.items[j]] = [PCR.items[j], PCR.items[i]]; if (PCR.cur === i) PCR.cur = j; pcrPaint(); paintCompose(); }
+  else if (a === 'pcr-go') { if (!PCR) return; PCR.cur = b.dataset.i != null ? +b.dataset.i : PCR.cur + +b.dataset.v; pcrPaint(); }
+  else if (a === 'pcr-ar') { if (!PCR) return; PCR.ar = b.dataset.v; pcrPaint(); }
+  else if (a === 'pg-nav') { const tr = b.closest('.pgal')?.querySelector('.pgtrack'); tr?.scrollBy({left:+b.dataset.v * tr.clientWidth, behavior:'smooth'}); }
+  else if (a === 'gclip') {
+    const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === b.dataset.id && (postOwner(x) || x.author) === b.dataset.u), i = +b.dataset.i, x = p?.gal?.[i];
+    if (!x?.clip || !social) return; b.disabled = true; const pl = b.querySelector('.play'); if (pl) pl.textContent = '…';
+    songURL(b.dataset.u, x.clip, 'pv_' + p.id + '_' + i).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vg' + Math.random().toString(36).slice(2, 8);
+      b.outerHTML = `<div class="pgcell on"><video id="${vid}" class="stvid" controls autoplay playsinline loop${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${mu ? ' muted' : ''} poster="${esc(x.clip.poster || '')}" src="${src.url}" style="${galPos(x, pcrR(p.gar))}"></video></div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
+      .catch(() => { b.disabled = false; if (pl) pl.textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
+  }
   else if (a === 'compose-open') { composeOpen = true; render(); document.getElementById('ptext')?.focus(); }
-  else if (a === 'compose-close') { composeOpen = false; postCrop = null; PVIDEO = null; PAUDIO = null; PLINK = false; PTAGS = []; PTAGP = false; render(); }
+  else if (a === 'compose-close') { pcrClear(); composeOpen = false; postCrop = null; PVIDEO = null; PAUDIO = null; PLINK = false; PTAGS = []; PTAGP = false; render(); }
   else if (a === 'ptag-open') { PTAGP = !PTAGP; paintCompose(); }
   else if (a === 'ptag-close') { PTAGP = false; paintCompose(); }
   else if (a === 'pmention') { const ta = document.getElementById('ptext'), u = mentionPool().find(x => x.id === b.dataset.id); if (!ta || !u) return;
@@ -8427,11 +8606,12 @@ document.addEventListener('click', async e => {
   else if (a === 'post-edit-no') { postEdit = null; render(); }
   else if (a === 'post-del-no') { postDelAsk = null; render(); }
   else if (a === 'post-del-yes') {
-    const pid = b.dataset.id; postDelAsk = null; const delAudio = S.posts.find(x => x.id === pid)?.audio, delClip = S.posts.find(x => x.id === pid)?.clip;
+    const pid = b.dataset.id; postDelAsk = null; const delAudio = S.posts.find(x => x.id === pid)?.audio, delClip = S.posts.find(x => x.id === pid)?.clip, delGal = S.posts.find(x => x.id === pid)?.gal;
     S.posts = S.posts.filter(x => x.id !== pid); save(); render(); toast('Beitrag gelöscht');
     if (social) social.db.doc('chats/pimg_' + social.uid + '/m/' + pid).delete().catch(() => {});
     if (social && delAudio) for (let i = 0; i < delAudio.n; i++) social.db.doc(`profiles/${social.uid}/pa_${pid}/c${i}`).delete().catch(() => {});
     if (social && delClip) for (let i = 0; i < delClip.n; i++) social.db.doc(`profiles/${social.uid}/pv_${pid}/c${i}`).delete().catch(() => {});
+    if (social && delGal) delGal.forEach((x, j) => { if (x.k) social.db.doc('chats/pimg_' + social.uid + '/m/' + x.k).delete().catch(() => {}); if (x.clip) for (let i = 0; i < x.clip.n; i++) social.db.doc(`profiles/${social.uid}/pv_${pid}_${j}/c${i}`).delete().catch(() => {}); });
   }
   else if (a === 'aplay') {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === id && (postOwner(x) || '') === b.dataset.u);
@@ -8648,8 +8828,12 @@ document.addEventListener('submit', async e => {
   } else if (t === 'post') {
     const url = (document.getElementById('purl')?.value || '').trim(), text = val('ptext');
     if (PVIDEO?.busy) { toast('Das Video wird noch vorbereitet.'); return; }
-    if ((PAUDIO || PVIDEO) && !PRIGHTS) { toast(PAUDIO ? 'Bitte bestätige erst, dass du den Song teilen darfst.' : 'Bitte bestätige erst, dass du das Video teilen darfst.'); document.getElementById('prights')?.focus(); return; }
-    const type = PAUDIO || PMU ? 'musik' : PVIDEO ? 'clip' : postCrop ? 'foto' : url ? 'video' : 'gedanke';
+    const gal = PCR?.items.length ? PCR : null, galV = !!gal?.items.some(x => x.t === 'v');
+    if (gal && gal.items.some(x => x.t === 'v' && !x.poster)) { toast('Ein Video wird noch vorbereitet.'); return; }
+    if ((PAUDIO || PVIDEO || galV) && !PRIGHTS) { toast(PAUDIO ? 'Bitte bestätige erst, dass du den Song teilen darfst.' : 'Bitte bestätige erst, dass du das Video teilen darfst.'); document.getElementById('prights')?.focus(); return; }
+    if (gal && gal.items.length === 1 && gal.items[0].t === 'i') { try { postCrop = await galBake(gal.items[0], pcrR(gal.ar)); } catch { toast('Das Foto ließ sich nicht vorbereiten.'); return; } } // ein Foto: wie bisher
+    const multi = gal && !(gal.items.length === 1 && gal.items[0].t === 'i');
+    const type = PAUDIO || PMU ? 'musik' : multi ? (gal.items.some(x => x.t === 'i') ? 'foto' : 'clip') : PVIDEO ? 'clip' : postCrop ? 'foto' : url ? 'video' : 'gedanke';
     if (type === 'gedanke' && !text) { toast('Schreib etwas oder füg ein Foto, ein Video, Musik oder einen Link hinzu.'); document.getElementById('ptext')?.focus(); return; }
     if (url && !/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; }
     const p = {id:'p' + Date.now().toString(36), author:S.me, type, text, ts:Date.now(), reactions:{}, comments:[]};
@@ -8669,10 +8853,15 @@ document.addEventListener('submit', async e => {
       try { p.clip = {...await uploadPostVideo(PVIDEO, p.id, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.round(i / n * 100)} %`; }), ok:Date.now()}; }
       catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } return; }
     }
+    if (multi) {
+      const sb = f.querySelector('button[type=submit]'); if (sb) sb.disabled = true;
+      try { p.gal = await galBuild(p, (i, n) => { if (sb) sb.textContent = `Lädt hoch … ${Math.min(n, Math.floor(i) + 1)} von ${n}`; }); p.gar = gal.ar; }
+      catch (err) { console.warn(err); toast(err.message === 'gross' ? 'Ein Video ist zu groß. Kürz es bitte etwas.' : 'Das Hochladen hat nicht geklappt. Versuch es nochmal.'); if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } return; }
+    }
     if (social) { postAud = val('paud') === 'pub' ? 'pub' : 'fr'; if (postAud === 'pub') p.pub = 1; } // Beitrag öffentlich oder nur für Freunde
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
-    composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PMU = null; PMUP = false; stAuStop(); PRIGHTS = false; PLINK = false; PTAGS = []; PTAGP = false; save(); render();
+    pcrClear(); composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PMU = null; PMUP = false; stAuStop(); PRIGHTS = false; PLINK = false; PTAGS = []; PTAGP = false; save(); render();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
