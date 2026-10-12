@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f2f5bffe6e73';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='db322fb187b8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1012,6 +1012,10 @@ footer.foot .lnk{color:var(--muted)}
 /* Story: „In Story posten“ + Editor wie Insta, Regenbogen-Ring in der Story-Leiste (Inaya, 2026-10-11) */
 .sring:not(.none):not(.seen) .sava{border:3px solid transparent;background:linear-gradient(#1a1a1d,#1a1a1d) padding-box,conic-gradient(from 200deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de,#ff2d55) border-box;box-shadow:0 0 0 2px #0a0a0b inset,0 0 10px #ff2d5540}
 .sring.seen .sava{border:3px solid #6b6a72}
+@property --stua{syntax:'<angle>';inherits:false;initial-value:0deg}
+.sring.upl .sava{border:3px solid transparent!important;background:linear-gradient(#1a1a1d,#1a1a1d) padding-box,conic-gradient(from var(--stua),#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de,#ff2d55) border-box!important;box-shadow:0 0 0 2px #0a0a0b inset,0 0 10px #ff2d5540;animation:stuspin 1.1s linear infinite}
+@keyframes stuspin{to{--stua:360deg}}
+@media (prefers-reduced-motion:reduce){.sring.upl .sava{animation-duration:3s}}
 .stpick{background:#0b0b0c;overflow-y:auto;color:#fff;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;touch-action:pan-y}
 .stphead{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:8px;padding:10px;background:#0b0b0c}.stphead b{flex:1;text-align:center;font-size:17px}.stphead .stic{background:none}.stpsp{width:44px}
 .stptiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px 12px 14px}.stptiles>*{display:grid;justify-items:center;gap:6px;padding:14px 6px;border-radius:14px;background:#1d1d20;border:0;color:#fff;cursor:pointer;font:600 13px -apple-system,Arial,sans-serif}.stptiles svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.stptiles .staa{font-size:20px;line-height:26px}
@@ -5690,7 +5694,7 @@ function storyUsers(){ // Freunde und alle mit öffentlicher Story
 function storyBar(){
   if (!S.me) return ''; storySweep();
   const mine = myStories(), fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
-  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${nameFont(u)}>${esc(label)}</small></button>`;
+  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' + (STUP ? ' upl' : '') : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${nameFont(u)}>${esc(label)}</small></button>`;
   return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
 }
 function storyThumb(d){ return new Promise(ok => { const img = new Image(); img.onerror = () => ok(''); img.onload = () => { const c = document.createElement('canvas'); c.width = 108; c.height = 192; c.getContext('2d').drawImage(img, 0, 0, 108, 192); ok(c.toDataURL('image/jpeg', .6)); }; img.src = d; }); }
@@ -5933,7 +5937,9 @@ function stStep(d){ if (!STV) return; const g = STV.list[STV.ui]; STV.ii += d;
   if (STV.ii < 0) { if (STV.ui === 0) STV.ii = 0; else { STV.ui--; STV.ii = STV.list[STV.ui].items.length - 1; } }
   storyPaint(); }
 function stClose(){ stSpStop(); stAuStop(); stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
-async function stShare(){ // nur einmal posten, Fenster schließt sofort, hochgeladen wird im Hintergrund (Inaya, 2026-10-11)
+let STUP = 0; // Storys, die gerade hochladen: Ring dreht sich (Inaya, 2026-10-12)
+async function stShare(){ STUP++; try { await stShare0(); } finally { STUP = Math.max(0, STUP - 1); if (!stNew && !STV) render(); else document.querySelectorAll(".sring.upl").forEach(x => STUP || x.classList.remove("upl")); } }
+async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochgeladen wird im Hintergrund (Inaya, 2026-10-11)
   const n = stNew; if (!n || n.posting) return; n.posting = true;
   document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = true);
   stTaCommit(); n.song = (n.song || '').trim();
