@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8cbce0b915e5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d772b9de440f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -23,7 +23,7 @@
   auth.onAuthStateChanged(u => { user = u; });
 
   /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p)};
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
 
   /* ---------- Wer ist angemeldet ---------- */
   const me = {
@@ -1276,6 +1276,17 @@ html:has(body.stopen){background:#000}
 .vtrph{position:absolute;top:-2px;bottom:-2px;width:3px;margin-left:-1.5px;background:#fff;border-radius:2px;box-shadow:0 0 3px #000;pointer-events:none}
 .stsndhint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid #ffffff60;border-radius:22px;background:#0a0a0bcc;color:#fff;font:600 14px -apple-system,Arial,sans-serif;cursor:pointer}
 .stsndhint svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
+
+.stvf{position:absolute;inset:0;overflow:hidden}.stvfbg{position:absolute;inset:0}
+.stvf video.stimg{position:absolute;inset:auto;max-width:none;object-fit:cover}
+
+/* Chat-Schreibleiste: langes Feld mit kleinem Senden-Pfeil darin (Inaya, 2026-10-12) */
+.cinw{position:relative;flex:1;min-width:0;display:flex}
+.cinw input{flex:1;min-width:0;width:100%;padding-right:44px!important}
+.csend{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;opacity:.85}
+.csend:hover,.csend:focus-visible{opacity:1;background:#ffffff1a}
+.csend svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.post.tp .csend,.chatpanel .csend{color:var(--p-fg,var(--fg))}
 </style>
 
 <div id="app"></div>
@@ -5255,7 +5266,9 @@ const STF = [['normal','Normal',''],
   ['blut','Blutmond','grayscale(1) sepia(1) saturate(4) hue-rotate(-42deg) contrast(1.15) brightness(.85)','radial-gradient(circle,transparent 45%,rgba(30,0,0,.5))','normal']];
 const stF = f => STF.find(x => x[0] === f) || STF[0];
 const stFilter = f => stF(f)[2] || 'none';
-const stImgHTML = (src, f, alt='', vid) => { const x = stF(f); return `${vid ? `<video class="stimg stvid" src="${src}" playsinline autoplay ${vid === 'loop' ? 'loop muted' : vid === 'loopsnd' ? 'loop' : ''} style="filter:${x[2] || 'none'}"></video>` : `<img class="stimg" draggable="false" src="${src}" alt="${esc(alt)}" style="filter:${x[2] || 'none'}">`}${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`; };
+const stVfBg = bg => bg && bg !== 'blur' ? `background-color:${esc(bg.c)};background-image:${stTbPat(bg)}` : 'background:#0a0a0b';
+const stImgHTML = (src, f, alt='', vid, vf) => { const x = stF(f); const vtag = st => `<video class="stimg stvid" src="${src}" playsinline autoplay ${vid === 'loop' ? 'loop muted' : vid === 'loopsnd' ? 'loop' : ''}${vf ? ` data-s="${+vf.s || 0}" data-l="${+vf.l || 0}"` : ''} style="filter:${x[2] || 'none'};${st}"></video>`;
+  return `${vid ? vf ? `<div class="stvf"><div class="stvfbg" style="${stVfBg(vf.bg)}"></div>${vtag(`left:${+vf.x}%;top:${+vf.y}%;width:${+vf.w}%;height:${+vf.h}%`)}</div>` : vtag('') : `<img class="stimg" draggable="false" src="${src}" alt="${esc(alt)}" style="filter:${x[2] || 'none'}">`}${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`; };
 // Texte frei platzierbar: {t, x, y in %, s = Größe, c = Farbe, st = Schrift, bg = 0 ohne, 1 Kasten, 2 halbdurchsichtig}
 const STXT = [['klassisch','Klassisch'],['modern','Modern'],['neon','Neon'],['schreib','Schreibmaschine'],['fett','Fett'],['gotisch','Gotisch']];
 const STFR = [[0,'Ohne'],[1,'Kasten'],[2,'Schatten'],[3,'Umriss'],[4,'Kreis'],[5,'Rahmen'],[6,'Blase'],[7,'Band']]; // alte Textrahmen, nur noch zum Anzeigen alter Storys
@@ -5400,7 +5413,7 @@ function storyPaint(){
   vc.innerHTML = `<div class="stbox view"><div class="stframe" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
     <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class="cameo">${avatar(u.outfit, 'head', '', true)}</span><b>${esc(own ? 'Deine Story' : u.name)}</b></button><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
-    ${vsrc ? stImgHTML(vsrc, st.f, '', true) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
+    ${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${stTextsHTML(stTexts(st))}
     ${st.mu ? stMuHTML(st.mu, st.mp) : st.song && SPRES[st.song] ? stMuHTML(SPRES[st.song], {x:50, y:84, w:76}) : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
@@ -5469,6 +5482,7 @@ async function stShare(){ // nur einmal posten, Fenster schließt sofort, hochge
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
   if (n.vid || social) toast('Deine Story wird gepostet …');
   if (n.vid) {
+    if (n.vid.vf) { const f = n.vid.vf, r1 = x => Math.round(x * 100) / 100; st.vf = {x:r1(f.x), y:r1(f.y), w:r1(f.w), h:r1(f.h), s:r1(f.s), l:r1(f.l), bg:f.bg && f.bg !== 'blur' ? {c:f.bg.c, p:f.bg.p || ''} : null}; }
     try { const {poster, ...m} = await uploadPostVideo(n.vid, st.id, null, 'sv_' + st.id); st.vid = m; }
     catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); return; }
     STVID[S.me + '/' + st.id] = n.vid.url;
@@ -5553,23 +5567,37 @@ function stTrimWire(c, im){ // Balken ziehen wie in der Apple-Galerie
 function stTrimSet(c, im, at){ c.moved = c.moved || false; const s0 = document.getElementById('stv-start'), l0 = document.getElementById('stv-len'); if (s0) s0.value = c.start; if (l0) l0.value = c.len; stTrimPaint(); try { im.currentTime = at ?? c.start; } catch {} stTrimPh(); }
 async function stVidDone(){ // Weiter: zuschneiden und, wenn nötig, neu aufnehmen
   const c = stCam, v = document.getElementById('stcimg'); if (!c || !v || !c.dur) return;
-  const plain = !c.moved && !c.bgSet && c.start < .05 && c.len >= c.dur - .1 && c.file.size <= VID_MAX;
+  const plain = false, fast = c.file.size <= VID_MAX; // klein genug: sofort weiter, nichts neu aufnehmen (Inaya, 2026-10-12)
   const busy = document.createElement('p'); busy.className = 'stpbusy stvbusy'; busy.id = 'stbusy'; busy.textContent = 'Video wird vorbereitet …'; document.getElementById('stcr')?.appendChild(busy);
   try {
-    let r;
-    if (plain) r = await prepVideo(c.file);
+    let r, vf = null;
+    if (fast) { const vw = v.videoWidth, vh = v.videoHeight; vf = {x:c.ox / c.W * 100, y:c.oy / c.H * 100, w:vw * c.sc / c.W * 100, h:vh * c.sc / c.H * 100, s:c.start, l:c.len, bg:c.bg || stcBgDef(c)};
+      v.pause(); await new Promise(ok => { v.onseeked = ok; try { v.currentTime = c.start + .05; } catch { ok(); } setTimeout(ok, 1200); });
+      const pc = document.createElement('canvas'); pc.width = 360; pc.height = Math.round(360 * c.H / c.W); const g = pc.getContext('2d'), k = pc.width / c.W;
+      try { g.drawImage(await stBgCanvas(vf.bg, pc.width, pc.height), 0, 0); g.drawImage(v, c.ox * k, c.oy * k, vw * c.sc * k, vh * c.sc * k); } catch {}
+      r = {blob:c.file, type:c.file.type || 'video/mp4', poster:pc.toDataURL('image/jpeg', .6), vf}; }
+    else if (plain) r = await prepVideo(c.file);
     else { // jetzt im Antippen: Ton freigeben, dann den gewählten Teil im Bildausschnitt aufnehmen
       let ac = null; try { const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); ac.resume?.().catch(() => {}); } catch {}
       v.loop = false; v.muted = false; v.pause(); try { v.currentTime = c.start; } catch {}
       c.playP = v.play().catch(() => { v.muted = true; return v.play(); }); // im Antippen starten, sonst bleibt das iPhone stumm
       r = await stRecVideo(v, ac, c, q => { busy.textContent = `Video wird zugeschnitten … ${Math.round(q * 100)} %`; });
     }
-    if (stCam !== c) return; URL.revokeObjectURL(c.url); stCam = null;
-    stNew = {img:r.poster, vid:{...r, url:URL.createObjectURL(r.blob)}, thumb:await storyThumb(r.poster), f:'normal', song:'', texts:[], edit:null, tool:null, hint:true}; storyPaint();
+    if (stCam !== c) return; if (!vf) URL.revokeObjectURL(c.url); stCam = null;
+    stNew = {img:r.poster, vid:{...r, url:vf ? c.url : URL.createObjectURL(r.blob)}, thumb:await storyThumb(r.poster), f:'normal', song:'', texts:[], edit:null, tool:null, hint:true}; storyPaint();
   } catch (err) { busy.remove(); toast(err.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : err.message === 'kein' ? 'Dein Handy kann hier keine Videos zuschneiden. Nimm ein Video unter 1 Minute.' : 'Das Video ließ sich nicht vorbereiten.'); }
 }
 // Tonspur einer Videodatei als AudioBuffer (Inaya, 2026-10-11: hochgeladene Videos hatten keinen Ton)
 const VABUF = new WeakMap();
+document.addEventListener('loadedmetadata', e => { const v = e.target; if (v.matches?.('video.stvid[data-l]') && +v.dataset.s) { try { v.currentTime = +v.dataset.s; } catch {} } }, true);
+document.addEventListener('timeupdate', e => { const v = e.target; if (!v.matches?.('video.stvid[data-l]')) return; const s0 = +v.dataset.s || 0, l = +v.dataset.l || 0; if (!l) return;
+  if (v.currentTime < s0 - .4) { try { v.currentTime = s0; } catch {} }
+  else if (v.currentTime >= s0 + l) { if (v.loop) { try { v.currentTime = s0; } catch {} } else if (!v.dataset.done) { v.dataset.done = 1; v.pause(); v.onended?.(); } } }, true);
+async function putChunks(path, b64, size, ver, onStep){ // bis zu 6 Stücke gleichzeitig statt eins nach dem anderen (Inaya, 2026-10-12: viel schneller)
+  const n = Math.ceil(b64.length / size); let next = 0, done = 0;
+  const work = async () => { while (next < n) { const i = next++; await social.db.doc(`${path}/c${i}`).set({v:ver, d:b64.slice(i * size, (i + 1) * size)}); onStep?.(++done, n); } };
+  await Promise.all(Array.from({length:Math.min(6, n)}, work)); return n;
+}
 function vidAudioBuf(file){
   if (!file || file.size > 160 * 1024 * 1024) return Promise.resolve(null); if (VABUF.has(file)) return VABUF.get(file);
   const pr = (async () => { try { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; const ab = await file.arrayBuffer(), ac = new AC();
@@ -5672,7 +5700,7 @@ function stCamWire(){
   const zoomTo = (z, cx, cy) => { const W = fr.clientWidth, H = fr.clientHeight; cx = cx ?? W / 2; cy = cy ?? H / 2; const old = c.sc || 1; z = Math.min(4, Math.max(c.zmin || c.fit || 1, z)); c.zoom = z; c.moved = true; const iw = nw(), ih = nh(), ns = Math.max(W / iw, H / ih) * z; c.ox = cx - (cx - c.ox) * ns / old; c.oy = cy - (cy - c.oy) * ns / old; zr.value = z; lay(); };
   if (c.vid) { const meta = () => { const d = im.duration; if (!isFinite(d) || !d) return; if (!c.dur) { c.dur = d; c.len = Math.min(ST_VMAX, d); } lay(); stTrimPaint(); };
     if (im.readyState >= 1) meta(); ['loadedmetadata', 'durationchange', 'loadeddata', 'canplay'].forEach(ev => im.addEventListener(ev, () => { meta(); if (c.dur) stTrimFrames(c); }));
-    stTrimWire(c, im); vidAudioBuf(c.file);
+    stTrimWire(c, im); if (c.file.size > VID_MAX) vidAudioBuf(c.file); // Tonspur nur vorbereiten, wenn neu aufgenommen werden muss
     im.play?.().catch(() => {}); setTimeout(() => { if (stCam === c && !c.dur) { try { im.load(); im.play().catch(() => {}); } catch {} } }, 2500);
     setTimeout(() => { if (stCam === c && !c.dur) { const lb = document.getElementById('stv-lbl'); if (lb) lb.textContent = 'Das Video lässt sich hier nicht lesen. Versuch ein anderes oder ein kürzeres.'; } }, 9000);
     im.addEventListener('timeupdate', () => { if (c.dur && im.loop && (im.currentTime > c.start + c.len || im.currentTime < c.start - .3)) { try { im.currentTime = c.start; } catch {} } });
@@ -5705,7 +5733,7 @@ function stEditorHTML(){
   const ico0 = {aa:'<b class="staa">Aa</b>', mu:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>', x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', tr:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg>'};
   const ico = {...ico0, ...NFI}; ico.fx0 = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
   return `<div class="stbox edit ed2"><div class="stframe sted${e ? ' editing' : ''}" id="stfr">
-    ${n.tb ? `<div class="sttbg" style="background-color:${esc(n.tb.c)};background-image:${stTbPat(n.tb)}"><i style="background:${esc(n.tb.c)}"></i></div>` : n.vid ? stImgHTML(n.vid.url, n.f, '', n.snd ? 'loopsnd' : 'loop') : stImgHTML(n.img, n.f, 'Deine Story')}
+    ${n.tb ? `<div class="sttbg" style="background-color:${esc(n.tb.c)};background-image:${stTbPat(n.tb)}"><i style="background:${esc(n.tb.c)}"></i></div>` : n.vid ? stImgHTML(n.vid.url, n.f, '', n.snd ? 'loopsnd' : 'loop', n.vid.vf) : stImgHTML(n.img, n.f, 'Deine Story')}
     <div class="sttexts">${n.texts.map((x, i) => i === n.edit ? '' : `<div ${stTxtAttrs(x, i)}>${esc(x.t)}</div>`).join('')}</div>
     <div class="stfname" id="stfname"${n.hint ? '' : ' hidden'}>${n.hint ? 'Wisch übers Foto für Filter' : esc(fx[1])}</div>
     ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-back" aria-label="Zurück">${ico.x}</button></div>
@@ -6053,8 +6081,7 @@ document.addEventListener('change', async e => {
 });
 async function uploadPostVideo(v, pid, onStep, base){
   const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(v.blob); });
-  const n = Math.ceil(b64.length / VID_CHUNK), ver = Date.now();
-  for (let i = 0; i < n; i++) { await social.db.doc(`profiles/${social.uid}/${base || 'pv_' + pid}/c${i}`).set({v:ver, d:b64.slice(i * VID_CHUNK, (i + 1) * VID_CHUNK)}); onStep?.(i + 1, n); }
+  const ver = Date.now(), n = await putChunks(`profiles/${social.uid}/${base || 'pv_' + pid}`, b64, VID_CHUNK, ver, onStep);
   return {n, v:ver, type:v.type, poster:v.poster};
 }
 function clipHTML(p){
@@ -6621,7 +6648,7 @@ function chatsView(){
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
-      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off"><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button><button class="btn" type="submit">Senden</button></form>
+      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="send"><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></span><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
     </section>`;
   }
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
@@ -6701,10 +6728,10 @@ async function voiceStart(){
   let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); } catch { return toast('Erlaube bitte den Zugriff aufs Mikrofon, dann kannst du Sprachnachrichten aufnehmen.'); }
   if (VREC || !CH.open) { stream.getTracks().forEach(t => t.stop()); return; }
   const mt = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'].find(t => MediaRecorder.isTypeSupported(t)) || '';
-  let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:48000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); return toast('Die Aufnahme ließ sich nicht starten.'); }
+  let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:32000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); return toast('Die Aufnahme ließ sich nicht starten.'); }
   const v = VREC = {rec, stream, parts:[], t0:Date.now(), cid:CH.open, type:(mt || rec.mimeType || 'audio/mp4').split(';')[0]};
   rec.ondataavailable = e => { if (e.data.size) v.parts.push(e.data); };
-  if (/mp4/.test(v.type)) rec.start(); else rec.start(500); voicePaint(); // iPhone: mp4 in Stücken wird oft kaputt
+  if (/mp4/.test(v.type)) rec.start(); else rec.start(500); v.fast = 1; voicePaint(); // iPhone: mp4 in Stücken wird oft kaputt
   v.timer = setInterval(() => { const s = (Date.now() - v.t0) / 1000, el = document.getElementById('vrtime'); if (el) el.textContent = stTime(s); if (s >= VMAX) voiceStop(true); }, 250);
 }
 function voiceStop(send){
@@ -6721,6 +6748,14 @@ async function voiceSend(j){
   if (!VSEND.includes(j)) VSEND.push(j); j.err = ''; j.step = 'Wird gesendet …'; voicePend();
   try {
     const k = j.k = j.k || 'v' + Date.now().toString(36);
+    if (social.db.batch && j.blob.size < 3 * 1024 * 1024) { // ein einziger Schreibvorgang: Tonstücke, Nachricht und Chat-Vorschau zusammen
+      const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(j.blob); });
+      const C = 900000, n = Math.ceil(b64.length / C), v = Date.now(), ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6), bt = social.db.batch();
+      for (let i = 0; i < n; i++) bt.set(social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`), {v, d:b64.slice(i * C, (i + 1) * C)});
+      bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), {from:social.uid, text:'', ts, audio:{n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur}});
+      if (!j.cid.startsWith('zimmer_') && !j.cid.startsWith('wall_')) bt.update(social.db.doc('chats/' + j.cid), {last:ts, lastText:'♪ Sprachnachricht', lastFrom:social.uid});
+      await vTimeout(bt.commit(), 30000); VSEND.splice(VSEND.indexOf(j), 1); voicePend(); return;
+    }
     const au = await vTimeout(uploadPostAudio(new File([j.blob], 'Sprachnachricht', {type:j.type}), k, (i, n) => { j.step = `Wird gesendet … ${Math.round(i / n * 100)} %`; voicePend(); }), 60000);
     const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur}}), 30000);
     if (!ok) throw new Error('recht');
@@ -6853,7 +6888,8 @@ function addEmoButtons(){
     if (f.querySelector('.emobtn')) return;
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
-    sub.insertAdjacentHTML('beforebegin', `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>`);
+    const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>`;
+    if (sub.closest('.cinw')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
 new MutationObserver(addEmoButtons).observe(document.documentElement, {childList:true, subtree:true});
@@ -7208,8 +7244,7 @@ async function uploadSong(file, onStep){
 // MP3 im Salon: die Datei liegt in Stücken unter profiles/<uid>/pa_<beitrag>/c<i> (Inaya, 2026-10-10)
 async function uploadPostAudio(file, pid, onStep){
   const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(file); });
-  const n = Math.ceil(b64.length / SONG_CHUNK), v = Date.now();
-  for (let i = 0; i < n; i++) { await social.db.doc(`profiles/${social.uid}/pa_${pid}/c${i}`).set({v, d:b64.slice(i * SONG_CHUNK, (i + 1) * SONG_CHUNK)}); onStep?.(i + 1, n); }
+  const v = Date.now(), n = await putChunks(`profiles/${social.uid}/pa_${pid}`, b64, SONG_CHUNK, v, onStep);
   return {n, v, type:/^audio\//.test(file.type) ? file.type : 'audio/mpeg', name:file.name.replace(/\.[a-z0-9]+$/i, '').slice(0, 80)};
 }
 function audioHTML(p){
