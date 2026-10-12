@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2a8f03d80717';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='eb8bc3b0c5b0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -6137,7 +6137,7 @@ async function stCamStart(){
   if (!stCam) return; stCamStop(); stCam.noCam = false;
   try {
     if (!navigator.mediaDevices?.getUserMedia) throw 0;
-    const vc = {facingMode:stCam.facing, width:{ideal:1080}, height:{ideal:1920}}; let st; try { st = await navigator.mediaDevices.getUserMedia({video:vc, audio:true}); } catch { st = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); } // Ton fürs Video beim Gedrückthalten
+    const vc = {facingMode:stCam.facing, width:{ideal:1080}, height:{ideal:1920}}; const st = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); // Mikro erst beim Gedrückthalten: ein offenes Mikro schaltet am iPhone den Ton der ganzen Seite leise/aus (Inaya, 2026-10-12)
     if (!stCam || stCam.mode !== 'cam') { st.getTracks().forEach(t => t.stop()); return; }
     stCam.stream = st; const v = document.getElementById('stvid'); if (v) { v.srcObject = st; v.play().catch(() => {}); }
   } catch { if (stCam) { stCam = {facing:stCam.facing, mode:'pick', noCam:true}; storyPaint(); toast('Die Kamera ist hier nicht freigegeben. Tipp nochmal auf Kamera, dann öffnet sich die Handy-Kamera.'); } }
@@ -6148,20 +6148,24 @@ document.addEventListener('pointerdown', e => {
   const b = e.target.closest?.('#stshut'); if (!b || !stCam?.stream) return; e.preventDefault();
   const t = setTimeout(() => stRecStart(b), 350); stRec = {t, b, on:false};
 });
-document.addEventListener('pointerup', () => { const r = stRec; if (!r) return; clearTimeout(r.t); if (!r.on) { stRec = null; stCamShot(); } else stRecStop(); });
+document.addEventListener('pointerup', () => { const r = stRec; if (!r) return; clearTimeout(r.t); if (r.on) stRecStop(); else if (r.pend) stRec = null; else { stRec = null; stCamShot(); } });
 document.addEventListener('pointercancel', () => { const r = stRec; if (!r) return; clearTimeout(r.t); if (r.on) stRecStop(); else stRec = null; });
 document.addEventListener('contextmenu', e => { if (e.target.closest?.('#stshut')) e.preventDefault(); });
-function stRecStart(b){
+async function stRecStart(b){
   const r = stRec; if (!r || !stCam?.stream) return;
+  r.pend = true; try { r.au = await navigator.mediaDevices.getUserMedia({audio:true}); } catch { r.au = null; } // Ton fürs Video, nur solange aufgenommen wird
+  if (stRec !== r || !stCam?.stream) { r.au?.getTracks().forEach(t => t.stop()); return; }
   const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'], mt = window.MediaRecorder && types.find(t => MediaRecorder.isTypeSupported(t));
-  if (!mt) { stRec = null; toast('Video aufnehmen geht in diesem Browser nicht. Tipp für ein Foto.'); return; }
-  let rec; try { rec = new MediaRecorder(stCam.stream, {mimeType:mt, videoBitsPerSecond:2500000}); } catch { stRec = null; toast('Video aufnehmen ging gerade nicht.'); return; }
+  if (!mt) { r.au?.getTracks().forEach(t => t.stop()); stRec = null; toast('Video aufnehmen geht in diesem Browser nicht. Tipp für ein Foto.'); return; }
+  const ms = new MediaStream([...stCam.stream.getVideoTracks(), ...(r.au ? r.au.getAudioTracks() : [])]);
+  let rec; try { rec = new MediaRecorder(ms, {mimeType:mt, videoBitsPerSecond:2500000}); } catch { r.au?.getTracks().forEach(t => t.stop()); stRec = null; toast('Video aufnehmen ging gerade nicht.'); return; }
   r.on = true; r.rec = rec; r.mt = mt.split(';')[0]; r.parts = []; r.t0 = Date.now(); rec.ondataavailable = ev => ev.data.size && r.parts.push(ev.data);
   rec.onstop = () => stRecDone(r); rec.start(500); b.classList.add('rec'); b.style.setProperty('--recs', ST_VMAX + 's');
   r.max = setTimeout(() => { if (stRec === r) stRecStop(); }, ST_VMAX * 1000);
 }
 function stRecStop(){ const r = stRec; if (!r?.on) return; stRec = null; clearTimeout(r.max); r.b?.classList.remove('rec'); try { r.rec.stop(); } catch {} }
 function stRecDone(r){
+  r.au?.getTracks().forEach(t => t.stop());
   const blob = new Blob(r.parts, {type:r.mt}); if (Date.now() - r.t0 < 600 || !blob.size) { toast('Halt den Knopf etwas länger für ein Video.'); return; }
   stCamStop(); const f = new File([blob], 'story.' + (/mp4/.test(r.mt) ? 'mp4' : 'webm'), {type:r.mt}); stVideo(f);
 }
