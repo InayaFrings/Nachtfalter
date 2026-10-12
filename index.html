@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9dd65e5d327f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='361ae48e6abc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1414,6 +1414,9 @@ body.cmvopen{overflow:hidden}
 .nt-th{position:relative}.nt-th .nt-tx{font:500 8.5px/1.2 var(--f-body,system-ui),sans-serif;color:var(--ink,#ddd);padding:4px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;text-align:left;overflow-wrap:anywhere}
 .nt-pl{position:absolute;right:3px;bottom:3px;width:15px;height:15px;border-radius:50%;background:#000a;display:grid;place-items:center}.nt-pl svg{width:9px;height:9px;fill:#fff;stroke:#fff;stroke-width:1}
 article.post.ntflash{animation:ntfl 1.6s ease}@keyframes ntfl{0%,40%{box-shadow:0 0 0 2px #fff8}100%{box-shadow:0 0 0 0 #fff0}}
+.bubble .meta,.bubble.me .meta,.bubble.media>.meta{display:flex!important;align-items:center;justify-content:flex-end;gap:6px;text-align:right!important;font-size:10.5px}
+.mdelb{border:0;background:none;padding:0;margin:-4px -4px -4px 0;color:inherit;cursor:pointer;display:inline-grid;place-items:center;width:24px;height:24px;opacity:.85}.mdelb svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mdel{display:inline-flex;gap:4px;align-items:center}.mdyes{border:1px solid #ffffff40;border-radius:999px;background:#151517;color:#fff;font:600 11px/1 inherit;padding:5px 9px;cursor:pointer;white-space:nowrap}.mdno{border:0;background:none;color:inherit;cursor:pointer;padding:2px 4px;font-size:12px}
 </style>
 
 <div id="app"></div>
@@ -5197,7 +5200,7 @@ function piWatch(p){
   if (!PI[k]) {
     PI[k] = {list:[], p};
     if (k.startsWith('helper-')) helperCmMig(p, k);
-    PI[k].unsub = social.db.collection('chats/pi_' + k + '/m').onSnapshot(snap => { PI[k].list = snap.docs.map(d => ({did:d.id, ...d.data()})); piDraw(k); ntPing(); }, () => {});
+    PI[k].unsub = social.db.collection('chats/pi_' + k + '/m').onSnapshot(snap => { PI[k].list = snap.docs.filter(d => !isDel(d.id)).map(d => ({did:d.id, ...d.data()})); piDraw(k); ntPing(); }, () => {});
   }
   PI[k].p = p; return PI[k];
 }
@@ -7023,15 +7026,18 @@ function openChat(id){
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
   CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot({includeMetadataChanges:true}, snap => {
-    CH.msgs = snap.docs.map(d => ({...d.data(), id:d.id, _pend:!!d.metadata?.hasPendingWrites})).reverse(); markSeen(); drawMsgs();
+    CH.msgs = snap.docs.filter(d => !isDel(d.id)).map(d => ({...d.data(), id:d.id, _pend:!!d.metadata?.hasPendingWrites})).reverse(); markSeen(); drawMsgs();
   }, () => {});
   go('chats');
 }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
-function drawMsgs(){
-  const box = document.getElementById('msgs'); if (!box) return;
-  box.innerHTML = msgsHTML(); box.scrollTop = box.scrollHeight; msgImgs(box); voicePend();
+function drawMsgs(keep){
+  const box = document.getElementById('msgs'); if (!box) return; const st0 = box.scrollTop;
+  box.innerHTML = msgsHTML(); box.scrollTop = keep ? st0 : box.scrollHeight; msgImgs(box); voicePend(); vmPrefetch();
 }
+// Sprachnachrichten im Chat schon vorab laden, damit sie beim Antippen sofort spielen (Inaya, 2026-10-12)
+let VMPF = null;
+function vmPrefetch(){ clearTimeout(VMPF); VMPF = setTimeout(async () => { if (!social) return; for (const m of CH.msgs.filter(x => x.audio?.voice && x.audio.n && !x._pend && !(VOICEURL[x.audio.k] && x.from === social.uid)).slice(-8).reverse()) { try { await songURL(m.from, m.audio, 'pa_' + m.audio.k); } catch {} } }, 300); }
 const msgImgs = box => box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = box.scrollHeight; }, {once:true}); });
 function msgsHTML(){
   const c = CH.list.find(x => x.id === CH.open);
@@ -7200,9 +7206,10 @@ function vWave(lv, n=36){ // 36 Balken, je 0–9
 async function voiceSend(j){
   if (!VSEND.includes(j)) VSEND.push(j); j.err = ''; j.step = 'Wird gesendet …'; voicePend();
   try {
-    const k = j.k = j.k || 'v' + Date.now().toString(36);
+    const k = j.k = j.k || 'v' + Date.now().toString(36); try { VOICEURL[k] = VOICEURL[k] || URL.createObjectURL(j.blob); } catch {}
     if (social.db.batch && j.blob.size < 3 * 1024 * 1024) { // ein einziger Schreibvorgang: Tonstücke, Nachricht und Chat-Vorschau zusammen
       const b64 = await new Promise((ok, fail) => { const fr = new FileReader(); fr.onerror = fail; fr.onload = () => ok(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(j.blob); });
+      if (j.cancel) return; // schon gelöscht
       const C = 900000, n = Math.ceil(b64.length / C), v = Date.now(), ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6), bt = social.db.batch();
       for (let i = 0; i < n; i++) bt.set(social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`), {v, d:b64.slice(i * C, (i + 1) * C)});
       bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), {from:social.uid, text:'', ts, audio:{n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur, w:j.w || ''}});
@@ -7211,6 +7218,7 @@ async function voiceSend(j){
       j.mid = mid; bt.commit().then(() => { const i = VSEND.indexOf(j); if (i >= 0) VSEND.splice(i, 1); voicePend(); }).catch(() => { j.err = 'Das Senden hat nicht geklappt.'; voicePend(); }); voicePend(); return;
     }
     const au = await vTimeout(uploadPostAudio(new File([j.blob], 'Sprachnachricht', {type:j.type}), k, (i, n) => { j.step = `Wird gesendet … ${Math.round(i / n * 100)} %`; voicePend(); }), 60000);
+    if (j.cancel) { for (let i = 0; i < au.n; i++) social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`).delete().catch(() => {}); return; }
     const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur, w:j.w || ''}}), 30000);
     if (!ok) throw new Error('recht');
     VSEND.splice(VSEND.indexOf(j), 1); voicePend();
@@ -7218,7 +7226,7 @@ async function voiceSend(j){
 }
 function voicePend(){
   const box = document.getElementById('msgs'); if (!box) return; box.querySelectorAll('.vpend').forEach(x => x.remove());
-  VSEND.filter(j => j.cid === CH.open && (j.err || !j.mid || !CH.msgs.some(m => m.id === j.mid))).forEach((j, i) => box.insertAdjacentHTML('beforeend', j.err ? `<div class="bubble me media vpend"><div class="apost maud mvoice"><div class="ainfo"><b>Sprachnachricht · ${stTime(j.dur)}</b><span class="muted" role="status">${j.err ? esc(j.err) : esc(j.step)}</span>${j.err ? `<span class="row"><button type="button" class="btn ghost" data-act="voice-drop" data-i="${VSEND.indexOf(j)}">Verwerfen</button><button type="button" class="btn" data-act="voice-retry" data-i="${VSEND.indexOf(j)}">Nochmal senden</button></span>` : ''}</div></div></div>` : `<div class="bubble me media vpend">${vmsgHTML({from:social?.uid, id:'', _pend:true, audio:{d:j.dur, w:j.w || ''}})}</div>`));
+  VSEND.filter(j => j.cid === CH.open && (j.err || !j.mid || !CH.msgs.some(m => m.id === j.mid))).forEach((j, i) => box.insertAdjacentHTML('beforeend', j.err ? `<div class="bubble me media vpend"><div class="apost maud mvoice"><div class="ainfo"><b>Sprachnachricht · ${stTime(j.dur)}</b><span class="muted" role="status">${j.err ? esc(j.err) : esc(j.step)}</span>${j.err ? `<span class="row"><button type="button" class="btn ghost" data-act="voice-drop" data-i="${VSEND.indexOf(j)}">Verwerfen</button><button type="button" class="btn" data-act="voice-retry" data-i="${VSEND.indexOf(j)}">Nochmal senden</button></span>` : ''}</div></div></div>` : `<div class="bubble me media vpend">${vmsgHTML({from:social?.uid, id:'', _pend:true, audio:{d:j.dur, w:j.w || ''}})}<small class="meta"><span class="mt">jetzt</span><button type="button" class="mdelb" data-act="voice-drop" data-i="${VSEND.indexOf(j)}" aria-label="Sprachnachricht löschen">${TRASH_SVG}</button></small></div>`));
   if (VSEND.some(j => j.cid === CH.open)) box.scrollTop = box.scrollHeight;
 }
 function voicePaint(){
@@ -7361,7 +7369,7 @@ function wallSync(){
   if (WL.unsub) { WL.unsub(); WL.unsub = null; }
   WL.uid = target; WL.list = [];
   if (!target) return;
-  WL.unsub = social.db.collection('chats/wall_' + target + '/m').orderBy('ts', 'desc').limit(100).onSnapshot(snap => { WL.list = snap.docs.map(d => ({mid:d.id, ...d.data()})); drawWall(); }, () => {});
+  WL.unsub = social.db.collection('chats/wall_' + target + '/m').orderBy('ts', 'desc').limit(100).onSnapshot(snap => { WL.list = snap.docs.filter(d => !isDel(d.id)).map(d => ({mid:d.id, ...d.data()})); drawWall(); }, () => {});
   drawWall();
 }
 function mediaHTML(c){
@@ -7401,7 +7409,7 @@ async function vmPlay(id, at){
   if (VMID === id && VMA.src) { if (at != null && isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; else if (!VMA.paused) return VMA.pause(); VMA.play().catch(() => {}); return; }
   VMA.pause(); VMID = id; VMA.removeAttribute('src'); vmPaint(); const pl = document.querySelector(`.vmsg[data-id="${CSS.escape(id)}"] .vmplay`); pl?.classList.add('busy');
   try { VMA.play().catch(() => {}); } catch {} // im Antippen freischalten
-  try { const src = await songURL(m.from, m.audio, 'pa_' + m.audio.k); if (VMID !== id) return; VMA.src = src.url;
+  try { const src = VOICEURL[m.audio.k] && m.from === social.uid ? {url:VOICEURL[m.audio.k], data:VOICEURL[m.audio.k]} : await songURL(m.from, m.audio, 'pa_' + m.audio.k); if (VMID !== id) return; VMA.src = src.url;
     if (at != null) VMA.addEventListener('loadedmetadata', () => { if (isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; }, {once:true});
     await VMA.play().catch(() => { VMA.src = src.data; return VMA.play(); }); }
   catch { toast('Die Sprachnachricht ließ sich gerade nicht laden.'); VMID = null; }
@@ -7424,8 +7432,13 @@ function msgLink(t){
 }
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid;
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta">${ago(m.ts)}${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? ` · <span class="mdel">Für alle löschen? <button type="button" class="lnk" data-act="msg-del-yes" data-id="${esc(m.id)}">Ja</button> <button type="button" class="lnk" data-act="msg-del-no">Nein</button></span>` : ` · <button type="button" class="lnk mdelb" data-act="msg-del" data-id="${esc(m.id)}">löschen</button>`) : ''}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
+// Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
+const isDel = id => !!(S.nfDel && S.nfDel[id]);
+function markDel(id, on=true){ S.nfDel = S.nfDel || {}; if (on) S.nfDel[id] = Date.now(); else delete S.nfDel[id]; for (const k in S.nfDel) if (Date.now() - S.nfDel[k] > 14 * 864e5) delete S.nfDel[k]; save(); }
+const TRASH_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10 11v5.5M14 11v5.5"/></svg>';
+const VOICEURL = {}; // eigene Sprachnachrichten spielen sofort aus dem Gerät
 let msgDelAsk = null; // eigene Chatnachrichten für alle löschen (Inaya, 2026-10-11)
 
 /* ---------- Wer ist gerade da (online) ---------- */
@@ -8282,14 +8295,17 @@ document.addEventListener('click', async e => {
   if (a === 'voice-x') { voiceStop(false); return; }
   if (a === 'voice-send') { voiceStop(true); return; }
   if (a === 'voice-retry') { const j = VSEND[+b.dataset.i]; if (j) voiceSend(j); return; }
-  if (a === 'voice-drop') { VSEND.splice(+b.dataset.i, 1); voicePend(); return; }
+  if (a === 'voice-drop') { const j = VSEND[+b.dataset.i]; if (j) { j.cancel = true; VSEND.splice(VSEND.indexOf(j), 1); } voicePend(); return; }
   if (a === 'att-toggle') { chatAttach = !chatAttach; const keep = document.getElementById('cm-in')?.value || ''; render(); const i = document.getElementById('cm-in'); if (i) i.value = keep; return; }
   if (a === 'att-link') { chatAttach = false; render(); const i = document.getElementById('cm-in'); if (i) { if (!/https?:\/\//.test(i.value)) i.value = (i.value ? i.value + ' ' : '') + 'https://'; i.focus(); } return; }
   if (a === 'mimg-open') { const img = b.querySelector('img'); if (!img) return; const o = document.createElement('div'); o.className = 'mview'; o.innerHTML = `<img src="${img.src}" alt="Foto"><button class="btn ghost" type="button">Schließen</button>`; o.addEventListener('click', () => o.remove()); document.body.appendChild(o); return; }
-  if (a === 'msg-del') { msgDelAsk = id; drawMsgs(); return; }
-  if (a === 'msg-del-no') { msgDelAsk = null; drawMsgs(); return; }
+  if (a === 'msg-del') { msgDelAsk = id; drawMsgs(true); return; }
+  if (a === 'msg-del-no') { msgDelAsk = null; drawMsgs(true); return; }
   if (a === 'msg-del-yes') {
     const m = CH.msgs.find(x => x.id === id), cid = CH.open; msgDelAsk = null; if (!m || m.from !== social?.uid || !cid) return;
+    // sofort weg, auch wenn die Sprachnachricht noch lädt (Inaya, 2026-10-12)
+    markDel(id); CH.msgs = CH.msgs.filter(x => x.id !== id); const vj = VSEND.find(x => x.mid === id); if (vj) { vj.cancel = true; VSEND.splice(VSEND.indexOf(vj), 1); }
+    if (VMID === id) { VMA.pause(); VMID = null; } drawMsgs(true);
     try {
       await social.db.doc(`chats/${cid}/m/${id}`).delete();
       for (const [x, base] of [[m.audio, 'pa_'], [m.clip, 'pv_']]) if (x?.k) for (let i = 0; i < x.n; i++) social.db.doc(`profiles/${social.uid}/${base}${x.k}/c${i}`).delete().catch(() => {});
@@ -8300,7 +8316,7 @@ document.addEventListener('click', async e => {
         social.db.doc('chats/' + cid).update(upd).catch(() => {});
         const c = CH.list.find(x => x.id === cid); if (c) Object.assign(c, upd);
       }
-    } catch { toast('Die Nachricht ließ sich nicht löschen.'); drawMsgs(); }
+    } catch { markDel(id, false); toast('Die Nachricht ließ sich nicht löschen.'); drawMsgs(); }
     return;
   }
   if (a === 'mvplay') {
@@ -8325,7 +8341,7 @@ document.addEventListener('click', async e => {
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') go('profile', id);
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
-  else if (a === 'rwall-del') { if (social && WL.uid) social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => toast('Löschen ging nicht.')); }
+  else if (a === 'rwall-del') { if (social && WL.uid) { markDel(id); WL.list = WL.list.filter(x => x.mid !== id); drawWall(); social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => { markDel(id, false); toast('Löschen ging nicht.'); }); } }
   else if (a === 'pose') { // ohne neu zu zeichnen, damit Eingaben im Formular bleiben
     me().pose = b.dataset.v; save();
     document.querySelectorAll('[data-act="pose"]').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === b.dataset.v));
@@ -8559,7 +8575,7 @@ document.addEventListener('click', async e => {
   else if (a === 'cmv-open') { cmvOpen(b.dataset.k); }
   else if (a === 'cmv-x') { cmvClose(); }
   else if (a === 'pc-more') { const x = b.dataset.k + '/' + b.dataset.d; CMOPEN.has(x) ? CMOPEN.delete(x) : CMOPEN.add(x); piDraw(b.dataset.k); }
-  else if (a === 'pc-del') { try { await social.db.doc('chats/pi_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch {} }
+  else if (a === 'pc-del') { const k = b.dataset.k, d0 = b.dataset.d; markDel(d0); if (PI[k]) { PI[k].list = PI[k].list.filter(x => x.did !== d0); piDraw(k); } try { await social.db.doc('chats/pi_' + k + '/m/' + d0).delete(); } catch { markDel(d0, false); toast('Das ließ sich gerade nicht löschen.'); } }
   else if (a === 'react') {
     const p = S.posts.find(x => x.id === id); p.reactions = p.reactions || {};
     const k = Object.values(p.reactions).some(l => l.includes(S.me)) ? 1 : -1;
