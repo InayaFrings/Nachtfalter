@@ -1,3 +1,112 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Noctibat</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
+<script>window.NF_BUILD='c4f6b0cff555';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>window.NF_FIREBASE = {"config": {"apiKey": "AIzaSyBAN0OV756ln_ELGwTgcS6yvHYL3m_VeRQ", "authDomain": "nachtfalter-fe3d1.firebaseapp.com", "projectId": "nachtfalter-fe3d1", "storageBucket": "nachtfalter-fe3d1.firebasestorage.app", "messagingSenderId": "276441792597", "appId": "1:276441792597:web:aa561493db5fbfcd33d4dc"}, "ownerEmail": "InayaFrings@gmail.com"};</script>
+<script>/* Nachtfalter auf eigener Webseite mit Firebase: bildet window.claude.use('db' | 'user' | 'room') auf
+   Firebase Auth + Firestore ab, damit der Seiten-Code derselbe bleibt wie in der Claude-Version.
+   Dazu NF_AUTH für Registrieren, Anmelden und „Passwort vergessen“ per E-Mail.
+   Braucht window.NF_FIREBASE = {config, ownerEmail} und die Firebase-compat-Skripte (app, auth, firestore). */
+(function(){
+  const C = window.NF_FIREBASE;
+  if (!C || !window.firebase) return;
+  firebase.initializeApp(C.config);
+  const auth = firebase.auth(), fs = firebase.firestore();
+  fs.settings({ignoreUndefinedProperties: true, merge: true});
+  auth.languageCode = 'de';
+  let user = null;
+  const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
+  auth.onAuthStateChanged(u => { user = u; });
+
+  /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
+
+  /* ---------- Wer ist angemeldet ---------- */
+  const me = {
+    async id(){ await ready; return user ? user.uid : null; },
+    async isOwner(){ await ready; return !!(user && user.email && C.ownerEmail && user.email.toLowerCase() === C.ownerEmail.toLowerCase()); },
+    async me(){ await ready; return user ? {id: user.uid} : null; },
+    canEdit: () => false
+  };
+
+  /* ---------- Räume: Anwesenheit als kleine Dokumente mit Herzschlag ---------- */
+  const STALE = 70000;
+  function mkRoom(name){
+    const key = Math.random().toString(36).slice(2, 10);
+    const coll = fs.collection('presence').doc(name.replace(/[\/]/g, '_')).collection('p');
+    let state = {}, beat = null, unsub = null, peersCb = null, last = [];
+    const write = () => user && coll.doc(key).set({...state, by: user.uid, t: Date.now()}).catch(() => {});
+    function listen(){
+      if (unsub) return;
+      unsub = coll.onSnapshot(snap => {
+        const now = Date.now();
+        last = snap.docs.map(d => ({peer: d.id, by: d.data().by, presence: d.data()})).filter(p => now - (p.presence.t || 0) < STALE);
+        peersCb && peersCb({peers: last, joined: [], left: [], updated: []});
+      }, () => {});
+    }
+    const refresh = setInterval(() => { if (peersCb && last.length) { const now = Date.now(); const f = last.filter(p => now - (p.presence.t || 0) < STALE); if (f.length !== last.length) { last = f; peersCb({peers: f, joined: [], left: [], updated: []}); } } }, 15000);
+    const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
+    addEventListener('pagehide', bye);
+    return {
+      name,
+      async presence(p){ state = {...state, ...p}; await write(); if (!beat) beat = setInterval(write, 25000); listen(); },
+      onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
+      emit(){}, on(){ return () => {}; },
+      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
+      async join(n){ return mkRoom(n); }
+    };
+  }
+  let lobby = null;
+
+  window.claude = {use: async n => {
+    await ready;
+    if (!user) return null;
+    if (n === 'db') return db;
+    if (n === 'user') return me;
+    if (n === 'room') return lobby || (lobby = mkRoom('lobby'));
+    return null;
+  }};
+
+  /* ---------- Konto ---------- */
+  const de = e => {
+    const c = (e && e.code) || '';
+    if (c.includes('email-already-in-use')) return 'Mit dieser E-Mail gibt es schon ein Konto. Melde dich stattdessen an.';
+    if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-login')) return 'E-Mail oder Passwort stimmen nicht.';
+    if (c.includes('invalid-email')) return 'Das ist keine gültige E-Mail-Adresse.';
+    if (c.includes('weak-password')) return 'Das Passwort ist zu kurz. Nimm mindestens 6 Zeichen.';
+    if (c.includes('too-many-requests')) return 'Zu viele Versuche. Warte kurz und probier es dann nochmal.';
+    if (c.includes('requires-recent-login')) return 'Bitte melde dich einmal neu an und versuch es dann nochmal.';
+    if (c.includes('network')) return 'Keine Verbindung. Prüf dein Internet und probier es nochmal.';
+    return 'Das hat gerade nicht geklappt. Probier es gleich nochmal.';
+  };
+  const back = () => location.origin + location.pathname;
+  window.NF_AUTH = {
+    ready,
+    resetViaMail: true, // Firebase zeigt die Seite zum neuen Passwort selbst an
+    email: () => user ? user.email : null,
+    async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
+    async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async signOut(){ try { await auth.signOut(); } catch {} user = null; },
+    async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
+    async updatePw(pw){ try { await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
+    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
+    // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
+    async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
+    async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
+    onRecovery(){},
+    get recovering(){ return false; }
+  };
+})();
+</script>
+<style>html,body{margin:0}</style></head><body>
 <title>Noctibat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1238,6 +1347,44 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .stlike.pop .lheart{animation:stpop .35s ease}@keyframes stpop{40%{transform:scale(1.35)}}
 .stlikes{position:absolute;left:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #ffffff60;border-radius:18px;background:#0000006b;color:#fff;font:600 14px -apple-system,Arial,sans-serif;cursor:pointer}
 .stlikes .lheart{width:20px;height:20px;stroke:currentColor;stroke-width:1.7}.stlikes.on .lheart{color:#e0303a}
+/* Story-Leiste für die eigene Story, Blätter, Highlights (Inaya, 2026-10-12) */
+.stown{display:flex;align-items:flex-end;gap:2px}.stown .sp{flex:1}
+.stob{flex:none;display:grid;justify-items:center;gap:3px;min-width:58px;padding:4px 2px;border:0;background:transparent;color:#fff;font:600 11px -apple-system,'Helvetica Neue',Arial,sans-serif;cursor:pointer;text-shadow:0 1px 3px #000a}
+.stob svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px #0008)}
+.stoa{justify-items:start;min-width:0}.stoai{display:flex;align-items:center;gap:6px;height:26px}
+.stoai .cameo{width:24px;height:24px;border-radius:50%;overflow:hidden;border:1.5px solid #000;margin-left:-9px;background:#222;display:block}.stoai .cameo:first-of-type{margin-left:0}.stoai .cameo svg,.stoai .cameo img{width:100%;height:100%;object-fit:cover}
+.stolk{display:inline-flex;align-items:center;gap:2px;font:600 13px -apple-system,Arial,sans-serif}.stolk .lheart{width:16px!important;height:16px!important;color:#e0303a;filter:none}
+.streply.stonly{justify-content:flex-end}
+#stsh{position:fixed;inset:0;z-index:60;pointer-events:none}#stsh:empty{display:none}
+.stshb{position:absolute;inset:0;background:#000000a6;pointer-events:auto}
+.stshp{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(480px,100%);max-height:78vh;overflow:auto;overscroll-behavior:contain;background:#161617;color:#eeedf2;border:1px solid #ffffff26;border-bottom:0;border-radius:16px 16px 0 0;padding:6px 16px calc(16px + env(safe-area-inset-bottom,0px));pointer-events:auto;display:grid;gap:2px;align-content:start;font:15px Inter,-apple-system,'Helvetica Neue',Arial,sans-serif}
+.stshg{justify-self:center;width:40px;height:4px;border-radius:2px;background:#ffffff4d;margin:4px 0 8px}
+.stshp h3{margin:0 0 8px;font:600 17px var(--f-display);text-align:center}.stshp .note{margin:2px 0 8px;font-size:13px;opacity:.75;text-align:center}
+.stshi{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;padding:8px 4px;border:0;border-bottom:1px solid #ffffff14;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.stshi:last-child{border-bottom:0}.stshi .sp{flex:1}.stshi small{display:block;opacity:.65;font-size:12px}.stshi b{font-weight:600}
+.stshi>svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.stshi .cameo{width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;background:#222;display:block}.stshi .cameo svg,.stshi .cameo img{width:100%;height:100%;object-fit:cover}
+.stshi .lheart{width:20px;height:20px;color:#e0303a;flex:none}
+.stck{width:24px;height:24px;border-radius:50%;border:1.5px solid #ffffff80;display:grid;place-items:center;flex:none;font-size:14px;line-height:1}
+.stshi[aria-pressed="true"] .stck{background:#fff;border-color:#fff;color:#0a0a0b}
+.stshp input{width:100%;height:42px;padding:0 16px;margin:0 0 6px;border:1px solid #ffffff40;border-radius:21px;background:#0a0a0b;color:#fff;font:16px Inter,-apple-system,Arial,sans-serif}
+.stshrow{display:flex;gap:8px;align-items:center;margin:8px 0 2px}.stshrow input{margin:0;flex:1;min-width:0}
+.stseg{display:flex;gap:6px;margin:4px 0 10px}.stseg button{flex:1;min-height:40px;border:1px solid #ffffff40;border-radius:20px;background:none;color:#fff;font:600 14px Inter,-apple-system,Arial,sans-serif;cursor:pointer}.stseg button[aria-pressed="true"]{background:#fff;color:#0a0a0b;border-color:#fff}
+.stshl{font:600 13px Inter,-apple-system,Arial,sans-serif;opacity:.8;margin:10px 0 2px}
+.stchips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}.stchips button{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border:1px solid #ffffff40;border-radius:16px;background:#ffffff14;color:#fff;font:14px Inter,-apple-system,Arial,sans-serif;cursor:pointer}
+.stshi .stgrp svg{box-sizing:border-box;padding:8px;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sthlc{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;background:#26262b;display:grid;place-items:center;border:1.5px solid #ffffff60}.sthlc img{width:100%;height:100%;object-fit:cover}
+.mstory.msh{border:0;padding:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;justify-items:start}
+.hlgrid{display:flex;flex-wrap:wrap;gap:16px 12px}
+.hlc{display:grid;justify-items:center;gap:6px;width:78px;padding:0;border:0;background:none;color:inherit;cursor:pointer;font:13px Inter,-apple-system,Arial,sans-serif}
+.hlcv{width:70px;height:70px;border-radius:50%;padding:3px;border:1.5px solid currentColor;display:block;box-sizing:border-box}
+.hlcv img,.hlcv i{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:#ffffff1a}
+.hlc small{max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.sring{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.stlp{position:fixed;inset:0;z-index:300}.stlpb{position:absolute;inset:0;background:#00000080}
+.stlpm{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(360px,calc(100% - 32px));display:grid;background:#161617;border:1px solid #ffffff2e;border-radius:14px;overflow:hidden}
+.stlpm button{min-height:54px;border:0;border-bottom:1px solid #ffffff14;background:none;color:#eeedf2;font:600 16px Inter,-apple-system,Arial,sans-serif;cursor:pointer}.stlpm button:last-child{border-bottom:0;font-weight:400;opacity:.8}
+.cpinl{display:flex;align-items:center;gap:4px;margin:0 0 2px;font-size:12px;opacity:.7}.cpinl svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .staud>div{display:grid;gap:12px;justify-items:center}.staud .row{gap:10px}
 .mstory{display:grid;gap:4px;margin-bottom:6px}.mstory img{width:74px;height:130px;object-fit:cover;border-radius:6px;border:1px solid var(--line,#ffffff40)}.mstory small{opacity:.75;font-size:12px}
 
@@ -5196,11 +5343,12 @@ function piInner(p, full){
   // Alte Kommentare (vor den Antworten) zählen als Antworten auf den ersten Kommentar (Inaya, 2026-10-11)
   const clk = {}; for (const x of list) if (x.kind === 'cl' && x.c && x.by) (clk[x.c] = clk[x.c] || new Set()).add(x.by); // Likes auf Kommentare (Inaya, 2026-10-12)
   const cmLikeHTML = (k, d, can) => { if (/^h\d/.test(d)) return ''; const l = clk[d], n = l?.size || 0, on = !!l?.has(uid); return can ? `<button type="button" class="cmlike" data-act="pc-like" data-k="${k}" data-d="${esc(d)}" aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Kommentar gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="cmlike">${HEART(false)}<span>${n}</span></span>` : ''; };
+  const pinD = owner.startsWith('helper-') ? null : list.find(x => x.kind === 'pin' && x.by === owner)?.c; // ein fixierter Kommentar, nur vom Beitragsbesitzer (Inaya, 2026-10-12)
   const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
-  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img, cmLikeHTML(k, c.did, can), c.men);
-  const cm = all.filter(c => !reOf(c)).map(c => {
+  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', owner === uid && c === top && !/^h\d/.test(c.did) ? `<button class="lnk" data-act="pc-pin" data-k="${k}" data-d="${esc(c.did)}">${c.did === pinD ? 'lösen' : 'fixieren'}</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img, cmLikeHTML(k, c.did, can), c.men);
+  const cm = all.filter(c => !reOf(c)).sort((a, b) => (b.did === pinD) - (a.did === pinD)).map(c => {
     const rs = all.filter(r => reOf(r) === c.did), open = CMOPEN.has(k + '/' + c.did);
-    return `<div class="cthread">${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
+    return `<div class="cthread${c.did === pinD ? ' cpin' : ''}">${c.did === pinD ? '<small class="cpinl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg>Fixiert</small>' : ''}${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
   }).join('');
   const nC = all.length, bar = `<div class="reacts pbar">${reacts}<button type="button" class="cmbtn" data-act="cmv-open" data-k="${k}" aria-label="Kommentare ansehen">${CMV_ICO}<span>${nC || ''}</span></button>${repostBtn(p)}</div>`;
   if (!full) return bar;
@@ -5306,6 +5454,7 @@ function notifs(){
     }
   }
   for (const st of myStories()) for (const x of STC[uid + '_' + st.id]?.list || []) if (x.by && x.by !== uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deine Story kommentiert:', quote:x.text, go:'story', sid:st.id, th:st.thumb || st.img || ''});
+  for (const m of NT.ment) if (m.by && m.by !== uid && m.st) out.push({ts:m.ts || 0, uid:m.by, kind:'c', text:'hat dich in der Story erwähnt.', go:'ostory', oid:m.st.u, sid:m.st.id, th:m.st.th || ''});
   for (const m of NT.ment) if (m.by && m.by !== uid && m.k) out.push({ts:m.ts || 0, uid:m.by, kind:'c', text:'hat dich in einem Kommentar erwähnt:', quote:m.text, go:m.oid === uid ? 'post' : 'opost', oid:m.oid, k:m.k, p:m.p || {}});
   for (const m of NT.wall) if (m.from && m.from !== uid) out.push({ts:m.ts || 0, uid:m.from, kind:'w', text:'hat dir ins Gästebuch geschrieben:', quote:m.text, go:'wall'});
   const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
@@ -5367,7 +5516,7 @@ function notifView(){
     const many = g.uids.length > 1;
     const text = g.kind === 'r' ? (many ? 'gefällt dein Beitrag' : 'gefällt dein Beitrag') + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
     const badge = g.kind === 'r' ? '' : `<i class="nt-badge"><svg viewBox="0 0 24 24" aria-hidden="true">${NT_BADGE[g.kind] || ''}</svg></i>`;
-    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p, 'post', '', g.k, g.kind === 'c') : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid, g.k, true) : g.go === 'story' ? ntThumb({img:g.th, text:'Story'}, 'story', g.sid) : '';
+    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p, 'post', '', g.k, g.kind === 'c') : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid, g.k, true) : g.go === 'story' ? ntThumb({img:g.th, text:'Story'}, 'story', g.sid) : g.go === 'ostory' ? ntThumb({img:g.th, text:'Story'}, 'ostory', g.oid, g.sid) : '';
     return `<li class="nt${g.ts > seen ? ' new' : ''}">
       <button type="button" class="nt-av${many ? ' two' : ''}" data-act="profile" data-id="${esc(g.uids[0])}" aria-label="${esc(ntName(g.uids[0]))}"><span class="cameo">${ntHead(g.uids[0])}</span>${many ? `<span class="cameo">${ntHead(g.uids[1])}</span>` : ''}${badge}</button>
       <button type="button" class="nt-txt" data-act="nt-go" data-v="${g.go}" data-id="${esc(g.oid || '')}"${g.k ? ` data-k="${esc(g.k)}"` : ''}${g.kind === 'c' ? ' data-c="1"' : ''}>${who(g)} ${text}${g.quote ? ` <span class="nt-q">${etx(String(g.quote).slice(0, 80))}${String(g.quote).length > 80 ? '…' : ''}</span>` : ''} <span class="nt-t">${ntAgo(g.ts)}</span></button>
@@ -5574,7 +5723,8 @@ const myStories = () => (S.stories || []).filter(st => Date.now() - st.ts < STOR
 function storiesOf(id){
   if (id === S.me) return myStories();
   const u = S.users[id] || (PROF[id] ? profUser(id) : null); if (!u || !u.remote) return []; const fr = isFriend(id); if (!fr && PROF[id]?.priv) return [];
-  return (u.stories || []).filter(st => Date.now() - st.ts < STORY_H && (fr || st.pub)).sort((a, b) => a.ts - b.ts); // Nicht-Freunde sehen nur öffentliche Storys (Inaya, 2026-10-12)
+  const mi = social?.uid; if (mi && (u.sth || []).includes(mi)) return []; // Story verbergen vor (Inaya, 2026-10-12)
+  return (u.stories || []).filter(st => Date.now() - st.ts < STORY_H && (st.cf ? (st.cfl || []).includes(mi) : (fr || st.pub))).sort((a, b) => a.ts - b.ts); // Nicht-Freunde sehen nur öffentliche Storys (Inaya, 2026-10-12)
 }
 const stSeen = (id, l) => l.every(st => (S.stSeen || {})[id + '_' + st.id]);
 function storyUsers(){ // Freunde und alle mit öffentlicher Story
@@ -5719,11 +5869,12 @@ function storyPaint(){
   const g = STV.list[STV.ui], st = g && g.items[STV.ii]; if (!st) { stClose(); return; }
   const u = profUser(g.uid) || me(), own = g.uid === S.me, src = storyImg(g.uid, st.id, st.img, st.thumb);
   let vsrc = ''; if (st.vid && st.vid.n && social) { const k = g.uid + '/' + st.id; vsrc = STVID[k] || ''; if (STVID[k] === undefined) { STVID[k] = ''; songURL(own ? social.uid : g.uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; storyPaint(); }).catch(() => { STVID[k] = null; storyPaint(); }); } }
+  if (!STV.arch && !own) stViewMark(g.uid, st.id);
   S.stSeen = S.stSeen || {}; if (!STV.arch && !S.stSeen[g.uid + '_' + st.id]) { S.stSeen[g.uid + '_' + st.id] = Date.now(); for (const k in S.stSeen) if (Date.now() - S.stSeen[k] > 2 * STORY_H) delete S.stSeen[k]; }
-  let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div>'; vc = ov.firstChild; }
+  let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div><div id="stsh"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe${st.v === 2 ? ' v2' : ''}" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)}>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)}>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${st.v === 2 ? '<div class="stcv">' : ''}${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${st.v === 2 ? stStkHTML(st.stk) : ''}${stTextsHTML(stTexts(st))}${st.v === 2 ? '</div>' : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
@@ -5742,9 +5893,9 @@ function storyPaint(){
   const ve = ov.querySelector('video.stvid');
   if (ve && (STV.delAsk || STV.hold)) ve.pause();
   else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
-    ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1);
+    ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch || STV.hl) ve.onended = () => stStep(1);
     ve.ontimeupdate = () => { if (!nb) return; const s0 = +ve.dataset.s || 0, L = +ve.dataset.l || ((ve.duration || 0) - s0); if (L > 0) nb.style.backgroundPosition = (100 - Math.min(1, Math.max(0, (ve.currentTime - s0) / L)) * 100) + '% 0'; }; }
-  else if ((!st.vid || vbad) && !STV.arch && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
+  else if ((!st.vid || vbad) && (!STV.arch || STV.hl) && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
 }
 // Story-Likes: chats/sl_<besitzer>_<story>/m/<uid> (Inaya, 2026-10-12)
 const SLK = {};
@@ -5753,7 +5904,8 @@ const stLiked = (uid, sid) => stLk(uid, sid).by.has(social?.uid);
 function stLikesHTML(uid, sid){ const n = stLk(uid, sid).by.size; return `<button class="stlikes${n ? ' on' : ''}" data-act="st-likes" data-u="${esc(uid)}" data-id="${esc(sid)}" aria-label="${n} Likes">${HEART(n > 0)}<span>${n || ''}</span></button>`; }
 function stLkPaint(uid, sid){ const ov = document.getElementById('storyov'); if (!ov) return;
   const l = ov.querySelector(`.stlike[data-u="${CSS.escape(uid)}"][data-id="${CSS.escape(sid)}"]`); if (l) { const on = stLiked(uid, sid); l.setAttribute('aria-pressed', on); l.innerHTML = HEART(on); }
-  const m = ov.querySelector(`.stlikes[data-u="${CSS.escape(uid)}"][data-id="${CSS.escape(sid)}"]`); if (m) m.outerHTML = stLikesHTML(uid, sid); }
+  const m = ov.querySelector(`.stlikes[data-u="${CSS.escape(uid)}"][data-id="${CSS.escape(sid)}"]`); if (m) m.outerHTML = stLikesHTML(uid, sid);
+  if (uid === social?.uid) stOwnPaint(sid); }
 function stHold(on){ if (!STV) return; const ov = document.getElementById('storyov'), ve = ov?.querySelector('video.stvid'), nb = ov?.querySelector('.stbars i.now');
   if (on) { if (STV.hold) return; STV.hold = Date.now(); clearTimeout(stTimer); if (nb) nb.style.animationPlayState = 'paused'; ve?.pause(); stAu.pause(); }
   else if (STV.hold) { STV.t0 += Date.now() - STV.hold; STV.hold = null; storyPaint(); } }
@@ -5767,12 +5919,16 @@ function stcListHTML(key){ const w = STC[key] || {list:[]}, uid = social?.uid, o
   return w.list.length ? w.list.map(c => cbub(c.by, c.name || ntName(c.by), c.text, c.ts, c.by === uid || owner === uid ? `<button class="lnk" data-act="stc-del" data-k="${esc(key)}" data-d="${esc(c.did)}">entfernen</button>` : '')).join('') : '<p class="muted stcnone">Noch keine Kommentare. Schreib den ersten.</p>'; }
 function stcMineHTML(key){ const w = STC[key] || {list:[]}, mine = w.list.filter(c => c.by === social?.uid).at(-1); return mine ? cbub(mine.by, mine.name || me().name, mine.text, mine.ts, '') : ''; }
 function stcSheetHTML(g, st, own, u){
-  const key = (own ? social.uid : g.uid) + '_' + st.id, w = stcWatch(key), n = w.list.length, th = u.theme && u.theme.box ? postTheme(u.theme) : '';
+  const key = (own ? social.uid : g.uid) + '_' + st.id, th = u.theme && u.theme.box ? postTheme(u.theme) : '';
+  const cmOff = !!st.nocm || (own ? !stSetG().cm : u.stcm === 0), rep = own ? 'all' : u.str || 'all', canW = !own && !cmOff && rep !== 'off' && (rep !== 'fr' || isFriend(g.uid));
+  const heart = `<button type="button" class="stlike" data-act="st-like" data-u="${esc(g.uid)}" data-id="${esc(st.id)}" aria-pressed="${stLiked(g.uid, st.id)}" aria-label="Gefällt mir">${HEART(stLiked(g.uid, st.id))}</button>`;
+  if (cmOff && !own) return `<div class="stcs" id="stcs" data-k="${esc(key)}"><div class="streply stonly">${heart}</div></div>`; // Kommentare aus: nur das Herz rechts
+  const w = stcWatch(key), n = w.list.length;
   return `<div class="stcs${STV.cOpen ? ' open' : ''}" id="stcs" data-k="${esc(key)}">
     <div class="stch" id="stch" role="button" tabindex="0" aria-expanded="${!!STV.cOpen}" aria-label="Kommentare ${STV.cOpen ? 'schließen' : 'öffnen'}"><i></i><small id="stcn">${n ? n + (n === 1 ? ' Kommentar' : ' Kommentare') : 'Kommentare'}</small></div>
     <div class="stcp post${th ? ' tp' : ''}"${th ? ` style="${th}"` : ''}><div class="stcl cmts" id="stcl">${STV.cOpen ? stcListHTML(key) : ''}</div></div>
     <div class="stcmine cmts" id="stcmine">${STV.cOpen ? '' : stcMineHTML(key)}</div>
-    <form class="streply" data-form="streply" data-k="${esc(key)}"><input id="st-rin" maxlength="500" placeholder="Kommentieren …" aria-label="Story kommentieren" autocomplete="off" enterkeyhint="send"><button type="submit" class="strsend" aria-label="Kommentar senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>${own ? stLikesHTML(social.uid, st.id) : `<button type="button" class="stlike" data-act="st-like" data-u="${esc(g.uid)}" data-id="${esc(st.id)}" aria-pressed="${stLiked(g.uid, st.id)}" aria-label="Gefällt mir">${HEART(stLiked(g.uid, st.id))}</button>`}</form>
+    ${own ? stOwnBarHTML(st) : canW ? `<form class="streply" data-form="streply" data-k="${esc(key)}"><input id="st-rin" maxlength="500" placeholder="Kommentieren …" aria-label="Story kommentieren" autocomplete="off" enterkeyhint="send"><button type="submit" class="strsend" aria-label="Kommentar senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>${heart}</form>` : `<div class="streply stonly">${heart}</div>`}
   </div>`;
 }
 function stcPaint(key){ const sh = document.getElementById('stcs'); if (!sh || sh.dataset.k !== key) return; const n = (STC[key]?.list || []).length;
@@ -5784,6 +5940,130 @@ function stcOpen(on){ if (!STV) return; const sh = document.getElementById('stcs
   document.getElementById('stvfr')?.classList.toggle('cmopen', STV.cOpen);
   if (STV.cOpen) { stHold(true); stcPaint(sh.dataset.k); const l = document.getElementById('stcl'); if (l) l.scrollTop = l.scrollHeight; }
   else { stcPaint(sh.dataset.k); if (document.activeElement?.id !== 'st-rin') stHold(false); } }
+/* ---------- Eigene Story: Gesehen von, Erwähnen, Senden, Mehr; Story-Einstellungen; Highlights (Inaya, 2026-10-12) ---------- */
+const stSetG = () => (S.stSet = Object.assign({hide:[], cf:[], rep:'all', cm:1}, S.stSet || {}));
+const STI = {
+  eye:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  at:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.8"/><path d="M15.8 8.5v4.6c0 1.6 1.1 2.6 2.4 2.6 1.6 0 2.8-1.6 2.8-3.9A9 9 0 1 0 16.6 19.7"/></svg>',
+  send:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>',
+  more:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>',
+  del:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>',
+  arch:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/><path d="M3.5 7.5V4M3.5 7.5H7"/></svg>',
+  hl:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6l1.3 2.8 3 .3-2.3 2 .7 3-2.7-1.6-2.7 1.6.7-3-2.3-2 3-.3z"/></svg>',
+  save:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>',
+  post:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M12 8v8M8 12h8"/></svg>',
+  set:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>',
+  cm:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.5a8.4 8.4 0 1 1 15.6-4.4z"/></svg>',
+  cmoff:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.5a8.4 8.4 0 1 1 15.6-4.4z"/><path d="M4 4l16 16"/></svg>',
+  back:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  go:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>'};
+const stCur = () => STV?.list[STV.ui]?.items[STV.ii];
+const stCam_ = u => `<span class="cameo">${u ? headPic(u, '', true) : ''}</span>`;
+const stUser = id => id === social?.uid || id === S.me ? me() : profUser(id);
+const stNm = id => stUser(id)?.name || PROF[id]?.name || '';
+// Wer die Story angesehen hat: chats/sv_<besitzer>_<story>/m/<uid>
+const SVW = new Set(), SVV = {};
+function stViewMark(uid, sid){ if (!social || !uid || uid === S.me || uid === social.uid) return; const k = uid + '_' + sid; if (SVW.has(k)) return; SVW.add(k);
+  social.db.doc('chats/sv_' + k + '/m/' + social.uid).set({by:social.uid, name:me().name, ts:Date.now()}).catch(() => SVW.delete(k)); }
+function stViews(sid){ const k = (social?.uid || '') + '_' + sid; if (!SVV[k] && social) { const w = SVV[k] = {list:[]}; try { w.unsub = social.db.collection('chats/sv_' + k + '/m').onSnapshot(q => { w.list = q.docs.map(d => ({id:d.id, ...d.data()})).filter(x => x.id !== social.uid).sort((a, b) => (b.ts || 0) - (a.ts || 0)); w.list.forEach(x => { if (!PROF[x.id] && !S.users[x.id] && !NT.asked[x.id]) { NT.asked[x.id] = 1; loadProf(x.id).then(() => stOwnPaint(sid)); } }); stOwnPaint(sid); }, () => {}); } catch {} } return SVV[k] || {list:[]}; }
+function stOwnBarHTML(st){
+  const v = stViews(st.id).list, lk = stLk(social.uid, st.id).by.size, heads = v.slice(0, 3).map(x => stCam_(stUser(x.id))).join('');
+  const ob = (act, ico, l) => `<button type="button" class="stob" data-act="${act}" aria-label="${l}">${ico}<span>${l}</span></button>`;
+  return `<div class="stown" id="stown" data-id="${esc(st.id)}"><button type="button" class="stob stoa" data-act="st-views" aria-label="Gesehen von ${v.length}"><span class="stoai">${STI.eye}${heads}${lk ? `<span class="stolk">${HEART(true)}${lk}</span>` : ''}</span><span>Gesehen von${v.length ? ' ' + v.length : ''}</span></button><span class="sp"></span>${ob('st-men', STI.at, 'Erwähnen')}${ob('st-send', STI.send, 'Senden')}${ob('st-more', STI.more, 'Mehr')}</div>`;
+}
+function stOwnPaint(sid){ const el = document.getElementById('stown'), st = stCur(); if (el && st && st.id === sid) el.outerHTML = stOwnBarHTML(st); if (STV?.sheet === 'views' && st?.id === sid) stShow('views'); }
+// Blätter von unten in der Story; die Story wartet so lange
+function stShOpen(kind, html, label){ const el = document.getElementById('stsh'); if (!el || !STV) return; const was = STV.sheet; STV.sheet = kind;
+  el.innerHTML = `<div class="stshb" data-act="stsh-x"></div><div class="stshp" role="dialog" aria-label="${esc(label || '')}"><i class="stshg" aria-hidden="true"></i>${html}</div>`; if (!was) stHold(true); }
+function stShClose(quiet){ const el = document.getElementById('stsh'); if (el) el.innerHTML = ''; if (!STV || !STV.sheet) return; STV.sheet = null; if (!quiet && !STV.cOpen) stHold(false); }
+const stRow = (act, ico, t, extra = '', more = '') => `<button type="button" class="stshi" data-act="${act}"${extra}>${ico}<span>${t}</span>${more}</button>`;
+function stShow(kind){
+  const st = stCur(); if (!st || !STV) return; const set = stSetG();
+  if (kind === 'views') { const w = stViews(st.id), lk = stLk(social.uid, st.id).by, ids = [...new Set([...w.list.map(x => x.id), ...lk])].filter(id => id !== social.uid);
+    return stShOpen('views', `<h3>Gesehen von ${w.list.length}</h3><p class="note">${lk.size === 1 ? '1 Like' : lk.size + ' Likes'}</p>${ids.length ? ids.map(id => stRow('st-prof', stCam_(stUser(id)), `<b>${esc(stNm(id) || w.list.find(x => x.id === id)?.name || 'Jemand')}</b>`, ` data-id="${esc(id)}"`, `<span class="sp"></span>${lk.has(id) ? HEART(true) : ''}`)).join('') : '<p class="note">Noch hat niemand deine Story angesehen.</p>'}`, 'Gesehen von'); }
+  if (kind === 'men') { const tags = stTexts(st).filter(x => x.u);
+    return stShOpen('men', `<h3>Personen erwähnen</h3>${tags.length ? `<div class="stchips">${tags.map(x => `<button type="button" data-act="st-menx" data-id="${esc(x.u)}" aria-label="${esc(x.t)} entfernen">@${esc(x.t)} ✕</button>`).join('')}</div>` : ''}<input id="stmen-q" placeholder="Name suchen …" autocomplete="off" autocapitalize="none" aria-label="Name suchen"><div id="stmen-l">${stMenList('')}</div>`, 'Personen erwähnen'); }
+  if (kind === 'send') { STV.sendSel = STV.sendSel || new Set(); const l = CH.list.filter(c => !/^(zimmer|wall|ment|sl|sc|sv|pi)_/.test(c.id));
+    return stShOpen('send', `<h3>Story senden</h3>${l.length ? l.map(c => stRow('st-sendsel', c.group ? '<span class="cameo stgrp"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.4 2.7-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M15.5 14c2.6-.4 4.6 1.2 5 4.5"/></svg></span>' : stCam_(stUser(c.members.find(m => m !== social.uid))), `<b>${esc(chatName(c))}</b><small>${c.group ? 'Gruppe' : 'Chat'}</small>`, ` data-id="${esc(c.id)}" aria-pressed="${STV.sendSel.has(c.id)}"`, '<span class="sp"></span><i class="stck" aria-hidden="true">✓</i>')).join('') + `<div class="stshrow"><span class="sp" style="flex:1"></span><button type="button" class="btn" data-act="st-sendgo">Senden</button></div>` : '<p class="note">Du hast noch keine Chats.</p>'}`, 'Story senden'); }
+  if (kind === 'more') return stShOpen('more', [stRow('st-m-del', STI.del, '<b>Story löschen</b>'), stRow('st-m-arch', STI.arch, 'Archivieren'), stRow('st-m-hl', STI.hl, 'Als Highlight speichern'), stRow('st-m-save', STI.save, 'Speichern …'), stRow('st-m-post', STI.post, 'Als Beitrag teilen …'), stRow('st-m-set', STI.set, 'Story-Einstellungen'), stRow('st-m-cm', st.nocm ? STI.cm : STI.cmoff, st.nocm ? 'Kommentarfunktion aktivieren' : 'Kommentarfunktion deaktivieren')].join(''), 'Mehr');
+  if (kind === 'hl') { const hl = S.hl || [];
+    return stShOpen('hl', `<h3>Als Highlight speichern</h3>${hl.map(h => stRow('st-hladd', `<span class="sthlc">${hlCover(h, S.me)}</span>`, `<b>${esc(h.t)}</b><small>${h.items.length === 1 ? '1 Story' : h.items.length + ' Storys'}</small>`, ` data-id="${esc(h.id)}" aria-pressed="${h.items.some(x => x.id === st.id)}"`, '<span class="sp"></span><i class="stck" aria-hidden="true">✓</i>')).join('')}<form class="stshrow" data-form="sthlnew"><input id="sthl-n" maxlength="24" placeholder="Neues Highlight, z. B. Konzerte" aria-label="Name vom neuen Highlight" autocomplete="off"><button class="btn" type="submit">Erstellen</button></form>`, 'Als Highlight speichern'); }
+  if (kind === 'set') { const seg = (v, l) => `<button type="button" data-act="stset-rep" data-v="${v}" aria-pressed="${set.rep === v}">${l}</button>`, n = x => x.length === 1 ? '1 Person' : x.length + ' Personen';
+    return stShOpen('set', `<h3>Story-Einstellungen</h3>${stRow('stset-pick', '', `<b>Story verbergen vor</b><small>${n(set.hide)}</small>`, ' data-v="hide"', '<span class="sp"></span>' + STI.go)}${stRow('stset-pick', '', `<b>Enge Freunde</b><small>${n(set.cf)}. Beim Posten wählst du „Enge Freunde“, dann sehen nur sie die Story.</small>`, ' data-v="cf"', '<span class="sp"></span>' + STI.go)}<p class="stshl">Antworten zulassen</p><div class="stseg" role="group" aria-label="Antworten zulassen">${seg('all', 'Alle')}${seg('fr', 'Freunde')}${seg('off', 'Aus')}</div>${stRow('stset-cm', '', `<b>Kommentare zulassen</b><small>${set.cm ? 'An: Kommentare unter deinen Storys sind sichtbar.' : 'Aus: unter deinen Storys gibt es keine Kommentare.'}</small>`, ` aria-pressed="${!!set.cm}"`, '<span class="sp"></span><i class="stck" aria-hidden="true">✓</i>')}`, 'Story-Einstellungen'); }
+  if (kind === 'hide' || kind === 'cf') { const l = stFriends(), sel = set[kind];
+    return stShOpen(kind, `<div class="stshrow" style="margin:0 0 6px"><button type="button" class="stob" data-act="stset-back" aria-label="Zurück" style="min-width:40px">${STI.back}</button><h3 style="flex:1;margin:0">${kind === 'hide' ? 'Story verbergen vor' : 'Enge Freunde'}</h3><span style="width:40px"></span></div><p class="note">${kind === 'hide' ? 'Diese Personen sehen deine Storys nicht.' : 'Nur diese Personen sehen Storys, die du für „Enge Freunde“ postest.'}</p>${l.length > 6 ? '<input id="stset-q" placeholder="Suchen …" autocomplete="off" aria-label="Freunde suchen">' : ''}<div id="stset-l">${l.length ? l.map(u => stRow('stset-tog', stCam_(u), `<b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}`, ` data-v="${kind}" data-id="${esc(u.id)}" data-n="${esc((u.name + ' ' + (u.handle || '')).toLowerCase())}" aria-pressed="${sel.includes(u.id)}"`, '<span class="sp"></span><i class="stck" aria-hidden="true">✓</i>')).join('') : '<p class="note">Du hast noch keine Freunde.</p>'}</div>`, kind === 'hide' ? 'Story verbergen vor' : 'Enge Freunde'); }
+}
+function stMenList(q){ const st = stCur(), on = new Set(stTexts(st || {}).filter(x => x.u).map(x => x.u)); const l = (q ? mentionFind(q) : stFriends().slice(0, 8)).filter(u => !on.has(u.id));
+  return l.length ? l.map(u => stRow('st-menadd', stCam_(u), `<b>${esc(u.name)}</b>${u.handle ? `<small>@${esc(u.handle)}</small>` : ''}`, ` data-id="${esc(u.id)}"`)).join('') : `<p class="note">${q ? 'Niemand gefunden.' : 'Tipp einen Namen ein.'}</p>`; }
+document.addEventListener('input', e => {
+  if (e.target.id === 'stmen-q') { const l = document.getElementById('stmen-l'); if (l) l.innerHTML = stMenList(e.target.value.trim().replace(/^@/, '')); }
+  if (e.target.id === 'stset-q') { const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#stset-l [data-n]').forEach(x => { x.hidden = !!q && !x.dataset.n.includes(q); }); }
+});
+// Highlights: S.hl = [{id, t, items:[Story ohne großes Bild]}], im Profil-Dokument als hl
+const hlCover = (h, uid) => { const it = h.items[0], th = h.c || it?.thumb || (it && STIMG[uid + '/' + it.id]) || ''; return th ? `<img src="${esc(th)}" alt="">` : '<i></i>'; };
+function hlPub(){ return (S.hl || []).slice(0, 12).map(h => ({id:h.id, t:h.t, c:h.items[0]?.thumb || '', items:h.items.slice(-30).map(({img, thumb, cfl, ...r}) => r)})); }
+function hlDrop(sid){ if (!S.hl) return; S.hl.forEach(h => { h.items = h.items.filter(x => x.id !== sid); }); S.hl = S.hl.filter(h => h.items.length); }
+function hlTabHTML(u, own){ const hl = own ? (S.hl || []) : (u.hl || []);
+  return hl.length ? `<div class="hlgrid">${hl.map(h => `<button type="button" class="hlc" data-act="hl-open" data-u="${esc(own ? S.me : u.id)}" data-id="${esc(h.id)}"><span class="hlcv">${hlCover(h, own ? S.me : u.id)}</span><small>${esc(h.t)}</small></button>`).join('')}</div>`
+    : `<p class="muted" style="margin:0">${own ? 'Noch keine Highlights. Öffne deine Story, tippe auf „Mehr“ und dann auf „Als Highlight speichern“.' : 'Noch keine Highlights.'}</p>`; }
+const hlCopy = st => { const {img, cfl, ...r} = st; return r; };
+function stHlNew(name){ const st = stCur(); name = String(name).trim().slice(0, 24); if (!st) return; if (!name) return toast('Gib dem Highlight einen Namen.');
+  S.hl = S.hl || []; if (S.hl.length >= 12) return toast('Du hast schon 12 Highlights.'); S.hl.push({id:'h' + Date.now().toString(36), t:name, items:[hlCopy(st)]}); save(); stShClose(); toast(`In „${name}“ gespeichert`); }
+function stOpenAt(uid, sid){ if (uid === social?.uid) uid = S.me; stAuUnlock(); stOpen(uid); if (!STV) return toast('Diese Story ist schon abgelaufen.');
+  const ui = STV.list.findIndex(g => g.uid === uid), ii = ui < 0 ? -1 : STV.list[ui].items.findIndex(x => x.id === sid);
+  if (ii < 0) { STV = null; storyPaint(); return toast('Diese Story ist schon abgelaufen.'); } STV.ui = ui; STV.ii = ii; storyPaint(); }
+async function stBlob(st){ const k = S.me + '/' + st.id, url = st.vid ? STVID[k] : (STIMG[k] || st.img); if (!url) throw new Error('laedt'); const blob = await (await fetch(url)).blob();
+  const ext = st.vid ? (/webm/.test(blob.type) ? 'webm' : /quicktime/.test(blob.type) ? 'mov' : 'mp4') : (/png/.test(blob.type) ? 'png' : 'jpg');
+  return new File([blob], 'noctibat-story-' + st.id + '.' + ext, {type:blob.type || (st.vid ? 'video/mp4' : 'image/jpeg')}); }
+async function stDownload(st){ let f; try { f = await stBlob(st); } catch (e) { return toast(e?.message === 'laedt' ? 'Die Story lädt noch. Versuch es gleich nochmal.' : 'Speichern ging gerade nicht.'); }
+  try { if (isMob() && navigator.canShare?.({files:[f]})) { await navigator.share({files:[f]}); return; } } catch (e) { if (e?.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); toast('Gespeichert'); }
+async function stToPost(st){ let f; try { f = await stBlob(st); } catch (e) { return toast(e?.message === 'laedt' ? 'Die Story lädt noch. Versuch es gleich nochmal.' : 'Das ging gerade nicht.'); }
+  stClose(); go('profile', S.me); profTab = 'posts'; composeOpen = true; render();
+  const fresh = !PCR || !PCR.items.length; pcrAddFiles([f]).then(() => { if (PCR?.items.length) { if (fresh) PCR.step = 1; pcrOpen(); } }); if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'}; PCR.open = true; pcrPaint(); }
+function stMentNotify(st, id){ if (!social || !id || id === social.uid) return; social.db.collection('chats/ment_' + id + '/m').add({by:social.uid, name:me().name, text:'', st:{u:social.uid, id:st.id, th:st.thumb || ''}, ts:Date.now()}).catch(() => {}); }
+async function stAct(a, b){
+  const st = stCur(), set = stSetG();
+  if (a === 'stsh-x') return stShClose();
+  if (a === 'stlp-x' || a === 'stlp-view' || a === 'stlp-new') { document.getElementById('stlp')?.remove(); if (a === 'stlp-view') { stAuUnlock(); stOpen(S.me); } if (a === 'stlp-new') stCreate(); return; }
+  if (a === 'hl-open') { const uid = b.dataset.u, own = uid === S.me, h = (own ? S.hl || [] : profUser(uid)?.hl || []).find(x => x.id === b.dataset.id); if (!h || !h.items.length) return; stAuUnlock(); STV = {list:[{uid, items:[...h.items]}], ui:0, ii:0, arch:true, hl:h.id}; storyPaint(); return; }
+  if (a === 'hl-rm') { if (!STV?.hl || !st) return; const h = (S.hl || []).find(x => x.id === STV.hl); if (!h) return; h.items = h.items.filter(x => x.id !== st.id); S.hl = S.hl.filter(x => x.items.length); save(); toast(`Aus „${h.t}“ entfernt`); STV.list[0].items.splice(STV.ii, 1); if (!STV.list[0].items.length) return stClose(); STV.ii = Math.min(STV.ii, STV.list[0].items.length - 1); storyPaint(); return; }
+  if (a === 'st-opensh') return stOpenAt(b.dataset.u, b.dataset.id);
+  if (!st || !STV) return;
+  if (a === 'st-views') return stShow('views');
+  if (a === 'st-men') return stShow('men');
+  if (a === 'st-send') { STV.sendSel = new Set(); return stShow('send'); }
+  if (a === 'st-more') return stShow('more');
+  if (a === 'st-menadd') { const u = stUser(b.dataset.id); if (!u) return; const tx = Array.isArray(st.texts) ? st.texts : (st.texts = stTexts(st)); if (tx.some(x => x.u === u.id)) return;
+    tx.push({t:u.name, u:u.id, x:50, y:70 + (tx.filter(x => x.u).length % 4) * 6, s:5, c:'#111111', st:'modern', bg:0}); st.v = st.v || 2; save(); stMentNotify(st, u.id); storyPaint(); stShow('men'); toast(`${u.name} erwähnt`); return; }
+  if (a === 'st-menx') { if (Array.isArray(st.texts)) st.texts = st.texts.filter(x => x.u !== b.dataset.id); save(); storyPaint(); stShow('men'); return; }
+  if (a === 'st-sendsel') { const id = b.dataset.id; STV.sendSel.has(id) ? STV.sendSel.delete(id) : STV.sendSel.add(id); b.setAttribute('aria-pressed', STV.sendSel.has(id)); return; }
+  if (a === 'st-sendgo') { const ids = [...(STV.sendSel || [])]; if (!ids.length) return toast('Wähl mindestens einen Chat aus.'); b.disabled = true; let ok = 0;
+    for (const cid of ids) if (await sendMsg(cid, '', {story:{th:st.thumb || '', u:social.uid, id:st.id, sh:1}})) ok++;
+    STV.sendSel = new Set(); stShClose(); if (ok) toast(ok === 1 ? 'Story gesendet' : `An ${ok} Chats gesendet`); return; }
+  if (a === 'st-m-del') { stShClose(); STV.delAsk = true; storyPaint(); return; }
+  if (a === 'st-m-arch') { S.stories = (S.stories || []).filter(x => x.id !== st.id); const {img, ...rest} = st; S.storyArch = [{...rest, archTs:Date.now()}, ...(S.storyArch || [])].slice(0, 80); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; save(); stShClose(true); toast('Story archiviert. Du findest sie in deinem Archiv.'); STV.hold = null; stStep(1); return; }
+  if (a === 'st-m-hl') return stShow('hl');
+  if (a === 'st-hladd') { const h = (S.hl || []).find(x => x.id === b.dataset.id); if (!h) return; const has = h.items.some(x => x.id === st.id); h.items = has ? h.items.filter(x => x.id !== st.id) : [...h.items, hlCopy(st)].slice(-30); S.hl = S.hl.filter(x => x.items.length); save(); stShClose(); toast(has ? `Aus „${h.t}“ entfernt` : `In „${h.t}“ gespeichert`); return; }
+  if (a === 'st-m-save') { stShClose(); return stDownload(st); }
+  if (a === 'st-m-post') { stShClose(); return stToPost(st); }
+  if (a === 'st-m-set') return stShow('set');
+  if (a === 'st-m-cm') { st.nocm = st.nocm ? 0 : 1; if (!st.nocm) delete st.nocm; save(); stShClose(true); storyPaint(); stHold(false); toast(st.nocm ? 'Kommentare für diese Story aus' : 'Kommentare für diese Story an'); return; }
+  if (a === 'stset-pick') return stShow(b.dataset.v);
+  if (a === 'stset-back') return stShow('set');
+  if (a === 'stset-tog') { const k = b.dataset.v, id = b.dataset.id, l = set[k]; set[k] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; b.setAttribute('aria-pressed', set[k].includes(id)); save(); return; }
+  if (a === 'stset-rep') { set.rep = b.dataset.v; save(); return stShow('set'); }
+  if (a === 'stset-cm') { set.cm = set.cm ? 0 : 1; save(); stShow('set'); storyPaint(); return; }
+}
+// Eigene Story gedrückt halten: Story ansehen oder neue hinzufügen (Inaya, 2026-10-12)
+let STLP = null;
+document.addEventListener('pointerdown', e => { const r = e.target.closest?.('.sring.own'); if (!r || !myStories().length) return; clearTimeout(STLP?.t);
+  STLP = {x:e.clientX, y:e.clientY}; STLP.t = setTimeout(() => { if (!STLP) return; STLP.fired = Date.now(); try { navigator.vibrate?.(12); } catch {} document.getElementById('stlp')?.remove(); const el = document.createElement('div'); el.id = 'stlp'; el.className = 'stlp'; el.innerHTML = '<div class="stlpb" data-act="stlp-x"></div><div class="stlpm" role="menu" aria-label="Deine Story"><button type="button" role="menuitem" data-act="stlp-view">Story ansehen</button><button type="button" role="menuitem" data-act="stlp-new">Neue Story hinzufügen</button><button type="button" role="menuitem" data-act="stlp-x">Abbrechen</button></div>'; document.body.appendChild(el); }, 480); });
+document.addEventListener('pointermove', e => { if (STLP && !STLP.fired && Math.hypot(e.clientX - STLP.x, e.clientY - STLP.y) > 10) { clearTimeout(STLP.t); STLP = null; } });
+document.addEventListener('pointerup', () => { if (STLP && !STLP.fired) { clearTimeout(STLP.t); STLP = null; } });
+document.addEventListener('pointercancel', () => { if (STLP && !STLP.fired) { clearTimeout(STLP.t); STLP = null; } });
+document.addEventListener('click', e => { if (STLP?.fired) { const fresh = Date.now() - STLP.fired < 1500; if (fresh && !e.target.closest?.('.stlp')) { e.preventDefault(); e.stopImmediatePropagation(); } STLP = null; } }, true);
+document.addEventListener('contextmenu', e => { if (e.target.closest?.('.sring')) e.preventDefault(); });
 // Regler ziehen: hoch = öffnen, runter = schließen; antippen = umschalten
 let STCD = null;
 document.addEventListener('pointerdown', e => { const h = e.target.closest?.('#stch'); if (!h) return; STCD = {y:e.clientY, id:e.pointerId, moved:false}; try { h.setPointerCapture(e.pointerId); } catch {} });
@@ -5841,7 +6121,7 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
   if (n.tb) { n.img = await stTbRender(n.tb); n.thumb = await storyThumb(n.img); }
   else if (n.m) { try { n.img = await stBake(n); } catch {} n.thumb = await storyThumb(n.img); }
   const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0, l:Math.min(MU_WIN, muL(n.mu))} : null;
-  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
+  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.cf ? {cf:1} : n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
   if (n.stk?.length) st.stk = n.stk.slice(0, 20).map(x => ({k:x.k, x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, w:Math.round(x.w * 10) / 10, r:Math.round(+x.r || 0)}));
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
   if (n.vid || social) toast('Deine Story wird gepostet …');
@@ -6231,7 +6511,7 @@ function stEditorHTML(){
     ${n.tool === 'bg' && !n.tb && !e ? stMBgPanel(n) : ''}${n.tool === 'stk' && !e ? stStkPanel() : ''}
     ${n.tool === 'mutrim' && n.mu && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${pmuHTML(n.mu)}${muTrimHTML(n.mu, 'st')}<div class="row"><button class="btn ghost" data-act="st-music">Anderer Song</button><span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
     ${n.tool === 'music' && !e ? `<div class="stmpanel stmus"><i class="mugrip" aria-hidden="true"></i>${muSearchHTML('st-msq')}<div class="stmres" id="st-msres">${n.mu ? `<p class="stmsmsg">Gewählt: ${esc(n.mu.t)} · ${esc(n.mu.a)} <button class="lnk" data-act="st-mutrim">Stelle wählen</button></p>` : '<p class="stmsmsg">Such nach einem Song oder einer Band. Er spielt dann in deiner Story von selbst.</p>'}</div><div class="row">${n.mu || n.song ? '<button class="btn ghost" data-act="st-songx">Song entfernen</button>' : ''}<span class="sp"></span><button class="btn" data-act="st-tagx">Fertig</button></div></div>` : ''}
-  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${S.stPub ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${S.stPub ? ' ghost' : ''}" data-act="st-aud" data-v="0">Nur Freunde</button></span><button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class=\"cameo\">${headPic(me(), '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
+  </div>${n.askAud ? `<div class="stdelask staud" role="alertdialog" aria-label="Wer sieht deine Story?"><div><b>Wer sieht deine Story?</b><span class="row"><button class="btn${S.stPub ? '' : ' ghost'}" data-act="st-aud" data-v="1">Öffentlich</button><button class="btn${S.stPub ? ' ghost' : ''}" data-act="st-aud" data-v="0">Nur Freunde</button></span>${stSetG().cf.length ? `<button class="btn ghost" data-act="st-aud" data-v="cf">Enge Freunde (${stSetG().cf.length})</button>` : '<small class="note">Enge Freunde legst du in deiner Story unter „Mehr“ → „Story-Einstellungen“ fest.</small>'}<button class="lnk" data-act="st-audx">Abbrechen</button></div></div>` : ''}${e ? '' : `<div class="stfoot"><button class="stme" data-act="st-share"><span class=\"cameo\">${headPic(me(), '', true)}</span>Deine Story</button><span class="sp"></span><button class="starrow" data-act="st-share" aria-label="Story teilen">${logoSVG('stmoth')}<span>Teilen</span></button></div>`}</div>`;
 }
 function stVV(){ // X und Fertig bleiben oben in der Ecke, die Werkzeugleiste sitzt direkt über der Tastatur (Inaya, 2026-10-11)
   const fr = document.getElementById('stfr'), ed = fr?.querySelector('.stedov'); if (!ed) return;
@@ -6959,7 +7239,7 @@ function profileView(id){
   </section>`;
   }
   let panel = '';
-  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['reposts','Reposts'],['tagged','Markiert']]; // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
+  const tabs = u.helper ? [['room','Zimmer'],['rules', u.id === 'andy' ? 'So geht’s' : 'Regeln'],['news','Neuigkeiten']] /* Helfer: Schreiben nur im Chat unter Chats (Inaya, 2026-10-10) */ : [['room','Zimmer'],['posts','Beiträge'],['reposts','Reposts'],['tagged','Markiert'],['hl','Highlights']]; // Reposts = von anderen geteilte Beiträge (Inaya, 2026-10-11) // Gästebuch steht rechts unter dem Avatar (Inayas Wunsch)
   if (!tabs.some(([k]) => k === profTab)) profTab = tabs[0][0];
   if (profTab === 'rules') panel = `<div class="rules">${esc(u.about)}</div>`;
   if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="feed insta pfeed">${n.map(x => postHTML(x)).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
@@ -6970,6 +7250,7 @@ function profileView(id){
   if (profTab === 'tagged') { // Beiträge, auf denen man markiert ist (Inaya, 2026-10-12)
     const seen = new Set(), tg = [...S.posts, ...Object.values(S.users).filter(x => x.remote).flatMap(x => x.posts || []), ...ownerPubPosts()].filter(p => !p.arch && ptagsClean(p.tags).some(t => t.id === u.id) && !seen.has((p.author || '') + '/' + p.id) && seen.add((p.author || '') + '/' + p.id)).sort((a, b) => b.ts - a.ts);
     panel = tg.length ? `<div class="feed insta pfeed">${tg.map(x => postHTML(x)).join('')}</div>` : `<p class="muted" style="margin:0">${own ? 'Du bist noch auf keinem Beitrag markiert.' : 'Noch auf keinem Beitrag markiert.'}</p>`; }
+  if (profTab === 'hl') panel = hlTabHTML(u, own);
   if (profTab === 'reposts') { const rp = posts.filter(p => !p.arch && p.type === 'teilen').sort((a, b) => b.ts - a.ts); panel = rp.length ? `<div class="feed insta pfeed">${rp.map(x => postHTML(x)).join('')}</div>` : `<p class="muted" style="margin:0">${own ? 'Du hast noch nichts repostet. Unter jedem Beitrag von anderen kannst du auf „Teilen“ tippen.' : 'Noch keine Reposts.'}</p>`; }
   // Steckbrief steht direkt unter dem Profilkopf (Inayas Wunsch), nicht mehr als Reiter
   const sf = (k,v) => `<div><dt>${k}</dt><dd>${esc(v) || '–'}</dd></div>`;
@@ -7153,7 +7434,7 @@ function remoteUser(id, p){
   return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
     music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songMu:p.songMu && typeof p.songMu === 'object' ? p.songMu : null, songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
-    joined:p.joined || Date.now(), wall:[], owned:[], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
+    joined:p.joined || Date.now(), wall:[], owned:[], sth:Array.isArray(p.sth) ? p.sth : [], str:p.str || 'all', stcm:p.stcm === 0 ? 0 : 1, hl:Array.isArray(p.hl) ? p.hl : [], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
 // Raumchat: „Nur Freunde“ oder „Öffentlich“. In öffentliche Zimmer darf jedes Mitglied rein.
@@ -7210,9 +7491,10 @@ function publishProfile(){
       delete x.full; }
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
-      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
+      hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => r.cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
+    if (big()) doc.hl = doc.hl.map(h => ({...h, c:''}));
     if (big()) doc.cover = null;
     if (big() && doc.banner) doc.banner = {...doc.banner, img:null};
     if (big()) doc.pic = null;
@@ -7490,7 +7772,7 @@ async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
-    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
+    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
     return true;
   } catch { toast('Die Nachricht ging nicht raus. Hast du Schreibrechte für Noctibat?'); return false; }
 }
@@ -7671,6 +7953,7 @@ async function vmPlay(id, at){
   finally { document.querySelectorAll('.vmplay.busy').forEach(x => x.classList.remove('busy')); vmPaint(); }
 }
 function msgMedia(m){
+  if (m.story && m.story.sh) { const ou = m.story.u === social?.uid ? me() : profUser(m.story.u); return `<button type="button" class="mstory msh" data-act="st-opensh" data-u="${esc(m.story.u || '')}" data-id="${esc(m.story.id || '')}">${m.story.th ? `<img src="${esc(m.story.th)}" alt="">` : ''}<small>Story von ${esc(ou?.name || 'jemandem')}</small></button>`; }
   if (m.story) { const mine = m.from === social?.uid; return `<div class="mstory">${m.story.th ? `<img src="${esc(m.story.th)}" alt="">` : ''}<small>${mine ? 'Antwort auf die Story' : 'Antwort auf deine Story'}</small></div>`; }
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
   if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
@@ -8603,6 +8886,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (a === 'nt-go' && b.dataset.v === 'story') { const sid = b.dataset.id, items = myStories(), i = items.findIndex(x => x.id === sid); if (i < 0) return toast('Diese Story ist schon abgelaufen.'); stAuUnlock(); STV = {list:[{uid:S.me, items}], ui:0, ii:i, cOpen:true}; storyPaint(); stHold(true); return; }
+  if (a === 'nt-go' && b.dataset.v === 'ostory') { stOpenAt(b.dataset.id, b.dataset.k); return; }
   if (a === 'nt-go' && b.dataset.v === 'opost' && /^helper-/.test(b.dataset.id || '')) { go('home'); return; } // Antwort unter einem Helfer-Beitrag: der steht im Salon
   if (a === 'nt-go') { const v = b.dataset.v; if (b.dataset.k && (v === 'post' || v === 'opost')) { ntOpenPost(b.dataset.k, v === 'opost' ? b.dataset.id : S.me, b.dataset.c === '1'); return; } if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
@@ -8806,16 +9090,17 @@ document.addEventListener('click', async e => {
     if (on) l.by.delete(me_); else l.by.add(me_); stLkPaint(uid, sid); if (!on) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
     try { if (on) await ref.delete(); else await ref.set({kind:'like', by:me_, ts:Date.now()}); } catch { if (on) l.by.add(me_); else l.by.delete(me_); stLkPaint(uid, sid); toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'st-likes') { const l = stLk(b.dataset.u, b.dataset.id); if (!l.by.size) return toast('Noch keine Likes.'); toast('Gefällt ' + [...l.by].map(id => PROF[id]?.name || 'Jemand').join(', ')); [...l.by].filter(id => !PROF[id]).forEach(id => loadProf(id)); }
-  else if (a === 'st-aud') { if (!stNew) return; stNew.pub = b.dataset.v === '1'; stNew.audOk = true; stNew.askAud = false; S.stPub = stNew.pub ? 1 : 0; save(); stShare(); }
+  else if (a === 'st-aud') { if (!stNew) return; stNew.cf = b.dataset.v === 'cf'; stNew.pub = b.dataset.v === '1'; stNew.audOk = true; stNew.askAud = false; S.stPub = stNew.pub ? 1 : 0; save(); stShare(); }
   else if (a === 'st-audx') { if (stNew) { stNew.askAud = false; storyPaint(); } }
   else if (a === 'st-prof' && e.target.closest?.('.sthmu') && stSp?.c) { try { stSp.c.togglePlay(); } catch {} } // Tippen auf den Song: Spotify-Ton an/aus
-  else if (a === 'st-prof') { STV = null; storyPaint(); go('profile', id); window.scrollTo(0, 0); } // Name in der Story führt zum Profil (Inaya, 2026-10-11)
+  else if (a.startsWith('st-m-') || a.startsWith('stsh-') || a.startsWith('stset-') || ['st-views','st-men','st-send','st-more','st-menadd','st-menx','st-sendsel','st-sendgo','st-hladd','hl-rm','hl-open','st-opensh','stlp-x','stlp-view','stlp-new'].includes(a)) stAct(a, b);
+  else if (a === 'st-prof') { stShClose(true); STV = null; storyPaint(); go('profile', id); window.scrollTo(0, 0); } // Name in der Story führt zum Profil (Inaya, 2026-10-11)
   else if ((a === 'st-next' || a === 'st-prev') && !stAuSrc) { stAuUnlock(); if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); } else if (Date.now() - stSwiped > 400) stStep(-1); }
   else if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); }
   else if (a === 'st-prev') { if (Date.now() - stSwiped > 400) stStep(-1); }
   else if (a === 'st-del') { if (!STV) return; STV.delAsk = true; storyPaint(); }
   else if (a === 'st-delno') { if (!STV) return; STV.delAsk = false; STV.t0 = Date.now(); storyPaint(); }
-  else if (a === 'st-delyes') { if (!STV) return; STV.delAsk = false; const st = STV?.list[STV.ui]?.items[STV.ii]; if (!st) return; S.stories = (S.stories || []).filter(x => x.id !== st.id); if (social) social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; save(); toast('Story gelöscht'); stStep(1); }
+  else if (a === 'st-delyes') { if (!STV) return; STV.delAsk = false; const st = STV?.list[STV.ui]?.items[STV.ii]; if (!st) return; S.stories = (S.stories || []).filter(x => x.id !== st.id); hlDrop(st.id); if (social) social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; save(); toast('Story gelöscht'); stStep(1); }
   else if (a === 'st-restore') { const st = (S.storyArch || []).find(x => x.id === b.dataset.id); if (!st) return; S.storyArch = S.storyArch.filter(x => x !== st); const {archTs, ...r} = st; S.stories = [...(S.stories || []), {...r, ts:Date.now()}]; if (STV) { STV = null; storyPaint(); } save(); render(); toast('Die Story ist wieder 24 Stunden für deine Freunde sichtbar.'); }
   else if (a === 'mood-emo') { const inp = document.getElementById('e-mood'); if (!inp) return; const c = ':' + b.dataset.v + ':'; if ((inp.value + c).length > 120) return; inp.value += c; inp.dispatchEvent(new Event('input', {bubbles:true})); toast('Totenkopf hinzugefügt'); }
   else if (a === 'pp-tap') { if (storiesOf(id).length) ppAsk = id; else ppView = id; render(); }
@@ -8857,6 +9142,8 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'vplay') { b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
+  else if (a === 'pc-pin') { const k = b.dataset.k, d = b.dataset.d, w = PI[k], uid = social?.uid; if (!w || !uid || postOwner(w.p) !== uid || !d) return; const cur = w.list.find(x => x.kind === 'pin' && x.by === uid)?.c, ref = social.db.doc('chats/pi_' + k + '/m/pin');
+    try { if (cur === d) await ref.delete(); else await ref.set({kind:'pin', c:d, by:uid, ts:Date.now()}); toast(cur === d ? 'Kommentar nicht mehr fixiert' : 'Kommentar fixiert'); } catch { toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'pc-like') {
     const k = b.dataset.k, d = b.dataset.d, uid = social?.uid; if (!uid || !d) return; const id = 'cl_' + d + '_' + uid, on = b.getAttribute('aria-pressed') === 'true';
     try { if (on) await social.db.doc('chats/pi_' + k + '/m/' + id).delete(); else await social.db.doc('chats/pi_' + k + '/m/' + id).set({kind:'cl', c:d, by:uid, ts:Date.now()}); } catch { toast('Das hat gerade nicht geklappt.'); }
@@ -9147,6 +9434,7 @@ document.addEventListener('submit', async e => {
     if (file) { try { extra.img = await resizeImage(file, 560, .7); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; } }
     if (url) extra.url = url;
     if (await sendMsg('wall_' + WL.uid, text, extra)) { toast('Kommentar gepostet'); render(); }
+  } else if (t === 'sthlnew') { stHlNew(document.getElementById('sthl-n')?.value || '');
   } else if (t === 'streply') {
     const i = document.getElementById('st-rin'), text = i?.value.trim(), key = f.dataset.k; if (!text || !social || !key) return;
     i.value = ''; f.classList.remove('typed');
@@ -9282,3 +9570,5 @@ const cloudReady = cloudInit();
   paintAll();
 })();
 </script>
+
+</body></html>
