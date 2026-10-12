@@ -1178,6 +1178,16 @@ html:has(body.stopen){background:#000}
 form.typed .csend{display:grid}form.typed .micbtn{display:none}
 .csend svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
+
+/* Sprachnachricht gedrückt halten wie bei WhatsApp (Inaya, 2026-10-12) */
+.micbtn{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+form.vhold{position:relative}form.vhold .cinw,form.vhold .attbtn,form.vhold .emobtn,form.vhold .csend{display:none!important}
+form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:scale(1.25)}
+.vrhold{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:0 6px;overflow:hidden;white-space:nowrap}
+.vrhold b{font-variant-numeric:tabular-nums}.vrcancel{margin-left:auto;opacity:.75;font-size:14px;overflow:hidden;text-overflow:ellipsis}
+.vrlock{position:absolute;right:0;bottom:calc(100% + 10px);width:42px;padding:8px 0;display:grid;justify-items:center;gap:2px;border:1px solid var(--line,#ffffff40);border-radius:21px;background:var(--panel,#141416);color:var(--fg,#eeedf2);pointer-events:none}
+.vrlock svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}.vrlock i{font-style:normal;line-height:1;animation:vrup 1s ease-in-out infinite}@keyframes vrup{50%{transform:translateY(-4px)}}
+.vrbar .vrsend{display:grid;margin-left:auto}
 </style>
 
 <div id="app"></div>
@@ -6615,14 +6625,27 @@ function groupForm(friends){
 async function chBgSave(cid, g){ if (!g.bgNew || !g.theme.bg) return; await social.db.doc('chats/' + cid + '/bg/img').set({img:g.bgNew, by:social.uid, ts:Date.now()}); CHBG[cid + ':' + g.theme.bg.v] = g.bgNew; delete g.bgNew; }
 // Sprachnachrichten in privaten Chats, Gruppen und öffentlichen Gruppen (Inaya, 2026-10-11)
 let VREC = null; const VMAX = 120;
-async function voiceStart(){
-  if (VREC || !CH.open || !social) return;
+// Wie bei WhatsApp (Inaya, 2026-10-12): Mikrofon gedrückt halten = aufnehmen, loslassen = senden, nach oben wischen = fixieren (dann senden mit dem Pfeil), nach links wischen = verwerfen
+let VHOLD = null;
+document.addEventListener('pointerdown', e => { const b = e.target.closest?.('.micbtn'); if (!b || VREC || e.button > 0) return; e.preventDefault(); VHOLD = {x:e.clientX, y:e.clientY, id:e.pointerId, up:false}; try { b.setPointerCapture(e.pointerId); } catch {} voiceStart(false); });
+document.addEventListener('pointermove', e => { const h = VHOLD; if (!h || e.pointerId !== h.id || !VREC || VREC.locked) return; const dx = e.clientX - h.x, dy = e.clientY - h.y;
+  if (dy < -70) { VREC.locked = true; VHOLD = null; voicePaint(); }
+  else if (dx < -110) { VHOLD = null; voiceStop(false); }
+  else { const l = document.getElementById('vrlock'); if (l) l.style.transform = `translateY(${Math.min(0, dy) * .6}px)`; const c = document.getElementById('vrcancel'); if (c) c.style.transform = `translateX(${Math.min(0, dx) * .6}px)`; } });
+const vEnd = e => { const h = VHOLD; if (!h || e.pointerId !== h.id) return; VHOLD = null;
+  if (!VREC) { h.up = true; VHOLDUP = true; return; } // Mikrofon-Freigabe kam dazwischen: dann fixiert aufnehmen
+  if (VREC.locked) return;
+  if (Date.now() - VREC.t0 < 700) { voiceStop(false); toast('Halte das Mikrofon gedrückt, um aufzunehmen.'); } else voiceStop(true); };
+document.addEventListener('pointerup', vEnd); document.addEventListener('pointercancel', vEnd);
+let VHOLDUP = false;
+async function voiceStart(locked){
+  if (VREC || !CH.open || !social) return; VHOLDUP = false;
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast('Dein Browser kann hier keine Sprachnachrichten aufnehmen.');
   let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); } catch { return toast('Erlaube bitte den Zugriff aufs Mikrofon, dann kannst du Sprachnachrichten aufnehmen.'); }
   if (VREC || !CH.open) { stream.getTracks().forEach(t => t.stop()); return; }
   const mt = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'].find(t => MediaRecorder.isTypeSupported(t)) || '';
   let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:32000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); return toast('Die Aufnahme ließ sich nicht starten.'); }
-  const v = VREC = {rec, stream, parts:[], t0:Date.now(), cid:CH.open, type:(mt || rec.mimeType || 'audio/mp4').split(';')[0]};
+  const v = VREC = {rec, stream, parts:[], t0:Date.now(), cid:CH.open, type:(mt || rec.mimeType || 'audio/mp4').split(';')[0], locked:!!locked || VHOLDUP || !VHOLD}; VHOLDUP = false;
   rec.ondataavailable = e => { if (e.data.size) v.parts.push(e.data); };
   if (/mp4/.test(v.type)) rec.start(); else rec.start(500); v.fast = 1; voicePaint(); // iPhone: mp4 in Stücken wird oft kaputt
   v.timer = setInterval(() => { const s = (Date.now() - v.t0) / 1000, el = document.getElementById('vrtime'); if (el) el.textContent = stTime(s); if (s >= VMAX) voiceStop(true); }, 250);
@@ -6662,8 +6685,13 @@ function voicePend(){
 }
 function voicePaint(){
   const f = document.querySelector('[data-form="cmsg"]'), bar = document.getElementById('vrbar');
-  if (VREC && f && CH.open === VREC.cid) { f.hidden = true; if (!bar) f.insertAdjacentHTML('afterend', `<div class="vrbar" id="vrbar" role="group" aria-label="Sprachnachricht wird aufgenommen"><button type="button" class="vrx" data-act="voice-x" aria-label="Aufnahme verwerfen">✕</button><i class="vrdot" aria-hidden="true"></i><span>Aufnahme <b id="vrtime">${stTime((Date.now() - VREC.t0) / 1000)}</b></span><span class="sp"></span><button type="button" class="btn vrsend" data-act="voice-send">Senden</button></div>`); }
-  else { if (VREC) voiceStop(false); if (f) f.hidden = false; bar?.remove(); }
+  const tm = () => `<b id="vrtime">${stTime((Date.now() - VREC.t0) / 1000)}</b>`;
+  if (VREC && f && CH.open === VREC.cid && !VREC.locked) { // gedrückt halten: Mikrofon bleibt unter dem Finger
+    f.hidden = false; f.classList.add('vhold'); bar?.remove();
+    if (!f.querySelector('.vrhold')) f.querySelector('.micbtn')?.insertAdjacentHTML('beforebegin', `<span class="vrhold" role="status"><i class="vrdot" aria-hidden="true"></i>${tm()}<span class="vrcancel" id="vrcancel">‹ Zum Verwerfen nach links wischen</span></span><span class="vrlock" id="vrlock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg><i>⌃</i></span>`); }
+  else if (VREC && f && CH.open === VREC.cid) { f.classList.remove('vhold'); f.querySelectorAll('.vrhold,.vrlock').forEach(x => x.remove()); f.hidden = true;
+    if (!bar) f.insertAdjacentHTML('afterend', `<div class="vrbar" id="vrbar" role="group" aria-label="Sprachnachricht wird aufgenommen"><button type="button" class="vrx" data-act="voice-x" aria-label="Aufnahme verwerfen">✕</button><i class="vrdot" aria-hidden="true"></i><span>Aufnahme ${tm()}</span><span class="sp"></span><button type="button" class="csend vrsend" data-act="voice-send" aria-label="Sprachnachricht senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></div>`); }
+  else { if (VREC) voiceStop(false); if (f) { f.hidden = false; f.classList.remove('vhold'); f.querySelectorAll('.vrhold,.vrlock').forEach(x => x.remove()); } bar?.remove(); }
 }
 async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
@@ -7683,7 +7711,7 @@ document.addEventListener('click', async e => {
   if (a === 'wcol') { wColOpen = !wColOpen; render(); return; }
   if (a === 'mob-more') { mobMore = !mobMore; render(); return; }
   if (a === 'chat-back') { typingNow(false); CH.open = null; CH.mode = null; chatAttach = false; render(); return; }
-  if (a === 'voice-rec') { voiceStart(); return; }
+  if (a === 'voice-rec') { if (!e.detail) voiceStart(true); return; } // Tastatur: gleich fixiert aufnehmen; mit Finger/Maus: gedrückt halten
   if (a === 'voice-x') { voiceStop(false); return; }
   if (a === 'voice-send') { voiceStop(true); return; }
   if (a === 'voice-retry') { const j = VSEND[+b.dataset.i]; if (j) voiceSend(j); return; }
