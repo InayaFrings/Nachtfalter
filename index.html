@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ecfbdd521449';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='c2a70d75a3e6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -837,8 +837,8 @@ footer.foot .lnk{color:var(--muted)}
   footer.foot{display:none}
   .mcompose{width:100%;min-height:48px;font-size:18px}
   .pcplus{display:grid;place-items:center;width:100%;min-height:64px;margin:0 0 14px;border:1.5px dashed var(--line,#ffffff55);border-radius:6px;background:#ffffff08;color:var(--fg);cursor:pointer}.pcplus span{font:300 40px/1 var(--f-display);opacity:.85}
-  .pcfull{position:fixed;inset:0;z-index:1050;display:flex;flex-direction:column;background:var(--bg);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
-  body:has(.pcfull){overflow:hidden}
+  .pcfull{position:fixed;inset:0;z-index:1050;display:flex;flex-direction:column;background:#0a0a0b;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+  body:has(.pcfull){overflow:hidden}body:has(.pcfull) #app,body:has(.pcfull) .mobnav{visibility:hidden}body:has(.pcfull) .pcfull{visibility:visible}
   .pcfh{flex:none;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;min-height:52px;padding:0 6px;border-bottom:1px solid var(--line)}.pcfh b{text-align:center;font:600 17px var(--f-display)}
   .pcfx{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:var(--fg);cursor:pointer}.pcfx svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .pcfb{flex:1;overflow:auto;overscroll-behavior:contain;padding:12px 12px 24px}.pcfb .pform{min-height:100%;align-content:start;padding:16px}.pcfb .pform textarea#ptext{min-height:32vh;font-size:18px}
@@ -6030,7 +6030,7 @@ async function stDownload(st){ let f; try { f = await stBlob(st); } catch (e) { 
   try { if (isMob() && navigator.canShare?.({files:[f]})) { await navigator.share({files:[f]}); return; } } catch (e) { if (e?.name === 'AbortError') return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); toast('Gespeichert'); }
 async function stToPost(st){ let f; try { f = await stBlob(st); } catch (e) { return toast(e?.message === 'laedt' ? 'Die Story lädt noch. Versuch es gleich nochmal.' : 'Das ging gerade nicht.'); }
-  stClose(); go('profile', S.me); profTab = 'posts'; composeOpen = true; render();
+  stClose(); homeCompose = true; go('home'); render(); // Story als Beitrag: in den Salon zum Beitragsfeld (Inaya, 2026-10-12)
   const fresh = !PCR || !PCR.items.length; pcrAddFiles([f]).then(() => { if (PCR?.items.length) { if (fresh) PCR.step = 1; pcrOpen(); } }); if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'}; PCR.open = true; pcrPaint(); }
 function stMentNotify(st, id){ if (!social || !id || id === social.uid) return; social.db.collection('chats/ment_' + id + '/m').add({by:social.uid, name:me().name, text:'', st:{u:social.uid, id:st.id, th:st.thumb || ''}, ts:Date.now()}).catch(() => {}); }
 async function stAct(a, b){
@@ -6790,6 +6790,10 @@ function paintCompose(){
 // Handy: nur ein Feld mit Plus, Tippen öffnet den Editor als eigene Seite über den ganzen Bildschirm (Inaya, 2026-10-12)
 const pcPlus = act => { const bx = /^#[0-9a-f]{6}$/i.test(me()?.theme?.box || '') ? me().theme.box : ''; return `<button type="button" class="pcplus" data-act="${act}" aria-label="Beitrag erstellen"${bx ? ` style="background:${bx};color:${autoFg(bx)};border:1px solid ${autoFg(bx)}33;border-style:solid"` : ''}><span aria-hidden="true">+</span></button>`; }; // Farbe vom eigenen Profil, Plus hell oder dunkel je nach Untergrund (Inaya, 2026-10-12)
 const pcFull = act => `<div class="pcfull" role="dialog" aria-modal="true" aria-label="Neuer Beitrag"><header class="pcfh"><button type="button" class="pcfx" data-act="${act}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b>Neuer Beitrag</b><span></span></header><div class="pcfb">${composeHTML()}</div></div>`;
+// Handy: die Seite füllt genau den sichtbaren Bereich über der Tastatur, der Salon scheint nicht durch (wie die Kommentare)
+function pcFit(){ const el = document.querySelector('.pcfull'), vv = window.visualViewport; if (!el || !vv || !isMob()) return; el.style.top = vv.offsetTop + 'px'; el.style.height = vv.height + 'px'; el.style.bottom = 'auto'; }
+window.visualViewport?.addEventListener('resize', pcFit); window.visualViewport?.addEventListener('scroll', pcFit);
+new MutationObserver(() => { if (document.querySelector('.pcfull:not([data-fit])')) { document.querySelectorAll('.pcfull').forEach(x => x.dataset.fit = 1); pcFit(); } }).observe(document.documentElement, {childList:true, subtree:true});
 function composeHTML(){
   const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'foto' ? postCrop || PCR?.items.some(x => x.t === 'i') : k === 'clip' ? PVIDEO || PCR?.items.some(x => x.t === 'v') : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
