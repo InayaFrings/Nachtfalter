@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2a8f03d80717';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5dd13e4fe5a3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5718,6 +5718,21 @@ const stOkUrl = (u, re) => typeof u === 'string' && re.test(u) ? u : '';
 const stMuPv = mu => stOkUrl(mu && mu.pv, /^https:\/\/[\w.-]+\.(?:apple\.com|mzstatic\.com|itunes\.com|dzcdn\.net)\//);
 const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.com|dzcdn\.net)\//);
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+let stAuBlocked = false; // Browser hat den Ton blockiert (kein Antippen vorher): beim nächsten Tippen irgendwo geht der Ton an
+const PSF_AU = new Audio(); PSF_AU.loop = true; PSF_AU.setAttribute('playsinline', '');
+// iPhone (Inaya, 2026-10-12): Safari erlaubt Ton nur, wenn ein Player bei einem echten Antippen gestartet wurde. Darum werden beide Player
+// bei jedem Tippen kurz still angestoßen, und Musik, die stumm starten musste, bekommt beim nächsten Tippen ihren Ton.
+function auGesture(e){
+  const snd = e.target.closest?.('[data-act=st-snd],.stsndhint');
+  if (stAuBlocked && !snd) { stAuBlocked = false; stMute = false; const v = document.querySelector('#storyov video.stvid');
+    if (stAuSrc) { stAu.muted = false; stAu.play().catch(() => {}); } else if (v) { v.muted = false; v.play().catch(() => {}); }
+    document.querySelectorAll('.stsndhint').forEach(x => x.remove()); stSndMark(); setTimeout(muMarkPrev, 30); }
+  else if (snd) stAuBlocked = false;
+  if (!stAuSrc && stAu.paused) stAuUnlock();
+  if (PSF && PSF.blocked) { PSF.blocked = false; PSF.a.play().catch(() => {}); }
+  else if (!PSF && PSF_AU.paused) { try { PSF_AU.loop = false; PSF_AU.src = ST_SILENT; PSF_AU.play().catch(() => {}); } catch {} }
+}
+document.addEventListener('touchend', auGesture, {capture:true, passive:true}); document.addEventListener('click', auGesture, true);
 function stAuUnlock(){ if (stAuSrc) return; try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
 const SPRES = {}; // Spotify-Link -> gefundene Hörprobe
 const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
@@ -5731,7 +5746,7 @@ function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} 
 function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
   const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
   if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
-  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(() => { if (stAuSrc !== pv) return; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
+  stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(() => { if (stAuSrc !== pv) return; stMute = true; stAuBlocked = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
 function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.removeAttribute('src'); try { stAu.load(); } catch {} }
 const stMuHTML = (mu, mp, edit, sel) => { mp = mp || {x:50, y:80, w:72}; const art = stMuArt(mu);
   return `<div class="stmu${edit ? ' ed' : ''}${sel ? ' sel' : ''}"${edit ? ' id="stmued"' : ' data-act="st-snd" role="button" tabindex="0" aria-label="Ton an oder aus"'} style="left:${+mp.x}%;top:${+mp.y}%;width:${+mp.w}%;--mw:${+mp.w}">${art ? `<img src="${esc(art)}" alt="">` : '<i class="stmuno">♪</i>'}<span><b>${esc(mu.t || 'Song')}</b><small>${esc(mu.a || '')}</small></span><i class="stmeq" aria-hidden="true"><i></i><i></i><i></i></i></div>`; };
@@ -5829,7 +5844,7 @@ function storyPaint(){
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
   if (ve && (STV.delAsk || STV.hold)) ve.pause();
-  else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
+  else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stAuBlocked = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
     ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch) ve.onended = () => stStep(1); }
   else if (!st.vid && !STV.arch && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
 }
@@ -6854,9 +6869,9 @@ function psfToggle(b){
 async function psfStart(uid, quiet){ // der Player wird schon beim Tippen angestoßen, sonst sperrt das iPhone den Ton
   const f = profUser(uid)?.songFile; if (!f) return;
   psfStop(); try { stAuStop(); } catch {} try { pspStop(); } catch {}
-  const a = new Audio(); a.loop = true; a.src = ST_SILENT; a.play().catch(() => {}); const me = PSF = {uid, a}; a.onpause = a.onplay = psfMark; psfMark();
+  const a = PSF_AU; a.loop = true; a.src = ST_SILENT; a.play().catch(() => {}); const me = PSF = {uid, a}; a.onpause = a.onplay = psfMark; psfMark();
   try { const src = await songURL(uid, f); if (PSF !== me) return; a.src = src.url; await a.play(); }
-  catch (e) { if (PSF === me && !quiet && e?.name !== 'NotAllowedError') toast('Der Song ließ sich gerade nicht laden.'); }
+  catch (e) { if (PSF === me && e?.name === 'NotAllowedError') me.blocked = true; else if (PSF === me && !quiet) toast('Der Song ließ sich gerade nicht laden.'); }
   psfMark();
 }
 function musicHTML(u, mine){
@@ -8115,8 +8130,8 @@ function profAuto(){ // Profilmusik von selbst: Suche-Song, eigene MP3 oder Spot
   if (u.songSp && /track\//.test(u.songSp)) { profMuStarted[u.id] = 1; if (!(PSP && PSP.url === u.songSp)) pspToggle(u.songSp); return; }
   if (u.songFile?.n && social) { profMuStarted[u.id] = 1; if (!(PSF && PSF.uid === u.id)) psfStart(u.id, true); }
 }
-// Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite
-document.addEventListener('pointerdown', e => {
+// Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite (click, weil das iPhone pointerdown nicht als Antippen zählt)
+document.addEventListener('click', e => {
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const pm = u && profMu(u);
   if (pm && stMuPv(pm) && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=pmu-play],[data-act=music-toggle]') && (stAuSrc !== stMuPv(pm) || stAu.paused) && !profMuStarted[u.id]) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(pm, true, true); setTimeout(muMarkPrev, 50); return; }
