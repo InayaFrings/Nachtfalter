@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d7ea7c729336';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='08b39da576b9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1389,6 +1389,10 @@ body.cmvopen{overflow:hidden}
 #stspw.stspw{left:-10000px!important;top:0!important;width:300px!important;opacity:0;pointer-events:none}
 /* Ton-Knopf auf Fotos mit Musik (Inaya, 2026-10-12) */
 .pvolw{position:relative}.pvolw>.photo{display:block}.pvol{position:absolute;right:10px;bottom:10px;width:38px;height:38px;border-radius:999px;border:0;background:#000a;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;z-index:2}.pvol svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pvol svg path:first-child{fill:currentColor}
+/* Chat: Sprachnachricht kompakt, Zeit und Löschen unten links, Ladekreis statt Play (Inaya, 2026-10-12) */
+.bubble:has(.vmsg){white-space:normal;width:fit-content;max-width:min(300px,84%);min-width:0!important;row-gap:4px!important;gap:4px!important}.bubble .vmsg{min-width:0!important;width:min(262px,70vw)}.bubble .vmav .cameo{width:46px;height:46px}
+.bubble .meta,.bubble.me .meta,.bubble.media>.meta{text-align:left!important;justify-content:flex-start}
+.vmspin{display:grid;place-items:center}.vmspin i{width:22px;height:22px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:vmspin .8s linear infinite;opacity:.85}@keyframes vmspin{to{transform:rotate(360deg)}}
 </style>
 
 <div id="app"></div>
@@ -6865,8 +6869,8 @@ function openChat(id){
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
-  CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot(snap => {
-    CH.msgs = snap.docs.map(d => ({...d.data(), id:d.id})).reverse(); markSeen(); drawMsgs();
+  CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot({includeMetadataChanges:true}, snap => {
+    CH.msgs = snap.docs.map(d => ({...d.data(), id:d.id, _pend:!!d.metadata?.hasPendingWrites})).reverse(); markSeen(); drawMsgs();
   }, () => {});
   go('chats');
 }
@@ -7050,7 +7054,8 @@ async function voiceSend(j){
       for (let i = 0; i < n; i++) bt.set(social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`), {v, d:b64.slice(i * C, (i + 1) * C)});
       bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), {from:social.uid, text:'', ts, audio:{n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur, w:j.w || ''}});
       if (!j.cid.startsWith('zimmer_') && !j.cid.startsWith('wall_')) bt.update(social.db.doc('chats/' + j.cid), {last:ts, lastText:'♪ Sprachnachricht', lastFrom:social.uid});
-      await vTimeout(bt.commit(), 30000); VSEND.splice(VSEND.indexOf(j), 1); voicePend(); return;
+      // sofort im Chat (Firestore zeigt es gleich an), bis der Server bestätigt: Ladekreis statt Play (Inaya, 2026-10-12)
+      j.mid = mid; bt.commit().then(() => { const i = VSEND.indexOf(j); if (i >= 0) VSEND.splice(i, 1); voicePend(); }).catch(() => { j.err = 'Das Senden hat nicht geklappt.'; voicePend(); }); voicePend(); return;
     }
     const au = await vTimeout(uploadPostAudio(new File([j.blob], 'Sprachnachricht', {type:j.type}), k, (i, n) => { j.step = `Wird gesendet … ${Math.round(i / n * 100)} %`; voicePend(); }), 60000);
     const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur, w:j.w || ''}}), 30000);
@@ -7060,7 +7065,7 @@ async function voiceSend(j){
 }
 function voicePend(){
   const box = document.getElementById('msgs'); if (!box) return; box.querySelectorAll('.vpend').forEach(x => x.remove());
-  VSEND.filter(j => j.cid === CH.open).forEach((j, i) => box.insertAdjacentHTML('beforeend', `<div class="bubble me media vpend"><div class="apost maud mvoice"><div class="ainfo"><b>Sprachnachricht · ${stTime(j.dur)}</b><span class="muted" role="status">${j.err ? esc(j.err) : esc(j.step)}</span>${j.err ? `<span class="row"><button type="button" class="btn ghost" data-act="voice-drop" data-i="${VSEND.indexOf(j)}">Verwerfen</button><button type="button" class="btn" data-act="voice-retry" data-i="${VSEND.indexOf(j)}">Nochmal senden</button></span>` : ''}</div></div></div>`));
+  VSEND.filter(j => j.cid === CH.open && (j.err || !j.mid || !CH.msgs.some(m => m.id === j.mid))).forEach((j, i) => box.insertAdjacentHTML('beforeend', j.err ? `<div class="bubble me media vpend"><div class="apost maud mvoice"><div class="ainfo"><b>Sprachnachricht · ${stTime(j.dur)}</b><span class="muted" role="status">${j.err ? esc(j.err) : esc(j.step)}</span>${j.err ? `<span class="row"><button type="button" class="btn ghost" data-act="voice-drop" data-i="${VSEND.indexOf(j)}">Verwerfen</button><button type="button" class="btn" data-act="voice-retry" data-i="${VSEND.indexOf(j)}">Nochmal senden</button></span>` : ''}</div></div></div>` : `<div class="bubble me media vpend">${vmsgHTML({from:social?.uid, id:'', _pend:true, audio:{d:j.dur, w:j.w || ''}})}</div>`));
   if (VSEND.some(j => j.cid === CH.open)) box.scrollTop = box.scrollHeight;
 }
 function voicePaint(){
@@ -7227,7 +7232,7 @@ function vmBars(m){ let w = String(m.audio.w || ''); if (!/^\d{8,}$/.test(w)) { 
 function vmsgHTML(m){
   const u = uidUser(m.from), d = +m.audio.d || 0;
   return `<div class="vmsg" data-id="${esc(m.id || '')}"><span class="vmav"><span class="cameo">${headPic(u)}</span><svg class="vmmic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
-    <button type="button" class="vmplay" data-act="vm-play" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg></button>
+    ${m._pend && m.from === social?.uid ? '<span class="vmplay vmspin" role="status" aria-label="Wird gesendet"><i></i></span>' : `<button type="button" class="vmplay" data-act="vm-play" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg></button>`}
     <div class="vmr"><div class="vmw" data-act="vm-seek" data-id="${esc(m.id || '')}" role="slider" aria-label="Stelle in der Sprachnachricht" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0"><b class="vmdot"></b>${vmBars(m)}</div><small class="vmt">${stTime(d)}</small></div></div>`;
 }
 // eine Sprachnachricht spielt zur Zeit; Fortschritt färbt die Balken
