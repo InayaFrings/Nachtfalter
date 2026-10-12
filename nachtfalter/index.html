@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='96b3209edb78';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2b6fed1225f7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -835,6 +835,12 @@ footer.foot .lnk{color:var(--muted)}
   .fpanel{top:0}
   footer.foot{display:none}
   .mcompose{width:100%;min-height:48px;font-size:18px}
+  .pcplus{display:grid;place-items:center;width:100%;min-height:64px;margin:0 0 14px;border:1.5px dashed var(--line,#ffffff55);border-radius:6px;background:#ffffff08;color:var(--fg);cursor:pointer}.pcplus span{font:300 40px/1 var(--f-display);opacity:.85}
+  .pcfull{position:fixed;inset:0;z-index:1050;display:flex;flex-direction:column;background:var(--bg);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+  body:has(.pcfull){overflow:hidden}
+  .pcfh{flex:none;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;min-height:52px;padding:0 6px;border-bottom:1px solid var(--line)}.pcfh b{text-align:center;font:600 17px var(--f-display)}
+  .pcfx{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:var(--fg);cursor:pointer}.pcfx svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .pcfb{flex:1;overflow:auto;overscroll-behavior:contain;padding:12px 12px 24px}.pcfb .pform{min-height:100%;align-content:start;padding:16px}.pcfb .pform textarea#ptext{min-height:32vh;font-size:18px}
   /* Garderobe: großer Avatar oben, Teile in vier Spalten, antippen zieht an */
   .wardrobe .mirror{width:min(30vw,124px)}
   .card-in > .chips[role=tablist]{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:8px!important}
@@ -6780,6 +6786,9 @@ function paintCompose(){
   const box = document.getElementById('patts'); if (box) box.innerHTML = composeAtt();
   document.querySelectorAll('.cbtn').forEach(x => x.classList.toggle('on', x.dataset.v === 'foto' ? !!postCrop || !!PCR?.items.some(y => y.t === 'i') : x.dataset.v === 'clip' ? !!PVIDEO || !!PCR?.items.some(y => y.t === 'v') : x.dataset.v === 'musik' ? !!(PAUDIO || PMU) : x.dataset.v === 'tag' ? PTAGS.length > 0 : PLINK));
 }
+// Handy: nur ein Feld mit Plus, Tippen öffnet den Editor als eigene Seite über den ganzen Bildschirm (Inaya, 2026-10-12)
+const pcPlus = act => `<button type="button" class="pcplus" data-act="${act}" aria-label="Beitrag erstellen"><span aria-hidden="true">+</span></button>`;
+const pcFull = act => `<div class="pcfull" role="dialog" aria-modal="true" aria-label="Neuer Beitrag"><header class="pcfh"><button type="button" class="pcfx" data-act="${act}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b>Neuer Beitrag</b><span></span></header><div class="pcfb">${composeHTML()}</div></div>`;
 function composeHTML(){
   const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'foto' ? postCrop || PCR?.items.some(x => x.t === 'i') : k === 'clip' ? PVIDEO || PCR?.items.some(x => x.t === 'v') : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
@@ -7035,7 +7044,7 @@ function pubPosts(){
 function homeView(){
   const pubMode = social && S.salonMode === 'pub';
   const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).filter(p => p.type !== 'teilen').sort((a,b) => b.ts - a.ts); // Reposts nur auf dem Profil, nicht im Salon (Inaya, 2026-10-12)
-  const compose = isMob() && !homeCompose ? `<button class="btn mcompose" data-act="hcompose">＋ Beitrag erstellen</button>` : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
+  const compose = isMob() ? pcPlus('hcompose') + (homeCompose ? pcFull('hcompose') : '') : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
   return `${storyBar()}${compose}
@@ -7251,7 +7260,7 @@ function profileView(id){
   if (profTab === 'chat') panel = chatHTML(u);
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
   if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
-  if (profTab === 'posts') panel = (own ? (composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.some(p => p.type !== 'teilen') ? `<div class="feed insta pfeed">${(pinCtx = true, posts.filter(p => !p.arch && p.type !== 'teilen').sort(pinSort).map(x => postHTML(x)).join(''))}</div>` + (pinCtx = false, '') : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
+  if (profTab === 'posts') panel = (own ? (isMob() ? pcPlus('compose-open') + (composeOpen ? pcFull('compose-close') : '') : composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.some(p => p.type !== 'teilen') ? `<div class="feed insta pfeed">${(pinCtx = true, posts.filter(p => !p.arch && p.type !== 'teilen').sort(pinSort).map(x => postHTML(x)).join(''))}</div>` + (pinCtx = false, '') : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
   if (profTab === 'tagged') { // Beiträge, auf denen man markiert ist (Inaya, 2026-10-12)
     const seen = new Set(), tg = [...S.posts, ...Object.values(S.users).filter(x => x.remote).flatMap(x => x.posts || []), ...ownerPubPosts()].filter(p => !p.arch && ptagsClean(p.tags).some(t => t.id === u.id) && !seen.has((p.author || '') + '/' + p.id) && seen.add((p.author || '') + '/' + p.id)).sort((a, b) => b.ts - a.ts);
     panel = tg.length ? `<div class="feed insta pfeed">${tg.map(x => postHTML(x)).join('')}</div>` : `<p class="muted" style="margin:0">${own ? 'Du bist noch auf keinem Beitrag markiert.' : 'Noch auf keinem Beitrag markiert.'}</p>`; }
