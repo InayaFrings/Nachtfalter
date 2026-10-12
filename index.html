@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='cc24c2209174';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a62d173be6bf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1385,6 +1385,8 @@ body.cmvopen{overflow:hidden}
 .muprev2{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-line,#ffffff4d);background:transparent;color:var(--p-fg,#eeedf2);cursor:pointer;padding:0}.muprev2 svg{width:18px;height:18px;fill:currentColor}
 .pspw{position:fixed;left:-10000px;top:0;width:300px;height:80px;opacity:0;pointer-events:none}
 .phmu{display:flex;align-items:center;gap:6px;background:none;border:0;padding:2px 0 0;margin:0;color:inherit;font:500 12.5px/1.25 system-ui,-apple-system,sans-serif;cursor:pointer;max-width:100%;min-width:0;text-align:left}.phmu .steq i{background:currentColor;animation-play-state:paused}.phmu.on .steq i{animation-play-state:running}.ph>div{min-width:0}
+/* Spotify-Player der Story unsichtbar, Titel steht oben unter dem Namen (Inaya, 2026-10-12) */
+#stspw.stspw{left:-10000px!important;top:0!important;width:300px!important;opacity:0;pointer-events:none}
 </style>
 
 <div id="app"></div>
@@ -5549,19 +5551,19 @@ function storyPaint(){
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && SPRES[st.song]))}</span></button><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : own ? '<button class="lnk" data-act="st-del">Löschen</button>' : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${stTextsHTML(stTexts(st))}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
     ${STV.arch || !social ? '' : stcSheetHTML(g, st, own, u)}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
     </div></div>`;
-  const mu = st.mu || (st.song ? stSpMu(st.song) : null);
+  const mu = st.mu || null;
   const skey = g.uid + '/' + st.id, fresh = STV.key !== skey; if (fresh) { STV.key = skey; STV.t0 = Date.now(); }
   const dur = st.mu || st.song ? 15000 : 7000, gone = Date.now() - STV.t0; // Song-Storys 15 Sekunden, dann nächste Person oder zu
   const nb = ov.querySelector('.stbars i.now'); if (nb && !st.vid) { nb.style.animationDuration = dur + 'ms'; nb.style.animationDelay = -gone + 'ms'; if (STV.delAsk || STV.hold) nb.style.animationPlayState = 'paused'; }
   if (mu) { stAu.loop = true; if (STV.delAsk || STV.hold) stAu.pause(); else stAuPlay(mu, fresh, true); } else stAuStop();
-  stSpPlay(mu ? '' : st.song, g.uid + '/' + st.id); stSwipeWire();
+  stSpPlay(mu ? '' : st.song, g.uid + '/' + st.id); if (stSp?.c) { try { STV.delAsk || STV.hold ? stSp.c.pause() : stSp.c.resume(); } catch {} } stSwipeWire();
   clearTimeout(stTimer);
   const ve = ov.querySelector('video.stvid');
   if (ve && (STV.delAsk || STV.hold)) ve.pause();
@@ -5975,7 +5977,7 @@ function stEditorHTML(){
     <div class="sttexts">${n.texts.map((x, i) => i === n.edit ? '' : `<div ${stTxtAttrs(x, i)}>${esc(x.t)}</div>`).join('')}</div>
     <div class="stfname" id="stfname"${n.hint ? '' : ' hidden'}>${n.hint ? 'Wisch übers Foto für Filter' : esc(fx[1])}</div>
     ${e ? '' : `<div class="sttop"><button class="stic" data-act="st-back" aria-label="Zurück">${ico.x}</button></div>
-    <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button>${n.vid ? `<button class="stic${n.snd ? ' on' : ''}" data-act="st-esnd" aria-label="${n.snd ? 'Ton aus' : 'Ton an'}">${n.snd ? NFI.snd : NFI.mute}</button>` : ''}<button class="stic${n.song || n.mu ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button>${n.tb ? `<button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>` : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}<button class="stic" data-act="st-tag" aria-label="Jemanden markieren">${ico.tag}</button></div>
+    <div class="stside"><button class="stic" data-act="st-aa" aria-label="Text hinzufügen">${ico.aa}</button>${n.vid ? `<button class="stic${n.snd ? ' on' : ''}" data-act="st-esnd" aria-label="${n.snd ? 'Ton aus' : 'Ton an'}">${n.snd ? NFI.snd : NFI.mute}</button>` : ''}<button class="stic${n.song || n.mu ? ' on' : ''}" data-act="st-music" aria-label="Musik">${ico.mu}</button>${n.tb ? `<button class="stic${n.tool === 'bg' ? ' on' : ''}" data-act="st-bg" aria-label="Hintergrund">${ico.gal}</button>` : `<button class="stic" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">${ico.fx}</button>`}</div>
     ${n.tb ? '' : `<button class="stfarrow l" data-act="st-fstep" data-v="-1" aria-label="Vorheriger Filter">‹</button><button class="stfarrow r" data-act="st-fstep" data-v="1" aria-label="Nächster Filter">›</button>`}
     ${n.mu ? `<div class="stemu">${stHeadMu(n.mu)}<button class="stmux2" data-act="st-songx" aria-label="Song entfernen">${NFI.x}</button></div>` : n.song ? `<button class="stsong" data-act="st-music">♪ Spotify-Song</button>` : ''}
     <div class="sttrash" id="sttrash" hidden>${ico.tr}</div>
@@ -6366,7 +6368,7 @@ const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : null;
 const SPOE = {};
 function spOe(url){ if (SPOE[url] !== undefined) return SPOE[url] || null; SPOE[url] = 0;
   (async () => { const j = await jget('https://open.spotify.com/oembed?url=' + encodeURIComponent(url)).catch(() => null) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(url)).catch(() => null);
-    SPOE[url] = j && j.title ? {t:String(j.title).slice(0, 120), art:/^https:\/\/[\w.-]+\.(scdn\.co|spotifycdn\.com)\//.test(j.thumbnail_url || '') ? j.thumbnail_url : ''} : null; softRender(); })(); return null; }
+    SPOE[url] = j && j.title ? {t:String(j.title).slice(0, 120), art:/^https:\/\/[\w.-]+\.(scdn\.co|spotifycdn\.com)\//.test(j.thumbnail_url || '') ? j.thumbnail_url : ''} : null; if (STV) storyPaint(); else softRender(); })(); return null; }
 let PSP = null; // {url, c, playing}
 function pspToggle(url){
   const id = String(url).match(/track\/([A-Za-z0-9]+)/)?.[1]; if (!id) return;
@@ -8310,6 +8312,7 @@ document.addEventListener('click', async e => {
   else if (a === 'st-likes') { const l = stLk(b.dataset.u, b.dataset.id); if (!l.by.size) return toast('Noch keine Likes.'); toast('Gefällt ' + [...l.by].map(id => PROF[id]?.name || 'Jemand').join(', ')); [...l.by].filter(id => !PROF[id]).forEach(id => loadProf(id)); }
   else if (a === 'st-aud') { if (!stNew) return; stNew.pub = b.dataset.v === '1'; stNew.audOk = true; stNew.askAud = false; S.stPub = stNew.pub ? 1 : 0; save(); stShare(); }
   else if (a === 'st-audx') { if (stNew) { stNew.askAud = false; storyPaint(); } }
+  else if (a === 'st-prof' && e.target.closest?.('.sthmu') && stSp?.c) { try { stSp.c.togglePlay(); } catch {} } // Tippen auf den Song: Spotify-Ton an/aus
   else if (a === 'st-prof') { STV = null; storyPaint(); go('profile', id); window.scrollTo(0, 0); } // Name in der Story führt zum Profil (Inaya, 2026-10-11)
   else if ((a === 'st-next' || a === 'st-prev') && !stAuSrc) { stAuUnlock(); if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); } else if (Date.now() - stSwiped > 400) stStep(-1); }
   else if (a === 'st-next') { if (Date.now() - stSwiped > 400) stStep(1); }
