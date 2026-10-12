@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='fc2cac5b1c62';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='debc858f0666';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1383,6 +1383,59 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .stshi .lheart{width:20px;height:20px;color:#e0303a;flex:none}
 /* Interaktive Story-Sticker und Aktivitäten (Inaya, 2026-10-12) */
 .stbox.view .stnav{z-index:1}
+/* Sticker und GIFs (Inaya, 2026-10-12) */
+.sgbtn{background:none;border:0;width:36px;height:36px;padding:6px;flex:none;display:inline-grid;place-items:center;color:inherit;cursor:pointer;opacity:.85}
+.sgbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sgbtn[aria-expanded="true"]{opacity:1;color:#fff}
+.sgp{background:#121214;color:#eeedf2;border-top:1px solid #ffffff1f;display:flex;flex-direction:column;height:min(320px,46vh);font:14px Inter,-apple-system,'Helvetica Neue',Arial,sans-serif;position:relative;z-index:5}
+.sghead{display:flex;align-items:center;gap:2px;padding:6px 8px;border-bottom:1px solid #ffffff14;flex:none}
+.sgmodes,.sgsubs{display:flex;gap:2px}.sgsubs{flex:1}
+.sgsep{width:1px;height:24px;background:#ffffff26;margin:0 6px}
+.sgtab{display:grid;place-items:center;width:42px;height:38px;border:0;border-radius:10px;background:none;color:#a9a8b0;cursor:pointer;padding:0}
+.sgtab svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sgtab[aria-pressed="true"]{background:#ffffff1a;color:#fff}
+.sgmodes .sgtab[aria-pressed="true"]{background:#fff;color:#111}
+.sgx{margin-left:auto}
+.sgsearch{margin:8px 10px 0;flex:none}.sgsearch svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}.sgsearch input{flex:1;min-width:0;border:0;background:none;color:inherit;font:inherit;padding:9px 0;outline:none}
+.sgbody{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:8px 10px 12px;-webkit-overflow-scrolling:touch}
+.sggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px}
+.sggrid.gifs{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+.sgt{position:relative;aspect-ratio:1}
+.sgt.gif{aspect-ratio:4/3}
+.sgi{width:100%;height:100%;display:grid;place-items:center;border:0;border-radius:10px;background:none;padding:4px;cursor:pointer;color:inherit;overflow:hidden}
+.sgi:hover,.sgi:focus-visible{background:#ffffff12}
+.sgi svg,.sgi img{width:100%;height:100%;object-fit:contain;display:block}
+.sgt.gif .sgi{padding:0;background:#1d1d20}.sgt.gif .sgi img{object-fit:cover}
+.sgi .sgemo,.msgstk .sgemo{width:82%;height:82%}
+.sgmake{display:grid;place-content:center;justify-items:center;gap:2px;border:1.5px dashed #ffffff40;color:#cfcdd6}
+.sgmake svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8}.sgmake small{font-size:11px}
+.sgstar,.sgdel{position:absolute;top:2px;width:22px;height:22px;border:0;border-radius:50%;background:#000000a6;color:#bdbcc4;display:grid;place-items:center;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
+.sgstar{right:2px}.sgdel{left:2px}
+.sgstar svg,.sgdel svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.sgstar[aria-pressed="true"]{opacity:1;color:#f2d16b}.sgstar[aria-pressed="true"] svg{fill:currentColor}
+.sgt:hover .sgstar,.sgt:hover .sgdel,.sgt:focus-within .sgstar,.sgt:focus-within .sgdel{opacity:1}
+@media (hover:none){.sgstar,.sgdel{opacity:.85}}
+.sgnote{text-align:center;opacity:.7;margin:18px 8px;font-size:13px}
+.sgby{text-align:center;opacity:.5;font-size:11px;margin:10px 0 0}
+.msgstk{display:block;width:132px;height:132px;padding:0;border:0;background:none;cursor:pointer}
+.msgstk svg,.msgstk img{width:100%;height:100%;object-fit:contain;display:block}
+.msggif{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:10px;overflow:hidden;max-width:220px}
+.msggif img{display:block;width:100%;height:auto;max-height:260px;object-fit:cover}
+.bub .msgstk{width:110px;height:110px;margin-top:4px}.bub .msggif{max-width:200px;margin-top:4px}
+.sgmini{position:fixed;z-index:3300;background:#1b1b1e;border:1px solid #ffffff2a;border-radius:12px;padding:4px;box-shadow:0 8px 24px #0009}
+.sgmini button{display:flex;align-items:center;gap:8px;border:0;background:none;color:#eeedf2;font:14px Inter,-apple-system,Arial,sans-serif;padding:8px 12px;cursor:pointer}
+.sgmini svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.sgmk{position:fixed;inset:0;z-index:3200}
+.sgmkb{position:absolute;inset:0;background:#000000b3}
+.sgmkp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(380px,100%);max-height:100%;overflow:auto;background:#121214;color:#eeedf2;border:1px solid #ffffff26;display:grid;gap:12px;padding-bottom:16px;font:14px Inter,-apple-system,Arial,sans-serif}
+.sgmkp .pcfx svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8}
+.sgmkc{display:grid;place-items:center;padding:0 16px}
+#sg-cv{width:min(300px,78vw);height:auto;aspect-ratio:1;touch-action:none;border-radius:8px;cursor:grab}
+.sgmkz{display:flex;align-items:center;gap:10px;padding:0 16px}.sgmkz input{flex:1}
+.sgmks{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px}
+.sgmkf{padding:0 16px}
+.sgmks .chip{border:1px solid #ffffff33;background:none;color:inherit;border-radius:999px;padding:7px 13px;font:inherit;cursor:pointer}.sgmks .chip[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}
+@media (max-width:760px){.sgp{height:min(300px,44vh)}.sgmkp{inset:0;transform:none;left:0;top:0;width:100%;height:100%;border:0;align-content:start;padding-top:env(safe-area-inset-top,0px)}}
 .mshfull{width:min(300px,72vw);cursor:pointer;margin-bottom:2px}
 .mshfull .feed{margin:0;padding:0;gap:0}
 .mshfull article.post{margin:0;pointer-events:none}
@@ -1401,7 +1454,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .zcard .phl{margin-bottom:12px}
 }
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
-.bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}
+.bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}.bubble.shcard>.meta,.themed .bubble.me.shcard>.meta,.bubble.me.shcard>.meta .lnk,.bubble.me.shcard>.meta .mdel,.bubble.me.shcard>.meta .mdelb{color:#f2f1f5!important;opacity:1}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
 .pbar .shbtn{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;padding:0;color:inherit;cursor:pointer;margin-left:auto}
 .pbar .rpbtn ~ .shbtn{margin-left:auto}.pbar .rpbtn:has(~ .shbtn){margin-left:0}
@@ -5495,7 +5548,7 @@ function cmMention(b){
 function cbub(uid, name, text, ts, del, k, img='', extra='', men=null){
   const u = uid === social?.uid ? me() : S.users[uid] || (PROF[uid] ? profUser(uid) : null);
   if (!u && uid && social && !CMH[uid]) { CMH[uid] = 1; loadProf(uid).then(() => k ? piDraw(k) : softRender()); }
-  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit || u?.pic ? headPic(u) : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${men?.length ? mentionHTML(etx(text), men, 'profile') : etx(text)}</span>` : ''}${img && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
+  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit || u?.pic ? headPic(u) : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${men?.length ? mentionHTML(etx(text), men, 'profile') : etx(text)}</span>` : ''}${img && typeof img === 'object' ? sgMsgHTML(img) : ''}${typeof img === 'string' && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
 }
 function piInner(p, full){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
@@ -5509,7 +5562,7 @@ function piInner(p, full){
   const cmLikeHTML = (k, d, can) => { if (/^h\d/.test(d)) return ''; const l = clk[d], n = l?.size || 0, on = !!l?.has(uid); return can ? `<button type="button" class="cmlike" data-act="pc-like" data-k="${k}" data-d="${esc(d)}" aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Kommentar gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="cmlike">${HEART(false)}<span>${n}</span></span>` : ''; };
   const pinD = owner.startsWith('helper-') ? null : list.find(x => x.kind === 'pin' && x.by === owner)?.c; // ein fixierter Kommentar, nur vom Beitragsbesitzer (Inaya, 2026-10-12)
   const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
-  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', owner === uid && c === top && !/^h\d/.test(c.did) ? `<button class="lnk" data-act="pc-pin" data-k="${k}" data-d="${esc(c.did)}">${c.did === pinD ? 'lösen' : 'fixieren'}</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img, cmLikeHTML(k, c.did, can), c.men);
+  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', owner === uid && c === top && !/^h\d/.test(c.did) ? `<button class="lnk" data-act="pc-pin" data-k="${k}" data-d="${esc(c.did)}">${c.did === pinD ? 'lösen' : 'fixieren'}</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, sgClean(c.stk || c.gif) || c.img, cmLikeHTML(k, c.did, can), c.men);
   const cm = all.filter(c => !reOf(c)).sort((a, b) => (b.did === pinD) - (a.did === pinD)).map(c => {
     const rs = all.filter(r => reOf(r) === c.did), open = CMOPEN.has(k + '/' + c.did);
     return `<div class="cthread${c.did === pinD ? ' cpin' : ''}">${c.did === pinD ? '<small class="cpinl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg>Fixiert</small>' : ''}${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
@@ -8037,7 +8090,7 @@ async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
-    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.post ? '🖼 Beitrag' : extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
+    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.stk ? 'Sticker' : extra.gif ? 'GIF' : extra.post ? '🖼 Beitrag' : extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
     return true;
   } catch { toast('Die Nachricht ging nicht raus. Hast du Schreibrechte für Noctibat?'); return false; }
 }
@@ -8074,6 +8127,153 @@ const EMOS = {
 };
 const emoSVG = k => { const e = EMOS[k]; return e ? `<svg class="emo" viewBox="0 0 24 24" role="img" aria-label="${e[0]}"><title>${e[0]}</title><path d="${SKULL}" fill="#ecebe7" stroke="${EK}" stroke-width="1.1"/>${e[1]}<path d="M12 12.6l-1.1 1.9h2.2Z" fill="${EK}"/>${e[2]}</svg>` : ''; };
 const etx = t => esc(t || '').replace(/:([a-z]+):/g, (m, k) => EMOS[k] ? emoSVG(k) : m);
+/* ---------- Sticker und GIFs wie bei WhatsApp (Inaya, 2026-10-12) ---------- */
+const SG_ICO = {
+  stk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/><path d="M9 11.5v.5M15 11.5v.5"/><path d="M8.5 15c1.8 1.6 5.2 1.6 7 0"/></svg>',
+  own:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h9l4 4v3"/><path d="M13 4v4h4"/><path d="M4 4v16h8"/><path d="M8 11v.5M12 11v.5"/><path d="M7.5 14.5c1.4 1.2 3.6 1.3 5 .4"/><path d="M18 14v7M14.5 17.5h7"/></svg>',
+  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"/></svg>',
+  gif:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M10 10.2c-.4-.7-1-1-1.8-1C7 9.2 6.2 10.3 6.2 12s.8 2.8 2 2.8c1 0 1.8-.6 1.8-1.8V12H8.3M12.5 9.3v5.4M15.5 14.7V9.3h3M15.5 12h2.4"/></svg>',
+  srch:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>',
+  x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+};
+const SG = {form:null, mode:'s', sub:'all', gsub:'srch', q:'', res:[], err:'', busy:false, own:null, fav:null, key:null, view:[], mk:null};
+const sgOkImg = s => typeof s === 'string' && /^data:image\/(png|webp|jpeg|gif);base64,/.test(s) && s.length < 700000;
+const sgOkGif = s => typeof s === 'string' && /^https:\/\/(media\d*|i)\.giphy\.com\/[\w\/.\-]+(\?[\w=&.\-]*)?$/.test(s);
+function sgClean(p){ if (!p || typeof p !== 'object') return null;
+  if (p.k && STK[p.k]) return {k:p.k}; if (p.e && EMOS[p.e]) return {e:p.e}; if (sgOkImg(p.img)) return {img:p.img};
+  if (sgOkGif(p.u)) return {u:p.u, ...(sgOkGif(p.pv) ? {pv:p.pv} : {}), w:+p.w || 200, h:+p.h || 200}; return null; }
+const sgHash = s => { let h = 0; for (let i = 0; i < s.length; i += 7) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + s.length.toString(36); };
+const sgKey = p => p.k ? 'b' + p.k : p.e ? 'e' + p.e : p.u ? 'g' + sgHash(p.u) : 'i' + sgHash(p.img || '');
+const sgIsGif = p => !!p?.u;
+function sgItemHTML(p, big){ p = sgClean(p); if (!p) return '';
+  if (p.k) return stkSVG(p.k); if (p.e) return emoSVG(p.e).replace('class="emo"', 'class="emo sgemo"');
+  if (p.img) return `<img src="${esc(p.img)}" alt="Sticker" draggable="false">`;
+  return `<img src="${esc(big ? p.u : (p.pv || p.u))}" alt="GIF" loading="lazy" draggable="false"${big ? ` width="${p.w}" height="${p.h}"` : ''}>`; }
+// Chat und Kommentare zeigen Sticker ohne Blase, GIFs wie ein Foto
+const sgMsgHTML = (p, ctx='') => { p = sgClean(p); if (!p) return ''; return `<button type="button" class="${sgIsGif(p) ? 'msggif' : 'msgstk'}" data-act="sg-tapmsg" data-p="${esc(JSON.stringify(p))}" aria-label="${sgIsGif(p) ? 'GIF' : 'Sticker'}">${sgItemHTML(p, true)}</button>`; };
+// Bibliothek: eigene Sticker und Favoriten liegen privat beim Nutzer (data/users/<uid>/...)
+const sgCol = n => social ? social.db.collection(`data/users/${social.uid}/nf-sg/${n}`) : null;
+async function sgLoad(){
+  if (SG.own && SG.fav) return;
+  if (!social) { SG.own = S.sgOwn || []; SG.fav = S.sgFav || []; return; }
+  const rd = async n => { try { const q = await sgCol(n).get(); return q.docs.map(d => ({id:d.id, ...d.data()})).sort((a, b) => (b.ts || 0) - (a.ts || 0)); } catch { return []; } };
+  [SG.own, SG.fav] = await Promise.all([rd('stk'), rd('sgfav')]);
+  SG.own = SG.own.filter(x => sgOkImg(x.img)); SG.fav = SG.fav.map(x => ({...x, p:sgClean(x.p)})).filter(x => x.p);
+}
+async function sgGifKey(){ if (SG.key !== null) return SG.key; SG.key = ''; if (social) { try { const d = await social.db.doc('site/gif').get(); SG.key = (d.exists && d.data().giphy) || ''; } catch {} } return SG.key; }
+const sgFavHas = p => !!SG.fav?.some(x => x.id === sgKey(p));
+async function sgFavToggle(p){ p = sgClean(p); if (!p) return; await sgLoad(); const id = sgKey(p);
+  if (sgFavHas(p)) { SG.fav = SG.fav.filter(x => x.id !== id); if (social) sgCol('sgfav').doc(id).delete().catch(() => {}); else { S.sgFav = SG.fav; save(); } toast('Aus Favoriten entfernt'); }
+  else { const x = {id, p, ts:Date.now()}; SG.fav.unshift(x); if (social) sgCol('sgfav').doc(id).set({p, ts:x.ts}).catch(() => toast('Favorit konnte nicht gespeichert werden.')); else { S.sgFav = SG.fav; save(); } toast('Zu Favoriten hinzugefügt'); } }
+function sgList(){
+  if (SG.mode === 'g') return SG.gsub === 'fav' ? (SG.fav || []).filter(x => sgIsGif(x.p)).map(x => x.p) : SG.res;
+  if (SG.sub === 'fav') return (SG.fav || []).filter(x => !sgIsGif(x.p)).map(x => x.p);
+  if (SG.sub === 'own') return (SG.own || []).map(x => ({img:x.img, _own:x.id}));
+  return [...Object.keys(STK).map(k => ({k})), ...Object.keys(EMOS).map(e => ({e}))];
+}
+function sgGrid(){
+  const l = SG.view = sgList(), g = SG.mode === 'g', own = !g && SG.sub === 'own';
+  const tiles = l.map((p, i) => `<div class="sgt${g ? ' gif' : ''}"><button type="button" class="sgi" data-act="sg-send" data-i="${i}" aria-label="${g ? 'GIF' : 'Sticker'} senden">${sgItemHTML(p)}</button><button type="button" class="sgstar" data-act="sg-fav" data-i="${i}" aria-pressed="${sgFavHas(p)}" aria-label="${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}">${SG_ICO.star}</button>${own ? `<button type="button" class="sgdel" data-act="sg-del" data-i="${i}" aria-label="Sticker löschen">${SG_ICO.x}</button>` : ''}</div>`).join('');
+  const make = own ? `<div class="sgt"><label class="sgi sgmake" aria-label="Eigenen Sticker erstellen"><input type="file" id="sg-file" accept="image/*" hidden>${SG_ICO.plus}<small>Erstellen</small></label></div>` : '';
+  let empty = '';
+  if (!l.length) empty = !SG.own || !SG.fav ? '<p class="sgnote">Lädt …</p>' : g ? (SG.gsub === 'fav' ? '<p class="sgnote">Noch keine GIF-Favoriten. Tipp bei einem GIF auf den Stern.</p>' : SG.busy ? '<p class="sgnote">Sucht …</p>' : `<p class="sgnote">${esc(SG.err || 'Keine GIFs gefunden.')}</p>`) : SG.sub === 'fav' ? '<p class="sgnote">Noch keine Favoriten. Tipp bei einem Sticker auf den Stern.</p>' : own ? '' : '';
+  return `<div class="sggrid${g ? ' gifs' : ''}">${make}${tiles}</div>${empty}${g && SG.gsub === 'srch' && SG.key ? '<p class="sgby">Powered by GIPHY</p>' : ''}`;
+}
+function sgPanelHTML(){
+  const t = (act, v, on, ico, lbl) => `<button type="button" class="sgtab" data-act="${act}" data-v="${v}" aria-pressed="${on}" aria-label="${lbl}" title="${lbl}">${ico}</button>`;
+  const sub = SG.mode === 's' ? `${t('sg-sub', 'fav', SG.sub === 'fav', SG_ICO.star, 'Favoriten')}${t('sg-sub', 'all', SG.sub === 'all', SG_ICO.stk, 'Alle Sticker')}${t('sg-sub', 'own', SG.sub === 'own', SG_ICO.own, 'Eigene Sticker')}`
+    : `${t('sg-gsub', 'fav', SG.gsub === 'fav', SG_ICO.star, 'GIF-Favoriten')}${t('sg-gsub', 'srch', SG.gsub === 'srch', SG_ICO.srch, 'GIFs suchen')}`;
+  const search = SG.mode === 'g' && SG.gsub === 'srch' ? `<label class="musearch sgsearch">${SG_ICO.srch}<input type="search" id="sg-q" placeholder="GIFs suchen …" value="${esc(SG.q)}" autocomplete="off" enterkeyhint="search" aria-label="GIFs suchen"></label>` : '';
+  return `<div class="sghead"><div class="sgmodes">${t('sg-mode', 's', SG.mode === 's', SG_ICO.stk, 'Sticker')}${t('sg-mode', 'g', SG.mode === 'g', SG_ICO.gif, 'GIFs')}</div><span class="sgsep" aria-hidden="true"></span><div class="sgsubs">${sub}</div><button type="button" class="sgtab sgx" data-act="sg-close" aria-label="Schließen">${SG_ICO.x}</button></div>${search}<div class="sgbody" id="sg-body">${sgGrid()}</div>`;
+}
+function sgPaint(keepQ){ const el = document.getElementById('sgp'); if (!el) return; if (keepQ) { const b = document.getElementById('sg-body'); if (b) { b.innerHTML = sgGrid(); return; } } const st = el.querySelector('.sgbody')?.scrollTop || 0; el.innerHTML = sgPanelHTML(); const b = el.querySelector('.sgbody'); if (b) b.scrollTop = st; }
+async function sgOpen(btn){
+  const f = btn.closest('form'); if (!f) return; const ex = document.getElementById('sgp');
+  if (ex && SG.form === f) return sgClose();
+  ex?.remove(); SG.form = f; document.querySelectorAll('.emopop').forEach(x => x.remove());
+  const el = document.createElement('div'); el.id = 'sgp'; el.className = 'sgp'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Sticker und GIFs');
+  SG.el = el; f.insertAdjacentElement('afterend', el); f.classList.add('sgopen'); btn.setAttribute('aria-expanded', 'true');
+  if (isMob()) document.activeElement?.blur?.(); // wie bei WhatsApp: das Menü ersetzt die Tastatur
+  el.innerHTML = sgPanelHTML(); await sgLoad(); if (SG.mode === 'g' && !SG.res.length) sgSearch(); sgPaint();
+  if (f.dataset.form === 'cmsg') { const mb = document.getElementById('msgs'); if (mb) mb.scrollTop = mb.scrollHeight; }
+}
+function sgClose(){ document.getElementById('sgp')?.remove(); SG.el = null; SG.form?.classList.remove('sgopen'); SG.form?.querySelector('.sgbtn')?.setAttribute('aria-expanded', 'false'); SG.form = null; }
+let sgQT = null;
+async function sgSearch(){
+  const k = await sgGifKey(), q = SG.q.trim();
+  if (!k) { SG.res = []; SG.err = amOwner ? 'Die GIF-Suche ist noch nicht eingerichtet. Trag unter Einstellungen deinen GIPHY-Schlüssel ein.' : 'Die GIF-Suche ist noch nicht eingerichtet.'; sgPaint(true); return; }
+  SG.busy = true; SG.err = ''; sgPaint(true); const my = (SG.qn = (SG.qn || 0) + 1);
+  try {
+    const r = await fetch(`https://api.giphy.com/v1/gifs/${q ? 'search' : 'trending'}?api_key=${encodeURIComponent(k)}&limit=30&rating=pg-13&lang=de${q ? '&q=' + encodeURIComponent(q) : ''}`);
+    if (!r.ok) throw new Error(r.status); const d = await r.json(); if (my !== SG.qn) return;
+    SG.res = (d.data || []).map(x => { const a = x.images?.fixed_width || {}, s = x.images?.fixed_width_small || a; return sgClean({u:(a.url || '').split('?')[0], pv:(s.url || '').split('?')[0], w:+a.width, h:+a.height}); }).filter(Boolean);
+    if (!SG.res.length) SG.err = 'Keine GIFs gefunden.';
+  } catch { if (my !== SG.qn) return; SG.res = []; SG.err = 'GIFs konnten gerade nicht geladen werden.'; }
+  SG.busy = false; sgPaint(true);
+}
+async function sgSend(p){
+  p = sgClean(p); const f = SG.form; if (!p || !f || !social) return; const kind = sgIsGif(p) ? 'gif' : 'stk';
+  if (f.dataset.form === 'cmsg') { if (CH.open) await sendMsg(CH.open, '', {[kind]:p}); return; }
+  if (f.dataset.form === 'pcomment') { const k = f.dataset.k; if (!k) return;
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text:'', [kind]:p, by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { toast('Das hat nicht geklappt. Versuch es nochmal.'); }
+    piDraw(k); }
+}
+// Eigenen Sticker erstellen: Bild verschieben, zoomen, Form und weißer Rand
+const SGSH = [['orig','Original'],['circ','Kreis'],['heart','Herz'],['star','Stern'],['sq','Quadrat']];
+function sgShapePath(sh, S0){ const p = new Path2D(), c = S0 / 2;
+  if (sh === 'circ') p.arc(c, c, S0 * .46, 0, Math.PI * 2);
+  else if (sh === 'sq') { const m = S0 * .06, r = S0 * .12, w = S0 - 2 * m; p.roundRect ? p.roundRect(m, m, w, w, r) : p.rect(m, m, w, w); }
+  else if (sh === 'heart') { const q = new Path2D('M50 90C20 69 5 52 5 33 5 18 16 8 29 8c9 0 16 5 21 13 5-8 12-13 21-13 13 0 24 10 24 25 0 19-15 36-45 57z'); p.addPath(q, new DOMMatrix().scale(S0 / 100)); }
+  else if (sh === 'star') { const n = 5, R = S0 * .48, r = S0 * .22; for (let i = 0; i < n * 2; i++) { const a = (-90 + i * 180 / n) * Math.PI / 180, q = i % 2 ? r : R; i ? p.lineTo(c + Math.cos(a) * q, c + Math.sin(a) * q * 1.02 + S0 * .03) : p.moveTo(c + Math.cos(a) * q, c + Math.sin(a) * q + S0 * .03); } p.closePath(); }
+  else p.rect(0, 0, S0, S0); return p; }
+function sgDraw(cv, out){
+  const m = SG.mk; if (!m || !cv) return; const S0 = cv.width, x = cv.getContext('2d'); x.clearRect(0, 0, S0, S0);
+  const sc = Math.max(S0 / m.img.width, S0 / m.img.height) * m.z, w = m.img.width * sc, h = m.img.height * sc, dx = (S0 - w) / 2 + m.x * S0, dy = (S0 - h) / 2 + m.y * S0;
+  if (m.sh === 'orig') { const fit = Math.min(S0 / m.img.width, S0 / m.img.height) * m.z, fw = m.img.width * fit, fh = m.img.height * fit; x.drawImage(m.img, (S0 - fw) / 2 + m.x * S0, (S0 - fh) / 2 + m.y * S0, fw, fh); }
+  else { const P = sgShapePath(m.sh, S0); if (m.rim) { x.save(); x.lineWidth = S0 * .07; x.lineJoin = 'round'; x.strokeStyle = '#fff'; x.stroke(P); x.restore(); } x.save(); x.clip(P); x.drawImage(m.img, dx, dy, w, h); x.restore(); }
+  if (!out) { x.save(); x.globalCompositeOperation = 'destination-over'; const t = S0 / 12; for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) { x.fillStyle = (i + j) % 2 ? '#2a2a2e' : '#1e1e21'; x.fillRect(i * t, j * t, t, t); } x.restore(); }
+}
+function sgMkHTML(){ const m = SG.mk;
+  return `<div class="sgmkb" data-act="sg-mkx"></div><div class="sgmkp" role="dialog" aria-label="Sticker erstellen"><header class="pcfh"><button type="button" class="pcfx" data-act="sg-mkx" aria-label="Abbrechen">${SG_ICO.x}</button><b>Sticker erstellen</b><span></span></header>
+  <div class="sgmkc"><canvas id="sg-cv" width="300" height="300" aria-label="Vorschau, mit dem Finger verschieben"></canvas></div>
+  <label class="sgmkz"><span>Größe</span><input type="range" id="sg-z" min="0.4" max="3" step="0.01" value="${m.z}"></label>
+  <div class="sgmks">${SGSH.map(([v, l]) => `<button type="button" class="chip" data-act="sg-mksh" data-v="${v}" aria-pressed="${m.sh === v}">${l}</button>`).join('')}${m.sh !== 'orig' ? `<button type="button" class="chip" data-act="sg-mkrim" aria-pressed="${m.rim}">Weißer Rand</button>` : ''}</div>
+  <div class="row sgmkf"><span class="sp"></span><button type="button" class="btn" data-act="sg-mkok">Sticker speichern</button></div></div>`; }
+function sgMkPaint(){ let el = document.getElementById('sgmk'); if (!el) { el = document.createElement('div'); el.id = 'sgmk'; el.className = 'sgmk'; document.body.appendChild(el); } el.innerHTML = sgMkHTML(); sgDraw(document.getElementById('sg-cv')); }
+async function sgMkSave(){
+  const m = SG.mk; if (!m) return; const cv = document.createElement('canvas'); let img = '';
+  for (const s of [256, 200, 160]) { cv.width = cv.height = s; sgDraw(cv, true); img = cv.toDataURL('image/webp', .86); if (!img.startsWith('data:image/webp')) img = cv.toDataURL('image/png'); if (img.length < 260000) break; }
+  if (!sgOkImg(img)) return toast('Das Bild ist zu groß.');
+  await sgLoad(); const x = {id:'s' + Date.now().toString(36), img, ts:Date.now()};
+  if (social) { try { await sgCol('stk').doc(x.id).set({img, ts:x.ts}); } catch { return toast('Der Sticker konnte nicht gespeichert werden.'); } } else { S.sgOwn = [x, ...(S.sgOwn || [])].slice(0, 60); save(); }
+  SG.own.unshift(x); SG.mk = null; document.getElementById('sgmk')?.remove(); SG.mode = 's'; SG.sub = 'own'; sgPaint(); toast('Sticker gespeichert');
+}
+document.addEventListener('change', e => {
+  if (e.target.id !== 'sg-file') return; const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
+  const url = URL.createObjectURL(file), img = new Image(); img.onload = () => { SG.mk = {img, z:1, x:0, y:0, sh:'circ', rim:true}; sgMkPaint(); }; img.onerror = () => toast('Dieses Bild lässt sich nicht öffnen.'); img.src = url;
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'sg-z' && SG.mk) { SG.mk.z = +e.target.value; sgDraw(document.getElementById('sg-cv')); }
+  else if (e.target.id === 'sg-q') { SG.q = e.target.value; clearTimeout(sgQT); sgQT = setTimeout(sgSearch, 380); }
+});
+document.addEventListener('keydown', e => { if (e.target.id === 'sg-q' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+{ let drag = null, pts = new Map();
+  document.addEventListener('pointerdown', e => { if (e.target.id !== 'sg-cv' || !SG.mk) return; e.preventDefault(); e.target.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); drag = {x:SG.mk.x, y:SG.mk.y, z:SG.mk.z, p:[...pts.values()].map(a => [...a])}; });
+  document.addEventListener('pointermove', e => { if (!drag || !pts.has(e.pointerId) || !SG.mk) return; pts.set(e.pointerId, [e.clientX, e.clientY]); const cv = document.getElementById('sg-cv'); if (!cv) return; const W = cv.getBoundingClientRect().width, P = [...pts.values()];
+    if (P.length > 1 && drag.p.length > 1) { const d0 = Math.hypot(drag.p[0][0] - drag.p[1][0], drag.p[0][1] - drag.p[1][1]) || 1, d1 = Math.hypot(P[0][0] - P[1][0], P[0][1] - P[1][1]); SG.mk.z = Math.max(.4, Math.min(3, drag.z * d1 / d0)); const zi = document.getElementById('sg-z'); if (zi) zi.value = SG.mk.z; }
+    else { SG.mk.x = drag.x + (P[0][0] - drag.p[0][0]) / W; SG.mk.y = drag.y + (P[0][1] - drag.p[0][1]) / W; }
+    sgDraw(cv); });
+  const up = e => { pts.delete(e.pointerId); if (drag && SG.mk) drag = pts.size ? {x:SG.mk.x, y:SG.mk.y, z:SG.mk.z, p:[...pts.values()].map(a => [...a])} : null; };
+  document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up); }
+// Getippter Sticker/GIF im Chat oder Kommentar: zu den Favoriten
+function sgTapMsg(b){ document.querySelectorAll('.sgmini').forEach(x => x.remove()); let p; try { p = sgClean(JSON.parse(b.dataset.p)); } catch {} if (!p) return;
+  sgLoad().then(() => { const r = b.getBoundingClientRect(), el = document.createElement('div'); el.className = 'sgmini'; el.innerHTML = `<button type="button" data-act="sg-minifav">${SG_ICO.star}${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}</button>`; el._p = p;
+    document.body.appendChild(el); el.style.left = Math.max(8, Math.min(r.left, innerWidth - el.offsetWidth - 8)) + 'px'; el.style.top = Math.max(8, r.top - el.offsetHeight - 6) + 'px'; }); }
+document.addEventListener('click', e => { if (!e.target.closest('.sgmini,[data-act=sg-tapmsg]')) document.querySelectorAll('.sgmini').forEach(x => x.remove()); }, true);
+// Inaya: GIPHY-Schlüssel nur für die Seiten-Besitzerin
+function gifKeyCard(){ if (!amOwner || !social) return ''; sgGifKey().then(k => { const i = document.getElementById('gk-in'); if (i && !i.value && k) i.value = k; });
+  return `<div class="card"><h2 class="card-h">GIF-Suche</h2><div class="card-in"><p class="note">Trag hier deinen kostenlosen GIPHY-Schlüssel ein (developers.giphy.com → Create an API Key). Danach können alle GIFs suchen.</p><form data-form="gifkey" class="row" style="gap:8px;flex-wrap:wrap"><input id="gk-in" type="text" autocomplete="off" spellcheck="false" placeholder="GIPHY-Schlüssel" aria-label="GIPHY-Schlüssel" style="flex:1;min-width:200px"><button class="btn" type="submit">Speichern</button></form></div></div>`; }
 function emoPick(btn){
   document.querySelectorAll('.emopop').forEach(x => x.remove());
   const f = btn.closest('form')?.querySelector('#' + CSS.escape(btn.dataset.for)) || document.getElementById(btn.dataset.for); if (!f) return; // im Kommentarfenster gibt es dieselbe ID noch im Salon dahinter
@@ -8157,11 +8357,17 @@ function addEmoButtons(){
     if (f.querySelector('.emobtn')) return;
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
-    const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>`;
+    const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>` + (social && /^(cmsg|pcomment)$/.test(f.dataset.form) ? `<button type="button" class="sgbtn" data-act="sg-open" aria-expanded="false" aria-label="Sticker und GIFs" title="Sticker und GIFs">${SG_ICO.stk}</button>` : '');
     const pf = f.querySelector('.pcfield'), tw = isMob() && f.querySelector('.ptwrap'); if (tw) tw.insertAdjacentHTML('beforeend', eb); else if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
-new MutationObserver(addEmoButtons).observe(document.documentElement, {childList:true, subtree:true});
+function sgReattach(){ // nach dem Neuzeichnen bleibt das Sticker-Menü offen
+  const f = SG.form, el = SG.el; if (!f || !el || f.isConnected) return;
+  const sel = `form[data-form="${f.dataset.form}"]` + (f.dataset.k ? `[data-k="${CSS.escape(f.dataset.k)}"]` : ''), nf = document.querySelector('#cmv ' + sel) || document.querySelector(sel);
+  if (!nf) { SG.form = null; SG.el = null; return; }
+  SG.form = nf; nf.classList.add('sgopen'); nf.querySelector('.sgbtn')?.setAttribute('aria-expanded', 'true'); nf.insertAdjacentElement('afterend', el);
+}
+new MutationObserver(() => { addEmoButtons(); sgReattach(); }).observe(document.documentElement, {childList:true, subtree:true});
 /* ---------- Kommentare auf Profilen (geteilt, in chats/wall_<uid>/m) ---------- */
 const WL = {uid:null, unsub:null, list:[]};
 function wallSync(){
@@ -8218,6 +8424,7 @@ async function vmPlay(id, at){
   finally { document.querySelectorAll('.vmplay.busy').forEach(x => x.classList.remove('busy')); vmPaint(); }
 }
 function msgMedia(m){
+  if (m.stk || m.gif) { const h = sgMsgHTML(m.stk || m.gif); if (h) return h; }
   if (m.story && m.story.sh) { const x = m.story, ou = x.u === social?.uid ? me() : profUser(x.u), nm = ou?.name || x.n || 'Jemand', gone = x.ts && Date.now() - x.ts > STORY_H; if (!ou && x.u && social && !NT.asked[x.u]) { NT.asked[x.u] = 1; loadProf(x.u).then(softRender); }
     return `<button type="button" class="mshst" data-act="st-opensh" data-u="${esc(x.u || '')}" data-id="${esc(x.id || '')}" aria-label="Story von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${!gone && x.th ? `<img src="${esc(x.th)}" alt="">` : `<span class="mshna">Story nicht mehr verfügbar</span>`}</button>`; }
   if (m.post) { const x = m.post, ou = x.a === social?.uid ? me() : profUser(x.a), nm = ou?.name || x.n || 'Jemand'; if (!ou && x.a && social && !NT.asked[x.a]) { NT.asked[x.a] = 1; loadProf(x.a).then(softRender); }
@@ -8242,7 +8449,7 @@ function msgLink(t){
 }
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid;
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh ? ' shcard' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
 // Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
 const isDel = id => !!(S.nfDel && S.nfDel[id]);
@@ -8744,7 +8951,7 @@ function settingsView(){
     <div class="row"><button class="btn ghost logoutbtn" data-act="logout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3h9v18"/><path d="M5 3l5 2.2v14.6L5 21" fill="currentColor" fill-opacity=".18"/><circle cx="8.6" cy="12.4" r=".6" fill="currentColor"/><path d="M2.5 21h12.5"/><path d="M16 12h6.5M19.5 9l3 3-3 3"/></svg>Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
-  </div></div>${reportsCard()}${membersCard()}`;
+  </div></div>${reportsCard()}${gifKeyCard()}${membersCard()}`;
 }
 
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
@@ -9382,6 +9589,21 @@ document.addEventListener('click', async e => {
   else if (a === 'st-tag') { if (stNew) { stNewText(62); stNew.texts[stNew.edit].t = '@'; storyPaint(); } }
   else if (a === 'st-bg') { if (stNew) { stNew.tool = stNew.tool === 'bg' ? null : 'bg'; storyPaint(); } }
   else if (a === 'st-stk') { if (stNew) { stNew.tool = stNew.tool === 'stk' ? null : 'stk'; storyPaint(); } }
+  else if (a === 'sg-open') { sgOpen(b); }
+  else if (a === 'sg-close') { sgClose(); }
+  else if (a === 'sg-mode') { SG.mode = b.dataset.v; sgPaint(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
+  else if (a === 'sg-sub') { SG.sub = b.dataset.v; sgPaint(); }
+  else if (a === 'sg-gsub') { SG.gsub = b.dataset.v; sgPaint(); if (SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
+  else if (a === 'sg-send') { const p = SG.view[+b.dataset.i]; if (p) sgSend(p); }
+  else if (a === 'sg-fav') { const p = SG.view[+b.dataset.i]; if (p) { await sgFavToggle(p); sgPaint(true); } }
+  else if (a === 'sg-del') { const p = SG.view[+b.dataset.i]; if (!p?._own) return; if (!await askYesNo('Diesen Sticker löschen?', 'Ja, löschen', 'Nein')) return;
+    SG.own = SG.own.filter(x => x.id !== p._own); if (social) sgCol('stk').doc(p._own).delete().catch(() => {}); else { S.sgOwn = SG.own; save(); } sgPaint(true); }
+  else if (a === 'sg-mkx') { SG.mk = null; document.getElementById('sgmk')?.remove(); }
+  else if (a === 'sg-mksh') { if (SG.mk) { SG.mk.sh = b.dataset.v; sgMkPaint(); } }
+  else if (a === 'sg-mkrim') { if (SG.mk) { SG.mk.rim = !SG.mk.rim; sgMkPaint(); } }
+  else if (a === 'sg-mkok') { b.disabled = true; await sgMkSave(); }
+  else if (a === 'sg-tapmsg') { sgTapMsg(b); }
+  else if (a === 'sg-minifav') { const m = b.closest('.sgmini'), p = m?._p; m?.remove(); if (p) sgFavToggle(p); }
   else if (a === 'post-send') { shpOpen(b); }
   else if (a === 'shp-sel') { const id = b.dataset.id; SHP.sel.has(id) ? SHP.sel.delete(id) : SHP.sel.add(id); b.setAttribute('aria-pressed', SHP.sel.has(id)); }
   else if (a === 'shp-x') { shpClose(); }
@@ -9735,6 +9957,9 @@ document.addEventListener('submit', async e => {
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
     if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
+  } else if (t === 'gifkey') {
+    if (!amOwner || !social) return; const k = val('gk-in').trim();
+    try { await social.db.doc('site/gif').set({giphy:k}); SG.key = k; SG.res = []; toast(k ? 'GIF-Suche eingerichtet' : 'GIF-Schlüssel entfernt'); } catch { toast('Speichern hat nicht geklappt.'); }
   } else if (t === 'pcomment') {
     const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k]; if ((!text && !img) || !social) return;
     const rp = CMRE[k], men = (CMEN[k] || []).filter((m, i, l) => text.includes('@' + m.n) && l.findIndex(x => x.id === m.id) === i).slice(0, 10); inp.value = ''; delete PCIMG[k]; delete CMRE[k]; delete CMEN[k]; f.querySelector('.cmsug')?.remove();
