@@ -2,7 +2,7 @@
 <title>Nachtfalter</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Nachtfalter"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='99d905da965e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ddec31bc7f95';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -221,6 +221,10 @@ label.f{display:grid;gap:4px}
 .feed.insta .post>*{margin-inline:18px;min-width:0}
 .feed.insta .post>.ph{padding-top:14px}
 .feed.insta .post>.photo,.feed.insta .post>.vframe{margin-inline:0;width:100%;border-left:0;border-right:0}
+/* Beitrag wie bei Insta (Inaya, 2026-10-12): schmale Namensleiste, Bild randlos darunter, dann Text, dann Likes */
+.feed.insta .post{gap:10px}.feed.insta .post>.ph{padding-top:10px;gap:10px}.feed.insta .post>.ph .cameo{width:34px;height:34px}.feed.insta .post>.ph .who{font-size:16px;line-height:1.15}.feed.insta .post>.ph .meta{font-size:12.5px;line-height:1.2}
+.feed.insta .post>.pgal,.feed.insta .post>.ptagwrap,.feed.insta .post>.pvolw{margin-inline:0;margin-block:0}.feed.insta .post>.ptagwrap .photo,.feed.insta .post>.pvolw .photo,.feed.insta .post>.pgal .pgcell{border-left:0;border-right:0}
+.feed.insta .post>.caption{font-size:15px;line-height:1.4}
 .post.tp,.feed.insta .post.tp,.feed.insta .post.tp:first-child{background:linear-gradient(var(--p-bg),var(--p-bg)) padding-box,var(--pp-pat) border-box border-box,var(--p-bg);border:12px solid transparent;border-radius:10px;color:var(--p-fg);box-shadow:0 0 0 1px var(--p-line)}
 .post.tp .meta,.post.tp .muted{color:var(--p-muted)}.post.tp .lnk,.post.tp .who a,.post.tp .who button{color:var(--p-fg)}.post.tp .thought{border-left-color:var(--p-line)}
 .post.tp .reacts button{color:var(--p-fg);border-color:var(--p-line);background:transparent}.post.tp .reacts button[aria-pressed="true"]{border-color:var(--p-fg);background:color-mix(in srgb,var(--p-fg) 12%,transparent)}
@@ -6417,7 +6421,7 @@ function postHTML(p){
   if (p.clip && !p.gal) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
-  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body = `<p class="caption">${mentionHTML(etx(p.text), tags, 'profile')}</p>` + body; // Text immer über Bild oder Anhang (Inaya, 2026-10-11)
+  if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) { const cap = `<p class="caption">${mentionHTML(etx(p.text), tags, 'profile')}</p>`; body = p.gal?.length || p.img || p.bigimg || p.clip ? body + cap : cap + body; } // wie Insta: Bild direkt unter dem Namen, Text darunter (Inaya, 2026-10-12)
   const onPic = tpos || (p.gal || []).some(x => x.tg?.length); // auf dem Foto markiert: kein „mit …“ darunter (Inaya, 2026-10-12)
   if (tags.length && !onPic) body += `<p class="pwith">mit ${tags.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
   const lk = new Set(Object.values(p.reactions || {}).flat()), reacts = likeBtn(`data-act="react" data-id="${p.id}"`, lk.has(S.me), lk.size);
