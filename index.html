@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='02e74e9f4567';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e42038577a11';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1403,7 +1403,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
 .pbar .shbtn{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;padding:0;color:inherit;cursor:pointer;margin-left:auto}
-.pbar .rpbtn ~ .shbtn{margin-left:2px}
+.pbar .rpbtn ~ .shbtn{margin-left:auto}.pbar .rpbtn:has(~ .shbtn){margin-left:0}
 .pbar .shbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .stshb2{flex:none;display:grid;place-items:center;width:42px;height:42px;background:none;border:0;padding:0;color:#fff;cursor:pointer}
 .stshb2 svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -2021,10 +2021,11 @@ const SZ_TEES = [['sz_dino','Rawrsaurus-Shirt','#bfe0ea'],['sz_monster','Augenmo
 SZ_TEES.forEach(([id, name]) => ITEMS.push({id, cat:'top', name, st:'Scene'})); // bunte Scene-Shirts für beide (Inaya, 2026-10-10)
 const FREE = ITEMS.filter(i=>!i.price).map(i=>i.id);
 const DEFAULT_OUTFIT = {body:'w',back:'scenek',front:'p_seitlich',hacc:{},jewel:{},legw:{},eyeform:'e_rund',lips:'l_schmoll',face:'liner',top:'band',jacket:'j_kein',bottom:'jeans',shoes:'chucks',acc:{}};
+const LIP_DEF = '#8a3a4a'; // Lippen ohne Farbe wären unsichtbar: dezentes Altrosa (Inaya, 2026-10-12)
 function previewOutfit(o, i){
   if (i.none) { const t = {...o}; wearItem(t, i); return t; }
   if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_zunge' ? {lips:'l_offen'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
-  const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
+  const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); if (i.cat === 'lips' && !t.lipC) t.lipC = LIP_DEF; return t;
 }
 const thumbView = i => i.cat === 'top' && isDress(i) ? 'dress' : i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' || i.cat === 'lips' ? 'face' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : /^st_|^h_lang$/.test(i.id) ? 'bottom' : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? (/^ko_/.test(i.id) ? 'top' : 'belt') : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
 ITEMS.push(
@@ -2056,7 +2057,7 @@ const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !
 const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', face:'natur', back:'h_kein'};
 // „Komplett ausziehen“: Kleidung, Schuhe, Accessoires, Kopfbedeckung, Strümpfe und Schmuck aus; Körper, Haare und Gesicht bleiben
 function undressAll(o){ Object.assign(o, {back:'h_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
-function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
+function wearItem(o, i){ const k = i.cat; if (k === 'lips' && !o.lipC) o.lipC = LIP_DEF; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
 // Farben gelten nur für das Teil, das man gerade umgefärbt hat: jedes Kleidungsstück merkt sich seine eigene Farbe, alle anderen bleiben im Originaldesign (Inaya, 2026-10-10)
 const ICF = {top:['topC', 'motifC'], bottom:['bottomC'], shoes:['shoesC'], jacket:['jacketC']};
 function icolSwap(o, k, nv){
@@ -4701,7 +4702,7 @@ function seiteView(){
 let obDesign = false;
 function finishOb(){
     const p = S.pending, id = 'u' + Date.now().toString(36);
-    S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth, contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
+    S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth || regBirth(), contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
       theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), mood:'neu hier', headline:'', about:'', music:'', films:'', hobbies:'',
       wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen an alle neuen Noctibat! Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
     delete S.pending; S.me = id; welcomeDMs();
@@ -8962,6 +8963,9 @@ document.addEventListener('change', e => {
   const ok = d && m && y && new Date(`${y}-${m}-${d}T12:00`).getDate() === +d;
   document.getElementById(fs.dataset.for).value = ok ? `${y}-${m}-${d}` : (d && m && y ? 'ungueltig' : '');
 });
+// Beim Registrieren schon angegeben: nicht noch einmal fragen (Inaya, 2026-10-12)
+const NF_AUTH_MAIL = () => { try { return window.firebase?.auth?.().currentUser?.email || ''; } catch { return ''; } };
+function regBirth(){ const p = S.pending?.birth; if (p && !birthProblem(p)) return p; try { const r = JSON.parse(localStorage.getItem('nf-regbirth') || 'null'); const u = S.users[S.me] || {}, c = String(u.email || u.contact || NF_AUTH_MAIL() || '').toLowerCase(); if (r && Date.now() - r.ts < 7 * 864e5 && !birthProblem(r.birth) && (!c || c === r.c)) return r.birth; } catch {} return ''; }
 function birthView(){
   return `<div class="gate"><div class="card gate-card">${logoSVG('big')}
     <form data-form="birth">
@@ -8992,6 +8996,7 @@ function renderInner(){
   const restoreX = () => keepX.forEach(([cls, i, x]) => { const el = app.querySelectorAll(`[class="${CSS.escape(cls)}"]`)[i]; if (el) el.scrollLeft = x; });
   if (!S.unlocked) { applyPage(null); app.innerHTML = gateView(); return; }
   if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); restoreX(); return; }
+  if (birthProblem(S.users[S.me].birth)) { const rb = regBirth(); if (rb) { S.users[S.me].birth = rb; save(); } }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
   const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit','browse'].includes(V.name);
   const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, archive:archiveView, visit:visitView}[V.name] || homeView;
@@ -9616,7 +9621,8 @@ document.addEventListener('submit', async e => {
       if (r.needsConfirm) toast('Wir haben dir eine Mail geschickt. Bitte bestätige deine E-Mail-Adresse.');
       else await cloudReinit();
     }
-    S.pending = {outfit:{...DEFAULT_OUTFIT, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:'name', contact, birth, pwh: await hashPw(pw)};
+    try { localStorage.setItem('nf-regbirth', JSON.stringify({birth, c:contact.toLowerCase(), ts:Date.now()})); } catch {} // Geburtsdatum nur einmal fragen (Inaya, 2026-10-12)
+    S.pending = {outfit:{...DEFAULT_OUTFIT, lipC:LIP_DEF, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:'name', contact, birth, pwh: await hashPw(pw)};
     save(); render();
   } else if (t === 'forgot' && PUB) {
     const err = document.getElementById('fg-err'), c = val('fg-contact');
@@ -9663,7 +9669,7 @@ document.addEventListener('submit', async e => {
       u = Object.values(S.users).find(x => !x.helper && !x.remote && contactsOf(x).includes(normContact(contact)));
       if (u) u.pwh = await hashPw(pw);
       else { // Konto da, aber Profil noch nicht fertig: Einrichtung fortsetzen
-        S.pending = {outfit:{...DEFAULT_OUTFIT, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:S.pending?.step || 'name', contact, pwh: await hashPw(pw)};
+        S.pending = {outfit:{...DEFAULT_OUTFIT, lipC:LIP_DEF, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:S.pending?.step || 'name', contact, pwh: await hashPw(pw)};
         S.unlocked = true; save(); render(); return;
       }
     } else u = await findLogin(contact, pw);
