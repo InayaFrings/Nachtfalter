@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2c5ce6fd5c00';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ecfbdd521449';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -341,7 +341,8 @@ ul.zlist small{display:block;font:14px var(--f-ital);color:var(--muted)}
 .fullfig{max-width:220px;margin:0 auto}.fullfig svg{width:100%;height:auto;display:block}.fullav .chips{justify-content:center}
 .emo{width:1.35em;height:1.35em;vertical-align:-.3em;display:inline-block;margin:0 .05em}
 .emobtn{background:none;border:1px solid var(--line,#444);border-radius:999px;width:38px;height:38px;padding:5px;cursor:pointer;flex:none;display:inline-grid;place-items:center}
-.emobtn:hover,.emobtn:focus-visible{border-color:#ecebe7}.emobtn .emo{width:24px;height:24px;margin:0;vertical-align:0}
+.emobtn:hover,.emobtn:focus-visible{border-color:#ecebe7}
+.ptwrap{position:relative;display:grid}.ptwrap .emobtn{position:absolute;top:8px;right:8px;border:0;background:none;width:38px;height:38px;padding:5px;opacity:.9}.ptwrap:has(.emobtn) textarea{padding-right:50px} /* Handy: Totenkopf oben rechts im Textfeld (Inaya, 2026-10-12) */.emobtn .emo{width:24px;height:24px;margin:0;vertical-align:0}
 .emopop{position:absolute;z-index:3000;background:#0e0e10;border:1px solid #6a6a70;padding:8px;display:grid;grid-template-columns:repeat(4,40px);gap:4px;box-shadow:0 10px 30px #000a;max-width:calc(100vw - 16px)}
 .emopop button{background:none;border:1px solid transparent;width:40px;height:40px;padding:4px;cursor:pointer;border-radius:6px}
 .emopop button:hover,.emopop button:focus-visible{border-color:#ecebe7;background:#1c1c20}.emopop .emo{width:30px;height:30px;margin:0;vertical-align:0}
@@ -6794,7 +6795,7 @@ function composeHTML(){
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" class="pform${pt ? ' tp' : ''}" style="display:grid;gap:12px;${pt}">
         <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b><small>${social ? (aud() === 'pub' ? 'öffentlich' : 'nur Freunde') : ''}</small></div>
-        <textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden." aria-label="Text"></textarea>
+        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden." aria-label="Text"></textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
         <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('video', 'Link')}</div>
@@ -7909,7 +7910,7 @@ function addEmoButtons(){
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
     const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>`;
-    const pf = f.querySelector('.pcfield'); if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
+    const pf = f.querySelector('.pcfield'), tw = isMob() && f.querySelector('.ptwrap'); if (tw) tw.insertAdjacentHTML('beforeend', eb); else if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
 new MutationObserver(addEmoButtons).observe(document.documentElement, {childList:true, subtree:true});
