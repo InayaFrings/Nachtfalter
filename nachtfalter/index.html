@@ -1,3 +1,136 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Noctibat</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
+<script>window.NF_BUILD='0f92570f4528';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>window.NF_FIREBASE = {"config": {"apiKey": "AIzaSyBAN0OV756ln_ELGwTgcS6yvHYL3m_VeRQ", "authDomain": "nachtfalter-fe3d1.firebaseapp.com", "projectId": "nachtfalter-fe3d1", "storageBucket": "nachtfalter-fe3d1.firebasestorage.app", "messagingSenderId": "276441792597", "appId": "1:276441792597:web:aa561493db5fbfcd33d4dc"}, "ownerEmail": "InayaFrings@gmail.com"};</script>
+<script>/* Nachtfalter auf eigener Webseite mit Firebase: bildet window.claude.use('db' | 'user' | 'room') auf
+   Firebase Auth + Firestore ab, damit der Seiten-Code derselbe bleibt wie in der Claude-Version.
+   Dazu NF_AUTH für Registrieren, Anmelden und „Passwort vergessen“ per E-Mail.
+   Braucht window.NF_FIREBASE = {config, ownerEmail} und die Firebase-compat-Skripte (app, auth, firestore). */
+(function(){
+  const C = window.NF_FIREBASE;
+  if (!C || !window.firebase) return;
+  /* Mehrere Accounts wie bei Insta (Inaya, 2026-10-12): jeder gespeicherte Account hat einen eigenen Platz (eigene Firebase-App mit eigener Anmeldung).
+     nf-acct = aktiver Platz ('' = Standard), nf-accts = Liste zum Anzeigen (keine Passwörter, die Anmeldung verwaltet Firebase selbst). */
+  const LS = {get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} }};
+  const SLOT = /^[a-z0-9]{1,16}$/.test(LS.get('nf-acct') || '') ? LS.get('nf-acct') : '';
+  const appOf = sl => sl ? (firebase.apps.find(a => a.name === 'nf-' + sl) || firebase.initializeApp(C.config, 'nf-' + sl)) : (firebase.apps.find(a => a.name === '[DEFAULT]') || firebase.initializeApp(C.config));
+  const app = appOf(SLOT);
+  const auth = app.auth(), fs = app.firestore();
+  const accts = () => { try { const l = JSON.parse(LS.get('nf-accts') || '[]'); return Array.isArray(l) ? l.filter(x => x && typeof x.slot === 'string' && x.uid) : []; } catch { return []; } };
+  const saveAccts = l => LS.set('nf-accts', JSON.stringify(l.slice(0, 8)));
+  const go = sl => { LS.set('nf-acct', sl || null); location.reload(); };
+  async function dropSlot(sl){ // Anmeldung auf diesem Platz beenden und den zwischengespeicherten Stand löschen
+    try { const a = appOf(sl); await a.auth().signOut(); if (sl) await a.delete(); } catch {}
+    LS.set('nachtfalter-v2' + (sl ? ':' + sl : ''), null); }
+  fs.settings({ignoreUndefinedProperties: true, merge: true});
+  auth.languageCode = 'de';
+  let user = null;
+  const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
+  auth.onAuthStateChanged(u => { user = u; });
+
+  /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
+
+  /* ---------- Wer ist angemeldet ---------- */
+  const me = {
+    async id(){ await ready; return user ? user.uid : null; },
+    async isOwner(){ await ready; return !!(user && user.email && C.ownerEmail && user.email.toLowerCase() === C.ownerEmail.toLowerCase()); },
+    async me(){ await ready; return user ? {id: user.uid} : null; },
+    canEdit: () => false
+  };
+
+  /* ---------- Räume: Anwesenheit als kleine Dokumente mit Herzschlag ---------- */
+  const STALE = 70000;
+  function mkRoom(name){
+    const key = Math.random().toString(36).slice(2, 10);
+    const coll = fs.collection('presence').doc(name.replace(/[\/]/g, '_')).collection('p');
+    let state = {}, beat = null, unsub = null, peersCb = null, last = [];
+    const write = () => user && coll.doc(key).set({...state, by: user.uid, t: Date.now()}).catch(() => {});
+    function listen(){
+      if (unsub) return;
+      unsub = coll.onSnapshot(snap => {
+        const now = Date.now();
+        last = snap.docs.map(d => ({peer: d.id, by: d.data().by, presence: d.data()})).filter(p => now - (p.presence.t || 0) < STALE);
+        peersCb && peersCb({peers: last, joined: [], left: [], updated: []});
+      }, () => {});
+    }
+    const refresh = setInterval(() => { if (peersCb && last.length) { const now = Date.now(); const f = last.filter(p => now - (p.presence.t || 0) < STALE); if (f.length !== last.length) { last = f; peersCb({peers: f, joined: [], left: [], updated: []}); } } }, 15000);
+    const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
+    addEventListener('pagehide', bye);
+    return {
+      name,
+      async presence(p){ state = {...state, ...p}; await write(); if (!beat) beat = setInterval(write, 25000); listen(); },
+      onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
+      emit(){}, on(){ return () => {}; },
+      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
+      async join(n){ return mkRoom(n); }
+    };
+  }
+  let lobby = null;
+
+  window.claude = {use: async n => {
+    await ready;
+    if (!user) return null;
+    if (n === 'db') return db;
+    if (n === 'user') return me;
+    if (n === 'room') return lobby || (lobby = mkRoom('lobby'));
+    return null;
+  }};
+
+  /* ---------- Konto ---------- */
+  const de = e => {
+    const c = (e && e.code) || '';
+    if (c.includes('email-already-in-use')) return 'Mit dieser E-Mail gibt es schon ein Konto. Melde dich stattdessen an.';
+    if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-login')) return 'E-Mail oder Passwort stimmen nicht.';
+    if (c.includes('invalid-email')) return 'Das ist keine gültige E-Mail-Adresse.';
+    if (c.includes('weak-password')) return 'Das Passwort ist zu kurz. Nimm mindestens 6 Zeichen.';
+    if (c.includes('too-many-requests')) return 'Zu viele Versuche. Warte kurz und probier es dann nochmal.';
+    if (c.includes('requires-recent-login')) return 'Bitte melde dich einmal neu an und versuch es dann nochmal.';
+    if (c.includes('network')) return 'Keine Verbindung. Prüf dein Internet und probier es nochmal.';
+    return 'Das hat gerade nicht geklappt. Probier es gleich nochmal.';
+  };
+  const back = () => location.origin + location.pathname;
+  window.NF_AUTH = {
+    ready,
+    resetViaMail: true, // Firebase zeigt die Seite zum neuen Passwort selbst an
+    email: () => user ? user.email : null,
+    async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
+    async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async signOut(){ try { await auth.signOut(); } catch {} user = null; },
+    async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
+    async updatePw(pw){ try { await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
+    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
+    // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
+    async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
+    async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
+    // Mehrere Accounts
+    slot: SLOT,
+    accounts: accts,
+    remember(info){ // Anzeige-Daten des angemeldeten Accounts merken (Name, Bild, Farben)
+      if (!user) return; const l0 = accts();
+      l0.filter(x => x.uid === user.uid && x.slot !== SLOT).forEach(x => dropSlot(x.slot)); // derselbe Account doppelt: nur einmal behalten
+      const l = l0.filter(x => x.uid !== user.uid || x.slot === SLOT), e = {...info, slot: SLOT, uid: user.uid, ts: Date.now()}, i = l.findIndex(x => x.slot === SLOT);
+      if (i < 0) l.push(e); else l[i] = e; saveAccts(l); },
+    switchTo(sl){ if (sl === SLOT || !accts().some(x => x.slot === sl)) return; go(sl); },
+    addNew(){ if (accts().length >= 8) return false; let sl; do { sl = 'a' + Date.now().toString(36).slice(-6) + Math.random().toString(36).slice(2, 4); } while (accts().some(x => x.slot === sl)); go(sl); return true; },
+    async remove(sl){ if (sl === SLOT) return; saveAccts(accts().filter(x => x.slot !== sl)); await dropSlot(sl); },
+    forget(){ const l = accts().filter(x => x.slot !== SLOT); saveAccts(l); LS.set('nf-acct', l[0] ? l[0].slot || null : null); }, // nach Abmelden: zum nächsten gespeicherten Account
+    back(){ const l = accts().filter(x => x.slot !== SLOT); return l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
+    onRecovery(){},
+    get recovering(){ return false; }
+  };
+})();
+</script>
+<style>html,body{margin:0}</style></head><body>
 <title>Noctibat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10105,3 +10238,5 @@ const cloudReady = cloudInit();
   paintAll();
 })();
 </script>
+
+</body></html>
