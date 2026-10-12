@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='356ae4a6d2f9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1d3c1060ce2f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -8594,16 +8594,14 @@ function srBody(){
       + (ps.length ? `<div class="feed insta">${ps.map(p => postHTML(p)).join('')}</div>` : '<p class="note">Noch keine Beiträge mit diesem Hashtag.</p>');
     return body;
   } else if (SR.tab === 'u') {
-    body = (!k ? browseBtn() : FR.results == null ? '' : FR.results.length ? `<div class="plist">${FR.results.map(personRow).join('')}</div>` : `<p class="note">Niemand mit @${esc(k)} gefunden.</p>`)
-      + (!k && amOwner && FR.newbies?.length ? `<fieldset class="opt"><legend class="lbl">Neu bei Noctibat</legend><div class="plist">${FR.newbies.map(personRow).join('')}</div><p class="note" style="margin:6px 0 0">Tipp auf jemanden, um das Profil anzusehen.</p></fieldset>` : '');
+    body = (!k ? browseBtn() : FR.results == null ? '' : FR.results.length ? `<div class="plist">${FR.results.map(personRow).join('')}</div>` : `<p class="note">Niemand mit @${esc(k)} gefunden.</p>`);
   } else {
     const l = k ? htList(k) : [];
     body = !k ? '<p class="note">Gib einen Hashtag ein, zum Beispiel #goth.</p>' : l.length ? `<div class="htlist">${l.map(([t, n]) => `<button type="button" class="htrow" data-act="ht-open" data-v="${esc(t)}"><span class="htsym" aria-hidden="true">#</span><span class="htinfo"><b>#${esc(t)}</b><small>${n} ${n === 1 ? 'Beitrag' : 'Beiträge'}</small></span></button>`).join('')}</div>` : `<p class="note">Kein Hashtag #${esc(k)} gefunden.</p>`;
   }
   return `<div class="srtabs" role="tablist">${tab('u', 'User')}${tab('h', 'Hashtags')}</div>${body}`;
 }
-function findView(){ // eine Suche für User und Hashtags, Vorschläge schon beim Tippen (Inaya, 2026-10-12)
-  if (social && amOwner && !FR.newbies) loadNewbies();
+function findView(){ // eine Suche für User und Hashtags, Vorschläge schon beim Tippen; fremde Profile nur über Stöbern (Inaya, 2026-10-12)
   return `<div class="card"><h2 class="card-h">Suchen</h2><div class="card-in">
     <form data-form="fsearch" class="srform"><label class="musearch srbar"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.search}</svg><input type="search" id="fs-q" placeholder="Nutzer oder #Hashtag suchen" value="${esc(SR.q)}" aria-label="Nutzer oder Hashtag suchen" autocapitalize="none" spellcheck="false" autocomplete="off" enterkeyhint="search"></label></form>
     <div id="srres">${srBody()}</div>
