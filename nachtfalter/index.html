@@ -1218,7 +1218,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .vmt{font-size:13px;opacity:.75;font-variant-numeric:tabular-nums}
 
 /* Like statt Totenkopf-Reaktionen (Inaya, 2026-10-12) */
-.likebtn{display:inline-flex!important;align-items:center;gap:6px;flex:none!important}.likebtn .lheart{width:22px;height:22px;stroke:currentColor;stroke-width:1.7}
+.cmt.mom>.cmlike{align-self:center;margin-left:auto}.cmlike{display:inline-grid;justify-items:center;gap:0;background:none;border:0;padding:4px;color:inherit;cursor:pointer;flex:none;font-size:11px;line-height:1;min-width:30px}.cmlike .lheart{width:16px;height:16px;stroke:currentColor;stroke-width:1.8}.cmlike[aria-pressed="true"] .lheart{color:#c8283a}.likebtn{display:inline-flex!important;align-items:center;gap:6px;flex:none!important}.likebtn .lheart{width:22px;height:22px;stroke:currentColor;stroke-width:1.7}
 .likebtn[aria-pressed="true"] .lheart{color:#c8283a}.post.tp .likebtn[aria-pressed="true"] .lheart{color:#c8283a}
 .nt-ico .lheart{width:16px;height:16px;color:#c8283a;stroke:currentColor;stroke-width:1.7;vertical-align:-3px}
 
@@ -5199,8 +5199,10 @@ function piInner(p, full){
   const hloc = owner.startsWith('helper-') ? (p.comments || []).filter(c => S.users[c.author]?.helper).map((c, i) => ({kind:'c', by:c.author, name:S.users[c.author].name, text:c.text, ts:c.ts || 0, did:'h' + i})) : [];
   const all = list.filter(x => x.kind === 'c').concat(hloc).sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
   // Alte Kommentare (vor den Antworten) zählen als Antworten auf den ersten Kommentar (Inaya, 2026-10-11)
+  const clk = {}; for (const x of list) if (x.kind === 'cl' && x.c && x.by) (clk[x.c] = clk[x.c] || new Set()).add(x.by); // Likes auf Kommentare (Inaya, 2026-10-12)
+  const cmLikeHTML = (k, d, can) => { if (/^h\d/.test(d)) return ''; const l = clk[d], n = l?.size || 0, on = !!l?.has(uid); return can ? `<button type="button" class="cmlike" data-act="pc-like" data-k="${k}" data-d="${esc(d)}" aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Kommentar gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="cmlike">${HEART(false)}<span>${n}</span></span>` : ''; };
   const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
-  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img, '', c.men);
+  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, c.img, cmLikeHTML(k, c.did, can), c.men);
   const cm = all.filter(c => !reOf(c)).map(c => {
     const rs = all.filter(r => reOf(r) === c.did), open = CMOPEN.has(k + '/' + c.did);
     return `<div class="cthread">${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
@@ -5287,6 +5289,8 @@ function ntRemember(k){
   const ks = Object.keys(S.cmted).sort((a, b) => S.cmted[b].ts - S.cmted[a].ts); ks.slice(30).forEach(x => delete S.cmted[x]);
   save();
 }
+function cmLikeNotifs(w, uid, out, go, oid, k){ const mine = new Map(w.list.filter(c => c.kind === 'c' && c.by === uid).map(c => [c.did, c]));
+  for (const x of w.list) if (x.kind === 'cl' && x.by && x.by !== uid && mine.has(x.c)) out.push({ts:x.ts || 0, uid:x.by, ico:HEART(true), kind:'r', text:'gefällt dein Kommentar:', quote:mine.get(x.c).text, go, oid, k, p:w.p}); }
 function notifs(){
   if (!social) return [];
   const uid = social.uid, out = [];
@@ -5294,8 +5298,10 @@ function notifs(){
     if (postOwner(w.p) !== uid) { // fremder Beitrag: nur Antworten auf meine Kommentare melden (Inaya, 2026-10-11)
       const ow = postOwner(w.p);
       for (const x of w.list) if (x.kind === 'c' && x.by && x.by !== uid && x.to === uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'opost', oid:ow, k, p:w.p});
+      cmLikeNotifs(w, uid, out, 'opost', ow, k);
       continue;
     }
+    cmLikeNotifs(w, uid, out, 'post', '', k);
     for (const x of w.list) {
       if (!x.by || x.by === uid) continue;
       if (x.kind === 'c' && x.to === uid) { out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'post', k, p:w.p}); continue; }
@@ -8797,6 +8803,10 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'vplay') { b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
+  else if (a === 'pc-like') {
+    const k = b.dataset.k, d = b.dataset.d, uid = social?.uid; if (!uid || !d) return; const id = 'cl_' + d + '_' + uid, on = b.getAttribute('aria-pressed') === 'true';
+    try { if (on) await social.db.doc('chats/pi_' + k + '/m/' + id).delete(); else await social.db.doc('chats/pi_' + k + '/m/' + id).set({kind:'cl', c:d, by:uid, ts:Date.now()}); } catch { toast('Das hat gerade nicht geklappt.'); }
+  }
   else if (a === 'plike') {
     const k = b.dataset.k, uid = social?.uid; if (!uid) return;
     const mine = (PI[k]?.list || []).filter(x => x.kind === 'r' && x.by === uid && LIKE_IN(x.r));
