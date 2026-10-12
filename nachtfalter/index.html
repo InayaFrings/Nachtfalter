@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f70e4ea4325b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b000a4ccd201';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -432,7 +432,8 @@ body.stopen{overflow:hidden}.storyov{position:fixed;inset:0;z-index:3000;backgro
 .ptabs{display:flex;gap:22px;border-bottom:1px solid var(--p-line);flex-wrap:wrap}
 .ptabs button{background:none;border:0;border-bottom:2px solid transparent;padding:6px 0;font:400 18px var(--f-display);color:var(--p-muted)}
 .ptabs button[aria-selected="true"]{color:var(--p-fg);border-bottom-color:var(--p-fg)}
-.ptabs:has(.pti){gap:0;flex-wrap:nowrap;justify-content:space-between}.ptabs .pti{flex:1 1 0;display:grid;place-items:center;padding:10px 0 9px;cursor:pointer;opacity:.6}.ptabs .pti[aria-selected="true"]{opacity:1}
+.ptabs .pti svg{display:none}
+@media (max-width:760px){.ptabs:has(.pti){gap:0;flex-wrap:nowrap;justify-content:space-between}.ptabs .pti{flex:1 1 0;display:grid;place-items:center;padding:10px 0 9px;cursor:pointer;opacity:.6}.ptabs .pti[aria-selected="true"]{opacity:1}.ptabs .pti .ptl{display:none}.ptabs .pti svg{display:block}}
 .ptabs .pti svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.ptabs .pti[aria-selected="true"] svg{stroke-width:2.2}
 .ppanel{display:grid;gap:14px}
 .tiles{columns:2 220px;column-gap:14px}
@@ -7283,7 +7284,7 @@ function profileView(id){
     ${steckHTML}
     ${profFriends(u, others)}
     <div class="ptabs" role="tablist">${tabs.map(([k,l]) =>
-      `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}"${PTICO[k] ? ` class="pti" aria-label="${l}" title="${l}"` : ''}>${PTICO[k] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${PTICO[k]}</svg>` : l}</button>`).join('')}</div>
+      `<button role="tab" data-act="ptab" data-t="${k}" aria-selected="${profTab===k}"${PTICO[k] ? ` class="pti" aria-label="${l}" title="${l}"` : ''}>${PTICO[k] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${PTICO[k]}</svg><span class="ptl">${l}</span>` : l}</button>`).join('')}</div>
     <div class="ppanel">${panel}</div>${(PROF_WALL = wallP, '')}
     ${u.helper ? '' : `<p class="note pjoined">Dabei seit ${new Date(u.joined).toLocaleDateString('de-DE')}</p>`}
   </section>`;
