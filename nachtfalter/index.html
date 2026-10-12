@@ -187,7 +187,7 @@ label.f{display:grid;gap:4px}
 .nt-txt{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;color:inherit;font:inherit;font-size:16px;line-height:1.35;cursor:pointer;overflow-wrap:anywhere}
 .nt-q{color:var(--fg)}.nt-t{color:var(--muted);font-size:14px;white-space:nowrap}
 .nt-ico{display:inline-flex;gap:2px;vertical-align:-5px}.nt-ico svg{width:20px;height:20px}
-.nt-th{flex:none;width:48px;height:48px;padding:0;border:1px solid var(--line-soft);background:var(--paper-2,#1a1a1c);overflow:hidden;cursor:pointer;display:grid;place-items:center}
+.nt-th{flex:none;width:58px;height:58px;padding:0;border:1px solid var(--line-soft);background:var(--paper-2,#1a1a1c);overflow:hidden;cursor:pointer;display:grid;place-items:center}
 .nt-th img{width:100%;height:100%;object-fit:cover}.nt-th span{font:9px/1.15 var(--f-ital);color:var(--muted);padding:3px;text-align:center;overflow:hidden;max-height:100%;overflow-wrap:anywhere;hyphens:auto}
 .nt-btns{display:flex;gap:6px;flex:none}.nt-btns .btn{min-height:34px;padding:5px 12px;font-size:14px}
 .nt-empty{display:grid;justify-items:center;gap:8px;text-align:center;padding:48px 16px;color:var(--muted)}.nt-empty svg{width:56px;height:56px;fill:none;stroke:var(--fg);stroke-width:1.2;padding:14px;border:1.5px solid var(--fg);border-radius:50%;box-sizing:content-box}.nt-empty b{color:var(--fg);font:400 22px var(--f-display)}.nt-empty span{max-width:34ch}
@@ -1315,7 +1315,7 @@ body.cmvopen{overflow:hidden}
 .ststkg button{aspect-ratio:1;background:none;border:0;padding:6px;border-radius:10px;cursor:pointer}.ststkg button:active,.ststkg button:hover{background:#ffffff14}
 .ststkg svg{width:100%;height:100%;display:block}
 .sttile .ststk{pointer-events:none}
-.nt-th{position:relative}.nt-th .nt-tx{font:500 8.5px/1.2 var(--f-body,system-ui),sans-serif;color:var(--ink,#ddd);padding:4px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;text-align:left;overflow-wrap:anywhere}
+.nt-th{position:relative}.nt-th .nt-tx{font:600 9.5px/1.2 var(--f-body,system-ui),sans-serif;color:inherit;padding:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-align:left;overflow-wrap:break-word;word-break:normal;hyphens:auto;width:100%;max-width:100%;box-sizing:border-box;min-width:0}.nt-th .nt-tx .emo{width:11px;height:11px;vertical-align:-2px}
 .nt-pl{position:absolute;right:3px;bottom:3px;width:15px;height:15px;border-radius:50%;background:#000a;display:grid;place-items:center}.nt-pl svg{width:9px;height:9px;fill:#fff;stroke:#fff;stroke-width:1}
 article.post.ntflash{animation:ntfl 1.6s ease}@keyframes ntfl{0%,40%{box-shadow:0 0 0 2px #fff8}100%{box-shadow:0 0 0 0 #fff0}}
 .bubble .meta,.bubble.me .meta,.bubble.media>.meta{display:flex!important;align-items:center;justify-content:flex-end;gap:6px;text-align:right!important;font-size:10.5px}
@@ -5335,7 +5335,7 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   if (!p) return '';
   const sh = p.share, q = sh ? {author:sh.a, id:sh.pid, img:sh.img, text:sh.text, url:sh.url, lp:sh.lp} : p;
   const yt = q.url && typeof ytId === 'function' ? ytId(q.url) : '', sp = q.url && /open\.spotify\.com\/track\//.test(q.url) && typeof spOe === 'function' ? spOe(q.url) : null;
-  let inner = '', badge = ''; const g0 = !sh && p.gal?.[0];
+  let inner = '', badge = '', tst = ''; const g0 = !sh && p.gal?.[0];
   if (g0) { inner = g0.t === 'v' ? `<img src="${esc(g0.clip?.poster || '')}" alt="">` : g0.img ? `<img src="${esc(g0.img)}" alt="">` : `<img data-pimg="${esc((postOwner(p) || p.author) + '/' + g0.k)}" alt="">`; if (g0.t === 'v') badge = 'play'; }
   else if (q.img) inner = `<img src="${esc(q.img)}" alt="">`;
   else if (sh ? sh.bigk : p.bigimg) inner = `<img data-pimg="${esc(sh ? sh.bigk : p.author + '/' + p.id)}" alt="">`;
@@ -5343,9 +5343,10 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   else if (yt) { inner = `<img src="https://i.ytimg.com/vi/${esc(yt)}/mqdefault.jpg" alt="" onerror="this.remove()">`; badge = 'play'; }
   else if (q.mu?.art || sp?.art) { inner = `<img src="${esc(q.mu?.art || sp.art)}" alt="" onerror="this.remove()">`; badge = 'mu'; }
   else if (q.lp?.img && /^https:\/\//.test(q.lp.img)) inner = `<img src="${esc(q.lp.img)}" alt="" onerror="this.remove()">`;
-  if (!inner) { const t = String(q.text || q.lp?.t || (q.mu ? q.mu.t : '') || q.url || '').trim(); inner = `<span class="nt-tx">${esc(t.slice(0, 70)) || '…'}</span>`; if (q.mu) badge = 'mu'; }
+  if (!inner) { const t = String(q.text || q.lp?.t || (q.mu ? q.mu.t : '') || q.url || '').trim(); inner = `<span class="nt-tx" lang="de">${etx(t.slice(0, 70)) || '…'}</span>`; if (q.mu) badge = 'mu';
+    const au = profUser?.(sh ? sh.a : (p.author || oid)) || S.users[p.author], bx = /^#[0-9a-f]{6}$/i.test(au?.theme?.box || '') ? au.theme.box : '#1c1b20'; tst = ` style="background:${bx};color:${autoFg(bx)}"`; } // Textbeitrag: Kachel in den Farben des Beitrags, gut lesbar (Inaya, 2026-10-12)
   const ico = badge === 'play' ? '<i class="nt-pl" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i>' : badge === 'mu' ? '<i class="nt-pl" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i>' : '';
-  return `<button type="button" class="nt-th" data-act="nt-go" data-v="${v}" data-id="${esc(oid)}"${k ? ` data-k="${esc(k)}"` : ''}${cm ? ' data-c="1"' : ''} aria-label="Beitrag ansehen">${inner}${ico}</button>`;
+  return `<button type="button" class="nt-th" data-act="nt-go" data-v="${v}" data-id="${esc(oid)}"${k ? ` data-k="${esc(k)}"` : ''}${cm ? ' data-c="1"' : ''} aria-label="Beitrag ansehen"${tst}>${inner}${ico}</button>`;
 }
 function ntOpenPost(k, prof, cm){ // genau diesen Beitrag zeigen, bei Kommentaren gleich die Kommentare
   const hp = /^helper-/.test(prof) ? prof.slice(7) : prof; go('profile', hp); profTab = hp !== prof ? 'news' : 'posts'; render();
