@@ -1203,6 +1203,11 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .vmw i{flex:1;min-width:2px;max-width:4px;border-radius:2px;background:currentColor;opacity:.4}.vmw i.on{opacity:1}
 .vmdot{position:absolute;left:0;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:currentColor;pointer-events:none}
 .vmt{font-size:13px;opacity:.75;font-variant-numeric:tabular-nums}
+
+/* Like statt Totenkopf-Reaktionen (Inaya, 2026-10-12) */
+.likebtn{display:inline-flex!important;align-items:center;gap:6px;flex:none!important}.likebtn .lheart{width:22px;height:22px;stroke:currentColor;stroke-width:1.7}
+.likebtn[aria-pressed="true"] .lheart{color:#c8283a}.post.tp .likebtn[aria-pressed="true"] .lheart{color:#c8283a}
+.nt-ico .lheart{width:16px;height:16px;color:#c8283a;stroke:currentColor;stroke-width:1.7;vertical-align:-3px}
 </style>
 
 <div id="app"></div>
@@ -1232,7 +1237,10 @@ setTimeout(() => crashBox('Die Seite hat nach 12 Sekunden nichts angezeigt. ' + 
 // Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
 const PUB = !!window.NF_AUTH;
 const KEY = 'nachtfalter-v2';
-const REACTIONS = ['lach','schock','herz','wein','wut']; // Inayas Totenkopf-Reaktionen (2026-10-10)
+const REACTIONS = ['lach','schock','herz','wein','wut']; // Inayas Totenkopf-Reaktionen (2026-10-10), seit 2026-10-12 nur noch als Likes gezählt
+const LIKE_IN = r => r === 'like' || REACTIONS.includes(r);
+const HEART = on => `<svg class="lheart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z" fill="${on ? 'currentColor' : 'none'}"/></svg>`;
+const likeBtn = (attrs, on, n, can=true) => can ? `<button class="likebtn" ${attrs} aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="likebtn muted">${HEART(false)}<span>${n}</span></span>` : '';
 const RNAME = {lach:'Lachend', schock:'Geschockt', herz:'Herzaugen', wein:'Weinend', wut:'Wütend'};
 // Totenkopf mit Gesichtsausdruck, selbst gezeichnet; Herzen dunkelrot, Tränen hellblau-grau
 const RSKULL = (inner) => `<svg class="rsk" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path d="M16 2.5C8.6 2.5 3.5 7.6 3.5 14.3c0 4 1.9 6.9 4.6 8.5V27a1.6 1.6 0 0 0 1.6 1.6h12.6a1.6 1.6 0 0 0 1.6-1.6v-4.2c2.7-1.6 4.6-4.5 4.6-8.5C28.5 7.6 23.4 2.5 16 2.5Z" fill="#f2f0eb" stroke="#141218" stroke-width="1.4"/><path d="M12 28.6v-3M16 28.6v-3M20 28.6v-3" stroke="#141218" stroke-width="1.2"/>${inner}</svg>`;
@@ -4985,15 +4993,13 @@ const CMH = {};
 function cbub(uid, name, text, ts, del, k, img='', extra=''){
   const u = uid === social?.uid ? me() : S.users[uid] || (PROF[uid] ? profUser(uid) : null);
   if (!u && uid && social && !CMH[uid]) { CMH[uid] = 1; loadProf(uid).then(() => k ? piDraw(k) : softRender()); }
-  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit ? avatar(u.outfit, 'head') : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${etx(text)}</span>` : ''}${img && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
+  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit || u?.pic ? headPic(u) : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${etx(text)}</span>` : ''}${img && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
 }
 function piInner(p){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
   const can = owner === uid || isFriend(owner) || !!p.pub; // öffentliche Beiträge: jeder darf reagieren
-  const reacts = REACTIONS.map((r, i) => {
-    const n = list.filter(x => x.kind === 'r' && x.r === r).length, on = list.some(x => x.kind === 'r' && x.r === r && x.by === uid);
-    return can ? `<button data-act="preact" data-k="${k}" data-i="${i}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${n || ''}</button>` : n ? `<span class="muted">${RICON[r]} ${n}</span>` : '';
-  }).join('');
+  const likers = new Set(list.filter(x => x.kind === 'r' && LIKE_IN(x.r)).map(x => x.by)); // alte Totenkopf-Reaktionen zählen als Like (Inaya, 2026-10-12)
+  const reacts = likeBtn(`data-act="plike" data-k="${k}"`, likers.has(uid), likers.size, can);
   const all = list.filter(x => x.kind === 'c').sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
   // Alte Kommentare (vor den Antworten) zählen als Antworten auf den ersten Kommentar (Inaya, 2026-10-11)
   const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
@@ -5070,7 +5076,7 @@ function notifs(){
     for (const x of w.list) {
       if (!x.by || x.by === uid) continue;
       if (x.kind === 'c' && x.to === uid) { out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'post', k, p:w.p}); continue; }
-      if (x.kind === 'r' && REACTIONS.includes(x.r)) out.push({ts:x.ts || 0, uid:x.by, ico:RICON[x.r], kind:'r', text:'hat auf deinen Beitrag reagiert', go:'post', k, p:w.p});
+      if (x.kind === 'r' && LIKE_IN(x.r)) out.push({ts:x.ts || 0, uid:x.by, ico:HEART(true), kind:'r', text:'gefällt dein Beitrag', go:'post', k, p:w.p});
       else if (x.kind === 'c') out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deinen Beitrag kommentiert:', quote:x.text, go:'post', k, p:w.p});
     }
   }
@@ -5112,7 +5118,7 @@ function notifView(){
   const who = g => { const nm = id => `<b>${esc(ntName(id))}</b>`; return g.uids.length === 1 ? nm(g.uids[0]) : g.uids.length === 2 ? nm(g.uids[0]) + ' und ' + nm(g.uids[1]) : nm(g.uids[0]) + ` und ${g.uids.length - 1} weitere`; };
   const row = g => {
     const many = g.uids.length > 1;
-    const text = g.kind === 'r' ? (many ? 'haben auf deinen Beitrag reagiert' : 'hat auf deinen Beitrag reagiert') + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
+    const text = g.kind === 'r' ? (many ? 'gefällt dein Beitrag' : 'gefällt dein Beitrag') + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
     const badge = g.kind === 'r' ? '' : `<i class="nt-badge"><svg viewBox="0 0 24 24" aria-hidden="true">${NT_BADGE[g.kind] || ''}</svg></i>`;
     const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p) : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid) : '';
     return `<li class="nt${g.ts > seen ? ' new' : ''}">
@@ -5858,10 +5864,7 @@ function postHTML(p){
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show; if (hs) body += showHTML(hs);
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) body = `<p class="caption">${mentionHTML(etx(p.text), tags, 'profile')}</p>` + body; // Text immer über Bild oder Anhang (Inaya, 2026-10-11)
   if (tags.length) body += `<p class="pwith">mit ${tags.map(t => `<button class="lnk" data-act="profile" data-id="${esc(t.id)}">${esc(t.n)}</button>`).join(', ')}</p>`;
-  const reacts = REACTIONS.map(r => {
-    const who = p.reactions[r] || [], on = who.includes(S.me);
-    return `<button data-act="react" data-id="${p.id}" data-r="${r}" aria-pressed="${on}" aria-label="${RNAME[r]}" title="${RNAME[r]}">${RICON[r]} ${who.length || ''}</button>`;
-  }).join('');
+  const lk = new Set(Object.values(p.reactions || {}).flat()), reacts = likeBtn(`data-act="react" data-id="${p.id}"`, lk.has(S.me), lk.size);
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
   return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
@@ -6143,8 +6146,8 @@ function tileHTML(p){
   if (p.audio) b += `<p class="caption">♪ ${esc(p.audio.name || 'Lied')}</p>`;
   if (p.url) b += `<a class="vid p" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Film ansehen</span></a>`;
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) b += `<p class="caption">${etx(p.text)}</p>`;
-  const n = Object.values(p.reactions || {}).reduce((s,a) => s + (a?.length || 0), 0), nc = (p.comments || []).length;
-  return `<div class="tile">${b}<span class="meta">${ago(p.ts)}${n ? ` · ${n} Reaktionen` : ''}${nc ? ` · ${nc} Kommentare` : ''}</span></div>`;
+  const n = new Set(Object.values(p.reactions || {}).flat()).size, nc = (p.comments || []).length;
+  return `<div class="tile">${b}<span class="meta">${ago(p.ts)}${n ? ` · ${n} ${n === 1 ? 'Like' : 'Likes'}` : ''}${nc ? ` · ${nc} Kommentare` : ''}</span></div>`;
 }
 function chatHTML(h){
   const log = ((S.chats || {})[S.me + '>' + h.id]) || [];
@@ -8005,6 +8008,12 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'vplay') { b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
+  else if (a === 'plike') {
+    const k = b.dataset.k, uid = social?.uid; if (!uid) return;
+    const mine = (PI[k]?.list || []).filter(x => x.kind === 'r' && x.by === uid && LIKE_IN(x.r));
+    try { if (mine.length) await Promise.all(mine.map(x => social.db.doc('chats/pi_' + k + '/m/' + x.did).delete())); else await social.db.doc('chats/pi_' + k + '/m/' + uid + '_klike').set({kind:'r', r:'like', by:uid, ts:Date.now()}); }
+    catch { toast('Das hat gerade nicht geklappt.'); }
+  }
   else if (a === 'preact') {
     const k = b.dataset.k, r = REACTIONS[+b.dataset.i], uid = social?.uid; if (!uid || !r) return;
     const ref = social.db.doc('chats/pi_' + k + '/m/' + uid + '_k' + r); // _k + Name: Totenkopf-Reaktionen, alte Emoji-Reaktionen (_r) zählen nicht mehr
@@ -8017,10 +8026,9 @@ document.addEventListener('click', async e => {
   else if (a === 'pc-more') { const x = b.dataset.k + '/' + b.dataset.d; CMOPEN.has(x) ? CMOPEN.delete(x) : CMOPEN.add(x); piDraw(b.dataset.k); }
   else if (a === 'pc-del') { try { await social.db.doc('chats/pi_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch {} }
   else if (a === 'react') {
-    const p = S.posts.find(x => x.id === id), r = b.dataset.r;
-    const list = p.reactions[r] = p.reactions[r] || [];
-    const k = list.indexOf(S.me);
-    if (k >= 0) list.splice(k,1); else list.push(S.me);
+    const p = S.posts.find(x => x.id === id); p.reactions = p.reactions || {};
+    const k = Object.values(p.reactions).some(l => l.includes(S.me)) ? 1 : -1;
+    if (k >= 0) for (const r in p.reactions) p.reactions[r] = p.reactions[r].filter(x => x !== S.me); else (p.reactions.like = p.reactions.like || []).push(S.me);
     if (k < 0 && p.author !== S.me && !S.rewarded['r:' + id]) { S.rewarded['r:' + id] = 1; earn(PTS.reaktion, 'Reaktion'); }
     save(); render();
   }
