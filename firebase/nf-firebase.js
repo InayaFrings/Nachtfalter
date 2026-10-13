@@ -25,7 +25,7 @@
   auth.onAuthStateChanged(u => { user = u; });
 
   /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch(), runTransaction: f => fs.runTransaction(f)}; // Transaktionen: Plätze in Anrufen (Inaya, 2026-10-13)
 
   /* ---------- Wer ist angemeldet ---------- */
   const me = {

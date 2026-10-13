@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b0a342796c74';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7f0c14f2cca2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -35,7 +35,7 @@
   auth.onAuthStateChanged(u => { user = u; });
 
   /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch()};
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch(), runTransaction: f => fs.runTransaction(f)}; // Transaktionen: Plätze in Anrufen (Inaya, 2026-10-13)
 
   /* ---------- Wer ist angemeldet ---------- */
   const me = {
@@ -1534,6 +1534,55 @@ form[data-form=pcomment] .pcthumb{flex:none;align-self:center}form[data-form=pco
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
 .bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}.bubble.shcard>.meta,.themed .bubble.me.shcard>.meta,.bubble.me.shcard>.meta .lnk,.bubble.me.shcard>.meta .mdel,.bubble.me.shcard>.meta .mdelb{color:#f2f1f5!important;opacity:1}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
+/* ---------- Anrufe und Talks: alles aus dem Design des Chats (--p-*), Kacheln als Spitzbogen (Inaya, 2026-10-13) ---------- */
+body.callopen{overflow:hidden}
+.callov,.ringov{position:fixed;inset:0;z-index:3600;border:0;margin:0;padding:calc(12px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));gap:12px;overflow:hidden}
+.callov{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.callov.hasbg::before,.ringov.hasbg::before{content:'';position:absolute;inset:0;background:var(--cbg) center/cover no-repeat;opacity:.32;pointer-events:none}
+.callov>*,.ringov>*{position:relative}
+.chd{display:flex;align-items:center;gap:10px;min-width:0}.chd>div{flex:1;min-width:0;display:grid;gap:2px}
+.clti{font:400 clamp(22px,4.5vw,32px)/1.1 var(--p-font);color:var(--p-fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cstat{font:13px Inter,sans-serif;color:var(--p-muted)}.ccnt{flex:none;font:600 13px Inter,sans-serif;border:1px solid var(--p-line);border-radius:999px;padding:4px 11px;color:var(--p-fg)}
+.clgrid{display:grid;gap:10px;min-height:0;--c:1;--r:1;grid-template-columns:repeat(var(--c),minmax(0,1fr));grid-template-rows:repeat(var(--r),minmax(0,1fr))}
+.clgrid[data-n="2"]{--r:2}.clgrid[data-n="3"]{--r:3}.clgrid[data-n="4"]{--c:2;--r:2}.clgrid[data-n="5"],.clgrid[data-n="6"]{--c:2;--r:3}.clgrid[data-n="7"],.clgrid[data-n="8"],.clgrid[data-n="9"]{--c:3;--r:3}
+.clgrid[data-n="5"] .ctile:last-child{grid-column:span 2}
+@media (min-aspect-ratio:1/1){.clgrid[data-n="2"]{--c:2;--r:1}.clgrid[data-n="3"]{--c:3;--r:1}.clgrid[data-n="5"],.clgrid[data-n="6"]{--c:3;--r:2}.clgrid[data-n="5"] .ctile:last-child{grid-column:auto}}
+.ctile{position:relative;min-width:0;min-height:0;display:grid;place-items:center;overflow:hidden;background:var(--p-panel);border:1.5px solid var(--p-line);border-radius:50% 50% 16px 16px / 26% 26% 16px 16px;transition:box-shadow .15s,opacity .2s}
+.ctile::after{content:'';position:absolute;inset:5px;border:1px solid color-mix(in srgb,var(--p-fg) 22%,transparent);border-radius:inherit;pointer-events:none}
+.ctile.spk{box-shadow:0 0 0 2px var(--p-fg),0 0 22px color-mix(in srgb,var(--p-fg) 55%,transparent)}
+.ctile.lost{opacity:.55;border-style:dashed}.ctile.clwait{animation:cwait 1.6s ease-in-out infinite}@keyframes cwait{50%{opacity:.6}}
+.ctile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.ctile.hasv video{display:block}.ctile.hasv .cav{display:none}.ctile.clme video{transform:scaleX(-1)}
+.cav{width:min(62%,150px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-line);background:var(--p-bg);display:block}.cav svg,.cav img{width:100%;height:100%;display:block;object-fit:cover}
+.cnm{position:absolute;left:0;right:0;bottom:0;padding:18px 8px 9px;text-align:center;font:italic 15px/1.2 'IM Fell English',Georgia,serif;color:var(--p-fg);background:linear-gradient(transparent,color-mix(in srgb,var(--p-bg) 85%,transparent));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cnm small{display:block;font:11px Inter,sans-serif;color:var(--p-muted)}
+.ctile.hasv .cnm{color:#fff;background:linear-gradient(transparent,#000a)}
+.cmx{position:absolute;top:14%;right:12%;width:28px;height:28px;border-radius:50%;background:var(--p-bg);border:1px solid var(--p-line);color:var(--p-fg);display:none;place-items:center}.ctile.clmute .cmx{display:grid}.cmx svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
+.cbar{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px}
+.clbtn{display:grid;justify-items:center;gap:4px;background:none;border:0;padding:0;color:var(--p-fg);font:12px Inter,sans-serif;cursor:pointer;min-width:58px}
+.clbtn svg{width:24px;height:24px;padding:14px;box-sizing:content-box;border-radius:50%;border:1px solid var(--p-line);background:var(--p-panel);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .12s}
+.clbtn:active svg{transform:scale(.94)}.clbtn.cloff svg{background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}
+.clbtn.cend svg{background:#a3122a;border:2px solid var(--p-fg);color:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--p-bg) 70%,transparent)} /* Ring in Chat-Schriftfarbe: sichtbar auch auf roten Designs */.clbtn.cyes svg{background:var(--p-fg);border-color:var(--p-fg);color:var(--p-bg)}
+.ch-head>.row{flex-wrap:wrap;justify-content:flex-end}
+body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto}@media (min-width:761px){.callpill{top:16px;bottom:auto!important;right:16px}}
+.callbar.mine{border-style:solid}.callbar{align-self:start}.chbtns{flex-wrap:wrap;justify-content:flex-end}
+.callpill{position:fixed;right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:3500;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 10px;border-radius:999px;border:1px solid var(--p-line);box-shadow:0 8px 26px #000a;cursor:pointer;max-width:calc(100vw - 24px);text-align:left;font:inherit}
+.callpill span:last-child{display:grid;min-width:0}.callpill b{font:400 16px var(--p-font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.callpill small{font:12px Inter,sans-serif;color:var(--p-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clpic{width:38px;height:38px;border-radius:50%;background:var(--p-fg);color:var(--p-bg);display:grid;place-items:center;flex:none;animation:cpulse 2s ease-in-out infinite}.clpic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9}@keyframes cpulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--p-fg) 25%,transparent)}}
+.ringov{display:grid;place-items:center}.rgin{display:grid;justify-items:center;gap:8px;text-align:center}
+.rgav{width:140px;height:170px;overflow:hidden;border:1.5px solid var(--p-line);border-radius:50% 50% 16px 16px / 34% 34% 16px 16px;background:var(--p-panel);display:block;animation:cpulse 1.6s ease-in-out infinite}.rgav svg,.rgav img{width:100%;height:100%;object-fit:cover;display:block}
+.rgn{font:400 32px/1.1 var(--p-font)}.rgin small{color:var(--p-muted);font:14px Inter,sans-serif}.rgbtns{display:flex;gap:44px;margin-top:22px}
+.callb svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.callbar{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 12px;border:1px dashed var(--p-line);border-radius:16px;background:var(--p-panel);color:var(--p-fg)}.callbar>span:nth-child(2){flex:1;min-width:0;display:grid}.callbar small{color:var(--p-muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cbic{width:34px;height:34px;border-radius:50%;background:var(--p-fg);color:var(--p-bg);display:grid;place-items:center;flex:none;animation:cpulse 2s ease-in-out infinite}.cbic svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9}
+.talks{min-width:0}.tkrow{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.tkcard{flex:0 0 min(210px,70vw);scroll-snap-align:start;display:grid;align-content:start;gap:6px;padding:12px 12px 12px;border:1px solid var(--p-line);border-radius:26px 26px 12px 12px;background:var(--p-panel);color:var(--p-fg);min-width:0;position:relative}
+.tkcard.live{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--p-fg) 35%,transparent)}.tkcard.tkon{border-color:var(--p-fg)}
+.tkh{display:flex;align-items:center;gap:8px;min-width:0}.tkic{width:30px;height:30px;border-radius:50%;border:1px solid var(--p-line);display:grid;place-items:center;flex:none}.tkic svg,.tked svg,.tkadd svg,.tkkind svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tkn{flex:1;min-width:0;font:400 18px/1.15 var(--p-font);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tked{background:none;border:0;color:inherit;padding:4px;cursor:pointer;opacity:.75}
+.tkm{color:var(--p-muted);font:12px Inter,sans-serif}.tkav{display:flex;align-items:center;min-height:22px}.tkav .cameo{width:22px;height:22px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-panel);margin-left:-6px;background:var(--p-bg)}.tkav .cameo:first-child{margin-left:0}.tkav .cameo svg,.tkav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.tkav b{font:600 11px Inter,sans-serif;margin-left:4px}
+.tkgo{justify-content:center;width:100%}.tkgo[disabled]{opacity:.55;cursor:not-allowed}
+.tkadd{border-style:dashed;place-items:center;align-content:center;cursor:pointer;font:600 14px var(--p-font);gap:8px;min-height:120px}.tkadd svg{width:24px;height:24px}
+.tkform{display:grid;gap:12px;padding:18px}.tkform h3{margin:0;font:400 22px var(--p-font)}.tkkind{display:flex;gap:16px;flex-wrap:wrap;border:0;padding:0}.tkkind label{display:flex;align-items:center;gap:6px}
+
 .mread{display:flex;align-items:center;gap:6px;margin:3px 4px 0;font:12px Inter,sans-serif;color:var(--p-muted,#9a99a3)}.mreadav{display:flex;align-items:center}.mreadav .cameo{width:18px;height:18px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-bg,#0e0e10);margin-left:-5px;background:var(--p-panel,#1c1c1f);display:block}.mreadav .cameo:first-child{margin-left:0}.mreadav .cameo svg,.mreadav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.mreadav b{margin-left:4px;font-weight:600;font-size:11px}
 #stvfr{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .storyov .sthead,.storyov .stbars,.storyov #stcs,.storyov .starchbar{transition:opacity .22s ease}.storyov.stpress .sthead,.storyov.stpress .stbars,.storyov.stpress #stcs,.storyov.stpress .starchbar{opacity:0;pointer-events:none}
@@ -8082,7 +8131,7 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; e2Init(); // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 90000); // Freundesprofile regelmäßig auffrischen
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
@@ -8282,7 +8331,7 @@ function openChat(id){
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.lim = 200; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
-  chSub(id); rdWatch(id);
+  chSub(id); rdWatch(id); tkWatch(id);
   go('chats');
 }
 // Lesebestätigungen (Inaya, 2026-10-13): jedes Mitglied schreibt seinen Lesestand nach chats/<cid>/rd/<uid> = {ts}
@@ -8358,7 +8407,8 @@ function chatsView(){
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
       <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}</button>`; })()}${c.group ? `<small class="muted">${c.members.map(chatWho).map(esc).join(', ')}</small>` : ''}<small class="typing" id="chtyping" hidden></small></div>
-        ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
+        ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>`}</header>
+      ${c.pub ? talksHTML(c) : ''}${callBarHTML(c)}
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><textarea id="cm-in" class="mlin" rows="1" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
@@ -9178,6 +9228,225 @@ function chMore(){ if (!CH.open || !CH.mraw || CH.mraw.length < (CH.lim || 200))
     w.classList.remove('swiping', 'swre', 'swrx'); if (!on) return; const id = w.dataset.mid;
     if (dx > 56) { navigator.vibrate?.(8); chReply(id); } else if (dx < -56) { navigator.vibrate?.(8); rxOpen(id, w.querySelector('.bubble') || w); } };
   document.addEventListener('pointerup', end); document.addEventListener('pointercancel', end); }
+/* ---------- Anrufe und Talks (Inaya, 2026-10-13) ----------
+   Ton und Bild laufen per WebRTC direkt zwischen den Geräten (jeder mit jedem, DTLS-SRTP-verschlüsselt), Firestore übernimmt nur den Verbindungsaufbau.
+   Ein Anrufbereich („Talk“) ist chats/<cid>/talk/<id> mit den Plätzen p:{<uid>:{t:Herzschlag, s:Sitzung}}.
+   - Private Chats und private Gruppen: Bereiche 'audio' und 'video' (unsichtbar, entstehen beim ersten Anruf); Klingeln über rings/<uid>/r.
+   - Öffentliche Gruppen: 'audio' („Audiochat“) und 'video' („Videochat“) sind die Standard-Talks, der Admin kann umbenennen und weitere anlegen.
+   - Plätze: privat 2, sonst 9 je Talk. Durchgesetzt hier und in den Firestore-Regeln; verwaiste Plätze (kein Herzschlag seit 45 s) darf jedes Mitglied freigeben. */
+const TK_MAX = cid => /^dm_/.test(cid || '') ? 2 : 9, TK_STALE = 45000, TK_HB = 15000;
+const TK_DEF = {audio:{name:'Audiochat', kind:'audio'}, video:{name:'Videochat', kind:'video'}};
+const tkRef = (cid, tid) => social.db.doc(`chats/${cid}/talk/${tid}`);
+const tkFresh = (t, now = Date.now()) => Object.entries(t?.p || {}).filter(([, v]) => v && now - (+v.t || 0) < TK_STALE).map(([u]) => u);
+const TK = {cid:null, list:[], unsub:null};
+const CI = { // Symbole für Anrufe
+  ph:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  vid:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3z"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
+  micx:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16"/></svg>',
+  camx:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3zM3 3l18 18"/></svg>',
+  flip:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14-3l2 2M20 15a8 8 0 0 1-14 3l-2-2"/><path d="M20 4v4h-4M4 20v-4h4"/></svg>',
+  snd:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg>',
+  sndx:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  end:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 14.5c5-4.7 12-4.7 17 0l-2.3 2.6-3.4-1.6v-2.4a11 11 0 0 0-5.6 0v2.4l-3.4 1.6z"/></svg>',
+  min:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v0"/><path d="M8 19h8"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.7 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>' };
+let RTC_TURN = null; // optionaler TURN-Server aus site/rtc (nur wenn Inaya einen einträgt)
+async function rtcTurn(){ if (RTC_TURN !== null || !social) return; RTC_TURN = false; try { const d = await social.db.doc('site/rtc').get(); const x = d.exists ? d.data() : null; if (x?.urls) RTC_TURN = {urls:String(x.urls).split(/[\s,]+/).filter(Boolean), username:x.username || '', credential:x.credential || ''}; } catch {} }
+const rtcIce = () => [{urls:['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']}, {urls:'stun:stun.cloudflare.com:3478'}, ...(RTC_TURN ? [RTC_TURN] : [])];
+
+/* ---- Talks eines Chats beobachten ---- */
+function tkWatch(cid){ if (TK.cid === cid && TK.unsub) return; TK.unsub?.(); TK.cid = cid; TK.list = []; if (!social || !cid || !/^(dm_|g)/.test(cid)) return;
+  TK.unsub = social.db.collection(`chats/${cid}/talk`).onSnapshot(q => { TK.list = q.docs.map(d => ({id:d.id, ...d.data()})); tkEnsure(cid); tkSweep(cid); tkPaint(); callBarPaint(); }, () => {}); }
+// Öffentliche Gruppen bekommen die beiden Standard-Talks (auch ältere Gruppen, ohne Doppelte: feste IDs, nur anlegen wenn sie fehlen)
+let tkEnsuring = {};
+async function tkEnsure(cid){ const c = CH.list.find(x => x.id === cid); if (!c?.pub || !(c.members || []).includes(social.uid) || tkEnsuring[cid]) return;
+  const miss = Object.keys(TK_DEF).filter(id => !TK.list.some(t => t.id === id)); if (!miss.length) return; tkEnsuring[cid] = 1;
+  try { for (const id of miss) await social.db.runTransaction(async tx => { const r = tkRef(cid, id), d = await tx.get(r); if (!d.exists) tx.set(r, {...TK_DEF[id], def:1, ts:Date.now(), p:{}}); }); } catch {} delete tkEnsuring[cid]; }
+// verwaiste Plätze freigeben (Gerät abgestürzt, Netz weg)
+async function tkSweep(cid){ const now = Date.now();
+  for (const t of TK.list) for (const [u, v] of Object.entries(t.p || {})) if (u !== social.uid && now - (+v?.t || 0) > TK_STALE + 2000) tkRef(cid, t.id).update({[`p.${u}`]:firebase.firestore.FieldValue.delete(), gone:u}).catch(() => {}); }
+const tkSorted = () => [...TK.list].sort((a, b) => (b.def || 0) - (a.def || 0) || (a.id === 'audio' ? -1 : b.id === 'audio' ? 1 : 0) || (a.ts || 0) - (b.ts || 0));
+function tkCardHTML(c, t){ const on = tkFresh(t), n = on.length, mine = CALL && CALL.cid === c.id && CALL.tid === t.id, full = n >= 9 && !mine, admin = c.createdBy === social?.uid, mem = (c.members || []).includes(social?.uid);
+  return `<div class="tkcard${mine ? ' tkon' : ''}${n ? ' live' : ''}" data-tk="${esc(t.id)}"><div class="tkh"><span class="tkic" aria-hidden="true">${t.kind === 'video' ? CI.vid : CI.mic}</span><b class="tkn">${esc(t.name || TK_DEF[t.id]?.name || 'Talk')}</b>${admin ? `<button type="button" class="tked" data-act="tk-edit" data-id="${esc(t.id)}" aria-label="Talk umbenennen">${CI.pen}</button>` : ''}</div>
+    <small class="tkm">${t.kind === 'video' ? 'Videochat' : 'Audiochat'} · ${n}/9 · ${9 - n} ${9 - n === 1 ? 'Platz' : 'Plätze'} frei</small>
+    <span class="tkav">${on.slice(0, 5).map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(tkPaint); } return `<span class="cameo" title="${esc(chatWho(u))}">${p ? headPic(p) : ''}</span>`; }).join('')}${n > 5 ? `<b>+${n - 5}</b>` : ''}</span>
+    ${mine ? '<button type="button" class="btn ghost tkgo" data-act="call-open">Du bist drin</button>' : !mem ? '<small class="tkm">Tritt der Gruppe bei, um mitzureden.</small>' : `<button type="button" class="btn tkgo" data-act="tk-join" data-id="${esc(t.id)}"${full ? ' disabled' : ''}>${full ? 'Voll' : 'Beitreten'}</button>`}</div>`; }
+function talksHTML(c){ if (!c?.pub) return ''; const l = tkSorted();
+  return `<div class="talks" id="talks" aria-label="Talks"><div class="tkrow">${l.map(t => tkCardHTML(c, t)).join('') || '<p class="muted tkload">Talks werden eingerichtet …</p>'}${c.createdBy === social?.uid ? `<button type="button" class="tkcard tkadd" data-act="tk-new">${CI.plus}<span>Talk hinzufügen</span></button>` : ''}</div></div>`; }
+function tkPaint(){ const el = document.getElementById('talks'), c = CH.list.find(x => x.id === TK.cid); if (el && c && CH.open === c.id) { const sx = el.querySelector('.tkrow')?.scrollLeft || 0; el.outerHTML = talksHTML(c); const n = document.querySelector('#talks .tkrow'); if (n) n.scrollLeft = sx; } }
+// laufender Anruf im privaten Chat / in der privaten Gruppe: Leiste zum Beitreten
+function callBarHTML(c){ if (c && CALL && CALL.cid === c.id) return `<div id="callbar" class="callbar mine"><span class="cbic" aria-hidden="true">${CALL.kind === 'video' ? CI.vid : CI.ph}</span><span><b>${esc(c.pub ? callTitle(CALL).split(' · ')[0] : 'Dein Anruf')}</b><small class="cbst">${esc(CALL.statusText || '')}</small></span><button type="button" class="btn" data-act="call-open">Zum Anruf</button></div>`; // eigener Anruf in diesem Chat: Leiste statt schwebender Anzeige
+  if (!c || c.pub) return '<div id="callbar" hidden></div>'; const t = TK.cid === c.id ? TK.list.find(x => tkFresh(x).some(u => u !== social?.uid) && !(CALL && CALL.cid === c.id && CALL.tid === x.id)) : null;
+  if (!t) return '<div id="callbar" hidden></div>'; const n = tkFresh(t).length, full = n >= TK_MAX(c.id);
+  return `<div id="callbar" class="callbar"><span class="cbic" aria-hidden="true">${t.kind === 'video' ? CI.vid : CI.ph}</span><span><b>${t.kind === 'video' ? 'Videoanruf läuft' : 'Anruf läuft'}</b><small>${tkFresh(t).map(chatWho).map(esc).join(', ')} · ${n}/${TK_MAX(c.id)}</small></span><button type="button" class="btn" data-act="call-join" data-id="${esc(t.id)}"${full ? ' disabled' : ''}>${full ? 'Voll' : 'Beitreten'}</button></div>`; }
+function callBarPaint(){ const el = document.getElementById('callbar'), c = CH.list.find(x => x.id === TK.cid); if (el && c && CH.open === c.id) el.outerHTML = callBarHTML(c); }
+const callBtnsHTML = c => c && !c.pub ? `<button class="btn ghost iconb callb" data-act="call-start" data-k="audio" aria-label="Anrufen" title="Anrufen">${CI.ph}</button><button class="btn ghost iconb callb" data-act="call-start" data-k="video" aria-label="Videoanruf" title="Videoanruf">${CI.vid}</button>` : '';
+
+/* ---- der laufende Anruf ---- */
+let CALL = null;
+const callTheme = cid => { const c = CH.list.find(x => x.id === cid); return {c, st:themeStyle(normTheme({...(c?.theme || BLANK_THEME())})), bg:c ? chBg(c) : ''}; };
+async function callJoin(cid, tid, opts = {}){
+  if (!social) return; const c = CH.list.find(x => x.id === cid); if (!c || !(c.members || []).includes(social.uid)) return toast('Dafür musst du Mitglied sein.');
+  if (CALL && CALL.cid === cid && CALL.tid === tid) { callShow(); return; }
+  if (CALL) await callLeave(true);
+  if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) return toast('Dieser Browser kann keine Anrufe. Probier Safari oder Chrome in der neuesten Version.');
+  const kind = TK_DEF[tid]?.kind || TK.list.find(t => t.id === tid)?.kind || 'audio', max = TK_MAX(cid);
+  const ac = new (window.AudioContext || window.webkitAudioContext)(); // im Tippen anlegen, sonst bleibt es auf dem iPhone stumm
+  CALL = {cid, tid, kind, max, sid:e2Rand(10), peers:new Map(), st:{mic:true, cam:kind === 'video'}, sts:{}, room:{p:{}}, ac, t0:Date.now(), joined:0, ring:[], ringing:!!opts.ring, face:'user', out:true, view:'big', status:'Verbindet …'};
+  const C = CALL; callShow(); callPaint();
+  try { C.local = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}, video:kind === 'video' ? {facingMode:'user', width:{ideal:640}, height:{ideal:480}, frameRate:{ideal:24, max:30}} : false}); }
+  catch (e) { if (CALL === C) { CALL = null; callHide(); } return toast(e?.name === 'NotAllowedError' ? 'Bitte erlaube Noctibat den Zugriff auf ' + (kind === 'video' ? 'Kamera und Mikrofon.' : 'das Mikrofon.') : 'Mikrofon oder Kamera ließen sich nicht starten.'); }
+  if (CALL !== C) { C.local.getTracks().forEach(t => t.stop()); return; }
+  await rtcTurn();
+  try { await tkEnsureRoom(cid, tid, kind); await tkSweep(cid); await social.db.runTransaction(async tx => { const d = await tx.get(tkRef(cid, tid)); const p = d.data()?.p || {}, others = tkFresh({p}).filter(u => u !== social.uid);
+      if (!p[social.uid] && others.length >= max) throw new Error('voll'); tx.update(tkRef(cid, tid), {[`p.${social.uid}`]:{t:Date.now(), s:C.sid}}); }); }
+  catch (e) { C.local.getTracks().forEach(t => t.stop()); if (CALL === C) { CALL = null; callHide(); } return toast(e?.message === 'voll' ? `Alle ${max} Plätze sind belegt. Sobald jemand geht, wird ein Platz frei.` : 'Beitreten hat nicht geklappt. Versuch es nochmal.'); }
+  C.joined = Date.now(); C.status = 'Verbunden'; social.db.doc(`chats/${cid}/talk/${tid}/st/${social.uid}`).set({mic:true, cam:C.st.cam, ts:Date.now()}).catch(() => {});
+  C.unRoom = tkRef(cid, tid).onSnapshot(d => { if (CALL !== C) return; C.room = d.data() || {p:{}}; if (!C.room.p?.[social.uid]) { tkRef(cid, tid).update({[`p.${social.uid}`]:{t:Date.now(), s:C.sid}}).catch(() => {}); } callSync(); }, () => {});
+  // Signale strikt nacheinander und in Sende-Reihenfolge verarbeiten (Firestore liefert sie nach ID sortiert, parallel überholten sie sich)
+  C.sigQ = Promise.resolve(); C.unSig = tkRef(cid, tid).collection('sig').where('to', '==', social.uid).onSnapshot(q => { const l = q.docChanges().filter(ch => ch.type === 'added').map(ch => ch.doc).sort((a, b) => (+a.data().at || 0) - (+b.data().at || 0) || (+a.data().n || 0) - (+b.data().n || 0)); for (const d of l) C.sigQ = C.sigQ.then(() => sigIn(C, d)).catch(() => {}); }, () => {});
+  C.unSt = tkRef(cid, tid).collection('st').onSnapshot(q => { const s = {}; q.docs.forEach(d => { s[d.id] = d.data(); }); C.sts = s; callPaint(); }, () => {});
+  C.hb = setInterval(() => { if (CALL === C) tkRef(cid, tid).update({[`p.${social.uid}.t`]:Date.now()}).catch(() => {}); }, TK_HB);
+  C.tick = setInterval(() => { if (CALL === C) { callStatus(); callSync(); } }, 1000);
+  spkStart(C, social.uid, C.local);
+  if (opts.ring) ringOut(C, c); callPaint(); }
+async function tkEnsureRoom(cid, tid, kind){ if (TK.cid === cid && TK.list.some(t => t.id === tid)) return; await social.db.runTransaction(async tx => { const r = tkRef(cid, tid), d = await tx.get(r); if (!d.exists) tx.set(r, {...(TK_DEF[tid] || {name:'Talk', kind}), def:TK_DEF[tid] ? 1 : 0, ts:Date.now(), p:{}}); }); }
+function callSync(){ const C = CALL; if (!C || !C.joined) return; const p = C.room.p || {}, now = Date.now();
+  for (const [u, v] of Object.entries(p)) { if (u === social.uid || !v) continue; if (now - (+v.t || 0) > TK_STALE) continue; const pr = C.peers.get(u); if (!pr || pr.rs !== v.s) { if (pr) peerClose(C, u); peerOpen(C, u, v.s); } }
+  for (const u of [...C.peers.keys()]) { const pr = C.peers.get(u); if (p[u]) pr.seen = 1; if (!p[u] ? pr.seen || now - pr.born > 8000 : now - (+p[u].t || 0) > TK_STALE || p[u].s !== pr.rs) { if (pr.state === 'connected') C.had = 1; peerClose(C, u); } } // neue Verbindung: kurz warten, bis die Teilnehmerliste nachkommt
+  if (/^dm_/.test(C.cid) && C.had && !C.peers.size && !C.ending) { C.ending = 1; C.status = 'Anruf beendet'; callStatus(); setTimeout(() => CALL === C && callLeave(true), 1500); } // privat: legt die andere Person auf, ist der Anruf vorbei
+  callPaint(); }
+// Verbindung zu einer Person: pro Paar bietet nur die Seite mit der kleineren ID an, die andere antwortet (keine Überschneidungen, auch wenn viele gleichzeitig beitreten)
+function peerOpen(C, u, rs){ const pc = new RTCPeerConnection({iceServers:rtcIce(), bundlePolicy:'max-bundle'});
+  const pr = {u, rs, pc, born:Date.now(), init:social.uid < u, making:false, cand:[], candT:null, rq:[], stream:new MediaStream(), state:'neu', lost:0}; C.peers.set(u, pr);
+  if (pr.init) C.local.getTracks().forEach(t => pc.addTrack(t, C.local));
+  pc.ontrack = e => { if (!pr.stream.getTracks().includes(e.track)) pr.stream.addTrack(e.track); e.track.onunmute = () => callPaint(); spkStart(C, u, pr.stream); callPaint(); };
+  pc.onicecandidate = e => { if (!e.candidate) return; pr.cand.push(e.candidate.toJSON()); clearTimeout(pr.candT); pr.candT = setTimeout(() => { const l = pr.cand.splice(0); if (l.length) sigOut(C, pr, 'ice', l); }, 180); }; // Kandidaten gebündelt, spart Schreibvorgänge
+  pc.onnegotiationneeded = async () => { if (!pr.init) return; try { pr.making = true; await pc.setLocalDescription(await pc.createOffer()); sigOut(C, pr, 'sdp', pc.localDescription.toJSON()); } catch {} finally { pr.making = false; } };
+  pc.onconnectionstatechange = () => { pr.state = pc.connectionState; if (pr.state === 'connected') { pr.lost = 0; if (C.ringing && /^dm_/.test(C.cid)) C.ringing = false; }
+    if (pr.state === 'disconnected') { pr.lost = pr.lost || Date.now(); setTimeout(() => { if (C.peers.get(u) === pr && pc.connectionState === 'disconnected' && pr.init) try { pc.restartIce(); } catch {} }, 4000); } // Wiederverbinden: die anbietende Seite startet neu
+    if (pr.state === 'failed') { pr.lost = pr.lost || Date.now(); if (pr.init) try { pc.restartIce(); } catch {} } callPaint(); };
+  return pr; }
+function peerClose(C, u){ const pr = C.peers.get(u); if (!pr) return; C.peers.delete(u); try { pr.pc.close(); } catch {} spkStop(C, u); callPaint(); }
+// setLocalDescription ohne Angabe erzeugt Angebot bzw. Antwort passend zum Zustand (ältere Safari: von Hand)
+async function sldAuto(pc){ try { await pc.setLocalDescription(); } catch (e) { if (pc.signalingState === 'have-remote-offer') await pc.setLocalDescription(await pc.createAnswer()); else await pc.setLocalDescription(await pc.createOffer()); } }
+let sigN = 0;
+function sigOut(C, pr, type, d){ if (CALL !== C) return; tkRef(C.cid, C.tid).collection('sig').add({from:social.uid, to:pr.u, fs:C.sid, ts:pr.rs, type, d:JSON.stringify(d), at:Date.now(), n:++sigN}).catch(() => {}); }
+async function sigIn(C, doc){ const m = doc.data(); doc.ref.delete().catch(() => {}); if (CALL !== C || m.ts !== C.sid) return; // nur Nachrichten an diese Sitzung
+  if (m.type === 'decline') { if (/^dm_/.test(C.cid)) { C.status = 'Abgelehnt'; callPaint(); setTimeout(() => CALL === C && callLeave(), 1600); } return; }
+  let pr = C.peers.get(m.from); if (!pr || pr.rs !== m.fs) { if (pr) peerClose(C, m.from); pr = peerOpen(C, m.from, m.fs); }
+  let d; try { d = JSON.parse(m.d); } catch { return; } const pc = pr.pc;
+  try {
+    if (m.type === 'sdp') {
+      if (d.type === 'offer') { if (pr.init) return; // nur die andere Seite bietet an
+        await pc.setRemoteDescription(d);
+        for (const t of C.local.getTracks()) { const tr = pc.getTransceivers().find(x => x.receiver.track?.kind === t.kind && !x.sender.track); if (tr) { await tr.sender.replaceTrack(t); tr.direction = 'sendrecv'; try { tr.sender.setStreams?.(C.local); } catch {} } } // eigenes Mikro/Kamera auf die angebotenen Kanäle
+        await pc.setLocalDescription(await pc.createAnswer()); sigOut(C, pr, 'sdp', pc.localDescription.toJSON()); }
+      else if (pr.init && pc.signalingState === 'have-local-offer') await pc.setRemoteDescription(d);
+      for (const c of pr.rq.splice(0)) await pc.addIceCandidate(c).catch(() => {}); }
+    else if (m.type === 'ice') { for (const c of d) { if (!pc.remoteDescription) pr.rq.push(c); else await pc.addIceCandidate(c).catch(() => {}); } }
+  } catch {} }
+async function callLeave(quiet){ const C = CALL; if (!C) return; CALL = null; clearInterval(C.hb); clearInterval(C.tick); clearTimeout(C.ringT); C.unRoom?.(); C.unSig?.(); C.unSt?.();
+  for (const u of [...C.peers.keys()]) peerClose(C, u); C.local?.getTracks().forEach(t => t.stop()); try { C.ac?.close(); } catch {}
+  C.ring.forEach(r => social.db.doc(r).delete().catch(() => {}));
+  if (C.joined) { tkRef(C.cid, C.tid).update({[`p.${social.uid}`]:firebase.firestore.FieldValue.delete()}).catch(() => {}); social.db.doc(`chats/${C.cid}/talk/${C.tid}/st/${social.uid}`).delete().catch(() => {}); }
+  callHide(); tkPaint(); callBarPaint(); if (!quiet) toast('Anruf beendet'); }
+addEventListener('pagehide', () => { if (CALL?.joined) tkRef(CALL.cid, CALL.tid).update({[`p.${social.uid}`]:firebase.firestore.FieldValue.delete()}).catch(() => {}); });
+function callStatus(){ const C = CALL; if (!C) return; const live = [...C.peers.values()], on = live.filter(p => p.state === 'connected'), lost = live.filter(p => p.lost && p.state !== 'connected');
+  let s; if (!C.joined) s = 'Verbindet …'; else if (lost.length) s = `Verbindung zu ${lost.map(p => chatWho(p.u)).join(', ')} unterbrochen, wird wiederhergestellt …`;
+  else if (/^dm_/.test(C.cid) && !on.length) s = C.ringing ? (C.ring.length ? 'Klingelt …' : 'Ruft an …') : live.length ? 'Verbindet …' : 'Wartet …';
+  else if (!on.length) s = 'Du bist allein hier. Warte, bis jemand dazukommt.'; else { const sec = Math.floor((Date.now() - (C.since || (C.since = Date.now()))) / 1000); s = `Im Gespräch · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
+  if (C.status === 'Abgelehnt' || C.status === 'Keine Antwort' || C.status === 'Anruf beendet') s = C.status;
+  const here = !!C.min && V.name === 'chats' && CH.mode === 'chat' && CH.open === C.cid; document.body.classList.toggle('callhere', here); const cb = document.querySelector('#callbar .cbst'); if (cb) cb.textContent = s; else if (here && !document.querySelector('#callbar.mine')) callBarPaint(); const el = document.querySelector('#callov .cstat'), pl = document.querySelector('#callpill .cpst'); if (el) el.textContent = s; if (pl) pl.textContent = s; C.statusText = s; }
+// Sprechen erkennen: Leuchtrand um die Kachel
+function spkStart(C, u, stream){ if (!C.ac || !stream.getAudioTracks().length) return; spkStop(C, u); try { const src = C.ac.createMediaStreamSource(stream), an = C.ac.createAnalyser(); an.fftSize = 512; src.connect(an); const buf = new Uint8Array(an.fftSize); (C.spk = C.spk || {})[u] = {src, an, buf}; C.ac.resume?.(); if (!C.spkT) C.spkT = setInterval(() => spkTick(C), 160); } catch {} }
+function spkStop(C, u){ const s = C.spk?.[u]; if (s) { try { s.src.disconnect(); } catch {} delete C.spk[u]; } }
+function spkTick(C){ if (CALL !== C) return clearInterval(C.spkT); for (const [u, s] of Object.entries(C.spk || {})) { s.an.getByteTimeDomainData(s.buf); let m = 0; for (const v of s.buf) m = Math.max(m, Math.abs(v - 128)); const on = m > 10 && !(u === social.uid && !C.st.mic) && C.sts[u]?.mic !== false; document.querySelector(`#callov .ctile[data-u="${u}"]`)?.classList.toggle('spk', on); } }
+
+/* ---- Bedienung ---- */
+function callMic(){ const C = CALL; if (!C) return; C.st.mic = !C.st.mic; C.local.getAudioTracks().forEach(t => { t.enabled = C.st.mic; }); callStPub(); callPaint(); }
+function callCam(){ const C = CALL; if (!C || C.kind !== 'video') return; C.st.cam = !C.st.cam; C.local.getVideoTracks().forEach(t => { t.enabled = C.st.cam; }); callStPub(); callPaint(); }
+function callStPub(){ const C = CALL; if (C?.joined) social.db.doc(`chats/${C.cid}/talk/${C.tid}/st/${social.uid}`).set({mic:C.st.mic, cam:C.st.cam, ts:Date.now()}).catch(() => {}); }
+async function callFlip(){ const C = CALL; if (!C || C.kind !== 'video') return; const face = C.face === 'user' ? 'environment' : 'user';
+  try { const s = await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:face}, width:{ideal:640}, height:{ideal:480}}}); const nt = s.getVideoTracks()[0], ot = C.local.getVideoTracks()[0];
+    nt.enabled = C.st.cam; for (const pr of C.peers.values()) pr.pc.getSenders().filter(x => x.track?.kind === 'video').forEach(x => x.replaceTrack(nt)); if (ot) { C.local.removeTrack(ot); ot.stop(); } C.local.addTrack(nt); C.face = face; callPaint(); }
+  catch { toast('Dieses Gerät hat keine zweite Kamera.'); } }
+function callOut(){ const C = CALL; if (!C) return; C.out = !C.out; document.querySelectorAll('#callaud audio').forEach(a => { a.muted = !C.out; }); callPaint(); } // Ton der anderen aus/an
+async function callSink(){ if (!HTMLMediaElement.prototype.setSinkId) return; const l = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'audiooutput'); if (l.length < 2) return toast('Nur ein Lautsprecher gefunden.');
+  const C = CALL; C.sink = l[(l.findIndex(d => d.deviceId === C.sink) + 1) % l.length].deviceId; for (const a of document.querySelectorAll('#callaud audio')) await a.setSinkId(C.sink).catch(() => {}); toast('Ausgabe: ' + (l.find(d => d.deviceId === C.sink)?.label || 'anderer Lautsprecher')); }
+
+/* ---- Oberfläche: im Design des Chats bzw. der Gruppe ---- */
+function callShow(){ const C = CALL; if (!C) return; C.min = false; document.getElementById('callpill')?.remove(); let el = document.getElementById('callov');
+  if (!el) { el = document.createElement('section'); el.id = 'callov'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Anruf'); document.body.appendChild(el); }
+  const th = callTheme(C.cid); el.className = 'themed callov' + (th.bg ? ' hasbg' : ''); el.setAttribute('style', th.st); el.style.setProperty('--cbg', th.bg ? `url("${th.bg}")` : 'none');
+  if (!document.getElementById('callaud')) { const a = document.createElement('div'); a.id = 'callaud'; a.hidden = true; document.body.appendChild(a); }
+  document.body.classList.add('callopen'); callPaint(); }
+function callHide(){ document.body.classList.remove('callhere'); document.getElementById('callov')?.remove(); document.getElementById('callpill')?.remove(); document.getElementById('callaud')?.remove(); document.body.classList.remove('callopen'); }
+function callMinimize(){ const C = CALL; if (!C) return; C.min = true; setTimeout(() => { callBarPaint(); callStatus(); }, 50); document.getElementById('callov')?.remove(); document.body.classList.remove('callopen'); const th = callTheme(C.cid), c = th.c;
+  let p = document.getElementById('callpill'); if (!p) { p = document.createElement('button'); p.type = 'button'; p.id = 'callpill'; p.dataset.act = 'call-open'; document.body.appendChild(p); }
+  p.className = 'themed callpill'; p.setAttribute('style', th.st); p.innerHTML = `<span class="clpic" aria-hidden="true">${C.kind === 'video' ? CI.vid : CI.ph}</span><span><b>${esc(callTitle(C))}</b><small class="cpst">${esc(C.statusText || '')}</small></span>`;
+  if (c && CH.open !== c.id) { openChat(c.id); } }
+const callTitle = C => { const c = CH.list.find(x => x.id === C.cid), t = TK.cid === C.cid ? TK.list.find(x => x.id === C.tid) : null; return c?.pub ? (t?.name || TK_DEF[C.tid]?.name || 'Talk') + ' · ' + chatName(c) : chatName(c || {id:C.cid, members:[]}); };
+function callPaint(){ const C = CALL; if (!C) return; callStatus(); if (C.min) { const p = document.getElementById('callpill'); if (p) p.querySelector('.cpst').textContent = C.statusText || ''; return; }
+  const el = document.getElementById('callov'); if (!el) return; const me = social.uid, ids = [me, ...[...C.peers.keys()]], n = ids.length, vid = C.kind === 'video';
+  const hdr = el.querySelector('.chd'), grid = el.querySelector('.clgrid');
+  if (!grid) { C.barH = ''; } if (!grid) el.innerHTML = `<header class="chd"><div><b class="clti"></b><small class="cstat" aria-live="polite"></small></div><span class="ccnt"></span><button type="button" class="btn ghost iconb" data-act="call-min" aria-label="Verkleinern, weiter chatten" title="Zum Chat">${CI.chat}</button></header><div class="clgrid"></div><nav class="cbar" aria-label="Anruf steuern"></nav>`;
+  el.querySelector('.clti').textContent = callTitle(C); el.querySelector('.ccnt').textContent = `${n}/${C.max}`; callStatus();
+  const g = el.querySelector('.clgrid'); g.dataset.n = n; g.classList.toggle('clv', vid);
+  // Kacheln: vorhandene behalten (Video läuft weiter), neue anhängen, weg ist weg
+  const have = new Map([...g.children].map(x => [x.dataset.u, x]));
+  for (const u of ids) { let t = have.get(u); have.delete(u); if (!t) { t = document.createElement('div'); t.className = 'ctile'; t.dataset.u = u; t.innerHTML = `<span class="cav"></span><video playsinline autoplay muted></video><span class="cnm"></span><i class="cmx" aria-hidden="true">${CI.micx}</i>`; g.appendChild(t); const vv = t.querySelector('video'); vv.onloadeddata = vv.onresize = () => callPaint(); }
+    const pr = C.peers.get(u), st = u === me ? C.st : C.sts[u] || {}, stream = u === me ? C.local : pr?.stream, v = t.querySelector('video'), p = uidUser(u);
+    const hasV = vid && stream && stream.getVideoTracks().some(x => x.readyState === 'live') && st.cam !== false && (u === me || v.videoWidth > 0); // Bilder da? („muted“ bleibt in manchen Browsern hängen)
+    if (v.srcObject !== stream && stream) v.srcObject = stream; if (hasV) v.play().catch(() => {}); t.classList.toggle('hasv', !!hasV); t.classList.toggle('clme', u === me); t.classList.toggle('clmute', st.mic === false); t.classList.toggle('lost', !!(pr && pr.lost && pr.state !== 'connected')); t.classList.toggle('clwait', !!(pr && pr.state !== 'connected' && !pr.lost));
+    const av = t.querySelector('.cav'); if (av.dataset.u !== u || !av.innerHTML) { av.dataset.u = u; av.innerHTML = p ? headPic(p) : ''; if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => { const a = document.querySelector(`#callov .ctile[data-u="${u}"] .cav`); if (a) a.innerHTML = ''; callPaint(); }); } }
+    t.querySelector('.cnm').innerHTML = `❦ ${esc(u === me ? 'Du' : chatWho(u))}${pr && pr.state !== 'connected' ? ` <small>${pr.lost ? 'Verbindung weg …' : 'verbindet …'}</small>` : ''}`;
+    if (u !== me && pr) { let a = document.querySelector(`#callaud audio[data-u="${u}"]`); if (!a) { a = document.createElement('audio'); a.autoplay = true; a.setAttribute('playsinline', ''); a.dataset.u = u; document.getElementById('callaud')?.appendChild(a); if (C.sink && a.setSinkId) a.setSinkId(C.sink).catch(() => {}); }
+      if (a.srcObject !== pr.stream) a.srcObject = pr.stream; a.muted = !C.out; a.play().catch(() => {}); } }
+  have.forEach(x => x.remove()); document.querySelectorAll('#callaud audio').forEach(a => { if (!C.peers.has(a.dataset.u)) a.remove(); });
+  const hasFlip = vid && (navigator.mediaDevices?.enumerateDevices ? (C.cams ?? 2) > 1 : false); if (vid && C.cams == null && navigator.mediaDevices?.enumerateDevices) navigator.mediaDevices.enumerateDevices().then(l => { C.cams = l.filter(d => d.kind === 'videoinput').length; if (C.cams > 1) callPaint(); }).catch(() => {});
+  const bar = `<button type="button" class="clbtn${C.st.mic ? '' : ' cloff'}" data-act="call-mic" aria-pressed="${!C.st.mic}">${C.st.mic ? CI.mic : CI.micx}<span>${C.st.mic ? 'Mikro an' : 'Stumm'}</span></button>
+    ${vid ? `<button type="button" class="clbtn${C.st.cam ? '' : ' cloff'}" data-act="call-cam" aria-pressed="${!C.st.cam}">${C.st.cam ? CI.vid : CI.camx}<span>${C.st.cam ? 'Kamera an' : 'Kamera aus'}</span></button>` : ''}
+    ${vid && C.cams > 1 ? `<button type="button" class="clbtn" data-act="call-flip">${CI.flip}<span>Wechseln</span></button>` : ''}
+    <button type="button" class="clbtn${C.out ? '' : ' cloff'}" data-act="call-out" aria-pressed="${!C.out}">${C.out ? CI.snd : CI.sndx}<span>${C.out ? 'Ton an' : 'Ton aus'}</span></button>
+    ${HTMLMediaElement.prototype.setSinkId ? `<button type="button" class="clbtn" data-act="call-sink">${CI.snd}<span>Ausgabe</span></button>` : ''}
+    <button type="button" class="clbtn cend" data-act="call-end">${CI.end}<span>Auflegen</span></button>`;
+  if (C.barH !== bar) { C.barH = bar; el.querySelector('.cbar').innerHTML = bar; } } // nur bei Änderung neu, sonst flackert die Leiste
+
+/* ---- Klingeln (private Chats und private Gruppen) ---- */
+function ringOut(C, c){ const to = (c.members || []).filter(u => u !== social.uid && !tkFresh(C.room).includes(u)).slice(0, 8);
+  for (const u of to) { const path = `rings/${u}/r/${C.cid}~${C.tid}`; C.ring.push(path); social.db.doc(path).set({from:social.uid, cid:C.cid, tid:C.tid, kind:C.kind, at:Date.now(), sid:C.sid}).catch(() => {}); }
+  C.ringing = true; callPaint(); C.ringT = setTimeout(() => { if (CALL !== C) return; C.ring.forEach(r => social.db.doc(r).delete().catch(() => {})); C.ring = []; C.ringing = false;
+    if (/^dm_/.test(C.cid) && ![...C.peers.values()].some(p => p.state === 'connected')) { C.status = 'Keine Antwort'; callPaint(); setTimeout(() => CALL === C && callLeave(true), 1800); } }, 45000); }
+let RING = {list:[], unsub:null, shown:null};
+function ringWatch(){ if (RING.unsub || !social) return; RING.unsub = social.db.collection(`rings/${social.uid}/r`).onSnapshot(q => { const now = Date.now(); RING.list = q.docs.map(d => ({id:d.id, ref:d.ref, ...d.data()})).filter(r => now - (+r.at || 0) < 50000 && CH.list.some(c => c.id === r.cid)); ringPaint(); }, () => {}); }
+setInterval(() => { if (RING.list.length) { const now = Date.now(); const l = RING.list.filter(r => now - (+r.at || 0) < 50000); if (l.length !== RING.list.length) { RING.list = l; ringPaint(); } } }, 3000);
+function ringPaint(){ const r = RING.list.find(x => !(CALL && CALL.cid === x.cid && CALL.tid === x.tid)); let el = document.getElementById('ringov'); if (!r) { el?.remove(); RING.shown = null; return; }
+  if (el && RING.shown === r.id) return; RING.shown = r.id; navigator.vibrate?.([300, 200, 300]);
+  const th = callTheme(r.cid), c = th.c, u = uidUser(r.from); if (!el) { el = document.createElement('section'); el.id = 'ringov'; el.setAttribute('role', 'alertdialog'); document.body.appendChild(el); }
+  el.className = 'themed ringov' + (th.bg ? ' hasbg' : ''); el.setAttribute('style', th.st); el.style.setProperty('--cbg', th.bg ? `url("${th.bg}")` : 'none'); el.setAttribute('aria-label', 'Eingehender Anruf');
+  el.innerHTML = `<div class="rgin"><span class="rgav">${u ? headPic(u) : ''}</span><b class="rgn">${esc(chatWho(r.from))}</b><small>${r.kind === 'video' ? 'Videoanruf' : 'Anruf'}${c?.group ? ' in „' + esc(chatName(c)) + '“' : ''}</small>
+    <div class="rgbtns"><button type="button" class="clbtn cend" data-act="ring-no" data-id="${esc(r.id)}">${CI.end}<span>Ablehnen</span></button><button type="button" class="clbtn cyes" data-act="ring-yes" data-id="${esc(r.id)}">${r.kind === 'video' ? CI.vid : CI.ph}<span>Annehmen</span></button></div></div>`; }
+async function ringAnswer(id, yes){ const r = RING.list.find(x => x.id === id); RING.list = RING.list.filter(x => x.id !== id); ringPaint(); if (!r) return; r.ref.delete().catch(() => {});
+  if (!yes) { if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'decline', d:'{}', at:Date.now()}).catch(() => {}); return; }
+  openChat(r.cid); await callJoin(r.cid, r.tid); }
+
+/* ---- Talks verwalten (Admin der öffentlichen Gruppe) ---- */
+function tkDialog(t){ const c = CH.list.find(x => x.id === TK.cid); if (!c || c.createdBy !== social?.uid) return; document.getElementById('tkdlg')?.remove(); const th = callTheme(c.id), el = document.createElement('div'); el.id = 'tkdlg'; el.className = 'shpk';
+  el.innerHTML = `<div class="shpkb" data-act="tk-x"></div><form class="shpkp themed tkform" data-form="talk" style="${th.st}" data-id="${esc(t?.id || '')}"><h3>${t ? 'Talk umbenennen' : 'Neuer Talk'}</h3>
+    <label class="f"><span class="lbl">Name</span><input id="tk-name" type="text" maxlength="40" required value="${esc(t?.name || '')}" placeholder="z. B. Einfach quatschen"></label>
+    ${t ? '' : `<fieldset class="opt tkkind"><legend class="lbl">Art</legend><label><input type="radio" name="tk-kind" value="audio" checked> ${CI.mic} Audiochat</label><label><input type="radio" name="tk-kind" value="video"> ${CI.vid} Videochat</label></fieldset>`}
+    <p class="note">Bis zu 9 Personen gleichzeitig.</p><div class="row">${t && !t.def ? `<button type="button" class="btn ghost" data-act="tk-del" data-id="${esc(t.id)}">Löschen</button>` : ''}<span class="sp"></span><button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button><button class="btn" type="submit">${t ? 'Speichern' : 'Anlegen'}</button></div></form>`;
+  document.body.appendChild(el); setTimeout(() => document.getElementById('tk-name')?.focus(), 50); }
+async function tkSave(f){ const name = document.getElementById('tk-name').value.trim().slice(0, 40), id = f.dataset.id, cid = TK.cid; if (!name || !cid) return;
+  try { if (id) await tkRef(cid, id).update({name}); else { const kind = f.querySelector('input[name="tk-kind"]:checked')?.value === 'video' ? 'video' : 'audio'; await tkRef(cid, 't' + Date.now().toString(36) + e2Rand(3).toLowerCase()).set({name, kind, def:0, ts:Date.now(), p:{}}); }
+    document.getElementById('tkdlg')?.remove(); toast(id ? 'Talk umbenannt' : 'Talk angelegt'); } catch { toast('Das hat nicht geklappt. Nur der Admin der Gruppe kann Talks verwalten.'); } }
+function rtcCard(){ if (!amOwner || !social) return ''; rtcTurn().then(() => { const i = document.getElementById('rtc-u'); if (i && !i.value && RTC_TURN) { i.value = RTC_TURN.urls.join(' '); document.getElementById('rtc-n').value = RTC_TURN.username; document.getElementById('rtc-c').value = RTC_TURN.credential; } });
+  return `<div class="card"><h2 class="card-h">Anrufe</h2><div class="card-in"><p class="note">Anrufe laufen direkt zwischen den Geräten und kosten nichts. In manchen Mobilfunk- oder Firmennetzen klappt das nur über einen TURN-Server. Wenn du einen einrichtest, trag ihn hier ein (sonst leer lassen).</p><form data-form="rtcturn" class="grid" style="gap:8px"><input id="rtc-u" type="text" autocomplete="off" spellcheck="false" placeholder="turn:… (mehrere mit Leerzeichen)" aria-label="TURN-Adressen"><input id="rtc-n" type="text" autocomplete="off" spellcheck="false" placeholder="Benutzername" aria-label="TURN-Benutzername"><input id="rtc-c" type="text" autocomplete="off" spellcheck="false" placeholder="Passwort" aria-label="TURN-Passwort"><div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form></div></div>`; }
+
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid; if (m._lock) return e2LockHTML(m);
   if (!mine && m.from && !m._r) { // kleine Profilbilder an fremden Nachrichten, antippen öffnet das Profil (Inaya, 2026-10-13)
@@ -9689,7 +9958,7 @@ function settingsView(){
     <div class="row"><button class="btn ghost logoutbtn" data-act="logout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3h9v18"/><path d="M5 3l5 2.2v14.6L5 21" fill="currentColor" fill-opacity=".18"/><circle cx="8.6" cy="12.4" r=".6" fill="currentColor"/><path d="M2.5 21h12.5"/><path d="M16 12h6.5M19.5 9l3 3-3 3"/></svg>Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
-  </div></div>${e2Card()}${blockedCard()}${reportsCard()}${gifKeyCard()}${membersCard()}`;
+  </div></div>${e2Card()}${blockedCard()}${reportsCard()}${gifKeyCard()}${rtcCard()}${membersCard()}`;
 }
 
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
@@ -10374,6 +10643,21 @@ document.addEventListener('click', async e => {
   else if (a === 'shp-go') { const ids = [...SHP.sel], pl = SHP.post; if (!ids.length) return toast('Wähl mindestens einen Chat aus.'); b.disabled = true; let ok = 0;
     for (const id of ids) { const cid = await shCid(id); if (cid && await sendMsg(cid, '', {post:pl})) ok++; } shpClose(); if (ok) toast(ok === 1 ? 'Beitrag gesendet' : `An ${ok} Chats gesendet`); }
   else if (a === 'msh-post') { shpvOpen(b.dataset.u, b.dataset.id); }
+  else if (a === 'call-start') { const cid = CH.open; if (!cid) return; const live = TK.cid === cid ? TK.list.find(t => tkFresh(t).some(u => u !== social.uid)) : null; callJoin(cid, live ? live.id : b.dataset.k === 'video' ? 'video' : 'audio', {ring:!live}); }
+  else if (a === 'call-join' || a === 'tk-join') { if (CH.open) callJoin(CH.open, b.dataset.id); }
+  else if (a === 'call-open') callShow();
+  else if (a === 'call-min') callMinimize();
+  else if (a === 'call-mic') callMic();
+  else if (a === 'call-cam') callCam();
+  else if (a === 'call-flip') callFlip();
+  else if (a === 'call-out') callOut();
+  else if (a === 'call-sink') callSink();
+  else if (a === 'call-end') callLeave();
+  else if (a === 'ring-yes' || a === 'ring-no') ringAnswer(b.dataset.id, a === 'ring-yes');
+  else if (a === 'tk-new') tkDialog(null);
+  else if (a === 'tk-edit') tkDialog(TK.list.find(t => t.id === b.dataset.id));
+  else if (a === 'tk-x') document.getElementById('tkdlg')?.remove();
+  else if (a === 'tk-del') { if (await askYesNo('Diesen Talk löschen?', 'Ja, löschen', 'Nein')) { tkRef(TK.cid, b.dataset.id).delete().then(() => toast('Talk gelöscht')).catch(() => toast('Das hat nicht geklappt.')); document.getElementById('tkdlg')?.remove(); } }
   else if (a === 'rx-open') { const w = b.closest('.mwrap'); rxOpen(b.dataset.id, w?.querySelector('.bubble') || b); }
   else if (a === 'rx-pick') { const p = b.closest('#rxpop'); if (p) { rxSet(p.dataset.id, b.dataset.e); rxClose(); } }
   else if (a === 'rx-more') { const p = b.closest('#rxpop'), all = p?.querySelector('.rxall'); if (all) { all.hidden = !all.hidden; b.setAttribute('aria-expanded', !all.hidden); const w = document.querySelector(`#msgs .mwrap[data-mid="${CSS.escape(p.dataset.id)}"] .bubble`); if (w) rxPlace(p, w); } }
@@ -10756,6 +11040,8 @@ document.addEventListener('submit', async e => {
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
     if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
+  } else if (t === 'talk') { await tkSave(f);
+  } else if (t === 'rtcturn') { if (!amOwner) return; const urls = val('rtc-u').trim(); try { await social.db.doc('site/rtc').set(urls ? {urls, username:val('rtc-n').trim(), credential:val('rtc-c').trim()} : {urls:''}); RTC_TURN = null; toast(urls ? 'TURN-Server gespeichert' : 'TURN-Server entfernt'); } catch { toast('Speichern ging nicht.'); }
   } else if (t === 'gifkey') {
     if (!amOwner || !social) return; const k = val('gk-in').trim();
     try { await social.db.doc('site/gif').set({giphy:k}); SG.key = k; SG.res = []; toast(k ? 'GIF-Suche eingerichtet' : 'GIF-Schlüssel entfernt'); } catch { toast('Speichern hat nicht geklappt.'); }

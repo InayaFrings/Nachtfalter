@@ -90,7 +90,47 @@ service cloud.firestore {
         : true);
       allow delete: if invited() && (isDm(cid) ? inDm(cid) : isGroup(cid) ? request.auth.uid in resource.data.members : true);
     }
-    match /chats/{cid}/{sub}/{rest=**} { allow read, write: if invited() && sub != 'm' && sub != 'rd' && mayWrite(cid); }
+    match /chats/{cid}/{sub}/{rest=**} { allow read, write: if invited() && sub != 'm' && sub != 'rd' && sub != 'talk' && mayWrite(cid); }
+
+    // Anrufe und Talks (Inaya, 2026-10-13): chats/<cid>/talk/<id> mit Plätzen p:{<uid>:{t, s}}.
+    // Höchstens 2 Plätze im privaten Chat, sonst 9 je Talk. Jeder ändert nur den eigenen Platz; verwaiste Plätze (45 s ohne Herzschlag) darf jedes Mitglied freigeben.
+    function talkMax(cid) { return isDm(cid) ? 2 : 9; }
+    function groupAdmin(cid) { return isGroup(cid) && chatDoc(cid).createdBy == request.auth.uid; }
+    function pubGroup(cid) { return isGroup(cid) && chatDoc(cid).pub == true; }
+    match /chats/{cid}/talk/{tid} {
+      allow read: if invited() && mayRead(cid);
+      allow create: if invited() && mayWrite(cid) && request.resource.data.p.size() == 0
+        && request.resource.data.keys().hasOnly(['name', 'kind', 'def', 'ts', 'p'])
+        && request.resource.data.kind in ['audio', 'video'] && request.resource.data.name is string && request.resource.data.name.size() <= 40
+        && ((tid == 'audio' || tid == 'video') ? request.resource.data.kind == tid : (pubGroup(cid) && groupAdmin(cid)));
+      allow update: if invited() && mayWrite(cid) && (
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['p'])
+          && request.resource.data.p.diff(resource.data.p).affectedKeys().hasOnly([request.auth.uid])
+          && request.resource.data.p.size() <= talkMax(cid))
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['p', 'gone'])
+          && request.resource.data.p.diff(resource.data.p).affectedKeys().hasOnly([request.resource.data.gone])
+          && !(request.resource.data.gone in request.resource.data.p)
+          && resource.data.p[request.resource.data.gone].t < request.time.toMillis() - 45000)
+        || (groupAdmin(cid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+          && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40));
+      allow delete: if invited() && groupAdmin(cid) && tid != 'audio' && tid != 'video';
+      // Verbindungsaufbau: nur an die Person selbst lesbar
+      match /sig/{mid} {
+        allow create: if invited() && mayWrite(cid) && request.resource.data.from == request.auth.uid;
+        allow read: if invited() && resource.data.to == request.auth.uid;
+        allow delete: if invited() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+      }
+      // Mikrofon und Kamera an/aus
+      match /st/{uid} { allow read: if invited() && mayRead(cid); allow write: if me(uid) && mayWrite(cid); }
+    }
+
+    // Klingeln: nur Mitglieder desselben privaten Chats bzw. derselben privaten Gruppe
+    match /rings/{uid}/r/{rid} {
+      allow read, delete: if signedIn() && (request.auth.uid == uid || resource.data.from == request.auth.uid);
+      allow create, update: if signedIn() && request.resource.data.from == request.auth.uid
+        && (isDm(request.resource.data.cid) || isGroup(request.resource.data.cid))
+        && uid in chatDoc(request.resource.data.cid).members && request.auth.uid in chatDoc(request.resource.data.cid).members;
+    }
     // Lesebestätigungen: jede Person schreibt nur ihren eigenen Lesestand (Inaya, 2026-10-13)
     match /chats/{cid}/rd/{uid} { allow read: if invited() && mayRead(cid); allow write: if me(uid) && mayWrite(cid); }
 

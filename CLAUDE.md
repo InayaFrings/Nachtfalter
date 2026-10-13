@@ -41,6 +41,15 @@ Die Content-Security-Policy steht als `<meta>` im `<head>`. Wer ein neues extern
 
 - Jedes Mitglied schreibt seinen Lesestand nach `chats/<cid>/rd/<uid>` = `{ts}` (`rdMark()`), gelesen wird er live über `rdWatch()`. Angezeigt wird er nur unter der letzten eigenen Nachricht: im privaten Chat „Gelesen“, in Gruppen bis zu drei Profilbilder und „+N“.
 
+## Anrufe und Talks (seit v378)
+
+- WebRTC direkt zwischen den Geräten (jeder mit jedem), Firestore nur für den Verbindungsaufbau. Code: Abschnitt „Anrufe und Talks“ vor `bubbleHTML` in `index.html`.
+- Raum = `chats/<cid>/talk/<id>` mit Plätzen `p:{<uid>:{t:Herzschlag, s:Sitzung}}`, Signale unter `…/sig` (an eine Person, nach dem Lesen gelöscht), Mikro/Kamera unter `…/st/<uid>`, Klingeln unter `rings/<uid>/r/<cid>~<id>`.
+- Private Chats und Gruppen nutzen die Räume `audio`/`video`. Öffentliche Gruppen zeigen sie als Standard-Talks „Audiochat“/„Videochat“ (feste IDs, werden ergänzt, wenn sie fehlen). Weitere Talks legt nur der Admin (`createdBy`) an.
+- Plätze: privat 2, sonst 9 je Raum, durchgesetzt in `callJoin` (Transaktion) und in `firestore.rules`. Plätze ohne Herzschlag seit 45 s darf jedes Mitglied freigeben (`gone`).
+- Pro Paar bietet nur die Seite mit der kleineren UID an (`pr.init`), Signale werden streng nacheinander verarbeitet. Ohne TURN-Server (Einstellungen → Anrufe, `site/rtc`) klappen manche Mobilfunknetze nicht.
+- Die Oberfläche nutzt `themeStyle` und `chBg` des Chats, es gibt kein eigenes Farbsystem.
+
 ## Lokal testen
 
 Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu einen kleinen Server, der `index.html` ausliefert und im Shim nach `const auth = app.auth(), fs = app.firestore();` die Aufrufe `auth.useEmulator(...)` und `fs.useEmulator(...)` einsetzt. So entstehen nie Daten im echten Projekt.
