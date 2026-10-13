@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='02c4559b53f8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='dce2082b30dd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -62,12 +62,15 @@
     const refresh = setInterval(() => { if (peersCb && last.length) { const now = Date.now(); const f = last.filter(p => now - (p.presence.t || 0) < STALE); if (f.length !== last.length) { last = f; peersCb({peers: f, joined: [], left: [], updated: []}); } } }, 15000);
     const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
     addEventListener('pagehide', bye);
+    // App im Hintergrund (iPhone: App gewechselt, Bildschirm aus) = offline, sofort abmelden; beim Zurückkommen sofort wieder online (Inaya, 2026-10-13)
+    const vis = () => { if (!beat) return; if (document.visibilityState === 'hidden') { clearInterval(beat); beat = 1; coll.doc(key).delete().catch(() => {}); } else { write(); clearInterval(beat); beat = setInterval(write, 25000); } };
+    document.addEventListener('visibilitychange', vis);
     return {
       name,
-      async presence(p){ state = {...state, ...p}; await write(); if (!beat) beat = setInterval(write, 25000); listen(); },
+      async presence(p){ state = {...state, ...p}; await write(); if (!beat || beat === 1) beat = setInterval(write, 25000); listen(); },
       onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
       emit(){}, on(){ return () => {}; },
-      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
+      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); document.removeEventListener('visibilitychange', vis); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
       async join(n){ return mkRoom(n); }
     };
   }
@@ -206,6 +209,8 @@ main.main.wide{grid-column:2/-1}
 input[type=text],input[type=url],input[type=password],input[type=date],input[type=email],input[type=tel],textarea{width:100%;background:#0d0d0e;color:var(--fg);border:1px solid var(--line);padding:8px 10px;font:inherit;font-size:16px}
 input[type=date]{color-scheme:dark;min-height:42px}
 textarea{resize:vertical;min-height:80px}
+textarea.mlin{resize:none;min-height:0;display:block;line-height:1.35;overflow-y:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;field-sizing:fixed}
+.cform:has(textarea.mlin){align-items:flex-end}.pcfield:has(textarea.mlin){align-items:flex-end}.pcfield textarea.mlin{padding-top:11px;padding-bottom:11px}.pcfield.mlwide{flex-wrap:wrap;row-gap:0}.pcfield.mlwide textarea.mlin{flex:1 1 100%}.pcfield.mlwide textarea.mlin+*{margin-left:auto}.cform:has(textarea.mlin)>button,.cform:has(textarea.mlin) .cinw~button{align-self:flex-end}
 input[type=file]{font:15px var(--f-body);color:var(--muted);max-width:100%}
 label.f{display:grid;gap:4px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -252,7 +257,7 @@ label.f{display:grid;gap:4px}
 .post.tp,.feed.insta .post.tp,.feed.insta .post.tp:first-child{background:linear-gradient(var(--p-bg),var(--p-bg)) padding-box,var(--pp-pat) border-box border-box,var(--p-bg);border:12px solid transparent;border-radius:10px;color:var(--p-fg);box-shadow:0 0 0 1px var(--p-line)}
 .post.tp .meta,.post.tp .muted{color:var(--p-muted)}.post.tp .lnk,.post.tp .who a,.post.tp .who button{color:var(--p-fg)}.post.tp .thought{border-left-color:var(--p-line)}
 .post.tp .reacts button{color:var(--p-fg);border-color:var(--p-line);background:transparent}.post.tp .reacts button[aria-pressed="true"]{border-color:var(--p-fg);background:color-mix(in srgb,var(--p-fg) 12%,transparent)}
-.post.tp .cform input{background:var(--p-panel);color:var(--p-fg);border-color:var(--p-line)}.post.tp .cform input::placeholder{color:var(--p-muted)}.post.tp .btn.ghost{color:var(--p-fg);border-color:var(--p-line);background:transparent}.post.tp .btn:not(.ghost){background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}
+.post.tp .cform input,.post.tp .cform textarea{background:var(--p-panel);color:var(--p-fg);border-color:var(--p-line)}.post.tp .cform input::placeholder,.post.tp .cform textarea::placeholder{color:var(--p-muted)}.post.tp .btn.ghost{color:var(--p-fg);border-color:var(--p-line);background:transparent}.post.tp .btn:not(.ghost){background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}
 .post.tp .vid{color:var(--p-fg);border-color:var(--p-line)}.post.tp .vid .play,.post.tp .aplay{border-color:var(--p-fg)}.post.tp .aplay{background:var(--p-fg);color:var(--p-bg)}.post.tp .plink b{color:var(--p-muted)}.post.tp .bub{background:var(--p-panel);border-color:var(--p-line);color:var(--p-fg)}.post.tp .bub:before{border-color:var(--p-line)}
 .newgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:#000}
 .ncell{aspect-ratio:1/1;background:radial-gradient(circle at 50% 40%,#ffffff1f,transparent 70%),#0e0e10;min-width:0;overflow:hidden}.ncell svg{width:100%;height:100%;display:block}
@@ -294,7 +299,7 @@ label.f{display:grid;gap:4px}
 .pcimg{flex:none;width:38px;height:38px;border:1px solid var(--line,#444);border-radius:999px;display:inline-grid;place-items:center;cursor:pointer;color:var(--fg)}.pcimg svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pcimg input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.pcimg:hover,.pcimg:focus-within{border-color:#ecebe7}
 .post.tp .pcimg{color:var(--p-fg);border-color:var(--p-line)}.cbtns{display:flex;flex-wrap:wrap;gap:8px}.cbtn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px}.cbtn svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.cbtn i{font-style:normal}.cbtn.on{border-color:var(--fg);background:#ffffff14}.patts{display:grid;gap:8px}.patts:empty{display:none}.patt{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pattimg{max-width:160px;max-height:160px;border:1px solid var(--line);border-radius:6px}.pattmp3{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:6px 12px;min-width:0;overflow-wrap:anywhere}.pattmp3 svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7}.pattlink input{flex:1 1 180px;min-width:0;width:auto}[data-form=post]{min-width:0}[data-form=post]>*{min-width:0}
 @media (max-width:760px){.cbtns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.cbtn .cbx{display:none}.cbtn{flex-direction:column;gap:4px;padding:10px 4px;font-size:13px;text-align:center;justify-content:center}}
-.pcfield{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--input-bg,#0d0d0e);padding:0 0 0 6px}.post.tp .pcfield{background:var(--p-panel);border-color:var(--p-line)}.pcfield input{flex:1;min-width:0;border:0!important;background:transparent!important}.pcfield:not(:has(.pcthumb)){padding:0}.pcthumb{position:relative;flex:none;width:34px;height:34px}.pcthumb img{width:34px;height:34px;object-fit:cover;border-radius:5px;display:block}@media (max-width:760px){[data-form=comment] .pcfield,[data-form=pcomment] .pcfield{min-height:44px}}
+.pcfield{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--input-bg,#0d0d0e);padding:0 0 0 6px}.post.tp .pcfield{background:var(--p-panel);border-color:var(--p-line)}.pcfield input,.pcfield textarea{flex:1;min-width:0;border:0!important;background:transparent!important}.pcfield:not(:has(.pcthumb)){padding:0}.pcthumb{position:relative;flex:none;width:34px;height:34px}.pcthumb img{width:34px;height:34px;object-fit:cover;border-radius:5px;display:block}@media (max-width:760px){[data-form=comment] .pcfield,[data-form=pcomment] .pcfield{min-height:44px}}
 .pcx{position:absolute;top:-6px;right:-7px;width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:#0a0a0b;color:#ecebe7;font-size:13px;line-height:15px;padding:0;cursor:pointer}
 .cmt.mom{display:flex;gap:10px;align-items:flex-start;border-top:0;padding-top:0}.cmts{gap:10px}
 .cmh{width:38px;height:38px;padding:0;cursor:pointer}
@@ -326,7 +331,7 @@ label.f{display:grid;gap:4px}
 .nt-empty{display:grid;justify-items:center;gap:8px;text-align:center;padding:48px 16px;color:var(--muted)}.nt-empty svg{width:56px;height:56px;fill:none;stroke:var(--fg);stroke-width:1.2;padding:14px;border:1.5px solid var(--fg);border-radius:50%;box-sizing:content-box}.nt-empty b{color:var(--fg);font:400 22px var(--f-display)}.nt-empty span{max-width:34ch}
 @media (max-width:760px){.nt-btns{flex-direction:column}.nt-btns .btn{min-height:32px;padding:4px 10px}}
 .cform{display:flex;gap:8px}.cform[hidden]{display:none!important}
-.cform input{flex:1;min-width:0}
+.cform input,.cform textarea.mlin{flex:1;min-width:0}
 
 /* Seitenleiste */
 .me-card{padding:30px 18px 22px;display:grid;gap:22px;justify-items:center;text-align:center}
@@ -423,7 +428,9 @@ ul.zlist small{display:block;font:14px var(--f-ital);color:var(--muted)}
 .sttrash[hidden],.stfname[hidden]{display:none}.editing .stfname{display:none}.sttrash{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:54px;height:54px;border-radius:50%;border:2px solid #fff;background:#0006;color:#fff;display:grid;place-items:center;z-index:6;transition:transform .15s}.sttrash svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2}.sttrash.hot{transform:translateX(-50%) scale(1.25);background:#fff;color:#111}.sted.dragging .sttop,.sted.dragging .stbottom,.sted.dragging .stsong{opacity:0}
 .stedov{position:absolute;inset:0;background:#000000b0;z-index:6}.stedtop{position:absolute;top:10px;left:8px;right:8px;display:flex;gap:8px;align-items:center}.ststyles{flex:1;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.ststyles::-webkit-scrollbar{display:none}.ststyles button{flex:none;border:1px solid #fff8;background:#0006;color:#fff;border-radius:16px;padding:6px 12px;font-size:14px;cursor:pointer}.ststyles button[aria-pressed=true]{background:#fff;color:#111}.stdone{border:0;background:none;color:#fff;font:600 16px -apple-system,Arial,sans-serif;cursor:pointer;padding:6px}
 .stedtools{position:absolute;top:56px;left:8px;right:8px;display:flex;gap:10px;align-items:center}.stbgb b{font:700 20px -apple-system,Arial,sans-serif;padding:0 6px;border-radius:4px;color:var(--tc)}.stcols{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:4px}.stcols::-webkit-scrollbar{display:none}.stcols button{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0}.stcols button[aria-pressed=true]{transform:scale(1.25);box-shadow:0 0 0 2px #000}
-.stsize{position:absolute;left:-58px;top:50%;width:150px;transform:rotate(-90deg);accent-color:#fff}
+.stsize{position:absolute;left:10px;top:50%;width:44px;height:190px;transform:translateY(-50%);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:ns-resize;z-index:8;outline:none}
+.stszt{position:absolute;left:50%;top:11px;bottom:11px;width:4px;margin-left:-2px;border-radius:2px;background:linear-gradient(#fff,#ffffff55);box-shadow:0 0 3px #0008}
+.stszk{position:absolute;left:50%;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:#fff;box-shadow:0 1px 6px #000a;bottom:calc(var(--v,.5) * (100% - 24px));transition:transform .12s}.stsize.drag .stszk{transform:scale(1.25)}.stsize:focus-visible .stszk{outline:2px solid #9ad;outline-offset:2px}
 textarea.sttxt{left:50%;top:40%;width:84%;max-width:84%;background:transparent;border:0;outline:0;resize:none;overflow:hidden;caret-color:#fff;user-select:text;-webkit-user-select:text;touch-action:auto}textarea.sttxt.bg1{background:var(--tc)}textarea.sttxt.bg2{background:#000000a0}textarea.sttxt::placeholder{color:#fff9}
 .stmpanel{position:absolute;left:10px;right:10px;bottom:10px;z-index:7;background:#0d0c0ff2;border:1px solid #333;border-radius:14px;padding:12px;display:grid;gap:10px;color:#eee}
 .sttile{container-type:inline-size}.sttile .sttxt{pointer-events:none}.sttile .stov{z-index:1}
@@ -657,6 +664,7 @@ footer.foot .lnk{color:var(--muted)}
 .onl{display:inline-flex;align-items:center;gap:6px;font:14px var(--f-ital);color:var(--p-muted);margin-left:8px;white-space:nowrap}
 .onl i{width:9px;height:9px;border-radius:50%;border:1.5px solid currentColor;display:inline-block}
 .onl.on{color:var(--p-fg)}.onl.on i{background:#7fd08a;border-color:#7fd08a;box-shadow:0 0 6px #7fd08a}
+.psub{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:6px 0 4px;font:14px var(--f-ital);color:var(--p-muted)}.psub .onl{margin:0;display:inline-flex}.psub .onl.on{color:var(--p-fg)}.pleft .psub{justify-content:center;margin:2px 0 0}.preq{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.preq svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fg);vertical-align:middle;margin-left:4px}
 .plist{display:grid;gap:8px;margin-top:10px}
 .prow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);padding:8px 12px;flex-wrap:wrap}
@@ -1148,7 +1156,7 @@ video.stimg{object-fit:cover}
 .stedbot{margin-top:auto;display:grid;gap:8px;padding:8px 10px 12px;background:linear-gradient(transparent,#000a 30%)}
 .stedbot .stcols{gap:9px;align-items:center}.stedbot .stcols>button{width:32px;height:32px;flex:none}
 .stedbot .stseg{display:inline-flex;flex:none;margin-right:6px}
-.stsize{left:-62px;top:45%}
+.stsize{left:10px;top:45%}
 textarea.sttxt{top:44%}
 .stmsug,.mnlist{display:grid;gap:4px;max-height:40vh;overflow-y:auto}
 .stmsug{background:#0a0a0bf0;border:1px solid #3b3b3f;padding:6px}
@@ -1340,7 +1348,7 @@ html:has(body.stopen){background:#000}
 
 /* Chat-Schreibleiste: langes Feld mit kleinem Senden-Pfeil darin (Inaya, 2026-10-12) */
 .cinw{position:relative;flex:1;min-width:0;display:flex}
-.cinw input{flex:1;min-width:0;width:100%}
+.cinw input,.cinw textarea{flex:1;min-width:0;width:100%}
 .csend{display:none;flex:none;width:42px;height:42px;place-items:center;padding:0;border:1px solid var(--line,#ffffff40);border-radius:50%;background:var(--fg,#eeedf2);color:var(--bg,#0a0a0b);cursor:pointer}
 form.typed .csend{display:grid}form.typed .micbtn{display:none}
 .csend svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -1430,11 +1438,13 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .ststk .stpl2 svg{width:9cqw!important;height:9cqw!important;display:inline-block}.ststk .stdbdh svg{width:6cqw!important;height:6cqw!important;display:inline-block}.ststk .staskb svg{width:60%!important;height:60%!important}.ststk .sthlkc>svg{width:50%!important;height:50%!important}.ststk .stav svg{height:auto!important}.ststk .stcard{min-width:0;overflow:hidden}.staski{width:0!important}.st-av{aspect-ratio:auto!important}
 .lpill{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:9px 16px 9px 13px;border-radius:14px;background:#2a2a2ecc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#f2f1f5!important;text-decoration:none!important;font:600 16px var(--f-display,Inter),Inter,-apple-system,Arial,sans-serif;border:1px solid #ffffff1a;justify-self:start;align-self:start;margin:4px 0}.lpill svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}.lpill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} /* Link-Pille (Inaya, 2026-10-13) */
 .stpk{display:flex!important;flex-direction:column;gap:12px;max-height:78vh;overflow:hidden}.stpk>.stshg{align-self:center;margin:2px 0 0}.stpk .stpq0{flex:none}.stpkbody,.stpk .ststkl{overflow-y:auto;overscroll-behavior:contain;min-height:0;display:grid;gap:18px;padding-bottom:8px}
-.stpills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 8px}.stpill{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:12px;background:#1c1c1f;color:#eeedf2;border:1px solid #ffffff33;font:500 15px var(--f-display,'Space Grotesk'),'Space Grotesk',Inter,sans-serif;letter-spacing:.01em;cursor:pointer;line-height:1}.stpill:active,.stpill:hover{background:#2a2a2e;border-color:#ffffff66}.stpill[hidden]{display:none}.stpill svg{width:19px;height:19px;flex:none;fill:none;stroke:#eeedf2;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.stpill .emo{width:22px;height:22px;margin:0}
+.stpills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 8px}.stpill{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:12px;background:#1c1c1f;color:#eeedf2;border:1px solid #ffffff33;font:500 15px var(--f-display,'Space Grotesk'),'Space Grotesk',Inter,sans-serif;letter-spacing:.01em;cursor:pointer;line-height:1}.stpill:active,.stpill:hover{background:#2a2a2e;border-color:#ffffff66}.stpill[hidden]{display:none}.stpill svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--ic,#eeedf2);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--ic,#fff) 45%,transparent))}
+.stpill[style*="--ic"]{background:color-mix(in srgb,var(--ic) 13%,#1c1c1f);border-color:color-mix(in srgb,var(--ic) 42%,transparent)}.stpill[style*="--ic"]:active,.stpill[style*="--ic"]:hover{background:color-mix(in srgb,var(--ic) 24%,#1c1c1f);border-color:var(--ic)}
+.stpkgif[hidden]{display:none}.stpkgif{display:grid;gap:8px}.stpkgg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stpkgg button{padding:0;border:0;border-radius:10px;overflow:hidden;background:#1c1c1f;aspect-ratio:1;cursor:pointer}.stpkgg img{width:100%;height:100%;object-fit:cover;display:block}.stpkgif .sgpow,.stpkgif .stpkgm{font:12px Inter,sans-serif;color:#9a99a3;text-align:center}.stpill .emo{width:22px;height:22px;margin:0}
 .stptiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stptiles[hidden]{display:none}.stptile{display:grid;gap:8px;justify-items:center;background:none;border:0;color:#eeedf2;cursor:pointer;font:500 15px var(--f-display,'Space Grotesk'),'Space Grotesk',Inter,sans-serif;padding:0}.stptg{width:100%;aspect-ratio:1;border-radius:14px;background:#1c1c1f;border:1px solid #ffffff2a;display:grid;grid-template-columns:1fr 1fr;place-items:center;padding:10%;box-sizing:border-box;gap:6%}.stptg svg{width:100%;height:auto}.stptg.gif{grid-template-columns:1fr}.stptg.gif svg{width:46%;fill:none;stroke:#eeedf2;stroke-width:1.5}
 .stpkh{display:flex;align-items:center;justify-content:space-between}.stpkb{background:none;border:0;color:#eeedf2;font:600 14px Inter,sans-serif;cursor:pointer;padding:6px 0}.stpkh span{width:60px}.stpkres[hidden]{display:none}
 .stpl2{display:inline-flex;align-items:center;justify-content:center;gap:2.5cqw;width:100%;box-sizing:border-box;padding:4cqw 5cqw;border-radius:5cqw;background:#fff;color:#111;font:800 9cqw/1 var(--f-display),Inter,sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;text-decoration:none;box-shadow:0 3px 12px #0005;pointer-events:auto;cursor:pointer}.stpl2 svg{width:9cqw;height:9cqw;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}.stpl2 span{overflow:hidden;text-overflow:ellipsis}
-.stcard{background:#fff;color:#111;border-radius:7cqw;padding:6cqw 5.5cqw;display:grid;gap:3cqw;text-align:center;box-shadow:0 4px 18px #0006;font-family:Inter,-apple-system,Arial,sans-serif;pointer-events:auto}.stcq{font:700 7cqw/1.2 var(--f-display);overflow-wrap:anywhere}.stcdl{font:800 8.5cqw/1.1 Inter,sans-serif}.stcard small{font-size:4.6cqw;opacity:.65}
+.stcard{background:#fff;color:#111;border-radius:7cqw;padding:6cqw 5.5cqw;display:grid;gap:3cqw;text-align:center;box-shadow:0 4px 18px #0006;font-family:Inter,-apple-system,Arial,sans-serif;pointer-events:auto}.stcq{font:700 7cqw/1.2 var(--f-display);overflow-wrap:anywhere}.stcdl{font:800 7.6cqw/1.15 Inter,sans-serif;overflow-wrap:anywhere;text-wrap:balance}.stcard small{font-size:4.6cqw;opacity:.65}
 .staskr{display:flex;gap:2cqw;align-items:center;background:#f0eff3;border-radius:4cqw;padding:1.5cqw 1.5cqw 1.5cqw 4cqw}.staski{flex:1;min-width:0;border:0!important;background:none!important;font:16px Inter,sans-serif!important;color:#111!important;padding:2cqw 0!important;outline:0;box-shadow:none!important}.staskb{width:10cqw;height:10cqw;min-width:30px;min-height:30px;border-radius:50%;border:0;background:#111;color:#fff;display:grid;place-items:center;padding:0;cursor:pointer}.staskb svg{width:60%;height:60%;fill:none;stroke:currentColor;stroke-width:2}.staskph{background:#f0eff3;border-radius:4cqw;padding:3.5cqw;font-size:5cqw;opacity:.6}
 .stdbdh{display:inline-flex;align-items:center;justify-content:center;gap:2cqw;font:700 4.8cqw Inter,sans-serif!important;opacity:.7!important;text-transform:uppercase;letter-spacing:.06em}.stdbdh svg{width:6cqw;height:6cqw;fill:none;stroke:currentColor;stroke-width:2}.stdbdb{justify-self:center;border:0;border-radius:99px;background:#111;color:#fff;font:700 5.2cqw Inter,sans-serif;padding:2.6cqw 7cqw;cursor:pointer}
 .stav{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 8px #0007)}.stav svg,.stav img{width:100%;height:100%;object-fit:contain}
@@ -1495,6 +1505,11 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .sgmkz{display:flex;align-items:center;gap:10px;padding:0 16px}.sgmkz input{flex:1}
 .sgmks{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px}
 .sgmkf{padding:0 16px}
+.sgmktx{display:grid;gap:10px;padding:4px 16px 0;border-top:1px solid #ffffff1f;padding-top:12px}.sgmkh{font:700 15px var(--f-display,'Space Grotesk'),Inter,sans-serif}.sgmktx .sgmks{padding:0}.sgmktx .sgmkz{padding:0}
+.sgmktr{display:flex;gap:8px;align-items:flex-start}.sgmktr textarea{flex:1;min-height:0;resize:none;border-radius:12px;background:#1c1c1f;color:#eeedf2;border:1px solid #ffffff33;padding:9px 12px;font:16px Inter,sans-serif}.sgmktr .chip{border:1px solid #ffffff33;background:none;color:inherit;border-radius:999px;padding:8px 13px;font:inherit;cursor:pointer;white-space:nowrap}.sgmktr .chip[hidden]{display:none}
+.sgmkcol{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.sgmkcol>button:not(.chip){width:30px;height:30px;border-radius:50%;border:2px solid #ffffff55;cursor:pointer;padding:0}.sgmkcol>button[aria-pressed="true"]:not(.chip){outline:2px solid #fff;outline-offset:2px}.sgmkcol .chip{border:1px solid #ffffff33;background:none;color:inherit;border-radius:999px;padding:7px 13px;font:inherit;cursor:pointer}.sgmkcol .chip[aria-pressed="true"]{background:#fff;color:#111}
+.sgmkhint{color:#9a99a3;font-size:12px}
+.sgt .sgedit{position:absolute;left:2px;bottom:2px;width:24px;height:24px;border-radius:50%;border:0;background:#000a;color:#fff;display:grid;place-items:center;padding:0;cursor:pointer}.sgt .sgedit svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
 .sgmks .chip{border:1px solid #ffffff33;background:none;color:inherit;border-radius:999px;padding:7px 13px;font:inherit;cursor:pointer}.sgmks .chip[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}
 @media (max-width:760px){.sgp{height:min(300px,44vh)}.sgmkp{inset:0;transform:none;left:0;top:0;width:100%;height:100%;border:0;align-content:start;padding-top:env(safe-area-inset-top,0px)}}
 .mshfull{width:min(300px,72vw);cursor:pointer;margin-bottom:2px}
@@ -1517,6 +1532,9 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
 .bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}.bubble.shcard>.meta,.themed .bubble.me.shcard>.meta,.bubble.me.shcard>.meta .lnk,.bubble.me.shcard>.meta .mdel,.bubble.me.shcard>.meta .mdelb{color:#f2f1f5!important;opacity:1}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
+.wentry .gbpi{margin-top:6px}.wentry .gbpi .pbar{padding:0;gap:14px;border:0;margin:0}.wentry.ntflash,.cmt.ntflash{animation:ntfl 1.6s ease;border-radius:12px}.mshgb{margin-left:auto;font-size:11px;opacity:.7;font-weight:500}
+.shstory{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 10px;padding:10px 12px;border-radius:14px;border:1px solid #ffffff26;background:#ffffff0d;color:inherit;font:600 15px var(--f-display,'Space Grotesk'),Inter,sans-serif;cursor:pointer;text-align:left}.shstory .cameo{width:40px;height:40px;flex:none}.shstory span:nth-child(2){flex:1}.shstory b{font-size:22px;opacity:.6}
+.ststk.st-post{container-type:inline-size}.ststk .stpost{width:100%!important;margin:0;border-radius:5cqw;pointer-events:auto;box-shadow:0 6px 22px #0007;font-size:5cqw}.ststk .stpost .mshh{display:flex;align-items:center;gap:3cqw;padding:3.5cqw 4cqw;font:700 5.2cqw/1.2 var(--p-font,Inter),sans-serif}.ststk .stpost .mshh .cameo{width:9cqw;height:9cqw;flex:none}.ststk .stpost img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}.ststk .stpost .mshtx{display:block;padding:3cqw 4cqw 4cqw;font-size:4.4cqw;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.ststk .stpost svg{width:100%!important;height:100%!important}
 .pbar .shbtn{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;padding:0;color:inherit;cursor:pointer;margin-left:auto}
 .pbar .rpbtn ~ .shbtn{margin-left:auto}.pbar .rpbtn:has(~ .shbtn){margin-left:0}
 .pbar .shbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -1578,7 +1596,12 @@ button.stpo{cursor:pointer}button.stpo:active{background:#e4e4e8}
 .stslt u{position:absolute;top:50%;width:6cqw;height:6cqw;margin:-3cqw 0 0 -3cqw;border-radius:50%;background:#fff;border:.8cqw solid #111;box-sizing:border-box}
 .stslk{position:absolute;top:50%;width:14cqw;height:14cqw;transform:translate(-50%,-50%) scale(var(--sz,1));pointer-events:none;transition:transform .1s}
 .stslk svg{width:100%;height:100%;display:block}
-.stifm .stifc{position:absolute;left:7%;right:7%;top:22%}
+.stifm .stifc{position:absolute;left:6%;right:6%;top:max(68px,12%);max-height:calc(100% - 84px);overflow-y:auto;overscroll-behavior:contain}
+.sted:has(.stifm) .stside,.sted:has(.stifm) .sttop{visibility:hidden}
+.stcdin{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:8px}.stcdin label{display:grid;gap:4px;min-width:0;text-align:left}.stcdin span{font:600 12px Inter,sans-serif;color:#6b6b74;padding-left:4px}
+.stifcard .stcdin input{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;min-height:46px;margin:0;padding:10px 12px;border:1px solid #d6d6db;border-radius:12px;background:#f4f4f6;color:#111;font:600 16px Inter,-apple-system,sans-serif;line-height:24px;text-align:left;box-sizing:border-box}
+.stcdin input::-webkit-date-and-time-value{text-align:left;min-height:24px}.stcdin input::-webkit-calendar-picker-indicator{opacity:.6}
+.stcdpv{display:block;text-align:center;font:800 18px/1.2 Inter,sans-serif;color:#111;padding:4px 0 2px}
 .stifcard{background:#fff;color:#111;border-radius:18px;padding:16px;display:grid;gap:10px;box-shadow:0 6px 24px #0008}
 .stifcard input{width:100%;border:1px solid #d6d6db;border-radius:22px;background:#f4f4f6;color:#111;font:600 16px Inter,-apple-system,'Helvetica Neue',Arial,sans-serif;padding:11px 40px 11px 14px;box-sizing:border-box;outline:none}
 .stifcard #sti-q{border:0;background:none;text-align:center;font:700 19px var(--f-display);padding:6px}
@@ -1660,7 +1683,7 @@ button.stpo{cursor:pointer}button.stpo:active{background:#e4e4e8}
 .stemu{position:absolute;top:62px;left:12px;right:62px;z-index:4;display:flex;align-items:center;gap:8px;color:#fff;text-shadow:0 1px 4px #000;background:#0007;border-radius:999px;padding:6px 6px 6px 12px}.stemu .sthmu{flex:1}.stemu{top:12px;left:62px;right:62px;height:42px;box-sizing:border-box;padding:4px 4px 4px 12px;min-width:0}.stemu .sthmu{min-width:0;overflow:hidden}.stemu .sthmt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stemu .stmux2{flex:none} /* Musikleiste oben zwischen X und Aa (Inaya, 2026-10-12) */.stmux2{flex:none;width:28px;height:28px;border-radius:999px;border:0;background:#fff2;color:#fff;display:grid;place-items:center;padding:5px;cursor:pointer}.stmux2 svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 /* Kommentare wie bei Instagram (Inaya, 2026-10-12) */
 .pbar button,.post.tp .pbar button,.post.tp .reacts.pbar button[aria-pressed="true"],.reacts.pbar button[aria-pressed="true"]{border:0!important;background:none!important;padding:4px 6px;min-width:0!important;font-size:17px}.pbar .likebtn .lheart{width:26px;height:26px}.pbar .cmico{width:25px!important;height:25px!important}.pbar .rpbtn svg{width:24px!important;height:24px!important}.pbar{gap:10px!important}
-.pcfield input:focus,.pcfield input:focus-visible{outline:none!important;box-shadow:none!important}.pcfield:focus-within{border-color:var(--fg)}.post.tp .pcfield:focus-within{border-color:var(--p-fg)}
+.pcfield input:focus,.pcfield input:focus-visible,.pcfield textarea:focus,.pcfield textarea:focus-visible{outline:none!important;box-shadow:none!important}.pcfield:focus-within{border-color:var(--fg)}.post.tp .pcfield:focus-within{border-color:var(--p-fg)}
 .pbar{gap:6px}.pbar .cmbtn{gap:6px}.pbar .cmico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}.post.tp .pbar .cmbtn{color:var(--p-fg)}.pbar .rpbtn{margin-left:0}
 .lnk.cmvall{justify-self:start;margin-top:-6px;font-size:15px;opacity:.85;text-align:left}
 body.cmvopen{overflow:hidden}
@@ -1677,7 +1700,7 @@ body.cmvopen{overflow:hidden}
 .cmvpi .cmts{flex:1;min-height:0;overflow-y:auto;max-height:none!important;padding:12px 2px 6px;display:grid;align-content:start;gap:10px}
 .cmvpi .pbar{padding-top:10px;border-top:1px solid var(--line-soft,#333)}.post.tp .cmvpi .pbar{border-color:var(--p-line)}
 .cmvnone{margin:20px 0;text-align:center;font-style:normal}
-@media (max-width:760px){.cmv{place-items:stretch}.cmvback{display:none}.cmvbox{width:100vw;height:100dvh;height:100svh;max-height:none;min-height:0;border-radius:0;border:0!important;box-shadow:none;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}.cmvbox::before,.cmvbox::after{display:none!important}.cmv{background:var(--cmvbg,#141416)}.cmv::before,.cmv::after{content:'';position:absolute;left:0;right:0;height:100vh;background:var(--cmvbg,#141416);pointer-events:none}.cmv::before{bottom:100%}.cmv::after{top:100%}.cmvpost{display:none}.cmvh{padding:8px 6px;min-height:52px}.cmvpi{padding:0 12px 10px}.cmvpi .cform .pcfield{min-height:46px}.cmvpi input[type=text]{font-size:16px}}
+@media (max-width:760px){.cmv{place-items:stretch}.cmvback{display:none}.cmvbox{width:100vw;height:100dvh;height:100svh;max-height:none;min-height:0;border-radius:0;border:0!important;box-shadow:none;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}.cmvbox::before,.cmvbox::after{display:none!important}.cmv{background:var(--cmvbg,#141416)}.cmv::before,.cmv::after{content:'';position:absolute;left:0;right:0;height:100vh;background:var(--cmvbg,#141416);pointer-events:none}.cmv::before{bottom:100%}.cmv::after{top:100%}.cmvpost{display:none}.cmvh{padding:8px 6px;min-height:52px}.cmvpi{padding:0 12px 10px}.cmvpi .cform .pcfield{min-height:46px}.cmvpi input[type=text],.cmvpi textarea{font-size:16px}}
 /* Musikkarte so breit wie bei Inaya; Beitrags-Musik klein unter dem Namen (Inaya, 2026-10-12) */
 .music.mmu{justify-items:stretch;width:100%}.music.mmu .pmu{width:100%;box-sizing:border-box}.music.mmu .lnk{justify-self:start}.pmu .muart{width:56px;height:56px;object-fit:cover;border-radius:4px;flex:none}.pmu>span{flex:1;min-width:0;display:grid;text-align:left}.pmu>span b,.pmu>span small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .muprev2{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-line,#ffffff4d);background:transparent;color:var(--p-fg,#eeedf2);cursor:pointer;padding:0}.muprev2 svg{width:18px;height:18px;fill:currentColor}
@@ -1863,7 +1886,14 @@ async function shpOpen(b){
   SHP.sel = new Set(); SHP.post = {a, id:p.id, th:await shpThumb(art), t:String(p.text || '').slice(0, 140), n:profUser(p.author)?.name || ''};
   shpPaint(); }
 function shpPaint(){ document.getElementById('shpick')?.remove(); const l = shpChats(), el = document.createElement('div'); el.id = 'shpick'; el.className = 'shpk';
-  el.innerHTML = `<div class="shpkb" data-act="shp-x"></div><div class="shpkp shsheet" role="dialog" aria-label="Beitrag teilen"><div class="shtop"><i class="stshg" aria-hidden="true"></i></div>${shGrid('shp-sel', SHP.sel, 'shp-go')}</div>`; document.body.appendChild(el); }
+  el.innerHTML = `<div class="shpkb" data-act="shp-x"></div><div class="shpkp shsheet" role="dialog" aria-label="Beitrag teilen"><div class="shtop"><i class="stshg" aria-hidden="true"></i></div>${SHP.post?.gb ? '' : `<button type="button" class="shstory" data-act="shp-story"><span class="cameo">${headPic(me(), '', true)}</span><span>Zu deiner Story hinzufügen</span><b aria-hidden="true">›</b></button>`}${shGrid('shp-sel', SHP.sel, 'shp-go')}</div>`; document.body.appendChild(el); }
+// Beitrag in die Story teilen (Inaya, 2026-10-13): Hintergrund kommt aus dem Profil-Design der Person, von der der Beitrag ist –
+// nach demselben Prinzip wie bei „Mehrere Accounts“ (normTheme → Kastenfarbe box + Muster pattern), damit Farben und Muster überall gleich aussehen
+const profBg = u => { const t = normTheme({...(u?.theme || {})}); return {c:/^#[0-9a-f]{3,8}$/i.test(t.box) ? t.box : '#26262b', p:PATTERN_OPTS.some(o => o[0] === t.pattern) && t.pattern !== 'schlicht' ? t.pattern : ''}; };
+function stFromPost(){ const x = SHP.post; if (!x || !social) return; const ou = x.a === social.uid ? me() : profUser(x.a); shpClose();
+  stCamStop(); stCam = null; STV = null;
+  stNew = {v2:1, img:'', tb:profBg(ou), thumb:'', f:'normal', song:'', texts:[], stk:[{k:'post', a:x.a, id:x.id, th:x.th || '', t:x.t || '', n:x.n || ou?.name || '', x:50, y:47, w:68, r:0}], edit:null, tool:null, hint:false};
+  storyPaint(); }
 function shpClose(){ document.getElementById('shpick')?.remove(); SHP.sel = new Set(); SHP.post = null; }
 // Geteilten Beitrag öffnen, nur wenn man ihn sehen darf (Freunde-Beiträge nur für Freunde)
 async function shpvOpen(u, id){ const uid = u === social?.uid ? S.me : u, find = () => htPool().find(p => p.author === uid && p.id === id);
@@ -5668,7 +5698,7 @@ function cmMentNotify(k, men, text){ // Markierte bekommen eine Mitteilung in de
   for (const m of men) if (m.id && m.id !== social.uid) social.db.collection('chats/ment_' + m.id + '/m').add({by:social.uid, name:me().name, text:String(text).slice(0, 300), k, oid, p:mini, ts}).catch(() => {});
 }
 document.addEventListener('input', e => {
-  const f = e.target.closest?.('form[data-form="pcomment"]'); if (!f || e.target.tagName !== 'INPUT') return;
+  const f = e.target.closest?.('form[data-form="pcomment"]'); if (!f || !e.target.classList?.contains('pcin')) return;
   const q = social ? mentionQ(e.target.value, e.target.selectionEnd) : null; let box = f.querySelector('.cmsug');
   if (q == null) { box?.remove(); return; }
   const fr = new Set(FR.mine.filter(isFriend)), l = q ? mentionFind(q) : mentionPool().sort((a, b) => fr.has(b.id) - fr.has(a.id)).slice(0, 8); // schon nach dem @ Vorschläge zeigen (Inaya, 2026-10-12)
@@ -5678,15 +5708,15 @@ document.addEventListener('input', e => {
 document.addEventListener('pointerdown', e => { if (e.target.closest?.('.cmsug')) e.preventDefault(); }, true);
 document.addEventListener('mousedown', e => { if (e.target.closest?.('.cmsug')) e.preventDefault(); }, true);
 function cmMention(b){
-  const f = b.closest('form[data-form="pcomment"]'), k = f?.dataset.k, inp = f?.querySelector('input[type=text]'), u = mentionPool().find(x => x.id === b.dataset.id); if (!inp || !u) return;
+  const f = b.closest('form[data-form="pcomment"]'), k = f?.dataset.k, inp = f?.querySelector('.pcin'), u = mentionPool().find(x => x.id === b.dataset.id); if (!inp || !u) return;
   const pos = inp.selectionEnd ?? inp.value.length, head = inp.value.slice(0, pos).replace(/@[^\s@]*$/, '@' + u.name + ' ');
   inp.value = head + inp.value.slice(pos); try { inp.setSelectionRange(head.length, head.length); } catch {} inp.focus();
   (CMEN[k] = CMEN[k] || []).push({id:u.id, n:u.name}); f.querySelector('.cmsug')?.remove();
 }
-function cbub(uid, name, text, ts, del, k, img='', extra='', men=null){
+function cbub(uid, name, text, ts, del, k, img='', extra='', men=null, did=''){
   const u = uid === social?.uid ? me() : S.users[uid] || (PROF[uid] ? profUser(uid) : null);
   if (!u && uid && social && !CMH[uid]) { CMH[uid] = 1; loadProf(uid).then(() => k ? piDraw(k) : softRender()); }
-  return `<div class="cmt mom"><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit || u?.pic ? headPic(u) : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${men?.length ? mentionHTML(etx(text), men, 'profile') : etx(text)}</span>` : ''}${img && typeof img === 'object' ? sgMsgHTML(img) : ''}${typeof img === 'string' && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
+  return `<div class="cmt mom"${did ? ` data-did="${esc(did)}"` : ''}><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit || u?.pic ? headPic(u) : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${men?.length ? mentionHTML(etx(text), men, 'profile') : etx(text)}</span>` : ''}${img && typeof img === 'object' ? sgMsgHTML(img) : ''}${typeof img === 'string' && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
 }
 function piInner(p, full){
   const k = piKey(p), w = piWatch(p), list = w ? w.list : [], uid = social.uid, owner = postOwner(p);
@@ -5700,15 +5730,15 @@ function piInner(p, full){
   const cmLikeHTML = (k, d, can) => { if (/^h\d/.test(d)) return ''; const l = clk[d], n = l?.size || 0, on = !!l?.has(uid); return can ? `<button type="button" class="cmlike" data-act="pc-like" data-k="${k}" data-d="${esc(d)}" aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Kommentar gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="cmlike">${HEART(false)}<span>${n}</span></span>` : ''; };
   const pinD = owner.startsWith('helper-') ? null : list.find(x => x.kind === 'pin' && x.by === owner)?.c; // ein fixierter Kommentar, nur vom Beitragsbesitzer (Inaya, 2026-10-12)
   const first = all[0], reOf = c => c.re && byId[c.re] && !byId[c.re].re ? c.re : !c.re && first && c !== first && (c.ts || 0) < CMT_THREADS ? first.did : null;
-  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', owner === uid && c === top && !/^h\d/.test(c.did) ? `<button class="lnk" data-act="pc-pin" data-k="${k}" data-d="${esc(c.did)}">${c.did === pinD ? 'lösen' : 'fixieren'}</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, sgClean(c.stk || c.gif) || c.img, cmLikeHTML(k, c.did, can), c.men);
+  const one = (c, top) => cbub(c.by, c.name || 'Jemand', c.text, c.ts, [can ? `<button class="lnk" data-act="pc-re" data-k="${k}" data-d="${esc(top.did)}" data-u="${esc(c.by || '')}">antworten</button>` : '', owner === uid && c === top && !/^h\d/.test(c.did) ? `<button class="lnk" data-act="pc-pin" data-k="${k}" data-d="${esc(c.did)}">${c.did === pinD ? 'lösen' : 'fixieren'}</button>` : '', c.by === uid || owner === uid ? `<button class="lnk" data-act="pc-del" data-k="${k}" data-d="${esc(c.did)}" aria-label="Kommentar löschen">entfernen</button>` : ''].filter(Boolean).join(' · '), k, sgClean(c.stk || c.gif) || c.img, cmLikeHTML(k, c.did, can), c.men, c.did);
   const cm = all.filter(c => !reOf(c)).sort((a, b) => (b.did === pinD) - (a.did === pinD)).map(c => {
     const rs = all.filter(r => reOf(r) === c.did), open = CMOPEN.has(k + '/' + c.did);
     return `<div class="cthread${c.did === pinD ? ' cpin' : ''}">${c.did === pinD ? '<small class="cpinl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg>Fixiert</small>' : ''}${one(c, c)}${rs.length ? `<button type="button" class="lnk cmore" data-act="pc-more" data-k="${k}" data-d="${esc(c.did)}">${open ? 'Antworten verbergen' : `${rs.length === 1 ? '1 Antwort' : rs.length + ' Antworten'} anzeigen`}</button>${open ? `<div class="creplies">${rs.map(r => one(r, c)).join('')}</div>` : ''}` : ''}</div>`;
   }).join('');
-  const nC = all.length, bar = `<div class="reacts pbar">${reacts}<button type="button" class="cmbtn" data-act="cmv-open" data-k="${k}" aria-label="Kommentare ansehen">${CMV_ICO}<span>${nC || ''}</span></button>${repostBtn(p)}${sendBtn(p)}</div>`;
+  const nC = all.length, bar = `<div class="reacts pbar">${reacts}<button type="button" class="cmbtn" data-act="cmv-open" data-k="${k}" aria-label="Kommentare ansehen">${CMV_ICO}<span>${nC || ''}</span></button>${p.gb ? gbSendBtn(p) : repostBtn(p) + sendBtn(p)}</div>`;
   if (!full) return bar;
   const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
-  return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<input type="text" id="pc-${k}" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar"><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
+  return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<textarea class="pcin mlin" id="pc-${k}" rows="1" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar" enterkeyhint="enter"></textarea><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
 }
 // Fotos in Kommentaren: klein, weniger als halb so groß wie im Beitrag (Inaya, 2026-10-11)
 // Antworten: auf „antworten“ oder direkt auf die Sprechblase tippen; Fokus sofort, damit die Tastatur aufgeht (Inaya, 2026-10-11)
@@ -5717,13 +5747,15 @@ document.addEventListener('click', e => {
   const re = t.closest('[data-act="pc-re"]') || (!t.closest('button,a,input,label,img') ? t.closest('.cthread .bub')?.querySelector('[data-act="pc-re"]') : null);
   if (!re) return; e.preventDefault(); e.stopPropagation();
   const k = re.dataset.k, box = re.closest('[data-pi]'); CMRE[k] = {d:re.dataset.d, u:re.dataset.u}; piDraw(k);
-  const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] input[type=text]`); if (i) { i.focus({preventScroll:true}); kbSoon(); }
+  const i = (box && document.contains(box) ? box : document).querySelector(`form[data-k="${k}"] .pcin`); if (i) { i.focus({preventScroll:true}); kbSoon(); }
 }, true);
 document.addEventListener('input', e => { if (e.target.id !== 'pubg-q') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('#pubg-list .pubg').forEach(el => { el.hidden = !!q && !el.dataset.n.includes(q); }); });
 // Versehentlich auf „antworten“ getippt: Tastatur ohne Text wegdrücken hebt die Antwort wieder auf (Inaya, 2026-10-11)
 document.addEventListener('focusout', e => {
   const f = e.target.closest?.('form[data-form="pcomment"]'); if (!f || !CMRE[f.dataset.k]) return; const k = f.dataset.k;
-  setTimeout(() => { if (document.activeElement?.closest?.(`form[data-k="${k}"]`)) return; const i = document.querySelector(`form[data-k="${k}"] input[type=text]`); if (i && i.value.trim()) return; delete CMRE[k]; piDraw(k); }, 250);
+  // Sticker-/GIF-Menü, Emoji-Menü oder ein vorgemerktes GIF/Foto gehören noch zur Antwort: nicht aufheben (Ursache dafür, dass Sticker als neuer Kommentar statt als Antwort ankamen)
+  setTimeout(() => { const a = document.activeElement; if (a?.closest?.(`form[data-k="${k}"],#sgp,.emopop,.gst`)) return; if (SG.form?.dataset?.k === k || (GST && GST.key === 'p:' + k) || PCIMG[k]) return;
+    const i = document.querySelector(`form[data-k="${k}"] .pcin`); if (i && i.value.trim()) return; delete CMRE[k]; piDraw(k); }, 250);
 });
 // Link einfügen, wenn schon „https://“ im Feld steht: nicht doppelt (Inaya, 2026-10-11)
 document.addEventListener('input', e => { const t = e.target; if (!t || !('value' in t) || typeof t.value !== 'string' || !/https?:\/\/\s*https?:\/\//i.test(t.value)) return; const p = t.selectionStart, n = t.value.length; t.value = t.value.replace(/https?:\/\/\s*(https?:\/\/)/gi, '$1'); try { const q = Math.max(0, p - (n - t.value.length)); t.setSelectionRange(q, q); } catch {} });
@@ -5737,9 +5769,12 @@ document.addEventListener('change', async e => {
 // Kommentare wie bei Instagram: Handy = eigene Seite, PC = Beitrag und Kommentare nebeneinander (Inaya, 2026-10-12)
 const CMV_ICO = '<svg class="cmico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.5a8.4 8.4 0 1 1 15.6-4.4z"/></svg>';
 let CMV = null;
+// aus einer Mitteilung: genau den Kommentar zeigen (Antworten aufklappen, hinscrollen, kurz aufleuchten)
+function cmvShow(k, did){ if (!did || !PI[k]) return; const c = PI[k].list.find(x => x.did === did); if (c?.re) { CMOPEN.add(k + '/' + c.re); piDraw(k); }
+  setTimeout(() => { const el = document.querySelector(`#cmv [data-did="${CSS.escape(did)}"]`); if (!el) return; el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash'); }, 150); }
 function cmvOpen(k){
   const w = PI[k]; if (!w) return; cmvClose(true);
-  const art = [...document.querySelectorAll(`#app [data-pi="${k}"]`)].map(e => e.closest('article.post')).find(Boolean);
+  const art = [...document.querySelectorAll(`[data-pi="${k}"]`)].filter(e => !e.closest('#cmv')).map(e => e.closest('article.post') || e.closest('.wentry')).find(Boolean);
   let post = '', style = '', tp = '';
   if (art) { const c = art.cloneNode(true); c.querySelectorAll('.pi, .pdel, video[autoplay]').forEach(x => x.remove()); c.querySelectorAll('[id]').forEach(x => x.removeAttribute('id')); post = c.innerHTML; style = art.getAttribute('style') || ''; tp = art.classList.contains('tp') ? ' tp' : ''; }
   const el = document.createElement('div'); el.id = 'cmv'; el.className = 'cmv';
@@ -5747,7 +5782,7 @@ function cmvOpen(k){
   if (art) { const bg = getComputedStyle(art).backgroundColor; if (bg && !/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) el.style.setProperty('--cmvbg', bg); }
   document.body.appendChild(el); document.body.classList.add('cmvopen'); CMV = {k}; cmvFit();
   const cm = el.querySelector('.cmvpi .cmts'); if (cm) cm.scrollTop = cm.scrollHeight;
-  if (!isMob()) el.querySelector('.cmvpi input[type=text]')?.focus({preventScroll:true});
+  if (!isMob()) el.querySelector('.cmvpi .pcin')?.focus({preventScroll:true});
 }
 // Handy: das Kommentarfenster füllt genau den sichtbaren Bereich über der Tastatur, der Salon scheint nicht durch (Inaya, 2026-10-12)
 function cmvFit(){ const el = document.getElementById('cmv'), vv = window.visualViewport; if (!el || !vv) return; const box = el.querySelector('.cmvbox');
@@ -5759,10 +5794,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && CMV) cmvCl
 function piDraw(k){
   const w = PI[k]; if (!w) return;
   document.querySelectorAll(`[data-pi="${k}"]`).forEach(el => {
-    const inp = el.querySelector('input[type=text]'), val0 = inp?.value || '', foc = inp && document.activeElement === inp;
+    const inp = el.querySelector('.pcin'), val0 = inp?.value || '', foc = inp && document.activeElement === inp;
     el.innerHTML = piInner(w.p, el.hasAttribute('data-full'));
     const cm = el.querySelector('.cmts'); if (cm) cm.scrollTop = cm.scrollHeight; // neueste Kommentare unten sichtbar
-    const n = el.querySelector('input[type=text]'); if (n) { n.value = val0; if (foc) { n.focus({preventScroll:true}); kbDone = n; } }
+    const n = el.querySelector('.pcin'); if (n) { n.value = val0; mlFit(n); if (foc) { n.focus({preventScroll:true}); kbDone = n; } }
   });
 }
 /* ---------- Mitteilungen (Glocke): wer auf deine Beiträge reagiert, kommentiert, ins Gästebuch schreibt oder dich als Freund will (Inaya, 2026-10-10) ---------- */
@@ -5778,33 +5813,38 @@ function ntWatch(){ // die eigenen letzten Beiträge beobachten, auch wenn sie g
   S.posts.filter(p => p.author === S.me).sort((a, b) => b.ts - a.ts).slice(0, 25).forEach(piWatch);
   myStories().forEach(st => stcWatch(social.uid + '_' + st.id)); // Kommentare unter meinen Storys
   Object.values(S.cmted || {}).forEach(c => c && c.p && piWatch(c.p)); // Beiträge anderer, die ich kommentiert habe (Inaya, 2026-10-11)
+  (S.gbMine || []).forEach(x => x && x.w && x.mid && piWatch(gbPost(x.w, {mid:x.mid, text:x.text, from:social.uid}))); // eigene Gästebucheinträge bei anderen: Likes und Kommentare melden
 }
 // Merkt sich Beiträge anderer, unter die ich geschrieben habe, damit die Glocke weitere Kommentare dort meldet
 function ntRemember(k){
-  const w = PI[k]; if (!w || !social || postOwner(w.p) === social.uid) return;
+  const w = PI[k]; if (!w || !social || (w.p.gb ? w.p.gb.from : postOwner(w.p)) === social.uid) return;
   const p = w.p; S.cmted = S.cmted || {};
-  if (!S.cmted[k]) S.cmted[k] = {ts:Date.now(), p:{id:p.id, author:p.author, remote:true, type:p.type, text:String(p.text || '').slice(0, 60), pub:p.pub ? 1 : 0, ...(p.img && p.img.length < 30000 ? {img:p.img} : {})}};
+  if (!S.cmted[k]) S.cmted[k] = {ts:Date.now(), p:{id:p.id, author:p.author, remote:true, type:p.type, text:String(p.text || '').slice(0, 60), pub:p.pub ? 1 : 0, ...(p.img && p.img.length < 30000 ? {img:p.img} : {}), ...(p.gb ? {gb:p.gb} : {})}};
   const ks = Object.keys(S.cmted).sort((a, b) => S.cmted[b].ts - S.cmted[a].ts); ks.slice(30).forEach(x => delete S.cmted[x]);
   save();
 }
+// Likes auf eigene Kommentare (Inaya, 2026-10-13): wurden bisher als „gefällt dein Beitrag“ angezeigt und mit Beitrags-Likes zusammengelegt
+const cmQuote = c => c.text || (c.gif ? 'GIF' : c.stk ? 'Sticker' : c.img ? 'Foto' : '');
+function ntLkTs(key, ts){ const m = S.ntLk = S.ntLk || {}; if (!m[key]) { m[key] = ts; const ks = Object.keys(m); if (ks.length > 400) ks.sort((a, b) => m[a] - m[b]).slice(0, ks.length - 400).forEach(x => delete m[x]); clearTimeout(ntLkTs.t); ntLkTs.t = setTimeout(save, 800); } return m[key]; }
 function cmLikeNotifs(w, uid, out, go, oid, k){ const mine = new Map(w.list.filter(c => c.kind === 'c' && c.by === uid).map(c => [c.did, c]));
-  for (const x of w.list) if (x.kind === 'cl' && x.by && x.by !== uid && mine.has(x.c)) out.push({ts:x.ts || 0, uid:x.by, ico:HEART(true), kind:'r', text:'gefällt dein Kommentar:', quote:mine.get(x.c).text, go, oid, k, p:w.p}); }
+  for (const x of w.list) if (x.kind === 'cl' && x.by && x.by !== uid && mine.has(x.c)) out.push({ts:ntLkTs(k + '|' + x.c + '|' + x.by, x.ts || 0), uid:x.by, ico:HEART(true), kind:'cl', text:'gefällt dein Kommentar.', quote:cmQuote(mine.get(x.c)), go, oid, k, d:x.c, p:w.p}); }
 function notifs(){
   if (!social) return [];
   const uid = social.uid, out = [];
   for (const [k, w] of Object.entries(PI)) {
-    if (postOwner(w.p) !== uid) { // fremder Beitrag: nur Antworten auf meine Kommentare melden (Inaya, 2026-10-11)
+    const gb = w.p.gb, own = gb ? gb.from : postOwner(w.p), G = gb ? 'gb' : null; // Gästebuch: gemeldet wird, wer den Eintrag geschrieben hat
+    if (own !== uid) { // fremder Beitrag: nur Antworten auf meine Kommentare melden (Inaya, 2026-10-11)
       const ow = postOwner(w.p);
-      for (const x of w.list) if (x.kind === 'c' && x.by && x.by !== uid && x.to === uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'opost', oid:ow, k, p:w.p});
-      cmLikeNotifs(w, uid, out, 'opost', ow, k);
+      for (const x of w.list) if (x.kind === 'c' && x.by && x.by !== uid && x.to === uid) out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:cmQuote(x), go:G || 'opost', oid:ow, k, d:x.did, p:w.p});
+      cmLikeNotifs(w, uid, out, G || 'opost', ow, k);
       continue;
     }
-    cmLikeNotifs(w, uid, out, 'post', '', k);
+    cmLikeNotifs(w, uid, out, G || 'post', gb ? gb.w : '', k);
     for (const x of w.list) {
       if (!x.by || x.by === uid) continue;
-      if (x.kind === 'c' && x.to === uid) { out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:x.text, go:'post', k, p:w.p}); continue; }
-      if (x.kind === 'r' && LIKE_IN(x.r)) out.push({ts:x.ts || 0, uid:x.by, ico:HEART(true), kind:'r', text:'gefällt dein Beitrag', go:'post', k, p:w.p});
-      else if (x.kind === 'c') out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat deinen Beitrag kommentiert:', quote:x.text, go:'post', k, p:w.p});
+      if (x.kind === 'c' && x.to === uid) { out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:'hat auf deinen Kommentar geantwortet:', quote:cmQuote(x), go:G || 'post', oid:gb ? gb.w : '', k, d:x.did, p:w.p}); continue; }
+      if (x.kind === 'r' && LIKE_IN(x.r)) out.push({ts:gb ? ntLkTs(k + '|' + x.by, x.ts || 0) : x.ts || 0, uid:x.by, ico:HEART(true), kind:'r', text:gb ? 'gefällt dein Gästebucheintrag' : 'gefällt dein Beitrag', go:G || 'post', oid:gb ? gb.w : '', k, p:w.p});
+      else if (x.kind === 'c') out.push({ts:x.ts || 0, uid:x.by, kind:'c', text:gb ? 'hat deinen Gästebucheintrag kommentiert:' : 'hat deinen Beitrag kommentiert:', quote:cmQuote(x), go:G || 'post', oid:gb ? gb.w : '', k, d:x.did, p:w.p});
       else if (x.kind === 's') out.push({ts:x.ts || 0, uid:x.by, kind:'s', text:'hat deinen Beitrag geteilt.', go:'post', k, p:w.p});
     }
   }
@@ -5847,13 +5887,13 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   const ico = badge === 'play' ? '<i class="nt-pl" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i>' : badge === 'mu' ? '<i class="nt-pl" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i>' : '';
   return `<button type="button" class="nt-th" data-act="nt-go" data-v="${v}" data-id="${esc(oid)}"${k ? ` data-k="${esc(k)}"` : ''}${cm ? ' data-c="1"' : ''} aria-label="Beitrag ansehen"${tst}>${inner}${ico}</button>`;
 }
-function ntOpenPost(k, prof, cm){ // genau diesen Beitrag zeigen, bei Kommentaren gleich die Kommentare
+function ntOpenPost(k, prof, cm, did){ // genau diesen Beitrag zeigen, bei Kommentaren gleich die Kommentare
   const hp = /^helper-/.test(prof) ? prof.slice(7) : prof; go('profile', hp); profTab = hp !== prof ? 'news' : 'posts';
   songOff = hp; profMuStarted[hp] = true; try { if (PSF) { PSF.a.pause(); psfMark(); } if (songPlaying) songPause(); stAuStop(); } catch {} // aus einer Mitteilung: keine Profilmusik im Hintergrund (Inaya, 2026-10-13)
   render();
   let n = 0; const find = () => { const el = [...document.querySelectorAll(`#app [data-pi="${k}"]`)].map(e => e.closest('article.post')).find(Boolean);
     if (!el) { if (++n < 12) setTimeout(find, 250); else document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}); return; }
-    el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash'); if (cm) setTimeout(() => { if (PI[k]) cmvOpen(k); }, 500); };
+    el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash'); if (cm) setTimeout(() => { if (PI[k]) { cmvOpen(k); cmvShow(k, did); } }, 500); };
   setTimeout(find, 150);
 }
 function notifView(){
@@ -5864,19 +5904,19 @@ function notifView(){
   const sec = n => n.ts > seen ? 'Neu' : n.ts >= day.getTime() ? 'Heute' : n.ts >= Date.now() - 7 * 864e5 ? 'Diese Woche' : n.ts >= Date.now() - 30 * 864e5 ? 'Diesen Monat' : 'Früher';
   const groups = [], byKey = {};
   for (const n of raw) {
-    const s = sec(n), key = n.kind === 'r' ? s + '|' + n.k : null;
+    const s = sec(n), key = n.kind === 'r' ? s + '|' + n.k : n.kind === 'cl' ? s + '|' + n.k + '|' + n.d : null;
     if (key && byKey[key]) { const g = byKey[key]; if (!g.uids.includes(n.uid)) g.uids.push(n.uid); if (n.ico && !g.icos.includes(n.ico)) g.icos.push(n.ico); continue; }
     const g = {...n, sec:s, uids:[n.uid], icos:n.ico ? [n.ico] : []}; groups.push(g); if (key) byKey[key] = g;
   }
   const who = g => { const nm = id => `<b>${esc(ntName(id))}</b>`; return g.uids.length === 1 ? nm(g.uids[0]) : g.uids.length === 2 ? nm(g.uids[0]) + ' und ' + nm(g.uids[1]) : nm(g.uids[0]) + ` und ${g.uids.length - 1} weitere`; };
   const row = g => {
     const many = g.uids.length > 1;
-    const text = g.kind === 'r' ? (many ? 'gefällt dein Beitrag' : 'gefällt dein Beitrag') + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
-    const badge = g.kind === 'r' ? '' : `<i class="nt-badge"><svg viewBox="0 0 24 24" aria-hidden="true">${NT_BADGE[g.kind] || ''}</svg></i>`;
-    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p, 'post', '', g.k, g.kind === 'c') : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid, g.k, true) : g.go === 'story' ? ntThumb({img:g.th, text:'Story'}, 'story', g.sid) : g.go === 'ostory' ? ntThumb({img:g.th, text:'Story'}, 'ostory', g.oid, g.sid) : '';
+    const text = g.kind === 'r' || g.kind === 'cl' ? g.text + ` <span class="nt-ico">${g.icos.slice(0, 3).join('')}</span>` : g.text;
+    const badge = g.kind === 'r' || g.kind === 'cl' ? '' : `<i class="nt-badge"><svg viewBox="0 0 24 24" aria-hidden="true">${NT_BADGE[g.kind] || ''}</svg></i>`;
+    const right = g.kind === 'q' ? `<span class="nt-btns"><button class="btn" data-act="fr-add" data-id="${esc(g.uid)}">Bestätigen</button><button class="btn ghost" data-act="fr-ignore" data-id="${esc(g.uid)}">Löschen</button></span>` : g.go === 'post' ? ntThumb(g.p, 'post', '', g.k, g.kind === 'c' || g.kind === 'cl') : g.go === 'opost' ? ntThumb(g.p, 'opost', g.oid, g.k, true) : g.go === 'story' ? ntThumb({img:g.th, text:'Story'}, 'story', g.sid) : g.go === 'ostory' ? ntThumb({img:g.th, text:'Story'}, 'ostory', g.oid, g.sid) : '';
     return `<li class="nt${g.ts > seen ? ' new' : ''}">
       <button type="button" class="nt-av${many ? ' two' : ''}" data-act="profile" data-id="${esc(g.uids[0])}" aria-label="${esc(ntName(g.uids[0]))}"><span class="cameo">${ntHead(g.uids[0])}</span>${many ? `<span class="cameo">${ntHead(g.uids[1])}</span>` : ''}${badge}</button>
-      <button type="button" class="nt-txt" data-act="nt-go" data-v="${g.go}" data-id="${esc(g.oid || '')}"${g.k ? ` data-k="${esc(g.k)}"` : ''}${g.kind === 'c' ? ' data-c="1"' : ''}>${who(g)} ${text}${g.quote ? ` <span class="nt-q">${etx(String(g.quote).slice(0, 80))}${String(g.quote).length > 80 ? '…' : ''}</span>` : ''} <span class="nt-t">${ntAgo(g.ts)}</span></button>
+      <button type="button" class="nt-txt" data-act="nt-go" data-v="${g.go}" data-id="${esc(g.oid || '')}"${g.k ? ` data-k="${esc(g.k)}"` : ''}${g.kind === 'c' || g.kind === 'cl' ? ' data-c="1"' : ''}${g.d ? ` data-d="${esc(g.d)}"` : ''}>${who(g)} ${text}${g.quote ? ` <span class="nt-q">${etx(String(g.quote).slice(0, 80))}${String(g.quote).length > 80 ? '…' : ''}</span>` : ''} <span class="nt-t">${ntAgo(g.ts)}</span></button>
       ${right}</li>`;
   };
   let html = '', last = '';
@@ -6014,15 +6054,17 @@ const stStkHTML = (l, edit, ctx) => (Array.isArray(l) ? l : []).map((x, i) => x.
 const stSgTabs = n => `<div class="stsgtabs" role="tablist"><button type="button" data-act="st-sgtab" data-v="" aria-pressed="${!n?.sgTab}">Story-Sticker</button><button type="button" data-act="st-sgtab" data-v="sg" aria-pressed="${!!n?.sgTab}">Sticker &amp; GIFs</button></div>`;
 const stStkPanel = n => n?.sgTab && (SG.tgt = 'story') ? `<div class="stmpanel ststkp stsgw">${stSgTabs(n)}<div id="sgp" class="sgp stsgp" role="dialog" aria-label="Sticker und GIFs">${sgPanelHTML()}</div></div>` : `<div class="stmpanel ststkp stpk"><i class="stshg" aria-hidden="true"></i>${stPillsHTML(n)}</div>`;
 /* ---------- Interaktive Story-Sticker wie bei Insta (Inaya, 2026-10-12): Umfrage, Totenkopf-Regler, Fotosticker mit Formen ---------- */
-const STI_K = {poll:1, sld:1, pho:1, loc:1, men:1, ht:1, lnk:1, cd:1, ask:1, dbd:1, av:1, hlk:1}, SPH = {}, SQ = {};
+const STI_K = {poll:1, sld:1, pho:1, loc:1, men:1, ht:1, lnk:1, cd:1, ask:1, dbd:1, av:1, hlk:1, post:1}, SPH = {}, SQ = {};
 // Insta-Sticker in der Story (Inaya, 2026-10-13): Standort, Erwähnung, Musik, Du bist dran, Polaroid, Fotostreifen, Foto, Highlight, Fragen, Avatar, Abstimmung, Regler, Link, Hashtag, Countdown
 const STPI = {loc:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>', men:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.6"/><path d="M15.6 12v1.3a2.7 2.7 0 0 0 5.4 0V12a9 9 0 1 0-3.6 7.2"/></svg>', mu:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>', dbd:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="13" height="13" rx="3"/><path d="M8 4h10a3 3 0 0 1 3 3v10M9.5 10.5v6M6.5 13.5h6"/></svg>', pol:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><rect x="7.5" y="5.5" width="9" height="9"/></svg>', strip:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="1"/><path d="M7 8.7h10M7 15.3h10"/></svg>', pho:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg>', hlk:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-dasharray="3 2.2"/><path d="M12 16.2s-4.2-2.5-4.2-5.4A2.3 2.3 0 0 1 12 9.6a2.3 2.3 0 0 1 4.2 1.2c0 2.9-4.2 5.4-4.2 5.4z"/></svg>', ask:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l1.4-4.6A8.5 8.5 0 1 1 21 11.5z"/><path d="M10 9.6a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2v.6M12 15.6v.1"/></svg>', av:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10.5" r="1"/><circle cx="15" cy="10.5" r="1"/><path d="M8.5 15c1.8 1.6 5.2 1.6 7 0"/></svg>', poll:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7"/></svg>', lnk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>', ht:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7 21M17 3l-2 18M4 8.5h17M3 15.5h17"/></svg>', cd:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.6 2.4M9.5 2.5h5"/></svg>'};
-const STPL = [['loc', 'Standort'], ['men', 'Erwähnung'], ['mu', 'Musik'], ['dbd', 'Du bist dran'], ['pol', 'Polaroid'], ['strip', 'Fotostreifen'], ['pho', 'Foto'], ['hlk', 'Highlight'], ['ask', 'Fragen'], ['av', 'Avatar'], ['poll', 'Abstimmung'], ['sld', 'Emoji-Regler'], ['lnk', 'Link'], ['ht', 'Hashtag'], ['cd', 'Countdown']];
+// Polaroid, Fotostreifen und Highlight aus der Auswahl genommen (Inaya, 2026-10-13); schon gepostete Sticker dieser Art werden weiter angezeigt
+const STPL = [['loc', 'Standort'], ['men', 'Erwähnung'], ['mu', 'Musik'], ['dbd', 'Du bist dran'], ['pho', 'Foto'], ['ask', 'Fragen'], ['av', 'Avatar'], ['poll', 'Abstimmung'], ['sld', 'Emoji-Regler'], ['lnk', 'Link'], ['ht', 'Hashtag'], ['cd', 'Countdown']];
 let ST_DBD = null; // „Du bist dran“: beim Mitmachen kommt der Sticker gleich in die neue Story
 // Avatar-Sticker: immer der eigene, angezogene Avatar in Posen und mit Gesichtern (Inaya, 2026-10-13)
 const STAV = [['Winken','winken','full',{lips:'l_laecheln'}], ['Peace','peace','full',{lips:'l_laecheln'}], ['Sitzen','sitzen','full',{lips:'l_laecheln'}], ['Jubeln','jubeln','full',{lips:'l_offen'}], ['Springen','springen','full',{lips:'l_offen'}], ['Drehen','drehen','full',{}], ['Schüchtern','schuechtern','full',{lips:'l_schmoll'}], ['Verliebt','','bust',{eyeform:'e_herz',lips:'l_laecheln'}], ['Lachen','','bust',{eyeform:'e_zu',lips:'l_offen'}], ['Durcheinander','','bust',{eyeform:'e_spirale',lips:'l_neutral'}]];
 function stAvHTML(u, i){ const v = STAV[i] || STAV[0], o = u?.outfit; if (!o) return ''; const mv = poseMove(v[1]); return `<span class="stav stavf${v[2] === 'bust' ? ' stavb' : ''}${mv ? ' mv-' + mv : ''}">${avatar({...o, ...v[3]}, v[2], v[1])}</span>`; }
-function stPillsHTML(n){ const pill = (k, l) => { const ic = k === 'sld' ? emoSVG('verliebt') : STPI[k], q = ` data-q="${esc(l.toLowerCase())}"`;
+const STPC = {loc:'#ff5d73', men:'#58a6ff', mu:'#c084fc', dbd:'#ffb547', pho:'#34d399', ask:'#f472b6', av:'#fde047', poll:'#22d3ee', sld:'#fb7185', lnk:'#60a5fa', ht:'#a3e635', cd:'#fb923c'}; // bunte Sticker-Icons (Inaya, 2026-10-13)
+function stPillsHTML(n){ const pill = (k, l) => { const ic = k === 'sld' ? emoSVG('verliebt') : STPI[k], q = ` data-q="${esc(l.toLowerCase())}" style="--ic:${STPC[k] || '#eeedf2'}"`;
     if (k === 'pho' || k === 'pol' || k === 'strip') return `<label class="stpill"${q}>${ic}<span>${l}</span><input type="file" accept="image/*" id="${k === 'pho' ? 'st-phf' : k === 'pol' ? 'st-polf' : 'st-strf'}"${k === 'strip' ? ' multiple' : ''} hidden></label>`;
     return `<button type="button" class="stpill" data-act="${k === 'mu' ? 'st-music' : 'st-pill'}" data-v="${k}"${q}>${ic}<span>${l}</span></button>`; };
   if (n?.stkAll === 'av') return `<div class="stpkh"><button type="button" class="stpkb" data-act="st-stkall" data-v="">‹ Zurück</button><b>Dein Avatar</b><span></span></div><div class="stavg">${STAV.map((v, i) => `<button type="button" data-act="st-avadd" data-v="${i}" aria-label="Avatar ${esc(v[0])}">${stAvHTML(me(), i)}<small>${esc(v[0])}</small></button>`).join('')}</div>`;
@@ -6030,10 +6072,18 @@ function stPillsHTML(n){ const pill = (k, l) => { const ic = k === 'sld' ? emoSV
   return `<label class="shsrch stpq0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" id="st-pq" placeholder="Suchen" autocomplete="off" aria-label="Sticker suchen"></label>
     <div class="stpkbody"><div class="stpills">${STPL.map(([k, l]) => pill(k, l)).join('')}</div>
     <div class="ststkg stpkres" hidden>${Object.keys(STK).map(k => `<button data-act="st-stkadd" data-v="${k}" data-q="${esc(STK[k][0].toLowerCase())}" aria-label="Sticker ${esc(STK[k][0])}">${stkSVG(k)}</button>`).join('')}</div>
+    <div class="stpkgif" hidden><b class="sttagh">GIFs</b><div class="stpkgg"></div><small class="stpkgm" hidden></small><small class="sgpow">Powered by GIPHY</small></div>
     <div class="stptiles"><button type="button" class="stptile" data-act="st-stkall" data-v="1"><span class="stptg">${['herzpixel', 'fledermaus', 'geist', 'totenkopf'].filter(k => STK[k]).map(k => stkSVG(k)).join('')}</span><b>Sticker</b></button><button type="button" class="stptile" data-act="st-gifs"><span class="stptg gif">${SG_ICO.gif}</span><b>GIFs</b></button></div></div>`; }
 document.addEventListener('input', e => { if (e.target.id !== 'st-pq') return; const q = e.target.value.trim().toLowerCase(), box = e.target.closest('.ststkp'); if (!box) return; let n = 0;
   box.querySelectorAll('.stpill').forEach(x => { x.hidden = !!q && !x.dataset.q.includes(q); }); const r = box.querySelector('.stpkres'); if (r) { r.querySelectorAll('button').forEach(x => { x.hidden = !q || !x.dataset.q.includes(q); if (!x.hidden) n++; }); r.hidden = !n; }
-  const t = box.querySelector('.stptiles'); if (t) t.hidden = !!q; });
+  const t = box.querySelector('.stptiles'); if (t) t.hidden = !!q; stPqGifs(q); });
+// Story-Suche: beim Öffnen und Tippen gleich passende GIFs vorschlagen, über dieselbe GIPHY-Anbindung wie das GIF-Menü (Inaya, 2026-10-13)
+let ST_PQG = [], stPqT = null, stPqN = 0;
+document.addEventListener('focusin', e => { if (e.target.id === 'st-pq') stPqGifs(e.target.value.trim().toLowerCase(), true); });
+function stPqGifs(q, now){ clearTimeout(stPqT); stPqT = setTimeout(async () => { const box = document.querySelector('.ststkp .stpkgif'); if (!box) return; const my = ++stPqN;
+    const l = await gifFetch(q, 12); if (my !== stPqN || !document.contains(box)) return; const g = box.querySelector('.stpkgg'), m = box.querySelector('.stpkgm');
+    ST_PQG = l.list; g.innerHTML = l.list.map((p, i) => `<button type="button" data-act="st-pqgif" data-i="${i}" aria-label="GIF einfügen">${sgItemHTML(p)}</button>`).join('');
+    m.hidden = !l.err; m.textContent = l.err || ''; box.hidden = !l.list.length && !l.err; box.querySelector('.sgpow').hidden = !l.list.length; }, now ? 0 : 350); }
 const stHost = u => { try { const h = new URL(u).hostname.replace(/^www\./, ''); return h[0].toUpperCase() + h.slice(1); } catch { return u; } };
 function stCdLeft(d){ const ms = +d - Date.now(); if (!(ms > 0)) return 'Vorbei'; const m = Math.floor(ms / 6e4), dd = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60; return dd ? `noch ${dd} ${dd === 1 ? 'Tag' : 'Tage'} ${h} Std.` : h ? `noch ${h} Std. ${mi} Min.` : `noch ${mi} Min.`; }
 function stHlOf(u, id){ const l = u === S.me || u === social?.uid ? S.hl || [] : profUser(u)?.hl || []; return l.find(h => h.id === id); }
@@ -6052,9 +6102,12 @@ function stIInner(x, i, ctx){
   if (x.k === 'men') return ctx ? `<button type="button" class="stpl2" data-act="st-prof" data-id="${esc(x.u || '')}">@${esc(x.t || '')}</button>` : `<span class="stpl2">@${esc(x.t || 'Name')}</span>`;
   if (x.k === 'ht') return ctx ? `<button type="button" class="stpl2" data-act="st-ht" data-v="${esc(String(x.t || '').toLowerCase())}">#${esc(x.t || '')}</button>` : `<span class="stpl2">#${esc(x.t || 'hashtag')}</span>`;
   if (x.k === 'lnk') return ctx && /^https?:\/\//i.test(x.t || '') ? `<a class="stpl2" href="${esc(x.t)}" target="_blank" rel="noopener">${pl(STPI.lnk, stHost(x.t))}</a>` : `<span class="stpl2">${pl(STPI.lnk, x.t ? stHost(x.t) : 'Link')}</span>`;
-  if (x.k === 'cd') { const d = new Date(+x.d || 0); return `<div class="stcard"><b class="stcq">${esc(x.q || 'Countdown')}</b><span class="stcdl">${x.d ? stCdLeft(x.d) : 'Datum wählen'}</span>${x.d ? `<small>${d.toLocaleDateString('de-DE', {day:'numeric', month:'long'})}, ${d.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})} Uhr</small>` : ''}</div>`; }
+  if (x.k === 'cd') { const d = new Date(+x.d || 0); return `<div class="stcard"><b class="stcq">${esc(x.q || 'Countdown')}</b><span class="stcdl"${x.d ? ` data-cd="${+x.d}"` : ''}>${x.d ? stCdLeft(x.d) : 'Datum wählen'}</span>${x.d ? `<small>${d.toLocaleDateString('de-DE', {day:'numeric', month:'long'})}, ${d.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})} Uhr</small>` : ''}</div>`; }
   if (x.k === 'ask') return `<div class="stcard"><b class="stcq">${esc(x.q || 'Stell mir eine Frage')}</b>${ctx && !ctx.own ? `<span class="staskr"><input class="staski" data-i="${i}" maxlength="200" placeholder="Antworten …" aria-label="Antwort" autocomplete="off"><button type="button" class="staskb" data-act="st-askgo" data-i="${i}" aria-label="Antwort senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button></span>` : `<span class="staskph">${ctx?.own ? 'Antworten kommen in deine Chats' : 'Antworten …'}</span>`}</div>`;
   if (x.k === 'dbd') return `<div class="stcard"><small class="stdbdh">${STPI.dbd}Du bist dran</small><b class="stcq">${esc(x.q || 'Mach mit!')}</b>${ctx && !ctx.own ? `<button type="button" class="stdbdb" data-act="st-dbd" data-i="${i}">Mitmachen</button>` : ''}</div>`;
+  if (x.k === 'post') { const ou = x.a === social?.uid ? me() : profUser(x.a), nm = ou?.name || x.n || 'Jemand', pt = ou?.theme?.box ? postTheme(ou.theme) : '', th = /^data:image\/(jpeg|png|webp);base64,/.test(x.th || '') ? x.th : '';
+    const inner = `<span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${th ? `<img src="${esc(th)}" alt="" draggable="false">` : ''}${x.t ? `<span class="mshtx">${etx(x.t)}</span>` : ''}`, cls = `stpost mshpo post${pt ? ' tp' : ''}`, sty = pt ? ` style="${pt}"` : '';
+    return ctx ? `<button type="button" class="${cls}"${sty} data-act="st-postopen" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen">${inner}</button>` : `<div class="${cls}"${sty}>${inner}</div>`; }
   if (x.k === 'av' && x.p != null) return stAvHTML(stUser(x.u) || me(), +x.p);
   if (x.k === 'av') { const u = stUser(x.u) || me(); return `<span class="stav">${u ? headPic(u, '', true) : ''}</span>`; }
   if (x.k === 'hlk') { const h = stHlOf(x.u, x.h), inner = `<span class="sthlkc">${h ? hlCover(h, x.u === social?.uid ? S.me : x.u) : STPI.hlk}</span><b>${esc(x.t || h?.t || 'Highlight')}</b>`; return ctx && h ? `<button type="button" class="sthlk" data-act="hl-open" data-u="${esc(x.u === social?.uid ? S.me : x.u)}" data-id="${esc(x.h)}">${inner}</button>` : `<span class="sthlk">${inner}</span>`; }
@@ -6105,12 +6158,18 @@ function stIfmHTML(n){ const f = n.ifm, x = n.stk?.[f.i]; if (!x) return ''; con
   if (STIFP[x.k] != null) { const top = `<div class="stedov stifm"><div class="stedtop"><div class="sttoprow"><button class="stat stback" data-act="st-ifx" aria-label="Abbrechen">${NFI.x}</button><span class="sp"></span>${x.k === 'men' || x.k === 'hlk' ? '' : '<button class="stdone" data-act="st-ifok">Fertig</button>'}</div></div><div class="stifc"><div class="stifcard st-${x.k}">`;
     if (x.k === 'hlk') { const hl = S.hl || []; return top + `<b class="stifh">Highlight wählen</b><div class="stifl">${hl.map(h => `<button type="button" class="stifrow" data-act="st-ifhl" data-id="${esc(h.id)}"><span class="sthlkc">${hlCover(h, S.me)}</span><b>${esc(h.t)}</b></button>`).join('')}</div></div></div></div>`; }
     if (x.k === 'men') return top + `<input id="sti-q" placeholder="${STIFP.men}" autocomplete="off" autocapitalize="none" aria-label="Person suchen"><div class="stifl" id="sti-ml">${mentionList(mentionFind(''), 'st-ifmen', '')}</div></div></div></div>`;
-    return top + `${x.k === 'ht' ? '<span class="stifpre">#</span>' : ''}<input id="sti-q" maxlength="${x.k === 'lnk' ? 300 : 80}" placeholder="${STIFP[x.k]}" value="${esc(d.q || '')}" aria-label="Text" autocomplete="off"${x.k === 'lnk' ? ' type="url" inputmode="url" autocapitalize="none"' : ''}>${x.k === 'cd' ? `<input id="sti-d" type="datetime-local" value="${esc(d.d || '')}" aria-label="Datum und Uhrzeit">` : ''}</div></div></div>`; }
+    return top + `${x.k === 'ht' ? '<span class="stifpre">#</span>' : ''}<input id="sti-q" maxlength="${x.k === 'lnk' ? 300 : 80}" placeholder="${STIFP[x.k]}" value="${esc(d.q || '')}" aria-label="Text" autocomplete="off"${x.k === 'lnk' ? ' type="url" inputmode="url" autocapitalize="none"' : ''}>${x.k === 'cd' ? stCdFields(d) : ''}</div></div></div>`; }
   return `<div class="stedov stifm"><div class="stedtop"><div class="sttoprow"><button class="stat stback" data-act="st-ifx" aria-label="Abbrechen">${NFI.x}</button><span class="sp"></span><button class="stdone" data-act="st-ifok">Fertig</button></div></div>
     <div class="stifc"><div class="stifcard st-${x.k}"><input id="sti-q" maxlength="80" placeholder="${x.k === 'poll' ? 'Stell eine Frage …' : 'Frag etwas …'}" value="${esc(d.q || '')}" aria-label="Frage" autocomplete="off">
     ${x.k === 'poll' ? d.o.map((o, a) => `<div class="stifo"><input class="sti-o" maxlength="40" placeholder="${a === 0 ? 'Ja' : a === 1 ? 'Nein' : 'Option ' + (a + 1)}" value="${esc(o)}" aria-label="Antwort ${a + 1}" autocomplete="off">${a > 1 ? `<button type="button" class="stifx" data-act="st-ifrm" data-a="${a}" aria-label="Antwort entfernen">${NFI.x}</button>` : ''}</div>`).join('') + (d.o.length < 4 ? '<button type="button" class="stifadd" data-act="st-ifadd">＋ Antwort hinzufügen</button>' : '')
       : `<div class="stsl"><div class="stslt"><i style="width:50%"></i></div><span class="stslk" style="left:50%">${emoSVG('verliebt')}</span></div>`}</div></div></div>`; }
-const stIfmRead = n => { const d = n.ifm?.d; if (!d) return; const q = document.getElementById('sti-q'); if (q) d.q = q.value; const dd = document.getElementById('sti-d'); if (dd) d.d = dd.value; const os = [...document.querySelectorAll('.sti-o')]; if (os.length) d.o = os.map(x => x.value); };
+// Countdown: Datum und Uhrzeit als zwei eigene Felder mit Beschriftung und Live-Vorschau; ein leeres datetime-local-Feld fiel auf dem iPhone zusammen und lief aus der Karte (Inaya, 2026-10-13)
+const stCdVal = () => { const a = document.getElementById('sti-dd')?.value, b = document.getElementById('sti-dt')?.value; return a ? a + 'T' + (b || '00:00') : ''; };
+function stCdFields(d){ const [a, b] = String(d.d || '').split('T'), t = new Date(), td = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`, v = Date.parse(d.d || '');
+  return `<div class="stcdin"><label><span>Datum</span><input id="sti-dd" type="date" min="${td}" value="${esc(a || '')}"></label><label><span>Uhrzeit</span><input id="sti-dt" type="time" value="${esc((b || '').slice(0, 5))}"></label></div><span class="stcdpv" id="sti-cdl">${v ? stCdLeft(v) : 'Wähl, wann es so weit ist'}</span>`; }
+document.addEventListener('input', e => { if (e.target.id !== 'sti-dd' && e.target.id !== 'sti-dt') return; const v = Date.parse(stCdVal()), l = document.getElementById('sti-cdl'); if (l) l.textContent = v ? stCdLeft(v) : 'Wähl, wann es so weit ist'; });
+setInterval(() => document.querySelectorAll('.stcdl[data-cd]').forEach(x => { const t = stCdLeft(+x.dataset.cd); if (x.textContent !== t) x.textContent = t; }), 20000); // Countdown zählt beim Ansehen weiter
+const stIfmRead = n => { const d = n.ifm?.d; if (!d) return; const q = document.getElementById('sti-q'); if (q) d.q = q.value; if (document.getElementById('sti-dd')) d.d = stCdVal(); const os = [...document.querySelectorAll('.sti-o')]; if (os.length) d.o = os.map(x => x.value); };
 // Aktivitäten: Umfrage-Ergebnisse und wer die Story gesehen hat (Inaya, 2026-10-12)
 function stActHTML(st){ const g = STV.list[STV.ui], c = stICtx(), hasI = (st.stk || []).some(x => x.k === 'poll' || x.k === 'sld'), tab = STV.actTab || (hasI ? 'res' : 'views');
   const thumbs = g.items.map((x, j) => `<button type="button" class="stath${j === STV.ii ? ' on' : ''}" data-act="st-actgo" data-v="${j}" aria-label="Story ${j + 1}">${x.thumb ? `<img src="${esc(x.thumb)}" alt="">` : '<i></i>'}</button>`).join('') + '<button type="button" class="stath new" data-act="st-actnew" aria-label="Neue Story">' + NFI.cam + '</button>';
@@ -6574,11 +6633,11 @@ function stOpen(uid){ // durch alle Leute mit Story tippen und wischen (Inaya, 2
 function stJump(d){ if (!STV) return; const ui = STV.ui + d; if (ui < 0) { STV.ii = 0; return storyPaint(); } if (ui >= STV.list.length) return stClose(); STV.ui = ui; STV.ii = stFirst(STV.list[ui]); storyPaint(); }
 function stSwipeWire(){ // nach links/rechts wischen = nächste/vorige Person
   const fr = document.getElementById('stvfr'); if (!fr || STV?.arch) return; let x0 = null, y0 = 0;
-  fr.addEventListener('pointerdown', e => { if (e.target.closest('#stcs')) { x0 = null; return; } x0 = e.clientX; y0 = e.clientY; });
+  fr.addEventListener('pointerdown', e => { if (e.target.closest('#stcs,.stsl')) { x0 = null; return; } x0 = e.clientX; y0 = e.clientY; });
   fr.addEventListener('pointerup', e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) { stSwiped = Date.now(); stJump(dx < 0 ? 1 : -1); } });
   fr.addEventListener('pointercancel', () => { x0 = null; });
   // nach unten wischen = Story schließen (Inaya, 2026-10-13); Touch-Ereignisse, weil der Browser senkrechtes Wischen sonst selbst übernimmt
-  let t0 = null; const ok = e => !e.target.closest('#stcs,input,textarea,.stbar,.stsheet');
+  let t0 = null; const ok = e => !e.target.closest('#stcs,input,textarea,.stbar,.stsheet,.stsl'); // Emoji-Regler ziehen schließt die Story nicht
   fr.addEventListener('touchstart', e => { t0 = e.touches.length === 1 && ok(e) ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : null; }, {passive:true});
   fr.addEventListener('touchend', e => { if (!t0 || !STV) return; const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y; t0 = null; if (dy > 90 && dy > Math.abs(dx) * 1.3) { stSwiped = Date.now(); stClose(); } }, {passive:true});
 }
@@ -6616,7 +6675,8 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
   const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.cf ? {cf:1} : n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
   if (n.stk?.length) st.stk = n.stk.slice(0, 20).map(x => ({k:x.k, x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, w:Math.round(x.w * 10) / 10, r:Math.round(+x.r || 0),
     ...(x.k === 'poll' ? {q:String(x.q || '').slice(0, 80), o:(x.o || []).slice(0, 4).map(o => String(o).slice(0, 40))} : x.k === 'sld' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'pho' ? {sh:x.sh || 'orig', ar:+x.ar || 1, p:x.p} : x.k === 'sg' ? (x.s ? {s:sgClean(x.s)} : {p:x.p})
-      : ['loc', 'ht', 'lnk', 'men'].includes(x.k) ? {t:String(x.t || '').slice(0, 300), ...(x.u ? {u:x.u} : {})} : x.k === 'ask' || x.k === 'dbd' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'cd' ? {q:String(x.q || '').slice(0, 60), d:+x.d || 0} : x.k === 'av' ? {u:x.u || stMyId(), ...(x.p != null ? {p:Math.max(0, Math.min(STAV.length - 1, +x.p || 0))} : {})} : x.k === 'hlk' ? {u:x.u, h:x.h, t:String(x.t || '').slice(0, 40)} : {})}));
+      : ['loc', 'ht', 'lnk', 'men'].includes(x.k) ? {t:String(x.t || '').slice(0, 300), ...(x.u ? {u:x.u} : {})} : x.k === 'ask' || x.k === 'dbd' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'cd' ? {q:String(x.q || '').slice(0, 60), d:+x.d || 0} : x.k === 'av' ? {u:x.u || stMyId(), ...(x.p != null ? {p:Math.max(0, Math.min(STAV.length - 1, +x.p || 0))} : {})} : x.k === 'hlk' ? {u:x.u, h:x.h, t:String(x.t || '').slice(0, 40)}
+      : x.k === 'post' ? {a:String(x.a || ''), id:String(x.id || ''), t:String(x.t || '').slice(0, 140), n:String(x.n || '').slice(0, 60), ...(/^data:image\/jpeg;base64,/.test(x.th || '') && x.th.length < 120000 ? {th:x.th} : {})} : {})}));
   const ph = {}; (st.stk || []).forEach((x, i) => { if ((x.k === 'pho' || x.k === 'sg') && x.p) ph[i] = x.p; });
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
   if (n.vid || social) toast('Deine Story wird gepostet …');
@@ -6987,7 +7047,7 @@ function stEditorHTML(){
     ${n.tb ? '' : `<span class="stfcur">${esc(fx[1])}</span>`}`}
     ${e ? `<div class="stedov">
       <div class="stedtop"><div class="sttoprow"><button class="stat stback" data-act="st-tback" aria-label="Zurück">${NFI.x}</button><span class="sp"></span><button class="stdone" data-act="st-tdone">Fertig</button></div></div>
-      <input class="stsize" id="st-size" type="range" min="4" max="16" step=".5" value="${e.s}" aria-label="Schriftgröße">
+      <div class="stsize" id="st-size" role="slider" tabindex="0" aria-label="Schriftgröße" aria-orientation="vertical" aria-valuemin="4" aria-valuemax="16" aria-valuenow="${e.s}" style="--v:${((e.s - 4) / 12).toFixed(3)}"><i class="stszt"></i><b class="stszk"></b></div>
       <div class="stedbot">
         <div class="stmsug" id="stmsug" hidden></div>
         <div class="stetp" data-p="font"${et === 'font' ? '' : ' hidden'}><div class="strow scroll ststyles" role="group" aria-label="Schriftart">${STXT.map(([k, l]) => `<button class="stsch" data-act="st-tstyle" data-v="${k}" aria-pressed="${e.st === k}" aria-label="Schrift ${l}"><b class="st-${k}">Aa</b><small>${{neon:'Schnörkel', schreib:'Maschine'}[k] || l}</small></button>`).join('')}</div></div>
@@ -7028,6 +7088,19 @@ window.visualViewport?.addEventListener('resize', stVV); window.visualViewport?.
 let stVVt = null;
 function stTaCommit(){ const n = stNew, ta = document.getElementById('st-ta'); if (!n || n.edit == null || !ta) return; n.texts[n.edit].t = ta.value; }
 function stTaFit(){ const ta = document.getElementById('st-ta'); if (!ta) return; ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+// Wischregler für die Schriftgröße: senkrecht, folgt direkt dem Finger (vorher gedrehtes <input type=range>, das sich auf dem iPhone kaum ziehen ließ) (Inaya, 2026-10-13)
+function stSizeWire(el, set){ if (!el) return; const MIN = 4, MAX = 16;
+  const put = v => { v = Math.round(Math.max(MIN, Math.min(MAX, v)) * 2) / 2; el.style.setProperty('--v', ((v - MIN) / (MAX - MIN)).toFixed(3)); el.setAttribute('aria-valuenow', v); set(v); };
+  const at = y => { const r = el.getBoundingClientRect(), k = 12; return MIN + (1 - Math.max(0, Math.min(1, (y - r.top - k) / Math.max(1, r.height - 2 * k)))) * (MAX - MIN); };
+  let pid = null;
+  el.addEventListener('touchstart', e => e.preventDefault(), {passive:false}); // kein Seiten-Scrollen, Tastatur bleibt offen
+  el.addEventListener('mousedown', e => e.preventDefault());
+  el.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); pid = e.pointerId; try { el.setPointerCapture(pid); } catch {} el.classList.add('drag'); put(at(e.clientY)); });
+  el.addEventListener('pointermove', e => { if (e.pointerId !== pid) return; e.preventDefault(); put(at(e.clientY)); });
+  const end = e => { if (e.pointerId !== pid) return; pid = null; el.classList.remove('drag'); try { el.releasePointerCapture(e.pointerId); } catch {} };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  el.addEventListener('keydown', e => { const d = {ArrowUp:.5, ArrowRight:.5, ArrowDown:-.5, ArrowLeft:-.5}[e.key]; if (!d) return; e.preventDefault(); put(+el.getAttribute('aria-valuenow') + d); });
+}
 function stEditWire(){
   const fr = document.getElementById('stfr'), n = stNew; if (!fr) return;
   const ta = document.getElementById('st-ta');
@@ -7036,7 +7109,7 @@ function stEditWire(){
     ta.addEventListener('input', () => { n.texts[n.edit].t = ta.value; stTaFit(); showSug(); stVV(); });
     showSug();
     document.querySelectorAll('.stedov button, .stedov .stmsug').forEach(x => x.addEventListener('mousedown', e => e.preventDefault())); // Tastatur bleibt offen
-    document.getElementById('st-size').addEventListener('input', e => { n.texts[n.edit].s = +e.target.value; ta.style.setProperty('--fs', e.target.value); stTaFit(); });
+    stSizeWire(document.getElementById('st-size'), v => { n.texts[n.edit].s = v; ta.style.setProperty('--fs', v); stTaFit(); });
     stVV(); clearInterval(stVVt); stVVt = setInterval(() => { if (!document.getElementById('st-ta')) clearInterval(stVVt); else stVV(); }, 200); return; }
   if (n.hint) setTimeout(() => { if (stNew === n && n.hint) { n.hint = false; const fn = document.getElementById('stfname'); if (fn) { fn.hidden = true; fn.classList.remove('hint'); } } }, 3500);
   // Wie bei Insta (Inaya, 2026-10-12): ein Finger verschiebt, zwei Finger machen größer/kleiner und drehen – Foto, Video, Texte und Sticker
@@ -7689,14 +7762,17 @@ function plinksHTML(u){
   return `<div class="plinks">${has.map(([k, l]) => { const url = plinkURL(k, L[k]), ic = `<svg viewBox="0 0 24 24" aria-hidden="true">${PLICON[k] || ''}</svg>`;
     return url ? `<a class="plink pic" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${l} öffnen" title="${l}">${ic}</a>` : `<span class="plink pic" title="${l}: ${esc(String(L[k]))}">${ic}</span>`; }).join('')}</div>`;
 }
+// Unter dem Namen: Online-Status und ob ich schon eine Anfrage geschickt habe (Inaya, 2026-10-13)
+const reqSent = id => !!social && FR.mine.includes(id) && !FR.inc.includes(id);
+const profSubHTML = u => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${onlineHTML(u)}${u.remote && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
   return `<header class="phead">
-    <div class="pleft"><h1 class="pname">${u.id === S.me && !u.remote && PUB && NF_AUTH.accounts ? `<button type="button" class="acctbtn" data-act="acct-open" aria-haspopup="dialog" aria-label="Account wechseln oder hinzufügen">${esc(u.name)}${hmark(u)}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>` : `${esc(u.name)}${hmark(u)}`}</h1>${u.id ? `<button type="button" class="pbtn${storiesOf(u.id).length ? ' hasst' + (stSeen(u.id, storiesOf(u.id)) ? ' seen' : '') : ''}" data-act="pp-tap" data-id="${esc(u.id)}" aria-label="${storiesOf(u.id).length ? 'Story oder Profilbild ansehen' : 'Profilbild ansehen'}">${portrait(u, t, storiesOf(u.id).length ? 'hasring' : '')}</button>` : portrait(u, t)}
+    <div class="pleft"><h1 class="pname">${u.id === S.me && !u.remote && PUB && NF_AUTH.accounts ? `<button type="button" class="acctbtn" data-act="acct-open" aria-haspopup="dialog" aria-label="Account wechseln oder hinzufügen">${esc(u.name)}${hmark(u)}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>` : `${esc(u.name)}${hmark(u)}`}</h1>${profSubHTML(u)}${u.id ? `<button type="button" class="pbtn${storiesOf(u.id).length ? ' hasst' + (stSeen(u.id, storiesOf(u.id)) ? ' seen' : '') : ''}" data-act="pp-tap" data-id="${esc(u.id)}" aria-label="${storiesOf(u.id).length ? 'Story oder Profilbild ansehen' : 'Profilbild ansehen'}">${portrait(u, t, storiesOf(u.id).length ? 'hasring' : '')}</button>` : portrait(u, t)}
       ${mine ? `<div class="row ppic"><label class="btn ghost filebtn">📷 Profilbild ${u.pic ? 'ändern' : 'hochladen'}<input type="file" accept="image/*" id="pp-file"></label>${u.pic ? '<button class="lnk" data-act="pp-clear">Avatar statt Foto</button>' : ''}</div>` : ''}</div>
     <div style="min-width:0">
-      ${u.id ? `<p class="phandle">${onlineHTML(u)}</p>` : ''}${ownerBadge(u)}${u.helper ? `<span class="badge">${u.helper} · erklärt die Regeln</span>` : ''}
+      ${ownerBadge(u)}${u.helper ? `<span class="badge">${u.helper} · erklärt die Regeln</span>` : ''}
       ${u.headline ? `<p class="phl">${esc(u.headline)}</p>` : ''}
       <div class="pstats"><span><b>${posts}</b> Beiträge</span><span><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</span></div>
       ${plinksHTML(u)}
@@ -7771,7 +7847,7 @@ function profileView(id){
     PROF_WALL = '';
     return `<section class="themed" style="${themeStyle(u.theme)}">
     ${bannerHTML(u.banner, u.name, u.handle || '')}
-    <header class="phead"><div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${portrait(u, u.theme)}</div>
+    <header class="phead"><div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${profSubHTML(u)}${portrait(u, u.theme)}</div>
       <div style="min-width:0"><p class="phandle">@${esc(u.handle || '')}</p><p class="note"><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Dieses Profil ist privat. Nur Freunde sehen Beiträge und Zimmer.</p><div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div></div></header>
   </section>`;
   }
@@ -8123,6 +8199,15 @@ function paintTyping(){
   el.hidden = !who.length; if (sub) sub.hidden = !!who.length;
 }
 setInterval(paintTyping, 1000);
+// Mehrzeilige Schreibfelder wie bei WhatsApp: wachsen bis etwa 5 Zeilen, danach scrollt man im Feld (Inaya, 2026-10-13)
+function mlFit(t){ if (!t || !t.classList?.contains('mlin')) return; t.style.height = 'auto'; const cs = getComputedStyle(t), lh = parseFloat(cs.lineHeight) || 21, pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth), max = Math.round(lh * 5 + pad);
+  const h = Math.min(t.scrollHeight + parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth), max); t.style.height = h + 'px'; t.style.overflowY = t.scrollHeight + 1 > max ? 'auto' : 'hidden';
+  const f = t.closest('.pcfield'); if (f) { const wide = !!t.value && (f.classList.contains('mlwide') || t.scrollHeight - pad > lh * 1.5); if (wide !== f.classList.contains('mlwide')) { f.classList.toggle('mlwide', wide); mlFit(t); } } } // Kommentar mehrzeilig: Feld volle Breite, Symbole darunter
+document.addEventListener('input', e => mlFit(e.target));
+// Enter: am Rechner absenden (Umschalt+Enter = neue Zeile), am Handy neue Zeile wie bei WhatsApp, Senden über den Knopf
+document.addEventListener('keydown', e => { const t = e.target; if (e.key !== 'Enter' || !t.classList?.contains('mlin') || e.isComposing) return;
+  if (e.shiftKey || matchMedia('(pointer:coarse)').matches) return; e.preventDefault(); const f = t.closest('form'); if (f) f.requestSubmit ? f.requestSubmit() : f.querySelector('[type=submit]')?.click(); });
+new MutationObserver(() => document.querySelectorAll('textarea.mlin').forEach(t => { if (t.value && !t.style.height) mlFit(t); })).observe(document.documentElement, {childList:true, subtree:true});
 const cmTyped = () => { const i = document.getElementById('cm-in'), f = i?.closest('form'); f?.classList.toggle('typed', !!i.value.trim() || f.classList.contains('gstf')); }; // wie bei WhatsApp: Mikrofon oder, sobald man tippt, der Pfeil
 new MutationObserver(cmTyped).observe(document.documentElement, {childList:true, subtree:true});
 document.addEventListener('input', e => { if (e.target.id === 'cm-in') { cmTyped(); typingNow(!!e.target.value.trim()); } if (e.target.id === 'rm-in') rmLeft(); });
@@ -8195,7 +8280,7 @@ function chatsView(){
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
-      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><input type="text" id="cm-in" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="send"></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
+      <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><textarea id="cm-in" class="mlin" rows="1" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
     </section>`;
   }
   return `<div class="card"><h2 class="card-h">Chats</h2><div class="card-in">
@@ -8352,7 +8437,7 @@ async function sendMsg(cid, text, extra={}){
   try {
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
     if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.stk ? 'Sticker' : extra.gif ? 'GIF' : extra.post ? '🖼 Beitrag' : extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
-    return true;
+    return mid; // Nachrichten-ID (wahr wie vorher)
   } catch { toast('Die Nachricht ging nicht raus. Hast du Schreibrechte für Noctibat?'); return false; }
 }
 /* ---------- Totenkopf-Emojis: :name: im Text wird zum kleinen Bild ---------- */
@@ -8430,12 +8515,12 @@ async function sgFavToggle(p){ p = sgClean(p); if (!p) return; await sgLoad(); c
 function sgList(){
   if (SG.mode === 'g') return SG.gsub === 'fav' ? (SG.fav || []).filter(x => sgIsGif(x.p)).map(x => x.p) : SG.res;
   if (SG.sub === 'fav') return (SG.fav || []).filter(x => !sgIsGif(x.p)).map(x => x.p);
-  if (SG.sub === 'own') return (SG.own || []).map(x => ({img:x.img, _own:x.id}));
+  if (SG.sub === 'own') return (SG.own || []).map(x => ({img:x.img, _own:x.id, _ed:!!x.src}));
   return [...Object.keys(STK).map(k => ({k})), ...Object.keys(EMOS).map(e => ({e}))];
 }
 function sgGrid(){
   const l = SG.view = sgList(), g = SG.mode === 'g', own = !g && SG.sub === 'own';
-  const tiles = l.map((p, i) => `<div class="sgt${g ? ' gif' : ''}"><button type="button" class="sgi" data-act="sg-send" data-i="${i}" aria-label="${g ? 'GIF' : 'Sticker'} senden">${sgItemHTML(p)}</button><button type="button" class="sgstar" data-act="sg-fav" data-i="${i}" aria-pressed="${sgFavHas(p)}" aria-label="${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}">${SG_ICO.star}</button>${own ? `<button type="button" class="sgdel" data-act="sg-del" data-i="${i}" aria-label="Sticker löschen">${SG_ICO.x}</button>` : ''}</div>`).join('');
+  const tiles = l.map((p, i) => `<div class="sgt${g ? ' gif' : ''}"><button type="button" class="sgi" data-act="sg-send" data-i="${i}" aria-label="${g ? 'GIF' : 'Sticker'} senden">${sgItemHTML(p)}</button><button type="button" class="sgstar" data-act="sg-fav" data-i="${i}" aria-pressed="${sgFavHas(p)}" aria-label="${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}">${SG_ICO.star}</button>${own ? `<button type="button" class="sgdel" data-act="sg-del" data-i="${i}" aria-label="Sticker löschen">${SG_ICO.x}</button>${p._ed ? `<button type="button" class="sgedit" data-act="sg-edit" data-i="${i}" aria-label="Sticker bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>` : ''}` : ''}</div>`).join('');
   const make = own ? `<div class="sgt"><label class="sgi sgmake" aria-label="Eigenen Sticker erstellen"><input type="file" id="sg-file" accept="image/*" hidden>${SG_ICO.plus}<small>Erstellen</small></label></div>` : '';
   let empty = '';
   if (!l.length) empty = !SG.own || !SG.fav ? '<p class="sgnote">Lädt …</p>' : g ? (SG.gsub === 'fav' ? '<p class="sgnote">Noch keine GIF-Favoriten. Tipp bei einem GIF auf den Stern.</p>' : SG.busy ? '<p class="sgnote">Sucht …</p>' : `<p class="sgnote">${esc(SG.err || 'Keine GIFs gefunden.')}</p>`) : SG.sub === 'fav' ? '<p class="sgnote">Noch keine Favoriten. Tipp bei einem Sticker auf den Stern.</p>' : own ? '' : '';
@@ -8462,16 +8547,16 @@ async function sgOpen(btn){
 }
 function sgClose(){ document.getElementById('sgp')?.remove(); SG.el = null; SG.form?.classList.remove('sgopen'); SG.form?.querySelector('.sgbtn')?.setAttribute('aria-expanded', 'false'); SG.form = null; }
 let sgQT = null;
+async function gifFetch(q, limit){ const k = await sgGifKey(); if (!k) return {list:[], err:''};
+  try { const r = await fetch(`https://api.giphy.com/v1/gifs/${q ? 'search' : 'trending'}?api_key=${encodeURIComponent(k)}&limit=${limit || 30}&rating=pg-13&lang=de${q ? '&q=' + encodeURIComponent(q) : ''}`);
+    if (!r.ok) throw new Error(r.status); const d = await r.json();
+    const list = (d.data || []).map(x => { const a = x.images?.fixed_width || {}, s = x.images?.fixed_width_small || a; return sgClean({u:(a.url || '').split('?')[0], pv:(s.url || '').split('?')[0], w:+a.width, h:+a.height}); }).filter(Boolean);
+    return {list, err:list.length ? '' : 'Keine GIFs gefunden.'}; } catch { return {list:[], err:'GIFs konnten gerade nicht geladen werden.'}; } }
 async function sgSearch(){
   const k = await sgGifKey(), q = SG.q.trim();
   if (!k) { SG.res = []; SG.err = amOwner ? 'Die GIF-Suche ist noch nicht eingerichtet. Trag unter Einstellungen deinen GIPHY-Schlüssel ein.' : 'Die GIF-Suche ist noch nicht eingerichtet.'; sgPaint(true); return; }
   SG.busy = true; SG.err = ''; sgPaint(true); const my = (SG.qn = (SG.qn || 0) + 1);
-  try {
-    const r = await fetch(`https://api.giphy.com/v1/gifs/${q ? 'search' : 'trending'}?api_key=${encodeURIComponent(k)}&limit=30&rating=pg-13&lang=de${q ? '&q=' + encodeURIComponent(q) : ''}`);
-    if (!r.ok) throw new Error(r.status); const d = await r.json(); if (my !== SG.qn) return;
-    SG.res = (d.data || []).map(x => { const a = x.images?.fixed_width || {}, s = x.images?.fixed_width_small || a; return sgClean({u:(a.url || '').split('?')[0], pv:(s.url || '').split('?')[0], w:+a.width, h:+a.height}); }).filter(Boolean);
-    if (!SG.res.length) SG.err = 'Keine GIFs gefunden.';
-  } catch { if (my !== SG.qn) return; SG.res = []; SG.err = 'GIFs konnten gerade nicht geladen werden.'; }
+  const l = await gifFetch(q, 30); if (my !== SG.qn) return; SG.res = l.list; SG.err = l.err;
   SG.busy = false; sgPaint(true);
 }
 function stSgAdd(p){ const n = stNew; if (!n) return; n.stk = n.stk || []; if (n.stk.length >= 20) return toast('Höchstens 20 Sticker pro Story.');
@@ -8490,7 +8575,7 @@ function gstTake(f){ if (!GST || gstKey(f) !== GST.key) return null; const p = G
 async function sgSend(p){
   p = sgClean(p); if (p && SG.tgt === 'story') return stSgAdd(p); if (p && SG.tgt === 'post') return pcSgAdd(p); if (p && SG.tgt === 'pcr') return pcrSkAdd(p);
   const f = SG.form; if (!p || !f || !social) return; const kind = sgIsGif(p) ? 'gif' : 'stk';
-  if (/^(cmsg|pcomment)$/.test(f.dataset.form)) { GST = {key:gstKey(f), p}; sgClose(); gstPaint(); f.querySelector('input[type="text"]')?.focus(); return; } // GIF erst als Vorschau über der Schreibleiste, Senden schickt es mit dem Text ab (Inaya, 2026-10-13)
+  if (/^(cmsg|pcomment)$/.test(f.dataset.form)) { GST = {key:gstKey(f), p}; sgClose(); gstPaint(); f.querySelector('.mlin')?.focus(); return; } // GIF erst als Vorschau über der Schreibleiste, Senden schickt es mit dem Text ab (Inaya, 2026-10-13)
   if (f.dataset.form === 'cmsg') { if (CH.open) await sendMsg(CH.open, '', {[kind]:p}); return; }
   if (f.dataset.form === 'pcomment') { const k = f.dataset.k; if (!k) return;
     const rp = CMRE[k]; delete CMRE[k]; if (rp) CMOPEN.add(k + '/' + rp.d); // Sticker/GIF auch als Antwort auf Kommentare (Inaya, 2026-10-13)
@@ -8510,36 +8595,66 @@ function sgDraw(cv, out){
   const sc = Math.max(S0 / m.img.width, S0 / m.img.height) * m.z, w = m.img.width * sc, h = m.img.height * sc, dx = (S0 - w) / 2 + m.x * S0, dy = (S0 - h) / 2 + m.y * S0;
   if (m.sh === 'orig') { const fit = Math.min(S0 / m.img.width, S0 / m.img.height) * m.z, fw = m.img.width * fit, fh = m.img.height * fit; x.drawImage(m.img, (S0 - fw) / 2 + m.x * S0, (S0 - fh) / 2 + m.y * S0, fw, fh); }
   else { const P = sgShapePath(m.sh, S0); if (m.rim) { x.save(); x.lineWidth = S0 * .07; x.lineJoin = 'round'; x.strokeStyle = '#fff'; x.stroke(P); x.restore(); } x.save(); x.clip(P); x.drawImage(m.img, dx, dy, w, h); x.restore(); }
+  sgDrawText(x, S0, m);
   if (!out) { x.save(); x.globalCompositeOperation = 'destination-over'; const t = S0 / 12; for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) { x.fillStyle = (i + j) % 2 ? '#2a2a2e' : '#1e1e21'; x.fillRect(i * t, j * t, t, t); } x.restore(); }
 }
-function sgMkHTML(){ const m = SG.mk;
+// Eigener Text im Sticker Maker (Inaya, 2026-10-13): schreiben, Schrift, Farbe, Größe, Kontur, mit dem Finger verschieben, wieder entfernen
+const SGTF = [['fett','Fett','800','Inter, sans-serif'], ['modern','Modern','700','"Space Grotesk", sans-serif'], ['gotik','Gotisch','400','UnifrakturMaguntia, serif'], ['schrift','Schreibschrift','400','"Pinyon Script", cursive'], ['antik','Antik','400','"IM Fell English SC", serif'], ['maschine','Maschine','400','"Special Elite", monospace']];
+const SGTC = ['#ffffff', '#111111', '#e05aa0', '#e0303a', '#fde047', '#a855f7', '#34d399', '#60a5fa'];
+const sgTxF = t => SGTF.find(f => f[0] === t?.f) || SGTF[0];
+const sgTxNew = () => ({t:'', f:'fett', c:'#ffffff', o:1, s:.16, x:.5, y:.82});
+function sgDrawText(x, S0, m){ const t = m.tx; if (!t) return; if (!String(t.t || '').trim()) { t.bb = null; return; }
+  const F = sgTxF(t), lines = String(t.t).split('\n').slice(0, 3); let px = t.s * S0; const setF = () => { x.font = `${F[2]} ${px}px ${F[3]}`; }; setF();
+  const maxW = S0 * .94; let w = Math.max(...lines.map(l => x.measureText(l).width), 1); if (w > maxW) { px *= maxW / w; setF(); w = maxW; }
+  const lh = px * 1.1, h = lh * lines.length, cx = t.x * S0, cy = t.y * S0;
+  x.save(); x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.miterLimit = 2;
+  lines.forEach((l, i) => { const y = cy - h / 2 + lh * (i + .5); if (t.o) { x.lineWidth = Math.max(2, px * .22); x.strokeStyle = isLight(t.c) ? '#111111' : '#ffffff'; x.strokeText(l, cx, y); } x.fillStyle = t.c; x.fillText(l, cx, y); });
+  x.restore(); t.bb = {x:(cx - w / 2) / S0, y:(cy - h / 2) / S0, w:w / S0, h:h / S0}; }
+const sgFontReady = t => { const F = sgTxF(t); return document.fonts?.load ? document.fonts.load(`${F[2]} 40px ${F[3]}`, String(t?.t || 'Aa')).catch(() => {}) : Promise.resolve(); };
+function sgTxHTML(t){ return `<div class="sgmktx"><b class="sgmkh">Text</b>
+    <div class="sgmktr"><textarea id="sg-tx" rows="2" maxlength="60" placeholder="Eigenen Text schreiben …" aria-label="Text für den Sticker">${esc(t.t)}</textarea><button type="button" class="chip" data-act="sg-txdel"${t.t ? '' : ' hidden'}>Text entfernen</button></div>
+    <div class="sgmks" role="group" aria-label="Schrift">${SGTF.map(([v, l, w, f]) => `<button type="button" class="chip" data-act="sg-txf" data-v="${v}" aria-pressed="${t.f === v}" style="font:${w} 15px ${esc(f)}">${l}</button>`).join('')}</div>
+    <div class="sgmkcol" role="group" aria-label="Textfarbe">${SGTC.map(c => `<button type="button" data-act="sg-txc" data-v="${c}" style="background:${c}" aria-pressed="${t.c === c}" aria-label="Farbe ${c}"></button>`).join('')}<button type="button" class="chip" data-act="sg-txo" aria-pressed="${!!t.o}">Kontur</button></div>
+    <label class="sgmkz"><span>Textgröße</span><input type="range" id="sg-ts" min="0.07" max="0.3" step="0.005" value="${t.s}"></label>
+    <small class="sgmkhint">Den Text kannst du mit dem Finger auf dem Bild verschieben.</small></div>`; }
+function sgMkHTML(){ const m = SG.mk; m.tx = m.tx || sgTxNew();
   return `<div class="sgmkb" data-act="sg-mkx"></div><div class="sgmkp" role="dialog" aria-label="Sticker erstellen"><header class="pcfh"><button type="button" class="pcfx" data-act="sg-mkx" aria-label="Abbrechen">${SG_ICO.x}</button><b>Sticker erstellen</b><span></span></header>
   <div class="sgmkc"><canvas id="sg-cv" width="300" height="300" aria-label="Vorschau, mit dem Finger verschieben"></canvas></div>
   <label class="sgmkz"><span>Größe</span><input type="range" id="sg-z" min="0.4" max="3" step="0.01" value="${m.z}"></label>
   <div class="sgmks">${SGSH.map(([v, l]) => `<button type="button" class="chip" data-act="sg-mksh" data-v="${v}" aria-pressed="${m.sh === v}">${l}</button>`).join('')}${m.sh !== 'orig' ? `<button type="button" class="chip" data-act="sg-mkrim" aria-pressed="${m.rim}">Weißer Rand</button>` : ''}</div>
-  <div class="row sgmkf"><span class="sp"></span><button type="button" class="btn" data-act="sg-mkok">Sticker speichern</button></div></div>`; }
-function sgMkPaint(){ let el = document.getElementById('sgmk'); if (!el) { el = document.createElement('div'); el.id = 'sgmk'; el.className = 'sgmk'; document.body.appendChild(el); } el.innerHTML = sgMkHTML(); sgDraw(document.getElementById('sg-cv')); }
+  ${sgTxHTML(m.tx)}
+  <div class="row sgmkf"><span class="sp"></span><button type="button" class="btn" data-act="sg-mkok">${m.id ? 'Änderungen speichern' : 'Sticker speichern'}</button></div></div>`; }
+function sgMkPaint(){ let el = document.getElementById('sgmk'); if (!el) { el = document.createElement('div'); el.id = 'sgmk'; el.className = 'sgmk'; document.body.appendChild(el); } const sc = el.querySelector('.sgmkp')?.scrollTop || 0; el.innerHTML = sgMkHTML(); const p = el.querySelector('.sgmkp'); if (p) p.scrollTop = sc; sgDraw(document.getElementById('sg-cv')); sgFontReady(SG.mk?.tx).then(() => sgDraw(document.getElementById('sg-cv'))); }
+// Ausgangsbild klein mitspeichern, damit man Text und Ausschnitt später noch ändern kann
+function sgSrcOf(img){ try { const k = Math.min(1, 640 / Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height); const d = c.toDataURL('image/png').length < 200000 ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', .82); return d.length < 330000 ? d : ''; } catch { return ''; } }
+const sgMkRecipe = m => ({z:+m.z || 1, x:+m.x || 0, y:+m.y || 0, sh:m.sh, rim:!!m.rim, ...(m.tx && String(m.tx.t || '').trim() ? {tx:{t:String(m.tx.t).slice(0, 60), f:m.tx.f, c:m.tx.c, o:m.tx.o ? 1 : 0, s:+m.tx.s, x:+m.tx.x, y:+m.tx.y}} : {})});
 async function sgMkSave(){
-  const m = SG.mk; if (!m) return; const cv = document.createElement('canvas'); let img = '';
+  const m = SG.mk; if (!m) return; await sgFontReady(m.tx); const cv = document.createElement('canvas'); let img = '';
   for (const s of [256, 200, 160]) { cv.width = cv.height = s; sgDraw(cv, true); img = cv.toDataURL('image/webp', .86); if (!img.startsWith('data:image/webp')) img = cv.toDataURL('image/png'); if (img.length < 260000) break; }
   if (!sgOkImg(img)) return toast('Das Bild ist zu groß.');
-  await sgLoad(); const x = {id:'s' + Date.now().toString(36), img, ts:Date.now()};
-  if (social) { try { await sgCol('stk').doc(x.id).set({img, ts:x.ts}); } catch { return toast('Der Sticker konnte nicht gespeichert werden.'); } } else { S.sgOwn = [x, ...(S.sgOwn || [])].slice(0, 60); save(); }
-  SG.own.unshift(x); SG.mk = null; document.getElementById('sgmk')?.remove(); SG.mode = 's'; SG.sub = 'own'; sgPaint(); toast('Sticker gespeichert');
+  await sgLoad(); const src = social ? (m.src || sgSrcOf(m.img)) : '', x = {id:m.id || 's' + Date.now().toString(36), img, ts:Date.now(), ...(src ? {src, mk:sgMkRecipe(m)} : {})};
+  if (social) { try { await sgCol('stk').doc(x.id).set({img, ts:x.ts, ...(src ? {src, mk:x.mk} : {})}); } catch { return toast('Der Sticker konnte nicht gespeichert werden.'); } } else { S.sgOwn = [x, ...(S.sgOwn || []).filter(y => y.id !== x.id)].slice(0, 60); save(); }
+  SG.own = [x, ...SG.own.filter(y => y.id !== x.id)]; SG.mk = null; document.getElementById('sgmk')?.remove(); SG.mode = 's'; SG.sub = 'own'; sgPaint(); toast('Sticker gespeichert');
 }
 document.addEventListener('change', e => {
   if (e.target.id !== 'sg-file') return; const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
-  const url = URL.createObjectURL(file), img = new Image(); img.onload = () => { SG.mk = {img, z:1, x:0, y:0, sh:'circ', rim:true}; sgMkPaint(); }; img.onerror = () => toast('Dieses Bild lässt sich nicht öffnen.'); img.src = url;
+  const url = URL.createObjectURL(file), img = new Image(); img.onload = () => { SG.mk = {img, z:1, x:0, y:0, sh:'circ', rim:true, tx:sgTxNew()}; sgMkPaint(); }; img.onerror = () => toast('Dieses Bild lässt sich nicht öffnen.'); img.src = url;
 });
 document.addEventListener('input', e => {
   if (e.target.id === 'sg-z' && SG.mk) { SG.mk.z = +e.target.value; sgDraw(document.getElementById('sg-cv')); }
+  else if (e.target.id === 'sg-tx' && SG.mk?.tx) { SG.mk.tx.t = e.target.value.replace(/\n{3,}/g, '\n\n'); const d = document.querySelector('[data-act=sg-txdel]'); if (d) d.hidden = !SG.mk.tx.t; sgDraw(document.getElementById('sg-cv')); sgFontReady(SG.mk.tx).then(() => sgDraw(document.getElementById('sg-cv'))); }
+  else if (e.target.id === 'sg-ts' && SG.mk?.tx) { SG.mk.tx.s = +e.target.value; sgDraw(document.getElementById('sg-cv')); }
   else if (e.target.id === 'sg-q') { SG.q = e.target.value; clearTimeout(sgQT); sgQT = setTimeout(sgSearch, 380); }
 });
 document.addEventListener('keydown', e => { if (e.target.id === 'sg-q' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
 { let drag = null, pts = new Map();
-  document.addEventListener('pointerdown', e => { if (e.target.id !== 'sg-cv' || !SG.mk) return; e.preventDefault(); e.target.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); drag = {x:SG.mk.x, y:SG.mk.y, z:SG.mk.z, p:[...pts.values()].map(a => [...a])}; });
+  document.addEventListener('pointerdown', e => { if (e.target.id !== 'sg-cv' || !SG.mk) return; e.preventDefault(); e.target.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    const r = e.target.getBoundingClientRect(), u = (e.clientX - r.left) / r.width, v = (e.clientY - r.top) / r.height, bb = SG.mk.tx?.bb, k = .05;
+    const onTx = pts.size === 1 && bb && u > bb.x - k && u < bb.x + bb.w + k && v > bb.y - k && v < bb.y + bb.h + k; // Finger auf dem Text: Text verschieben
+    drag = {x:SG.mk.x, y:SG.mk.y, z:SG.mk.z, p:[...pts.values()].map(a => [...a]), ...(onTx ? {tx:1, tx0:SG.mk.tx.x, ty0:SG.mk.tx.y} : {})}; });
   document.addEventListener('pointermove', e => { if (!drag || !pts.has(e.pointerId) || !SG.mk) return; pts.set(e.pointerId, [e.clientX, e.clientY]); const cv = document.getElementById('sg-cv'); if (!cv) return; const W = cv.getBoundingClientRect().width, P = [...pts.values()];
     if (P.length > 1 && drag.p.length > 1) { const d0 = Math.hypot(drag.p[0][0] - drag.p[1][0], drag.p[0][1] - drag.p[1][1]) || 1, d1 = Math.hypot(P[0][0] - P[1][0], P[0][1] - P[1][1]); SG.mk.z = Math.max(.4, Math.min(3, drag.z * d1 / d0)); const zi = document.getElementById('sg-z'); if (zi) zi.value = SG.mk.z; }
+    else if (drag.tx && SG.mk.tx) { SG.mk.tx.x = Math.max(.05, Math.min(.95, drag.tx0 + (P[0][0] - drag.p[0][0]) / W)); SG.mk.tx.y = Math.max(.05, Math.min(.95, drag.ty0 + (P[0][1] - drag.p[0][1]) / W)); }
     else { SG.mk.x = drag.x + (P[0][0] - drag.p[0][0]) / W; SG.mk.y = drag.y + (P[0][1] - drag.p[0][1]) / W; }
     sgDraw(cv); });
   const up = e => { pts.delete(e.pointerId); if (drag && SG.mk) drag = pts.size ? {x:SG.mk.x, y:SG.mk.y, z:SG.mk.z, p:[...pts.values()].map(a => [...a])} : null; };
@@ -8666,10 +8781,22 @@ function mediaHTML(c){
 }
 // Jeder Gästebuch-Eintrag in Farbe und Muster vom Profil der Person, die ihn geschrieben hat (Inaya, 2026-10-11)
 function wTheme(id){ const t = id && (id === S.me || id === social?.uid ? me() : PROF[id]?.theme ? PROF[id] : profUser(id))?.theme; return t ? postTheme(normTheme({...t})) : ''; }
+// Gästebuch wie der Salon (Inaya, 2026-10-13): Likes, Antworten und Teilen laufen über dasselbe System wie bei Beiträgen (chats/pi_<Gästebuch>_gb<Eintrag>),
+// weil die Einträge selbst (chats/wall_*) nach den Regeln nicht geändert werden dürfen
+const gbPost = (w, c) => ({id:'gb' + c.mid, author:w, remote:true, text:c.text || '', ...(c.img ? {img:c.img} : {}), gb:{w, mid:c.mid, from:c.from || ''}});
+const gbSendBtn = p => social ? `<button type="button" class="shbtn" data-act="gb-send" data-k="${esc(piKey(p) || '')}" aria-label="Eintrag teilen">${SEND_ICO}</button>` : '';
+function gbRemember(w, mid, text){ S.gbMine = [{w, mid, text:String(text || '').slice(0, 60), ts:Date.now()}, ...(S.gbMine || []).filter(x => x.mid !== mid)].slice(0, 30); save(); }
+function gbOpen(w, mid, cm, did){ // zum Eintrag im Gästebuch springen, bei Kommentaren gleich die Kommentare
+  if (!/^[\w-]+$/.test(w || '') || !/^[\w-]+$/.test(mid || '')) return; go('profile', w === social?.uid ? S.me : w); render();
+  let n = 0; const find = () => { const el = document.querySelector(`.wentry[data-gb="${mid}"]`);
+    if (!el) { if (++n < 16) setTimeout(find, 250); else { const r = document.getElementById('rwall'); r ? r.scrollIntoView({block:'start', behavior:'smooth'}) : toast('Diesen Eintrag kannst du gerade nicht sehen.'); } return; }
+    el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash');
+    const k = el.querySelector('[data-pi]')?.dataset.pi; if (cm && k) setTimeout(() => { if (PI[k]) { cmvOpen(k); cmvShow(k, did); } }, 500); };
+  setTimeout(find, 150); }
 function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
-  box.innerHTML = WL.list.length ? WL.list.map(c => { const wst = wTheme(c.from === social?.uid ? S.me : c.from); return `<div class="entry wentry${wst ? ' tp' : ''}" style="${wst}"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`; }).join('')
+  box.innerHTML = WL.list.length ? WL.list.map(c => { const wst = wTheme(c.from === social?.uid ? S.me : c.from); const wp = gbPost(WL.uid, c), wk = piKey(wp); return `<div class="entry wentry${wst ? ' tp' : ''}" style="${wst}" data-gb="${esc(c.mid)}"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${wk ? `<div class="pi gbpi" data-pi="${wk}">${piInner(wp)}</div>` : ''}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`; }).join('')
     : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
 // Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
@@ -8710,6 +8837,7 @@ function msgMedia(m){
     const op = ou && htPool().find(p => p.author === (x.a === social?.uid ? S.me : x.a) && p.id === x.id), oh = op ? postHTML(op) : '';
     if (oh) return `<div class="mshfull" role="button" tabindex="0" data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><div class="feed insta">${oh}</div></div>`;
     const pt = ou?.theme?.box ? postTheme(ou.theme) : '';
+    if (x.gb) return `<button type="button" class="mshpo post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''} data-act="msh-gb" data-w="${esc(x.gb)}" data-id="${esc(x.id || '')}" aria-label="Gästebucheintrag von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b><small class="mshgb">Gästebuch</small></span>${x.th ? `<img src="${esc(x.th)}" alt="">` : ''}${x.t ? `<span class="mshtx">${etx(x.t)}</span>` : ''}</button>`;
     return `<button type="button" class="mshpo post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''} data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${x.th ? `<img src="${esc(x.th)}" alt="">` : ''}${x.t ? `<span class="mshtx"><b>${esc(nm)}</b> ${etx(x.t)}</span>` : ''}</button>`; }
   if (m.story) { const mine = m.from === social?.uid; return `<div class="mstory">${m.story.th ? `<img src="${esc(m.story.th)}" alt="">` : ''}<small>${mine ? 'Antwort auf die Story' : 'Antwort auf deine Story'}</small></div>`; }
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
@@ -8759,7 +8887,7 @@ function onlineState(u){
   const seen = PROF[u.id]?.seen; return [false, seen ? 'Offline · zuletzt da ' + ago(seen) : 'Offline'];
 }
 const onlineHTML = u => { const [on, t] = onlineState(u); return `<span class="onl ${on ? 'on' : ''}" data-onl="${esc(u.id)}"><i aria-hidden="true"></i>${esc(t)}</span>`; };
-function paintOnline(){ document.querySelectorAll('[data-onl]').forEach(el => { const u = S.users[el.dataset.onl]; if (u) el.outerHTML = onlineHTML(u); }); }
+function paintOnline(){ document.querySelectorAll('[data-onl]').forEach(el => { const id = el.dataset.onl, u = S.users[id] || (PROF[id] ? profUser(id) : null); if (u) el.outerHTML = onlineHTML(u); }); }
 
 /* ---------- Zimmer besuchen (höchstens 6 Leute) ---------- */
 const ROOM_MAX = 6;
@@ -9710,12 +9838,13 @@ document.addEventListener('click', async e => {
   }
   if (a === 'nt-go' && b.dataset.v === 'story') { const sid = b.dataset.id, items = myStories(), i = items.findIndex(x => x.id === sid); if (i < 0) return toast('Story nicht mehr verfügbar'); stAuUnlock(); STV = {list:[{uid:S.me, items}], ui:0, ii:i, cOpen:true}; storyPaint(); stHold(true); return; }
   if (a === 'nt-go' && b.dataset.v === 'ostory') { stOpenAt(b.dataset.id, b.dataset.k); return; }
+  if (a === 'nt-go' && b.dataset.v === 'gb') { const g = PI[b.dataset.k]?.p?.gb; if (g) gbOpen(g.w, g.mid, b.dataset.c === '1', b.dataset.d); return; }
   if (a === 'nt-go' && b.dataset.v === 'opost' && /^helper-/.test(b.dataset.id || '')) { go('home'); return; } // Antwort unter einem Helfer-Beitrag: der steht im Salon
-  if (a === 'nt-go') { const v = b.dataset.v; if (b.dataset.k && (v === 'post' || v === 'opost')) { ntOpenPost(b.dataset.k, v === 'opost' ? b.dataset.id : S.me, b.dataset.c === '1'); return; } if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
+  if (a === 'nt-go') { const v = b.dataset.v; if (b.dataset.k && (v === 'post' || v === 'opost')) { ntOpenPost(b.dataset.k, v === 'opost' ? b.dataset.id : S.me, b.dataset.c === '1', b.dataset.d); return; } if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
   if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
   else if (a === 'profile') { if (CMV || document.getElementById('cmv')) cmvClose(true); go('profile', social && id === social.uid ? S.me : id); } // auch aus dem Kommentarfenster heraus (Inaya, 2026-10-12)
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
-  else if (a === 'rwall-del') { if (social && WL.uid) { markDel(id); WL.list = WL.list.filter(x => x.mid !== id); drawWall(); social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => { markDel(id, false); toast('Löschen ging nicht.'); }); } }
+  else if (a === 'rwall-del') { if (social && WL.uid) { const gk = WL.uid + '_gb' + id; social.db.collection('chats/pi_' + gk + '/m').get().then(q => q.docs.forEach(d => d.ref.delete().catch(() => {}))).catch(() => {}); /* Likes und Kommentare zum Eintrag mit entfernen */ markDel(id); WL.list = WL.list.filter(x => x.mid !== id); drawWall(); social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => { markDel(id, false); toast('Löschen ging nicht.'); }); } }
   else if (a === 'pose') { // ohne neu zu zeichnen, damit Eingaben im Formular bleiben
     me().pose = b.dataset.v; save();
     document.querySelectorAll('[data-act="pose"]').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === b.dataset.v));
@@ -9895,8 +10024,14 @@ document.addEventListener('click', async e => {
   else if (a === 'sg-sub') { SG.sub = b.dataset.v; sgPaint(); }
   else if (a === 'sg-gsub') { SG.gsub = b.dataset.v; sgPaint(); if (SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
   else if (a === 'gst-x') { GST = null; gstPaint(); }
+  else if (a === 'st-pqgif') { const p = ST_PQG[+b.dataset.i]; if (p) stSgAdd(p); }
   else if (a === 'sg-send') { const p = SG.view[+b.dataset.i]; if (p) sgSend(p); }
   else if (a === 'sg-fav') { const p = SG.view[+b.dataset.i]; if (!p) return; await sgLoad(); if (sgFavHas(p) && !(SG.mode === 's' ? SG.sub === 'fav' : SG.gsub === 'fav')) return toast(sgIsGif(p) ? 'Dieses GIF wurde bereits hinzugefügt.' : 'Dieser Sticker wurde bereits hinzugefügt.'); await sgFavToggle(p); sgPaint(true); } // schon gespeichert: nur Hinweis, entfernen im Favoriten-Reiter (Inaya, 2026-10-13)
+  else if (a === 'sg-edit') { const p = SG.view[+b.dataset.i], x = p?._own && (SG.own || []).find(y => y.id === p._own); if (!x?.src) return; const img = new Image();
+    img.onload = () => { const r = x.mk || {}; SG.mk = {img, id:x.id, src:x.src, z:+r.z || 1, x:+r.x || 0, y:+r.y || 0, sh:r.sh || 'circ', rim:r.rim !== false, tx:{...sgTxNew(), ...(r.tx || {})}}; sgMkPaint(); }; img.onerror = () => toast('Dieser Sticker lässt sich nicht mehr bearbeiten.'); img.src = x.src; }
+  else if (a === 'sg-txf' || a === 'sg-txc') { const t = SG.mk?.tx; if (!t) return; if (a === 'sg-txf') t.f = b.dataset.v; else t.c = b.dataset.v; sgMkPaint(); }
+  else if (a === 'sg-txo') { const t = SG.mk?.tx; if (!t) return; t.o = t.o ? 0 : 1; sgMkPaint(); }
+  else if (a === 'sg-txdel') { const t = SG.mk?.tx; if (!t) return; t.t = ''; sgMkPaint(); }
   else if (a === 'sg-del') { const p = SG.view[+b.dataset.i]; if (!p?._own) return; if (!await askYesNo('Diesen Sticker löschen?', 'Ja, löschen', 'Nein')) return;
     SG.own = SG.own.filter(x => x.id !== p._own); if (social) sgCol('stk').doc(p._own).delete().catch(() => {}); else { S.sgOwn = SG.own; save(); } sgPaint(true); }
   else if (a === 'sg-mkx') { SG.mk = null; document.getElementById('sgmk')?.remove(); }
@@ -9906,11 +10041,16 @@ document.addEventListener('click', async e => {
   else if (a === 'sg-tapmsg') { sgTapMsg(b); }
   else if (a === 'sg-minifav') { const m = b.closest('.sgmini'), p = m?._p; m?.remove(); if (p) sgFavToggle(p); }
   else if (a === 'post-send') { shpOpen(b); }
+  else if (a === 'gb-send') { const p = PI[b.dataset.k]?.p, g = p?.gb; if (!g || !social) return; const el = b.closest('.wentry') || document.querySelector(`.wentry[data-gb="${g.mid}"]`);
+    SHP.sel = new Set(); SHP.post = {a:g.from, id:g.mid, gb:g.w, th:await shpThumb(el), t:String(p.text || '').slice(0, 140), n:chatWho(g.from)}; shpPaint(); }
+  else if (a === 'msh-gb') { gbOpen(b.dataset.w, b.dataset.id); }
   else if (a === 'shp-sel') { const id = b.dataset.id; SHP.sel.has(id) ? SHP.sel.delete(id) : SHP.sel.add(id); b.setAttribute('aria-pressed', SHP.sel.has(id)); }
   else if (a === 'shp-x') { shpClose(); }
   else if (a === 'shp-go') { const ids = [...SHP.sel], pl = SHP.post; if (!ids.length) return toast('Wähl mindestens einen Chat aus.'); b.disabled = true; let ok = 0;
     for (const id of ids) { const cid = await shCid(id); if (cid && await sendMsg(cid, '', {post:pl})) ok++; } shpClose(); if (ok) toast(ok === 1 ? 'Beitrag gesendet' : `An ${ok} Chats gesendet`); }
   else if (a === 'msh-post') { shpvOpen(b.dataset.u, b.dataset.id); }
+  else if (a === 'shp-story') stFromPost();
+  else if (a === 'st-postopen') { if (stNew) return; const u = b.dataset.u, id = b.dataset.id; stClose(); shpvOpen(u, id); }
   else if (a === 'shpv-x') { document.getElementById('shpv')?.remove(); }
   else if (a === 'st-iadd') { const n = stNew; if (!n) return; n.stk = n.stk || []; if (n.stk.length >= 20) return toast('Höchstens 20 Sticker pro Story.');
     const k = b.dataset.v; n.stk.push(k === 'poll' ? {k, q:'', o:['', ''], x:50, y:46, w:72, r:0} : {k, q:'', x:50, y:46, w:72, r:0}); n.ifm = {i:n.stk.length - 1, d:{q:'', o:k === 'poll' ? ['', ''] : []}, neu:1}; n.tool = null; n.hint = false; storyPaint(); setTimeout(() => document.getElementById('sti-q')?.focus(), 60); }
@@ -9966,7 +10106,7 @@ document.addEventListener('click', async e => {
   else if (a === 'st-back') { stNew = null; stAuStop(); stCreate(); } // zurück zur Auswahl, falls man doch keine Story will (Inaya)
   else if (a === 'st-tback') { const n = stNew; if (!n || n.edit == null) return; const x = n.texts[n.edit];
     if (n.editOld) n.texts[n.edit] = n.editOld; else n.texts.splice(n.edit, 1); n.edit = null; n.editOld = null;
-    if (n.tb && !n.texts.length) { stNew = null; stCreate(); return; } storyPaint(); }
+    if (n.tb && !n.texts.length && !n.stk?.length) { stNew = null; stCreate(); return; } storyPaint(); }
   else if (a === 'st-share') { if (stNew && social && !stNew.audOk) { const v = stAudV(); stNew.cf = v === 'cf'; stNew.pub = v === '1'; stNew.audOk = true; } stShare(); }
   else if (a === 'st-audopen') { if (stNew && social) { stNew.askAud = true; storyPaint(); } }
   else if (a === 'stc-del') { if (!await askYesNo('Möchtest du diesen Kommentar wirklich entfernen?', 'Ja', 'Nein')) return; try { await social.db.doc('chats/sc_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch { toast('Das hat gerade nicht geklappt.'); } }
@@ -10285,7 +10425,7 @@ document.addEventListener('submit', async e => {
     if (!amOwner || !social) return; const k = val('gk-in').trim();
     try { await social.db.doc('site/gif').set({giphy:k}); SG.key = k; SG.res = []; toast(k ? 'GIF-Suche eingerichtet' : 'GIF-Schlüssel entfernt'); } catch { toast('Speichern hat nicht geklappt.'); }
   } else if (t === 'pcomment') {
-    const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k], gif = GST && gstKey(f) === GST.key ? GST.p : null; if ((!text && !img && !gif) || !social) return; if (gif) gstTake(f);
+    const k = f.dataset.k, inp = f.querySelector('.pcin') || document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k], gif = GST && gstKey(f) === GST.key ? GST.p : null; if ((!text && !img && !gif) || !social) return; if (gif) gstTake(f); inp.style.height = '';
     const rp = CMRE[k], men = (CMEN[k] || []).filter((m, i, l) => text.includes('@' + m.n) && l.findIndex(x => x.id === m.id) === i).slice(0, 10); inp.value = ''; delete PCIMG[k]; delete CMRE[k]; delete CMEN[k]; f.querySelector('.cmsug')?.remove();
     if (rp) CMOPEN.add(k + '/' + rp.d);
     try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), ...(gif ? {[sgIsGif(gif) ? 'gif' : 'stk']:gif} : {}), ...(men.length ? {men} : {}), ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); cmMentNotify(k, men, text); } catch { inp.value = text; if (img) PCIMG[k] = img; if (gif) { GST = {key:'p:' + k, p:gif}; gstPaint(); } toast('Das hat gerade nicht geklappt.'); }
@@ -10316,7 +10456,7 @@ document.addEventListener('submit', async e => {
     await srRun(val('fs-q')); render(); if (!isMob()) document.getElementById('fs-q')?.focus(); else document.activeElement?.blur?.();
   } else if (t === 'cmsg') {
     const text = val('cm-in'), gif = gstTake(f); if ((!text && !gif) || !CH.open) return;
-    document.getElementById('cm-in').value = ''; cmTyped(); typingNow(false);
+    { const ci = document.getElementById('cm-in'); ci.value = ''; ci.style.height = ''; mlFit(ci); } cmTyped(); typingNow(false);
     sendMsg(CH.open, text, gif ? {[sgIsGif(gif) ? 'gif' : 'stk']:gif} : {});
   } else if (t === 'rwall') {
     const inp = document.getElementById('rw-in'), text = inp.value.trim(), file = document.getElementById('rw-img')?.files[0], url = val('rw-url');
@@ -10326,7 +10466,7 @@ document.addEventListener('submit', async e => {
     const extra = {};
     if (file) { try { extra.img = await resizeImage(file, 560, .7); } catch { toast('Dieses Bild ließ sich nicht lesen. Versuch ein JPG oder PNG.'); return; } }
     if (url) extra.url = url;
-    if (await sendMsg('wall_' + WL.uid, text, extra)) { toast('Kommentar gepostet'); render(); }
+    const mid = await sendMsg('wall_' + WL.uid, text, extra); if (mid) { if (WL.uid !== social.uid) gbRemember(WL.uid, mid, text); toast('Kommentar gepostet'); render(); }
   } else if (t === 'sthlnew') { stHlNew(document.getElementById('sthl-n')?.value || '');
   } else if (t === 'streply') {
     const i = document.getElementById('st-rin'), text = i?.value.trim(), key = f.dataset.k; if (!text || !social || !key) return;

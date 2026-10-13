@@ -53,12 +53,15 @@
     const refresh = setInterval(() => { if (peersCb && last.length) { const now = Date.now(); const f = last.filter(p => now - (p.presence.t || 0) < STALE); if (f.length !== last.length) { last = f; peersCb({peers: f, joined: [], left: [], updated: []}); } } }, 15000);
     const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
     addEventListener('pagehide', bye);
+    // App im Hintergrund (iPhone: App gewechselt, Bildschirm aus) = offline, sofort abmelden; beim Zurückkommen sofort wieder online (Inaya, 2026-10-13)
+    const vis = () => { if (!beat) return; if (document.visibilityState === 'hidden') { clearInterval(beat); beat = 1; coll.doc(key).delete().catch(() => {}); } else { write(); clearInterval(beat); beat = setInterval(write, 25000); } };
+    document.addEventListener('visibilitychange', vis);
     return {
       name,
-      async presence(p){ state = {...state, ...p}; await write(); if (!beat) beat = setInterval(write, 25000); listen(); },
+      async presence(p){ state = {...state, ...p}; await write(); if (!beat || beat === 1) beat = setInterval(write, 25000); listen(); },
       onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
       emit(){}, on(){ return () => {}; },
-      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
+      async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); document.removeEventListener('visibilitychange', vis); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
       async join(n){ return mkRoom(n); }
     };
   }
