@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0f92570f4528';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7b88148b9d97';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1411,6 +1411,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .sgbtn{background:none;border:0;width:36px;height:36px;padding:6px;flex:none;display:inline-grid;place-items:center;color:inherit;cursor:pointer;opacity:.85}
 .sgbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sgbtn[aria-expanded="true"]{opacity:1;color:#fff}
+form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;padding:0;border:1px solid var(--line,#ffffff40);border-radius:50%;opacity:1}form[data-form=cmsg] .sgbtn svg{width:21px;height:21px} /* Chat: Sticker-Knopf gleich groß wie Mikro/Plus (Inaya, 2026-10-13) */
 .sgp{background:#121214;color:#eeedf2;border-top:1px solid #ffffff1f;display:flex;flex-direction:column;height:min(320px,46vh);font:14px Inter,-apple-system,'Helvetica Neue',Arial,sans-serif;position:relative;z-index:5}
 .sghead{display:flex;align-items:center;gap:2px;padding:6px 8px;border-bottom:1px solid #ffffff14;flex:none}
 .sgmodes,.sgsubs{display:flex;gap:2px}.sgsubs{flex:1}
@@ -1690,6 +1691,12 @@ body.cmvopen{overflow:hidden}
 .acctsw{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;color:var(--p-fg);animation:acctin .25s ease-out}.acctsw>div{display:grid;justify-items:center;gap:8px}.acctsw .cameo{width:96px;height:96px;border-radius:50%;overflow:hidden;border:2px solid var(--p-fg);background:var(--p-bg);display:grid;place-items:center}.acctsw .cameo img,.acctsw .cameo svg{width:100%;height:100%;object-fit:cover}.acctsw b{font-weight:400;font-size:28px}.acctsw small{opacity:.7}
 @keyframes acctin{from{opacity:0}to{opacity:1}}
 .acctback{margin-top:4px}
+/* Blockieren (Inaya, 2026-10-13) */
+.pactw{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pactw>.row,.pactw>.frq{flex:1 1 auto;min-width:0}
+.pmorebtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--p-line,#444);background:none;color:inherit;display:inline-grid;place-items:center;cursor:pointer;padding:0}.pmorebtn svg{width:20px;height:20px;fill:currentColor}
+.pmoresh .modal-card{display:grid;gap:12px;max-width:340px}.pmorel{display:grid;gap:8px}.btn.danger{background:#8a1020;border-color:#8a1020;color:#fff}
+.blkprof{display:grid;gap:10px;justify-items:start}.blkprof p{margin:0}
+.blkcard .prow .pgo{cursor:default}
 @media (min-width:761px){.acctov{align-items:center}.acctsh{border-radius:18px;border-bottom:1px solid var(--p-line);transform:translateY(16px);opacity:0;transition:transform .2s,opacity .2s}.acctov.in .acctsh{opacity:1}}
 .ststkg{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:4px}
 .ststkg button{aspect-ratio:1;background:none;border:0;padding:6px;border-radius:10px;cursor:pointer}.ststkg button:active,.ststkg button:hover{background:#ffffff14}
@@ -5419,7 +5426,7 @@ function gateView(){
 function rail(){
   const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
   ntWatch();
-  const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
+  const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(reqOpen) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['wardrobe','Garderobe'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
   const cur = V.name === 'design' ? 'profile' : V.name === 'browse' ? 'find' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
@@ -5436,7 +5443,7 @@ function rail(){
 const RAIL_ICO = {find:'search', notifs:'bell', settings:'gear'};
 const railIco = k => `<svg class="nli" viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS[RAIL_ICO[k] || k] || ''}</svg>`;
 function mobTop(nNew, ntN){ // Handy: Freunde und Chats oben rechts wie bei Momio
-  const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id)).length;
+  const reqs = FR.inc.filter(reqOpen).length;
   const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
   return `<div class="mtop">${b('nav', 'notifs', MOB_ICONS.bell, 'Mitteilungen', ntN)}${b('nav', 'find', MOB_ICONS.search, 'Suchen', 0)}${b('fp-toggle', '', MOB_ICONS.friends, 'Freunde', reqs)}${b('nav', 'chats', MOB_ICONS.chats, 'Chats', nNew)}${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', V.name === 'settings' ? 0 : newMembers())}</div>`;
 }
@@ -5519,7 +5526,7 @@ function fpRow(u, sub, act='profile', extra=''){
   return `<div class="fprow" ${!u.helper && act === 'profile' ? `data-pk="f" data-pid="${esc(u.id)}" data-pn="${esc(u.name)}"` : ''}><button class="fpmain" data-act="${act}" data-id="${esc(u.id)}"><span class=\"cameo\">${headPic(u)}</span><span class="fpinfo"><b>${esc(u.name)}${u.helper ? hmark(u) : ''}${act === 'helper-chat' && hNew(u.id) ? ' <i class="dot" aria-label="neu"></i>' : ''}</b><small>${on ? '<i class="ondot"></i>' : ''}${sub}</small></span></button>${extra}</div>`;
 }
 function friendPanel(nNew){
-  const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
+  const reqs = FR.inc.filter(reqOpen);
   const badge = reqs.length; // Chats haben ihr eigenes Symbol, hier nur Freunde und Freunde finden (Inaya, 2026-10-10)
   if (fpTab === 'chats' || isMob()) fpTab = 'friends'; // Handy: Suche hat ihr eigenes Symbol oben (Inaya, 2026-10-12)
   const tab = (k, l) => `<button role="tab" data-act="fp-tab" data-v="${k}" aria-selected="${fpTab === k}">${l}</button>`;
@@ -5633,7 +5640,7 @@ function piInner(p, full){
   const likers = new Set(list.filter(x => x.kind === 'r' && LIKE_IN(x.r)).map(x => x.by)); // alte Totenkopf-Reaktionen zählen als Like (Inaya, 2026-10-12)
   const reacts = likeBtn(`data-act="plike" data-k="${k}"`, likers.has(uid), likers.size, can);
   const hloc = owner.startsWith('helper-') ? (p.comments || []).filter(c => S.users[c.author]?.helper).map((c, i) => ({kind:'c', by:c.author, name:S.users[c.author].name, text:c.text, ts:c.ts || 0, did:'h' + i})) : [];
-  const all = list.filter(x => x.kind === 'c').concat(hloc).sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
+  const all = list.filter(x => x.kind === 'c' && !isBlk(x.by)).concat(hloc).sort((a, b) => a.ts - b.ts), byId = Object.fromEntries(all.map(c => [c.did, c]));
   // Alte Kommentare (vor den Antworten) zählen als Antworten auf den ersten Kommentar (Inaya, 2026-10-11)
   const clk = {}; for (const x of list) if (x.kind === 'cl' && x.c && x.by) (clk[x.c] = clk[x.c] || new Set()).add(x.by); // Likes auf Kommentare (Inaya, 2026-10-12)
   const cmLikeHTML = (k, d, can) => { if (/^h\d/.test(d)) return ''; const l = clk[d], n = l?.size || 0, on = !!l?.has(uid); return can ? `<button type="button" class="cmlike" data-act="pc-like" data-k="${k}" data-d="${esc(d)}" aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Kommentar gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="cmlike">${HEART(false)}<span>${n}</span></span>` : ''; };
@@ -5751,11 +5758,11 @@ function notifs(){
   for (const m of NT.ment) if (m.by && m.by !== uid && m.st) out.push({ts:m.ts || 0, uid:m.by, kind:'c', text:'hat dich in der Story erwähnt.', go:'ostory', oid:m.st.u, sid:m.st.id, th:m.st.th || ''});
   for (const m of NT.ment) if (m.by && m.by !== uid && m.k) out.push({ts:m.ts || 0, uid:m.by, kind:'c', text:'hat dich in einem Kommentar erwähnt:', quote:m.text, go:m.oid === uid ? 'post' : 'opost', oid:m.oid, k:m.k, p:m.p || {}});
   for (const m of NT.wall) if (m.from && m.from !== uid) out.push({ts:m.ts || 0, uid:m.from, kind:'w', text:'hat dir ins Gästebuch geschrieben:', quote:m.text, go:'wall'});
-  const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
+  const reqs = FR.inc.filter(reqOpen);
   let ch = false; S.notifReq = S.notifReq || {};
-  for (const id of reqs) { if (!S.notifReq[id]) { S.notifReq[id] = Date.now(); ch = true; } out.push({ts:S.notifReq[id], uid:id, kind:'q', text:'möchte mit dir befreundet sein.', go:'req'}); }
+  for (const id of reqs) { if (!S.notifReq[id]) { S.notifReq[id] = Math.min(Date.now(), FR.incTs[id] || Date.now()); ch = true; } out.push({ts:S.notifReq[id], uid:id, kind:'q', text:'möchte mit dir befreundet sein.', go:'req'}); }
   if (ch) save();
-  return out.sort((a, b) => b.ts - a.ts).slice(0, 60);
+  return out.filter(x => !isBlk(x.uid)).sort((a, b) => b.ts - a.ts).slice(0, 60);
 }
 const ntNew = () => notifs().filter(n => n.ts > (S.notifSeen || 0)).length;
 function ntPing(){ const n = ntNew(); if (n !== NT.last || V.name === 'notifs') { NT.last = n; softRender(); } }
@@ -5787,7 +5794,9 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   return `<button type="button" class="nt-th" data-act="nt-go" data-v="${v}" data-id="${esc(oid)}"${k ? ` data-k="${esc(k)}"` : ''}${cm ? ' data-c="1"' : ''} aria-label="Beitrag ansehen"${tst}>${inner}${ico}</button>`;
 }
 function ntOpenPost(k, prof, cm){ // genau diesen Beitrag zeigen, bei Kommentaren gleich die Kommentare
-  const hp = /^helper-/.test(prof) ? prof.slice(7) : prof; go('profile', hp); profTab = hp !== prof ? 'news' : 'posts'; render();
+  const hp = /^helper-/.test(prof) ? prof.slice(7) : prof; go('profile', hp); profTab = hp !== prof ? 'news' : 'posts';
+  songOff = hp; profMuStarted[hp] = true; try { if (PSF) { PSF.a.pause(); psfMark(); } if (songPlaying) songPause(); stAuStop(); } catch {} // aus einer Mitteilung: keine Profilmusik im Hintergrund (Inaya, 2026-10-13)
+  render();
   let n = 0; const find = () => { const el = [...document.querySelectorAll(`#app [data-pi="${k}"]`)].map(e => e.closest('article.post')).find(Boolean);
     if (!el) { if (++n < 12) setTimeout(find, 250); else document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}); return; }
     el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash'); if (cm) setTimeout(() => { if (PI[k]) cmvOpen(k); }, 500); };
@@ -6096,7 +6105,7 @@ const stSeen = (id, l) => l.every(st => (S.stSeen || {})[id + '_' + st.id]);
 function storyUsers(){ // Freunde und alle mit öffentlicher Story
   if (social) loadPubFeed(); const m = new Map(); Object.values(S.users).filter(u => u.remote).forEach(u => m.set(u.id, u));
   PUBF.ids.forEach(id => { if (!m.has(id) && id !== social?.uid) { const u = profUser(id); if (u) m.set(id, u); } });
-  return [...m.values()].filter(u => storiesOf(u.id).length);
+  return [...m.values()].filter(u => storiesOf(u.id).length && !isBlk(u.id));
 }
 function storyBar(){
   if (!S.me) return ''; storySweep();
@@ -6468,6 +6477,10 @@ function stSwipeWire(){ // nach links/rechts wischen = nächste/vorige Person
   fr.addEventListener('pointerdown', e => { if (e.target.closest('#stcs')) { x0 = null; return; } x0 = e.clientX; y0 = e.clientY; });
   fr.addEventListener('pointerup', e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) { stSwiped = Date.now(); stJump(dx < 0 ? 1 : -1); } });
   fr.addEventListener('pointercancel', () => { x0 = null; });
+  // nach unten wischen = Story schließen (Inaya, 2026-10-13); Touch-Ereignisse, weil der Browser senkrechtes Wischen sonst selbst übernimmt
+  let t0 = null; const ok = e => !e.target.closest('#stcs,input,textarea,.stbar,.stsheet');
+  fr.addEventListener('touchstart', e => { t0 = e.touches.length === 1 && ok(e) ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : null; }, {passive:true});
+  fr.addEventListener('touchend', e => { if (!t0 || !STV) return; const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y; t0 = null; if (dy > 90 && dy > Math.abs(dx) * 1.3) { stSwiped = Date.now(); stClose(); } }, {passive:true});
 }
 let stSwiped = 0;
 // Story-Song spielt automatisch (Spotify-Player-Schnittstelle); der Player bleibt stehen, solange dieselbe Story offen ist
@@ -7427,7 +7440,7 @@ function pubPosts(){
   loadPubFeed();
   const seen = new Set(), out = [];
   for (const p of [...S.posts.filter(p => (p.author === S.me && p.pub) || S.users[p.author]?.helper), ...PUBF.ids.flatMap(id => PROF[id] ? remoteUser(id, PROF[id]).posts.filter(p => p.pub) : []), ...ownerPubPosts()]) { const k = p.author + '_' + p.id; if (!seen.has(k)) { seen.add(k); out.push(p); } }
-  return out;
+  return out.filter(p => !isBlk(p.author));
 }
 function homeView(){
   const pubMode = social && S.salonMode === 'pub';
@@ -7572,8 +7585,8 @@ function profileHead(u, t, mine){
       ${musicHTML(u, mine)}
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
         : u.helper ? `<button class="btn" data-act="helper-chat" data-id="${u.id}">Schreib mir</button>`
-        : u.remote && !isFriend(u.id) ? frReqHTML(u.id)
-        : u.remote ? `<div class="row pbtns"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button></div>` : ''}
+        : u.remote && !isFriend(u.id) ? `<div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div>`
+        : u.remote ? `<div class="row pbtns"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button>${profMoreBtn(u.id)}</div>` : ''}
     </div>
   </header>`;
 }
@@ -7631,6 +7644,7 @@ const PTICO = {room:'<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/
 const profUser = id => S.users[id] || (PROF[id] ? remoteUser(id, PROF[id]) : null);
 function profileView(id){
   const u = profUser(id); if (!u) return homeView();
+  if (u.remote && isBlk(id)) { PROF_WALL = ''; return iBlocked(id) ? `<section class="card blkprof"><h2 class="card-h">${esc(u.name)}</h2><p class="muted">@${esc(u.handle || '')}</p><p>Du hast diese Person blockiert. Ihr seht gegenseitig keine Beiträge, Storys oder Nachrichten.</p><button class="btn" data-act="unblock" data-id="${esc(id)}">Entblockieren</button></section>` : `<section class="card blkprof"><h2 class="card-h">Profil nicht verfügbar</h2><p class="muted">Dieses Profil kannst du gerade nicht ansehen.</p></section>`; }
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
   const posts = (u.remote ? [...(u.posts || [])].filter(p => ((p.pub && !u.priv) || isFriend(id)) && !isHidden(p)) : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
@@ -7639,7 +7653,7 @@ function profileView(id){
     return `<section class="themed" style="${themeStyle(u.theme)}">
     ${bannerHTML(u.banner, u.name, u.handle || '')}
     <header class="phead"><div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${portrait(u, u.theme)}</div>
-      <div style="min-width:0"><p class="phandle">@${esc(u.handle || '')}</p><p class="note"><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Dieses Profil ist privat. Nur Freunde sehen Beiträge und Zimmer.</p>${frReqHTML(u.id)}</div></header>
+      <div style="min-width:0"><p class="phandle">@${esc(u.handle || '')}</p><p class="note"><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Dieses Profil ist privat. Nur Freunde sehen Beiträge und Zimmer.</p><div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div></div></header>
   </section>`;
   }
   let panel = '';
@@ -7803,7 +7817,7 @@ function shopView(isShop){
 // Jede Person schreibt nur ihre eigenen Dokumente: profiles/<id>, friends/<id>, handles/<id>.
 // Freundschaft = beide Listen enthalten sich gegenseitig. Chats liegen unter chats/<chatId>/m.
 const PROF = {};
-const FR = {mine:[], inc:[], ready:false, results:null, q:''};
+const FR = {mine:[], inc:[], ready:false, results:null, q:'', rq:{}, incTs:{}}; // rq: wann ich wem eine Anfrage geschickt habe, incTs: wann mir jemand eine geschickt hat (Inaya, 2026-10-13)
 const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
@@ -7811,12 +7825,12 @@ function socialStart(){
   social = {db:cloud.db, uid:cloud.uid};
   setInterval(() => { if (!document.hidden) syncFriends(); }, 90000); // Freundesprofile regelmäßig auffrischen
   const db = social.db;
-  db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); syncFriends(); }, () => {});
+  db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.list = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0));
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis);
     Promise.all(CH.list.flatMap(c => c.members).filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender);
   }, () => {});
-  db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.ready = true; syncFriends(); }).catch(() => {});
+  db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; syncFriends(); }).catch(() => {});
   db.doc('site/owner').get().then(async d => {
     OWNER = d.exists ? d.data().uid : null;
     if (amOwner && OWNER !== social.uid) { try { await db.doc('site/owner').set({uid:social.uid}); OWNER = social.uid; } catch {} } if (amOwner && !MEMBERS) loadMembers();
@@ -7841,6 +7855,35 @@ function remoteUser(id, p){
     joined:p.joined || Date.now(), wall:[], owned:[], sth:Array.isArray(p.sth) ? p.sth : [], str:p.str || 'all', stcm:p.stcm === 0 ? 0 : 1, hl:Array.isArray(p.hl) ? p.hl : [], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
 const isFriend = id => FR.mine.includes(id) && FR.inc.includes(id);
+/* ---------- Blockieren (Inaya, 2026-10-13) ----------
+   Liste privat in S.blocked; im öffentlichen Profil nur verschlüsselte Kennungen (bk), damit der blockierte Mensch dich auch nicht mehr sieht. */
+const bkHash = str => { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
+const iBlocked = id => !!id && (S.blocked || []).some(x => x.id === id);
+const blockedMe = id => !!(id && social && Array.isArray(PROF[id]?.bk) && PROF[id].bk.includes(bkHash(id + '>' + social.uid)));
+const isBlk = id => !!id && id !== social?.uid && (iBlocked(id) || blockedMe(id));
+const chVis = c => !(/^dm_/.test(c.id) && (c.members || []).some(id => isBlk(id)));
+const reqOpen = id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id) && !isBlk(id);
+function chRefilter(){ if (CH.raw) CH.list = CH.raw.filter(chVis); }
+async function blockUser(id){
+  const u = S.users[id] || profUser(id) || remoteUser(id, PROF[id] || {}); if (!u || !social) return;
+  if (!await askYesNo(`Möchtest du ${u.name}${u.handle ? ' (@' + u.handle + ')' : ''} wirklich blockieren? Ihr seid dann keine Freunde mehr und seht gegenseitig keine Beiträge, Storys oder Nachrichten.`, 'Blockieren', 'Abbrechen')) return;
+  const pic = typeof u.pic === 'string' && /^data:image\//.test(u.pic) && u.pic.length < 60000 ? u.pic : '';
+  S.blocked = [...(S.blocked || []).filter(x => x.id !== id), {id, name:u.name || '', handle:u.handle || '', pic, outfit:pic ? null : u.outfit || null, ts:Date.now()}];
+  save(); chRefilter(); if (FR.mine.includes(id)) await setMine(FR.mine.filter(x => x !== id)); publishProfile();
+  if (CH.open && /^dm_/.test(CH.open) && CH.open.includes(id)) { CH.open = null; CH.mode = null; }
+  toast(`${u.name} ist jetzt blockiert`); render(); }
+function unblockUser(id){ const x = (S.blocked || []).find(y => y.id === id); S.blocked = (S.blocked || []).filter(y => y.id !== id); S.ignoredReq = (S.ignoredReq || []).filter(y => y !== id);
+  save(); chRefilter(); publishProfile(); toast(`${x?.name || 'Die Person'} ist nicht mehr blockiert`); render(); }
+const PMORE_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+const profMoreBtn = id => social && id && id !== social.uid && !S.users[id]?.helper ? `<button type="button" class="pmorebtn" data-act="pmore-open" data-id="${esc(id)}" aria-label="Weitere Optionen" title="Weitere Optionen">${PMORE_ICO}</button>` : '';
+function profMoreOpen(id){ const u = S.users[id] || profUser(id); if (!u) return; document.getElementById('pmorebox')?.remove();
+  const m = document.createElement('div'); m.className = 'modal pmoresh'; m.id = 'pmorebox'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Optionen');
+  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(u.name)}</h2><div class="pmorel">${iBlocked(id) ? `<button type="button" class="btn ghost" data-act="unblock" data-id="${esc(id)}">Blockierung aufheben</button>` : `<button type="button" class="btn danger" data-act="block" data-id="${esc(id)}">Blockieren</button>`}<button type="button" class="btn ghost" data-act="pmore-x">Abbrechen</button></div></div>`;
+  m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=pmore-x],[data-act=block],[data-act=unblock]')) setTimeout(() => m.remove()); });
+  document.body.appendChild(m); }
+function blockedCard(){ if (!social) return ''; const l = (S.blocked || []).slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  return `<div class="card blkcard"><h2 class="card-h">Blockierte Nutzer</h2><div class="card-in">${l.length ? l.map(x => { const u = {pic:x.pic, outfit:x.outfit || {}}; return `<div class="prow"><div class="pgo"><span class="cameo">${headPic(u)}</span><div class="pinfo"><b>${esc(x.name || 'Unbekannt')}</b><span class="muted">@${esc(x.handle || '')}</span></div></div><div class="pbtns"><button class="btn ghost" data-act="unblock" data-id="${esc(x.id)}">Entblockieren</button></div></div>`; }).join('') : '<p class="note" style="margin:0">Du hast niemanden blockiert. Blockieren kannst du auf dem Profil einer Person über die drei Punkte.</p>'}</div></div>`; }
 // Raumchat: „Nur Freunde“ oder „Öffentlich“. In öffentliche Zimmer darf jedes Mitglied rein.
 const roomOf = id => { const r = (S.users[id] || PROF[id])?.roomOpen; return roomAlive(r) ? r : null; };
 const roomKind = ro => ro && ro.pub ? 'öffentlich' : 'nur Freunde';
@@ -7876,9 +7919,19 @@ async function syncFriends(){
   if (friendCount() !== lastFC) { lastFC = friendCount(); publishProfile(); }
   softRender();
 }
-async function setMine(list){
-  FR.mine = [...new Set(list)];
-  try { await social.db.doc('friends/' + social.uid).set({list:FR.mine}); } catch { toast('Das hat nicht geklappt. Hast du Schreibrechte für Noctibat?'); }
+// Neue oder erneut gesendete Anfrage: der andere sieht sie wieder und bekommt eine Mitteilung, auch wenn er sie vorher abgelehnt hat
+function frReqFresh(){
+  let ch = false; S.notifReq = S.notifReq || {}; S.ignTs = S.ignTs || {};
+  for (const id of Object.keys(S.notifReq)) if (!FR.inc.includes(id)) { delete S.notifReq[id]; ch = true; } // zurückgezogen: beim nächsten Mal wieder neu
+  for (const id of FR.inc) { const t = FR.incTs[id] || 0; if (!t) continue;
+    if ((S.ignoredReq || []).includes(id) && t > (S.ignTs[id] || 0)) { S.ignoredReq = S.ignoredReq.filter(x => x !== id); ch = true; }
+    if (S.notifReq[id] && t > S.notifReq[id]) { S.notifReq[id] = t; ch = true; } }
+  if (ch) save(); }
+async function setMine(list, again){
+  FR.mine = [...new Set(list)]; const now = Date.now(), rq = {};
+  for (const id of FR.mine) rq[id] = id === again || !FR.rq[id] ? now : FR.rq[id];
+  FR.rq = rq;
+  try { await social.db.doc('friends/' + social.uid).set({list:FR.mine, rq}); } catch { toast('Das hat nicht geklappt. Hast du Schreibrechte für Noctibat?'); }
   syncFriends();
 }
 let deleting = false;
@@ -7896,6 +7949,7 @@ function publishProfile(){
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, hts:u.priv ? [] : [...new Set(posts.filter(p => p.pub).flatMap(p => htOf(p.text)))].slice(0, 60), stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => (r = r.stk ? {...r, stk:r.stk.map(({p, ...q}) => q)} : r, r).cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
+    doc.bk = (S.blocked || []).map(x => bkHash(social.uid + '>' + x.id)); // wen ich blockiert habe, nur als Kennung (Inaya, 2026-10-13)
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.hl = doc.hl.map(h => ({...h, c:''}));
@@ -7919,7 +7973,7 @@ async function searchPeople(q){
 function frReqHTML(id){
   if (!social) return '';
   if (FR.inc.includes(id)) return `<div class="frq"><p class="note" style="margin:0">Möchte mit dir befreundet sein.</p><div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button><button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button></div></div>`;
-  if (FR.mine.includes(id)) return `<div class="row"><span class="muted">Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button></div>`;
+  if (FR.mine.includes(id)) return `<div class="row"><span class="muted">Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button><button class="btn ghost" data-act="fr-again" data-id="${id}">Erneut senden</button></div>`;
   return `<div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Freundschaftsanfrage senden</button></div>`;
 }
 function personRow(id){
@@ -7975,10 +8029,11 @@ function vmPrefetch(){ clearTimeout(VMPF); VMPF = setTimeout(async () => { if (!
 const msgImgs = (box, keep) => { const st0 = box.scrollTop; box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = keep ? st0 : box.scrollHeight; }, {once:true}); }); }; // beim Löschen nicht nach unten springen (Inaya, 2026-10-12)
 function msgsHTML(){
   const c = CH.list.find(x => x.id === CH.open);
-  return CH.msgs.length ? CH.msgs.map(m => bubbleHTML(m, c?.group)).join('')
+  return CH.msgs.length ? CH.msgs.filter(m => !isBlk(m.from)).map(m => bubbleHTML(m, c?.group)).join('')
     : '<p class="muted" style="margin:auto">Noch keine Nachrichten. Schreib die erste.</p>';
 }
 async function openDM(id){
+  if (isBlk(id)) return toast(iBlocked(id) ? 'Du hast diese Person blockiert.' : 'Du kannst dieser Person nicht schreiben.');
   const a = [social.uid, id].sort(), cid = 'dm_' + a.join('_');
   if (!CH.list.some(c => c.id === cid)) { try { await social.db.doc('chats/' + cid).set({group:false, members:a, ts:Date.now()}); } catch { return toast('Der Chat konnte nicht starten.'); } }
   openChat(cid);
@@ -9042,12 +9097,12 @@ function settingsView(){
     <div class="row"><button class="btn ghost logoutbtn" data-act="logout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3h9v18"/><path d="M5 3l5 2.2v14.6L5 21" fill="currentColor" fill-opacity=".18"/><circle cx="8.6" cy="12.4" r=".6" fill="currentColor"/><path d="M2.5 21h12.5"/><path d="M16 12h6.5M19.5 9l3 3-3 3"/></svg>Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
-  </div></div>${reportsCard()}${gifKeyCard()}${membersCard()}`;
+  </div></div>${blockedCard()}${reportsCard()}${gifKeyCard()}${membersCard()}`;
 }
 
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
 function friendsView(){
-  const reqs = FR.inc.filter(id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id));
+  const reqs = FR.inc.filter(reqOpen);
   const friends = Object.values(S.users).filter(u => u.id !== S.me).sort(byPin('f'));
   return `<div class="card"><h2 class="card-h">Freunde</h2><div class="card-in">
     ${reqs.length ? `<fieldset class="opt"><legend class="lbl">Freundschaftsanfragen</legend><div class="plist">${reqs.map(personRow).join('')}</div></fieldset>` : ''}
@@ -9176,9 +9231,11 @@ function grabGroupDraft(){
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id;
+  if (a === 'fr-add' && isBlk(id)) return toast('Du hast diese Person blockiert.');
   if (a === 'fr-add') { S.ignoredReq = (S.ignoredReq || []).filter(x => x !== id); save(); await setMine([...FR.mine, id]); toast(FR.inc.includes(id) ? 'Ihr seid jetzt befreundet' : 'Anfrage gesendet'); }
   else if (a === 'fr-remove') { const was = isFriend(id); await setMine(FR.mine.filter(x => x !== id)); if (was && V.name === 'profile' && V.arg === id) go('friends'); else render(); toast(was ? 'Entfernt' : 'Anfrage zurückgezogen'); }
-  else if (a === 'fr-ignore') { S.ignoredReq = [...new Set([...(S.ignoredReq || []), id])]; save(); render(); }
+  else if (a === 'fr-ignore') { S.ignoredReq = [...new Set([...(S.ignoredReq || []), id])]; S.ignTs = {...(S.ignTs || {}), [id]:Date.now()}; save(); render(); }
+  else if (a === 'fr-again') { if (isBlk(id)) return; if (Date.now() - (FR.rq[id] || 0) < 60000) return toast('Die Anfrage wurde gerade erst gesendet.'); await setMine(FR.mine, id); render(); toast('Anfrage erneut gesendet'); }
   else if (a === 'chat-open') openChat(id);
   else if (a === 'chat-new') { CH.mode = 'new'; render(); }
   else if (a === 'chat-group') { CH.gdraft = {pub:b.dataset.v === 'pub', name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
@@ -9682,6 +9739,9 @@ document.addEventListener('click', async e => {
   else if (a === 'st-stk') { if (stNew) { stNew.tool = stNew.tool === 'stk' ? null : 'stk'; storyPaint(); } }
   else if (a === 'sg-open') { sgOpen(b); }
   else if (a === 'sg-close') { if (SG.tgt === 'story' && stNew) { stNew.tool = null; stNew.sgTab = false; SG.tgt = null; storyPaint(); } else if (SG.tgt === 'post') pcSgClose(); else sgClose(); }
+  else if (a === 'pmore-open') profMoreOpen(b.dataset.id);
+  else if (a === 'block') blockUser(b.dataset.id);
+  else if (a === 'unblock') unblockUser(b.dataset.id);
   else if (a === 'acct-open') acctOpen();
   else if (a === 'acct-x') acctClose();
   else if (a === 'acct-go') acctGo(b.dataset.slot);
@@ -9693,7 +9753,7 @@ document.addEventListener('click', async e => {
   else if (a === 'sg-sub') { SG.sub = b.dataset.v; sgPaint(); }
   else if (a === 'sg-gsub') { SG.gsub = b.dataset.v; sgPaint(); if (SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
   else if (a === 'sg-send') { const p = SG.view[+b.dataset.i]; if (p) sgSend(p); }
-  else if (a === 'sg-fav') { const p = SG.view[+b.dataset.i]; if (p) { await sgFavToggle(p); sgPaint(true); } }
+  else if (a === 'sg-fav') { const p = SG.view[+b.dataset.i]; if (!p) return; await sgLoad(); if (sgFavHas(p) && !(SG.mode === 's' ? SG.sub === 'fav' : SG.gsub === 'fav')) return toast(sgIsGif(p) ? 'Dieses GIF wurde bereits hinzugefügt.' : 'Dieser Sticker wurde bereits hinzugefügt.'); await sgFavToggle(p); sgPaint(true); } // schon gespeichert: nur Hinweis, entfernen im Favoriten-Reiter (Inaya, 2026-10-13)
   else if (a === 'sg-del') { const p = SG.view[+b.dataset.i]; if (!p?._own) return; if (!await askYesNo('Diesen Sticker löschen?', 'Ja, löschen', 'Nein')) return;
     SG.own = SG.own.filter(x => x.id !== p._own); if (social) sgCol('stk').doc(p._own).delete().catch(() => {}); else { S.sgOwn = SG.own; save(); } sgPaint(true); }
   else if (a === 'sg-mkx') { SG.mk = null; document.getElementById('sgmk')?.remove(); }
@@ -9748,7 +9808,7 @@ document.addEventListener('click', async e => {
     if (n.tb && !n.texts.length) { stNew = null; stCreate(); return; } storyPaint(); }
   else if (a === 'st-share') { if (stNew && social && !stNew.audOk) { const v = stAudV(); stNew.cf = v === 'cf'; stNew.pub = v === '1'; stNew.audOk = true; } stShare(); }
   else if (a === 'st-audopen') { if (stNew && social) { stNew.askAud = true; storyPaint(); } }
-  else if (a === 'stc-del') { try { await social.db.doc('chats/sc_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch { toast('Das hat gerade nicht geklappt.'); } }
+  else if (a === 'stc-del') { if (!await askYesNo('Möchtest du diesen Kommentar wirklich löschen?', 'Ja', 'Nein')) return; try { await social.db.doc('chats/sc_' + b.dataset.k + '/m/' + b.dataset.d).delete(); } catch { toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'st-like') { const uid = b.dataset.u, sid = b.dataset.id, me_ = social?.uid; if (!me_) return; const l = stLk(uid, sid), on = l.by.has(me_), ref = social.db.doc('chats/sl_' + uid + '_' + sid + '/m/' + me_);
     if (on) l.by.delete(me_); else l.by.add(me_); stLkPaint(uid, sid); if (!on) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
     try { if (on) await ref.delete(); else await ref.set({kind:'like', by:me_, ts:Date.now()}); } catch { if (on) l.by.add(me_); else l.by.delete(me_); stLkPaint(uid, sid); toast('Das hat gerade nicht geklappt.'); } }
@@ -9829,7 +9889,7 @@ document.addEventListener('click', async e => {
   else if (a === 'cmv-open') { cmvOpen(b.dataset.k); }
   else if (a === 'cmv-x') { cmvClose(); }
   else if (a === 'pc-more') { const x = b.dataset.k + '/' + b.dataset.d; CMOPEN.has(x) ? CMOPEN.delete(x) : CMOPEN.add(x); piDraw(b.dataset.k); }
-  else if (a === 'pc-del') { const k = b.dataset.k, d0 = b.dataset.d; markDel(d0); if (PI[k]) { PI[k].list = PI[k].list.filter(x => x.did !== d0); piDraw(k); } try { await social.db.doc('chats/pi_' + k + '/m/' + d0).delete(); } catch { markDel(d0, false); toast('Das ließ sich gerade nicht löschen.'); } }
+  else if (a === 'pc-del') { const k = b.dataset.k, d0 = b.dataset.d; if (!await askYesNo('Möchtest du diesen Kommentar wirklich löschen?', 'Ja', 'Nein')) return; markDel(d0); if (PI[k]) { PI[k].list = PI[k].list.filter(x => x.did !== d0); piDraw(k); } try { await social.db.doc('chats/pi_' + k + '/m/' + d0).delete(); } catch { markDel(d0, false); toast('Das ließ sich gerade nicht löschen.'); } }
   else if (a === 'react') {
     const p = S.posts.find(x => x.id === id); p.reactions = p.reactions || {};
     const k = Object.values(p.reactions).some(l => l.includes(S.me)) ? 1 : -1;
