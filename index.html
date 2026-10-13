@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7b88148b9d97';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='08e655e8d51e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1411,6 +1411,10 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .sgbtn{background:none;border:0;width:36px;height:36px;padding:6px;flex:none;display:inline-grid;place-items:center;color:inherit;cursor:pointer;opacity:.85}
 .sgbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sgbtn[aria-expanded="true"]{opacity:1;color:#fff}
+.cmrow{display:flex;align-items:flex-end;gap:7px;align-self:flex-start;max-width:88%;min-width:0}.cmrow>.bubble{max-width:none;min-width:0}
+.chat .mav{width:28px;height:28px;padding:0;cursor:pointer;flex:none;border-radius:50%;overflow:hidden;border:1px solid var(--p-line);background:var(--p-panel);display:block}.chat .mav svg,.chat .mav img{width:100%;height:100%;display:block}
+.bubble button.who{background:none;border:0;padding:0;color:inherit;cursor:pointer;text-align:left}
+.chprof{background:none;border:0;padding:0;color:inherit;cursor:pointer;text-align:left;font:inherit;font-weight:700}
 form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;padding:0;border:1px solid var(--line,#ffffff40);border-radius:50%;opacity:1}form[data-form=cmsg] .sgbtn svg{width:21px;height:21px} /* Chat: Sticker-Knopf gleich groß wie Mikro/Plus (Inaya, 2026-10-13) */
 .sgp{background:#121214;color:#eeedf2;border-top:1px solid #ffffff1f;display:flex;flex-direction:column;height:min(320px,46vh);font:14px Inter,-apple-system,'Helvetica Neue',Arial,sans-serif;position:relative;z-index:5}
 .sghead{display:flex;align-items:center;gap:2px;padding:6px 8px;border-bottom:1px solid #ffffff14;flex:none}
@@ -1437,7 +1441,7 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .sgstar,.sgdel{position:absolute;top:2px;width:22px;height:22px;border:0;border-radius:50%;background:#000000a6;color:#bdbcc4;display:grid;place-items:center;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
 .sgstar{right:2px}.sgdel{left:2px}
 .sgstar svg,.sgdel svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.sgstar[aria-pressed="true"]{opacity:1;color:#f2d16b}.sgstar[aria-pressed="true"] svg{fill:currentColor}
+.sgstar[aria-pressed="true"]{opacity:1;color:#fff}.sgstar[aria-pressed="true"] svg{fill:currentColor}
 .sgt:hover .sgstar,.sgt:hover .sgdel,.sgt:focus-within .sgstar,.sgt:focus-within .sgdel{opacity:1}
 @media (hover:none){.sgstar,.sgdel{opacity:.85}}
 .sgnote{text-align:center;opacity:.7;margin:18px 8px;font-size:13px}
@@ -1449,7 +1453,7 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .bub .msgstk{width:110px;height:110px;margin-top:4px}.bub .msggif{max-width:200px;margin-top:4px}
 .sgmini{position:fixed;z-index:3300;background:#1b1b1e;border:1px solid #ffffff2a;border-radius:12px;padding:4px;box-shadow:0 8px 24px #0009}
 .sgmini button{display:flex;align-items:center;gap:8px;border:0;background:none;color:#eeedf2;font:14px Inter,-apple-system,Arial,sans-serif;padding:8px 12px;cursor:pointer}
-.sgmini svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.sgmini svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.sgmini .on svg{fill:#fff;stroke:#fff} /* Favorit = Stern weiß gefüllt (Inaya, 2026-10-13) */
 .sgmk{position:fixed;inset:0;z-index:3200}
 .sgmkb{position:absolute;inset:0;background:#000000b3}
 .sgmkp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(380px,100%);max-height:100%;overflow:auto;background:#121214;color:#eeedf2;border:1px solid #ffffff26;display:grid;gap:12px;padding-bottom:16px;font:14px Inter,-apple-system,Arial,sans-serif}
@@ -8072,7 +8076,7 @@ function chatsView(){
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
-      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle"><b class="ch-name">${esc(chatName(c))}</b><small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small><small class="typing" id="chtyping" hidden></small></div>
+      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}</button>`; })()}<small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}</small><small class="typing" id="chtyping" hidden></small></div>
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
@@ -8362,7 +8366,8 @@ async function sgSend(p){
   const f = SG.form; if (!p || !f || !social) return; const kind = sgIsGif(p) ? 'gif' : 'stk';
   if (f.dataset.form === 'cmsg') { if (CH.open) await sendMsg(CH.open, '', {[kind]:p}); return; }
   if (f.dataset.form === 'pcomment') { const k = f.dataset.k; if (!k) return;
-    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text:'', [kind]:p, by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { toast('Das hat nicht geklappt. Versuch es nochmal.'); }
+    const rp = CMRE[k]; delete CMRE[k]; if (rp) CMOPEN.add(k + '/' + rp.d); // Sticker/GIF auch als Antwort auf Kommentare (Inaya, 2026-10-13)
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text:'', [kind]:p, ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); } catch { if (rp) CMRE[k] = rp; toast('Das hat nicht geklappt. Versuch es nochmal.'); }
     piDraw(k); }
 }
 // Eigenen Sticker erstellen: Bild verschieben, zoomen, Form und weißer Rand
@@ -8414,7 +8419,7 @@ document.addEventListener('keydown', e => { if (e.target.id === 'sg-q' && e.key 
   document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up); }
 // Getippter Sticker/GIF im Chat oder Kommentar: zu den Favoriten
 function sgTapMsg(b){ document.querySelectorAll('.sgmini').forEach(x => x.remove()); let p; try { p = sgClean(JSON.parse(b.dataset.p)); } catch {} if (!p) return;
-  sgLoad().then(() => { const r = b.getBoundingClientRect(), el = document.createElement('div'); el.className = 'sgmini'; el.innerHTML = `<button type="button" data-act="sg-minifav">${SG_ICO.star}${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}</button>`; el._p = p;
+  sgLoad().then(() => { const r = b.getBoundingClientRect(), el = document.createElement('div'); el.className = 'sgmini'; el.innerHTML = `<button type="button" data-act="sg-minifav"${sgFavHas(p) ? ' class="on"' : ''}>${SG_ICO.star}${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}</button>`; el._p = p;
     document.body.appendChild(el); el.style.left = Math.max(8, Math.min(r.left, innerWidth - el.offsetWidth - 8)) + 'px'; el.style.top = Math.max(8, r.top - el.offsetHeight - 6) + 'px'; }); }
 document.addEventListener('click', e => { if (!e.target.closest('.sgmini,[data-act=sg-tapmsg]')) document.querySelectorAll('.sgmini').forEach(x => x.remove()); }, true);
 // Inaya: GIPHY-Schlüssel nur für die Seiten-Besitzerin
@@ -8595,7 +8600,12 @@ function msgLink(t){
 }
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid;
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<small class="who">${esc(chatWho(m.from))}</small>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
+  if (!mine && m.from && !m._r) { // kleine Profilbilder an fremden Nachrichten, antippen öffnet das Profil (Inaya, 2026-10-13)
+    const u = S.users[m.from] || (PROF[m.from] ? profUser(m.from) : null);
+    if (!u && social && !CMH[m.from]) { CMH[m.from] = 1; loadProf(m.from).then(() => softRender()); }
+    return `<div class="cmrow"><button type="button" class="cameo mav" data-act="profile" data-id="${esc(m.from)}" aria-label="Profil von ${esc(chatWho(m.from))}">${u?.outfit || u?.pic ? headPic(u) : ''}</button>${bubbleHTML({...m, _r:1}, group)}</div>`;
+  }
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${esc(chatWho(m.from))}</button>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
 // Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
 const isDel = id => !!(S.nfDel && S.nfDel[id]);
@@ -8786,7 +8796,7 @@ function closeRoomChat(auto){ delete me().roomOpen; if (roomMode === 'chat') roo
 // Kleine Ja/Nein-Frage als eigenes Fenster
 function askYesNo(q, yes='Ja', no='Nein'){
   return new Promise(res => {
-    const m = document.createElement('div'); m.className = 'modal'; m.style.zIndex = '2000'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    const m = document.createElement('div'); m.className = 'modal'; m.style.zIndex = '5000'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
     m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(q)}</h2><div class="row"><button type="button" class="btn ghost" data-r="0">${esc(no)}</button><span class="sp"></span><button type="button" class="btn" data-r="1">${esc(yes)}</button></div></div>`;
     const done = v => { m.remove(); res(v); };
     m.addEventListener('click', e => { const r = e.target.closest('[data-r]'); if (r) { e.stopPropagation(); done(r.dataset.r === '1'); } else if (e.target === m) done(false); });
