@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f5d4c570ec77';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='eb5720efa8ad';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1533,6 +1533,30 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
 .bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}.bubble.shcard>.meta,.themed .bubble.me.shcard>.meta,.bubble.me.shcard>.meta .lnk,.bubble.me.shcard>.meta .mdel,.bubble.me.shcard>.meta .mdelb{color:#f2f1f5!important;opacity:1}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
+.chat .mwrap{display:flex;flex-direction:column;flex:none;position:relative;touch-action:pan-y;min-width:0}.chat .mwrap.me{align-items:flex-end}.chat .mwrap.them{align-items:flex-start}
+.mline{display:flex;align-items:center;gap:4px;width:100%;min-width:0;will-change:transform}.mwrap.me .mline{justify-content:flex-end}.mwrap.them .mline>.cmrow,.mwrap.them .mline>.bubble{min-width:0}
+.mact{display:flex;gap:2px;flex:none;opacity:0;transition:opacity .15s}.mwrap:hover .mact,.mact:focus-within{opacity:1}
+.mact button{width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--p-fg,#eeedf2);opacity:.75;display:grid;place-items:center;cursor:pointer}.mact button:hover,.mact button:focus-visible{opacity:1;background:var(--p-panel,#ffffff14)}
+.mact svg,.rxre svg,.chre>svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (pointer:coarse){.mact{opacity:1}.mact .mactre{display:none}.mact button{width:28px;height:28px;opacity:.45}}
+.mrx{display:flex;flex-wrap:wrap;gap:4px;margin:-4px 8px 0;position:relative;z-index:1}.mwrap.them .mrx{margin-left:42px}
+.mrxb{display:inline-flex;align-items:center;gap:3px;height:26px;padding:0 7px;border-radius:13px;border:1px solid var(--p-line,#ffffff33);background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2);font:600 12px Inter,sans-serif;cursor:pointer}
+.mrxb .emo{width:18px;height:18px;margin:0}.mrxb.on{border-color:var(--p-fg,#fff);box-shadow:0 0 0 1px var(--p-fg,#fff) inset}
+.rxpop{position:fixed;z-index:4000;display:grid;gap:6px;padding:8px;border-radius:18px;background:var(--p-panel,#161617);color:var(--p-fg,#eeedf2);border:1px solid var(--p-line,#ffffff33);box-shadow:0 10px 30px #000a;max-width:calc(100vw - 16px)}
+.rxq,.rxall{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}.rxall{max-width:290px;border-top:1px solid var(--p-line,#ffffff26);padding-top:6px}.rxall[hidden]{display:none}
+.rxpop button[data-act="rx-pick"]{width:42px;height:42px;padding:4px;border:0;border-radius:50%;background:none;cursor:pointer;transition:transform .12s}.rxpop button[data-act="rx-pick"] .emo{width:32px;height:32px;margin:0}
+.rxpop button[data-act="rx-pick"]:hover,.rxpop button[data-act="rx-pick"]:focus-visible{transform:scale(1.18)}.rxpop button[aria-pressed="true"]{background:var(--p-fg,#fff)}
+.rxmore{width:42px;height:42px;border-radius:50%;border:1px solid var(--p-line,#ffffff33);background:none;color:inherit;display:grid;place-items:center;cursor:pointer}.rxmore svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.rxre{display:flex;align-items:center;justify-content:center;gap:6px;height:38px;border-radius:12px;border:1px solid var(--p-line,#ffffff33);background:none;color:inherit;font:600 14px var(--f-display,'Space Grotesk'),Inter,sans-serif;cursor:pointer}
+.mquote{display:grid;gap:1px;width:100%;min-width:min(180px,100%);max-width:100%;margin:2px 0 6px;padding:5px 9px;border:0;border-left:3px solid currentColor;border-radius:8px;background:#0000001f;color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer;opacity:.9}
+.bubble.them .mquote{background:#ffffff14}.mquote b{font-size:12px}.mquote span{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal}.mquote .emo{width:16px;height:16px}
+.bubble.media>.mquote,.bubble.shcard>.mquote{margin:4px 8px 6px;width:auto;background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2)}
+.chre{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 10px;margin-bottom:6px;border-left:3px solid var(--p-fg,#eeedf2);border-radius:10px;background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2)}
+.chreq{flex:1;min-width:0;display:grid;font-size:13px}.chreq b{font-size:12px}.chreq span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.85}.chreq .emo{width:15px;height:15px}
+.chrex{width:30px;height:30px;border:0;border-radius:50%;background:none;color:inherit;cursor:pointer;flex:none}
+.mwrap.mflash .bubble{animation:ntfl 1.6s ease}
+.mwrap.swre::before,.mwrap.swrx::after{position:absolute;top:50%;margin-top:-14px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2);font-size:16px;line-height:28px;text-align:center}
+.mwrap.swre::before{content:'↩';left:6px}.mwrap.swrx::after{content:'☺';right:6px}
 .e2badge{display:inline-flex;align-items:center;gap:3px;font:inherit;color:inherit;padding:0;vertical-align:baseline}.e2badge svg,.e2li svg,.e2warn>svg,.note>svg:first-child,.e2sheet h3 svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:-1px;margin-right:3px}
 .bubble.e2lock{font-style:italic;opacity:.8;display:block}.e2hint{display:block;font-style:normal;font-size:12px;opacity:.75;margin-top:2px}.e2warn{align-self:center;max-width:92%;display:grid;gap:8px;margin:8px auto;padding:10px 12px;border:1px solid var(--line,#ffffff33);border-radius:12px;font-size:13px;background:#ffffff0a}
 .e2sheet{padding:10px 18px 22px}.e2sheet h3{margin:6px 0 10px}.e2code{font:600 20px/1.5 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-align:center;word-spacing:.35em;padding:10px;border:1px solid #ffffff33;border-radius:12px}
@@ -8229,12 +8253,14 @@ function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
-  CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
-  CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(200).onSnapshot({includeMetadataChanges:true}, snap => {
-    CH.mraw = snap.docs.filter(d => !isDel(d.id)).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); markSeen(); drawMsgs(); e2Prev(id);
-  }, () => {});
+  CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.lim = 200; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
+  chSub(id);
   go('chats');
 }
+function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
+  return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 200).onSnapshot({includeMetadataChanges:true}, snap => {
+    CH.mraw = snap.docs.filter(d => !isDel(d.id)).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id);
+    if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
 function drawMsgs(keep){
   const box = document.getElementById('msgs'); if (!box) return; const st0 = box.scrollTop;
@@ -8249,7 +8275,7 @@ function msgsHTML(){
   if (warn.length) return msgsHTML0(c) + warn.map(u => `<div class="e2warn">${E2_LOCK}<span>${esc(chatWho(u))} hat ein neues Gerät angemeldet oder sich neu angemeldet. Eure Nachrichten bleiben verschlüsselt. Wenn du sichergehen willst, vergleicht eure Sicherheitsnummer.</span><span class="row"><button type="button" class="btn ghost" data-act="e2-code">Sicherheitsnummer</button><button type="button" class="btn ghost" data-act="e2-warnok" data-id="${esc(u)}">OK</button></span></div>`).join('');
   return msgsHTML0(c); }
 function msgsHTML0(c){
-  return CH.msgs.length ? CH.msgs.filter(m => !isBlk(m.from)).map(m => bubbleHTML(m, c?.group)).join('')
+  return CH.msgs.length ? CH.msgs.filter(m => !isBlk(m.from)).map(m => msgWrapHTML(m, c?.group)).join('')
     : '<p class="muted" style="margin:auto">Noch keine Nachrichten. Schreib die erste.</p>';
 }
 async function openDM(id){
@@ -8423,7 +8449,7 @@ async function voiceSend(j){
       if (j.cancel) return; // schon gelöscht
       const C = 900000, n = Math.ceil(b64.length / C), v = Date.now(), ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6), bt = social.db.batch();
       const audio = {n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur, w:j.w || '', ...(mk || {})};
-      const doc = e2 ? await e2Seal(j.cid, mid, ts, {text:'', audio}, e2Members(j.cid)) : {from:social.uid, text:'', ts, audio}; if (e2) E2E.dec[mid] = e2Clean({text:'', audio});
+      const doc = e2 ? await e2Seal(j.cid, mid, ts, {text:'', audio}, e2Members(j.cid)) : {from:social.uid, text:'', ts, audio}; if (e2) E2E.dec[mid + '@' + ts] = e2Clean({text:'', audio});
       for (let i = 0; i < n; i++) bt.set(social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`), {v, d:b64.slice(i * C, (i + 1) * C)});
       bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), doc);
       if (!j.cid.startsWith('zimmer_') && !j.cid.startsWith('wall_')) bt.update(social.db.doc('chats/' + j.cid), {last:ts, lastText:e2 ? '🔒' : '♪ Sprachnachricht', lastFrom:social.uid});
@@ -8518,7 +8544,9 @@ function e2Clean(o){ const r = {}; if (!o || typeof o !== 'object') return r; //
   if (typeof o.img === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(o.img)) r.img = o.img;
   for (const f of ['stk', 'gif']) if (o[f]) { const p = sgClean(o[f]); if (p) r[f] = p; }
   for (const f of ['post', 'story', 'audio', 'clip']) if (o[f] && typeof o[f] === 'object' && !Array.isArray(o[f])) r[f] = o[f];
-  if (o.kind === 'invite') r.kind = 'invite'; return r; }
+  if (o.kind === 'invite') r.kind = 'invite';
+  if (o.kind === 'react' && typeof o.to === 'string' && EMOS[o.e]) { r.kind = 'react'; r.to = o.to.slice(0, 60); r.e = o.e; }
+  if (reOk(o.re)) r.re = {id:o.re.id, from:String(o.re.from || '').slice(0, 40), t:String(o.re.t || '').slice(0, 100)}; return r; }
 const e2Aad = (cid, mid, from, sd, ts) => E2_TX.encode(`nf1|${cid}|${mid}|${from}|${sd}|${ts}`); // bindet Chat, Nachricht, Absender, Gerät und Zeit an den Inhalt
 async function e2Wrap(cekRaw, aad, uid, dev){ const s = await E2E.suite.createSenderContext({recipientPublicKey:await e2PubKey(uid, dev), senderKey:E2E.kp, info:E2_INFO}); const w = new Uint8Array(await s.seal(cekRaw, aad)); return b64e(new Uint8Array(s.enc)) + '.' + b64e(w); }
 async function e2Seal(cid, mid, ts, content, members){
@@ -8551,12 +8579,12 @@ async function e2MediaSeal(buf){ const mk = crypto.getRandomValues(new Uint8Arra
 async function e2MediaOpen(u8, f){ const k = await crypto.subtle.importKey('raw', b64d(f.mk), 'AES-GCM', false, ['decrypt']); return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:b64d(f.miv)}, k, u8)); }
 // Nachrichten für die Anzeige: verschlüsselte im Hintergrund entschlüsseln, Klartext nur im Arbeitsspeicher
 function e2View(cid, raw){
-  return raw.map(({id, d, pend}) => { if (!d.e2e) return {...d, id, _pend:pend}; const base = {from:d.from, ts:d.ts, id, _pend:pend, _e2e:1}, c = E2E.dec[id]; if (c) return {...base, ...c};
-    if (!E2E.bad[id] && !E2E.busy[id]) { E2E.busy[id] = 1; e2Open(cid, id, d).then(x => { E2E.dec[id] = x; }).catch(e => { E2E.bad[id] = e?.message === 'nokey' ? 'nokey' : e?.message === 'off' ? 'off' : 'bad'; }).finally(() => { delete E2E.busy[id]; e2Redraw(cid); }); }
-    return {...base, _lock:E2E.bad[id] || 'wait'}; }); }
+  return raw.map(({id, d, pend}) => { if (!d.e2e) return {...d, id, _pend:pend}; const base = {from:d.from, ts:d.ts, id, _pend:pend, _e2e:1}, ck = id + '@' + d.ts, c = E2E.dec[ck]; if (c) return {...base, ...c};
+    if (!E2E.bad[ck] && !E2E.busy[ck]) { E2E.busy[ck] = 1; e2Open(cid, id, d).then(x => { E2E.dec[ck] = x; }).catch(e => { E2E.bad[ck] = e?.message === 'nokey' ? 'nokey' : e?.message === 'off' ? 'off' : 'bad'; }).finally(() => { delete E2E.busy[ck]; e2Redraw(cid); }); }
+    return {...base, _lock:E2E.bad[ck] || 'wait'}; }); }
 let e2RT = null;
 function e2Redraw(cid){ clearTimeout(e2RT); e2RT = setTimeout(() => { if (CH.open !== cid || !CH.mraw) return; const box = document.getElementById('msgs'), atEnd = !box || box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-  CH.msgs = e2View(cid, CH.mraw); e2Prev(cid); drawMsgs(!atEnd); }, 40); }
+  CH.msgs = e2View(cid, CH.mraw); chSplit(); e2Prev(cid); drawMsgs(!atEnd); }, 40); }
 const e2PrevText = m => m._lock ? '' : m.text || (m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.story ? '📖 Story' : '');
 function e2Prev(cid){ const l = CH.msgs.filter(m => m._e2e || !m.e2e), m = l[l.length - 1]; if (m && m._e2e && !m._lock) { const t = e2PrevText(m).slice(0, 60); if (E2E.prev[cid] !== t) { E2E.prev[cid] = t; softRender(); } } }
 const chatPrevText = c => c.lastText === '🔒' ? (E2E.prev[c.id] || '🔒 Verschlüsselte Nachricht') : c.lastText; // Chatliste: Vorschau nur aus dem eigenen Speicher
@@ -8615,7 +8643,7 @@ async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
     if (e2Chat(cid)) { // privat: nur verschlüsselt, nie im Klartext an den Server
-      const doc = await e2Seal(cid, mid, ts, {text, ...extra}, e2Members(cid)); E2E.dec[mid] = e2Clean({text, ...extra});
+      const doc = await e2Seal(cid, mid, ts, {text, ...extra}, e2Members(cid)); E2E.dec[mid + '@' + ts] = e2Clean({text, ...extra});
       await social.db.doc('chats/' + cid + '/m/' + mid).set(doc); await social.db.doc('chats/' + cid).update({last:ts, lastText:'🔒', lastFrom:social.uid}); return mid; }
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
     if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.stk ? 'Sticker' : extra.gif ? 'GIF' : extra.post ? '🖼 Beitrag' : extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
@@ -8943,7 +8971,7 @@ function sgReattach(){ // nach dem Neuzeichnen bleibt das Sticker-Menü offen
   if (!nf) { SG.form = null; SG.el = null; return; }
   SG.form = nf; nf.classList.add('sgopen'); nf.querySelector('.sgbtn')?.setAttribute('aria-expanded', 'true'); nf.insertAdjacentElement('afterend', el);
 }
-new MutationObserver(() => { addEmoButtons(); sgReattach(); if (GST || document.querySelector('.gst')) gstPaint(); }).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(() => { addEmoButtons(); sgReattach(); if (GST || document.querySelector('.gst')) gstPaint(); if (CH.re || document.querySelector('.chre')) chRePaint(); }).observe(document.documentElement, {childList:true, subtree:true});
 /* ---------- Kommentare auf Profilen (geteilt, in chats/wall_<uid>/m) ---------- */
 const WL = {uid:null, unsub:null, list:[]};
 function wallSync(){
@@ -9039,6 +9067,70 @@ function msgLink(t){
   return v ? `<a class="mlink yt" href="${esc(u)}" target="_blank" rel="noopener"><span class="mthumb"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></span><span class="mhost">YouTube · antippen zum Ansehen</span></a>`
     : `<a class="mlink" href="${esc(u)}" target="_blank" rel="noopener"><span class="mico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><span class="mhost">${esc(host)}<small>Link öffnen</small></span></a>`;
 }
+/* ---------- Reaktionen und Antworten auf einzelne Nachrichten (Inaya, 2026-10-13) ----------
+   Reaktion: eigenes Dokument chats/<cid>/m/r_<nachricht>_<uid> mit {kind:'react', to, e} (e = Noctibat-Emoji); in privaten Chats verschlüsselt wie eine Nachricht.
+   Antwort: Feld re:{id, from, t} in der Nachricht (Zitat), in privaten Chats mit verschlüsselt. Auswählen: Symbol neben der Blase oder wischen
+   (nach rechts = antworten, nach links = reagieren). Zitat antippen springt zur Originalnachricht und lädt ältere Nachrichten bei Bedarf nach. */
+const RX_QUICK = ['verliebt', 'lachtraenen', 'ueberrascht', 'weinen', 'wuetend', 'totenkopf'];
+const RX_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 14.2a4 4 0 0 0 6.8 0"/><circle cx="9.3" cy="10" r=".9" fill="currentColor"/><circle cx="14.7" cy="10" r=".9" fill="currentColor"/></svg>';
+const RE_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6L4 12l6 6"/><path d="M4.5 12H14a6 6 0 0 1 6 6v1"/></svg>';
+const isRx = id => /^r_/.test(id || '');
+function chSplit(){ const r = {}; CH.msgs = CH.msgs.filter(m => { if (!isRx(m.id)) return true; if (m.kind === 'react' && typeof m.to === 'string' && EMOS[m.e] && !m._lock) (r[m.to] = r[m.to] || {})[m.from] = m.e; return false; }); CH.rx = r; }
+const msgSnip = m => String(m.text ? m.text.replace(/\s+/g, ' ') : m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.story ? '📖 Story' : 'Nachricht').slice(0, 100);
+const reOk = r => r && typeof r === 'object' && typeof r.id === 'string' && /^[\w-]{1,60}$/.test(r.id);
+const quoteHTML = r => reOk(r) ? `<button type="button" class="mquote" data-act="msg-jump" data-id="${esc(r.id)}" aria-label="Zur Originalnachricht springen"><b>${esc(r.from === social?.uid ? 'Du' : chatWho(r.from))}</b><span>${etx(String(r.t || '').slice(0, 100))}</span></button>` : '';
+const chReExtra = () => { const r = CH.re; return r && r.cid === CH.open ? {re:{id:r.id, from:r.from, t:r.t}} : {}; };
+function chReply(mid){ const m = CH.msgs.find(x => x.id === mid); if (!m || m._lock) return; rxClose(); CH.re = {cid:CH.open, id:mid, from:m.from, t:msgSnip(m)}; chRePaint(); const i = document.getElementById('cm-in'); if (i) { i.focus({preventScroll:true}); kbSoon?.(); } }
+function chRePaint(){ const r = CH.re && CH.re.cid === CH.open ? CH.re : null, f = document.querySelector('form[data-form="cmsg"]'), ex = document.querySelector('.chre');
+  if (ex && (!r || ex.dataset.id !== r.id || ex.nextElementSibling !== f)) ex.remove(); else if (ex) return; if (!r || !f) return;
+  f.insertAdjacentHTML('beforebegin', `<div class="chre" data-id="${esc(r.id)}">${RE_ICO}<span class="chreq"><b>${r.from === social?.uid ? 'Antwort auf deine Nachricht' : 'Antwort an ' + esc(chatWho(r.from))}</b><span>${etx(r.t)}</span></span><button type="button" class="chrex" data-act="re-x" aria-label="Antwort abbrechen">✕</button></div>`); }
+function rxHTML(m){ const r = CH.rx?.[m.id]; if (!r) return ''; const by = {};
+  for (const [u, e] of Object.entries(r)) if (!isBlk(u)) (by[e] = by[e] || []).push(u);
+  const ks = Object.keys(by); if (!ks.length) return '';
+  return `<div class="mrx">${ks.map(e => { const l = by[e], on = l.includes(social?.uid); return `<button type="button" class="mrxb${on ? ' on' : ''}" data-act="rx-tog" data-id="${esc(m.id)}" data-e="${e}" aria-pressed="${on}" title="${esc(l.map(u => u === social?.uid ? 'Du' : chatWho(u)).join(', '))}" aria-label="${esc(EMOS[e][0])}, ${l.length}">${emoSVG(e)}${l.length > 1 ? `<span>${l.length}</span>` : ''}</button>`; }).join('')}</div>`; }
+function msgWrapHTML(m, group){ const mine = m.from === social?.uid, ok = m.id && !m._lock && !m._pend && !isRx(m.id);
+  const act = ok ? `<span class="mact"><button type="button" class="mactrx" data-act="rx-open" data-id="${esc(m.id)}" aria-label="Mit Emoji reagieren">${RX_ICO}</button><button type="button" class="mactre" data-act="re-start" data-id="${esc(m.id)}" aria-label="Auf diese Nachricht antworten">${RE_ICO}</button></span>` : '';
+  return `<div class="mwrap ${mine ? 'me' : 'them'}" data-mid="${esc(m.id || '')}"><div class="mline">${mine ? act + bubbleHTML(m, group) : bubbleHTML(m, group) + act}</div>${rxHTML(m)}</div>`; }
+async function rxSet(mid, e){ const cid = CH.open; if (!cid || !social || !mid || isRx(mid) || (e && !EMOS[e])) return;
+  const rid = 'r_' + mid + '_' + social.uid, cur = CH.rx?.[mid]?.[social.uid], ref = social.db.doc(`chats/${cid}/m/${rid}`);
+  try { if (!e || cur === e) { await ref.delete(); return; } // gleiche Reaktion nochmal = entfernen
+    const ts = Date.now(), c = {kind:'react', to:mid, e};
+    if (e2Chat(cid)) { const doc = await e2Seal(cid, rid, ts, c, e2Members(cid)); E2E.dec[rid + '@' + ts] = e2Clean(c); await ref.set(doc); }
+    else await ref.set({from:social.uid, ts, ...c});
+  } catch { toast('Die Reaktion hat nicht geklappt. Versuch es nochmal.'); } }
+function rxClose(){ document.getElementById('rxpop')?.remove(); }
+function rxOpen(mid, anchor){ rxClose(); if (!mid || !anchor) return; const cur = CH.rx?.[mid]?.[social?.uid], el = document.createElement('div');
+  const btn = k => `<button type="button" data-act="rx-pick" data-e="${k}" aria-label="${esc(EMOS[k][0])}" aria-pressed="${cur === k}">${emoSVG(k)}</button>`;
+  el.id = 'rxpop'; el.className = 'rxpop'; el.dataset.id = mid; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Reaktion wählen');
+  el.innerHTML = `<div class="rxq">${RX_QUICK.map(btn).join('')}<button type="button" class="rxmore" data-act="rx-more" aria-label="Mehr Emojis" aria-expanded="false">${SG_ICO.plus}</button></div><div class="rxall" hidden>${Object.keys(EMOS).filter(k => !RX_QUICK.includes(k)).map(btn).join('')}</div><button type="button" class="rxre" data-act="re-start" data-id="${esc(mid)}">${RE_ICO}<span>Antworten</span></button>`;
+  const cs = getComputedStyle(document.getElementById('msgs') || document.body); ['--p-panel', '--p-fg', '--p-bg', '--p-line', '--p-muted'].forEach(v => { const x = cs.getPropertyValue(v); if (x) el.style.setProperty(v, x); });
+  document.body.appendChild(el); rxPlace(el, anchor); el.querySelector('[data-act="rx-pick"]')?.focus({preventScroll:true}); }
+function rxPlace(el, anchor){ const r = anchor.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, vh = window.visualViewport?.height || innerHeight;
+  let top = r.top - h - 8; if (top < 8) top = Math.min(vh - h - 8, r.bottom + 8); el.style.top = Math.max(8, top) + 'px'; el.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + 'px'; }
+document.addEventListener('pointerdown', e => { if (document.getElementById('rxpop') && !e.target.closest?.('#rxpop,[data-act="rx-open"]')) rxClose(); }, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') rxClose(); });
+document.addEventListener('scroll', e => { if (e.target?.id === 'msgs') rxClose(); }, true);
+// Zur Originalnachricht springen; fehlt sie (weiter oben), ältere Nachrichten nachladen
+async function msgJump(id){ rxClose();
+  for (let i = 0; i < 5; i++) { const el = document.querySelector(`#msgs .mwrap[data-mid="${CSS.escape(id)}"]`);
+    if (el) { el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('mflash'); void el.offsetWidth; el.classList.add('mflash'); return; }
+    if (!(await chMore())) break; }
+  toast('Diese Nachricht gibt es nicht mehr.'); }
+function chMore(){ if (!CH.open || !CH.mraw || CH.mraw.length < (CH.lim || 200)) return Promise.resolve(false); CH.lim = (CH.lim || 200) + 300; return chSub(CH.open, true); }
+// Wischen auf dem Handy: nach rechts = antworten, nach links = reagieren (senkrecht scrollen bleibt frei)
+{ let sw = null;
+  document.addEventListener('pointerdown', e => { const w = e.target.closest?.('#msgs .mwrap'); sw = null;
+    if (!w || e.pointerType === 'mouse' || !w.querySelector('.mact') || e.target.closest('input,textarea,video,audio,iframe,.vmsg,.memb,.mrx,.mact,.mquote')) return;
+    sw = {w, x:e.clientX, y:e.clientY, id:e.pointerId, dx:0, on:false}; }, {passive:true});
+  document.addEventListener('pointermove', e => { if (!sw || e.pointerId !== sw.id) return; const dx = e.clientX - sw.x, dy = e.clientY - sw.y;
+    if (!sw.on) { if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) { sw = null; return; } if (Math.abs(dx) < 12) return; sw.on = true; sw.w.classList.add('swiping'); rxClose(); }
+    sw.dx = Math.max(-96, Math.min(96, dx)); const ln = sw.w.querySelector('.mline'); if (ln) ln.style.transform = `translateX(${Math.round(sw.dx * .75)}px)`;
+    sw.w.classList.toggle('swre', sw.dx > 56); sw.w.classList.toggle('swrx', sw.dx < -56); }, {passive:true});
+  const end = e => { if (!sw || e.pointerId !== sw.id) return; const {w, dx, on} = sw; sw = null; const ln = w.querySelector('.mline');
+    if (ln) { ln.style.transition = 'transform .18s ease'; ln.style.transform = ''; setTimeout(() => { ln.style.transition = ''; }, 200); }
+    w.classList.remove('swiping', 'swre', 'swrx'); if (!on) return; const id = w.dataset.mid;
+    if (dx > 56) { navigator.vibrate?.(8); chReply(id); } else if (dx < -56) { navigator.vibrate?.(8); rxOpen(id, w.querySelector('.bubble') || w); } };
+  document.addEventListener('pointerup', end); document.addEventListener('pointercancel', end); }
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid; if (m._lock) return e2LockHTML(m);
   if (!mine && m.from && !m._r) { // kleine Profilbilder an fremden Nachrichten, antippen öffnet das Profil (Inaya, 2026-10-13)
@@ -9046,7 +9138,7 @@ function bubbleHTML(m, group){
     if (!u && social && !CMH[m.from]) { CMH[m.from] = 1; loadProf(m.from).then(() => softRender()); }
     return `<div class="cmrow"><button type="button" class="cameo mav" data-act="profile" data-id="${esc(m.from)}" aria-label="Profil von ${esc(chatWho(m.from))}">${u?.outfit || u?.pic ? headPic(u) : ''}</button>${bubbleHTML({...m, _r:1}, group)}</div>`;
   }
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${esc(chatWho(m.from))}</button>` : ''}${msgMedia(m)}${m.text ? etx(m.text) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${esc(chatWho(m.from))}</button>` : ''}${quoteHTML(m.re)}${msgMedia(m)}${m.text ? etx(m.text) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
 // Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
 const isDel = id => !!(S.nfDel && S.nfDel[id]);
@@ -9903,7 +9995,7 @@ document.addEventListener('change', async e => {
   chatAttach = false; render();
   if (id !== 'cm-img' && !(await askYesNo(id === 'cm-aud' ? 'Hast du diesen Song selbst gemacht oder darfst du ihn teilen? Songs von anderen Künstlern bitte als Spotify-Link schicken.' : 'Hast du dieses Video selbst gemacht oder darfst du es teilen, auch die Musik darin?', 'Ja, darf ich', 'Abbrechen'))) return; // Rechte bestätigen auch im Chat (Inaya, 2026-10-11)
   if (id === 'cm-img') {
-    try { let d = await resizeImage(f, 1080, .78); if (d.length > 650000) d = await resizeImage(f, 800, .7); if (d.length > 900000) return toast('Das Foto ist zu groß.'); toast('Foto wird gesendet …'); await sendMsg(cid, '', {img:d}); }
+    try { let d = await resizeImage(f, 1080, .78); if (d.length > 650000) d = await resizeImage(f, 800, .7); if (d.length > 900000) return toast('Das Foto ist zu groß.'); toast('Foto wird gesendet …'); await sendMsg(cid, '', {img:d, ...chReExtra()}); CH.re = null; chRePaint(); }
     catch { toast('Das Foto ließ sich nicht öffnen.'); }
   } else if (id === 'cm-vid') { // Videos im Chat, einzeln und in Gruppen (Inaya, 2026-10-11)
     const k = 'c' + Date.now().toString(36); toast('Video wird vorbereitet …');
@@ -9996,6 +10088,7 @@ document.addEventListener('click', async e => {
     if (VMID === id) { VMA.pause(); VMID = null; } drawMsgs(true);
     try {
       await social.db.doc(`chats/${cid}/m/${id}`).delete();
+      Object.keys(CH.rx?.[id] || {}).forEach(u => social.db.doc(`chats/${cid}/m/r_${id}_${u}`).delete().catch(() => {})); // Reaktionen zur Nachricht mit entfernen
       for (const [x, base] of [[m.audio, 'pa_'], [m.clip, 'pv_']]) if (x?.k) for (let i = 0; i < x.n; i++) social.db.doc(`profiles/${social.uid}/${base}${x.k}/c${i}`).delete().catch(() => {});
       const rest = CH.msgs.filter(x => x.id !== id).sort((x, y) => (x.ts || 0) - (y.ts || 0)), prev = rest[rest.length - 1];
       if ((m.ts || 0) >= (prev?.ts || 0) && !cid.startsWith('zimmer_') && !cid.startsWith('wall_')) {
@@ -10236,6 +10329,13 @@ document.addEventListener('click', async e => {
   else if (a === 'shp-go') { const ids = [...SHP.sel], pl = SHP.post; if (!ids.length) return toast('Wähl mindestens einen Chat aus.'); b.disabled = true; let ok = 0;
     for (const id of ids) { const cid = await shCid(id); if (cid && await sendMsg(cid, '', {post:pl})) ok++; } shpClose(); if (ok) toast(ok === 1 ? 'Beitrag gesendet' : `An ${ok} Chats gesendet`); }
   else if (a === 'msh-post') { shpvOpen(b.dataset.u, b.dataset.id); }
+  else if (a === 'rx-open') { const w = b.closest('.mwrap'); rxOpen(b.dataset.id, w?.querySelector('.bubble') || b); }
+  else if (a === 'rx-pick') { const p = b.closest('#rxpop'); if (p) { rxSet(p.dataset.id, b.dataset.e); rxClose(); } }
+  else if (a === 'rx-more') { const p = b.closest('#rxpop'), all = p?.querySelector('.rxall'); if (all) { all.hidden = !all.hidden; b.setAttribute('aria-expanded', !all.hidden); const w = document.querySelector(`#msgs .mwrap[data-mid="${CSS.escape(p.dataset.id)}"] .bubble`); if (w) rxPlace(p, w); } }
+  else if (a === 'rx-tog') rxSet(b.dataset.id, b.dataset.e);
+  else if (a === 're-start') chReply(b.dataset.id);
+  else if (a === 're-x') { CH.re = null; chRePaint(); }
+  else if (a === 'msg-jump') msgJump(b.dataset.id);
   else if (a === 'e2-code') { if (CH.open) e2CodeOpen(CH.open); }
   else if (a === 'e2-x') { document.getElementById('e2dlg')?.remove(); }
   else if (a === 'e2-warnok') { e2WarnOk(b.dataset.id); drawMsgs(true); }
@@ -10651,7 +10751,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'cmsg') {
     const text = val('cm-in'), gif = gstTake(f); if ((!text && !gif) || !CH.open) return;
     { const ci = document.getElementById('cm-in'); ci.value = ''; ci.style.height = ''; mlFit(ci); } cmTyped(); typingNow(false);
-    sendMsg(CH.open, text, gif ? {[sgIsGif(gif) ? 'gif' : 'stk']:gif} : {});
+    sendMsg(CH.open, text, {...(gif ? {[sgIsGif(gif) ? 'gif' : 'stk']:gif} : {}), ...chReExtra()}); CH.re = null; chRePaint();
   } else if (t === 'rwall') {
     const inp = document.getElementById('rw-in'), text = inp.value.trim(), file = document.getElementById('rw-img')?.files[0], url = val('rw-url');
     if (!WL.uid || (!text && !file && !url)) return;
