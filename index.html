@@ -2,7 +2,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5812a88f0785';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='262ea3eb96d2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1415,7 +1415,7 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .pcrsk{pointer-events:auto;touch-action:none;cursor:grab;z-index:4}.pcrskx{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:0;background:#000c;color:#fff;font-size:12px;line-height:24px;padding:0;cursor:pointer}
 .pcrskp .sgp{position:static;width:100%;max-height:300px}
 .vmsg{padding-bottom:18px;column-gap:12px}.vmr{position:relative;display:block}.vmt{position:absolute;left:0;top:100%;margin-top:2px;line-height:16px}.vmsg>*{align-self:center}.bubble:has(.vmsg){padding:12px 14px 6px!important}.bubble .vmsg{width:min(250px,64vw);overflow:visible}.vmw{margin-left:7px}.vmw i{min-width:1.5px}.cmrow>.bubble:has(.vmsg){max-width:none!important;flex:none} /* Sprachnachricht: Bild, Play und Welle auf einer Linie, Zeit darunter (Inaya, 2026-10-13) */
-.gst{position:relative;align-self:flex-start;margin:0 0 8px;padding:6px;border:1px solid var(--p-line,#ffffff33);border-radius:12px;background:var(--p-panel,#141416);max-width:180px;line-height:0}.gstm img{display:block;max-width:100%;max-height:150px;border-radius:8px;width:auto;height:auto}.gstx{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;border:1px solid #ffffff55;background:#000;color:#fff;font-size:13px;line-height:24px;padding:0;cursor:pointer} /* GIF-Vorschau über der Schreibleiste (Inaya, 2026-10-13) */
+.gst{position:relative;align-self:flex-start;width:fit-content;margin:0 0 8px;padding:6px;border:1px solid var(--p-line,#ffffff33);border-radius:12px;background:var(--p-panel,#141416);max-width:180px;line-height:0}.gstm>svg{display:block;width:96px;height:96px;margin:0}.gstm img{display:block;max-width:100%;max-height:150px;border-radius:8px;width:auto;height:auto}.gstx{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;border:1px solid #ffffff55;background:#000;color:#fff;font-size:13px;line-height:24px;padding:0;cursor:pointer} /* GIF-Vorschau über der Schreibleiste (Inaya, 2026-10-13) */
 .psgpick{display:block!important;width:100%;justify-self:stretch;align-self:stretch}.pcsgp{width:100%!important;max-width:none!important;left:0!important;right:0!important;box-sizing:border-box} /* GIF-Auswahl so breit wie die Box */
 .cmrow{display:flex;align-items:flex-end;gap:7px;align-self:flex-start;max-width:88%;min-width:0}.cmrow>.bubble{max-width:none;min-width:0}
 .chat .mav{width:28px;height:28px;padding:0;cursor:pointer;flex:none;border-radius:50%;overflow:hidden;border:1px solid var(--p-line);background:var(--p-panel);display:block}.chat .mav svg,.chat .mav img{width:100%;height:100%;display:block}
@@ -8390,13 +8390,13 @@ function gstPaint(){
   if (!GST) { document.querySelectorAll('form.gstf').forEach(f => { f.classList.remove('gstf'); if (f.dataset.form === 'cmsg') cmTyped(); }); return; }
   document.querySelectorAll('form[data-form="cmsg"],form[data-form="pcomment"]').forEach(f => { if (gstKey(f) !== GST.key) return; f.classList.add('gstf', 'typed');
     if (f.previousElementSibling?.classList.contains('gst')) return;
-    f.insertAdjacentHTML('beforebegin', `<div class="gst"><div class="gstm">${sgItemHTML(GST.p, true)}</div><button type="button" class="gstx" data-act="gst-x" aria-label="GIF entfernen">✕</button></div>`); });
+    f.insertAdjacentHTML('beforebegin', `<div class="gst"><div class="gstm">${sgItemHTML(GST.p, true)}</div><button type="button" class="gstx" data-act="gst-x" aria-label="${sgIsGif(GST.p) ? 'GIF' : 'Sticker'} entfernen">✕</button></div>`); });
 }
 function gstTake(f){ if (!GST || gstKey(f) !== GST.key) return null; const p = GST.p; GST = null; gstPaint(); return p; }
 async function sgSend(p){
   p = sgClean(p); if (p && SG.tgt === 'story') return stSgAdd(p); if (p && SG.tgt === 'post') return pcSgAdd(p); if (p && SG.tgt === 'pcr') return pcrSkAdd(p);
   const f = SG.form; if (!p || !f || !social) return; const kind = sgIsGif(p) ? 'gif' : 'stk';
-  if (kind === 'gif' && /^(cmsg|pcomment)$/.test(f.dataset.form)) { GST = {key:gstKey(f), p}; sgClose(); gstPaint(); f.querySelector('input[type="text"]')?.focus(); return; } // GIF erst als Vorschau über der Schreibleiste, Senden schickt es mit dem Text ab (Inaya, 2026-10-13)
+  if (/^(cmsg|pcomment)$/.test(f.dataset.form)) { GST = {key:gstKey(f), p}; sgClose(); gstPaint(); f.querySelector('input[type="text"]')?.focus(); return; } // GIF erst als Vorschau über der Schreibleiste, Senden schickt es mit dem Text ab (Inaya, 2026-10-13)
   if (f.dataset.form === 'cmsg') { if (CH.open) await sendMsg(CH.open, '', {[kind]:p}); return; }
   if (f.dataset.form === 'pcomment') { const k = f.dataset.k; if (!k) return;
     const rp = CMRE[k]; delete CMRE[k]; if (rp) CMOPEN.add(k + '/' + rp.d); // Sticker/GIF auch als Antwort auf Kommentare (Inaya, 2026-10-13)
@@ -10169,7 +10169,7 @@ document.addEventListener('submit', async e => {
     const k = f.dataset.k, inp = document.getElementById('pc-' + k), text = inp.value.trim(), img = PCIMG[k], gif = GST && gstKey(f) === GST.key ? GST.p : null; if ((!text && !img && !gif) || !social) return; if (gif) gstTake(f);
     const rp = CMRE[k], men = (CMEN[k] || []).filter((m, i, l) => text.includes('@' + m.n) && l.findIndex(x => x.id === m.id) === i).slice(0, 10); inp.value = ''; delete PCIMG[k]; delete CMRE[k]; delete CMEN[k]; f.querySelector('.cmsug')?.remove();
     if (rp) CMOPEN.add(k + '/' + rp.d);
-    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), ...(gif ? {gif} : {}), ...(men.length ? {men} : {}), ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); cmMentNotify(k, men, text); } catch { inp.value = text; if (img) PCIMG[k] = img; if (gif) { GST = {key:'p:' + k, p:gif}; gstPaint(); } toast('Das hat gerade nicht geklappt.'); }
+    try { await social.db.collection('chats/pi_' + k + '/m').add({kind:'c', text, ...(img ? {img} : {}), ...(gif ? {[sgIsGif(gif) ? 'gif' : 'stk']:gif} : {}), ...(men.length ? {men} : {}), ...(rp ? {re:rp.d, ...(rp.u ? {to:rp.u} : {})} : {}), by:social.uid, name:me().name, ts:Date.now()}); ntRemember(k); cmMentNotify(k, men, text); } catch { inp.value = text; if (img) PCIMG[k] = img; if (gif) { GST = {key:'p:' + k, p:gif}; gstPaint(); } toast('Das hat gerade nicht geklappt.'); }
     piDraw(k);
   } else if (t === 'comment') {
     const id = f.dataset.id, text = val('c-' + id); if (!text) return;
@@ -10198,7 +10198,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'cmsg') {
     const text = val('cm-in'), gif = gstTake(f); if ((!text && !gif) || !CH.open) return;
     document.getElementById('cm-in').value = ''; cmTyped(); typingNow(false);
-    sendMsg(CH.open, text, gif ? {gif} : {});
+    sendMsg(CH.open, text, gif ? {[sgIsGif(gif) ? 'gif' : 'stk']:gif} : {});
   } else if (t === 'rwall') {
     const inp = document.getElementById('rw-in'), text = inp.value.trim(), file = document.getElementById('rw-img')?.files[0], url = val('rw-url');
     if (!WL.uid || (!text && !file && !url)) return;
