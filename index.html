@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0520230f6dec';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b0a342796c74';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5462,9 +5462,9 @@ function go(name, arg=null){
   roomSel = null;
   if (stAuSrc && !STV && !stNew) stAuStop(); for (const k in profMuStarted) delete profMuStarted[k]; if (name !== V.name || arg !== V.arg) { try { psfStop(); pspStop(); } catch {} }
   V = {name, arg}; trial = null; draft = null; mdraft = null; render(); window.scrollTo(0,0);
-  if (name === 'profile') profAuto(); // Profilmusik startet gleich beim Öffnen (Inaya, 2026-10-12)
+  // Profilmusik startet nicht mehr von selbst, nur über den Play-Knopf (Inaya, 2026-10-13)
   if (name === 'profile' && arg && S.users[arg]?.remote && social) loadProf(arg).then(() => { // Freundesprofil frisch laden
-    if (PROF[arg] && S.users[arg]?.remote && isFriend(arg)) { S.users[arg] = remoteUser(arg, PROF[arg]); if (V.name === 'profile' && V.arg === arg) { softRender(); profAuto(); } } });
+    if (PROF[arg] && S.users[arg]?.remote && isFriend(arg)) { S.users[arg] = remoteUser(arg, PROF[arg]); if (V.name === 'profile' && V.arg === arg) softRender(); } });
 }
 const BAT = `<svg class="hbat" viewBox="-21 -8 42 14" aria-hidden="true"><path fill="currentColor" d="M0-3C1-6 2-7 3-6C3-4 4-3 6-4C10-7 15-7 20-4C17-3 15-1 15 2C13 0 10 0 9 2C7 0 4 1 3 3C2 2 1 2 0 4C-1 2-2 2-3 3C-4 1-7 0-9 2C-10 0-13 0-15 2C-15-1-17-3-20-4C-15-7-10-7-6-4C-4-3-3-4-3-6C-2-7-1-6 0-3Z"/></svg>`;
 const OWNER_BAT = `<svg class="obat" viewBox="-24 -14 48 26" aria-hidden="true"><path d="M-4-9L-2-12L0-9.6L2-12L4-9L3-7H-3Z" fill="#e9e3f4"/><path fill="currentColor" d="M0-3C1-6 2-7 3-6C3-4 4-3 6-4C9-8 14-9 22-6C19-5 18-3 18 0C16-1 15 0 15 2C13 0 11 0 10 3C8 1 5 1 3 4C2 3 1 3 0 6C-1 3-2 3-3 4C-5 1-8 1-10 3C-11 0-13 0-15 2C-15 0-16-1-18 0C-18-3-19-5-22-6C-14-9-9-8-6-4C-4-3-3-4-3-6C-2-7-1-6 0-3Z"/><circle cx="-1.3" cy="-3.6" r=".7" fill="#b48ae0"/><circle cx="1.3" cy="-3.6" r=".7" fill="#b48ae0"/><path d="M13-3L14-5L15-3L17-2L15-1L14 1L13-1L11-2Z" fill="#e9e3f4"/><path d="M-13-3L-14-5L-15-3L-17-2L-15-1L-14 1L-13-1L-11-2Z" fill="#e9e3f4"/></svg>`;
@@ -6416,7 +6416,7 @@ document.addEventListener('input', e => { // Musiksuche in Story und Beitrag
   stMsT = setTimeout(async () => { const l = await stSongSearch(q); if (mq.value !== q) return; stMsShow(l || [], l == null ? 'Die Suche hat gerade nicht geklappt. Versuch es gleich nochmal.' : l.length ? '' : 'Nichts gefunden.', box); }, 400);
 });
 // Song-Ausschnitt frei wählen (Inaya, 2026-10-12): Anfang und Ende ziehen, Fenster verschieben. Die Suche liefert pro Song eine 30-Sekunden-Hörprobe, das ist die ganze Zeitleiste.
-const muMax = k => k === 'post' ? MU_LEN : MU_WIN; // Story und Profil höchstens 15 s, Beitrag bis 30 s
+const muMax = k => k === 'post' || k === 'prof' ? MU_LEN : MU_WIN; // Story höchstens 15 s, Beitrag und Profil 30 s (Inaya, 2026-10-13)
 const muL = mu => Math.max(3, Math.min(MU_LEN, +(mu && mu.l) || MU_WIN));
 const muTrimHTML = (mu, k) => { const L = Math.min(muL(mu), muMax(k)), s0 = Math.max(0, Math.min(MU_LEN - L, +mu.s || 0));
   return `<div class="mutrim"><b>Wähle den Teil für ${k === 'prof' ? 'deine Profil-Musik' : k === 'post' ? 'deinen Beitrag' : 'deine Story'}</b><div class="mutbar" data-k="${k}" role="slider" aria-label="Ausschnitt des Songs, Pfeiltasten verschieben" aria-valuemin="0" aria-valuemax="${MU_LEN - L}" aria-valuenow="${s0}" tabindex="0"><div class="mutwin" style="left:${s0 / MU_LEN * 100}%;width:${L / MU_LEN * 100}%"><i class="muth l" aria-hidden="true"></i><i class="muth r" aria-hidden="true"></i></div><i class="mutph" aria-hidden="true" hidden></i></div><div class="mutax" aria-hidden="true"><span>0:00</span><span>0:15</span><span>0:30</span></div><small class="mutlbl">${stTime(s0)} – ${stTime(s0 + L)} · ${Math.round(L)} Sekunden</small><small class="mutnote">Die Musiksuche gibt pro Song eine Hörprobe von 30 Sekunden. Zieh die Ränder für Anfang und Ende, oder schieb den ganzen Teil.</small></div>`; };
@@ -7709,6 +7709,7 @@ ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</
 let musicEdit = false;
 // Alte Spotify-Profilmusik: gleiche Song-Karte wie die neue Profilmusik, Titel/Bild/Ton direkt von Spotify, damit der Song stimmt (Inaya, 2026-10-12)
 const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : null;
+const profFull = mu => ({...mu, s:null, l:null}); // Profil: die ganze 30-Sekunden-Hörprobe, einmal, ohne Ausschnitt
 const SPOE = {};
 function spOe(url){ if (SPOE[url] !== undefined) return SPOE[url] || null; SPOE[url] = 0;
   (async () => { const j = await jget('https://open.spotify.com/oembed?url=' + encodeURIComponent(url)).catch(() => null) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(url)).catch(() => null);
@@ -7744,7 +7745,8 @@ function psfToggle(b){
 async function psfStart(uid, quiet){ // der Player wird schon beim Tippen angestoßen, sonst sperrt das iPhone den Ton
   const f = profUser(uid)?.songFile; if (!f) return;
   psfStop(); try { stAuStop(); } catch {} try { pspStop(); } catch {}
-  const a = new Audio(); a.loop = true; a.src = ST_SILENT; a.play().catch(() => {}); const me = PSF = {uid, a}; a.onpause = a.onplay = psfMark; psfMark();
+  const a = new Audio(); a.loop = false; a.src = ST_SILENT; a.play().catch(() => {}); const me = PSF = {uid, a}; a.onpause = a.onplay = psfMark; psfMark();
+  a.ontimeupdate = () => { if (a.src !== ST_SILENT && a.currentTime >= 30) { a.pause(); try { a.currentTime = 0; } catch {} } }; // eigene MP3 im Profil: 30 Sekunden (Inaya, 2026-10-13)
   try { const src = await songURL(uid === S.me && social ? social.uid : uid, f); if (PSF !== me) return; a.src = src.url; await a.play(); }
   catch (e) { if (PSF === me && e?.name === 'NotAllowedError') me.blocked = true; else if (PSF === me && !quiet) toast('Der Song ließ sich gerade nicht laden.'); }
   psfMark();
@@ -7755,7 +7757,7 @@ function musicHTML(u, mine){
     if (m) return `<div class="music mmu"><div class="pmu">${m.art ? `<img class="muart" src="${esc(m.art)}" alt="">` : ''}<span><b>${esc(m.t)}</b><small>Spotify</small></span><button type="button" class="muprev2" data-act="psp-play" data-sp="${esc(u.songSp)}" aria-label="Song anhören">${PSP && PSP.url === u.songSp && PSP.playing ? MU_PAUSE : MU_PLAY}</button></div>${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
     if (SPOE[u.songSp] !== null) return `<div class="music mmu"><p class="muted mulade">Musik lädt …</p></div>`; }
   if (!profMu(u) && !u.songSp && u.songFile?.n) return `<div class="music mmu"><div class="pmu"><span class="muart mp3art" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.musik}</svg></span><span><b>${esc(u.songFile.name || 'Eigene MP3')}</b><small>Eigene MP3</small></span><button type="button" class="muprev2" data-act="psf-play" data-u="${esc(u.id)}" aria-label="Song anhören">${PSF && PSF.uid === u.id && !PSF.a.paused ? MU_PAUSE : MU_PLAY}</button></div>${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`; // eigene MP3 auf dem Profil (Inaya, 2026-10-12)
-  if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(u.songMu)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
+  if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(profFull(u.songMu))}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
   const sp = u.songSp && embedOf(u.songSp);
   if (sp) return `<div class="music msp">${linkHTML(u.songSp, null, true)}${mine ? `<button class="lnk" data-act="nav" data-v="design">Song ändern</button>` : ''}</div>`;
   const vid = '', playing = // MP3-Song auf dem Profil entfernt, nur noch Spotify (Inaya, 2026-10-11)
@@ -8004,7 +8006,7 @@ function designView(){
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
           <fieldset class="opt emus"><legend class="lbl">♪ Musik auf deinem Profil (freiwillig)</legend>
-            ${mdraft?.songMu ? `${pmuHTML(mdraft.songMu)}${muTrimHTML(mdraft.songMu, 'prof')}<div class="row"><button type="button" class="lnk" data-act="e-mux">Musik entfernen</button></div>` : `${u.songSp && !mdraft?.songSpX ? `<p class="note">Gerade: Spotify-Song. Such unten einen Song, um ihn zu ersetzen. <button type="button" class="lnk" data-act="e-mux">Entfernen</button></p>` : ''}${u.songFile && !mdraft?.songFileX ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(u.songFile.name || 'Eigene MP3')}</span><button type="button" class="lnk" data-act="e-sfx">MP3 entfernen</button></div><p class="note" style="margin:0">Oder such unten einen Song, um sie zu ersetzen.</p>` : ''}${muSearchHTML('e-msq')}<div class="stmres" id="e-msres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div>${u.songFile && !mdraft?.songFileX ? '' : `<label class="rights"><input type="checkbox" id="e-songrights" ${SONGRIGHTS ? 'checked' : ''}><span>Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.</span></label><label class="lnk pmup"><input id="e-songfile" type="file" accept="audio/*,.mp3,.m4a" hidden>Oder eigene MP3 hochladen</label><span class="note" id="e-songname"></span>`}`} <!-- eigene MP3 aufs Profil wie bei Beiträgen (Inaya, 2026-10-12) -->
+            ${mdraft?.songMu ? `${pmuHTML(profFull(mdraft.songMu))}<p class="note mu30">Spielt 30 Sekunden, wenn jemand auf deinem Profil auf Play drückt.</p><div class="row"><button type="button" class="lnk" data-act="e-mux">Musik entfernen</button></div>` : `${u.songSp && !mdraft?.songSpX ? `<p class="note">Gerade: Spotify-Song. Such unten einen Song, um ihn zu ersetzen. <button type="button" class="lnk" data-act="e-mux">Entfernen</button></p>` : ''}${u.songFile && !mdraft?.songFileX ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(u.songFile.name || 'Eigene MP3')}</span><button type="button" class="lnk" data-act="e-sfx">MP3 entfernen</button></div><p class="note" style="margin:0">Oder such unten einen Song, um sie zu ersetzen.</p>` : ''}${muSearchHTML('e-msq')}<div class="stmres" id="e-msres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div>${u.songFile && !mdraft?.songFileX ? '' : `<label class="rights"><input type="checkbox" id="e-songrights" ${SONGRIGHTS ? 'checked' : ''}><span>Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.</span></label><label class="lnk pmup"><input id="e-songfile" type="file" accept="audio/*,.mp3,.m4a" hidden>Oder eigene MP3 hochladen</label><span class="note" id="e-songname"></span>`}`} <!-- eigene MP3 aufs Profil wie bei Beiträgen (Inaya, 2026-10-12) -->
           </fieldset>
           <div class="row"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
         </form>
@@ -9549,26 +9551,12 @@ function songPause(){
   songMark(false);
 }
 const profMuStarted = {};
-function profAuto(){ // Profilmusik von selbst: Suche-Song, eigene MP3 oder Spotify (Inaya, 2026-10-12). iPhone lässt Ton erst nach einem Tippen zu.
-  const u = V.name === 'profile' ? profUser(V.arg || S.me) : null; if (!u || songOff === u.id || STV || stNew || profMuStarted[u.id]) return;
-  const pm = profMu(u);
-  if (pm) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(pm, true, true); setTimeout(muMarkPrev, 50); return; }
-  if (u.songSp && /track\//.test(u.songSp)) { profMuStarted[u.id] = 1; if (!(PSP && PSP.url === u.songSp)) pspToggle(u.songSp); return; }
-  if (u.songFile?.n && social) { profMuStarted[u.id] = 1; if (!(PSF && PSF.uid === u.id)) psfStart(u.id, true); }
-}
 // Viele Browser spielen Ton erst nach dem ersten Tippen: dann startet der Song beim ersten Tippen auf die Seite (iPhone zählt nur das fertige Tippen, nicht pointerdown)
 document.addEventListener('click', e => {
   if (PSF?.blocked && V.name === 'profile' && !e.target.closest?.('[data-act=psf-play]')) { PSF.blocked = false; PSF.a.play().then(psfMark).catch(() => {}); }
   if (stAuNA && stAuSrc && !stAu.paused && stAu.muted && !STV && !e.target.closest?.('[data-act=pmu-play],[data-act=pvol],[data-act=phmu-play]')) { stAuNA = false; stMute = false; stAu.muted = false; setTimeout(muMarkPrev, 30); }
 }, true);
-document.addEventListener('click', e => {
-  const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
-  const pm = u && profMu(u);
-  if (pm && stMuPv(pm) && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=pmu-play],[data-act=music-toggle]') && (stAuSrc !== stMuPv(pm) || stAu.paused) && !profMuStarted[u.id]) { profMuStarted[u.id] = 1; stAu.loop = true; stMute = false; stAuPlay(pm, true, true); setTimeout(muMarkPrev, 50); return; }
-  if (u && !pm && !profMuStarted[u.id] && songOff !== u.id && !STV && !stNew && !e.target.closest?.('[data-act=psf-play],[data-act=psp-play],[data-act=nav],a,button')) { profAuto(); return; }
-  if (!u || songOff === u.id || songPlaying || songErr || e.target.closest?.('[data-act=music-toggle]')) return;
-  songPlay();
-}, true);
+// (früher: Profilmusik startete beim ersten Tippen irgendwo auf der Seite; entfernt, Inaya, 2026-10-13)
 function syncSong(){
   const u = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const file = null, vid = ''; // MP3-Song auf dem Profil entfernt (Inaya, 2026-10-11) // Spotify-Song hat Vorrang
@@ -10442,7 +10430,7 @@ document.addEventListener('click', async e => {
     const x = n.texts[n.edit]; x.t = ta.value; x.m = [...(x.m || []).filter(m => m.id !== u.id), {id:u.id, n:u.name}].slice(0, 10);
     try { ta.setSelectionRange(head.length, head.length); } catch {} ta.focus(); stTaFit(); const sg = document.getElementById('stmsug'); if (sg) sg.hidden = true; }
   else if (a === 'st-tagx') { if (stNew) { stNew.tool = null; storyPaint(); } }
-  else if (a === 'e-mpick') { const r = STMRES[+b.dataset.i]; if (!r || !mdraft) return; mdraft.songMu = {...r, s:0, l:MU_WIN}; render(); stAu.loop = true; stMute = false; stAuPlay(mdraft.songMu, true, true); }
+  else if (a === 'e-mpick') { const r = STMRES[+b.dataset.i]; if (!r || !mdraft) return; mdraft.songMu = {...r, s:0, l:MU_LEN}; render(); stAu.loop = false; stMute = false; stAuPlay(mdraft.songMu, true, false); setTimeout(muMarkPrev, 50); }
   else if (a === 'e-sfx') { if (!mdraft) return; mdraft.songFileX = true; psfStop(); render(); }
   else if (a === 'psf-play') psfToggle(b);
   else if (a === 'e-mux') { if (!mdraft) return; mdraft.songMu = null; mdraft.songSpX = true; stAuStop(); render(); }
@@ -10888,7 +10876,7 @@ document.addEventListener('submit', async e => {
     }
     if (u.songUrl) u.songUrl = ''; // YouTube-Songs gibt es nicht mehr
     if (mdraft && (mdraft.songMu || mdraft.songFileX) && u.songFile) { const f = u.songFile; if (social) for (let i = 0; i < f.n; i++) social.db.doc(`profiles/${social.uid}/song/c${i}`).delete().catch(() => {}); delete u.songFile; }
-    if (mdraft) { if (mdraft.songMu) { const m = mdraft.songMu; u.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:+m.s || 0, l:Math.min(MU_WIN, muL(m))}; u.songSp = ''; } else { delete u.songMu; if (mdraft.songSpX) u.songSp = ''; } } // Profil-Musik aus der Suche (Inaya, 2026-10-11)
+    if (mdraft) { if (mdraft.songMu) { const m = mdraft.songMu; u.songMu = {t:m.t, a:m.a, art:m.art, pv:m.pv, s:0, l:MU_LEN}; u.songSp = ''; } else { delete u.songMu; if (mdraft.songSpX) u.songSp = ''; } } // Profil-Musik aus der Suche (Inaya, 2026-10-11)
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
     u.theme = {...draft}; u.pic = mdraft.pic; u.cover = null; u.banner = {...mdraft.banner}; // Nutzernamen-Kasten wird wieder gespeichert (Inaya, 2026-10-11)
