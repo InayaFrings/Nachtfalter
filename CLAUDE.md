@@ -37,6 +37,10 @@ Die Content-Security-Policy steht als `<meta>` im `<head>`. Wer ein neues extern
 - Antwort = Feld `re:{id, from, t}` in der Nachricht. Das Zitat springt per `msgJump`, ältere Nachrichten lädt `chMore()` nach (`CH.lim`).
 - Bedienung: Symbole neben der Blase (Desktop beim Überfahren, Handy immer), wischen nach rechts = antworten, nach links = reagieren.
 
+## Lesebestätigungen (seit v376)
+
+- Jedes Mitglied schreibt seinen Lesestand nach `chats/<cid>/rd/<uid>` = `{ts}` (`rdMark()`), gelesen wird er live über `rdWatch()`. Angezeigt wird er nur unter der letzten eigenen Nachricht: im privaten Chat „Gelesen“, in Gruppen bis zu drei Profilbilder und „+N“.
+
 ## Lokal testen
 
 Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu einen kleinen Server, der `index.html` ausliefert und im Shim nach `const auth = app.auth(), fs = app.firestore();` die Aufrufe `auth.useEmulator(...)` und `fs.useEmulator(...)` einsetzt. So entstehen nie Daten im echten Projekt.

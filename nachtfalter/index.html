@@ -1,9 +1,9 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://www.youtube.com https://open.spotify.com https://*.spotifycdn.com https://noembed.com https://api.deezer.com">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://www.youtube.com https://open.spotify.com https://*.spotifycdn.com https://noembed.com https://api.deezer.com https://itunes.apple.com">
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='eb5720efa8ad';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0520230f6dec';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1458,7 +1458,8 @@ form.vhold .micbtn{background:#e0303a;border-color:#e0303a;color:#fff;transform:
 .chat .mav{width:28px;height:28px;padding:0;cursor:pointer;flex:none;border-radius:50%;overflow:hidden;border:1px solid var(--p-line);background:var(--p-panel);display:block}.chat .mav svg,.chat .mav img{width:100%;height:100%;display:block}
 .bubble button.who{background:none;border:0;padding:0;color:inherit;cursor:pointer;text-align:left}
 .chprof{background:none;border:0;padding:0;color:inherit;cursor:pointer;text-align:left;font:inherit;font-weight:700}
-form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;padding:0;border:1px solid var(--line,#ffffff40);border-radius:50%;opacity:1}form[data-form=cmsg] .sgbtn svg{width:21px;height:21px} /* Chat: Sticker-Knopf gleich groß wie Mikro/Plus (Inaya, 2026-10-13) */
+form[data-form=pcomment] .csend{display:grid;align-self:flex-end}form[data-form=pcomment] .attbtn{border-color:var(--p-line,var(--line,#ffffff40));color:var(--p-fg,inherit);align-self:flex-end}form[data-form=pcomment] .cinw{align-items:center;gap:6px}
+form[data-form=pcomment] .pcthumb{flex:none;align-self:center}form[data-form=pcomment] .sgbtn,form[data-form=pcomment] .emobtn,form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;padding:0;border:1px solid var(--line,#ffffff40);border-radius:50%;opacity:1}form[data-form=cmsg] .sgbtn svg{width:21px;height:21px} /* Chat: Sticker-Knopf gleich groß wie Mikro/Plus (Inaya, 2026-10-13) */
 .sgp{background:#121214;color:#eeedf2;border-top:1px solid #ffffff1f;display:flex;flex-direction:column;height:min(320px,46vh);font:14px Inter,-apple-system,'Helvetica Neue',Arial,sans-serif;position:relative;z-index:5}
 .sghead{display:flex;align-items:center;gap:2px;padding:6px 8px;border-bottom:1px solid #ffffff14;flex:none}
 .sgmodes,.sgsubs{display:flex;gap:2px}.sgsubs{flex:1}
@@ -1533,6 +1534,11 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .bubble.shcard{background:none;border:0;padding:0;box-shadow:none}
 .bubble.shcard>.meta{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-left:auto;background:#0b0b0cd9;color:#f2f1f5;padding:3px 10px;border-radius:12px;opacity:1}.bubble.shcard>.meta *{color:inherit}.bubble.shcard.them>.meta{margin-left:0}.bubble.shcard>.meta,.themed .bubble.me.shcard>.meta,.bubble.me.shcard>.meta .lnk,.bubble.me.shcard>.meta .mdel,.bubble.me.shcard>.meta .mdelb{color:#f2f1f5!important;opacity:1}
 .bubble.shcard .mshst,.bubble.shcard .mshpo{margin-bottom:2px}
+.mread{display:flex;align-items:center;gap:6px;margin:3px 4px 0;font:12px Inter,sans-serif;color:var(--p-muted,#9a99a3)}.mreadav{display:flex;align-items:center}.mreadav .cameo{width:18px;height:18px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-bg,#0e0e10);margin-left:-5px;background:var(--p-panel,#1c1c1f);display:block}.mreadav .cameo:first-child{margin-left:0}.mreadav .cameo svg,.mreadav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.mreadav b{margin-left:4px;font-weight:600;font-size:11px}
+#stvfr{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.storyov .sthead,.storyov .stbars,.storyov #stcs,.storyov .starchbar{transition:opacity .22s ease}.storyov.stpress .sthead,.storyov.stpress .stbars,.storyov.stpress #stcs,.storyov.stpress .starchbar{opacity:0;pointer-events:none}
+.archbar{flex-wrap:wrap}.archbtns{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}.starcht{display:grid;gap:6px;min-width:0}.starcha{display:flex;gap:6px}.starcha .btn{flex:1;justify-content:center;padding:6px 8px;font-size:13px}.starcha .iconb{flex:none;width:36px;padding:6px}.starcha svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.starchbar{position:absolute;left:0;right:0;bottom:0;display:flex;gap:10px;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,#000c 40%);z-index:6}.starchbar .btn{flex:1;justify-content:center}
 .chat .mwrap{display:flex;flex-direction:column;flex:none;position:relative;touch-action:pan-y;min-width:0}.chat .mwrap.me{align-items:flex-end}.chat .mwrap.them{align-items:flex-start}
 .mline{display:flex;align-items:center;gap:4px;width:100%;min-width:0;will-change:transform}.mwrap.me .mline{justify-content:flex-end}.mwrap.them .mline>.cmrow,.mwrap.them .mline>.bubble{min-width:0}
 .mact{display:flex;gap:2px;flex:none;opacity:0;transition:opacity .15s}.mwrap:hover .mact,.mact:focus-within{opacity:1}
@@ -1548,11 +1554,12 @@ form[data-form=cmsg] .sgbtn,form[data-form=cmsg] .emobtn{width:42px;height:42px;
 .rxpop button[data-act="rx-pick"]:hover,.rxpop button[data-act="rx-pick"]:focus-visible{transform:scale(1.18)}.rxpop button[aria-pressed="true"]{background:var(--p-fg,#fff)}
 .rxmore{width:42px;height:42px;border-radius:50%;border:1px solid var(--p-line,#ffffff33);background:none;color:inherit;display:grid;place-items:center;cursor:pointer}.rxmore svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
 .rxre{display:flex;align-items:center;justify-content:center;gap:6px;height:38px;border-radius:12px;border:1px solid var(--p-line,#ffffff33);background:none;color:inherit;font:600 14px var(--f-display,'Space Grotesk'),Inter,sans-serif;cursor:pointer}
-.mquote{display:grid;gap:1px;width:100%;min-width:min(180px,100%);max-width:100%;margin:2px 0 6px;padding:5px 9px;border:0;border-left:3px solid currentColor;border-radius:8px;background:#0000001f;color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer;opacity:.9}
-.bubble.them .mquote{background:#ffffff14}.mquote b{font-size:12px}.mquote span{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal}.mquote .emo{width:16px;height:16px}
+.mquote{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:9px;row-gap:3px;width:100%;min-width:min(190px,100%);max-width:100%;margin:2px 0 8px;padding:7px 11px 8px;border:1px dashed currentColor;border-radius:14px;background:color-mix(in srgb,currentColor 7%,transparent);color:inherit;font:inherit;font-size:13px;text-align:left;cursor:pointer;opacity:.94;box-sizing:border-box}
+.mquote:hover,.mquote:focus-visible{background:color-mix(in srgb,currentColor 13%,transparent)}.mquote .mqh{grid-column:1/-1;font:italic 15px/1.2 'IM Fell English',Georgia,serif;opacity:.85;letter-spacing:.01em}
+.mquote .mqtx{grid-column:2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;white-space:normal;overflow-wrap:anywhere;line-height:1.35}.mquote:not(:has(.mqmd)) .mqtx{grid-column:1/-1}
+.mquote .mqmd{grid-column:1;width:46px;height:46px;display:grid;place-items:center;border-radius:10px;overflow:hidden}.mquote .mqmd svg,.mquote .mqmd img{width:100%;height:100%;object-fit:contain;display:block}.mquote .mqmd.gif img,.mquote .mqmd.ph img{object-fit:cover}.mquote .mqmd .emo{margin:0}.mquote .mqtx .emo{width:16px;height:16px}
 .bubble.media>.mquote,.bubble.shcard>.mquote{margin:4px 8px 6px;width:auto;background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2)}
-.chre{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 10px;margin-bottom:6px;border-left:3px solid var(--p-fg,#eeedf2);border-radius:10px;background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2)}
-.chreq{flex:1;min-width:0;display:grid;font-size:13px}.chreq b{font-size:12px}.chreq span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.85}.chreq .emo{width:15px;height:15px}
+.chre{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:var(--p-fg,#eeedf2)}.chre .chreq{flex:1;margin:0;cursor:default;background:var(--p-panel,#1c1c1f)}
 .chrex{width:30px;height:30px;border:0;border-radius:50%;background:none;color:inherit;cursor:pointer;flex:none}
 .mwrap.mflash .bubble{animation:ntfl 1.6s ease}
 .mwrap.swre::before,.mwrap.swrx::after{position:absolute;top:50%;margin-top:-14px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2);font-size:16px;line-height:28px;text-align:center}
@@ -5774,7 +5781,7 @@ function piInner(p, full){
   const nC = all.length, bar = `<div class="reacts pbar">${reacts}<button type="button" class="cmbtn" data-act="cmv-open" data-k="${k}" aria-label="Kommentare ansehen">${CMV_ICO}<span>${nC || ''}</span></button>${p.gb ? gbSendBtn(p) : repostBtn(p) + sendBtn(p)}</div>`;
   if (!full) return bar;
   const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
-  return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<span class="pcfield">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<textarea class="pcin mlin" id="pc-${k}" rows="1" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Etwas dazu schreiben…'}" maxlength="300" aria-label="Kommentar" enterkeyhint="enter"></textarea><label class="pcimg" title="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" aria-label="Foto anhängen"></label></span><button class="btn ghost" type="submit">Senden</button></form>` : ''}`;
+  return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<label class="attbtn pcatt" title="Foto anhängen" aria-label="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" hidden></label><span class="cinw">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<textarea class="pcin mlin" id="pc-${k}" rows="1" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Kommentieren …'}" maxlength="300" aria-label="Kommentar" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button></form>` : ''}`;
 }
 // Fotos in Kommentaren: klein, weniger als halb so groß wie im Beitrag (Inaya, 2026-10-11)
 // Antworten: auf „antworten“ oder direkt auf die Sprechblase tippen; Fokus sofort, damit die Tastatur aufgeht (Inaya, 2026-10-11)
@@ -6348,7 +6355,7 @@ function pvRescue(){ // Song lädt nicht (z. B. abgelaufener Link): einmal frisc
   return true; }
 const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.com|dzcdn\.net)\//);
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
-function stAuUnlock(){ if (stAuSrc) return; try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
+function stAuUnlock(){ if (stAuSrc) return; stAuWin = null; stAu.loop = false; /* der stille Ton ist 0 Sekunden lang: in Schleife fror die Seite ein */ try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
 const SPRES = {}; // Spotify-Link -> gefundene Hörprobe
 const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
 function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}</span></span>` : ''; }
@@ -6359,7 +6366,9 @@ const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story s
 function auDiag(m){ try { console.warn('Ton:', m); } catch {} }
 stAu.addEventListener('error', () => { if (!stAuSrc || pvRescue()) return; const c = stAu.error?.code; auDiag(`Song lädt nicht (Code ${c || '?'}${c === 2 ? ', Netzwerk' : c === 4 ? ', Format/Adresse' : ''}) ` + String(stAuSrc).replace(/^https:\/\/([^/]+).*/, '$1')); });
 let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
-stAu.addEventListener('timeupdate', () => { if (stAuWin && (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5)) { try { stAu.currentTime = stAuWin.s; } catch {} } });
+// Nur den gewählten Song zurückspulen und nur, wenn der Anfang im Ton liegt: sonst spulte das Fenster z. B. den stillen Entsperr-Ton endlos zurück und die Seite fror ein (Inaya, 2026-10-13)
+stAu.addEventListener('timeupdate', () => { if (!stAuWin || !stAuSrc || stAu.src !== stAuSrc) return; const d = stAu.duration; if (isFinite(d) && stAuWin.s >= d - .05) return;
+  if (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5) { try { stAu.currentTime = stAuWin.s; } catch {} } });
 function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} }; if (stAu.readyState >= 1) go(); else stAu.addEventListener('loadedmetadata', go, {once:true}); }
 function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
   const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
@@ -6447,11 +6456,11 @@ function storyPaint(){
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div><div id="stsh"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe${st.v === 2 ? ' v2' : ''}" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)}>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : STV.arch ? `<button class="btn stre" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button>` : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)}>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${st.v === 2 ? '<div class="stcv">' : ''}${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${st.v === 2 ? stStkHTML(st.stk, false, stICtx()) : ''}${stTextsHTML(stTexts(st))}${st.v === 2 ? '</div>' : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
-    ${STV.arch || !social ? '' : stcSheetHTML(g, st, own, u)}
+    ${STV.arch ? `<div class="starchbar"><button class="btn" data-act="st-restore" data-id="${esc(st.id)}">Wieder posten</button><button class="btn ghost" data-act="st-m-del">Löschen</button></div>` : !social ? '' : stcSheetHTML(g, st, own, u)}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
     </div></div>`;
   const mu = st.mu || null;
@@ -6482,6 +6491,23 @@ function stLkPaint(uid, sid){ const ov = document.getElementById('storyov'); if 
 function stHold(on){ if (!STV) return; const ov = document.getElementById('storyov'), ve = ov?.querySelector('video.stvid'), nb = ov?.querySelector('.stbars i.now');
   if (on) { if (STV.hold) return; STV.hold = Date.now(); clearTimeout(stTimer); if (nb) nb.style.animationPlayState = 'paused'; ve?.pause(); stAu.pause(); }
   else if (STV.hold) { STV.t0 += Date.now() - STV.hold; STV.hold = null; storyPaint(); } }
+// Gedrückt halten pausiert die Story, Loslassen läuft an genau derselben Stelle weiter (Inaya, 2026-10-13).
+// Fortsetzen ohne Neuzeichnen, sonst finge ein Video wieder von vorn an.
+function stResume(){ if (!STV || !STV.hold) return; STV.t0 += Date.now() - STV.hold; STV.hold = null;
+  const ov = document.getElementById('storyov'), g = STV.list[STV.ui], st = g?.items[STV.ii]; if (!ov || !st || STV.delAsk || STV.cOpen || !ov.querySelector('#stvfr')) return storyPaint();
+  const nb = ov.querySelector('.stbars i.now'), ve = ov.querySelector('video.stvid'); if (nb) nb.style.animationPlayState = 'running';
+  if (st.mu) stAuPlay(st.mu, false, true); if (stSp?.c) { try { stSp.c.resume(); } catch {} }
+  clearTimeout(stTimer); if (ve) { ve.play().catch(() => {}); return; }
+  const vbad = st.vid && STVID[g.uid + '/' + st.id] === null; if ((!st.vid || vbad) && (!STV.arch || STV.hl)) { const dur = st.mu || st.song ? 15000 : 7000; stTimer = setTimeout(() => stStep(1), Math.max(250, dur - (Date.now() - STV.t0))); } }
+{ let lp = null;
+  const free = t => !t.closest('input,textarea,a,.stsl,#stcs,.sthead,.stbars,.stsheet,.starchbar,.stdelask,.stsndhint,.stmu,.sthlk,.stpost,.staskr,.stdbdb,button:not([data-act="st-next"]):not([data-act="st-prev"])');
+  document.addEventListener('pointerdown', e => { if (!STV || STV.hold || e.button > 0 || !e.target.closest?.('#stvfr') || !free(e.target)) return;
+    lp = {id:e.pointerId, x:e.clientX, y:e.clientY, t:setTimeout(() => { if (!lp || !STV || STV.hold) return; lp.on = true; stHold(true); document.getElementById('storyov')?.classList.add('stpress'); }, 200)}; }, true);
+  document.addEventListener('pointermove', e => { if (lp && !lp.on && e.pointerId === lp.id && Math.hypot(e.clientX - lp.x, e.clientY - lp.y) > 14) { clearTimeout(lp.t); lp = null; } }, true);
+  const up = e => { if (!lp || e.pointerId !== lp.id) return; clearTimeout(lp.t); const on = lp.on; lp = null; if (!on) return;
+    stSwiped = Date.now(); document.getElementById('storyov')?.classList.remove('stpress'); stResume(); }; // stSwiped: das Loslassen zählt nicht als Tippen (weiter/zurück)
+  document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  document.addEventListener('contextmenu', e => { if (e.target.closest?.('#stvfr')) e.preventDefault(); }); }
 document.addEventListener('focusin', e => { if (e.target.id === 'st-rin') stHold(true); });
 document.addEventListener('focusout', e => { if (e.target.id === 'st-rin') setTimeout(() => { if (document.activeElement?.id !== 'st-rin' && !STV?.cOpen) stHold(false); }, 150); });
 document.addEventListener('input', e => { if (e.target.id === 'st-rin') e.target.closest('form')?.classList.toggle('typed', !!e.target.value.trim()); });
@@ -8205,7 +8231,7 @@ async function searchPeople(q){
 function frReqHTML(id){
   if (!social) return '';
   if (FR.inc.includes(id)) return `<div class="frq"><p class="note" style="margin:0">Möchte mit dir befreundet sein.</p><div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button><button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button></div></div>`;
-  if (FR.mine.includes(id)) return `<div class="row"><span class="muted">Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button><button class="btn ghost" data-act="fr-again" data-id="${id}">Erneut senden</button></div>`;
+  if (FR.mine.includes(id)) return `<div class="row"><span class="muted">Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button></div>`;
   return `<div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Freundschaftsanfrage senden</button></div>`;
 }
 function personRow(id){
@@ -8254,12 +8280,22 @@ function openChat(id){
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.lim = 200; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
-  chSub(id);
+  chSub(id); rdWatch(id);
   go('chats');
 }
+// Lesebestätigungen (Inaya, 2026-10-13): jedes Mitglied schreibt seinen Lesestand nach chats/<cid>/rd/<uid> = {ts}
+function rdWatch(id){ CH.rdunsub?.(); CH.rd = {}; CH.rdMine = 0; CH.rdunsub = social.db.collection('chats/' + id + '/rd').onSnapshot(q => { const r = {}; q.docs.forEach(d => { r[d.id] = +d.data().ts || 0; }); const ch = JSON.stringify(r) !== JSON.stringify(CH.rd); CH.rd = r; CH.rdMine = Math.max(CH.rdMine || 0, r[social.uid] || 0); if (ch && CH.open === id) drawMsgs(true); }, () => {}); }
+function rdMark(){ const id = CH.open; if (!id || !social || document.hidden || V.name !== 'chats' || CH.mode !== 'chat' || id.startsWith('wall_')) return;
+  const last = CH.msgs.filter(m => !m._pend).reduce((a, m) => Math.max(a, +m.ts || 0), 0); if (!last || last <= (CH.rdMine || 0)) return;
+  CH.rdMine = last; social.db.doc(`chats/${id}/rd/${social.uid}`).set({ts:last}).catch(() => {}); }
+document.addEventListener('visibilitychange', () => { if (!document.hidden) rdMark(); });
+function readHTML(m, c){ const mem = (c?.members || e2Members(CH.open, c) || []).filter(u => u !== social?.uid && !isBlk(u)), l = mem.filter(u => (CH.rd?.[u] || 0) >= (+m.ts || 0)); if (!l.length) return '';
+  if (!c?.group) return '<div class="mread">Gelesen</div>';
+  const show = l.slice(0, 3), more = l.length - show.length, names = l.map(chatWho).join(', ');
+  return `<div class="mread" title="Gelesen von ${esc(names)}" aria-label="Gelesen von ${esc(names)}"><span>Gelesen</span><span class="mreadav">${show.map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => drawMsgs(true)); } return `<span class="cameo">${p ? headPic(p) : ''}</span>`; }).join('')}${more > 0 ? `<b>+${more}</b>` : ''}</span></div>`; }
 function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
   return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 200).onSnapshot({includeMetadataChanges:true}, snap => {
-    CH.mraw = snap.docs.filter(d => !isDel(d.id)).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id);
+    CH.mraw = snap.docs.filter(d => !isDel(d.id)).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id); rdMark();
     if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
 function drawMsgs(keep){
@@ -8275,7 +8311,8 @@ function msgsHTML(){
   if (warn.length) return msgsHTML0(c) + warn.map(u => `<div class="e2warn">${E2_LOCK}<span>${esc(chatWho(u))} hat ein neues Gerät angemeldet oder sich neu angemeldet. Eure Nachrichten bleiben verschlüsselt. Wenn du sichergehen willst, vergleicht eure Sicherheitsnummer.</span><span class="row"><button type="button" class="btn ghost" data-act="e2-code">Sicherheitsnummer</button><button type="button" class="btn ghost" data-act="e2-warnok" data-id="${esc(u)}">OK</button></span></div>`).join('');
   return msgsHTML0(c); }
 function msgsHTML0(c){
-  return CH.msgs.length ? CH.msgs.filter(m => !isBlk(m.from)).map(m => msgWrapHTML(m, c?.group)).join('')
+  const vis = CH.msgs.filter(m => !isBlk(m.from)), lastMine = [...vis].reverse().find(m => m.from === social?.uid && !m._lock && !m._pend);
+  return CH.msgs.length ? vis.map(m => msgWrapHTML(m, c?.group, m === lastMine ? readHTML(m, c) : '')).join('')
     : '<p class="muted" style="margin:auto">Noch keine Nachrichten. Schreib die erste.</p>';
 }
 async function openDM(id){
@@ -8318,7 +8355,7 @@ function chatsView(){
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
-      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}</button>`; })()}<small class="muted">${c.group ? c.members.map(chatWho).map(esc).join(', ') : 'Privater Chat'}${e2Chat(c.id, c) ? ` · <button type="button" class="lnk e2badge" data-act="e2-code" aria-label="Verschlüsselung prüfen">${E2_LOCK}verschlüsselt</button>` : ''}</small><small class="typing" id="chtyping" hidden></small></div>
+      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}</button>`; })()}${c.group ? `<small class="muted">${c.members.map(chatWho).map(esc).join(', ')}</small>` : ''}<small class="typing" id="chtyping" hidden></small></div>
         ${c.group ? `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>`}</header>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
@@ -8378,7 +8415,7 @@ function groupForm(friends){
   // Vorschau: so sieht der Gruppenchat aus, ändert sich bei jeder Farbe, jedem Muster und jeder Schrift sofort mit (Inaya, 2026-10-10)
   const who = g.members.map(id => S.users[id]?.name || PROF[id]?.name).filter(Boolean);
   const prev = `<div class="gprev"><span class="lbl">${g.dm ? 'So sieht euer Chat aus' : 'So sieht eure Gruppe aus'}</span><section class="themed chatpanel${g.theme.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...g.theme}))}">
-      <header class="ch-head"><div><b class="ch-name" id="g-prevname">${esc(g.dm ? (who[0] || 'Freund') : (g.name || 'Eure Gruppe'))}</b><small class="muted">${g.dm ? 'Privater Chat' : esc(['Du', ...who].join(', '))}</small></div></header>
+      <header class="ch-head"><div><b class="ch-name" id="g-prevname">${esc(g.dm ? (who[0] || 'Freund') : (g.name || 'Eure Gruppe'))}</b>${g.dm ? '' : `<small class="muted">${esc(['Du', ...who].join(', '))}</small>`}</div></header>
       <div class="chat msgs"${bgImgStyle(g.theme.bg ? g.bgNew || chBg({id:g.id, theme:g.theme}) : '')}><div class="bubble them">${g.dm ? '' : `<small class="who">${esc(who[0] || 'Freundin')}</small>`}${etx('Wer kommt heute Abend mit auf den Friedhof? :lach:')}<small class="meta">vor 2 Min.</small></div><div class="bubble me">Ich bin dabei!<small class="meta">gerade eben</small></div></div>
     </section></div>`;
   return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
@@ -8389,6 +8426,7 @@ function groupForm(friends){
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Hintergrundbild</legend><div class="row"><label class="btn ghost"><input type="file" id="g-bgfile" accept="image/*" hidden>${g.theme.bg ? 'Anderes Foto' : 'Foto hochladen'}</label>${g.theme.bg ? '<button type="button" class="lnk" data-act="g-bgdel">Foto entfernen</button>' : ''}</div><p class="note" style="margin:0">Rand und Sprechblasen behalten die Farbe, die du oben auswählst.</p></fieldset>
     ${g.id && gDelAsk ? `<div class="gdel"><span>Gruppe wirklich für alle löschen? Alle Nachrichten sind dann weg.</span><div class="row"><button class="btn" type="button" data-act="chat-del-yes">Ja, löschen</button><button class="btn ghost" type="button" data-act="chat-del-no">Nein</button></div></div>` : ''}
+    ${g.id && e2Chat(g.id) ? `<div class="setrow e2row"><div class="setinfo"><span class="lbl">${E2_LOCK} Ende-zu-Ende-verschlüsselt</span><span class="setval muted">Nur ${g.dm ? 'ihr beide' : 'die Mitglieder'} könnt die Nachrichten lesen.</span><button class="btn ghost setedit" type="button" data-act="e2-code">Sicherheitsnummer</button></div></div>` : ''}
     <div class="row">${g.id && !g.dm ? `<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button><button class="btn ghost" type="button" data-act="chat-del">Gruppe löschen</button>` : ''}<span class="sp"></span><button class="btn" type="submit">${g.id ? 'Speichern' : 'Gruppe erstellen'}</button></div>
   </form>`;
 }
@@ -8546,7 +8584,7 @@ function e2Clean(o){ const r = {}; if (!o || typeof o !== 'object') return r; //
   for (const f of ['post', 'story', 'audio', 'clip']) if (o[f] && typeof o[f] === 'object' && !Array.isArray(o[f])) r[f] = o[f];
   if (o.kind === 'invite') r.kind = 'invite';
   if (o.kind === 'react' && typeof o.to === 'string' && EMOS[o.e]) { r.kind = 'react'; r.to = o.to.slice(0, 60); r.e = o.e; }
-  if (reOk(o.re)) r.re = {id:o.re.id, from:String(o.re.from || '').slice(0, 40), t:String(o.re.t || '').slice(0, 100)}; return r; }
+  if (reOk(o.re)) { const st = sgClean(o.re.s); r.re = {id:o.re.id, from:String(o.re.from || '').slice(0, 40), t:String(o.re.t || '').slice(0, 100), ...(st ? {s:st} : {})}; } return r; }
 const e2Aad = (cid, mid, from, sd, ts) => E2_TX.encode(`nf1|${cid}|${mid}|${from}|${sd}|${ts}`); // bindet Chat, Nachricht, Absender, Gerät und Zeit an den Inhalt
 async function e2Wrap(cekRaw, aad, uid, dev){ const s = await E2E.suite.createSenderContext({recipientPublicKey:await e2PubKey(uid, dev), senderKey:E2E.kp, info:E2_INFO}); const w = new Uint8Array(await s.seal(cekRaw, aad)); return b64e(new Uint8Array(s.enc)) + '.' + b64e(w); }
 async function e2Seal(cid, mid, ts, content, members){
@@ -9078,19 +9116,26 @@ const isRx = id => /^r_/.test(id || '');
 function chSplit(){ const r = {}; CH.msgs = CH.msgs.filter(m => { if (!isRx(m.id)) return true; if (m.kind === 'react' && typeof m.to === 'string' && EMOS[m.e] && !m._lock) (r[m.to] = r[m.to] || {})[m.from] = m.e; return false; }); CH.rx = r; }
 const msgSnip = m => String(m.text ? m.text.replace(/\s+/g, ' ') : m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.story ? '📖 Story' : 'Nachricht').slice(0, 100);
 const reOk = r => r && typeof r === 'object' && typeof r.id === 'string' && /^[\w-]{1,60}$/.test(r.id);
-const quoteHTML = r => reOk(r) ? `<button type="button" class="mquote" data-act="msg-jump" data-id="${esc(r.id)}" aria-label="Zur Originalnachricht springen"><b>${esc(r.from === social?.uid ? 'Du' : chatWho(r.from))}</b><span>${etx(String(r.t || '').slice(0, 100))}</span></button>` : '';
-const chReExtra = () => { const r = CH.re; return r && r.cid === CH.open ? {re:{id:r.id, from:r.from, t:r.t}} : {}; };
-function chReply(mid){ const m = CH.msgs.find(x => x.id === mid); if (!m || m._lock) return; rxClose(); CH.re = {cid:CH.open, id:mid, from:m.from, t:msgSnip(m)}; chRePaint(); const i = document.getElementById('cm-in'); if (i) { i.focus({preventScroll:true}); kbSoon?.(); } }
+// Zitat zeigt den echten Inhalt der Originalnachricht (Text, Sticker, GIF, Foto); ist sie nicht geladen, den beim Antworten gemerkten Stand
+function quoteBody(o){ const st = sgClean(o.stk || o.gif || o.s), tx = o.text ?? o.t ?? '';
+  const md = st ? `<span class="mqmd${sgIsGif(st) ? ' gif' : ''}">${sgItemHTML(st)}</span>` : typeof o.img === 'string' && /^data:image\//.test(o.img) ? `<span class="mqmd ph"><img src="${esc(o.img)}" alt=""></span>` : '';
+  const t = String(tx || (st ? (sgIsGif(st) ? 'GIF' : 'Sticker') : o.img ? 'Foto' : msgSnip(o))).replace(/\s+/g, ' ').slice(0, 160);
+  return `${md}<span class="mqtx">${etx(t)}</span>`; }
+const quoteHTML = r => { if (!reOk(r)) return ''; const o = CH.msgs.find(x => x.id === r.id && !x._lock);
+  return `<button type="button" class="mquote${o || r.s ? ' hasmd' : ''}" data-act="msg-jump" data-id="${esc(r.id)}" aria-label="Zur Originalnachricht springen"><span class="mqh">❦ ${esc(r.from === social?.uid ? 'Du' : chatWho(r.from))}</span>${quoteBody(o || r)}</button>`; };
+const chReExtra = () => { const r = CH.re; return r && r.cid === CH.open ? {re:{id:r.id, from:r.from, t:r.t, ...(r.s ? {s:r.s} : {})}} : {}; };
+function chReply(mid){ const m = CH.msgs.find(x => x.id === mid); if (!m || m._lock) return; rxClose(); const st = sgClean(m.stk || m.gif); CH.re = {cid:CH.open, id:mid, from:m.from, t:msgSnip(m), ...(st ? {s:st} : {})}; chRePaint(); const i = document.getElementById('cm-in'); if (i) { i.focus({preventScroll:true}); kbSoon?.(); } }
 function chRePaint(){ const r = CH.re && CH.re.cid === CH.open ? CH.re : null, f = document.querySelector('form[data-form="cmsg"]'), ex = document.querySelector('.chre');
   if (ex && (!r || ex.dataset.id !== r.id || ex.nextElementSibling !== f)) ex.remove(); else if (ex) return; if (!r || !f) return;
-  f.insertAdjacentHTML('beforebegin', `<div class="chre" data-id="${esc(r.id)}">${RE_ICO}<span class="chreq"><b>${r.from === social?.uid ? 'Antwort auf deine Nachricht' : 'Antwort an ' + esc(chatWho(r.from))}</b><span>${etx(r.t)}</span></span><button type="button" class="chrex" data-act="re-x" aria-label="Antwort abbrechen">✕</button></div>`); }
+  const o = CH.msgs.find(x => x.id === r.id && !x._lock) || r;
+  f.insertAdjacentHTML('beforebegin', `<div class="chre" data-id="${esc(r.id)}"><span class="chreq mquote hasmd"><span class="mqh">❦ ${r.from === social?.uid ? 'Antwort auf deine Nachricht' : 'Antwort an ' + esc(chatWho(r.from))}</span>${quoteBody(o)}</span><button type="button" class="chrex" data-act="re-x" aria-label="Antwort abbrechen">✕</button></div>`); }
 function rxHTML(m){ const r = CH.rx?.[m.id]; if (!r) return ''; const by = {};
   for (const [u, e] of Object.entries(r)) if (!isBlk(u)) (by[e] = by[e] || []).push(u);
   const ks = Object.keys(by); if (!ks.length) return '';
   return `<div class="mrx">${ks.map(e => { const l = by[e], on = l.includes(social?.uid); return `<button type="button" class="mrxb${on ? ' on' : ''}" data-act="rx-tog" data-id="${esc(m.id)}" data-e="${e}" aria-pressed="${on}" title="${esc(l.map(u => u === social?.uid ? 'Du' : chatWho(u)).join(', '))}" aria-label="${esc(EMOS[e][0])}, ${l.length}">${emoSVG(e)}${l.length > 1 ? `<span>${l.length}</span>` : ''}</button>`; }).join('')}</div>`; }
-function msgWrapHTML(m, group){ const mine = m.from === social?.uid, ok = m.id && !m._lock && !m._pend && !isRx(m.id);
+function msgWrapHTML(m, group, read = ''){ const mine = m.from === social?.uid, ok = m.id && !m._lock && !m._pend && !isRx(m.id);
   const act = ok ? `<span class="mact"><button type="button" class="mactrx" data-act="rx-open" data-id="${esc(m.id)}" aria-label="Mit Emoji reagieren">${RX_ICO}</button><button type="button" class="mactre" data-act="re-start" data-id="${esc(m.id)}" aria-label="Auf diese Nachricht antworten">${RE_ICO}</button></span>` : '';
-  return `<div class="mwrap ${mine ? 'me' : 'them'}" data-mid="${esc(m.id || '')}"><div class="mline">${mine ? act + bubbleHTML(m, group) : bubbleHTML(m, group) + act}</div>${rxHTML(m)}</div>`; }
+  return `<div class="mwrap ${mine ? 'me' : 'them'}" data-mid="${esc(m.id || '')}"><div class="mline">${mine ? act + bubbleHTML(m, group) : bubbleHTML(m, group) + act}</div>${rxHTML(m)}${read}</div>`; }
 async function rxSet(mid, e){ const cid = CH.open; if (!cid || !social || !mid || isRx(mid) || (e && !EMOS[e])) return;
   const rid = 'r_' + mid + '_' + social.uid, cur = CH.rx?.[mid]?.[social.uid], ref = social.db.doc(`chats/${cid}/m/${rid}`);
   try { if (!e || cur === e) { await ref.delete(); return; } // gleiche Reaktion nochmal = entfernen
@@ -9562,12 +9607,24 @@ function syncSong(){
 let setOpen = null;
 // Archiviert (Inaya, 2026-10-11): Unterpunkte Beitrag-Archiv und Story-Archiv, alles lässt sich wiederherstellen
 const archPosts = () => S.posts.filter(p => p.author === S.me && p.arch).sort((a, b) => b.arch - a.arch);
+// Beitrag löschen (Feed und Archiv): auch Bilder, Audio und Videos auf dem Server
+function postDelete(pid){
+  postDelAsk = null; const delAudio = S.posts.find(x => x.id === pid)?.audio, delClip = S.posts.find(x => x.id === pid)?.clip, delGal = S.posts.find(x => x.id === pid)?.gal;
+  S.posts = S.posts.filter(x => x.id !== pid); save(); render(); toast('Beitrag gelöscht');
+  if (social) social.db.doc('chats/pimg_' + social.uid + '/m/' + pid).delete().catch(() => {});
+  if (social && delAudio) for (let i = 0; i < delAudio.n; i++) social.db.doc(`profiles/${social.uid}/pa_${pid}/c${i}`).delete().catch(() => {});
+  if (social && delClip) for (let i = 0; i < delClip.n; i++) social.db.doc(`profiles/${social.uid}/pv_${pid}/c${i}`).delete().catch(() => {});
+  if (social && delGal) delGal.forEach((x, j) => { if (x.k) social.db.doc('chats/pimg_' + social.uid + '/m/' + x.k).delete().catch(() => {}); if (x.clip) for (let i = 0; i < x.clip.n; i++) social.db.doc(`profiles/${social.uid}/pv_${pid}_${j}/c${i}`).delete().catch(() => {}); });
+}
+// Story aus dem Archiv löschen: Eintrag, Highlights, Bild und Video auf dem Server (Inaya, 2026-10-13)
+function storyArchDelete(st){ S.storyArch = (S.storyArch || []).filter(x => x.id !== st.id); S.stories = (S.stories || []).filter(x => x.id !== st.id); hlDrop(st.id); save();
+  if (social) { social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); if (st.vid?.n) for (let i = 0; i < st.vid.n; i++) social.db.doc(`profiles/${social.uid}/sv_${st.id}/c${i}`).delete().catch(() => {}); } }
 function archiveView(){
   const sub = V.arg, posts = archPosts(), sts = S.storyArch || [];
   const head = (t, back) => `<div class="archhead"><button class="btn ghost iconb" data-act="${back ? 'arch-go' : 'nav'}" data-v="${back ? '' : 'settings'}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><h2 class="card-h">${t}</h2></div>`;
-  if (sub === 'posts') { archCtx = true; const h = posts.map(p => `<div class="archwrap"><p class="archbar">${ARCH_SVG}<span>Archiviert ${ago(p.arch)} · nur du siehst ihn</span><button class="btn ghost" data-act="arch-back" data-id="${esc(p.id)}">Wiederherstellen</button></p>${postHTML(p)}</div>`).join(''); archCtx = false;
+  if (sub === 'posts') { archCtx = true; const h = posts.map(p => `<div class="archwrap"><p class="archbar">${ARCH_SVG}<span>Archiviert ${ago(p.arch)} · nur du siehst ihn</span><span class="archbtns"><button class="btn" data-act="arch-back" data-id="${esc(p.id)}">Im Feed veröffentlichen</button><button class="btn ghost" data-act="arch-pdel" data-id="${esc(p.id)}">Löschen</button></span></p>${postHTML(p)}</div>`).join(''); archCtx = false;
     return `<section class="archpage">${head('Beitrag-Archiv', true)}${posts.length ? `<div class="feed insta">${h}</div>` : '<p class="note">Hier landen Beiträge, die du archivierst. Archivieren geht über ⋯ oben an deinem Beitrag.</p>'}</section>`; }
-  if (sub === 'story') return `<section class="archpage">${head('Story-Archiv', true)}${sts.length ? `<div class="stgrid">${sts.map(st => { const d = new Date(st.ts); return `<button class="sttile" data-act="arch-story" data-id="${esc(st.id)}" aria-label="Story vom ${d.toLocaleDateString('de-DE')} ansehen">${st.thumb ? stImgHTML(st.thumb, st.f) : ''}${st.v === 2 ? stStkHTML(st.stk) : ''}${stTextsHTML(stTexts(st))}<span class="stdate"><b>${d.getDate()}</b><small>${d.toLocaleDateString('de-DE', {month:'short'})}</small></span>${st.song ? '<i class="stnote" aria-label="mit Song">♪</i>' : ''}</button>`; }).join('')}</div><p class="note">Tipp eine Story an, um sie anzusehen und wiederherzustellen. Dann ist sie wieder 24 Stunden für deine Freunde sichtbar.</p>` : '<p class="note">Nach 24 Stunden landen deine Storys automatisch hier. Nur du siehst sie.</p>'}</section>`;
+  if (sub === 'story') return `<section class="archpage">${head('Story-Archiv', true)}${sts.length ? `<div class="stgrid starchg">${sts.map(st => { const d = new Date(st.ts); return `<div class="starcht"><button class="sttile" data-act="arch-story" data-id="${esc(st.id)}" aria-label="Story vom ${d.toLocaleDateString('de-DE')} ansehen">${st.thumb ? stImgHTML(st.thumb, st.f) : ''}${st.v === 2 ? stStkHTML(st.stk) : ''}${stTextsHTML(stTexts(st))}<span class="stdate"><b>${d.getDate()}</b><small>${d.toLocaleDateString('de-DE', {month:'short'})}</small></span>${st.song ? '<i class="stnote" aria-label="mit Song">♪</i>' : ''}</button><span class="starcha"><button class="btn" data-act="st-restore" data-id="${esc(st.id)}">Posten</button><button class="btn ghost iconb" data-act="arch-sdel" data-id="${esc(st.id)}" aria-label="Story löschen" title="Löschen">${TRASH_SVG}</button></span></div>`; }).join('')}</div><p class="note">Tipp eine Story an, um sie anzusehen. „Posten“ zeigt sie wieder 24 Stunden lang deinen Freunden.</p>` : '<p class="note">Nach 24 Stunden landen deine Storys automatisch hier. Nur du siehst sie.</p>'}</section>`;
   const p0 = posts[0], s0 = sts[0];
   return `<section class="archpage">${head('Archiviert', false)}<p class="note">Nur du siehst, was hier liegt.</p><div class="archtiles">
     <button class="archtile" data-act="arch-go" data-v="posts"><span class="atprev">${p0 ? (p0.img ? `<img src="${esc(p0.img)}" alt="">` : `<i>${esc(String(p0.text || KIND[p0.type] || '').slice(0, 60))}</i>`) : ARCH_SVG}</span><b>Beitrag-Archiv</b><small>${posts.length} ${posts.length === 1 ? 'Beitrag' : 'Beiträge'}</small></button>
@@ -10336,7 +10393,7 @@ document.addEventListener('click', async e => {
   else if (a === 're-start') chReply(b.dataset.id);
   else if (a === 're-x') { CH.re = null; chRePaint(); }
   else if (a === 'msg-jump') msgJump(b.dataset.id);
-  else if (a === 'e2-code') { if (CH.open) e2CodeOpen(CH.open); }
+  else if (a === 'e2-code') { const id = CH.mode === 'group' ? CH.gdraft?.id || CH.open : CH.open; if (id) e2CodeOpen(id); }
   else if (a === 'e2-x') { document.getElementById('e2dlg')?.remove(); }
   else if (a === 'e2-warnok') { e2WarnOk(b.dataset.id); drawMsgs(true); }
   else if (a === 'e2-xask') e2XferAsk();
@@ -10422,7 +10479,7 @@ document.addEventListener('click', async e => {
   else if (a === 'st-prev') { if (Date.now() - stSwiped > 400) stStep(-1); }
   else if (a === 'st-del') { if (!STV) return; STV.delAsk = true; storyPaint(); }
   else if (a === 'st-delno') { if (!STV) return; STV.delAsk = false; STV.t0 = Date.now(); storyPaint(); }
-  else if (a === 'st-delyes') { if (!STV) return; STV.delAsk = false; const st = STV?.list[STV.ui]?.items[STV.ii]; if (!st) return; S.stories = (S.stories || []).filter(x => x.id !== st.id); hlDrop(st.id); if (social) social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; save(); toast('Story gelöscht'); stStep(1); }
+  else if (a === 'st-delyes') { if (!STV) return; STV.delAsk = false; const st = STV?.list[STV.ui]?.items[STV.ii]; if (!st) return; if (STV.arch) { storyArchDelete(st); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; toast('Story gelöscht'); return STV.list[STV.ui].items.length ? stStep(1) : stClose(); } S.stories = (S.stories || []).filter(x => x.id !== st.id); hlDrop(st.id); if (social) social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); STV.list[STV.ui].items.splice(STV.ii, 1); STV.ii--; save(); toast('Story gelöscht'); stStep(1); }
   else if (a === 'st-restore') { const st = (S.storyArch || []).find(x => x.id === b.dataset.id); if (!st) return; S.storyArch = S.storyArch.filter(x => x !== st); const {archTs, ...r} = st; S.stories = [...(S.stories || []), {...r, ts:Date.now()}]; if (STV) { STV = null; storyPaint(); } save(); render(); toast('Die Story ist wieder 24 Stunden für deine Freunde sichtbar.'); }
   else if (a === 'mood-emo') { const inp = document.getElementById('e-mood'); if (!inp) return; const c = ':' + b.dataset.v + ':'; if ((inp.value + c).length > 120) return; inp.value += c; inp.dispatchEvent(new Event('input', {bubbles:true})); toast('Totenkopf hinzugefügt'); }
   else if (a === 'pp-tap') { if (storiesOf(id).length) ppAsk = id; else ppView = id; render(); }
@@ -10441,14 +10498,10 @@ document.addEventListener('click', async e => {
   else if (a === 'post-edit') { postMenu = null; postEdit = b.dataset.id; postDelAsk = null; render(); document.getElementById('pe-' + postEdit)?.focus(); }
   else if (a === 'post-edit-no') { postEdit = null; render(); }
   else if (a === 'post-del-no') { postDelAsk = null; render(); }
-  else if (a === 'post-del-yes') {
-    const pid = b.dataset.id; postDelAsk = null; const delAudio = S.posts.find(x => x.id === pid)?.audio, delClip = S.posts.find(x => x.id === pid)?.clip, delGal = S.posts.find(x => x.id === pid)?.gal;
-    S.posts = S.posts.filter(x => x.id !== pid); save(); render(); toast('Beitrag gelöscht');
-    if (social) social.db.doc('chats/pimg_' + social.uid + '/m/' + pid).delete().catch(() => {});
-    if (social && delAudio) for (let i = 0; i < delAudio.n; i++) social.db.doc(`profiles/${social.uid}/pa_${pid}/c${i}`).delete().catch(() => {});
-    if (social && delClip) for (let i = 0; i < delClip.n; i++) social.db.doc(`profiles/${social.uid}/pv_${pid}/c${i}`).delete().catch(() => {});
-    if (social && delGal) delGal.forEach((x, j) => { if (x.k) social.db.doc('chats/pimg_' + social.uid + '/m/' + x.k).delete().catch(() => {}); if (x.clip) for (let i = 0; i < x.clip.n; i++) social.db.doc(`profiles/${social.uid}/pv_${pid}_${j}/c${i}`).delete().catch(() => {}); });
-  }
+  else if (a === 'post-del-yes') postDelete(b.dataset.id);
+  else if (a === 'arch-pdel') { if (await askYesNo('Diesen Beitrag endgültig löschen?', 'Ja, löschen', 'Nein')) postDelete(b.dataset.id); }
+  else if (a === 'arch-sdel') { const st = (S.storyArch || []).find(x => x.id === b.dataset.id); if (!st || !(await askYesNo('Diese Story endgültig löschen?', 'Ja, löschen', 'Nein'))) return; storyArchDelete(st); render(); toast('Story gelöscht'); }
+
   else if (a === 'aplay') {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === id && (postOwner(x) || '') === b.dataset.u);
     if (!p?.audio || !social) return;

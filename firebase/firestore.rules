@@ -90,7 +90,9 @@ service cloud.firestore {
         : true);
       allow delete: if invited() && (isDm(cid) ? inDm(cid) : isGroup(cid) ? request.auth.uid in resource.data.members : true);
     }
-    match /chats/{cid}/{sub}/{rest=**} { allow read, write: if invited() && sub != 'm' && mayWrite(cid); }
+    match /chats/{cid}/{sub}/{rest=**} { allow read, write: if invited() && sub != 'm' && sub != 'rd' && mayWrite(cid); }
+    // Lesebestätigungen: jede Person schreibt nur ihren eigenen Lesestand (Inaya, 2026-10-13)
+    match /chats/{cid}/rd/{uid} { allow read: if invited() && mayRead(cid); allow write: if me(uid) && mayWrite(cid); }
 
     // Wer gerade online ist
     match /presence/{room}/p/{key} {
