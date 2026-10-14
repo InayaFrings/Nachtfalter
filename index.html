@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='3b6fb4764e3c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6bc57fab4ad4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1610,6 +1610,13 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .phd{font:600 14px Inter,sans-serif;opacity:.85;margin-right:10px;white-space:nowrap}
 .chmore{display:block;margin:0 auto 8px;font-size:13px;padding:6px 14px}
 .pushprefs{display:grid;gap:6px;margin:8px 0}
+.pleft .pname{margin-bottom:0}.pleft .psub{margin:0 0 18px}
+.privcol{min-width:0;display:grid;gap:14px;align-content:start}
+.privbox{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--p-line);border-radius:18px;background:var(--p-panel);color:var(--p-fg)}
+.privbox b{display:block;font:400 22px/1.2 var(--p-font);margin-bottom:4px}.privbox p{margin:0;color:var(--p-muted);font:15px/1.45 Inter,sans-serif}
+.privic{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--p-line);display:grid;place-items:center;background:var(--p-bg)}.privic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.frsentrow{align-items:center;gap:8px;flex-wrap:nowrap}.frsentrow .btn{padding:8px 12px;white-space:nowrap}.frsent{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;white-space:nowrap;font-size:14px;border:1px solid var(--p-line,var(--line));border-radius:999px;font-weight:600}.frsent svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:760px){.privcol{justify-items:stretch}.privbox{text-align:left}}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -7931,7 +7938,7 @@ function plinksHTML(u){
 }
 // Unter dem Namen: Online-Status und ob ich schon eine Anfrage geschickt habe (Inaya, 2026-10-13)
 const reqSent = id => !!social && FR.mine.includes(id) && !FR.inc.includes(id);
-const profSubHTML = u => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${u.handle && !u.helper ? `<span class="phd">@${esc(u.handle)}</span>` : ''}${onlineHTML(u)}${u.remote && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
+const profSubHTML = (u, low) => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${u.handle && !u.helper ? `<span class="phd">@${esc(u.handle)}</span>` : ''}${onlineHTML(u)}${u.remote && !low && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
@@ -8014,8 +8021,8 @@ function profileView(id){
     PROF_WALL = '';
     return `<section class="themed" style="${themeStyle(u.theme)}">
     ${bannerHTML(u.banner, u.name, u.handle || '')}
-    <header class="phead"><div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${profSubHTML(u)}${portrait(u, u.theme)}</div>
-      <div style="min-width:0"><p class="phandle">@${esc(u.handle || '')}</p><p class="note"><svg class="ico-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Dieses Profil ist privat. Nur Freunde sehen Beiträge und Zimmer.</p><div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div></div></header>
+    <header class="phead"><div class="pleft"><h1 class="pname">${esc(u.name)}${hmark(u)}</h1>${profSubHTML(u, true)}${portrait(u, u.theme)}</div>
+      <div class="privcol"><div class="privbox"><span class="privic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span><div><b>Privates Profil</b><p>${FR.mine.includes(u.id) ? `Deine Anfrage ist unterwegs. Sobald ${esc(u.name)} sie annimmt, siehst du Beiträge und Zimmer.` : FR.inc.includes(u.id) ? `${esc(u.name)} möchte mit dir befreundet sein. Nimm an, dann seht ihr gegenseitig Beiträge und Zimmer.` : `Nur Freunde sehen Beiträge und Zimmer. Schick ${esc(u.name)} eine Anfrage, um mehr zu sehen.`}</p></div></div><div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div></div></header>
   </section>`;
   }
   let panel = '';
@@ -8339,7 +8346,7 @@ async function searchPeople(q){
 function frReqHTML(id){
   if (!social) return '';
   if (FR.inc.includes(id)) return `<div class="frq"><p class="note" style="margin:0">Möchte mit dir befreundet sein.</p><div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button><button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button></div></div>`;
-  if (FR.mine.includes(id)) return `<div class="row"><span class="muted">Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button></div>`;
+  if (FR.mine.includes(id)) return `<div class="row frsentrow"><span class="frsent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span><button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button></div>`;
   return `<div class="row"><button class="btn" data-act="fr-add" data-id="${id}">Freundschaftsanfrage senden</button></div>`;
 }
 function personRow(id){
@@ -10216,7 +10223,7 @@ const browseBtn = () => `<button class="btn ghost brbtn" data-act="browse"><svg 
 function browseView(){
   if (social && !BR.ids && !BR.busy) loadBrowse();
   const card = id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), on = onlineState(u);
-    return `<button type="button" class="brcard" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="brfig">${avatar(u.outfit, 'bust')}</span><b>${esc(u.name)}${hmark(u)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<span class="brtag">Befreundet</span>' : on[0] ? '<span class="brtag on">online</span>' : ''}</button>`; };
+    return `<button type="button" class="brcard" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="brfig">${avatar(u.outfit, 'bust')}</span><b>${esc(u.name)}${hmark(u)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<span class="brtag">Befreundet</span>' : FR.mine.includes(id) ? '<span class="brtag">Anfrage gesendet</span>' : FR.inc.includes(id) ? '<span class="brtag on">Möchte befreundet sein</span>' : on[0] ? '<span class="brtag on">online</span>' : ''}</button>`; };
   return `<div class="card"><h2 class="card-h">Stöbern</h2><div class="card-in">
     <div class="row"><button class="btn ghost" data-act="nav" data-v="find">← Freunde finden</button></div>
     ${!social ? '<p class="note">Stöbern geht, sobald du angemeldet bist.</p>' : !BR.ids ? '<p class="muted">Profile werden geladen …</p>' : BR.ids.length ? `<div class="brgrid">${BR.ids.map(card).join('')}</div>${BR.more ? '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="browse-more">Mehr anzeigen</button></div>' : ''}` : '<p class="note">Noch keine anderen Profile.</p>'}
