@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='58fd340ec567';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='60065ea40696';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -332,7 +332,13 @@ label.f{display:grid;gap:4px}
 .nt-txt{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;color:inherit;font:inherit;font-size:16px;line-height:1.35;cursor:pointer;overflow-wrap:anywhere}
 .nt-q{color:var(--fg)}.nt-t{color:var(--muted);font-size:14px;white-space:nowrap}
 .nt-ico{display:inline-flex;gap:2px;vertical-align:-5px}.nt-ico svg{width:20px;height:20px}
-.nt-th{flex:none;width:58px;height:58px;padding:0;border:1px solid var(--line-soft);background:var(--paper-2,#1a1a1c);overflow:hidden;cursor:pointer;display:grid;place-items:center}
+.nt-th{flex:none;width:58px;height:66px;padding:0;border:1px solid var(--line-soft);border-radius:29px 29px 8px 8px / 26px 26px 8px 8px;background:radial-gradient(circle at 50% 35%,#2a2633,#141317 75%);overflow:hidden;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 10px #0006,inset 0 0 0 2px #0003;transition:transform .15s}
+.nt-th:hover{transform:translateY(-1px)}
+.nt-th::before{content:'';position:absolute;inset:0;margin:auto;width:24px;height:24px;opacity:.35;background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23eeedf2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Ccircle cx='9' cy='10' r='2'/%3E%3Cpath d='M21 16l-5-5-8 8'/%3E%3C/svg%3E")}
+.nt-th:has(.nt-tx)::before,.nt-th:has(img[src])::before{display:none}
+.nt-th img{position:relative;z-index:1}
+.nt-th .nt-q{position:absolute;top:2px;left:5px;font:400 18px/1 Georgia,serif;opacity:.55;font-style:normal}
+.nt-th:has(.nt-tx) .nt-tx{padding:13px 5px 4px!important;-webkit-line-clamp:4!important;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
 .nt-th img{width:100%;height:100%;object-fit:cover}.nt-th span{font:9px/1.15 var(--f-ital);color:var(--muted);padding:3px;text-align:center;overflow:hidden;max-height:100%;overflow-wrap:anywhere;hyphens:auto}
 .nt-btns{display:flex;gap:6px;flex:none}.nt-btns .btn{min-height:34px;padding:5px 12px;font-size:14px}
 .nt-empty{display:grid;justify-items:center;gap:8px;text-align:center;padding:48px 16px;color:var(--muted)}.nt-empty svg{width:56px;height:56px;fill:none;stroke:var(--fg);stroke-width:1.2;padding:14px;border:1.5px solid var(--fg);border-radius:50%;box-sizing:content-box}.nt-empty b{color:var(--fg);font:400 22px var(--f-display)}.nt-empty span{max-width:34ch}
@@ -1700,6 +1706,11 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .archsetb{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:18px 18px 8px 8px;background:var(--paper-2,#151517);color:var(--fg);font:inherit;text-align:left;cursor:pointer}
 .archsetb:hover{border-color:var(--fg)}.archsetb>svg{width:26px;height:26px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6}.archsetb>span{display:grid;flex:1}.archsetb b{font:400 17px var(--f-display,serif)}.archsetb small{color:var(--muted);font-size:13px}.archsetb>i{font-style:normal;font-size:22px;opacity:.6}
 .hword{white-space:nowrap;font-size:min(28px,calc((100vw - 72px) / (var(--hn,10) * 1.2)))!important;letter-spacing:.08em!important}
+.e2box{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:center;margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:22px 22px 10px 10px;background:linear-gradient(160deg,#1d1a24,#121215)}
+.e2seal{width:46px;height:54px;border-radius:50% 50% 10px 10px / 60% 60% 10px 10px;border:1.5px solid #b89cff;display:grid;place-items:center;color:#d8c8ff;box-shadow:0 0 14px #8a5cd655}.e2seal svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.e2txt{display:grid;gap:3px;min-width:0}.e2txt b{font:400 18px var(--f-display,serif)}.e2txt small{color:var(--muted);font-size:13px;line-height:1.45}
+.e2go{grid-column:1/-1;justify-content:center}
+@media (min-width:761px){.e2box{grid-template-columns:auto 1fr auto}.e2go{grid-column:auto}}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -6192,7 +6203,7 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   else if (q.mu?.art || sp?.art) { inner = `<img src="${esc(q.mu?.art || sp.art)}" alt="" onerror="this.remove()">`; badge = 'mu'; }
   else if (q.lp?.img && /^https:\/\//.test(q.lp.img)) inner = `<img src="${esc(q.lp.img)}" alt="" onerror="this.remove()">`;
   if (!inner) { const t = String(q.text || q.lp?.t || (q.mu ? q.mu.t : '') || q.url || '').trim(); inner = `<span class="nt-tx" lang="de">${etx(t.slice(0, 70)) || '…'}</span>`; if (q.mu) badge = 'mu';
-    const au = profUser?.(sh ? sh.a : (p.author || oid)) || S.users[p.author], bx = /^#[0-9a-f]{6}$/i.test(au?.theme?.box || '') ? au.theme.box : '#1c1b20'; tst = ` style="background:${bx};color:${autoFg(bx)}"`; } // Textbeitrag: Kachel in den Farben des Beitrags, gut lesbar (Inaya, 2026-10-12)
+    const au = profUser?.(sh ? sh.a : (p.author || oid)) || S.users[p.author], bx = /^#[0-9a-f]{6}$/i.test(au?.theme?.box || '') ? au.theme.box : '#1c1b20', pat = au?.theme?.pattern && au.theme.pattern !== 'schlicht' ? patternURL(au.theme.pattern, isLight(bx) ? 'tag' : 'nacht', .12) : 'none'; tst = ` style="background-color:${bx};background-image:${pat};color:${autoFg(bx)};--ntb:${bx}"`; inner = '<i class="nt-q" aria-hidden="true">❝</i>' + inner; } // Textbeitrag: Kachel in den Farben des Beitrags, gut lesbar (Inaya, 2026-10-12)
   const ico = badge === 'play' ? '<i class="nt-pl" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i>' : badge === 'mu' ? '<i class="nt-pl" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i>' : '';
   return `<button type="button" class="nt-th" data-act="nt-go" data-v="${v}" data-id="${esc(oid)}"${k ? ` data-k="${esc(k)}"` : ''}${cm ? ' data-c="1"' : ''} aria-label="Beitrag ansehen"${tst}>${inner}${ico}</button>`;
 }
@@ -8381,7 +8392,7 @@ function socialStart(){
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); if (RING.raw.length) ringFilter();
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
     Promise.all(CH.list.flatMap(c => c.members).filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender);
   }, () => {});
   db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; syncFriends(); }).catch(() => {});
@@ -8745,8 +8756,9 @@ function groupForm(friends){
     <fieldset class="opt"><legend class="lbl">Muster</legend><div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="gopt" data-k="pattern" data-v="${v}" aria-pressed="${g.theme.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div></fieldset>
     <fieldset class="opt"><legend class="lbl">Hintergrundbild</legend><div class="row"><label class="btn ghost"><input type="file" id="g-bgfile" accept="image/*" hidden>${g.theme.bg ? 'Anderes Foto' : 'Foto hochladen'}</label>${g.theme.bg ? '<button type="button" class="lnk" data-act="g-bgdel">Foto entfernen</button>' : ''}</div><p class="note" style="margin:0">Rand und Sprechblasen behalten die Farbe, die du oben auswählst.</p></fieldset>
     ${g.id && gDelAsk ? `<div class="gdel"><span>Gruppe wirklich für alle löschen? Alle Nachrichten sind dann weg.</span><div class="row"><button class="btn" type="button" data-act="chat-del-yes">Ja, löschen</button><button class="btn ghost" type="button" data-act="chat-del-no">Nein</button></div></div>` : ''}
-    ${g.id && e2Chat(g.id) ? `<div class="setrow e2row"><div class="setinfo"><span class="lbl">${E2_LOCK} Ende-zu-Ende-verschlüsselt</span><span class="setval muted">Nur ${g.dm ? 'ihr beide' : 'die Mitglieder'} könnt die Nachrichten lesen.</span><button class="btn ghost setedit" type="button" data-act="e2-code">Sicherheitsnummer</button></div></div>` : ''}
+
     <div class="row">${g.id && !g.dm ? `<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button><button class="btn ghost" type="button" data-act="chat-del">Gruppe löschen</button>` : ''}<span class="sp"></span><button class="btn" type="submit">${g.id ? 'Speichern' : 'Gruppe erstellen'}</button></div>
+    ${g.id && e2Chat(g.id) ? `<div class="e2box"><span class="e2seal" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.3" r="1.4"/><path d="M12 16.7v1.6"/></svg></span><span class="e2txt"><b>Ende-zu-Ende-verschlüsselt</b><small>Nur ${g.dm ? 'ihr beide könnt' : 'die Mitglieder können'} die Nachrichten lesen, nicht einmal Noctibat. Mit der Sicherheitsnummer prüft ihr, dass niemand dazwischen sitzt.</small></span><button class="btn ghost e2go" type="button" data-act="e2-code">Sicherheitsnummer vergleichen</button></div>` : ''}
   </form>`;
 }
 async function chBgSave(cid, g){ if (!g.bgNew || !g.theme.bg) return; await social.db.doc('chats/' + cid + '/bg/img').set({img:g.bgNew, by:social.uid, ts:Date.now()}); CHBG[cid + ':' + g.theme.bg.v] = g.bgNew; delete g.bgNew; }
@@ -8951,8 +8963,23 @@ let e2RT = null;
 function e2Redraw(cid){ clearTimeout(e2RT); e2RT = setTimeout(() => { if (CH.open !== cid || !CH.mraw) return; const box = document.getElementById('msgs'), atEnd = !box || box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   CH.msgs = e2View(cid, CH.mraw); chSplit(); e2Prev(cid); drawMsgs(!atEnd); }, 40); }
 const e2PrevText = m => m._lock ? '' : m.text || (m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.story ? '📖 Story' : '');
-function e2Prev(cid){ const l = CH.msgs.filter(m => m._e2e || !m.e2e), m = l[l.length - 1]; if (m && m._e2e && !m._lock) { const t = e2PrevText(m).slice(0, 60); if (E2E.prev[cid] !== t) { E2E.prev[cid] = t; softRender(); } } }
-const chatPrevText = c => c.lastText === '🔒' ? (E2E.prev[c.id] || '🔒 Verschlüsselte Nachricht') : c.lastText; // Chatliste: Vorschau nur aus dem eigenen Speicher
+function e2Prev(cid){ const l = CH.msgs.filter(m => m._e2e || !m.e2e), m = l[l.length - 1]; if (m && m._e2e && !m._lock) { const t0 = e2PrevText(m); if (!t0) return; const t = (m.from === social?.uid ? 'Du: ' : '') + t0.slice(0, 60); if (E2E.prev[cid] !== t) { E2E.prev[cid] = t; const c = CH.list.find(x => x.id === cid), cache = e2pvCache(); if (c?.last) { cache[cid] = {t, at:c.last}; try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} } softRender(); } } }
+const chatPrevText = c => c.lastText === '🔒' ? (E2E.prev[c.id] || '…') : c.lastText; // Chatliste: Vorschau nur aus dem eigenen Speicher
+// Vorschau verschlüsselter Chats (Inaya, 2026-10-14): die letzte Nachricht wird auf dem eigenen Gerät entschlüsselt, der Server sieht weiter nur 🔒.
+// Gemerkt wird sie nur auf diesem Gerät (localStorage), damit nach dem Neuladen gleich der Text dasteht.
+const E2PV = {c:null, busy:false, t:null};
+const e2pvKey = () => 'nf-e2prev:' + (social?.uid || '');
+function e2pvCache(){ if (E2PV.c) return E2PV.c; try { E2PV.c = JSON.parse(localStorage.getItem(e2pvKey()) || '{}') || {}; } catch { E2PV.c = {}; } for (const [k, v] of Object.entries(E2PV.c)) if (v?.t && !E2E.prev[k]) E2E.prev[k] = v.t; return E2PV.c; }
+function e2pvQueue(){ clearTimeout(E2PV.t); E2PV.t = setTimeout(e2pvLoad, 600); }
+async function e2pvLoad(){ if (E2PV.busy || !social) return; const cache = e2pvCache(); const todo = CH.list.filter(c => c.lastText === '🔒' && c.last && cache[c.id]?.at !== c.last); if (!todo.length) return;
+  if (!(await e2Init().catch(() => false))) return; E2PV.busy = true; let ch = false;
+  try { for (const c of todo.slice(0, 25)) { try { const q = await social.db.collection(`chats/${c.id}/m`).orderBy('ts', 'desc').limit(4).get();
+        for (const d of q.docs) { if (d.id.startsWith('r_') || isDel(d.id)) continue; const x = d.data(); let t = '';
+          if (x.e2e) { const ck = d.id + '@' + x.ts; const m = E2E.dec[ck] || await e2Open(c.id, d.id, x).then(v => (E2E.dec[ck] = v)).catch(() => null); if (!m || m.kind === 'react') continue; t = e2PrevText(m) || ''; }
+          else t = x.text || ''; if (!t) continue;
+          t = (x.from === social.uid ? 'Du: ' : '') + t.slice(0, 60); cache[c.id] = {t, at:c.last}; E2E.prev[c.id] = t; ch = true; break; } } catch {} } }
+  finally { E2PV.busy = false; }
+  if (ch) { try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} softRender(); } }
 function e2LockHTML(m){ const t = m._lock === 'wait' ? 'Wird entschlüsselt …' : m._lock === 'nokey' ? 'Auf diesem Gerät nicht lesbar' : m._lock === 'off' ? 'Verschlüsselung hier nicht verfügbar' : 'Ließ sich nicht entschlüsseln';
   return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? '<small class="e2hint">Verlauf holen: Einstellungen → Verschlüsselung</small>' : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; }
 const E2_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
