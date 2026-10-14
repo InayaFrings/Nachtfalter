@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='029f3ccbce7b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3b6fb4764e3c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -9583,11 +9583,12 @@ async function rulesCheck(){ try { await social.db.collection(`rings/${social.ui
    Geräte-Schlüssel und Auswahl liegen privat unter data/users/<uid>/nf-push. Verschickt wird von den Cloud Functions (functions/index.js, braucht Blaze).
    Der Web-Push-Schlüssel (VAPID, öffentlich) steht in site/push und wird von Inaya in den Einstellungen eingetragen. */
 const PUSH = {vapid:null, doc:null, busy:false, err:''};
+const PUSH_VAPID = 'BLClFwGbH4M514GFPExL4h8acnZmcllWnT3jntcTx4AjVXJ4Q35dh6EX-fmbjxlEsbrFvaa6AQKqOhYnab5YwAg'; // öffentlicher Web-Push-Schlüssel aus der Firebase-Konsole (Inaya, 2026-10-14); site/push kann ihn überschreiben
 const PUSH_KINDS = [['calls', 'Anrufe'], ['msgs', 'Nachrichten'], ['friends', 'Freundschaftsanfragen'], ['gb', 'Gästebuch']];
 const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 const pushStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const pushRef = () => social.db.doc(`data/users/${social.uid}/nf-push`);
-async function pushLoad(){ if (!social) return; try { const [v, d] = await Promise.all([social.db.doc('site/push').get(), pushRef().get()]); PUSH.vapid = v.exists ? v.data().vapid || '' : ''; PUSH.doc = d.exists ? d.data() : {}; } catch { PUSH.vapid = PUSH.vapid || ''; PUSH.doc = PUSH.doc || {}; } }
+async function pushLoad(){ if (!social) return; try { const [v, d] = await Promise.all([social.db.doc('site/push').get(), pushRef().get()]); PUSH.vapid = (v.exists ? v.data().vapid || '' : '') || PUSH_VAPID; PUSH.doc = d.exists ? d.data() : {}; } catch { PUSH.vapid = PUSH.vapid || PUSH_VAPID; PUSH.doc = PUSH.doc || {}; } }
 const pushMine = () => { try { return localStorage.getItem('nf-push-id') || ''; } catch { return ''; } };
 function pushCard(){ if (!social) return ''; if (PUSH.doc === null) { pushLoad().then(() => { const el = document.getElementById('pushcard'); if (el) el.outerHTML = pushCard(); }); }
   const on = !!(pushMine() && PUSH.doc?.tokens?.[pushMine()]) && pushOk() && Notification.permission === 'granted', prefs = PUSH.doc?.prefs || {};
