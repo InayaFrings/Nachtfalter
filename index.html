@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='60065ea40696';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9a5bcedc98f6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1711,6 +1711,9 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .e2txt{display:grid;gap:3px;min-width:0}.e2txt b{font:400 18px var(--f-display,serif)}.e2txt small{color:var(--muted);font-size:13px;line-height:1.45}
 .e2go{grid-column:1/-1;justify-content:center}
 @media (min-width:761px){.e2box{grid-template-columns:auto 1fr auto}.e2go{grid-column:auto}}
+[data-pk],[data-pk] *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.pinpop .pindel{color:#ff7a7a}.pinpop .pindel svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+.choicebtns{display:grid;gap:8px;margin-top:6px}.choicebtns .btn{justify-content:center}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -5899,11 +5902,25 @@ const byPin = kind => (a, b) => (isPin(kind, b.id) ? 1 : 0) - (isPin(kind, a.id)
 // Wie bei WhatsApp: lange drücken (oder am PC Rechtsklick / Pfeil) öffnet ein Menü mit „Anpinnen“; angepinnt steht oben mit kleiner Nadel (Inaya, 2026-10-10)
 const PIN_MAX = 3, pinMax = kind => kind === 'f' ? 4 : PIN_MAX; // angepinnte Freunde (max. 4) stehen auch auf dem Profil (Inaya, 2026-10-10)
 const pinMark = (kind, id) => `${isPin(kind, id) ? `<span class="pinm" title="Angepinnt" aria-label="Angepinnt">${PIN_ICO}</span>` : ''}<button type="button" class="pinmore" data-act="pin-menu" aria-label="Optionen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
+// Chat löschen (Inaya, 2026-10-14): nur für mich (ausblenden bis zur nächsten neuen Nachricht, alter Verlauf bleibt weg) oder für beide (alles weg)
+function askChoice(q, txt, opts){ return new Promise(res => { const m = document.createElement('div'); m.className = 'modal'; m.style.zIndex = '5000'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(q)}</h2>${txt ? `<p class="note">${esc(txt)}</p>` : ''}<div class="choicebtns">${opts.map(([v, l, cls]) => `<button type="button" class="btn ${cls || 'ghost'}" data-r="${v}">${esc(l)}</button>`).join('')}</div></div>`;
+  const done = v => { m.remove(); res(v); }; m.addEventListener('click', e => { const r = e.target.closest('[data-r]'); if (r) { e.stopPropagation(); done(r.dataset.r); } else if (e.target === m) done(null); }); document.body.appendChild(m); }); }
+async function chatRemove(cid){ const c = CH.list.find(x => x.id === cid); if (!c || !/^dm_/.test(cid)) return; document.querySelector('.pinpop')?.remove();
+  const v = await askChoice(`Chat mit ${chatName(c)} löschen?`, '„Nur für mich“ entfernt den Chat und den bisherigen Verlauf bei dir. Schreibt die Person wieder, erscheint der Chat mit den neuen Nachrichten. „Für beide“ löscht alle Nachrichten endgültig, auch bei der anderen Person.', [['me', 'Nur für mich', 'ghost'], ['all', 'Für beide löschen', ''], ['', 'Abbrechen', 'ghost']]);
+  if (!v) return;
+  if (v === 'me') { S.chatHid = {...(S.chatHid || {}), [cid]:Date.now()}; save(); }
+  else { try { let n = 0; for (;;) { const q = await social.db.collection(`chats/${cid}/m`).limit(300).get(); if (q.empty || n > 20) break; const bt = social.db.batch(); q.docs.forEach(d => bt.delete(d.ref)); await bt.commit(); n++; }
+      await social.db.doc('chats/' + cid).update({last:Date.now(), lastText:'', lastFrom:social.uid}).catch(() => {}); S.chatHid = {...(S.chatHid || {}), [cid]:Date.now()}; save(); }
+    catch { return toast('Löschen hat nicht ganz geklappt. Versuch es nochmal.'); } }
+  if (CH.open === cid) { if (CH.unsub) { CH.unsub(); CH.unsub = null; } CH.open = null; CH.mode = null; }
+  chRefilter(); render(); toast(v === 'me' ? 'Chat bei dir gelöscht' : 'Chat für beide gelöscht'); }
+const chHidAt = cid => +(S.chatHid || {})[cid] || 0;
 function pinMenu(el, x, y){
   document.querySelector('.pinpop')?.remove();
   const kind = el.dataset.pk, id = el.dataset.pid, on = isPin(kind, id);
   const m = document.createElement('div'); m.className = 'pinpop'; m.setAttribute('role', 'menu');
-  m.innerHTML = `<div class="pinsheet"><p class="pinname">${esc(el.dataset.pn || '')}</p><button type="button" role="menuitem" data-act="pin" data-k="${kind}" data-id="${esc(id)}">${PIN_ICO}<span>${on ? 'Lösen' : 'Anpinnen'}</span></button><button type="button" class="pincancel" data-act="pin-close">Abbrechen</button></div>`;
+  m.innerHTML = `<div class="pinsheet"><p class="pinname">${esc(el.dataset.pn || '')}</p><button type="button" role="menuitem" data-act="pin" data-k="${kind}" data-id="${esc(id)}">${PIN_ICO}<span>${on ? 'Nicht mehr anpinnen' : 'Oben anpinnen'}</span></button>${kind === 'c' && /^dm_/.test(id) ? `<button type="button" role="menuitem" class="pindel" data-act="chat-rm" data-id="${esc(id)}">${TRASH_SVG}<span>Chat löschen</span></button>` : ''}<button type="button" class="pincancel" data-act="pin-close">Abbrechen</button></div>`;
   document.body.appendChild(m);
   if (!isMob()) { const sh = m.firstChild; sh.style.left = Math.min(x, innerWidth - 230) + 'px'; sh.style.top = Math.min(y, innerHeight - 140) + 'px'; m.classList.add('at'); }
   const t0 = Date.now(); m.addEventListener('click', e => { if (e.target === m && Date.now() - t0 > 450) m.remove(); });
@@ -8428,7 +8445,7 @@ const bkHash = str => { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i 
 const iBlocked = id => !!id && (S.blocked || []).some(x => x.id === id);
 const blockedMe = id => !!(id && social && Array.isArray(PROF[id]?.bk) && PROF[id].bk.includes(bkHash(id + '>' + social.uid)));
 const isBlk = id => !!id && id !== social?.uid && (iBlocked(id) || blockedMe(id));
-const chVis = c => !(/^dm_/.test(c.id) && (c.members || []).some(id => isBlk(id)));
+const chVis = c => !(/^dm_/.test(c.id) && (c.members || []).some(id => isBlk(id))) && !(chHidAt(c.id) && (+c.last || 0) <= chHidAt(c.id));
 const reqOpen = id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id) && !isBlk(id);
 function chRefilter(){ if (CH.raw) CH.list = CH.raw.filter(chVis); }
 async function blockUser(id){
@@ -8618,7 +8635,7 @@ function readHTML(m, c){ const mem = (c?.members || e2Members(CH.open, c) || [])
   return `<div class="mread" title="Gelesen von ${esc(names)}" aria-label="Gelesen von ${esc(names)}"><span>Gelesen</span><span class="mreadav">${show.map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => drawMsgs(true)); } return `<span class="cameo">${p ? headPic(p) : ''}</span>`; }).join('')}${more > 0 ? `<b>+${more}</b>` : ''}</span></div>`; }
 function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
   return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 60).onSnapshot({includeMetadataChanges:true}, snap => {
-    CH.mraw = snap.docs.filter(d => !isDel(d.id)).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id); rdMark();
+    CH.mraw = snap.docs.filter(d => !isDel(d.id) && !(chHidAt(id) && (+d.data().ts || 0) <= chHidAt(id))).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id); rdMark();
     if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
 function drawMsgs(keep){
@@ -8757,7 +8774,7 @@ function groupForm(friends){
     <fieldset class="opt"><legend class="lbl">Hintergrundbild</legend><div class="row"><label class="btn ghost"><input type="file" id="g-bgfile" accept="image/*" hidden>${g.theme.bg ? 'Anderes Foto' : 'Foto hochladen'}</label>${g.theme.bg ? '<button type="button" class="lnk" data-act="g-bgdel">Foto entfernen</button>' : ''}</div><p class="note" style="margin:0">Rand und Sprechblasen behalten die Farbe, die du oben auswählst.</p></fieldset>
     ${g.id && gDelAsk ? `<div class="gdel"><span>Gruppe wirklich für alle löschen? Alle Nachrichten sind dann weg.</span><div class="row"><button class="btn" type="button" data-act="chat-del-yes">Ja, löschen</button><button class="btn ghost" type="button" data-act="chat-del-no">Nein</button></div></div>` : ''}
 
-    <div class="row">${g.id && !g.dm ? `<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button><button class="btn ghost" type="button" data-act="chat-del">Gruppe löschen</button>` : ''}<span class="sp"></span><button class="btn" type="submit">${g.id ? 'Speichern' : 'Gruppe erstellen'}</button></div>
+    <div class="row">${g.id && !g.dm ? `<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button><button class="btn ghost" type="button" data-act="chat-del">Gruppe löschen</button>` : g.id && g.dm ? `<button class="btn ghost" type="button" data-act="chat-rm" data-id="${esc(g.id)}">Chat löschen</button>` : ''}<span class="sp"></span><button class="btn" type="submit">${g.id ? 'Speichern' : 'Gruppe erstellen'}</button></div>
     ${g.id && e2Chat(g.id) ? `<div class="e2box"><span class="e2seal" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.3" r="1.4"/><path d="M12 16.7v1.6"/></svg></span><span class="e2txt"><b>Ende-zu-Ende-verschlüsselt</b><small>Nur ${g.dm ? 'ihr beide könnt' : 'die Mitglieder können'} die Nachrichten lesen, nicht einmal Noctibat. Mit der Sicherheitsnummer prüft ihr, dass niemand dazwischen sitzt.</small></span><button class="btn ghost e2go" type="button" data-act="e2-code">Sicherheitsnummer vergleichen</button></div>` : ''}
   </form>`;
 }
@@ -11141,6 +11158,7 @@ document.addEventListener('click', async e => {
   else if (a === 'call-end') callLeave();
   else if (a === 'ring-yes' || a === 'ring-no') ringAnswer(b.dataset.id, a === 'ring-yes');
   else if (a === 'tk-new') tkDialog(null);
+  else if (a === 'chat-rm') chatRemove(b.dataset.id || CH.open || CH.gdraft?.id);
   else if (a === 'g-pic-x') { grabGroupDraft(); if (CH.gdraft) { CH.gdraft.pic = ''; render(); } }
   else if (a === 'grp-share') { const c = CH.list.find(x => x.id === CH.open); if (!c?.group) return; GSH.g = c; GSH.sel = new Set(); grpSharePaint(); }
   else if (a === 'grp-x') { document.getElementById('grpsh')?.remove(); GSH.sel = new Set(); }
