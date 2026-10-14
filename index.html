@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4401a1153fc2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f554cfd2a236';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1637,6 +1637,14 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .vm2 .vmrate{margin-left:auto;border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:1px 8px;font:600 11px/16px Inter,sans-serif;opacity:.75;cursor:pointer}
 .vm2 .vmspin{width:42px;height:50px;border-radius:50% 50% 8px 8px / 62% 62% 8px 8px;border:1.5px dashed currentColor}
 .psub .page{font-weight:600}
+.zcard{min-width:0;overflow:hidden}.zcard .pname{font-size:clamp(20px,5.5vw,30px);line-height:1.15;overflow-wrap:anywhere;hyphens:auto;min-width:0;max-width:100%}.zcard .pname .uname{display:inline;white-space:normal}.zcard .pname .lnk{white-space:normal;overflow-wrap:anywhere;text-align:center}
+#batfly{position:fixed;inset:0;z-index:5000;pointer-events:none;overflow:hidden}
+#batfly span{position:absolute;left:-60px;color:var(--fg,#eeedf2);opacity:.9;animation:batx var(--du) cubic-bezier(.45,.05,.55,.95) var(--d) both;filter:drop-shadow(0 2px 4px #0008)}
+#batfly span svg{width:100%;height:auto;display:block;animation:batw .18s ease-in-out infinite alternate;transform-origin:50% 40%}
+@keyframes batx{0%{transform:translate(0,0)}35%{transform:translate(38vw,var(--dy))}70%{transform:translate(72vw,calc(var(--dy) * -1))}100%{transform:translate(calc(100vw + 120px),var(--dy))}}
+@keyframes batw{from{transform:scaleY(1)}to{transform:scaleY(.45)}}
+#pullbat{position:fixed;left:50%;top:calc(6px + env(safe-area-inset-top,0px));z-index:5000;width:46px;color:var(--fg,#eeedf2);pointer-events:none;transform:translate(-50%,0);transition:opacity .15s}
+#pullbat svg{width:100%;height:auto;display:block}#pullbat.go{color:var(--accent,#b98cff)}#pullbat.spin svg{animation:batw .12s ease-in-out infinite alternate}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -1652,7 +1660,9 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .mact{display:flex;gap:2px;flex:none;opacity:0;transition:opacity .15s}.mwrap:hover .mact,.mact:focus-within{opacity:1}
 .mact button{width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--p-fg,#eeedf2);opacity:.75;display:grid;place-items:center;cursor:pointer}.mact button:hover,.mact button:focus-visible{opacity:1;background:var(--p-panel,#ffffff14)}
 .mact svg,.rxre svg,.chre>svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-@media (pointer:coarse){.mact{opacity:1}.mact .mactre{display:none}.mact button{width:28px;height:28px;opacity:.45}}
+@media (pointer:coarse){.mact{opacity:1}.mact .mactre{display:none}.mact button{width:28px;height:28px;opacity:.45}.mact .mactsw{display:grid;opacity:.6}}
+@media (hover:none){.mact{opacity:1}.mact .mactre{display:none}.mact .mactsw{display:grid;opacity:.6}}
+.mact .mactsw{display:none}.mactsw svg{width:18px;height:18px}
 .mrx{display:flex;flex-wrap:wrap;gap:4px;margin:-4px 8px 0;position:relative;z-index:1}.mwrap.them .mrx{margin-left:42px}
 .mrxb{display:inline-flex;align-items:center;gap:3px;height:26px;padding:0 7px;border-radius:13px;border:1px solid var(--p-line,#ffffff33);background:var(--p-panel,#1c1c1f);color:var(--p-fg,#eeedf2);font:600 12px Inter,sans-serif;cursor:pointer}
 .mrxb .emo{width:18px;height:18px;margin:0}.mrxb.on{border-color:var(--p-fg,#fff);box-shadow:0 0 0 1px var(--p-fg,#fff) inset}
@@ -2057,7 +2067,7 @@ const SH_KINDS = {s:1, sd:1, st:1};
 const shCount = p => { const w = piKey(p) ? piWatch(p) : null; return w ? w.list.filter(x => SH_KINDS[x.kind]).length : 0; };
 function shMark(owner, pid, kind){ if (!social || !owner || !/^[\w-]+$/.test(String(owner) + pid) || /^helper-/.test(owner)) return; social.db.doc(`chats/pi_${owner}_${pid}/m/${social.uid}_${kind}_${Date.now().toString(36)}`).set({kind, by:social.uid, ts:Date.now()}).catch(() => {}); }
 const RP_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>';
-const repostBtn = p => { const n = shCount(p); return p.author === S.me && !p.remote ? (n ? `<span class="rpbtn rpown" title="So oft wurde dein Beitrag geteilt" aria-label="${n}-mal geteilt">${RP_SVG}<span>${n}</span></span>` : '')
+const repostBtn = p => { const n = shCount(p); return p.author === S.me && !p.remote ? `<span class="rpbtn rpown" title="So oft wurde dein Beitrag geteilt" aria-label="${n}-mal geteilt">${RP_SVG}<span>${n}</span></span>`
   : `<button type="button" class="rpbtn" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag reposten${n ? ` (${n}-mal geteilt)` : ''}">${RP_SVG}<span>${n || ''}</span></button>`; };
 const likeBtn = (attrs, on, n, can=true) => can ? `<button class="likebtn" ${attrs} aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="likebtn muted">${HEART(false)}<span>${n}</span></span>` : '';
 const RNAME = {lach:'Lachend', schock:'Geschockt', herz:'Herzaugen', wein:'Weinend', wut:'Wütend'};
@@ -9313,16 +9323,17 @@ const quoteHTML = r => { if (!reOk(r)) return ''; const o = CH.msgs.find(x => x.
   return `<button type="button" class="mquote${o || r.s ? ' hasmd' : ''}" data-act="msg-jump" data-id="${esc(r.id)}" aria-label="Zur Originalnachricht springen"><span class="mqh">❦ ${esc(r.from === social?.uid ? 'Du' : chatWho(r.from))}</span>${quoteBody(o || r)}</button>`; };
 const chReExtra = () => { const r = CH.re; return r && r.cid === CH.open ? {re:{id:r.id, from:r.from, t:r.t, ...(r.s ? {s:r.s} : {})}} : {}; };
 function chReply(mid){ const m = CH.msgs.find(x => x.id === mid); if (!m || m._lock) return; rxClose(); const st = sgClean(m.stk || m.gif); CH.re = {cid:CH.open, id:mid, from:m.from, t:msgSnip(m), ...(st ? {s:st} : {})}; chRePaint(); const i = document.getElementById('cm-in'); if (i) { i.focus({preventScroll:true}); kbSoon?.(); } }
-function chRePaint(){ const r = CH.re && CH.re.cid === CH.open ? CH.re : null, f = document.querySelector('form[data-form="cmsg"]'), ex = document.querySelector('.chre');
-  if (ex && (!r || ex.dataset.id !== r.id || ex.nextElementSibling !== f)) ex.remove(); else if (ex) return; if (!r || !f) return;
+// Reihenfolge über dem Schreibfeld fest (Inaya, 2026-10-14): Antwort-Leiste, darunter Sticker/GIF-Vorschau, dann das Feld. Vorher schoben sich beide endlos gegenseitig weg (Seite fror ein).
+function chRePaint(){ const r = CH.re && CH.re.cid === CH.open ? CH.re : null, f = document.querySelector('form[data-form="cmsg"]'), ex = document.querySelector('.chre'), tgt = f?.previousElementSibling?.classList.contains('gst') ? f.previousElementSibling : f;
+  if (ex && (!r || ex.dataset.id !== r.id || ex.nextElementSibling !== tgt)) ex.remove(); else if (ex) return; if (!r || !f) return;
   const o = CH.msgs.find(x => x.id === r.id && !x._lock) || r;
-  f.insertAdjacentHTML('beforebegin', `<div class="chre" data-id="${esc(r.id)}"><span class="chreq mquote hasmd"><span class="mqh">❦ ${r.from === social?.uid ? 'Antwort auf deine Nachricht' : 'Antwort an ' + esc(chatWho(r.from))}</span>${quoteBody(o)}</span><button type="button" class="chrex" data-act="re-x" aria-label="Antwort abbrechen">✕</button></div>`); }
+  tgt.insertAdjacentHTML('beforebegin', `<div class="chre" data-id="${esc(r.id)}"><span class="chreq mquote hasmd"><span class="mqh">❦ ${r.from === social?.uid ? 'Antwort auf deine Nachricht' : 'Antwort an ' + esc(chatWho(r.from))}</span>${quoteBody(o)}</span><button type="button" class="chrex" data-act="re-x" aria-label="Antwort abbrechen">✕</button></div>`); }
 function rxHTML(m){ const r = CH.rx?.[m.id]; if (!r) return ''; const by = {};
   for (const [u, e] of Object.entries(r)) if (!isBlk(u)) (by[e] = by[e] || []).push(u);
   const ks = Object.keys(by); if (!ks.length) return '';
   return `<div class="mrx">${ks.map(e => { const l = by[e], on = l.includes(social?.uid); return `<button type="button" class="mrxb${on ? ' on' : ''}" data-act="rx-tog" data-id="${esc(m.id)}" data-e="${e}" aria-pressed="${on}" title="${esc(l.map(u => u === social?.uid ? 'Du' : chatWho(u)).join(', '))}" aria-label="${esc(EMOS[e][0])}, ${l.length}">${emoSVG(e)}${l.length > 1 ? `<span>${l.length}</span>` : ''}</button>`; }).join('')}</div>`; }
 function msgWrapHTML(m, group, read = ''){ const mine = m.from === social?.uid, ok = m.id && !m._lock && !m._pend && !isRx(m.id);
-  const act = ok ? `<span class="mact"><button type="button" class="mactrx" data-act="rx-open" data-id="${esc(m.id)}" aria-label="Mit Emoji reagieren">${RX_ICO}</button><button type="button" class="mactre" data-act="re-start" data-id="${esc(m.id)}" aria-label="Auf diese Nachricht antworten">${RE_ICO}</button></span>` : '';
+  const act = ok ? `<span class="mact"><button type="button" class="mactrx" data-act="rx-open" data-id="${esc(m.id)}" aria-label="Mit Emoji reagieren">${RX_ICO}</button><button type="button" class="mactre" data-act="re-start" data-id="${esc(m.id)}" aria-label="Auf diese Nachricht antworten">${RE_ICO}</button><button type="button" class="mactsw" data-act="re-start" data-id="${esc(m.id)}" aria-label="Antworten (oder nach rechts wischen)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h3M9.5 12h3"/><path d="M14 7l5 5-5 5"/></svg></button></span>` : '';
   return `<div class="mwrap ${mine ? 'me' : 'them'}" data-mid="${esc(m.id || '')}"><div class="mline">${mine ? act + bubbleHTML(m, group) : bubbleHTML(m, group) + act}</div>${rxHTML(m)}${read}</div>`; }
 async function rxSet(mid, e){ const cid = CH.open; if (!cid || !social || !mid || isRx(mid) || (e && !EMOS[e])) return;
   const rid = 'r_' + mid + '_' + social.uid, cur = CH.rx?.[mid]?.[social.uid], ref = social.db.doc(`chats/${cid}/m/${rid}`);
@@ -9637,6 +9648,23 @@ async function tkSave(f, go){ const name = document.getElementById('tk-name').va
 // Sind die eingespielten Firestore-Regeln aktuell? Klingeln (rings) gibt es erst seit v378. Ohne sie kommen Anrufe nie an.
 async function rulesCheck(){ try { await social.db.collection(`rings/${social.uid}/r`).limit(1).get({source:'server'}); return '✓ Die Firestore-Regeln sind aktuell genug für Anrufe und Klingeln.'; }
   catch (e) { return e?.code === 'permission-denied' ? '<b>⚠ Die Firestore-Regeln sind veraltet.</b> Anrufe klingeln deshalb nicht beim anderen Gerät. Kopiere den kompletten Inhalt von firebase/firestore.rules in die Firebase-Konsole (Firestore → Regeln) und veröffentliche ihn.' : 'Die Regeln ließen sich gerade nicht prüfen (keine Verbindung?).'; } }
+/* ---- Neu geladen: Fledermäuse fliegen über die Seite (Inaya, 2026-10-14) ----
+   Nach jedem Neuladen (Browser-Knopf, Runterziehen am Handy). In der App vom Home-Bildschirm gibt es kein eingebautes Runterziehen, dafür ein eigenes. */
+function batFly(){ if (matchMedia('(prefers-reduced-motion: reduce)').matches || document.getElementById('batfly')) return;
+  const el = document.createElement('div'); el.id = 'batfly'; el.setAttribute('aria-hidden', 'true'); const n = innerWidth < 600 ? 6 : 9;
+  el.innerHTML = Array.from({length:n}, (_, i) => { const y = 8 + Math.random() * 70, d = (i * .12 + Math.random() * .25).toFixed(2), sz = (22 + Math.random() * 26).toFixed(0), du = (1.5 + Math.random() * .9).toFixed(2), dy = (-30 + Math.random() * 60).toFixed(0);
+    return `<span style="top:${y}vh;--d:${d}s;--du:${du}s;--dy:${dy}px;width:${sz}px">${BAT}</span>`; }).join('');
+  document.body.appendChild(el); setTimeout(() => el.remove(), 4200); }
+try { if (performance.getEntriesByType('navigation')[0]?.type === 'reload' || sessionStorage.getItem('nf-pull')) { sessionStorage.removeItem('nf-pull'); setTimeout(batFly, 600); } } catch {}
+// Runterziehen zum Neuladen, nur in der installierten App (Browser haben es selbst)
+(() => { const sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; if (!sa) return;
+  let y0 = null, dy = 0, ind = null; const blocked = t => !!t.closest?.('.storyov,.callov,.ringov,.shpk,.chatpanel,#cmv,.mview,.sgp,.stmpanel,dialog,[role=dialog],input,textarea,.tkpage') || document.body.classList.contains('chatfull') || document.body.classList.contains('stopen');
+  addEventListener('touchstart', e => { if (scrollY > 0 || e.touches.length > 1 || blocked(e.target)) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, {passive:true});
+  addEventListener('touchmove', e => { if (y0 == null) return; dy = e.touches[0].clientY - y0; if (scrollY > 0 || dy < 0) { dy = 0; ind?.remove(); ind = null; return; }
+    if (!ind && dy > 12) { ind = document.createElement('div'); ind.id = 'pullbat'; ind.innerHTML = BAT; document.body.appendChild(ind); }
+    if (ind) { const q = Math.min(1, dy / 110); ind.style.transform = `translate(-50%, ${Math.min(dy, 140) * .6}px) rotate(${q * 360}deg) scale(${.6 + q * .5})`; ind.style.opacity = String(.3 + q * .7); ind.classList.toggle('go', dy > 110); } }, {passive:true});
+  addEventListener('touchend', () => { if (y0 == null) return; const go = dy > 110; y0 = null; if (ind) { if (go) { ind.classList.add('spin'); try { sessionStorage.setItem('nf-pull', '1'); } catch {} setTimeout(() => location.reload(), 250); } else { ind.remove(); ind = null; } } }, {passive:true});
+})();
 /* ---- Push-Mitteilungen (Inaya, 2026-10-14) ----
    Geräte-Schlüssel und Auswahl liegen privat unter data/users/<uid>/nf-push. Verschickt wird von den Cloud Functions (functions/index.js, braucht Blaze).
    Der Web-Push-Schlüssel (VAPID, öffentlich) steht in site/push und wird von Inaya in den Einstellungen eingetragen. */
