@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e8be66289fb1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='02601bf77c78';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2104,7 +2104,11 @@ async function shpOpen(b){
 const GSH = {sel:new Set(), g:null};
 function grpSharePaint(){ document.getElementById('grpsh')?.remove(); const c = GSH.g; if (!c) return; const el = document.createElement('div'); el.id = 'grpsh'; el.className = 'shpk'; const th = c.theme?.box ? postTheme(normTheme({...c.theme})) : '';
   el.innerHTML = `<div class="shpkb" data-act="grp-x"></div><div class="shpkp shsheet${th ? ' shth' : ''}"${th ? ` style="${th}"` : ''} role="dialog" aria-label="Gruppe teilen"><div class="shtop"><i class="stshg" aria-hidden="true"></i></div><div class="shhead"><b>❦ Gruppe teilen</b><small>„${esc(chatName(c))}“ · ${c.pub ? 'öffentlich' : 'privat'}</small><button type="button" class="shx" data-act="grp-x" aria-label="Schließen">✕</button></div>${shGrid('grp-sel', GSH.sel, 'grp-go').replace(/(<button type="button" class="shti" data-act="grp-sel" data-id=")([^"]+)(")/g, (m0, a, id, z) => id === c.id ? m0.replace('class="shti"', 'class="shti" hidden') : m0)}</div>`;
-  document.body.appendChild(el); }
+  document.body.appendChild(el); grpShDock(); }
+// PC: wie „Talk erstellen“ unten am Chatfenster angedockt und genau so breit (Inaya, 2026-10-14)
+function grpShDock(){ const f = document.querySelector('#grpsh .shsheet'), pn = document.querySelector('.chatmain>.chatpanel'); if (!f || !pn || innerWidth <= 760) return;
+  const r = pn.getBoundingClientRect(); Object.assign(f.style, {left:r.left + 'px', width:r.width + 'px', transform:'none', top:'auto', bottom:Math.max(0, innerHeight - Math.min(r.bottom, innerHeight)) + 'px', height:Math.min(r.height, innerHeight * .78) + 'px'}); }
+addEventListener('resize', () => { if (document.getElementById('grpsh')) grpShDock(); });
 async function grpShareGo(btn){ const c = GSH.g, ids = [...GSH.sel]; if (!c || !ids.length) return toast('Wähl mindestens einen Chat aus.'); btn.disabled = true; let ok = 0;
   const g = {id:c.id, n:chatName(c), pub:c.pub ? 1 : 0, box:c.theme?.box || '', cnt:(c.members || []).length};
   for (const id of ids) { if (id === c.id) continue; const cid = await shCid(id); if (!cid) continue;
