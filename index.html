@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ededb99941ce';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='029f3ccbce7b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1609,6 +1609,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .diagout{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,monospace;background:#0006;border:1px solid var(--line,#333);border-radius:10px;padding:10px;margin:10px 0;max-height:60vh;overflow:auto;user-select:text;-webkit-user-select:text}
 .phd{font:600 14px Inter,sans-serif;opacity:.85;margin-right:10px;white-space:nowrap}
 .chmore{display:block;margin:0 auto 8px;font-size:13px;padding:6px 14px}
+.pushprefs{display:grid;gap:6px;margin:8px 0}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -8183,7 +8184,7 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
@@ -9578,6 +9579,56 @@ async function tkSave(f, go){ const name = document.getElementById('tk-name').va
 // Sind die eingespielten Firestore-Regeln aktuell? Klingeln (rings) gibt es erst seit v378. Ohne sie kommen Anrufe nie an.
 async function rulesCheck(){ try { await social.db.collection(`rings/${social.uid}/r`).limit(1).get({source:'server'}); return '✓ Die Firestore-Regeln sind aktuell genug für Anrufe und Klingeln.'; }
   catch (e) { return e?.code === 'permission-denied' ? '<b>⚠ Die Firestore-Regeln sind veraltet.</b> Anrufe klingeln deshalb nicht beim anderen Gerät. Kopiere den kompletten Inhalt von firebase/firestore.rules in die Firebase-Konsole (Firestore → Regeln) und veröffentliche ihn.' : 'Die Regeln ließen sich gerade nicht prüfen (keine Verbindung?).'; } }
+/* ---- Push-Mitteilungen (Inaya, 2026-10-14) ----
+   Geräte-Schlüssel und Auswahl liegen privat unter data/users/<uid>/nf-push. Verschickt wird von den Cloud Functions (functions/index.js, braucht Blaze).
+   Der Web-Push-Schlüssel (VAPID, öffentlich) steht in site/push und wird von Inaya in den Einstellungen eingetragen. */
+const PUSH = {vapid:null, doc:null, busy:false, err:''};
+const PUSH_KINDS = [['calls', 'Anrufe'], ['msgs', 'Nachrichten'], ['friends', 'Freundschaftsanfragen'], ['gb', 'Gästebuch']];
+const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const pushStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const pushRef = () => social.db.doc(`data/users/${social.uid}/nf-push`);
+async function pushLoad(){ if (!social) return; try { const [v, d] = await Promise.all([social.db.doc('site/push').get(), pushRef().get()]); PUSH.vapid = v.exists ? v.data().vapid || '' : ''; PUSH.doc = d.exists ? d.data() : {}; } catch { PUSH.vapid = PUSH.vapid || ''; PUSH.doc = PUSH.doc || {}; } }
+const pushMine = () => { try { return localStorage.getItem('nf-push-id') || ''; } catch { return ''; } };
+function pushCard(){ if (!social) return ''; if (PUSH.doc === null) { pushLoad().then(() => { const el = document.getElementById('pushcard'); if (el) el.outerHTML = pushCard(); }); }
+  const on = !!(pushMine() && PUSH.doc?.tokens?.[pushMine()]) && pushOk() && Notification.permission === 'granted', prefs = PUSH.doc?.prefs || {};
+  let body;
+  if (PUSH.doc === null) body = '<p class="note">Lädt …</p>';
+  else if (!pushOk()) body = `<p class="note">${isIOS() && !pushStandalone() ? 'Auf dem iPhone gehen Mitteilungen nur mit der App vom Home-Bildschirm: in Safari unten auf „Teilen“ → „Zum Home-Bildschirm“, dann Noctibat von dort öffnen (ab iOS 16.4).' : 'Dieser Browser kann keine Mitteilungen empfangen.'}</p>`;
+  else if (!PUSH.vapid) body = `<p class="note">Mitteilungen sind noch nicht eingerichtet.${amOwner ? '' : ' Inaya kümmert sich darum.'}</p>`;
+  else if (Notification.permission === 'denied') body = `<p class="note">Du hast Mitteilungen für Noctibat blockiert. ${isIOS() ? 'Erlauben: Einstellungen → Mitteilungen → Noctibat.' : 'Erlauben: über das Schloss neben der Adresse → Mitteilungen.'}</p>`;
+  else body = on ? `<p class="note">✓ Mitteilungen sind auf diesem Gerät an. Du bekommst sie, wenn Noctibat geschlossen ist. Ist die App offen, siehst du alles direkt.</p>
+      <div class="pushprefs">${PUSH_KINDS.map(([k, l]) => `<label class="allg"><input type="checkbox" data-act="push-pref" data-k="${k}"${prefs[k] === false ? '' : ' checked'}> ${l}</label>`).join('')}</div>
+      <div class="row"><button type="button" class="btn ghost" data-act="push-off">Auf diesem Gerät ausschalten</button></div>`
+    : `<p class="note">Bekomm Bescheid bei Anrufen, Nachrichten, Freundschaftsanfragen und Gästebuch-Einträgen, auch wenn Noctibat geschlossen ist. Bei verschlüsselten Chats steht nur „Neue Nachricht“, nie der Inhalt.</p><div class="row"><button type="button" class="btn" data-act="push-on"${PUSH.busy ? ' disabled' : ''}>${PUSH.busy ? 'Wird eingeschaltet …' : 'Mitteilungen einschalten'}</button></div>`;
+  if (PUSH.err) body += `<p class="note" style="color:var(--p-fg)">${esc(PUSH.err)}</p>`;
+  const own = amOwner ? `<form data-form="pushkey" class="grid" style="gap:8px;margin-top:10px"><p class="note">Nur für dich: Web-Push-Schlüssel aus der Firebase-Konsole (Projekteinstellungen → Cloud Messaging → Web-Push-Zertifikate → „Schlüsselpaar“). Er ist öffentlich und darf in der App stehen.</p><input id="push-vapid" type="text" autocomplete="off" spellcheck="false" placeholder="B…" value="${esc(PUSH.vapid || '')}" aria-label="Web-Push-Schlüssel"><div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form>` : '';
+  return `<div class="card" id="pushcard"><h2 class="card-h">Mitteilungen</h2><div class="card-in">${body}${own}</div></div>`; }
+function pushPaint(){ const el = document.getElementById('pushcard'); if (el) el.outerHTML = pushCard(); }
+let PUSHMSG = null;
+async function pushMessaging(){ if (PUSHMSG) return PUSHMSG; if (!firebase.messaging) await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js'; sc.onload = ok; sc.onerror = () => no(new Error('Laden fehlgeschlagen')); document.head.appendChild(sc); });
+  const reg = await navigator.serviceWorker.register('/nf-push-sw.js', {scope:'/'}); await navigator.serviceWorker.ready;
+  return PUSHMSG = {m:firebase.messaging(firebase.apps.find(a => a.name === '[DEFAULT]') || firebase.apps[0]), reg}; }
+async function pushOn(){ if (PUSH.busy) return; PUSH.err = ''; let perm;
+  try { perm = await Notification.requestPermission(); } catch { perm = Notification.permission; } // muss direkt im Tippen passieren (iPhone)
+  if (perm !== 'granted') { PUSH.err = 'Ohne deine Erlaubnis kann Noctibat keine Mitteilungen schicken.'; pushPaint(); return; }
+  PUSH.busy = true; pushPaint();
+  try { const {m, reg} = await pushMessaging(); const t = await m.getToken({vapidKey:PUSH.vapid, serviceWorkerRegistration:reg}); if (!t) throw new Error('kein Schlüssel');
+    const id = hstr(t); await pushRef().set({tokens:{[id]:{t, ts:Date.now(), dev:(isIOS() ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + (pushStandalone() ? ' (App)' : '')}}, prefs:{...(PUSH.doc?.prefs || {})}}, {merge:true});
+    try { localStorage.setItem('nf-push-id', id); localStorage.setItem('nf-push-t', String(Date.now())); } catch {} await pushLoad(); toast('Mitteilungen sind an'); }
+  catch (e) { PUSH.err = 'Einschalten hat nicht geklappt (' + (e?.code || e?.message || e) + ').'; }
+  PUSH.busy = false; pushPaint(); }
+async function pushOff(){ const id = pushMine(); try { const {m} = await pushMessaging(); await m.deleteToken().catch(() => {}); } catch {} if (id) await pushRef().update({[`tokens.${id}`]:firebase.firestore.FieldValue.delete()}).catch(() => {}); try { localStorage.removeItem('nf-push-id'); } catch {} await pushLoad(); pushPaint(); toast('Mitteilungen auf diesem Gerät aus'); }
+// Schlüssel erneuern sich manchmal: einmal am Tag still auffrischen
+async function pushRefresh(){ try { if (!pushOk() || Notification.permission !== 'granted' || !pushMine()) return; const last = +localStorage.getItem('nf-push-t') || 0; if (Date.now() - last < 86400000) return; await pushLoad(); if (!PUSH.vapid) return;
+    const {m, reg} = await pushMessaging(); const t = await m.getToken({vapidKey:PUSH.vapid, serviceWorkerRegistration:reg}); const id = hstr(t); localStorage.setItem('nf-push-t', String(Date.now()));
+    if (id !== pushMine() || !PUSH.doc?.tokens?.[id]) { const up = {[`tokens.${id}`]:{t, ts:Date.now(), dev:PUSH.doc?.tokens?.[pushMine()]?.dev || ''}}; if (pushMine() && pushMine() !== id) up[`tokens.${pushMine()}`] = firebase.firestore.FieldValue.delete(); await pushRef().set({}, {merge:true}); await pushRef().update(up); localStorage.setItem('nf-push-id', id); } } catch {} }
+// Mitteilung angetippt: passenden Chat oder Profil öffnen (?c=<chat> bzw. ?p=<person>)
+function pushOpen(href){ let u; try { u = new URL(href, location.href); } catch { return; } const c = u.searchParams.get('c'), pr = u.searchParams.get('p'); if (!c && !pr) return;
+  const go2 = () => { if (!social) return false; if (c) { if (!CH.list.some(x => x.id === c)) return false; openChat(c); } else go('profile', pr); render(); return true; };
+  let n = 0; const t = setInterval(() => { if (go2() || ++n > 40) clearInterval(t); }, 500);
+  try { if (location.search) history.replaceState(null, '', location.pathname + location.hash); } catch {} }
+if (/[?&](c|p)=/.test(location.search)) pushOpen(location.href);
+navigator.serviceWorker?.addEventListener?.('message', e => { if (e.data?.nfOpen) pushOpen(e.data.nfOpen); });
 /* ---- Selbsttest (Inaya, 2026-10-13): prüft auf der echten Seite mit dem echten Konto, woran Anrufe, Sprachnachrichten, Lesebestätigungen oder Namen scheitern ---- */
 function diagCard(){ if (!social) return ''; return `<div class="card"><h2 class="card-h">Selbsttest</h2><div class="card-in"><p class="note">Prüft Anrufe, Sprachnachrichten, Lesebestätigungen und Namen auf diesem Gerät. Es wird nichts verschickt. Das Ergebnis kannst du kopieren und weitergeben.</p><button type="button" class="btn" data-act="diag-run">Selbsttest starten</button><pre id="diag-out" class="diagout" hidden></pre><div class="row" id="diag-btns" hidden style="gap:8px;flex-wrap:wrap"><button type="button" class="btn" data-act="diag-copy">Ergebnis kopieren</button>${navigator.share ? '<button type="button" class="btn ghost" data-act="diag-share">Teilen …</button>' : ''}</div></div></div>`; }
 // Tageskontingent des kostenlosen Firebase-Tarifs: ein Schreibversuch ohne Anmeldung (die Regeln lehnen ihn ab) antwortet mit 429, wenn das Kontingent aufgebraucht ist
@@ -10130,7 +10181,7 @@ function settingsView(){
     <div class="row"><button class="btn ghost logoutbtn" data-act="logout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3h9v18"/><path d="M5 3l5 2.2v14.6L5 21" fill="currentColor" fill-opacity=".18"/><circle cx="8.6" cy="12.4" r=".6" fill="currentColor"/><path d="M2.5 21h12.5"/><path d="M16 12h6.5M19.5 9l3 3-3 3"/></svg>Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
     ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}
-  </div></div>${e2Card()}${blockedCard()}${reportsCard()}${gifKeyCard()}${rtcCard()}${diagCard()}${membersCard()}`;
+  </div></div>${e2Card()}${blockedCard()}${reportsCard()}${gifKeyCard()}${pushCard()}${rtcCard()}${diagCard()}${membersCard()}`;
 }
 
 /* ---------- Zirkel: suchen, hinzufügen, entfernen ---------- */
@@ -10827,6 +10878,9 @@ document.addEventListener('click', async e => {
   else if (a === 'call-end') callLeave();
   else if (a === 'ring-yes' || a === 'ring-no') ringAnswer(b.dataset.id, a === 'ring-yes');
   else if (a === 'tk-new') tkDialog(null);
+  else if (a === 'push-on') pushOn();
+  else if (a === 'push-off') pushOff();
+  else if (a === 'push-pref') { const k = b.dataset.k; try { await pushRef().set({prefs:{[k]:b.checked}}, {merge:true}); (PUSH.doc = PUSH.doc || {}).prefs = {...(PUSH.doc.prefs || {}), [k]:b.checked}; } catch { toast('Speichern ging nicht.'); } }
   else if (a === 'ch-more') { b.disabled = true; b.textContent = 'Lädt …'; await chMore(); }
   else if (a === 'diag-run') { b.disabled = true; try { await diagRun(); } finally { b.disabled = false; } }
   else if (a === 'diag-copy') { const t = document.getElementById('diag-out')?.textContent || ''; // iPhone: zuerst im selben Tippen über ein Textfeld kopieren, das klappt dort zuverlässig
@@ -11222,6 +11276,7 @@ document.addEventListener('submit', async e => {
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
     if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
+  } else if (t === 'pushkey') { if (!amOwner) return; const v = val('push-vapid').trim(); try { await social.db.doc('site/push').set({vapid:v}); PUSH.vapid = v; pushPaint(); toast(v ? 'Web-Push-Schlüssel gespeichert' : 'Web-Push-Schlüssel entfernt'); } catch { toast('Speichern ging nicht.'); }
   } else if (t === 'talk') { await tkSave(f, false);
   } else if (t === 'rtcturn') { if (!amOwner) return; const urls = val('rtc-u').trim(); try { await social.db.doc('site/rtc').set(urls ? {urls, username:val('rtc-n').trim(), credential:val('rtc-c').trim()} : {urls:''}); RTC_TURN = null; toast(urls ? 'TURN-Server gespeichert' : 'TURN-Server entfernt'); } catch { toast('Speichern ging nicht.'); }
   } else if (t === 'gifkey') {
