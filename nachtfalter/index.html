@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='88d96cd5b5dd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d59380aab039';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1740,6 +1740,12 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .portrait.mini.fr-ornament::before,.portrait.mini.fr-ornament::after{font-size:9px;padding:0 2px}.portrait.mini.fr-ornament::before{top:-7px}.portrait.mini.fr-ornament::after{bottom:-7px}
 .portrait.mini.fr-dornen .pic{border-width:1.5px}.portrait.mini.fr-dornen::after{inset:-3px;border-width:1.5px}
 .chpor{flex:none;display:block}.portrait.mini.hd{width:46px}
+.ptwrap{position:relative}.ptwrap .emobtn{position:absolute;top:8px;right:8px;width:36px;height:36px;z-index:2}.ptwrap textarea{padding-right:52px!important}
+.pfhead{align-items:center}.paudb{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid currentColor;border-radius:999px;background:none;color:inherit;font:600 13px Inter,sans-serif;cursor:pointer;opacity:.9}
+.paudb svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}.paudb i{font-style:normal;font-size:10px;opacity:.7}
+/* Beitragsleiste: alle Symbole gleich groß und gleich kräftig (Inaya, 2026-10-14) */
+.pbar .cmbtn svg,.pbar .rpbtn svg,.pbar .shbtn svg{width:22px!important;height:22px!important;stroke-width:1.7!important;fill:none}
+.pbar .likebtn .lheart{height:22px!important;width:25.7px!important;stroke-width:1.7!important}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -2107,7 +2113,7 @@ const HEART = on => `<svg class="lheart" viewBox="-2 0 28 24" aria-hidden="true"
 // Repost neben dem Like, unter der Kommentarleiste (Inaya, 2026-10-12)
 // Teilen wie bei Insta: Papierflieger rechts unten, schickt den Beitrag in Chats (Inaya, 2026-10-12)
 const CROSS_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.6 3-5.6 6-5.6s5.4 2 6 5.6"/><path d="M18.5 7.5v6M15.5 10.5h6"/></svg>'; // Person mit Plus = Mitglieder hinzufügen
-const SEND_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13.5" height="11" rx="1.5"/><path d="M2.5 7.2l6.75 4.8L16 7.2"/><path d="M16.5 12h5.5M19.4 9.4L22 12l-2.6 2.6"/></svg>'; // Brief mit Pfeil = senden
+const SEND_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5.5" r="2.7"/><circle cx="6" cy="12" r="2.7"/><circle cx="18" cy="18.5" r="2.7"/><path d="M8.4 10.7l7.2-4M8.4 13.3l7.2 4"/></svg>'; // Teilen: drei verbundene Punkte (Inaya, 2026-10-14)
 const sendBtn = p => social ? `<button type="button" class="shbtn" data-act="post-send" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag teilen">${SEND_ICO}</button>` : '';
 const SHP = {sel:new Set(), post:null};
 const shpChats = () => CH.list.filter(c => !/^(zimmer|wall|ment|sl|sc|sv|sq|pi)_/.test(c.id));
@@ -7774,12 +7780,12 @@ function composeHTML(){
   const b = (k, l, inner) => `<label class="btn ghost cbtn${(k === 'stk' ? PSG : k === 'foto' ? postCrop || PCR?.items.some(x => x.t === 'i') : k === 'clip' ? PVIDEO || PCR?.items.some(x => x.t === 'v') : k === 'musik' ? PAUDIO || PMU : k === 'tag' ? PTAGS.length : PLINK) ? ' on' : ''}" data-v="${k}" ${k === 'video' ? 'data-act="plink" role="button" tabindex="0"' : k === 'musik' ? 'data-act="pmu-open" role="button" tabindex="0"' : k === 'tag' ? 'data-act="ptag-open" role="button" tabindex="0"' : k === 'stk' ? 'data-act="psg-open" role="button" tabindex="0"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${CICO[k === 'stk' ? 'gif' : k]}</svg><span>${l}<i class="cbx"> hinzufügen</i></span>${inner || ''}</label>`;
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" class="pform${pt ? ' tp' : ''}" style="display:grid;gap:12px;${pt}">
-        <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b><small>${social ? (aud() === 'pub' ? 'öffentlich' : 'nur Freunde') : ''}</small></div>
+        <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b>${social ? `<button type="button" class="paudb" data-act="paud-tog" aria-label="Wer sieht das? Antippen zum Umschalten">${aud() === 'pub' ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></svg>Öffentlich' : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg>Nur Freunde'}<i aria-hidden="true">▾</i></button><input type="hidden" id="paud" value="${aud()}">` : ''}</div>
         <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text">${esc(PTXT)}</textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
         <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('stk', 'GIF')}${b('video', 'Link')}</div>
-        <div class="row">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="paud" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${aud() === 'pub' ? 'selected' : ''}>Öffentlich</option><option value="fr" ${aud() === 'fr' ? 'selected' : ''}>Nur Freunde</option></select></label>` : ''}<span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
+        <div class="row"><span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
 }
@@ -9401,7 +9407,7 @@ function addEmoButtons(){
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
     const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>` + (social && /^(cmsg|pcomment)$/.test(f.dataset.form) ? `<button type="button" class="sgbtn" data-act="sg-open" aria-expanded="false" aria-label="Sticker und GIFs" title="Sticker und GIFs">${SG_ICO.stk}</button>` : '');
-    const pf = f.querySelector('.pcfield'), tw = isMob() && f.querySelector('.ptwrap'); if (tw) tw.insertAdjacentHTML('beforeend', eb); else if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
+    const pf = f.querySelector('.pcfield'), tw = f.querySelector('.ptwrap'); /* Beitrag: Emoji oben rechts im Schreibfeld (Inaya, 2026-10-14) */ if (tw) tw.insertAdjacentHTML('beforeend', eb); else if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
 function sgReattach(){ // nach dem Neuzeichnen bleibt das Sticker-Menü offen
@@ -11188,6 +11194,7 @@ document.addEventListener('click', async e => {
   else if (a === 'call-end') callLeave();
   else if (a === 'ring-yes' || a === 'ring-no') ringAnswer(b.dataset.id, a === 'ring-yes');
   else if (a === 'tk-new') tkDialog(null);
+  else if (a === 'paud-tog') { postAud = aud() === 'pub' ? 'fr' : 'pub'; const f = b.closest('form'), t = PTXT; if (f) { const tmp = document.createElement('div'); tmp.innerHTML = composeHTML(); const nb = tmp.querySelector('.paudb'), ni = tmp.querySelector('#paud'); b.replaceWith(nb); f.querySelector('#paud').value = ni.value; } }
   else if (a === 'chat-rm') chatRemove(b.dataset.id || CH.open || CH.gdraft?.id);
   else if (a === 'g-pic-x') { grabGroupDraft(); if (CH.gdraft) { CH.gdraft.pic = ''; render(); } }
   else if (a === 'grp-share') { const c = CH.list.find(x => x.id === CH.open); if (!c?.group) return; GSH.g = c; GSH.sel = new Set(); grpSharePaint(); }
