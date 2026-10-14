@@ -112,7 +112,8 @@ service cloud.firestore {
         || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['p', 'gone'])
           && request.resource.data.p.diff(resource.data.p).affectedKeys().hasOnly([request.resource.data.gone])
           && !(request.resource.data.gone in request.resource.data.p)
-          && resource.data.p[request.resource.data.gone].t < request.time.toMillis() - 45000)
+          && (resource.data.p[request.resource.data.gone].t < request.time.toMillis() - 45000
+            || resource.data.p[request.resource.data.gone].t > request.time.toMillis() + 120000)) // auch Geisterplätze mit vorgehender Uhr
         || ((groupAdmin(cid) || resource.data.get('by', '') == request.auth.uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40));
       allow delete: if invited() && mayWrite(cid) && (groupAdmin(cid) || resource.data.get('by', '') == request.auth.uid) && tid != 'audio' && tid != 'video';

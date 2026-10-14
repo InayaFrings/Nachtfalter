@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='6b40a9c22221';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3f359966ac48';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5488,7 +5488,7 @@ async function claimHandle(h){
   if (!cloud?.handles) return;
   let old = null;
   try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; } catch {}
-  try { await cloud.handles.doc(cloud.uid).set({h}); } catch {}
+  try { await cloud.handles.doc(cloud.uid).set({h, ...(me()?.name ? {n:me().name} : {})}, {merge:true}); } catch {} // n = Anzeigename, damit alle Umbenennungen sofort sehen
   // Anmelden mit Nutzername: Nutzername → E-Mail (nur einzeln abrufbar, nicht auflistbar)
   if (PUB && NF_AUTH.email()) {
     if (old && old !== h) await cloud.db.doc('logins/' + old).delete().catch(() => {});
@@ -5541,7 +5541,7 @@ const BAT = `<svg class="hbat" viewBox="-21 -8 42 14" aria-hidden="true"><path f
 const OWNER_BAT = `<svg class="obat" viewBox="-24 -14 48 26" aria-hidden="true"><path d="M-4-9L-2-12L0-9.6L2-12L4-9L3-7H-3Z" fill="#e9e3f4"/><path fill="currentColor" d="M0-3C1-6 2-7 3-6C3-4 4-3 6-4C9-8 14-9 22-6C19-5 18-3 18 0C16-1 15 0 15 2C13 0 11 0 10 3C8 1 5 1 3 4C2 3 1 3 0 6C-1 3-2 3-3 4C-5 1-8 1-10 3C-11 0-13 0-15 2C-15 0-16-1-18 0C-18-3-19-5-22-6C-14-9-9-8-6-4C-4-3-3-4-3-6C-2-7-1-6 0-3Z"/><circle cx="-1.3" cy="-3.6" r=".7" fill="#b48ae0"/><circle cx="1.3" cy="-3.6" r=".7" fill="#b48ae0"/><path d="M13-3L14-5L15-3L17-2L15-1L14 1L13-1L11-2Z" fill="#e9e3f4"/><path d="M-13-3L-14-5L-15-3L-17-2L-15-1L-14 1L-13-1L-11-2Z" fill="#e9e3f4"/></svg>`;
 const isSiteOwner = u => !!u && (u.id === S.me ? amOwner : (u.remote && OWNER === u.id));
 const hmark = u => isSiteOwner(u) ? `<span class="hmark omark" title="Owner von Noctibat">${BAT}<span class="sr">Owner</span></span>` : u?.helper ? `<span class="hmark" title="${u.helper} von Noctibat">${BAT}<span class="sr">${u.helper}</span></span>` : '';
-const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name)}</button>${hmark(u)}</span>`; };
+const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name || nmOf(id) || 'Jemand')}</button>${hmark(u || {id, remote:true})}</span>`; };
 const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}">${cls.includes('hasring') ? '<i class="pring" aria-hidden="true"></i>' : ''}<div class="pic">${u.pic && !cls.includes('mirror') ? `<img src="${u.pic}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
 const headPic = (u, ...a) => u?.pic && /^data:image\//.test(u.pic) ? `<img class="cpic" src="${u.pic}" alt="" draggable="false">` : avatar(u?.outfit, 'head', ...a); // Profilbild, sonst Avatar (Inaya, 2026-10-12)
 const uidUser = id => id === social?.uid ? me() : S.users[id] || (PROF[id] ? profUser(id) : null);
@@ -5829,6 +5829,7 @@ function cmMention(b){
 }
 function cbub(uid, name, text, ts, del, k, img='', extra='', men=null, did=''){
   const u = uid === social?.uid ? me() : S.users[uid] || (PROF[uid] ? profUser(uid) : null);
+  name = u?.name || nmOf(uid) || name; // immer der aktuelle Name, nicht der beim Schreiben gespeicherte
   if (!u && uid && social && !CMH[uid]) { CMH[uid] = 1; loadProf(uid).then(() => k ? piDraw(k) : softRender()); }
   return `<div class="cmt mom"${did ? ` data-did="${esc(did)}"` : ''}><button type="button" class="cameo cmh" data-act="profile" data-id="${esc(uid || '')}" aria-label="${esc(name)}">${u?.outfit || u?.pic ? headPic(u) : ''}</button><div class="bub"><b><button type="button" class="cname" data-act="profile" data-id="${esc(uid || '')}">${esc(name)}</button>${hmark(uid && uid === OWNER ? {id:uid, remote:true} : u)}</b>${text ? `<span class="btx">${men?.length ? mentionHTML(etx(text), men, 'profile') : etx(text)}</span>` : ''}${img && typeof img === 'object' ? sgMsgHTML(img) : ''}${typeof img === 'string' && /^data:image\//.test(img) ? `<button type="button" class="mimg cimg" data-act="mimg-open" aria-label="Foto groß ansehen"><img src="${esc(img)}" alt="Foto im Kommentar"></button>` : ''}<span class="meta">${ago(ts)}${del ? ' · ' + del : ''}</span></div>${extra}</div>`;
 }
@@ -6527,7 +6528,7 @@ function storyPaint(){
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div><div id="stsh"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe${st.v === 2 ? ' v2' : ''}" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)}>${esc(own ? 'Deine Story' : u.name)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)}>${esc(own ? 'Deine Story' : u.name)}${own ? '' : hmark(u)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString('de-DE') : ago(st.ts)}</small></span>${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
     ${st.v === 2 ? '<div class="stcv">' : ''}${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : '<p class="stload">Story wird geladen …</p>'}
     ${st.v === 2 ? stStkHTML(st.stk, false, stICtx()) : ''}${stTextsHTML(stTexts(st))}${st.v === 2 ? '</div>' : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
@@ -8153,7 +8154,7 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 90000); // Freundesprofile regelmäßig auffrischen
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
@@ -8280,6 +8281,7 @@ function publishProfile(){
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, hts:u.priv ? [] : [...new Set(posts.filter(p => p.pub).flatMap(p => htOf(p.text)))].slice(0, 60), stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => (r = r.stk ? {...r, stk:r.stk.map(({p, ...q}) => q)} : r, r).cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
+    if (NM[social.uid]?.n !== u.name || (u.handle && NM[social.uid]?.h !== u.handle)) social.db.doc('handles/' + social.uid).set({...(u.handle ? {h:u.handle} : {}), n:u.name || ''}, {merge:true}).catch(() => {});
     doc.bk = (S.blocked || []).map(x => bkHash(social.uid + '>' + x.id)); // wen ich blockiert habe, nur als Kennung (Inaya, 2026-10-13)
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
@@ -8313,13 +8315,24 @@ function personRow(id){
     : FR.mine.includes(id) ? `<span class="muted">Anfrage gesendet</span> <button class="btn ghost" data-act="fr-remove" data-id="${id}">Zurückziehen</button>`
     : FR.inc.includes(id) ? `<button class="btn" data-act="fr-add" data-id="${id}">Annehmen</button> <button class="btn ghost" data-act="fr-ignore" data-id="${id}">Ablehnen</button>`
     : `<button class="btn" data-act="fr-add" data-id="${id}">Hinzufügen</button>`;
-  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class=\"cameo\">${headPic(u)}</span><div class="pinfo"><b>${esc(u.name)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<small class="pstat">Befreundet</small>' : FR.mine.includes(id) ? '<small class="pstat">Anfrage gesendet</small>' : ''}</div></button><div class="pbtns">${btn}</div></div>`;
+  return `<div class="prow"><button type="button" class="pgo" data-act="profile" data-id="${id}" aria-label="Profil von ${esc(u.name)} ansehen"><span class=\"cameo\">${headPic(u)}</span><div class="pinfo"><b>${esc(u.name)}${hmark(u)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<small class="pstat">Befreundet</small>' : FR.mine.includes(id) ? '<small class="pstat">Anfrage gesendet</small>' : ''}</div></button><div class="pbtns">${btn}</div></div>`;
 }
 const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id)) ? `<span class="badge owner">✦ Owner · Gründerin von Noctibat</span>` : '';
 
 /* ---------- Chats ---------- */
-const chatName = c => c.group ? (c.name || 'Gruppe') : (PROF[c.members.find(m => m !== social?.uid)]?.name || 'Chat');
-const chatWho = id => id === social?.uid ? 'Du' : PROF[id]?.name || 'Jemand';
+// Namen und Nutzernamen aller Mitglieder live (Inaya, 2026-10-13): wer sich umbenennt, ist sofort überall neu zu sehen, auch bei Leuten, die das Profil schon geladen hatten
+const NM = {}; let nmT = null;
+function nmWatch(){ social.db.collection('handles').onSnapshot(q => { let ch = false;
+  q.docChanges().forEach(c => { const id = c.doc.id, d = c.doc.data() || {}; if (c.type === 'removed') { delete NM[id]; return; } const o = NM[id]; NM[id] = {h:d.h || '', n:d.n || ''};
+    if (o && (o.h !== NM[id].h || o.n !== NM[id].n) && id !== social.uid) { ch = true; if (PROF[id]) { if (NM[id].n) PROF[id].name = NM[id].n; if (NM[id].h) PROF[id].handle = NM[id].h; }
+      const u = S.users[id]; if (u?.remote) { if (NM[id].n) u.name = NM[id].n; if (NM[id].h) u.handle = NM[id].h; } } });
+  if (ch) { clearTimeout(nmT); nmT = setTimeout(softRender, 300); } }, () => {}); }
+const nmOf = id => PROF[id]?.name || NM[id]?.n || S.users[id]?.name || '';
+const chatName = c => c.group ? (c.name || 'Gruppe') : (nmOf(c.members.find(m => m !== social?.uid)) || 'Chat');
+const chatWho = id => id === social?.uid ? 'Du' : nmOf(id) || 'Jemand';
+// Name mit Fledermaus/Owner-Zeichen, überall gleich (Inaya, 2026-10-13)
+const markOf = id => !id ? '' : id === social?.uid ? hmark(me()) : hmark(S.users[id] || (PROF[id] ? profUser(id) : {id, remote:true}));
+const whoH = id => esc(chatWho(id)) + markOf(id);
 const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last > ((S.seen || {})[c.id] || 0);
 // „… schreibt“: jede Person setzt chats/<id>/t/<uid> beim Tippen (Inaya, 2026-10-11)
 let typLast = 0;
@@ -8404,7 +8417,7 @@ const CTICO = {priv:'<path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.5
 let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz unten (Inaya, 2026-10-10)
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && (CH.mode === 'chat' || CH.mode === 'talks') ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${esc(c.id)}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(chatPrevText(c)) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
+  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && (CH.mode === 'chat' || CH.mode === 'talks') ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${esc(c.id)}"><b>${esc(chatName(c))}${c.group ? '' : markOf(c.members.find(m => m !== social?.uid))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(chatPrevText(c)) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -8412,7 +8425,7 @@ function chatsView(){
     const c = CH.list.find(x => x.id === CH.open), cand = c && !c.pub ? friends.filter(f => !c.members.includes(f.id)) : [];
     const mems = c ? c.members.filter(m => m !== social.uid) : []; // Mitglieder wieder entfernen (Inaya, 2026-10-10)
     right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
-      <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : esc(chatWho(c.createdBy))}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
+      <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : whoH(c.createdBy)}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
       ${c?.pub ? '<p class="note">In öffentliche Gruppen kann man niemanden hinzufügen. Jeder tritt selbst bei.</p>' : `<h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
       ${cand.length > 1 ? '<label class="musearch gmq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="gmqi" placeholder="User suchen …" aria-label="User suchen" autocomplete="off"></label>' : ''}${cand.length ? cand.map(f => `<label class="allg" data-q="${esc((f.name + ' ' + (f.handle || '')).toLowerCase())}"><input type="checkbox" class="ga-mem" value="${esc(f.id)}"> ${esc(f.name)} @${esc(f.handle)}</label>`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}`}
       <div class="row"><button class="btn ghost" type="button" data-act="chat-open" data-id="${esc(CH.open || '')}">Zurück</button>${c && !gAdmin(c) ? '<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button>' : ''}<span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
@@ -8429,7 +8442,7 @@ function chatsView(){
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel cpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
-      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}</button>`; })()}${c.group ? `<small class="muted">${c.members.map(chatWho).map(esc).join(', ')}</small>` : ''}<small class="typing" id="chtyping" hidden></small></div>
+      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}${markOf(o)}</button>`; })()}${c.group ? `<small class="muted">${c.members.map(whoH).join(', ')}</small>` : ''}<small class="typing" id="chtyping" hidden></small></div>
         ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${tkBtnHTML(c)}<button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>`}</header>
       <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
@@ -9270,7 +9283,8 @@ const tkRef = (cid, tid) => social.db.doc(`chats/${cid}/talk/${tid}`);
 // Serverzeit: Plätze und Klingeln vergleichen Zeiten verschiedener Geräte. Geht eine Handy-Uhr falsch, sah der andere den Platz als verwaist und verband sich nie.
 let CLK = 0; const srvNow = () => Date.now() + CLK;
 async function clkSync(){ try { const r = social.db.doc(`data/users/${social.uid}/nf-e2/clk/t`), t0 = Date.now(); await r.set({t:firebase.firestore.FieldValue.serverTimestamp()}); const d = await r.get({source:'server'}), t1 = Date.now(); const st = d.data()?.t?.toMillis?.(); if (st) { const off = st - (t0 + t1) / 2; CLK = Math.abs(off) > 1500 ? Math.round(off) : 0; } } catch {} }
-const tkFresh = (t, now = srvNow()) => Object.entries(t?.p || {}).filter(([, v]) => v && now - (+v.t || 0) < TK_STALE).map(([u]) => u);
+const tkAge = (v, now = srvNow()) => now - (+v?.t || 0), tkOk = (v, now) => { const a = tkAge(v, now); return a < TK_STALE && a > -60000; }; // mehr als 60 s „in der Zukunft“ = Geisterplatz
+const tkFresh = (t, now = srvNow()) => Object.entries(t?.p || {}).filter(([, v]) => v && tkOk(v, now)).map(([u]) => u);
 const TK = {cid:null, list:[], unsub:null};
 const CI = { // Symbole für Anrufe
   ph:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
@@ -9301,7 +9315,7 @@ async function tkEnsure(cid){ const c = CH.list.find(x => x.id === cid); if (!c?
   try { for (const id of miss) await social.db.runTransaction(async tx => { const r = tkRef(cid, id), d = await tx.get(r); if (!d.exists) tx.set(r, {...TK_DEF[id], def:1, ts:Date.now(), p:{}}); }); } catch {} delete tkEnsuring[cid]; }
 // verwaiste Plätze freigeben (Gerät abgestürzt, Netz weg)
 async function tkSweep(cid){ const now = srvNow();
-  for (const t of TK.list) for (const [u, v] of Object.entries(t.p || {})) if (u !== social.uid && now - (+v?.t || 0) > TK_STALE + 2000) tkRef(cid, t.id).update({[`p.${u}`]:firebase.firestore.FieldValue.delete(), gone:u}).catch(() => {}); }
+  for (const t of TK.list) for (const [u, v] of Object.entries(t.p || {})) if (u !== social.uid && (tkAge(v, now) > TK_STALE + 2000 || tkAge(v, now) < -120000)) tkRef(cid, t.id).update({[`p.${u}`]:firebase.firestore.FieldValue.delete(), gone:u}).catch(() => {}); }
 const tkSorted = () => [...TK.list].sort((a, b) => (b.def || 0) - (a.def || 0) || (a.id === 'audio' ? -1 : b.id === 'audio' ? 1 : 0) || (a.ts || 0) - (b.ts || 0));
 // Talk-Seite der öffentlichen Gruppe (Inaya, 2026-10-13): eigene Unterseite statt Kartenreihe über den Nachrichten
 const tkMay = (c, t) => !!social && (c?.createdBy === social.uid || (t?.by && t.by === social.uid)); // umbenennen/löschen: Admin der Gruppe oder wer den Talk erstellt hat
@@ -9353,14 +9367,15 @@ async function callJoin(cid, tid, opts = {}){
   const kind = TK_DEF[tid]?.kind || TK.list.find(t => t.id === tid)?.kind || opts.kind || 'audio', max = TK_MAX(cid);
   const ac = opts.ac || new (window.AudioContext || window.webkitAudioContext)(); // im Tippen anlegen, sonst bleibt es auf dem iPhone stumm
   CALL = {cid, tid, kind, max, sid:e2Rand(10), peers:new Map(), st:{mic:true, cam:kind === 'video'}, sts:{}, room:{p:{}}, ac, t0:Date.now(), joined:0, ring:[], ringing:!!opts.ring, face:'user', out:true, view:'big', status:'Verbindet …'};
-  const C = CALL; callShow(); callPaint();
-  try { C.local = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}, video:kind === 'video' ? {facingMode:'user', width:{ideal:640}, height:{ideal:480}, frameRate:{ideal:24, max:30}} : false}); }
-  catch (e) { try { ac.close(); } catch {} if (CALL === C) { CALL = null; callHide(); } return toast(micErr(e, kind === 'video')); }
+  const C = CALL; C.step = 'Mikrofon wird gestartet …'; if (opts.ring) ringOut(C, c); callShow(); callPaint(); // das andere Gerät klingelt sofort, nicht erst nach Mikrofon und Platz
+  const slow = (pr, ms, what) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(Object.assign(new Error('zeit'), {what})), ms))]);
+  try { C.local = await slow(navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}, video:kind === 'video' ? {facingMode:'user', width:{ideal:640}, height:{ideal:480}, frameRate:{ideal:24, max:30}} : false}), 45000, 'mic'); }
+  catch (e) { try { ac.close(); } catch {} if (CALL === C) { await callLeave(true); } return toast(e?.message === 'zeit' ? (kind === 'video' ? 'Kamera und Mikrofon' : 'Das Mikrofon') + ' haben nicht geantwortet. Schließ Noctibat einmal ganz (aus der App-Übersicht wischen) und öffne es neu.' : micErr(e, kind === 'video')); }
   if (CALL !== C) { C.local.getTracks().forEach(t => t.stop()); return; }
-  await rtcTurn();
-  try { await tkEnsureRoom(cid, tid, kind); await tkSweep(cid); await social.db.runTransaction(async tx => { const d = await tx.get(tkRef(cid, tid)); const p = d.data()?.p || {}, others = tkFresh({p}).filter(u => u !== social.uid);
-      if (!p[social.uid] && others.length >= max) throw new Error('voll'); tx.update(tkRef(cid, tid), {[`p.${social.uid}`]:{t:srvNow(), s:C.sid}}); }); }
-  catch (e) { C.local.getTracks().forEach(t => t.stop()); try { ac.close(); } catch {} if (CALL === C) { CALL = null; callHide(); } return toast(e?.message === 'voll' ? `Alle ${max} Plätze sind belegt. Sobald jemand geht, wird ein Platz frei.` : 'Beitreten hat nicht geklappt. Versuch es nochmal.'); }
+  C.step = 'Verbindung wird aufgebaut …'; callStatus(); await slow(rtcTurn(), 8000).catch(() => {});
+  try { await slow(tkEnsureRoom(cid, tid, kind), 15000); tkSweep(cid); await slow(social.db.runTransaction(async tx => { const d = await tx.get(tkRef(cid, tid)); const p = d.data()?.p || {}, others = tkFresh({p}).filter(u => u !== social.uid);
+      if (!p[social.uid] && others.length >= max) throw new Error('voll'); tx.update(tkRef(cid, tid), {[`p.${social.uid}`]:{t:srvNow(), s:C.sid}}); }), 15000); }
+  catch (e) { if (CALL === C) await callLeave(true); else { C.local.getTracks().forEach(t => t.stop()); try { ac.close(); } catch {} } return toast(e?.message === 'voll' ? `Alle ${max} Plätze sind belegt. Sobald jemand geht, wird ein Platz frei.` : e?.message === 'zeit' ? 'Noctibat erreicht die Datenbank gerade nicht. Prüf deine Internetverbindung und versuch es nochmal.' : e?.code === 'permission-denied' ? (amOwner ? 'Die Datenbank hat den Anruf abgelehnt: Die Firestore-Regeln sind veraltet. Spiel firebase/firestore.rules in der Firebase-Konsole ein.' : 'Die Datenbank hat den Anruf abgelehnt (fehlende Berechtigung). Sag Inaya Bescheid.') : `Beitreten hat nicht geklappt (${e?.code || e?.message || 'unbekannt'}). Versuch es nochmal.`); }
   C.joined = Date.now(); C.status = 'Verbunden'; social.db.doc(`chats/${cid}/talk/${tid}/st/${social.uid}`).set({mic:true, cam:C.st.cam, ts:Date.now()}).catch(() => {});
   C.unRoom = tkRef(cid, tid).onSnapshot(d => { if (CALL !== C) return; C.room = d.data() || {p:{}}; if (!C.room.p?.[social.uid]) { tkRef(cid, tid).update({[`p.${social.uid}`]:{t:srvNow(), s:C.sid}}).catch(() => {}); } callSync(); }, () => {});
   // Signale strikt nacheinander und in Sende-Reihenfolge verarbeiten (Firestore liefert sie nach ID sortiert, parallel überholten sie sich)
@@ -9369,11 +9384,11 @@ async function callJoin(cid, tid, opts = {}){
   C.hb = setInterval(() => { if (CALL === C) tkRef(cid, tid).update({[`p.${social.uid}.t`]:srvNow()}).catch(() => {}); }, TK_HB);
   C.tick = setInterval(() => { if (CALL === C) { callStatus(); callSync(); } }, 1000);
   spkStart(C, social.uid, C.local);
-  if (opts.ring) ringOut(C, c); callPaint(); }
+  if (opts.ring) ringOut(C, c); C.step = ''; callPaint(); }
 async function tkEnsureRoom(cid, tid, kind){ if (TK.cid === cid && TK.list.some(t => t.id === tid)) return; await social.db.runTransaction(async tx => { const r = tkRef(cid, tid), d = await tx.get(r); if (!d.exists) tx.set(r, {...(TK_DEF[tid] || {name:'Talk', kind}), def:TK_DEF[tid] ? 1 : 0, ts:Date.now(), p:{}}); }); }
 function callSync(){ const C = CALL; if (!C || !C.joined) return; const p = C.room.p || {}, now = srvNow();
-  for (const [u, v] of Object.entries(p)) { if (u === social.uid || !v) continue; if (now - (+v.t || 0) > TK_STALE) continue; const pr = C.peers.get(u); if (!pr || pr.rs !== v.s) { if (pr) peerClose(C, u); peerOpen(C, u, v.s); } }
-  for (const u of [...C.peers.keys()]) { const pr = C.peers.get(u); if (p[u]) pr.seen = 1; if (!p[u] ? pr.seen || now - pr.born > 8000 : now - (+p[u].t || 0) > TK_STALE || p[u].s !== pr.rs) { if (pr.state === 'connected') C.had = 1; peerClose(C, u); } } // neue Verbindung: kurz warten, bis die Teilnehmerliste nachkommt
+  for (const [u, v] of Object.entries(p)) { if (u === social.uid || !v) continue; if (!tkOk(v, now)) continue; const pr = C.peers.get(u); if (!pr || pr.rs !== v.s) { if (pr) peerClose(C, u); peerOpen(C, u, v.s); } }
+  for (const u of [...C.peers.keys()]) { const pr = C.peers.get(u); if (p[u]) pr.seen = 1; if (!p[u] ? pr.seen || Date.now() - pr.born > 8000 : !tkOk(p[u], now) || p[u].s !== pr.rs) { if (pr.state === 'connected') C.had = 1; peerClose(C, u); } } // neue Verbindung: kurz warten, bis die Teilnehmerliste nachkommt
   if (/^dm_/.test(C.cid) && C.had && !C.peers.size && !C.ending) { C.ending = 1; C.status = 'Anruf beendet'; callStatus(); setTimeout(() => CALL === C && callLeave(true), 1500); } // privat: legt die andere Person auf, ist der Anruf vorbei
   callPaint(); }
 // Verbindung zu einer Person: pro Paar bietet nur die Seite mit der kleineren ID an, die andere antwortet (keine Überschneidungen, auch wenn viele gleichzeitig beitreten)
@@ -9395,6 +9410,7 @@ function sigOut(C, pr, type, d){ if (CALL !== C) return; tkRef(C.cid, C.tid).col
 async function sigIn(C, doc){ const m = doc.data(); doc.ref.delete().catch(() => {}); if (CALL !== C || m.ts !== C.sid) return; // nur Nachrichten an diese Sitzung
   if (m.type === 'decline') { if (/^dm_/.test(C.cid)) { C.status = 'Abgelehnt'; callPaint(); setTimeout(() => CALL === C && callLeave(), 1600); } return; }
   if (m.type === 'ringing') { C.rang = true; callStatus(); return; }
+  if (m.type === 'accept') { C.ringing = false; C.acc = 1; callStatus(); return; }
   let pr = C.peers.get(m.from); if (!pr || pr.rs !== m.fs) { if (pr) peerClose(C, m.from); pr = peerOpen(C, m.from, m.fs); }
   let d; try { d = JSON.parse(m.d); } catch { return; } const pc = pr.pc;
   try {
@@ -9414,8 +9430,8 @@ async function callLeave(quiet){ const C = CALL; if (!C) return; CALL = null; cl
   callHide(); tkPaint(); callBarPaint(); if (!quiet) toast('Anruf beendet'); }
 addEventListener('pagehide', () => { if (CALL?.joined) tkRef(CALL.cid, CALL.tid).update({[`p.${social.uid}`]:firebase.firestore.FieldValue.delete()}).catch(() => {}); });
 function callStatus(){ const C = CALL; if (!C) return; const live = [...C.peers.values()], on = live.filter(p => p.state === 'connected'), lost = live.filter(p => p.lost && p.state !== 'connected');
-  let s; if (!C.joined) s = 'Verbindet …'; else if (lost.length) s = `Verbindung zu ${lost.map(p => chatWho(p.u)).join(', ')} unterbrochen, wird wiederhergestellt …`;
-  else if (/^dm_/.test(C.cid) && !on.length) s = C.ringing ? (C.rang ? 'Klingelt …' : 'Ruft an …') : live.length ? 'Verbindet …' : 'Wartet …';
+  let s; if (!C.joined) s = C.ringing && C.ringStarted ? (C.rang ? 'Klingelt …' : 'Ruft an …') : C.step || 'Verbindet …'; else if (lost.length) s = `Verbindung zu ${lost.map(p => chatWho(p.u)).join(', ')} unterbrochen, wird wiederhergestellt …`;
+  else if (/^dm_/.test(C.cid) && !on.length) s = C.ringing ? (C.rang ? 'Klingelt …' : 'Ruft an …') : live.length || C.acc ? 'Verbindet …' : 'Wartet …';
   else if (!on.length) s = 'Du bist allein hier. Warte, bis jemand dazukommt.'; else { const sec = Math.floor((Date.now() - (C.since || (C.since = Date.now()))) / 1000); s = `Verbunden · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
   if (C.status === 'Abgelehnt' || C.status === 'Verpasst · keine Antwort' || C.status === 'Anruf beendet') s = C.status;
   const here = !!C.min && V.name === 'chats' && (CH.mode === 'chat' || CH.mode === 'talks') && CH.open === C.cid; document.body.classList.toggle('callhere', here); const cb = document.querySelector('#callbar .cbst'); if (cb) cb.textContent = s; else if (here && !document.querySelector('#callbar.mine')) callBarPaint(); const el = document.querySelector('#callov .cstat'), pl = document.querySelector('#callpill .cpst'); if (el) el.textContent = s; if (pl) pl.textContent = s; C.statusText = s; }
@@ -9475,7 +9491,7 @@ function callPaint(){ const C = CALL; if (!C) return; callStatus(); if (C.min) {
   if (C.barH !== bar) { C.barH = bar; el.querySelector('.cbar').innerHTML = bar; } } // nur bei Änderung neu, sonst flackert die Leiste
 
 /* ---- Klingeln (private Chats und private Gruppen) ---- */
-function ringOut(C, c){ const to = (c.members || []).filter(u => u !== social.uid && !tkFresh(C.room).includes(u)).slice(0, 8);
+function ringOut(C, c){ if (C.ringStarted) return; C.ringStarted = 1; const to = (c.members || []).filter(u => u !== social.uid && (/^dm_/.test(C.cid) || !tkFresh(C.room).includes(u))).slice(0, 8);
   for (const u of to) { const path = `rings/${u}/r/${C.cid}~${C.tid}`; C.ring.push(path); social.db.doc(path).set({from:social.uid, cid:C.cid, tid:C.tid, kind:C.kind, at:srvNow(), sid:C.sid}).catch(e => { if (CALL !== C || C.ringFail) return; C.ringFail = 1; // vorher still verschluckt: dann kam der Anruf einfach nie an
       toast(e?.code === 'permission-denied' ? (amOwner ? 'Das Klingeln wurde von der Datenbank abgelehnt: Die Firestore-Regeln sind veraltet. Spiel firebase/firestore.rules in der Firebase-Konsole ein.' : 'Das Klingeln konnte nicht zugestellt werden (fehlende Berechtigung). Sag Inaya Bescheid.') : 'Das Klingeln konnte gerade nicht zugestellt werden. Prüf deine Verbindung.'); }); }
   C.ringing = true; callPaint(); C.ringT = setTimeout(() => { if (CALL !== C) return; C.ring.forEach(r => social.db.doc(r).delete().catch(() => {})); C.ring = []; C.ringing = false;
@@ -9497,10 +9513,11 @@ function ringPaint(){ const r = RING.list.find(x => !(CALL && CALL.cid === x.cid
   if (!RING.done['rg' + r.id + r.sid]) { RING.done['rg' + r.id + r.sid] = 1; if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'ringing', d:'{}', at:Date.now()}).catch(() => {}); } // dem Anrufer zeigen: es klingelt wirklich
   const th = callTheme(r.cid), c = th.c, u = uidUser(r.from); if (!el) { el = document.createElement('section'); el.id = 'ringov'; el.setAttribute('role', 'alertdialog'); document.body.appendChild(el); }
   el.className = 'themed ringov' + (th.bg ? ' hasbg' : ''); el.setAttribute('style', th.st); el.style.setProperty('--cbg', th.bg ? `url("${th.bg}")` : 'none'); el.setAttribute('aria-label', 'Eingehender Anruf');
-  el.innerHTML = `<div class="rgin"><span class="rgav">${u ? headPic(u) : ''}</span><b class="rgn">${esc(chatWho(r.from))}</b><small>${r.kind === 'video' ? 'Eingehender Videoanruf' : 'Eingehender Anruf'}${c?.group ? ' in „' + esc(chatName(c)) + '“' : ''}</small>
+  el.innerHTML = `<div class="rgin"><span class="rgav">${u ? headPic(u) : ''}</span><b class="rgn">${whoH(r.from)}</b><small>${r.kind === 'video' ? 'Eingehender Videoanruf' : 'Eingehender Anruf'}${c?.group ? ' in „' + esc(chatName(c)) + '“' : ''}</small>
     <div class="rgbtns"><button type="button" class="clbtn cend" data-act="ring-no" data-id="${esc(r.id)}">${CI.end}<span>Ablehnen</span></button><button type="button" class="clbtn cyes" data-act="ring-yes" data-id="${esc(r.id)}">${r.kind === 'video' ? CI.vid : CI.ph}<span>Annehmen</span></button></div></div>`; }
 async function ringAnswer(id, yes){ const r = RING.list.find(x => x.id === id); RING.list = RING.list.filter(x => x.id !== id); ringPaint(); if (!r) return; RING.done[r.id + r.sid] = 1; r.ref.delete().catch(() => {});
   if (!yes) { if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'decline', d:'{}', at:Date.now()}).catch(() => {}); return; }
+  if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'accept', d:'{}', at:Date.now()}).catch(() => {}); // Anrufer: „Verbindet …“ statt weiter „Klingelt …“
   openChat(r.cid); await callJoin(r.cid, r.tid); }
 
 /* ---- Talks erstellen und verwalten: jedes Mitglied der öffentlichen Gruppe erstellt, umbenennen/löschen nur Admin oder Ersteller ---- */
@@ -9538,7 +9555,7 @@ function bubbleHTML(m, group){
     if (!u && social && !CMH[m.from]) { CMH[m.from] = 1; loadProf(m.from).then(() => softRender()); }
     return `<div class="cmrow"><button type="button" class="cameo mav" data-act="profile" data-id="${esc(m.from)}" aria-label="Profil von ${esc(chatWho(m.from))}">${u?.outfit || u?.pic ? headPic(u) : ''}</button>${bubbleHTML({...m, _r:1}, group)}</div>`;
   }
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${esc(chatWho(m.from))}</button>` : ''}${quoteHTML(m.re)}${msgMedia(m)}${m.text ? etx(m.text) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${whoH(m.from)}</button>` : ''}${quoteHTML(m.re)}${msgMedia(m)}${m.text ? etx(m.text) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
 // Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
 const isDel = id => !!(S.nfDel && S.nfDel[id]);
@@ -10727,7 +10744,7 @@ document.addEventListener('click', async e => {
   else if (a === 'shp-go') { const ids = [...SHP.sel], pl = SHP.post; if (!ids.length) return toast('Wähl mindestens einen Chat aus.'); b.disabled = true; let ok = 0;
     for (const id of ids) { const cid = await shCid(id); if (cid && await sendMsg(cid, '', {post:pl})) ok++; } shpClose(); if (ok) toast(ok === 1 ? 'Beitrag gesendet' : `An ${ok} Chats gesendet`); }
   else if (a === 'msh-post') { shpvOpen(b.dataset.u, b.dataset.id); }
-  else if (a === 'call-start') { const cid = CH.open; if (!cid) return; const live = TK.cid === cid ? TK.list.find(t => tkFresh(t).some(u => u !== social.uid)) : null; callJoin(cid, live ? live.id : b.dataset.k === 'video' ? 'video' : 'audio', {ring:!live}); }
+  else if (a === 'call-start') { const cid = CH.open; if (!cid) return; const live = TK.cid === cid ? TK.list.find(t => tkFresh(t).some(u => u !== social.uid)) : null; callJoin(cid, live ? live.id : b.dataset.k === 'video' ? 'video' : 'audio', {ring:!live || /^dm_/.test(cid)}); }
   else if (a === 'call-join' || a === 'tk-join') { if (CH.open) callJoin(CH.open, b.dataset.id); }
   else if (a === 'call-open') callShow();
   else if (a === 'call-min') callMinimize();
