@@ -63,3 +63,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - `handles/<uid>` = `{h: Nutzername, n: Anzeigename}` (immer mit `merge`). Alle hören live auf die ganze Sammlung (`nmWatch`), Umbenennungen sind sofort überall sichtbar. Namen über `chatWho`/`nmOf` holen, nie gespeicherte Kopien anzeigen.
 - Name mit Fledermaus/Owner-Zeichen: `whoH(uid)` bzw. `markOf(uid)` (nutzt `hmark`). Neue Stellen, die Namen zeigen, bitte damit bauen.
+
+## Verbindung und Kontosicherung (seit v385)
+
+- iPhone/iPad: Firestore mit `experimentalForceLongPolling` (im Shim, beide Kopien). Dort riss die Streaming-Verbindung das Schreiben still ab, Lesen ging weiter. Der Schreib-Wächter baut die Verbindung nach dem Hintergrund oder bei hängenden Schreibvorgängen neu auf (`social.db.reconnect`, `social.db.pending`).
+- Kontosicherung unter `data/users/<uid>`: Form v2 mit Stücken `nf2-<bereich>-<i>` und `nf-meta` = `{v:2, ks, h, ts}`. Geschrieben wird nur, was sich geändert hat (Prüfsumme `h`). Gespeichert wird erst nach erfolgreichem Laden (`cloud.loaded`), sonst überschreibt ein leerer Start den echten Stand. Die alte Form (`nf-0…`, `{n, ts}`) wird weiter gelesen.
+- Einstellungen → Selbsttest (`diagRun`) prüft auf der echten Seite Schreiben, Regeln, Lesebestätigung, Namen, Sprachspeicher, Mikrofon, Verschlüsselung und Netz.

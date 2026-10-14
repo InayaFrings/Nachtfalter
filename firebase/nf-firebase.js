@@ -18,14 +18,19 @@
   async function dropSlot(sl){ // Anmeldung auf diesem Platz beenden und den zwischengespeicherten Stand löschen
     try { const a = appOf(sl); await a.auth().signOut(); if (sl) await a.delete(); } catch {}
     LS.set('nachtfalter-v2' + (sl ? ':' + sl : ''), null); }
-  fs.settings({ignoreUndefinedProperties: true, merge: true});
+  // iPhone/iPad (Inaya, 2026-10-14): Die Streaming-Verbindung verlor dort das Schreiben still (Lesen ging weiter). Long Polling ist robuster.
+  const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  fs.settings({ignoreUndefinedProperties: true, merge: true, ...(IOS ? {experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false} : {})});
   auth.languageCode = 'de';
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
   auth.onAuthStateChanged(u => { user = u; });
 
   /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch(), runTransaction: f => fs.runTransaction(f)}; // Transaktionen: Plätze in Anrufen (Inaya, 2026-10-13)
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch(), runTransaction: f => fs.runTransaction(f),
+    lp: IOS, // Verbindungsart (für den Selbsttest)
+    reconnect: async () => { try { await fs.disableNetwork(); } catch {} try { await fs.enableNetwork(); } catch {} }, // hängende Verbindung neu aufbauen; wartende Schreibvorgänge gehen danach raus
+    pending: ms => Promise.race([fs.waitForPendingWrites().then(() => true), new Promise(r => setTimeout(() => r(false), ms))])}; // Transaktionen: Plätze in Anrufen (Inaya, 2026-10-13)
 
   /* ---------- Wer ist angemeldet ---------- */
   const me = {

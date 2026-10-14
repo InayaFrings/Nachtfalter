@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8c5ddf09e2cd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a989c4e950f1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -28,14 +28,19 @@
   async function dropSlot(sl){ // Anmeldung auf diesem Platz beenden und den zwischengespeicherten Stand löschen
     try { const a = appOf(sl); await a.auth().signOut(); if (sl) await a.delete(); } catch {}
     LS.set('nachtfalter-v2' + (sl ? ':' + sl : ''), null); }
-  fs.settings({ignoreUndefinedProperties: true, merge: true});
+  // iPhone/iPad (Inaya, 2026-10-14): Die Streaming-Verbindung verlor dort das Schreiben still (Lesen ging weiter). Long Polling ist robuster.
+  const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  fs.settings({ignoreUndefinedProperties: true, merge: true, ...(IOS ? {experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false} : {})});
   auth.languageCode = 'de';
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
   auth.onAuthStateChanged(u => { user = u; });
 
   /* ---------- Datenbank: Firestore hat schon dieselbe Form (collection/doc/where/orderBy/onSnapshot) ---------- */
-  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch(), runTransaction: f => fs.runTransaction(f)}; // Transaktionen: Plätze in Anrufen (Inaya, 2026-10-13)
+  const db = {collection: p => fs.collection(p), doc: p => fs.doc(p), batch: () => fs.batch(), runTransaction: f => fs.runTransaction(f),
+    lp: IOS, // Verbindungsart (für den Selbsttest)
+    reconnect: async () => { try { await fs.disableNetwork(); } catch {} try { await fs.enableNetwork(); } catch {} }, // hängende Verbindung neu aufbauen; wartende Schreibvorgänge gehen danach raus
+    pending: ms => Promise.race([fs.waitForPendingWrites().then(() => true), new Promise(r => setTimeout(() => r(false), ms))])}; // Transaktionen: Plätze in Anrufen (Inaya, 2026-10-13)
 
   /* ---------- Wer ist angemeldet ---------- */
   const me = {
@@ -5400,26 +5405,48 @@ function save(){
 // Deshalb liegt der ganze Stand zusätzlich privat unter data/users/<id>/ in der Datenbank.
 let cloud = null, cloudTimer = null, cloudBusy = Promise.resolve();
 const CHUNK = 60000;
+// Nur Geändertes hochladen (Inaya, 2026-10-14): vorher ging bei JEDER kleinen Änderung der ganze Stand (bei großen Konten viele MB) in 60-KB-Stücken hoch.
+// Firestore schreibt der Reihe nach, also warteten Lesebestätigung, Namen, Klingeln und Sprachnachrichten dahinter, auf dem Handy oft endlos.
+// Neu (v2): je Bereich von S eigene Stücke nf2-<bereich>-<i>, in nf-meta stehen Anzahl und Prüfsumme je Stück; geschrieben wird nur, was sich geändert hat.
+let CLAST = null; // Prüfsummen wie zuletzt gespeichert
+const hstr = s => { let h1 = 0xdeadbeef ^ s.length, h2 = 0x41c6ce57 ^ s.length; for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
+const ckId = k => encodeURIComponent(k).replace(/\./g, '%2E');
+function cloudParts(){ const out = {}; for (const [k, v] of Object.entries(S)) { if (v === undefined || typeof v === 'function') continue;
+    const val = k === 'users' && v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).filter(([, u]) => !u?.remote)) : v; // Profile anderer kommen ohnehin frisch aus der Datenbank
+    const str = JSON.stringify(val); if (str === undefined) continue; const n = Math.ceil(str.length / CHUNK) || 1; out[k] = Array.from({length:n}, (_, i) => str.slice(i * CHUNK, (i + 1) * CHUNK)); }
+  return out; }
 function cloudQueue(){
   if (!cloud) return;
   clearTimeout(cloudTimer);
-  cloudTimer = setTimeout(() => { cloudBusy = cloudBusy.then(cloudWrite, cloudWrite); }, 700);
+  cloudTimer = setTimeout(cloudFlush, 3000);
 }
+function cloudFlush(){ clearTimeout(cloudTimer); cloudTimer = null; cloudBusy = cloudBusy.then(cloudWrite, cloudWrite); }
+document.addEventListener('visibilitychange', () => { if (document.hidden && cloudTimer) cloudFlush(); });
 async function cloudWrite(){
-  if (!cloud) return;
-  const str = JSON.stringify(S), n = Math.ceil(str.length / CHUNK) || 1;
+  if (!cloud || !cloud.loaded) return; // erst nach erfolgreichem Laden (vorher konnte ein leerer Start den echten Stand überschreiben)
+  const parts = cloudParts(), ks = {}, h = {}, last = CLAST || {}, jobs = [];
+  for (const [k, l] of Object.entries(parts)) { ks[k] = l.length; l.forEach((c, i) => { const id = k + '.' + i, x = hstr(c); h[id] = x; if (last[id] !== x) jobs.push(cloud.col.doc('nf2-' + ckId(k) + '-' + i).set({s:c})); }); }
   try {
-    for (let i = 0; i < n; i++) await cloud.col.doc('nf-' + i).set({s: str.slice(i * CHUNK, (i + 1) * CHUNK)});
-    await cloud.col.doc('nf-meta').set({n, ts: S.savedAt || Date.now()});
+    await Promise.all(jobs);
+    await cloud.col.doc('nf-meta').set({v:2, ks, h, ts:S.savedAt || Date.now()}); CLAST = h; CLOUDSTAT = {n:Object.keys(h).length, w:jobs.length, kb:Math.round(Object.values(parts).flat().reduce((a, c) => a + c.length, 0) / 1024), t:Date.now()};
     if (!cloud.ok) { cloud.ok = true; refreshFoot(); }
   } catch (e) { if (e?.code === 'resource_exhausted') toast('Speicher voll: Das Foto ist zu groß.'); }
 }
-async function cloudReinit(){ cloud = null; await cloudInit(); }
-async function cloudRead(col, n){
-  let str = '';
-  for (let i = 0; i < n; i++) { const d = await col.doc('nf-' + i).get(); str += d.exists ? d.data().s : ''; }
-  return JSON.parse(str);
+let CLOUDSTAT = null;
+// Schreib-Wächter (Inaya, 2026-10-14): Auf dem iPhone riss die Schreibverbindung nach dem Hintergrund still ab, Lesen ging weiter. Dann neu verbinden.
+let wdLast = 0, hidAt = 0;
+document.addEventListener('visibilitychange', () => { if (document.hidden) { hidAt = Date.now(); return; } if (social?.db?.reconnect && hidAt && Date.now() - hidAt > 15000) { wdLast = Date.now(); social.db.reconnect(); } });
+setInterval(async () => { if (!social?.db?.pending || document.hidden) return; const ok = await social.db.pending(45000); if (!ok && !document.hidden && Date.now() - wdLast > 60000) { wdLast = Date.now(); social.db.reconnect(); } }, 60000);
+async function cloudRead(col, meta){
+  const m = typeof meta === 'number' ? {n:meta} : meta;
+  if (m.v === 2) { const st = {}; await Promise.all(Object.entries(m.ks || {}).map(async ([k, n]) => { const l = await Promise.all(Array.from({length:n}, (_, i) => col.doc('nf2-' + ckId(k) + '-' + i).get())); st[k] = JSON.parse(l.map(d => d.exists ? d.data().s : '').join('')); }));
+    CLAST = m.h || null; return st; }
+  let str = ''; // alte Form (bis v384): nf-0 … nf-n
+  for (let i = 0; i < m.n; i++) { const d = await col.doc('nf-' + i).get(); str += d.exists ? d.data().s : ''; }
+  CLAST = null; return JSON.parse(str);
 }
+async function cloudReinit(){ cloud = null; await cloudInit(); }
 // Beim Anmelden: Konto auch im Claude-Konto suchen, falls der Browser-Stand fehlt oder älter ist
 async function findLogin(contact, pw){
   const hs = new Set(await Promise.all(pwVariants(pw).map(hashPw)));
@@ -5429,9 +5456,9 @@ async function findLogin(contact, pw){
   u = hit(S); if (u || !cloud) return u;
   try {
     const meta = await cloud.col.doc('nf-meta').get(); if (!meta.exists) return null;
-    const st = ensureHelpers(await cloudRead(cloud.col, meta.data().n));
+    const st = ensureHelpers(await cloudRead(cloud.col, meta.data()));
     u = hit(st); if (!u) return null;
-    S = st; return S.users[u.id];
+    S = st; cloud.loaded = true; return S.users[u.id];
   } catch { return null; }
 }
 // Handy-Tastaturen setzen gern ein Leerzeichen ans Ende oder machen den ersten Buchstaben groß
@@ -5449,14 +5476,15 @@ async function cloudInit(){
     const col = db.collection('data/users/' + uid);
     const meta = await col.doc('nf-meta').get();
     try { amOwner = await user.isOwner(); } catch {}
-    cloud = {col, ok:false, uid, db, handles: db.collection('handles')};
+    cloud = {col, ok:false, uid, db, handles: db.collection('handles'), loaded:!meta.exists}; if (meta.exists && meta.data().v === 2) CLAST = meta.data().h || null;
     const localEmpty = !Object.values(S.users || {}).some(u => !u.helper && !u.remote);
     if (meta.exists && (localEmpty || (meta.data().ts || 0) > (S.savedAt || 0))) {
-      const st = await cloudRead(col, meta.data().n);
-      S = ensureHelpers(st); cloud.ok = true;
+      let st = null; for (let i = 0; i < 3 && !st; i++) { try { st = await cloudRead(col, meta.data()); } catch { await new Promise(r => setTimeout(r, 1500)); } }
+      if (!st) { toast('Dein Konto ließ sich gerade nicht laden. Bitte lade die Seite neu.'); return; } // nichts speichern: sonst ginge der echte Stand verloren
+      S = ensureHelpers(st); cloud.ok = true; cloud.loaded = true;
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
       softRender();
-    } else if (S.me || S.pending || meta.exists) { cloudQueue(); }
+    } else if (S.me || S.pending || meta.exists) { cloud.loaded = true; cloudQueue(); }
     else { cloud.ok = true; }
     if (me()?.handle) claimHandle(me().handle);
     acctRemember(); refreshFoot();
@@ -8268,6 +8296,7 @@ async function setMine(list, again){
   syncFriends();
 }
 let deleting = false;
+let lastPubJs = '';
 function publishProfile(){
   if (!social || deleting) return; acctRemember();
   clearTimeout(pubTimer);
@@ -8290,7 +8319,8 @@ function publishProfile(){
     if (big()) doc.cover = null;
     if (big() && doc.banner) doc.banner = {...doc.banner, img:null};
     if (big()) doc.pic = null;
-    try { await social.db.doc('profiles/' + social.uid).set(JSON.parse(JSON.stringify(doc))); } catch {}
+    const js = JSON.stringify(doc); if (js === lastPubJs) return; // unverändert: nicht erneut 240 KB hochladen
+    try { await social.db.doc('profiles/' + social.uid).set(JSON.parse(js)); lastPubJs = js; } catch {}
   }, 1500);
 }
 async function searchPeople(q){
@@ -9549,10 +9579,15 @@ async function rulesCheck(){ try { await social.db.collection(`rings/${social.ui
 function diagCard(){ if (!social) return ''; return `<div class="card"><h2 class="card-h">Selbsttest</h2><div class="card-in"><p class="note">Prüft Anrufe, Sprachnachrichten, Lesebestätigungen und Namen auf diesem Gerät. Es wird nichts verschickt. Das Ergebnis kannst du kopieren und weitergeben.</p><button type="button" class="btn" data-act="diag-run">Selbsttest starten</button><pre id="diag-out" class="diagout" hidden></pre><div class="row" id="diag-btns" hidden style="gap:8px;flex-wrap:wrap"><button type="button" class="btn" data-act="diag-copy">Ergebnis kopieren</button>${navigator.share ? '<button type="button" class="btn ghost" data-act="diag-share">Teilen …</button>' : ''}</div></div></div>`; }
 async function diagRun(){ const out = document.getElementById('diag-out'); if (!out) return; out.hidden = false; const L = []; const put = (ok, t) => { L.push((ok === true ? '✓ ' : ok === false ? '✗ ' : '• ') + t); out.textContent = L.join('\n'); };
   const lim = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('Zeitüberschreitung')), ms))]);
-  const err = e => e?.code || e?.name || e?.message || String(e);
+  const err = e => e?.message === 'Zeitüberschreitung' ? 'keine Antwort vom Server nach 10 s, Schreib-Warteschlange hängt' : e?.code || e?.message || e?.name || String(e);
   const ua = navigator.userAgent, ios = isIOS(), sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   put(null, `Version ${window.NF_BUILD} · ${ios ? 'iPhone/iPad' : /Android/.test(ua) ? 'Android' : 'Computer'} · ${sa ? 'App vom Home-Bildschirm' : 'Browser'} · ${(ua.match(/(Version|Chrome|Firefox|CriOS|FxiOS)\/[\d.]+/) || [''])[0]} · ${new Date().toLocaleString('de-DE')}`);
   put(!!social.uid, 'Angemeldet als @' + (me()?.handle || '?') + ' (' + social.uid.slice(0, 6) + '…)');
+  { const st = JSON.stringify(S).length; put(st < 3e6, `Kontostand: ${Math.round(st / 1024)} KB${CLOUDSTAT ? `, Sicherung zuletzt ${CLOUDSTAT.w} von ${CLOUDSTAT.n} Stücken geschrieben (${ago(CLOUDSTAT.t)})` : ', noch nicht gesichert seit dem Öffnen'}`); }
+  put(null, 'Verbindung: ' + (social.db.lp ? 'Long Polling (iPhone)' : 'Streaming'));
+  const wtest = async ms => { const t0 = Date.now(); await lim(social.db.doc(`data/users/${social.uid}/nf-e2/clk/t`).set({t:firebase.firestore.FieldValue.serverTimestamp()}), ms); return ((Date.now() - t0) / 1000).toFixed(1); };
+  try { put(true, `Schreiben: Server antwortet nach ${await wtest(20000)} s`); } catch (e) { put(false, `Schreiben: ${e?.message === 'Zeitüberschreitung' ? 'keine Antwort nach 20 s' : err(e)}`);
+    if (social.db.reconnect) { put(null, 'Baue die Verbindung neu auf …'); await social.db.reconnect(); try { put(true, `Schreiben nach Neuverbinden: Server antwortet nach ${await wtest(20000)} s`); } catch (e2) { put(false, `Schreiben nach Neuverbinden: ${e2?.message === 'Zeitüberschreitung' ? 'weiter keine Antwort' : err(e2)}`); } } }
   await lim(clkSync(), 8000).catch(() => {}); put(Math.abs(CLK) < 120000, `Uhr: ${Math.abs(CLK) < 1500 ? 'stimmt' : (CLK > 0 ? 'geht ' : 'geht ') + Math.round(Math.abs(CLK) / 1000) + ' s ' + (CLK > 0 ? 'nach' : 'vor')}`);
   try { await lim(social.db.collection(`rings/${social.uid}/r`).limit(1).get({source:'server'}), 10000); put(true, 'Regeln: Klingeln erlaubt (Regeln ab v378)'); } catch (e) { put(false, 'Regeln: Klingeln verboten → Firestore-Regeln sind veraltet (' + err(e) + ')'); }
   put(RING.unsub && !RING.err ? true : false, 'Eingehende Anrufe: ' + (RING.unsub && !RING.err ? 'Empfang läuft' : 'Empfang gestört (' + (RING.err || 'nicht gestartet') + ')'));
