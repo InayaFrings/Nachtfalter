@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='fd98ad33a8d6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d9109f42c243';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1646,7 +1646,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 #pullbat{position:fixed;left:50%;top:calc(6px + env(safe-area-inset-top,0px));z-index:5000;width:46px;color:var(--fg,#eeedf2);pointer-events:none;transform:translate(-50%,0);transition:opacity .15s}
 #pullbat svg{width:100%;height:auto;display:block}#pullbat.go{color:var(--accent,#b98cff)}#pullbat.spin svg{animation:batw .12s ease-in-out infinite alternate}
 .tkform .tkkind{margin-top:10px}.tkform .tkkind legend{margin:0 0 4px;padding:0}.tkform .f{margin:0}
-@media (min-width:761px){.shpkp.tkform{top:50%;bottom:auto;left:50%;transform:translate(-50%,-50%);width:min(520px,calc(100vw - 48px));max-height:min(86vh,720px);border:1px solid var(--p-line);border-radius:22px;padding:22px 24px 22px;box-shadow:0 24px 70px #000b}}
+@media (min-width:761px){.shpkp.tkform{max-height:min(86vh,720px);border:1px solid var(--p-line);border-bottom:0;padding:18px 24px 22px;box-shadow:0 -12px 50px #0009}}
 .shhead{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 10px;padding:0 2px 4px;border-bottom:1px solid var(--p-line,#ffffff26)}
 .shhead b{font:400 24px/1.1 var(--p-font,var(--f-display))}.shhead small{grid-row:2;color:var(--p-muted,#9a99a3);font:13px Inter,sans-serif;padding-bottom:6px}
 .shx{grid-row:1/3;grid-column:2;width:36px;height:36px;border:1px solid var(--p-line,#ffffff33);border-radius:50%;background:none;color:inherit;cursor:pointer;font-size:15px}
@@ -5168,6 +5168,8 @@ function cropAsk(file, W, H){
   });
 }
 let postCrop = null; // zugeschnittenes Bild für den nächsten Beitrag
+let PTXT = ''; // Beitragstext bleibt beim Hinzufügen von Foto, Video, Musik, GIF oder Link erhalten, egal in welcher Reihenfolge (Inaya, 2026-10-14)
+document.addEventListener('input', e => { if (e.target.id === 'ptext') PTXT = e.target.value; });
 let PTAGS = [], PTAGP = false; // Markierte Leute im nächsten Beitrag {id, n, x, y} (Inaya, 2026-10-11)
 const ptagsClean = l => (Array.isArray(l) ? l : []).filter(t => t && t.id && t.n).slice(0, 20).map(t => ({id:String(t.id), n:String(t.n).slice(0, 40), ...(t.x != null ? {x:Math.max(0, Math.min(100, +t.x || 0)), y:Math.max(0, Math.min(100, +t.y || 0))} : {})}));
 function ptagBubbles(tags, act){ return tags.filter(t => t.x != null).map(t => `<button type="button" class="ptagb" style="left:${+t.x}%;top:${+t.y}%" ${act ? `data-act="profile" data-id="${esc(t.id)}"` : 'tabindex="-1"'}>${esc(t.n)}</button>`).join(''); }
@@ -7627,7 +7629,7 @@ function composeHTML(){
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" class="pform${pt ? ' tp' : ''}" style="display:grid;gap:12px;${pt}">
         <div class="pfhead">${cameo(me())}<b>${esc(me().name)}</b><small>${social ? (aud() === 'pub' ? 'öffentlich' : 'nur Freunde') : ''}</small></div>
-        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text"></textarea></div>
+        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text">${esc(PTXT)}</textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
         <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('stk', 'GIF')}${b('video', 'Link')}</div>
@@ -9670,7 +9672,11 @@ function tkDialog(t){ const c = CH.list.find(x => x.id === TK.cid); if (!c?.pub 
     <p class="note">Bis zu 9 Personen gleichzeitig. Alle aus „${esc(chatName(c))}“ können beitreten.</p>
     ${t ? `<div class="tkfgo"><button class="btn" type="submit">Speichern</button>${!t.def ? `<button type="button" class="btn ghost" data-act="tk-del" data-id="${esc(t.id)}"${busy ? ' disabled title="Gerade sind Leute drin"' : ''}>Talk löschen</button>` : ''}<button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button></div>`
       : '<div class="tkfgo"><button class="btn" type="button" data-act="tk-mkgo">Erstellen und beitreten</button><button class="btn ghost" type="submit">Nur erstellen</button><button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button></div>'}</form>`;
-  document.body.appendChild(el); setTimeout(() => document.getElementById('tk-name')?.focus(), 50); }
+  document.body.appendChild(el); tkDlgFit(); setTimeout(() => document.getElementById('tk-name')?.focus(), 50); }
+// PC: wie am Handy von unten, aber genau so breit wie der Chat-Bereich und unten bündig daran (Inaya, 2026-10-14)
+function tkDlgFit(){ const f = document.querySelector('#tkdlg .tkform'), pn = document.querySelector('.chatmain>.chatpanel'); if (!f) return; if (!pn || innerWidth <= 760) { f.style.cssText = f.getAttribute('style')?.replace(/;?(left|width|bottom|transform|top):[^;]*/g, '') || ''; return; }
+  const r = pn.getBoundingClientRect(); Object.assign(f.style, {left:r.left + 'px', width:r.width + 'px', transform:'none', top:'auto', bottom:Math.max(0, innerHeight - r.bottom) + 'px'}); }
+addEventListener('resize', () => { if (document.getElementById('tkdlg')) tkDlgFit(); });
 async function tkSave(f, go){ const name = document.getElementById('tk-name').value.trim().replace(/\s+/g, ' ').slice(0, 40), id = f.dataset.id, cid = TK.cid; if (!cid) return; if (!name) { document.getElementById('tk-name').focus(); return toast('Gib dem Talk einen Namen.'); }
   const kind = f.querySelector('input[name="tk-kind"]:checked')?.value === 'video' ? 'video' : 'audio', nid = id || 't' + Date.now().toString(36) + e2Rand(3).toLowerCase().replace(/[^0-9a-z]/g, 'x');
   const ac = go ? new (window.AudioContext || window.webkitAudioContext)() : null; // noch im Tippen anlegen (iPhone)
@@ -11392,7 +11398,7 @@ document.addEventListener('submit', async e => {
     if (social) { postAud = val('paud') === 'pub' ? 'pub' : 'fr'; if (postAud === 'pub') p.pub = 1; } // Beitrag öffentlich oder nur für Freunde
     S.posts.push(p);
     if (!save()) { S.posts.pop(); return; }
-    pcrClear(); composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PMU = null; PMUP = false; stAuStop(); PRIGHTS = false; PLINK = false; PTAGS = []; PTAGP = false; PSG = null; PSGP = false; save(); render();
+    PTXT = ''; pcrClear(); composeOpen = false; homeCompose = false; postCrop = null; PVIDEO = null; PAUDIO = null; PMU = null; PMUP = false; stAuStop(); PRIGHTS = false; PLINK = false; PTAGS = []; PTAGP = false; PSG = null; PSGP = false; save(); render();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
