@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a5c7dcde0334';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='524de27ca0fd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1738,6 +1738,14 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .pcrth .pcrtool,.pcrth .pcradd,.pcrth .pcrhint,.pcrth .note,.pcrth .lnk,.pcrth .pcrtrim{font-family:var(--f-body)!important;font-style:normal}
 .pcrth .pcrhint,.pcrth .note,.pcrth .pcrbody .note{color:var(--p-fg)!important;opacity:.85}
 .pcrth .pcrstage{background-image:var(--p-pattern)}
+.pushask .pacard{position:relative;max-width:420px;background:var(--p-bg)!important;color:var(--p-fg);border:1px solid var(--p-line);border-radius:22px;padding:26px 22px 20px;font-family:var(--f-body);text-align:left}
+.pushask h2{margin:12px 0 6px;font:700 22px/1.2 var(--f-body);color:var(--p-fg)}.pawhy{margin:0 0 12px;font-size:15px;line-height:1.45}
+.pabell{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--p-fg);color:var(--p-bg)}.pabell svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.palist{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:10px}.palist li{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--p-line);border-radius:14px;background:var(--p-panel);font-size:15px;line-height:1.35}
+.palist svg{flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
+.pasteps{margin:0 0 12px;padding-left:22px;display:grid;gap:8px;font-size:15px;line-height:1.4}.panote{margin:0 0 16px;font-size:13px;line-height:1.4;color:var(--p-muted)}
+.pabtns{display:flex;gap:10px}.pabtns .btn{flex:1;min-height:46px;border-radius:999px;font:600 16px var(--f-body);white-space:nowrap;padding:0 12px}.pabtns .btn:not(.ghost){background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}.pabtns .btn.ghost{color:var(--p-fg);border-color:var(--p-line);background:transparent}
+.pax{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:1px solid var(--p-line);background:var(--p-panel);color:var(--p-fg);display:grid;place-items:center;cursor:pointer;padding:0}.pax svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .mshself .ph>.cameo{display:none}.mshself .ph{gap:0}
 .pcrth .lnk,.pcrth .pcrrow .lnk{color:var(--p-fg)!important;text-decoration-color:var(--p-line)}.pcrth .pcrtool.on{background:var(--p-fg)!important;color:var(--p-bg)!important}
 @media (min-width:761px){.pcrbox.pcrth{width:min(760px,92vw)!important;height:min(880px,92vh)!important;border:1px solid var(--p-line)!important;border-radius:24px;box-shadow:0 30px 90px #000c}.pcrov{place-items:center!important}}
@@ -8476,7 +8484,7 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
@@ -9552,7 +9560,8 @@ function msgMedia(m){
   if (m.post) { const x = m.post, ou = x.a === social?.uid ? me() : profUser(x.a), nm = ou?.name || x.n || 'Jemand'; if (!ou && x.a && social && !NT.asked[x.a]) { NT.asked[x.a] = 1; loadProf(x.a).then(softRender); }
     // wie im Salon, in den Farben des Beitrags, ohne Like/Kommentar/Repost (Inaya, 2026-10-12)
     const op = ou && htPool().find(p => p.author === (x.a === social?.uid ? S.me : x.a) && p.id === x.id), oh = op ? postHTML(op) : '';
-    if (oh) return `<div class="mshfull${x.a === m.from ? ' mshself' : ''}" role="button" tabindex="0" data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><div class="feed insta">${oh}</div></div>`;
+    const aud = op && (op.audio || op.mu || /open\.spotify\.com/.test(op.url || '')); // Audios: nie ein Profilbild im inneren Feld, das Bild steht schon neben der Nachricht (Inaya, 2026-10-14)
+    if (oh) return `<div class="mshfull${x.a === m.from || aud ? ' mshself' : ''}" role="button" tabindex="0" data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><div class="feed insta">${oh}</div></div>`;
     const pt = ou?.theme?.box ? postTheme(ou.theme) : '';
     if (x.gb) return `<button type="button" class="mshpo post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''} data-act="msh-gb" data-w="${esc(x.gb)}" data-id="${esc(x.id || '')}" aria-label="Gästebucheintrag von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b><small class="mshgb">Gästebuch</small></span>${x.th ? `<img src="${esc(x.th)}" alt="">` : ''}${x.t ? `<span class="mshtx">${etx(x.t)}</span>` : ''}</button>`;
     return `<button type="button" class="mshpo post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''} data-act="msh-post" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${x.th ? `<img src="${esc(x.th)}" alt="">` : ''}${x.t ? `<span class="mshtx"><b>${esc(nm)}</b> ${etx(x.t)}</span>` : ''}</button>`; }
@@ -9983,6 +9992,34 @@ async function pushOff(){ const id = pushMine(); try { const {m} = await pushMes
 async function pushRefresh(){ try { if (!pushOk() || Notification.permission !== 'granted' || !pushMine()) return; const last = +localStorage.getItem('nf-push-t') || 0; if (Date.now() - last < 86400000) return; await pushLoad(); if (!PUSH.vapid) return;
     const {m, reg} = await pushMessaging(); const t = await m.getToken({vapidKey:PUSH.vapid, serviceWorkerRegistration:reg}); const id = hstr(t); localStorage.setItem('nf-push-t', String(Date.now()));
     if (id !== pushMine() || !PUSH.doc?.tokens?.[id]) { const up = {[`tokens.${id}`]:{t, ts:Date.now(), dev:PUSH.doc?.tokens?.[pushMine()]?.dev || ''}}; if (pushMine() && pushMine() !== id) up[`tokens.${pushMine()}`] = firebase.firestore.FieldValue.delete(); await pushRef().set({}, {merge:true}); await pushRef().update(up); localStorage.setItem('nf-push-id', id); } } catch {} }
+// Beim Öffnen fragen, ob Mitteilungen an sollen (Inaya, 2026-10-14): Ja = einschalten, Nein = nicht mehr fragen, wegklicken (×) = beim nächsten Öffnen wieder fragen
+const PA_NO = () => 'nf-pushask-no:' + (social?.uid || ''), PA_SES = 'nf-pushask-ses';
+const paGet = (st, k) => { try { return st.getItem(k); } catch { return null; } }, paSet = (st, k) => { try { st.setItem(k, '1'); } catch {} };
+async function pushAsk(n = 0){
+  if (!social || !me()?.handle || paGet(sessionStorage, PA_SES) || paGet(localStorage, PA_NO()) || document.getElementById('pushask')) return;
+  const ios = isIOS() && !pushStandalone() && !pushOk(); // iPhone im Browser: Mitteilungen gehen erst mit der App vom Home-Bildschirm
+  if (!ios) { if (!pushOk() || Notification.permission === 'denied') return; if (Notification.permission === 'granted' && pushMine()) return; }
+  if ([...document.querySelectorAll('.modal, .callov, .ringov, .pcrov, #onb, .onb')].some(x => !x.hidden && getComputedStyle(x).display !== 'none') || typeof CALL !== 'undefined' && CALL) { if (n < 20) setTimeout(() => pushAsk(n + 1), 3000); return; } // nicht über andere Fenster legen
+  if (!ios) { await pushLoad(); if (!PUSH.vapid) return; }
+  const I = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+  const li = [[I('<path d="M6.5 3.5h3l1.5 4-2 1.2a11 11 0 0 0 6.3 6.3l1.2-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2z"/>'), '<b>Anrufe</b> klingeln bei dir, auch wenn Noctibat zu ist. Sonst verpasst du sie.'],
+    [I('<path d="M4 5h16v11H9l-5 4z"/>'), '<b>Nachrichten</b> aus Chats und Gruppen'], [I('<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M18 8v6M15 11h6"/>'), '<b>Freundschaftsanfragen</b> und Gästebuch-Einträge']];
+  const m = document.createElement('div'); m.className = 'modal pushask'; m.id = 'pushask'; m.style.zIndex = '4800'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'pa-h');
+  m.innerHTML = `<div class="card modal-card pacard" style="${myThemeStyle()}"><button type="button" class="pax" data-r="x" aria-label="Schließen (später nochmal fragen)">${I('<path d="M6 6l12 12M18 6L6 18"/>')}</button>
+    <span class="pabell" aria-hidden="true">${I('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>')}</span>
+    <h2 id="pa-h">Mitteilungen einschalten?</h2>
+    <p class="pawhy">${ios ? 'Wichtig, damit du nichts verpasst. Auf dem iPhone geht das nur mit der Noctibat-App vom Home-Bildschirm:' : 'Wichtig, damit du nichts verpasst. Ohne Mitteilungen erfährst du nur davon, wenn Noctibat gerade offen ist:'}</p>
+    ${ios ? `<ol class="pasteps"><li>Unten in Safari auf <b>Teilen</b> tippen (Quadrat mit Pfeil)</li><li><b>„Zum Home-Bildschirm“</b> wählen</li><li>Noctibat über das neue Symbol öffnen, dann fragen wir dich hier nochmal</li></ol>`
+      : `<ul class="palist">${li.map(([ic, t]) => `<li>${ic}<span>${t}</span></li>`).join('')}</ul><p class="panote">Bei verschlüsselten Chats steht nur „Neue Nachricht“, nie der Inhalt. Du kannst das jederzeit unter Einstellungen → Mitteilungen ändern.</p>`}
+    <div class="pabtns"><button type="button" class="btn ghost" data-r="no">Nein</button><button type="button" class="btn" data-r="yes">${ios ? 'Verstanden' : 'Ja, einschalten'}</button></div></div>`;
+  const done = () => { m.remove(); document.removeEventListener('keydown', esc1); };
+  const esc1 = e => { if (e.key === 'Escape') { paSet(sessionStorage, PA_SES); done(); } };
+  m.addEventListener('click', e => { const r = e.target.closest('[data-r]')?.dataset.r || (e.target === m ? 'x' : ''); if (!r) return; e.stopPropagation();
+    if (r === 'x' || (ios && r === 'yes')) { paSet(sessionStorage, PA_SES); done(); return; } // wegklicken: beim nächsten Öffnen wieder fragen
+    if (r === 'no') { paSet(localStorage, PA_NO()); done(); toast('Okay. Einschalten kannst du sie jederzeit unter Einstellungen → Mitteilungen.'); return; }
+    paSet(sessionStorage, PA_SES); done(); pushOn().then(() => { if (PUSH.err) toast(PUSH.err); }); }); // direkt im Tippen, sonst fragt das iPhone nicht
+  document.addEventListener('keydown', esc1); document.body.appendChild(m); m.querySelector('[data-r="yes"]').focus({preventScroll:true});
+}
 // Mitteilung angetippt: passenden Chat oder Profil öffnen (?c=<chat> bzw. ?p=<person>)
 function pushOpen(href){ let u; try { u = new URL(href, location.href); } catch { return; } const c = u.searchParams.get('c'), pr = u.searchParams.get('p'); if (!c && !pr) return;
   const go2 = () => { if (!social) return false; if (c) { if (!CH.list.some(x => x.id === c)) return false; openChat(c); } else go('profile', pr); render(); return true; };
