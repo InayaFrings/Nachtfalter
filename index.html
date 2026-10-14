@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='6bc57fab4ad4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='4cef18285ca1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1617,6 +1617,8 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .privic{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--p-line);display:grid;place-items:center;background:var(--p-bg)}.privic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .frsentrow{align-items:center;gap:8px;flex-wrap:nowrap}.frsentrow .btn{padding:8px 12px;white-space:nowrap}.frsent{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;white-space:nowrap;font-size:14px;border:1px solid var(--p-line,var(--line));border-radius:999px;font-weight:600}.frsent svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:760px){.privcol{justify-items:stretch}.privbox{text-align:left}}
+.navback{justify-self:start;align-self:start;width:max-content;position:sticky;top:calc(8px + env(safe-area-inset-top,0px));z-index:60;display:inline-flex;align-items:center;gap:6px;margin:0 0 12px;padding:7px 14px 7px 8px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--paper,#111) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--fg);font:600 14px Inter,sans-serif;cursor:pointer;max-width:calc(100% - 8px);box-shadow:0 4px 14px #0006}
+.navback svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.navback span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -5561,7 +5563,24 @@ function toast(msg){
 }
 function earn(){} // Punkte gibt es nicht mehr
 const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
+// Zurück-Pfeil überall (Inaya, 2026-10-14): jeder Seitenwechsel merkt sich, woher man kam (Seite, Reiter, Suche, offener Chat, Scrollstelle).
+// Die Hauptleiste (Salon, Profil, Chats …) fängt neu an. Android- und Browser-Zurück gehen denselben Weg.
+const NAVH = []; let navSkip = false;
+const navSnap = () => ({name:V.name, arg:V.arg, y:window.scrollY, sr:{...SR}, chatTab, ch:CH.open, chm:CH.mode, profTab, roomMode});
+const NAV_NAMES = {home:'Salon', find:'Suche', friends:'Freunde', chats:'Chats', room:'Zimmer', wardrobe:'Garderobe', notifs:'Mitteilungen', settings:'Einstellungen', games:'Minigames', design:'Profil gestalten', shop:'Laden'};
+function navLabel(s){ if (!s) return ''; if (s.name === 'profile') return s.arg === S.me ? 'Dein Profil' : 'Profil von ' + (S.users[s.arg]?.name || nmOf(s.arg) || 'jemandem');
+  if (s.name === 'chats' && s.ch) { const c = CH.list.find(x => x.id === s.ch); return c ? (c.group ? '„' + chatName(c) + '“' : 'Chat mit ' + chatName(c)) : 'Chat'; }
+  if (s.name === 'find') return s.sr?.q ? 'Suche „' + s.sr.q.slice(0, 20) + '“' : 'Stöbern'; return NAV_NAMES[s.name] || 'Zurück'; }
+const navBackHTML = () => NAVH.length ? `<button type="button" class="navback" data-act="nav-back" aria-label="Zurück zu ${esc(navLabel(NAVH[NAVH.length - 1]))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>${esc(navLabel(NAVH[NAVH.length - 1]))}</span></button>` : '';
+function navBack(){ const s = NAVH.pop(); if (!s) return false; navSkip = true;
+  try { Object.assign(SR, s.sr || {}); chatTab = s.chatTab || chatTab;
+    if (s.name === 'chats' && s.ch && CH.list.some(c => c.id === s.ch)) { openChat(s.ch); if (s.chm && s.chm !== 'chat') { CH.mode = s.chm; } }
+    else go(s.name, s.arg);
+    profTab = s.profTab ?? profTab; roomMode = s.roomMode || ''; render(); } finally { navSkip = false; }
+  const y = s.y || 0; requestAnimationFrame(() => window.scrollTo(0, y)); setTimeout(() => window.scrollTo(0, y), 350); return true; }
+addEventListener('popstate', () => { if (NAVH.length) navBack(); });
 function go(name, arg=null){
+  if (!navSkip && (name !== V.name || arg !== V.arg) && S.me) { NAVH.push(navSnap()); if (NAVH.length > 30) NAVH.shift(); try { history.pushState({nf:NAVH.length}, ''); } catch {} }
   if (name !== 'settings') { memSeenSnap = null; memAll = false; }
   mobMore = false; fpOpen = false; if (name !== V.name) roomMode = ''; if (name !== 'design') obDesign = false; LB = null;
   if (name !== V.name || arg !== V.arg) { profTab = null; songOff = null; profEdit = false; }
@@ -10451,7 +10470,7 @@ function renderInner(){
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
   app.innerHTML = `<div class="shell">${rail()}
-    <main class="main${wide ? ' wide' : ''}">${body()}${V.name === 'home' ? salonEnd() : ''}</main>
+    <main class="main${wide ? ' wide' : ''}">${navBackHTML()}${body()}${V.name === 'home' ? salonEnd() : ''}</main>
     ${wide ? '' : asideHTML()}
     ${pmenuSheet()}
     <footer class="foot"><span>Noctibat · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
@@ -10666,7 +10685,9 @@ document.addEventListener('click', async e => {
   if (a === 'nt-go' && b.dataset.v === 'gb') { const g = PI[b.dataset.k]?.p?.gb; if (g) gbOpen(g.w, g.mid, b.dataset.c === '1', b.dataset.d); return; }
   if (a === 'nt-go' && b.dataset.v === 'opost' && /^helper-/.test(b.dataset.id || '')) { go('home'); return; } // Antwort unter einem Helfer-Beitrag: der steht im Salon
   if (a === 'nt-go') { const v = b.dataset.v; if (b.dataset.k && (v === 'post' || v === 'opost')) { ntOpenPost(b.dataset.k, v === 'opost' ? b.dataset.id : S.me, b.dataset.c === '1', b.dataset.d); return; } if (v === 'req') go('friends'); else if (v === 'opost' && b.dataset.id) { go('profile', b.dataset.id); profTab = 'posts'; render(); setTimeout(() => document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } else { go('profile', S.me); if (v === 'post') { profTab = 'posts'; render(); } setTimeout(() => document.querySelector(v === 'wall' ? '#rwall' : '.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}), 250); } return; }
-  if (a === 'nav') { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } }
+  if (a === 'nav-back') { navBack(); return; }
+  if (a === 'nav') { const root = !!b.closest('.rail, .mtop, .mobnav'); if (root) { NAVH.length = 0; navSkip = true; } // Hauptleiste: Verlauf beginnt neu, kein Pfeil
+    try { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } } finally { navSkip = false; } }
   else if (a === 'profile') { if (CMV || document.getElementById('cmv')) cmvClose(true); go('profile', social && id === social.uid ? S.me : id); } // auch aus dem Kommentarfenster heraus (Inaya, 2026-10-12)
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
   else if (a === 'rwall-del') { if (social && WL.uid) { const gk = WL.uid + '_gb' + id; social.db.collection('chats/pi_' + gk + '/m').get().then(q => q.docs.forEach(d => d.ref.delete().catch(() => {}))).catch(() => {}); /* Likes und Kommentare zum Eintrag mit entfernen */ markDel(id); WL.list = WL.list.filter(x => x.mid !== id); drawWall(); social.db.doc('chats/wall_' + WL.uid + '/m/' + id).delete().catch(() => { markDel(id, false); toast('Löschen ging nicht.'); }); } }
