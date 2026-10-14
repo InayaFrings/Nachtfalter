@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='14afc5c1cb74';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='58fd340ec567';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1699,6 +1699,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .archset{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:8px 0 4px}
 .archsetb{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:18px 18px 8px 8px;background:var(--paper-2,#151517);color:var(--fg);font:inherit;text-align:left;cursor:pointer}
 .archsetb:hover{border-color:var(--fg)}.archsetb>svg{width:26px;height:26px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6}.archsetb>span{display:grid;flex:1}.archsetb b{font:400 17px var(--f-display,serif)}.archsetb small{color:var(--muted);font-size:13px}.archsetb>i{font-style:normal;font-size:22px;opacity:.6}
+.hword{white-space:nowrap;font-size:min(28px,calc((100vw - 72px) / (var(--hn,10) * 1.2)))!important;letter-spacing:.08em!important}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -10729,7 +10730,7 @@ function gamesView(){
   } else if (game === 'hang') {
     if (!GM.hang) hangNew(); const h = GM.hang, won = [...h.w].every(ch => h.g.includes(ch)), lost = h.miss >= 6;
     body = `<p class="note">Errate das düstere Wort, bevor das Männchen hängt.</p>
-      <div class="hangwrap">${hangSVG(h.miss)}<div><p class="hword">${[...h.w].map(ch => h.g.includes(ch) || lost ? ch : '_').join(' ')}</p>
+      <div class="hangwrap">${hangSVG(h.miss)}<div><p class="hword" style="--hn:${h.w.length}">${[...h.w].map(ch => h.g.includes(ch) || lost ? ch : '_').join(' ')}</p>
       <div class="keys">${[...'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ'].map(ch => `<button data-act="hang" data-c="${ch}" ${h.g.includes(ch) || won || lost ? 'disabled' : ''}>${ch}</button>`).join('')}</div></div></div>
       <p class="gstat">${won ? 'Richtig! Gut gemacht.' : lost ? `Leider verloren. Das Wort war ${h.w}.` : `Fehler: ${h.miss} von 6`}</p>`;
   } else if (game === 'bat') {
