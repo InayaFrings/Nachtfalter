@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='af40b7f52d0c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='91aa3c566820';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1597,7 +1597,6 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .tkjoin{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border:1px dashed var(--p-line);border-radius:16px;background:var(--p-panel)}.tkjoin p{margin:0;flex:1;min-width:180px}
 .tknote{margin:6px 2px 0;color:var(--p-muted)}
 .tkform{display:grid;gap:12px;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}.tkform h3{margin:0;font:400 24px var(--p-font)}
-.tkideas{display:flex;flex-wrap:wrap;gap:6px}.tkideas .chip{border:1px solid var(--p-line);background:none;color:inherit;border-radius:999px;padding:6px 12px;font:13px Inter,sans-serif;cursor:pointer}.tkideas .chip:hover{border-color:var(--p-fg)}
 .tkkind{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;padding:0;margin:0}.tkkind legend{margin-bottom:6px}.tkkind label{display:block;cursor:pointer}.tkkind input{position:absolute;opacity:0;pointer-events:none}
 .tkkind label>span{display:grid;justify-items:center;gap:4px;padding:12px 8px;border:1px solid var(--p-line);border-radius:22px 22px 10px 10px;background:var(--p-panel);text-align:center}.tkkind label>span svg{width:24px;height:24px}.tkkind b{font:400 17px var(--p-font)}.tkkind small{color:var(--p-muted);font:12px Inter,sans-serif}
 .tkkind input:checked+span{border-color:var(--p-fg);box-shadow:inset 0 0 0 1px var(--p-fg)}.tkkind input:focus-visible+span{outline:2px solid var(--p-fg);outline-offset:2px}
@@ -9483,14 +9482,13 @@ async function ringAnswer(id, yes){ const r = RING.list.find(x => x.id === id); 
   openChat(r.cid); await callJoin(r.cid, r.tid); }
 
 /* ---- Talks erstellen und verwalten: jedes Mitglied der öffentlichen Gruppe erstellt, umbenennen/löschen nur Admin oder Ersteller ---- */
-const TK_IDEAS = ['Gaming', 'Einfach quatschen', 'Musik hören', 'Video-Lounge'], TK_CAP = 30;
+const TK_CAP = 30;
 function tkDialog(t){ const c = CH.list.find(x => x.id === TK.cid); if (!c?.pub || !(c.members || []).includes(social?.uid)) return; if (t && !tkMay(c, t)) return;
   if (!t && TK.list.filter(x => !x.def).length >= TK_CAP) return toast(`Diese Gruppe hat schon ${TK_CAP} eigene Talks. Lösch erst einen, den keiner mehr braucht.`);
   document.getElementById('tkdlg')?.remove(); const th = callTheme(c.id), el = document.createElement('div'); el.id = 'tkdlg'; el.className = 'shpk'; const busy = t ? tkFresh(t).filter(u => u !== social.uid).length : 0;
   el.innerHTML = `<div class="shpkb" data-act="tk-x"></div><form class="shpkp themed tkform" data-form="talk" style="${th.st}" data-id="${esc(t?.id || '')}"><h3>${t ? 'Talk bearbeiten' : 'Talk erstellen'}</h3>
     <label class="f"><span class="lbl">Name</span><input id="tk-name" type="text" maxlength="40" required value="${esc(t ? tkName(t) : '')}" placeholder="z. B. Einfach quatschen" autocomplete="off"></label>
-    ${t ? '' : `<div class="tkideas" aria-label="Vorschläge">${TK_IDEAS.map(n => `<button type="button" class="chip" data-act="tk-idea" data-v="${esc(n)}">${esc(n)}</button>`).join('')}</div>
-    <fieldset class="tkkind"><legend class="lbl">Art</legend><label><input type="radio" name="tk-kind" value="audio" checked><span>${CI.mic}<b>Audiochat</b><small>nur Stimme</small></span></label><label><input type="radio" name="tk-kind" value="video"><span>${CI.vid}<b>Videochat</b><small>mit Kamera</small></span></label></fieldset>`}
+    ${t ? '' : `<fieldset class="tkkind"><legend class="lbl">Art</legend><label><input type="radio" name="tk-kind" value="audio" checked><span>${CI.mic}<b>Audiochat</b><small>nur Stimme</small></span></label><label><input type="radio" name="tk-kind" value="video"><span>${CI.vid}<b>Videochat</b><small>mit Kamera</small></span></label></fieldset>`}
     <p class="note">Bis zu 9 Personen gleichzeitig. Alle aus „${esc(chatName(c))}“ können beitreten.</p>
     ${t ? `<div class="tkfgo"><button class="btn" type="submit">Speichern</button>${!t.def ? `<button type="button" class="btn ghost" data-act="tk-del" data-id="${esc(t.id)}"${busy ? ' disabled title="Gerade sind Leute drin"' : ''}>Talk löschen</button>` : ''}<button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button></div>`
       : '<div class="tkfgo"><button class="btn" type="button" data-act="tk-mkgo">Erstellen und beitreten</button><button class="btn ghost" type="submit">Nur erstellen</button><button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button></div>'}</form>`;
@@ -10717,7 +10715,6 @@ document.addEventListener('click', async e => {
   else if (a === 'tk-new') tkDialog(null);
   else if (a === 'tk-page') { if (!CH.open) return; typingNow(false); chatAttach = false; CH.mode = 'talks'; render(); }
   else if (a === 'tk-back') { CH.mode = 'chat'; render(); }
-  else if (a === 'tk-idea') { const i = document.getElementById('tk-name'); if (i) { i.value = b.dataset.v; i.focus(); } if (/video/i.test(b.dataset.v)) { const r = document.querySelector('#tkdlg input[value="video"]'); if (r) r.checked = true; } }
   else if (a === 'tk-mkgo') { const f = b.closest('form'); if (f && f.reportValidity()) tkSave(f, true); }
   else if (a === 'tk-edit') tkDialog(TK.list.find(t => t.id === b.dataset.id));
   else if (a === 'tk-x') document.getElementById('tkdlg')?.remove();
