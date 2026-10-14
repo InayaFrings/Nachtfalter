@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='6e0d4429289a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='4401a1153fc2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1619,6 +1619,24 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 @media (max-width:760px){.privcol{justify-items:stretch}.privbox{text-align:left}}
 .navback{justify-self:start;align-self:start;width:max-content;position:sticky;top:calc(8px + env(safe-area-inset-top,0px));z-index:60;display:inline-flex;align-items:center;gap:6px;margin:0 0 12px;padding:7px 14px 7px 8px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--paper,#111) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--fg);font:600 14px Inter,sans-serif;cursor:pointer;max-width:calc(100% - 8px);box-shadow:0 4px 14px #0006}
 .navback svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.navback span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vmsg.vm2{display:flex;align-items:center;gap:12px;padding-bottom:0;width:min(250px,66vw)}
+.bubble:has(.vm2){padding:10px 12px 6px!important}
+.vm2 .vmplay{flex:none;width:42px;height:50px;border-radius:50% 50% 8px 8px / 62% 62% 8px 8px;border:1.5px solid currentColor;background:transparent;color:inherit;display:grid;place-items:center;transition:background .2s,color .2s}
+.vm2 .vmplay svg{width:18px;height:18px;fill:currentColor;margin-top:6px}
+.vm2.vmon .vmplay{background:currentColor}.vm2.vmon .vmplay svg{fill:var(--p-bg,#111)}
+.vm2 .vmr{flex:1;min-width:0;display:grid;gap:4px;position:relative}
+.vm2 .vmw{height:34px;gap:2px;align-items:center;position:relative}
+.vm2 .vmw::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:currentColor;opacity:.35}
+.vm2 .vmw i{flex:1;min-width:2px;max-width:3px;border-radius:2px;background:currentColor;opacity:.32;position:relative}
+.vm2 .vmw i.on{opacity:1}
+.vm2 .vmdot{position:absolute;left:0;top:-7px;width:22px;height:12px;margin:0 0 0 -11px;border-radius:0;background:none;color:inherit;opacity:0;transition:opacity .2s;pointer-events:none;z-index:1}
+.vm2 .vmdot svg{width:22px;height:12px;display:block}.vm2.vmon .vmdot{opacity:1}
+.vm2 .vmdot::after{content:'';position:absolute;left:50%;top:11px;width:1.5px;height:34px;margin-left:-.75px;background:currentColor;opacity:.8}
+.vm2 .vmfoot{display:flex;align-items:center;gap:8px}
+.vm2 .vmt{position:static;margin:0;font:italic 14px/1 var(--p-font,var(--f-ital));opacity:.85;font-variant-numeric:tabular-nums}.vm2 .vmt::before{content:'❦ ';font-style:normal;opacity:.8}
+.vm2 .vmrate{margin-left:auto;border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:1px 8px;font:600 11px/16px Inter,sans-serif;opacity:.75;cursor:pointer}
+.vm2 .vmspin{width:42px;height:50px;border-radius:50% 50% 8px 8px / 62% 62% 8px 8px;border:1.5px dashed currentColor}
+.psub .page{font-weight:600}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -2034,7 +2052,13 @@ async function shpvOpen(u, id){ const uid = u === social?.uid ? S.me : u, find =
   document.getElementById('shpv')?.remove(); const el = document.createElement('div'); el.id = 'shpv'; el.className = 'shpv';
   el.innerHTML = `<div class="shpvb" data-act="shpv-x"></div><div class="shpvp" role="dialog" aria-label="Beitrag"><header class="pcfh"><button type="button" class="pcfx" data-act="shpv-x" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b>Beitrag</b><span></span></header><div class="shpvc"><div class="feed insta">${postHTML(p)}</div></div></div>`;
   document.body.appendChild(el); }
-const repostBtn = p => p.author === S.me && !p.remote ? '' : `<button type="button" class="rpbtn" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag reposten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg><span>Repost</span></button>`;
+// Wie oft geteilt (Inaya, 2026-10-14): Reposts, in Chats gesendet und in Storys geteilt, gezählt in chats/pi_<besitzer>_<beitrag>/m (kind s/sd/st)
+const SH_KINDS = {s:1, sd:1, st:1};
+const shCount = p => { const w = piKey(p) ? piWatch(p) : null; return w ? w.list.filter(x => SH_KINDS[x.kind]).length : 0; };
+function shMark(owner, pid, kind){ if (!social || !owner || !/^[\w-]+$/.test(String(owner) + pid) || /^helper-/.test(owner)) return; social.db.doc(`chats/pi_${owner}_${pid}/m/${social.uid}_${kind}_${Date.now().toString(36)}`).set({kind, by:social.uid, ts:Date.now()}).catch(() => {}); }
+const RP_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>';
+const repostBtn = p => { const n = shCount(p); return p.author === S.me && !p.remote ? (n ? `<span class="rpbtn rpown" title="So oft wurde dein Beitrag geteilt" aria-label="${n}-mal geteilt">${RP_SVG}<span>${n}</span></span>` : '')
+  : `<button type="button" class="rpbtn" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag reposten${n ? ` (${n}-mal geteilt)` : ''}">${RP_SVG}<span>${n || ''}</span></button>`; };
 const likeBtn = (attrs, on, n, can=true) => can ? `<button class="likebtn" ${attrs} aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="likebtn muted">${HEART(false)}<span>${n}</span></span>` : '';
 const RNAME = {lach:'Lachend', schock:'Geschockt', herz:'Herzaugen', wein:'Weinend', wut:'Wütend'};
 // Totenkopf mit Gesichtsausdruck, selbst gezeichnet; Herzen dunkelrot, Tränen hellblau-grau
@@ -6856,6 +6880,7 @@ let STUP = 0; // Storys, die gerade hochladen: Ring dreht sich (Inaya, 2026-10-1
 async function stShare(){ STUP++; try { await stShare0(); } finally { STUP = Math.max(0, STUP - 1); if (!stNew && !STV) render(); else document.querySelectorAll(".sring.upl").forEach(x => STUP || x.classList.remove("upl")); } }
 async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochgeladen wird im Hintergrund (Inaya, 2026-10-11)
   const n = stNew; if (!n || n.posting) return; n.posting = true;
+  for (const x of n.stk || []) if (x.k === 'post' && x.a && x.id) shMark(x.a, x.id, 'st'); // in die Story geteilt: zählt beim Beitrag mit
   document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = true);
   stTaCommit(); n.song = (n.song || '').trim();
   if (n.vid && !social) { n.posting = false; document.querySelectorAll('[data-act=st-share]').forEach(x => x.disabled = false); toast('Videos in der Story gehen, sobald du angemeldet bist.'); return; }
@@ -7957,7 +7982,8 @@ function plinksHTML(u){
 }
 // Unter dem Namen: Online-Status und ob ich schon eine Anfrage geschickt habe (Inaya, 2026-10-13)
 const reqSent = id => !!social && FR.mine.includes(id) && !FR.inc.includes(id);
-const profSubHTML = (u, low) => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${u.handle && !u.helper ? `<span class="phd">@${esc(u.handle)}</span>` : ''}${onlineHTML(u)}${u.remote && !low && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
+const ageShow = u => u.helper ? null : u.remote ? u.age : ageOf(u.birth);
+const profSubHTML = (u, low) => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${ageShow(u) ? `<span class="page">${ageShow(u)} Jahre</span>` : ''}${onlineHTML(u)}${u.remote && !low && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
@@ -8238,7 +8264,7 @@ function softRender(){
 async function loadProf(id){ try { const d = await social.db.doc('profiles/' + id).get(); if (d.exists) { const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; } } catch {} }
 function remoteUser(id, p){
   const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
-  return {id, remote:true, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
+  return {id, remote:true, age:Number.isFinite(+p.age) && +p.age > 0 ? +p.age : null, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
     music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songMu:p.songMu && typeof p.songMu === 'object' ? p.songMu : null, songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], sth:Array.isArray(p.sth) ? p.sth : [], str:p.str || 'all', stcm:p.stcm === 0 ? 0 : 1, hl:Array.isArray(p.hl) ? p.hl : [], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
@@ -8340,6 +8366,7 @@ function publishProfile(){
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, hts:u.priv ? [] : [...new Set(posts.filter(p => p.pub).flatMap(p => htOf(p.text)))].slice(0, 60), stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => (r = r.stk ? {...r, stk:r.stk.map(({p, ...q}) => q)} : r, r).cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
     if (NM[social.uid]?.n !== u.name || NM[social.uid]?.v !== window.NF_BUILD || (u.handle && NM[social.uid]?.h !== u.handle)) social.db.doc('handles/' + social.uid).set({...(u.handle ? {h:u.handle} : {}), n:u.name || '', v:window.NF_BUILD || '', vt:Date.now()}, {merge:true}).catch(() => {});
+    doc.age = ageOf(u.birth) ?? null; // Alter im Profil sichtbar, das Geburtsdatum selbst bleibt privat (Inaya, 2026-10-14)
     doc.bk = (S.blocked || []).map(x => bkHash(social.uid + '>' + x.id)); // wen ich blockiert habe, nur als Kennung (Inaya, 2026-10-13)
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
     if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
@@ -9208,24 +9235,29 @@ function drawWall(){
 let chatAttach = false;
 function vmBars(m){ let w = String(m.audio.w || ''); if (!/^\d{8,}$/.test(w)) { let h = 0; for (const c of String(m.id || m.audio.k || 'x')) h = (h * 31 + c.charCodeAt(0)) >>> 0; w = Array.from({length:36}, (_, i) => { h = (h * 1103515245 + 12345) >>> 0; return 1 + (h >>> 16) % 8; }).join(''); }
   return [...w].map(c => `<i style="height:${18 + +c * 9}%"></i>`).join(''); }
+// Sprachnachricht im Noctibat-Stil (Inaya, 2026-10-14): Spitzbogen-Knopf, gespiegelte Wellenform mit Fledermaus als Abspielstelle, ❦ Dauer, Tempo-Knopf
+const VM_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>', VM_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3v13h-3zM13.5 5.5h3v13h-3z"/></svg>';
 function vmsgHTML(m){
-  const u = uidUser(m.from), d = +m.audio.d || 0;
-  return `<div class="vmsg" data-id="${esc(m.id || '')}"><span class="vmav"><span class="cameo">${headPic(u)}</span><svg class="vmmic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span>
-    ${m._pend && m.from === social?.uid ? '<span class="vmplay vmspin" role="status" aria-label="Wird gesendet"><i></i></span>' : `<button type="button" class="vmplay" data-act="vm-play" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg></button>`}
-    <div class="vmr"><div class="vmw" data-act="vm-seek" data-id="${esc(m.id || '')}" role="slider" aria-label="Stelle in der Sprachnachricht" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0"><b class="vmdot"></b>${vmBars(m)}</div><small class="vmt">${stTime(d)}</small></div></div>`;
+  const d = +m.audio.d || 0;
+  return `<div class="vmsg vm2" data-id="${esc(m.id || '')}">
+    ${m._pend && m.from === social?.uid ? '<span class="vmplay vmspin" role="status" aria-label="Wird gesendet"><i></i></span>' : `<button type="button" class="vmplay" data-act="vm-play" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht abspielen">${VM_PLAY}</button>`}
+    <div class="vmr"><div class="vmw" data-act="vm-seek" data-id="${esc(m.id || '')}" role="slider" aria-label="Stelle in der Sprachnachricht" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0"><b class="vmdot" aria-hidden="true">${BAT}</b>${vmBars(m)}</div>
+      <div class="vmfoot"><small class="vmt">${stTime(d)}</small><button type="button" class="vmrate" data-act="vm-rate" aria-label="Abspieltempo">${vmRateTxt()}</button></div></div></div>`;
 }
+let VMRATE = 1; const vmRateTxt = () => (VMRATE === 1 ? '1' : String(VMRATE).replace('.', ',')) + '×';
 // eine Sprachnachricht spielt zur Zeit; Fortschritt färbt die Balken
 const VMA = new Audio(); let VMID = null; VMA.preload = 'auto';
 function vmPaint(){ document.querySelectorAll('.vmsg').forEach(x => { const on = x.dataset.id === VMID, d = on && isFinite(VMA.duration) && VMA.duration ? VMA.duration : 0, q = on && d ? VMA.currentTime / d : 0;
   const bars = x.querySelectorAll('.vmw i'); bars.forEach((b, i) => b.classList.toggle('on', i / bars.length < q)); const dot = x.querySelector('.vmdot'); if (dot) dot.style.left = (q * 100) + '%';
-  const pl = x.querySelector('.vmplay'); const playing = on && !VMA.paused; if (pl && pl.dataset.p !== String(playing)) { pl.dataset.p = playing; pl.innerHTML = playing ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>'; pl.setAttribute('aria-label', playing ? 'Anhalten' : 'Sprachnachricht abspielen'); }
+  x.classList.toggle('vmon', on && (q > 0 || !VMA.paused));
+  const pl = x.querySelector('.vmplay'); const playing = on && !VMA.paused; if (pl && pl.dataset.p !== String(playing)) { pl.dataset.p = playing; pl.innerHTML = playing ? VM_PAUSE : VM_PLAY; pl.setAttribute('aria-label', playing ? 'Anhalten' : 'Sprachnachricht abspielen'); }
   const t = x.querySelector('.vmt'); const m = CH.msgs.find(y => y.id === x.dataset.id); if (t && m) t.textContent = stTime(on && (VMA.currentTime > 0 || !VMA.paused) ? VMA.currentTime : +m.audio.d || 0); }); }
 ['timeupdate', 'play', 'pause', 'ended', 'loadedmetadata'].forEach(ev => VMA.addEventListener(ev, vmPaint));
 VMA.addEventListener('ended', () => { VMA.currentTime = 0; vmPaint(); });
 async function vmPlay(id, at){
   const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
   if (VMID === id && VMA.src) { if (at != null && isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; else if (!VMA.paused) return VMA.pause(); VMA.play().catch(() => {}); return; }
-  VMA.pause(); VMID = id; VMA.removeAttribute('src'); vmPaint(); const pl = document.querySelector(`.vmsg[data-id="${CSS.escape(id)}"] .vmplay`); pl?.classList.add('busy');
+  VMA.pause(); VMID = id; VMA.removeAttribute('src'); VMA.playbackRate = VMRATE; vmPaint(); const pl = document.querySelector(`.vmsg[data-id="${CSS.escape(id)}"] .vmplay`); pl?.classList.add('busy');
   try { VMA.play().catch(() => {}); } catch {} // im Antippen freischalten
   try { const src = VOICEURL[m.audio.k] && m.from === social.uid ? {url:VOICEURL[m.audio.k], data:VOICEURL[m.audio.k]} : await songURL(m.from, m.audio, 'pa_' + m.audio.k); if (VMID !== id) return; VMA.src = src.url;
     if (at != null) VMA.addEventListener('loadedmetadata', () => { if (isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; }, {once:true});
@@ -10196,7 +10228,7 @@ function settingsView(){
       <label class="f" for="s-new2"><span class="lbl">Neues Passwort wiederholen</span><input id="s-new2" type="password" autocomplete="new-password" required></label>
       <span id="s-pw-err" class="err" hidden></span>
       <div class="row"><span class="sp"></span><button class="btn" type="submit">Passwort ändern</button></div></form>`)}
-    ${row('birth', 'Geburtsdatum', u.birth ? new Date(u.birth + 'T12:00').toLocaleDateString('de-DE') + ' <span class="muted">(' + ageOf(u.birth) + ' Jahre)</span>' : '<span class="muted">nicht angegeben</span>', `<form data-form="set-birth" class="setf">
+    ${u.birth ? `<div class="setrow"><div class="setinfo"><span class="lbl">Geburtsdatum</span><span class="setval">${new Date(u.birth + 'T12:00').toLocaleDateString('de-DE')} <span class="muted">(${ageOf(u.birth)} Jahre)</span></span></div><p class="note" style="margin:4px 0 0">Das Geburtsdatum lässt sich nach dem Eintragen nicht mehr ändern. Im Profil sehen andere nur dein Alter.</p></div>` : row('birth', 'Geburtsdatum', u.birth ? new Date(u.birth + 'T12:00').toLocaleDateString('de-DE') + ' <span class="muted">(' + ageOf(u.birth) + ' Jahre)</span>' : '<span class="muted">nicht angegeben</span>', `<form data-form="set-birth" class="setf">
       ${birthInput('s-birth', u.birth || '')}
       <span id="s-birth-err" class="err" hidden></span>
       <div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form>`, !u.birth)}
@@ -10671,6 +10703,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (a === 'vm-play') { vmPlay(id); return; }
+  if (a === 'vm-rate') { VMRATE = VMRATE === 1 ? 1.5 : VMRATE === 1.5 ? 2 : 1; VMA.playbackRate = VMRATE; document.querySelectorAll('.vmrate').forEach(x => { x.textContent = vmRateTxt(); }); return; }
   if (a === 'vm-seek') { const r = b.getBoundingClientRect(), q = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); vmPlay(id, q); return; }
   if (a === 'maplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
@@ -10892,7 +10925,7 @@ document.addEventListener('click', async e => {
   else if (a === 'shp-sel') { const id = b.dataset.id; SHP.sel.has(id) ? SHP.sel.delete(id) : SHP.sel.add(id); b.setAttribute('aria-pressed', SHP.sel.has(id)); }
   else if (a === 'shp-x') { shpClose(); }
   else if (a === 'shp-go') { const ids = [...SHP.sel], pl = SHP.post; if (!ids.length) return toast('Wähl mindestens einen Chat aus.'); b.disabled = true; let ok = 0;
-    for (const id of ids) { const cid = await shCid(id); if (cid && await sendMsg(cid, '', {post:pl})) ok++; } shpClose(); if (ok) toast(ok === 1 ? 'Beitrag gesendet' : `An ${ok} Chats gesendet`); }
+    for (const id of ids) { const cid = await shCid(id); if (cid && await sendMsg(cid, '', {post:pl})) ok++; } if (ok && pl && !pl.gb) shMark(pl.a, pl.id, 'sd'); shpClose(); if (ok) toast(ok === 1 ? 'Beitrag gesendet' : `An ${ok} Chats gesendet`); }
   else if (a === 'msh-post') { shpvOpen(b.dataset.u, b.dataset.id); }
   else if (a === 'call-start') { const cid = CH.open; if (!cid) return; const live = TK.cid === cid ? TK.list.find(t => tkFresh(t).some(u => u !== social.uid)) : null; callJoin(cid, live ? live.id : b.dataset.k === 'video' ? 'video' : 'audio', {ring:!live || /^dm_/.test(cid)}); }
   else if (a === 'call-join' || a === 'tk-join') { if (CH.open) callJoin(CH.open, b.dataset.id); }
@@ -11411,6 +11444,7 @@ document.addEventListener('submit', async e => {
     if (bad) { err.textContent = bad; err.hidden = false; return; }
     u.handle = nh; claimHandle(nh); setOpen = null; save(); render(); toast('Du heißt jetzt @' + nh);
   } else if (t === 'set-birth' || t === 'birth') {
+    if (me()?.birth && !birthProblem(me().birth) && t === 'set-birth') { setOpen = null; render(); return toast('Das Geburtsdatum lässt sich nicht mehr ändern.'); }
     const k = t === 'birth' ? 'b' : 's', b = val(k + '-birth'), bp = birthProblem(b), err = document.getElementById(k + '-birth-err') || document.getElementById('b-err');
     if (bp) { err.textContent = bp; err.hidden = false; return; }
     me().birth = b; setOpen = null; save(); render(); toast('Geburtsdatum gespeichert');
