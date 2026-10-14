@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='feb37866722c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='938327b0f25e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2258,7 +2258,7 @@ const SH_KINDS = {s:1, sd:1, st:1};
 const shCount = p => { const w = piKey(p) ? piWatch(p) : null; return w ? w.list.filter(x => SH_KINDS[x.kind]).length : 0; };
 function shMark(owner, pid, kind){ if (!social || !owner || !/^[\w-]+$/.test(String(owner) + pid) || /^helper-/.test(owner)) return; social.db.doc(`chats/pi_${owner}_${pid}/m/${social.uid}_${kind}_${Date.now().toString(36)}`).set({kind, by:social.uid, ts:Date.now()}).catch(() => {}); }
 const RP_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.7"/><path d="M4 12a8 8 0 0 1 13.7-5.7"/><path d="M17.9 2.6v3.9H14M6.1 21.4v-3.9H10"/></svg>'; // Ouroboros
-const repostBtn = p => { const n = shCount(p); return p.author === S.me && !p.remote ? `<span class="rpbtn rpown" title="So oft wurde dein Beitrag geteilt" aria-label="${n}-mal geteilt">${RP_SVG}<span>${n}</span></span>`
+const repostBtn = p => { const n = shCount(p); return p.author === S.me && !p.remote ? `<span class="rpbtn rpown" title="So oft wurde dein Beitrag geteilt" aria-label="${n ? n + '-mal geteilt' : 'Noch nicht geteilt'}">${RP_SVG}<span>${n || ''}</span></span>`
   : `<button type="button" class="rpbtn" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-label="Beitrag reposten${n ? ` (${n}-mal geteilt)` : ''}">${RP_SVG}<span>${n || ''}</span></button>`; };
 const likeBtn = (attrs, on, n, can=true) => can ? `<button class="likebtn" ${attrs} aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="likebtn muted">${HEART(false)}<span>${n}</span></span>` : '';
 const RNAME = {lach:'Lachend', schock:'Geschockt', herz:'Herzaugen', wein:'Weinend', wut:'Wütend'};
@@ -8324,8 +8324,8 @@ function roomOpenHTML(u, own){ // „Raumchat offen“ auf dem Profil, nur solan
 }
 const PTICO = { // eigene Noctibat-Symbole (Inaya, 2026-10-14): Kapelle, Kirchenfenster, Mond mit Stern, Ouroboros, Kamee
   room:'<path d="M12 1.8v3.4M10.4 3.2h3.2"/><path d="M4.5 21V11.5L12 5.5l7.5 6V21z"/><path d="M9.8 21v-4a2.2 2.2 0 0 1 4.4 0v4"/><path d="M3 21h18"/>',
-  posts:'<path d="M5 21V10.5a7 7 0 0 1 14 0V21z"/><path d="M12 3.5V21M5 13.5h14"/><path d="M8.5 21v-7.5M15.5 21v-7.5M8.2 6.5l3.8 3.2 3.8-3.2"/>',
-  hl:'<path d="M14.5 3.2a8.8 8.8 0 1 0 6.3 13.6A7.3 7.3 0 0 1 14.5 3.2z"/><path d="M17.6 5l.6 1.4 1.5.2-1.1 1 .3 1.5-1.3-.8-1.3.8.3-1.5-1.1-1 1.5-.2z"/>',
+  posts:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>', // Raster = Beiträge (Inaya, 2026-10-14: verständlicher)
+  hl:'<path d="M12 3.3l2.65 5.4 5.95.85-4.3 4.2 1 5.9L12 16.85 6.7 19.65l1-5.9-4.3-4.2 5.95-.85z"/>', // Stern = Highlights
   reposts:'<path d="M20 12a8 8 0 0 1-13.7 5.7"/><path d="M4 12a8 8 0 0 1 13.7-5.7"/><path d="M17.9 2.6v3.9H14M6.1 21.4v-3.9H10"/>',
   tagged:'<ellipse cx="12" cy="12.3" rx="7" ry="8.8"/><circle cx="12" cy="10.2" r="2.5"/><path d="M8.4 17c.7-2 2-3 3.6-3s2.9 1 3.6 3"/><path d="M12 1.5v2"/>'};
 const profUser = id => S.users[id] || (PROF[id] ? remoteUser(id, PROF[id]) : null);
