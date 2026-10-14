@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='94726572a379';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='364d7d98766e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5631,7 +5631,9 @@ function cloudFlush(){ clearTimeout(cloudTimer); cloudTimer = null; cloudBusy = 
 document.addEventListener('visibilitychange', () => { if (document.hidden && cloudTimer) cloudFlush(); });
 async function cloudWrite(){
   if (!cloud || !cloud.loaded) return; // erst nach erfolgreichem Laden (vorher konnte ein leerer Start den echten Stand überschreiben)
-  const parts = cloudParts(), ks = {}, h = {}, last = CLAST || {}, jobs = [];
+  let last = CLAST || {}; // mit dem Stand in der Cloud vergleichen, nicht mit dem eigenen letzten: ein anderes Gerät kann dazwischen gespeichert haben
+  if (CLAST) { try { const cm = await cloud.col.doc('nf-meta').get(); last = cm.exists && cm.data().v === 2 ? cm.data().h || {} : {}; } catch { last = {}; } }
+  const parts = cloudParts(), ks = {}, h = {}, jobs = [];
   for (const [k, l] of Object.entries(parts)) { ks[k] = l.length; l.forEach((c, i) => { const id = k + '.' + i, x = hstr(c); h[id] = x; if (last[id] !== x) jobs.push(cloud.col.doc('nf2-' + ckId(k) + '-' + i).set({s:c})); }); }
   try {
     await Promise.all(jobs);
@@ -5641,9 +5643,20 @@ async function cloudWrite(){
 }
 let CLOUDSTAT = null;
 // (Kein automatisches Neuverbinden mehr: das las jedes Mal alles neu. Ursache für hängendes Schreiben war das aufgebrauchte Tageskontingent.)
-async function cloudRead(col, meta){
+// Reparatur (Inaya, 2026-10-14): Mit mehreren Geräten konnten sich Stücke verschiedener Stände mischen, dann ließ sich ein Bereich nicht mehr lesen.
+// Kaputte Bereiche kommen aus dem Stand auf diesem Gerät (fb) oder aus der alten Sicherung (nf-0 …); danach wird alles neu geschrieben.
+let CBAD = [];
+async function cloudOld(col){ let str = ''; for (let i = 0; i < 400; i++) { const d = await col.doc('nf-' + i).get(); if (!d.exists) break; str += d.data().s || ''; } return str ? JSON.parse(str) : null; }
+async function cloudRead(col, meta, fb){
   const m = typeof meta === 'number' ? {n:meta} : meta;
-  if (m.v === 2) { const st = {}; await Promise.all(Object.entries(m.ks || {}).map(async ([k, n]) => { const l = await Promise.all(Array.from({length:n}, (_, i) => col.doc('nf2-' + ckId(k) + '-' + i).get())); st[k] = JSON.parse(l.map(d => d.exists ? d.data().s : '').join('')); }));
+  if (m.v === 2) { const st = {}, bad = [];
+    await Promise.all(Object.entries(m.ks || {}).map(async ([k, n]) => { const l = await Promise.all(Array.from({length:n}, (_, i) => col.doc('nf2-' + ckId(k) + '-' + i).get()));
+      try { if (l.some(d => !d.exists)) throw 0; st[k] = JSON.parse(l.map(d => d.data().s || '').join('')); } catch { bad.push(k); } }));
+    CBAD = bad.slice();
+    if (bad.length) { let old; for (const k of bad) { if (fb && fb[k] !== undefined) { st[k] = JSON.parse(JSON.stringify(fb[k])); continue; }
+        if (old === undefined) { try { old = await cloudOld(col); } catch { old = null; } } if (old && old[k] !== undefined) st[k] = old[k]; }
+      const miss = bad.filter(k => st[k] === undefined); if (miss.includes('users') || miss.includes('me')) { const e = new Error('kaputt'); e.keys = miss; throw e; }
+      CLAST = null; return st; } // CLAST leer: beim nächsten Speichern wird alles neu geschrieben
     CLAST = m.h || null; return st; }
   let str = ''; // alte Form (bis v384): nf-0 … nf-n
   for (let i = 0; i < m.n; i++) { const d = await col.doc('nf-' + i).get(); str += d.exists ? d.data().s : ''; }
@@ -5682,11 +5695,14 @@ async function cloudInit(){
     cloud = {col, ok:false, uid, db, handles: db.collection('handles'), loaded:!meta.exists}; if (meta.exists && meta.data().v === 2) CLAST = meta.data().h || null;
     const localEmpty = !Object.values(S.users || {}).some(u => !u.helper && !u.remote);
     if (meta.exists && (localEmpty || (meta.data().ts || 0) > (S.savedAt || 0))) {
-      let st = null; for (let i = 0; i < 3 && !st; i++) { try { st = await cloudRead(col, meta.data()); } catch { await new Promise(r => setTimeout(r, 1500)); } }
-      if (!st) { toast('Dein Konto ließ sich gerade nicht laden. Bitte lade die Seite neu.'); return; } // nichts speichern: sonst ginge der echte Stand verloren
+      // Stand auf diesem Gerät nur als Ersatz nehmen, wenn er sicher zu diesem Konto gehört (gleicher Nutzername)
+      const fbOk = !localEmpty && await (async () => { try { const d = await db.collection('handles').doc(uid).get(); return d.exists && !!me()?.handle && d.data().h === me().handle; } catch { return false; } })();
+      let st = null, why = ''; for (let i = 0; i < 3 && !st; i++) { try { st = await cloudRead(col, meta.data(), fbOk ? S : null); } catch (e) { why = e?.keys ? e.keys.join(', ') : e?.code || e?.message || ''; await new Promise(r => setTimeout(r, 1500)); } }
+      if (!st && fbOk) { st = S; CLAST = null; CBAD = ['alles']; } // Sicherung nicht lesbar, aber dieses Gerät hat den Stand: damit weitermachen und die Sicherung neu schreiben
+      if (!st) { toast(`Dein Konto ließ sich gerade nicht laden${why ? ' (' + why + ')' : ''}. Bitte lade die Seite neu.`); return; } // nichts speichern: sonst ginge der echte Stand verloren
       S = ensureHelpers(st); cloud.ok = true; cloud.loaded = true;
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
-      softRender();
+      softRender(); if (CBAD.length) { cloudQueue(); toast('Deine Kontosicherung war durcheinander und wurde repariert.'); }
     } else if (S.me || S.pending || meta.exists) { cloud.loaded = true; cloudQueue(); }
     else { cloud.ok = true; }
     if (me()?.handle) claimHandle(me().handle);
