@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='91aa3c566820';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6b40a9c22221';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -8153,12 +8153,12 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 90000); // Freundesprofile regelmäßig auffrischen
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis);
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); if (RING.raw.length) ringFilter();
     Promise.all(CH.list.flatMap(c => c.members).filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender);
   }, () => {});
   db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; syncFriends(); }).catch(() => {});
@@ -8521,14 +8521,21 @@ const vEnd = e => { const h = VHOLD; if (!h || e.pointerId !== h.id) return; VHO
   if (Date.now() - VREC.t0 < 700) { voiceStop(false); toast('Halte das Mikrofon gedrückt, um aufzunehmen.'); } else voiceStop(true); };
 document.addEventListener('pointerup', vEnd); document.addEventListener('pointercancel', vEnd);
 let VHOLDUP = false;
+const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function micErr(e, cam){ const was = cam ? 'Kamera und Mikrofon' : 'das Mikrofon', n = e?.name || '';
+  if (n === 'NotAllowedError' || n === 'SecurityError') return isIOS() ? `Noctibat darf ${was} nicht benutzen. Erlaube es beim Nachfragen. Hast du es abgelehnt: In Safari auf „aA“ → Website-Einstellungen → ${cam ? 'Kamera/Mikrofon' : 'Mikrofon'} → Erlauben. Bei der App vom Home-Bildschirm: Einstellungen → Safari → ${cam ? 'Kamera und Mikrofon' : 'Mikrofon'} → Erlauben, dann die App neu öffnen.` : `Noctibat darf ${was} nicht benutzen. Erlaube den Zugriff über das Schloss-Symbol neben der Adresse und versuch es nochmal.`;
+  if (n === 'NotFoundError' || n === 'OverconstrainedError') return cam ? 'Es wurde keine Kamera oder kein Mikrofon gefunden.' : 'Es wurde kein Mikrofon gefunden.';
+  if (n === 'NotReadableError' || n === 'AbortError') return `${cam ? 'Kamera oder Mikrofon' : 'Das Mikrofon'} wird gerade von einer anderen App benutzt (z. B. einem Telefonat). Beende das und versuch es nochmal.`;
+  return `${cam ? 'Kamera oder Mikrofon' : 'Das Mikrofon'} ließ sich nicht starten.`; }
 async function voiceStart(locked){
   if (VREC || !CH.open || !social) return; VHOLDUP = false;
   let lac = null; try { const AC = window.AudioContext || window.webkitAudioContext; lac = new AC(); lac.resume?.().catch(() => {}); } catch {} // im Antippen, sonst bleibt der Pegel auf dem iPhone stumm
-  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast('Dein Browser kann hier keine Sprachnachrichten aufnehmen.');
-  let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); } catch { return toast('Erlaube bitte den Zugriff aufs Mikrofon, dann kannst du Sprachnachrichten aufnehmen.'); }
-  if (VREC || !CH.open) { stream.getTracks().forEach(t => t.stop()); return; }
+  const lacX = () => { try { lac?.close(); } catch {} }; // Audio-Kontexte immer schließen: das iPhone erlaubt nur wenige gleichzeitig
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { lacX(); return toast(isIOS() ? 'Sprachnachrichten brauchen iOS 14.3 oder neuer. Aktualisiere dein iPhone.' : 'Dein Browser kann hier keine Sprachnachrichten aufnehmen.'); }
+  let stream; try { stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); } catch (e) { lacX(); VHOLD = null; return toast(micErr(e)); }
+  if (VREC || !CH.open) { stream.getTracks().forEach(t => t.stop()); lacX(); return; }
   const mt = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'].find(t => MediaRecorder.isTypeSupported(t)) || '';
-  let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:32000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); return toast('Die Aufnahme ließ sich nicht starten.'); }
+  let rec; try { rec = new MediaRecorder(stream, mt ? {mimeType:mt, audioBitsPerSecond:32000} : {}); } catch { stream.getTracks().forEach(t => t.stop()); lacX(); return toast('Die Aufnahme ließ sich nicht starten.'); }
   const v = VREC = {rec, stream, parts:[], t0:Date.now(), cid:CH.open, type:(mt || rec.mimeType || 'audio/mp4').split(';')[0], locked:!!locked || VHOLDUP || !VHOLD}; VHOLDUP = false;
   rec.ondataavailable = e => { if (e.data.size) v.parts.push(e.data); };
   v.lv = []; v.lac = lac; try { if (lac) { const an = lac.createAnalyser(); an.fftSize = 512; lac.createMediaStreamSource(stream).connect(an); const buf = new Float32Array(an.fftSize);
@@ -8567,14 +8574,14 @@ async function voiceSend(j){
       bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), doc);
       if (!j.cid.startsWith('zimmer_') && !j.cid.startsWith('wall_')) bt.update(social.db.doc('chats/' + j.cid), {last:ts, lastText:e2 ? '🔒' : '♪ Sprachnachricht', lastFrom:social.uid});
       // sofort im Chat (Firestore zeigt es gleich an), bis der Server bestätigt: Ladekreis statt Play (Inaya, 2026-10-12)
-      j.mid = mid; bt.commit().then(() => { const i = VSEND.indexOf(j); if (i >= 0) VSEND.splice(i, 1); voicePend(); }).catch(() => { j.err = 'Das Senden hat nicht geklappt.'; voicePend(); }); voicePend(); return;
+      j.mid = mid; bt.commit().then(() => { const i = VSEND.indexOf(j); if (i >= 0) VSEND.splice(i, 1); voicePend(); }).catch(e => { j.err = e?.code === 'permission-denied' ? 'Noctibat durfte die Sprachnachricht nicht speichern. Bist du noch Mitglied dieses Chats?' : 'Das Senden hat nicht geklappt. Prüf deine Verbindung.'; voicePend(); }); voicePend(); return;
     }
     const au = await vTimeout(uploadPostAudio(new File([j.blob], 'Sprachnachricht', {type:j.type}), k, (i, n) => { j.step = `Wird gesendet … ${Math.round(i / n * 100)} %`; voicePend(); }, e2Chat(j.cid)), 60000);
     if (j.cancel) { for (let i = 0; i < au.n; i++) social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`).delete().catch(() => {}); return; }
     const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur, w:j.w || ''}}), 30000);
     if (!ok) throw new Error('recht');
     VSEND.splice(VSEND.indexOf(j), 1); voicePend();
-  } catch (e) { j.err = e.message === 'zeit' ? 'Die Verbindung hängt gerade.' : e.message === 'recht' ? 'Noctibat durfte die Nachricht nicht speichern.' : 'Das Hochladen hat nicht geklappt.'; voicePend(); }
+  } catch (e) { j.err = e?.message === 'nokey' ? `${chatWho(e.uid)} hat Noctibat seit dem Update noch nicht geöffnet. Danach kannst du die Sprachnachricht verschlüsselt senden.` : e?.message === 'zeit' ? 'Die Verbindung hängt gerade.' : e?.message === 'recht' ? 'Noctibat durfte die Nachricht nicht speichern.' : e2Chat(j.cid) && !E2E.on ? (E2E.err || 'Die Verschlüsselung ist auf diesem Gerät noch nicht bereit.') : 'Das Hochladen hat nicht geklappt.'; voicePend(); }
 }
 function voicePend(){
   const box = document.getElementById('msgs'); if (!box) return; box.querySelectorAll('.vpend').forEach(x => x.remove());
@@ -9149,7 +9156,7 @@ async function vmPlay(id, at){
   try { const src = VOICEURL[m.audio.k] && m.from === social.uid ? {url:VOICEURL[m.audio.k], data:VOICEURL[m.audio.k]} : await songURL(m.from, m.audio, 'pa_' + m.audio.k); if (VMID !== id) return; VMA.src = src.url;
     if (at != null) VMA.addEventListener('loadedmetadata', () => { if (isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; }, {once:true});
     await VMA.play().catch(() => { VMA.src = src.data; return VMA.play(); }); }
-  catch { toast('Die Sprachnachricht ließ sich gerade nicht laden.'); VMID = null; }
+  catch (e) { toast(VMA.error?.code === 4 || e?.name === 'NotSupportedError' ? 'Dieses Gerät kann das Format der Sprachnachricht nicht abspielen. Aktualisiere den Browser oder hör sie auf einem anderen Gerät.' : e?.name === 'NotAllowedError' ? 'Tipp nochmal auf Play.' : 'Die Sprachnachricht ließ sich gerade nicht laden. Prüf deine Verbindung.'); VMID = null; }
   finally { document.querySelectorAll('.vmplay.busy').forEach(x => x.classList.remove('busy')); vmPaint(); }
 }
 function msgMedia(m){
@@ -9260,7 +9267,10 @@ function chMore(){ if (!CH.open || !CH.mraw || CH.mraw.length < (CH.lim || 200))
 const TK_MAX = cid => /^dm_/.test(cid || '') ? 2 : 9, TK_STALE = 45000, TK_HB = 15000;
 const TK_DEF = {audio:{name:'Audiochat', kind:'audio'}, video:{name:'Videochat', kind:'video'}};
 const tkRef = (cid, tid) => social.db.doc(`chats/${cid}/talk/${tid}`);
-const tkFresh = (t, now = Date.now()) => Object.entries(t?.p || {}).filter(([, v]) => v && now - (+v.t || 0) < TK_STALE).map(([u]) => u);
+// Serverzeit: Plätze und Klingeln vergleichen Zeiten verschiedener Geräte. Geht eine Handy-Uhr falsch, sah der andere den Platz als verwaist und verband sich nie.
+let CLK = 0; const srvNow = () => Date.now() + CLK;
+async function clkSync(){ try { const r = social.db.doc(`data/users/${social.uid}/nf-e2/clk/t`), t0 = Date.now(); await r.set({t:firebase.firestore.FieldValue.serverTimestamp()}); const d = await r.get({source:'server'}), t1 = Date.now(); const st = d.data()?.t?.toMillis?.(); if (st) { const off = st - (t0 + t1) / 2; CLK = Math.abs(off) > 1500 ? Math.round(off) : 0; } } catch {} }
+const tkFresh = (t, now = srvNow()) => Object.entries(t?.p || {}).filter(([, v]) => v && now - (+v.t || 0) < TK_STALE).map(([u]) => u);
 const TK = {cid:null, list:[], unsub:null};
 const CI = { // Symbole für Anrufe
   ph:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
@@ -9290,7 +9300,7 @@ async function tkEnsure(cid){ const c = CH.list.find(x => x.id === cid); if (!c?
   const miss = Object.keys(TK_DEF).filter(id => !TK.list.some(t => t.id === id)); if (!miss.length) return; tkEnsuring[cid] = 1;
   try { for (const id of miss) await social.db.runTransaction(async tx => { const r = tkRef(cid, id), d = await tx.get(r); if (!d.exists) tx.set(r, {...TK_DEF[id], def:1, ts:Date.now(), p:{}}); }); } catch {} delete tkEnsuring[cid]; }
 // verwaiste Plätze freigeben (Gerät abgestürzt, Netz weg)
-async function tkSweep(cid){ const now = Date.now();
+async function tkSweep(cid){ const now = srvNow();
   for (const t of TK.list) for (const [u, v] of Object.entries(t.p || {})) if (u !== social.uid && now - (+v?.t || 0) > TK_STALE + 2000) tkRef(cid, t.id).update({[`p.${u}`]:firebase.firestore.FieldValue.delete(), gone:u}).catch(() => {}); }
 const tkSorted = () => [...TK.list].sort((a, b) => (b.def || 0) - (a.def || 0) || (a.id === 'audio' ? -1 : b.id === 'audio' ? 1 : 0) || (a.ts || 0) - (b.ts || 0));
 // Talk-Seite der öffentlichen Gruppe (Inaya, 2026-10-13): eigene Unterseite statt Kartenreihe über den Nachrichten
@@ -9345,23 +9355,23 @@ async function callJoin(cid, tid, opts = {}){
   CALL = {cid, tid, kind, max, sid:e2Rand(10), peers:new Map(), st:{mic:true, cam:kind === 'video'}, sts:{}, room:{p:{}}, ac, t0:Date.now(), joined:0, ring:[], ringing:!!opts.ring, face:'user', out:true, view:'big', status:'Verbindet …'};
   const C = CALL; callShow(); callPaint();
   try { C.local = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}, video:kind === 'video' ? {facingMode:'user', width:{ideal:640}, height:{ideal:480}, frameRate:{ideal:24, max:30}} : false}); }
-  catch (e) { if (CALL === C) { CALL = null; callHide(); } return toast(e?.name === 'NotAllowedError' ? 'Bitte erlaube Noctibat den Zugriff auf ' + (kind === 'video' ? 'Kamera und Mikrofon.' : 'das Mikrofon.') : 'Mikrofon oder Kamera ließen sich nicht starten.'); }
+  catch (e) { try { ac.close(); } catch {} if (CALL === C) { CALL = null; callHide(); } return toast(micErr(e, kind === 'video')); }
   if (CALL !== C) { C.local.getTracks().forEach(t => t.stop()); return; }
   await rtcTurn();
   try { await tkEnsureRoom(cid, tid, kind); await tkSweep(cid); await social.db.runTransaction(async tx => { const d = await tx.get(tkRef(cid, tid)); const p = d.data()?.p || {}, others = tkFresh({p}).filter(u => u !== social.uid);
-      if (!p[social.uid] && others.length >= max) throw new Error('voll'); tx.update(tkRef(cid, tid), {[`p.${social.uid}`]:{t:Date.now(), s:C.sid}}); }); }
-  catch (e) { C.local.getTracks().forEach(t => t.stop()); if (CALL === C) { CALL = null; callHide(); } return toast(e?.message === 'voll' ? `Alle ${max} Plätze sind belegt. Sobald jemand geht, wird ein Platz frei.` : 'Beitreten hat nicht geklappt. Versuch es nochmal.'); }
+      if (!p[social.uid] && others.length >= max) throw new Error('voll'); tx.update(tkRef(cid, tid), {[`p.${social.uid}`]:{t:srvNow(), s:C.sid}}); }); }
+  catch (e) { C.local.getTracks().forEach(t => t.stop()); try { ac.close(); } catch {} if (CALL === C) { CALL = null; callHide(); } return toast(e?.message === 'voll' ? `Alle ${max} Plätze sind belegt. Sobald jemand geht, wird ein Platz frei.` : 'Beitreten hat nicht geklappt. Versuch es nochmal.'); }
   C.joined = Date.now(); C.status = 'Verbunden'; social.db.doc(`chats/${cid}/talk/${tid}/st/${social.uid}`).set({mic:true, cam:C.st.cam, ts:Date.now()}).catch(() => {});
-  C.unRoom = tkRef(cid, tid).onSnapshot(d => { if (CALL !== C) return; C.room = d.data() || {p:{}}; if (!C.room.p?.[social.uid]) { tkRef(cid, tid).update({[`p.${social.uid}`]:{t:Date.now(), s:C.sid}}).catch(() => {}); } callSync(); }, () => {});
+  C.unRoom = tkRef(cid, tid).onSnapshot(d => { if (CALL !== C) return; C.room = d.data() || {p:{}}; if (!C.room.p?.[social.uid]) { tkRef(cid, tid).update({[`p.${social.uid}`]:{t:srvNow(), s:C.sid}}).catch(() => {}); } callSync(); }, () => {});
   // Signale strikt nacheinander und in Sende-Reihenfolge verarbeiten (Firestore liefert sie nach ID sortiert, parallel überholten sie sich)
   C.sigQ = Promise.resolve(); C.unSig = tkRef(cid, tid).collection('sig').where('to', '==', social.uid).onSnapshot(q => { const l = q.docChanges().filter(ch => ch.type === 'added').map(ch => ch.doc).sort((a, b) => (+a.data().at || 0) - (+b.data().at || 0) || (+a.data().n || 0) - (+b.data().n || 0)); for (const d of l) C.sigQ = C.sigQ.then(() => sigIn(C, d)).catch(() => {}); }, () => {});
   C.unSt = tkRef(cid, tid).collection('st').onSnapshot(q => { const s = {}; q.docs.forEach(d => { s[d.id] = d.data(); }); C.sts = s; callPaint(); }, () => {});
-  C.hb = setInterval(() => { if (CALL === C) tkRef(cid, tid).update({[`p.${social.uid}.t`]:Date.now()}).catch(() => {}); }, TK_HB);
+  C.hb = setInterval(() => { if (CALL === C) tkRef(cid, tid).update({[`p.${social.uid}.t`]:srvNow()}).catch(() => {}); }, TK_HB);
   C.tick = setInterval(() => { if (CALL === C) { callStatus(); callSync(); } }, 1000);
   spkStart(C, social.uid, C.local);
   if (opts.ring) ringOut(C, c); callPaint(); }
 async function tkEnsureRoom(cid, tid, kind){ if (TK.cid === cid && TK.list.some(t => t.id === tid)) return; await social.db.runTransaction(async tx => { const r = tkRef(cid, tid), d = await tx.get(r); if (!d.exists) tx.set(r, {...(TK_DEF[tid] || {name:'Talk', kind}), def:TK_DEF[tid] ? 1 : 0, ts:Date.now(), p:{}}); }); }
-function callSync(){ const C = CALL; if (!C || !C.joined) return; const p = C.room.p || {}, now = Date.now();
+function callSync(){ const C = CALL; if (!C || !C.joined) return; const p = C.room.p || {}, now = srvNow();
   for (const [u, v] of Object.entries(p)) { if (u === social.uid || !v) continue; if (now - (+v.t || 0) > TK_STALE) continue; const pr = C.peers.get(u); if (!pr || pr.rs !== v.s) { if (pr) peerClose(C, u); peerOpen(C, u, v.s); } }
   for (const u of [...C.peers.keys()]) { const pr = C.peers.get(u); if (p[u]) pr.seen = 1; if (!p[u] ? pr.seen || now - pr.born > 8000 : now - (+p[u].t || 0) > TK_STALE || p[u].s !== pr.rs) { if (pr.state === 'connected') C.had = 1; peerClose(C, u); } } // neue Verbindung: kurz warten, bis die Teilnehmerliste nachkommt
   if (/^dm_/.test(C.cid) && C.had && !C.peers.size && !C.ending) { C.ending = 1; C.status = 'Anruf beendet'; callStatus(); setTimeout(() => CALL === C && callLeave(true), 1500); } // privat: legt die andere Person auf, ist der Anruf vorbei
@@ -9384,6 +9394,7 @@ let sigN = 0;
 function sigOut(C, pr, type, d){ if (CALL !== C) return; tkRef(C.cid, C.tid).collection('sig').add({from:social.uid, to:pr.u, fs:C.sid, ts:pr.rs, type, d:JSON.stringify(d), at:Date.now(), n:++sigN}).catch(() => {}); }
 async function sigIn(C, doc){ const m = doc.data(); doc.ref.delete().catch(() => {}); if (CALL !== C || m.ts !== C.sid) return; // nur Nachrichten an diese Sitzung
   if (m.type === 'decline') { if (/^dm_/.test(C.cid)) { C.status = 'Abgelehnt'; callPaint(); setTimeout(() => CALL === C && callLeave(), 1600); } return; }
+  if (m.type === 'ringing') { C.rang = true; callStatus(); return; }
   let pr = C.peers.get(m.from); if (!pr || pr.rs !== m.fs) { if (pr) peerClose(C, m.from); pr = peerOpen(C, m.from, m.fs); }
   let d; try { d = JSON.parse(m.d); } catch { return; } const pc = pr.pc;
   try {
@@ -9404,9 +9415,9 @@ async function callLeave(quiet){ const C = CALL; if (!C) return; CALL = null; cl
 addEventListener('pagehide', () => { if (CALL?.joined) tkRef(CALL.cid, CALL.tid).update({[`p.${social.uid}`]:firebase.firestore.FieldValue.delete()}).catch(() => {}); });
 function callStatus(){ const C = CALL; if (!C) return; const live = [...C.peers.values()], on = live.filter(p => p.state === 'connected'), lost = live.filter(p => p.lost && p.state !== 'connected');
   let s; if (!C.joined) s = 'Verbindet …'; else if (lost.length) s = `Verbindung zu ${lost.map(p => chatWho(p.u)).join(', ')} unterbrochen, wird wiederhergestellt …`;
-  else if (/^dm_/.test(C.cid) && !on.length) s = C.ringing ? (C.ring.length ? 'Klingelt …' : 'Ruft an …') : live.length ? 'Verbindet …' : 'Wartet …';
-  else if (!on.length) s = 'Du bist allein hier. Warte, bis jemand dazukommt.'; else { const sec = Math.floor((Date.now() - (C.since || (C.since = Date.now()))) / 1000); s = `Im Gespräch · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
-  if (C.status === 'Abgelehnt' || C.status === 'Keine Antwort' || C.status === 'Anruf beendet') s = C.status;
+  else if (/^dm_/.test(C.cid) && !on.length) s = C.ringing ? (C.rang ? 'Klingelt …' : 'Ruft an …') : live.length ? 'Verbindet …' : 'Wartet …';
+  else if (!on.length) s = 'Du bist allein hier. Warte, bis jemand dazukommt.'; else { const sec = Math.floor((Date.now() - (C.since || (C.since = Date.now()))) / 1000); s = `Verbunden · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
+  if (C.status === 'Abgelehnt' || C.status === 'Verpasst · keine Antwort' || C.status === 'Anruf beendet') s = C.status;
   const here = !!C.min && V.name === 'chats' && (CH.mode === 'chat' || CH.mode === 'talks') && CH.open === C.cid; document.body.classList.toggle('callhere', here); const cb = document.querySelector('#callbar .cbst'); if (cb) cb.textContent = s; else if (here && !document.querySelector('#callbar.mine')) callBarPaint(); const el = document.querySelector('#callov .cstat'), pl = document.querySelector('#callpill .cpst'); if (el) el.textContent = s; if (pl) pl.textContent = s; C.statusText = s; }
 // Sprechen erkennen: Leuchtrand um die Kachel
 function spkStart(C, u, stream){ if (!C.ac || !stream.getAudioTracks().length) return; spkStop(C, u); try { const src = C.ac.createMediaStreamSource(stream), an = C.ac.createAnalyser(); an.fftSize = 512; src.connect(an); const buf = new Uint8Array(an.fftSize); (C.spk = C.spk || {})[u] = {src, an, buf}; C.ac.resume?.(); if (!C.spkT) C.spkT = setInterval(() => spkTick(C), 160); } catch {} }
@@ -9465,19 +9476,30 @@ function callPaint(){ const C = CALL; if (!C) return; callStatus(); if (C.min) {
 
 /* ---- Klingeln (private Chats und private Gruppen) ---- */
 function ringOut(C, c){ const to = (c.members || []).filter(u => u !== social.uid && !tkFresh(C.room).includes(u)).slice(0, 8);
-  for (const u of to) { const path = `rings/${u}/r/${C.cid}~${C.tid}`; C.ring.push(path); social.db.doc(path).set({from:social.uid, cid:C.cid, tid:C.tid, kind:C.kind, at:Date.now(), sid:C.sid}).catch(() => {}); }
+  for (const u of to) { const path = `rings/${u}/r/${C.cid}~${C.tid}`; C.ring.push(path); social.db.doc(path).set({from:social.uid, cid:C.cid, tid:C.tid, kind:C.kind, at:srvNow(), sid:C.sid}).catch(e => { if (CALL !== C || C.ringFail) return; C.ringFail = 1; // vorher still verschluckt: dann kam der Anruf einfach nie an
+      toast(e?.code === 'permission-denied' ? (amOwner ? 'Das Klingeln wurde von der Datenbank abgelehnt: Die Firestore-Regeln sind veraltet. Spiel firebase/firestore.rules in der Firebase-Konsole ein.' : 'Das Klingeln konnte nicht zugestellt werden (fehlende Berechtigung). Sag Inaya Bescheid.') : 'Das Klingeln konnte gerade nicht zugestellt werden. Prüf deine Verbindung.'); }); }
   C.ringing = true; callPaint(); C.ringT = setTimeout(() => { if (CALL !== C) return; C.ring.forEach(r => social.db.doc(r).delete().catch(() => {})); C.ring = []; C.ringing = false;
-    if (/^dm_/.test(C.cid) && ![...C.peers.values()].some(p => p.state === 'connected')) { C.status = 'Keine Antwort'; callPaint(); setTimeout(() => CALL === C && callLeave(true), 1800); } }, 45000); }
-let RING = {list:[], unsub:null, shown:null};
-function ringWatch(){ if (RING.unsub || !social) return; RING.unsub = social.db.collection(`rings/${social.uid}/r`).onSnapshot(q => { const now = Date.now(); RING.list = q.docs.map(d => ({id:d.id, ref:d.ref, ...d.data()})).filter(r => now - (+r.at || 0) < 50000 && CH.list.some(c => c.id === r.cid)); ringPaint(); }, () => {}); }
-setInterval(() => { if (RING.list.length) { const now = Date.now(); const l = RING.list.filter(r => now - (+r.at || 0) < 50000); if (l.length !== RING.list.length) { RING.list = l; ringPaint(); } } }, 3000);
+    if (/^dm_/.test(C.cid) && ![...C.peers.values()].some(p => p.state === 'connected')) { C.status = 'Verpasst · keine Antwort'; sendMsg(C.cid, C.kind === 'video' ? '📹 Verpasster Videoanruf' : '📞 Verpasster Anruf', {call:{kind:C.kind, st:'missed'}}); callPaint(); setTimeout(() => CALL === C && callLeave(true), 1800); } }, 45000); }
+let RING = {list:[], raw:[], unsub:null, shown:null, seen:{}, err:null, done:{}};
+// Wann ist ein Klingeln frisch? Erst gesehen in dieser Sitzung (eigene Uhr) – so stört eine falsch gehende Handy-Uhr nicht. Beim Start nur, was laut Absender jünger als 50 s ist.
+const ringFresh = (r, now = Date.now()) => { const z = RING.seen[r.id + '|' + r.sid]; return !!z && now - z.t < 50000 && (z.live || Math.abs(srvNow() - (+r.at || 0)) < 50000); };
+function ringFilter(){ const now = Date.now(); RING.list = RING.raw.filter(r => ringFresh(r, now) && !RING.done[r.id + r.sid] && CH.list.some(c => c.id === r.cid)); ringPaint(); }
+function ringWatch(){ if (RING.unsub || !social) return; let first = true;
+  RING.unsub = social.db.collection(`rings/${social.uid}/r`).onSnapshot(q => { const now = Date.now(); RING.err = null;
+    q.docChanges().forEach(ch => { const k = ch.doc.id + '|' + ch.doc.data().sid; if (ch.type !== 'removed' && !RING.seen[k]) RING.seen[k] = {t:now, live:!first}; }); // je Anruf (sid), auch wenn das Dokument wiederverwendet wird
+    const gone = RING.list.filter(r => !q.docs.some(d => d.id === r.id)); // verschwunden ohne Antwort = verpasst (oder anderswo angenommen)
+    RING.raw = q.docs.map(d => ({id:d.id, ref:d.ref, ...d.data()})); first = false; ringFilter();
+    gone.forEach(r => { if (!RING.done[r.id + r.sid] && !(CALL && CALL.cid === r.cid)) toast(`Verpasster ${r.kind === 'video' ? 'Videoanruf' : 'Anruf'} von ${chatWho(r.from)}`); }); },
+  e => { RING.err = e?.code || 'fehler'; RING.unsub = null; setTimeout(ringWatch, 60000); }); } // vorher endete das Zuhören nach einem Fehler still für immer
+setInterval(() => { if (RING.list.length) ringFilter(); }, 3000);
 function ringPaint(){ const r = RING.list.find(x => !(CALL && CALL.cid === x.cid && CALL.tid === x.tid)); let el = document.getElementById('ringov'); if (!r) { el?.remove(); RING.shown = null; return; }
   if (el && RING.shown === r.id) return; RING.shown = r.id; navigator.vibrate?.([300, 200, 300]);
+  if (!RING.done['rg' + r.id + r.sid]) { RING.done['rg' + r.id + r.sid] = 1; if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'ringing', d:'{}', at:Date.now()}).catch(() => {}); } // dem Anrufer zeigen: es klingelt wirklich
   const th = callTheme(r.cid), c = th.c, u = uidUser(r.from); if (!el) { el = document.createElement('section'); el.id = 'ringov'; el.setAttribute('role', 'alertdialog'); document.body.appendChild(el); }
   el.className = 'themed ringov' + (th.bg ? ' hasbg' : ''); el.setAttribute('style', th.st); el.style.setProperty('--cbg', th.bg ? `url("${th.bg}")` : 'none'); el.setAttribute('aria-label', 'Eingehender Anruf');
-  el.innerHTML = `<div class="rgin"><span class="rgav">${u ? headPic(u) : ''}</span><b class="rgn">${esc(chatWho(r.from))}</b><small>${r.kind === 'video' ? 'Videoanruf' : 'Anruf'}${c?.group ? ' in „' + esc(chatName(c)) + '“' : ''}</small>
+  el.innerHTML = `<div class="rgin"><span class="rgav">${u ? headPic(u) : ''}</span><b class="rgn">${esc(chatWho(r.from))}</b><small>${r.kind === 'video' ? 'Eingehender Videoanruf' : 'Eingehender Anruf'}${c?.group ? ' in „' + esc(chatName(c)) + '“' : ''}</small>
     <div class="rgbtns"><button type="button" class="clbtn cend" data-act="ring-no" data-id="${esc(r.id)}">${CI.end}<span>Ablehnen</span></button><button type="button" class="clbtn cyes" data-act="ring-yes" data-id="${esc(r.id)}">${r.kind === 'video' ? CI.vid : CI.ph}<span>Annehmen</span></button></div></div>`; }
-async function ringAnswer(id, yes){ const r = RING.list.find(x => x.id === id); RING.list = RING.list.filter(x => x.id !== id); ringPaint(); if (!r) return; r.ref.delete().catch(() => {});
+async function ringAnswer(id, yes){ const r = RING.list.find(x => x.id === id); RING.list = RING.list.filter(x => x.id !== id); ringPaint(); if (!r) return; RING.done[r.id + r.sid] = 1; r.ref.delete().catch(() => {});
   if (!yes) { if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'decline', d:'{}', at:Date.now()}).catch(() => {}); return; }
   openChat(r.cid); await callJoin(r.cid, r.tid); }
 
@@ -9502,8 +9524,12 @@ async function tkSave(f, go){ const name = document.getElementById('tk-name').va
   document.getElementById('tkdlg')?.remove(); toast(id ? 'Talk gespeichert' : `„${name}“ ist erstellt`);
   if (!id) { TK.hl = nid; if (CH.mode !== 'talks') { CH.mode = 'talks'; render(); } else tkPaint(); setTimeout(() => document.querySelector(`[data-tk="${nid}"]`)?.scrollIntoView({block:'nearest', behavior:'smooth'}), 60); setTimeout(() => { if (TK.hl === nid) { TK.hl = null; tkPaint(); } }, 4000); }
   if (go) callJoin(cid, nid, {kind, ac}); }
+// Sind die eingespielten Firestore-Regeln aktuell? Klingeln (rings) gibt es erst seit v378. Ohne sie kommen Anrufe nie an.
+async function rulesCheck(){ try { await social.db.collection(`rings/${social.uid}/r`).limit(1).get({source:'server'}); return '✓ Die Firestore-Regeln sind aktuell genug für Anrufe und Klingeln.'; }
+  catch (e) { return e?.code === 'permission-denied' ? '<b>⚠ Die Firestore-Regeln sind veraltet.</b> Anrufe klingeln deshalb nicht beim anderen Gerät. Kopiere den kompletten Inhalt von firebase/firestore.rules in die Firebase-Konsole (Firestore → Regeln) und veröffentliche ihn.' : 'Die Regeln ließen sich gerade nicht prüfen (keine Verbindung?).'; } }
 function rtcCard(){ if (!amOwner || !social) return ''; rtcTurn().then(() => { const i = document.getElementById('rtc-u'); if (i && !i.value && RTC_TURN) { i.value = RTC_TURN.urls.join(' '); document.getElementById('rtc-n').value = RTC_TURN.username; document.getElementById('rtc-c').value = RTC_TURN.credential; } });
-  return `<div class="card"><h2 class="card-h">Anrufe</h2><div class="card-in"><p class="note">Anrufe laufen direkt zwischen den Geräten und kosten nichts. In manchen Mobilfunk- oder Firmennetzen klappt das nur über einen TURN-Server. Wenn du einen einrichtest, trag ihn hier ein (sonst leer lassen).</p><form data-form="rtcturn" class="grid" style="gap:8px"><input id="rtc-u" type="text" autocomplete="off" spellcheck="false" placeholder="turn:… (mehrere mit Leerzeichen)" aria-label="TURN-Adressen"><input id="rtc-n" type="text" autocomplete="off" spellcheck="false" placeholder="Benutzername" aria-label="TURN-Benutzername"><input id="rtc-c" type="text" autocomplete="off" spellcheck="false" placeholder="Passwort" aria-label="TURN-Passwort"><div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form></div></div>`; }
+  rulesCheck().then(t => { const el = document.getElementById('rules-st'); if (el) el.innerHTML = t; });
+  return `<div class="card"><h2 class="card-h">Anrufe</h2><div class="card-in"><p class="note" id="rules-st" role="status">Prüfe die Firestore-Regeln …</p><p class="note">Anrufe laufen direkt zwischen den Geräten und kosten nichts. In manchen Mobilfunk- oder Firmennetzen klappt das nur über einen TURN-Server. Wenn du einen einrichtest, trag ihn hier ein (sonst leer lassen).</p><form data-form="rtcturn" class="grid" style="gap:8px"><input id="rtc-u" type="text" autocomplete="off" spellcheck="false" placeholder="turn:… (mehrere mit Leerzeichen)" aria-label="TURN-Adressen"><input id="rtc-n" type="text" autocomplete="off" spellcheck="false" placeholder="Benutzername" aria-label="TURN-Benutzername"><input id="rtc-c" type="text" autocomplete="off" spellcheck="false" placeholder="Passwort" aria-label="TURN-Passwort"><div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form></div></div>`; }
 
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid; if (m._lock) return e2LockHTML(m);

@@ -49,6 +49,9 @@ Die Content-Security-Policy steht als `<meta>` im `<head>`. Wer ein neues extern
 - Öffentliche Gruppen haben eine eigene Talk-Seite (`CH.mode = 'talks'`, `talksPanelHTML`), geöffnet über das Talk-Symbol im Chat-Kopf (`tkBtnHTML`, Zahl = Leute in Talks). Im Chat selbst steht nur ein Hinweis (`tkHintHTML`), wenn jemand in einem Talk ist.
 - Eigene Talks erstellt jedes Mitglied (`by` = eigene UID, `def:0`, ID `t…`). Umbenennen und löschen dürfen der Admin (`createdBy`) und wer den Talk erstellt hat (`tkMay`), Standard-Talks sind nicht löschbar.
 - Plätze: privat 2, sonst 9 je Raum, durchgesetzt in `callJoin` (Transaktion) und in `firestore.rules`. Plätze ohne Herzschlag seit 45 s darf jedes Mitglied freigeben (`gone`).
+- Zeiten für Plätze und Klingeln immer mit `srvNow()` (Geräteuhr + Abstand zur Serverzeit aus `clkSync()`), nie mit `Date.now()`: sonst verbinden sich Geräte mit falsch gehender Uhr nicht.
+- Klingeln: Das Gerät der angerufenen Person schickt das Signal `ringing` zurück (Anrufer sieht „Ruft an …“ → „Klingelt …“). Ohne Antwort nach 45 s steht „Verpasst“, im privaten Chat landet „📞 Verpasster Anruf“. Schlägt das Schreiben des Klingelns fehl, kommt eine Meldung (vorher still verschluckt). Einstellungen → Anrufe zeigt Inaya, ob die eingespielten Regeln aktuell sind (`rulesCheck`).
+- Ohne geöffnete App klingelt nichts: Push im Hintergrund bräuchte einen Server (Cloud Functions, Blaze-Tarif) und ist nicht eingebaut.
 - Pro Paar bietet nur die Seite mit der kleineren UID an (`pr.init`), Signale werden streng nacheinander verarbeitet. Ohne TURN-Server (Einstellungen → Anrufe, `site/rtc`) klappen manche Mobilfunknetze nicht.
 - Die Oberfläche nutzt `themeStyle` und `chBg` des Chats, es gibt kein eigenes Farbsystem.
 
