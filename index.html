@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a989c4e950f1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2e64ee19f70c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1606,6 +1606,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .tkkind label>span{display:grid;justify-items:center;gap:4px;padding:12px 8px;border:1px solid var(--p-line);border-radius:22px 22px 10px 10px;background:var(--p-panel);text-align:center}.tkkind label>span svg{width:24px;height:24px}.tkkind b{font:400 17px var(--p-font)}.tkkind small{color:var(--p-muted);font:12px Inter,sans-serif}
 .tkkind input:checked+span{border-color:var(--p-fg);box-shadow:inset 0 0 0 1px var(--p-fg)}.tkkind input:focus-visible+span{outline:2px solid var(--p-fg);outline-offset:2px}
 .diagout{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,monospace;background:#0006;border:1px solid var(--line,#333);border-radius:10px;padding:10px;margin:10px 0;max-height:60vh;overflow:auto;user-select:text;-webkit-user-select:text}
+.phd{font:600 14px Inter,sans-serif;opacity:.85;margin-right:10px;white-space:nowrap}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -7930,7 +7931,7 @@ function plinksHTML(u){
 }
 // Unter dem Namen: Online-Status und ob ich schon eine Anfrage geschickt habe (Inaya, 2026-10-13)
 const reqSent = id => !!social && FR.mine.includes(id) && !FR.inc.includes(id);
-const profSubHTML = u => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${onlineHTML(u)}${u.remote && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
+const profSubHTML = u => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${u.handle && !u.helper ? `<span class="phd">@${esc(u.handle)}</span>` : ''}${onlineHTML(u)}${u.remote && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
 function profileHead(u, t, mine){
   const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
@@ -8208,9 +8209,10 @@ function softRender(){
     if (a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'checkbox')) && a.value) return;
     render(); }, 150);
 }
-async function loadProf(id){ try { const d = await social.db.doc('profiles/' + id).get(); if (d.exists) PROF[id] = d.data(); } catch {} }
+async function loadProf(id){ try { const d = await social.db.doc('profiles/' + id).get(); if (d.exists) { const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; } } catch {} }
 function remoteUser(id, p){
-  return {id, remote:true, name:p.name || 'Unbekannt', handle:p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
+  const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
+  return {id, remote:true, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
     banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
     music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songMu:p.songMu && typeof p.songMu === 'object' ? p.songMu : null, songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], sth:Array.isArray(p.sth) ? p.sth : [], str:p.str || 'all', stcm:p.stcm === 0 ? 0 : 1, hl:Array.isArray(p.hl) ? p.hl : [], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
@@ -8355,10 +8357,10 @@ const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id))
 const NM = {}; let nmT = null;
 function nmWatch(){ social.db.collection('handles').onSnapshot(q => { let ch = false;
   q.docChanges().forEach(c => { const id = c.doc.id, d = c.doc.data() || {}; if (c.type === 'removed') { delete NM[id]; return; } const o = NM[id]; NM[id] = {h:d.h || '', n:d.n || '', v:d.v || '', vt:+d.vt || 0};
-    if (o && (o.h !== NM[id].h || o.n !== NM[id].n) && id !== social.uid) { ch = true; if (PROF[id]) { if (NM[id].n) PROF[id].name = NM[id].n; if (NM[id].h) PROF[id].handle = NM[id].h; }
+    if ((!o || o.h !== NM[id].h || o.n !== NM[id].n) && id !== social.uid) { ch = true; if (PROF[id]) { if (NM[id].n) PROF[id].name = NM[id].n; if (NM[id].h) PROF[id].handle = NM[id].h; }
       const u = S.users[id]; if (u?.remote) { if (NM[id].n) u.name = NM[id].n; if (NM[id].h) u.handle = NM[id].h; } } });
   if (ch) { clearTimeout(nmT); nmT = setTimeout(softRender, 300); } }, () => {}); }
-const nmOf = id => PROF[id]?.name || NM[id]?.n || S.users[id]?.name || '';
+const nmOf = id => NM[id]?.n || PROF[id]?.name || S.users[id]?.name || '';
 const chatName = c => c.group ? (c.name || 'Gruppe') : (nmOf(c.members.find(m => m !== social?.uid)) || 'Chat');
 const chatWho = id => id === social?.uid ? 'Du' : nmOf(id) || 'Jemand';
 // Name mit Fledermaus/Owner-Zeichen, überall gleich (Inaya, 2026-10-13)
