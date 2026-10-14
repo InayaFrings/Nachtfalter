@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4cef18285ca1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6e0d4429289a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5570,7 +5570,7 @@ const navSnap = () => ({name:V.name, arg:V.arg, y:window.scrollY, sr:{...SR}, ch
 const NAV_NAMES = {home:'Salon', find:'Suche', friends:'Freunde', chats:'Chats', room:'Zimmer', wardrobe:'Garderobe', notifs:'Mitteilungen', settings:'Einstellungen', games:'Minigames', design:'Profil gestalten', shop:'Laden'};
 function navLabel(s){ if (!s) return ''; if (s.name === 'profile') return s.arg === S.me ? 'Dein Profil' : 'Profil von ' + (S.users[s.arg]?.name || nmOf(s.arg) || 'jemandem');
   if (s.name === 'chats' && s.ch) { const c = CH.list.find(x => x.id === s.ch); return c ? (c.group ? '„' + chatName(c) + '“' : 'Chat mit ' + chatName(c)) : 'Chat'; }
-  if (s.name === 'find') return s.sr?.q ? 'Suche „' + s.sr.q.slice(0, 20) + '“' : 'Stöbern'; return NAV_NAMES[s.name] || 'Zurück'; }
+  if (s.name === 'find') return s.sr?.q ? 'Suchen: „' + s.sr.q.slice(0, 20) + '“' : 'Suchen'; if (s.name === 'browse') return 'Stöbern'; return NAV_NAMES[s.name] || 'Zurück'; }
 const navBackHTML = () => NAVH.length ? `<button type="button" class="navback" data-act="nav-back" aria-label="Zurück zu ${esc(navLabel(NAVH[NAVH.length - 1]))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>${esc(navLabel(NAVH[NAVH.length - 1]))}</span></button>` : '';
 function navBack(){ const s = NAVH.pop(); if (!s) return false; navSkip = true;
   try { Object.assign(SR, s.sr || {}); chatTab = s.chatTab || chatTab;
@@ -10244,7 +10244,6 @@ function browseView(){
   const card = id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), on = onlineState(u);
     return `<button type="button" class="brcard" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="brfig">${avatar(u.outfit, 'bust')}</span><b>${esc(u.name)}${hmark(u)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<span class="brtag">Befreundet</span>' : FR.mine.includes(id) ? '<span class="brtag">Anfrage gesendet</span>' : FR.inc.includes(id) ? '<span class="brtag on">Möchte befreundet sein</span>' : on[0] ? '<span class="brtag on">online</span>' : ''}</button>`; };
   return `<div class="card"><h2 class="card-h">Stöbern</h2><div class="card-in">
-    <div class="row"><button class="btn ghost" data-act="nav" data-v="find">← Freunde finden</button></div>
     ${!social ? '<p class="note">Stöbern geht, sobald du angemeldet bist.</p>' : !BR.ids ? '<p class="muted">Profile werden geladen …</p>' : BR.ids.length ? `<div class="brgrid">${BR.ids.map(card).join('')}</div>${BR.more ? '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="browse-more">Mehr anzeigen</button></div>' : ''}` : '<p class="note">Noch keine anderen Profile.</p>'}
   </div></div>`;
 }
