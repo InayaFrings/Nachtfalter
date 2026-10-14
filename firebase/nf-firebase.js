@@ -41,7 +41,7 @@
   };
 
   /* ---------- Räume: Anwesenheit als kleine Dokumente mit Herzschlag ---------- */
-  const STALE = 70000;
+  const STALE = 300000; // Online-Anzeige (Inaya, 2026-10-14): Herzschlag alle 2 Minuten statt alle 25 Sekunden, das Tageskontingent war aufgebraucht
   function mkRoom(name){
     const key = Math.random().toString(36).slice(2, 10);
     const coll = fs.collection('presence').doc(name.replace(/[\/]/g, '_')).collection('p');
@@ -49,7 +49,8 @@
     const write = () => user && coll.doc(key).set({...state, by: user.uid, t: Date.now()}).catch(() => {});
     function listen(){
       if (unsub) return;
-      unsub = coll.onSnapshot(snap => {
+      if (Math.random() < 0.2) coll.where('t', '<', Date.now() - 3600000).limit(30).get().then(q => q.docs.forEach(d => d.ref.delete().catch(() => {}))).catch(() => {}); // liegengebliebene Einträge abgestürzter Geräte wegräumen
+      unsub = coll.where('t', '>', Date.now() - STALE).onSnapshot(snap => { // nur aktuelle, nicht jedes Mal alle alten Einträge lesen
         const now = Date.now();
         last = snap.docs.map(d => ({peer: d.id, by: d.data().by, presence: d.data()})).filter(p => now - (p.presence.t || 0) < STALE);
         peersCb && peersCb({peers: last, joined: [], left: [], updated: []});
@@ -59,11 +60,11 @@
     const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
     addEventListener('pagehide', bye);
     // App im Hintergrund (iPhone: App gewechselt, Bildschirm aus) = offline, sofort abmelden; beim Zurückkommen sofort wieder online (Inaya, 2026-10-13)
-    const vis = () => { if (!beat) return; if (document.visibilityState === 'hidden') { clearInterval(beat); beat = 1; coll.doc(key).delete().catch(() => {}); } else { write(); clearInterval(beat); beat = setInterval(write, 25000); } };
+    const vis = () => { if (!beat) return; if (document.visibilityState === 'hidden') { clearInterval(beat); beat = 1; coll.doc(key).delete().catch(() => {}); } else { write(); clearInterval(beat); beat = setInterval(write, 120000); } };
     document.addEventListener('visibilitychange', vis);
     return {
       name,
-      async presence(p){ state = {...state, ...p}; await write(); if (!beat || beat === 1) beat = setInterval(write, 25000); listen(); },
+      async presence(p){ state = {...state, ...p}; await write(); if (!beat || beat === 1) beat = setInterval(write, 120000); listen(); },
       onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
       emit(){}, on(){ return () => {}; },
       async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); document.removeEventListener('visibilitychange', vis); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },

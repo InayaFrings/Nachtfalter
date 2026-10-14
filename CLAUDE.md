@@ -69,3 +69,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - iPhone/iPad: Firestore mit `experimentalForceLongPolling` (im Shim, beide Kopien). Dort riss die Streaming-Verbindung das Schreiben still ab, Lesen ging weiter. Der Schreib-Wächter baut die Verbindung nach dem Hintergrund oder bei hängenden Schreibvorgängen neu auf (`social.db.reconnect`, `social.db.pending`).
 - Kontosicherung unter `data/users/<uid>`: Form v2 mit Stücken `nf2-<bereich>-<i>` und `nf-meta` = `{v:2, ks, h, ts}`. Geschrieben wird nur, was sich geändert hat (Prüfsumme `h`). Gespeichert wird erst nach erfolgreichem Laden (`cloud.loaded`), sonst überschreibt ein leerer Start den echten Stand. Die alte Form (`nf-0…`, `{n, ts}`) wird weiter gelesen.
 - Einstellungen → Selbsttest (`diagRun`) prüft auf der echten Seite Schreiben, Regeln, Lesebestätigung, Namen, Sprachspeicher, Mikrofon, Verschlüsselung und Netz.
+
+## Firebase-Kontingent (seit v387)
+
+- Der kostenlose Tarif (Spark) erlaubt pro Tag 20.000 Schreib- und 50.000 Lesevorgänge (Reset 9 Uhr deutscher Zeit). Am 14.10.2026 war es aufgebraucht: dann scheitert jedes Schreiben still (die Firestore-Bibliothek versucht es endlos), Lesen kann weiterlaufen. Selbsttest und `quotaCheck()` zeigen das an.
+- Sparsam bleiben: Online-Herzschlag alle 2 Minuten, Freundesprofile alle 10 Minuten, Chats laden zuerst 60 Nachrichten („Ältere Nachrichten laden“), Kontosicherung nur Geändertes, Profil nur bei Änderung, kein automatisches Neuverbinden (liest alles neu).

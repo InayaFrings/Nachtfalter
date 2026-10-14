@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2e64ee19f70c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ededb99941ce';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -51,7 +51,7 @@
   };
 
   /* ---------- Räume: Anwesenheit als kleine Dokumente mit Herzschlag ---------- */
-  const STALE = 70000;
+  const STALE = 300000; // Online-Anzeige (Inaya, 2026-10-14): Herzschlag alle 2 Minuten statt alle 25 Sekunden, das Tageskontingent war aufgebraucht
   function mkRoom(name){
     const key = Math.random().toString(36).slice(2, 10);
     const coll = fs.collection('presence').doc(name.replace(/[\/]/g, '_')).collection('p');
@@ -59,7 +59,8 @@
     const write = () => user && coll.doc(key).set({...state, by: user.uid, t: Date.now()}).catch(() => {});
     function listen(){
       if (unsub) return;
-      unsub = coll.onSnapshot(snap => {
+      if (Math.random() < 0.2) coll.where('t', '<', Date.now() - 3600000).limit(30).get().then(q => q.docs.forEach(d => d.ref.delete().catch(() => {}))).catch(() => {}); // liegengebliebene Einträge abgestürzter Geräte wegräumen
+      unsub = coll.where('t', '>', Date.now() - STALE).onSnapshot(snap => { // nur aktuelle, nicht jedes Mal alle alten Einträge lesen
         const now = Date.now();
         last = snap.docs.map(d => ({peer: d.id, by: d.data().by, presence: d.data()})).filter(p => now - (p.presence.t || 0) < STALE);
         peersCb && peersCb({peers: last, joined: [], left: [], updated: []});
@@ -69,11 +70,11 @@
     const bye = () => { if (beat) coll.doc(key).delete().catch(() => {}); };
     addEventListener('pagehide', bye);
     // App im Hintergrund (iPhone: App gewechselt, Bildschirm aus) = offline, sofort abmelden; beim Zurückkommen sofort wieder online (Inaya, 2026-10-13)
-    const vis = () => { if (!beat) return; if (document.visibilityState === 'hidden') { clearInterval(beat); beat = 1; coll.doc(key).delete().catch(() => {}); } else { write(); clearInterval(beat); beat = setInterval(write, 25000); } };
+    const vis = () => { if (!beat) return; if (document.visibilityState === 'hidden') { clearInterval(beat); beat = 1; coll.doc(key).delete().catch(() => {}); } else { write(); clearInterval(beat); beat = setInterval(write, 120000); } };
     document.addEventListener('visibilitychange', vis);
     return {
       name,
-      async presence(p){ state = {...state, ...p}; await write(); if (!beat || beat === 1) beat = setInterval(write, 25000); listen(); },
+      async presence(p){ state = {...state, ...p}; await write(); if (!beat || beat === 1) beat = setInterval(write, 120000); listen(); },
       onPeers(fn){ peersCb = fn; listen(); return () => { peersCb = null; }; },
       emit(){}, on(){ return () => {}; },
       async leave(){ clearInterval(beat); clearInterval(refresh); removeEventListener('pagehide', bye); document.removeEventListener('visibilitychange', vis); if (beat) { beat = null; await coll.doc(key).delete().catch(() => {}); } if (unsub) { unsub(); unsub = null; } },
@@ -1607,6 +1608,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .tkkind input:checked+span{border-color:var(--p-fg);box-shadow:inset 0 0 0 1px var(--p-fg)}.tkkind input:focus-visible+span{outline:2px solid var(--p-fg);outline-offset:2px}
 .diagout{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,monospace;background:#0006;border:1px solid var(--line,#333);border-radius:10px;padding:10px;margin:10px 0;max-height:60vh;overflow:auto;user-select:text;-webkit-user-select:text}
 .phd{font:600 14px Inter,sans-serif;opacity:.85;margin-right:10px;white-space:nowrap}
+.chmore{display:block;margin:0 auto 8px;font-size:13px;padding:6px 14px}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
 .chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
@@ -5420,7 +5422,7 @@ function cloudParts(){ const out = {}; for (const [k, v] of Object.entries(S)) {
 function cloudQueue(){
   if (!cloud) return;
   clearTimeout(cloudTimer);
-  cloudTimer = setTimeout(cloudFlush, 3000);
+  cloudTimer = setTimeout(cloudFlush, 8000);
 }
 function cloudFlush(){ clearTimeout(cloudTimer); cloudTimer = null; cloudBusy = cloudBusy.then(cloudWrite, cloudWrite); }
 document.addEventListener('visibilitychange', () => { if (document.hidden && cloudTimer) cloudFlush(); });
@@ -5435,10 +5437,7 @@ async function cloudWrite(){
   } catch (e) { if (e?.code === 'resource_exhausted') toast('Speicher voll: Das Foto ist zu groß.'); }
 }
 let CLOUDSTAT = null;
-// Schreib-Wächter (Inaya, 2026-10-14): Auf dem iPhone riss die Schreibverbindung nach dem Hintergrund still ab, Lesen ging weiter. Dann neu verbinden.
-let wdLast = 0, hidAt = 0;
-document.addEventListener('visibilitychange', () => { if (document.hidden) { hidAt = Date.now(); return; } if (social?.db?.reconnect && hidAt && Date.now() - hidAt > 15000) { wdLast = Date.now(); social.db.reconnect(); } });
-setInterval(async () => { if (!social?.db?.pending || document.hidden) return; const ok = await social.db.pending(45000); if (!ok && !document.hidden && Date.now() - wdLast > 60000) { wdLast = Date.now(); social.db.reconnect(); } }, 60000);
+// (Kein automatisches Neuverbinden mehr: das las jedes Mal alles neu. Ursache für hängendes Schreiben war das aufgebrauchte Tageskontingent.)
 async function cloudRead(col, meta){
   const m = typeof meta === 'number' ? {n:meta} : meta;
   if (m.v === 2) { const st = {}; await Promise.all(Object.entries(m.ks || {}).map(async ([k, n]) => { const l = await Promise.all(Array.from({length:n}, (_, i) => col.doc('nf2-' + ckId(k) + '-' + i).get())); st[k] = JSON.parse(l.map(d => d.exists ? d.data().s : '').join('')); }));
@@ -8185,7 +8184,7 @@ let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
   social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
-  setInterval(() => { if (!document.hidden) syncFriends(); }, 90000); // Freundesprofile regelmäßig auffrischen
+  setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
@@ -8371,7 +8370,7 @@ const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last
 let typLast = 0;
 function typingNow(on){
   if (!social || !CH.open || CH.mode !== 'chat') return; const ref = social.db.doc('chats/' + CH.open + '/t/' + social.uid);
-  if (on) { if (Date.now() - typLast < 2500) return; typLast = Date.now(); ref.set({ts:Date.now()}).catch(() => {}); }
+  if (on) { if (Date.now() - typLast < 6000) return; typLast = Date.now(); ref.set({ts:Date.now()}).catch(() => {}); }
   else if (typLast) { typLast = 0; ref.delete().catch(() => {}); }
 }
 function paintTyping(){
@@ -8398,7 +8397,7 @@ function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
-  CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.lim = 200; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
+  CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.lim = 60; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
   chSub(id); rdWatch(id); tkWatch(id);
   go('chats');
 }
@@ -8413,7 +8412,7 @@ function readHTML(m, c){ const mem = (c?.members || e2Members(CH.open, c) || [])
   const show = l.slice(0, 3), more = l.length - show.length, names = l.map(chatWho).join(', ');
   return `<div class="mread" title="Gelesen von ${esc(names)}" aria-label="Gelesen von ${esc(names)}"><span>Gelesen</span><span class="mreadav">${show.map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => drawMsgs(true)); } return `<span class="cameo">${p ? headPic(p) : ''}</span>`; }).join('')}${more > 0 ? `<b>+${more}</b>` : ''}</span></div>`; }
 function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
-  return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 200).onSnapshot({includeMetadataChanges:true}, snap => {
+  return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 60).onSnapshot({includeMetadataChanges:true}, snap => {
     CH.mraw = snap.docs.filter(d => !isDel(d.id)).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id); rdMark();
     if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && (S.seen || {})[c.id] !== c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); } }
@@ -8427,8 +8426,10 @@ function vmPrefetch(){ clearTimeout(VMPF); VMPF = setTimeout(async () => { if (!
 const msgImgs = (box, keep) => { const st0 = box.scrollTop; box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = keep ? st0 : box.scrollHeight; }, {once:true}); }); }; // beim Löschen nicht nach unten springen (Inaya, 2026-10-12)
 function msgsHTML(){
   const c = CH.list.find(x => x.id === CH.open), warn = c && e2Chat(c.id, c) ? e2Members(c.id, c).filter(u => u !== social?.uid && e2Warned(u)) : [];
-  if (warn.length) return msgsHTML0(c) + warn.map(u => `<div class="e2warn">${E2_LOCK}<span>${esc(chatWho(u))} hat ein neues Gerät angemeldet oder sich neu angemeldet. Eure Nachrichten bleiben verschlüsselt. Wenn du sichergehen willst, vergleicht eure Sicherheitsnummer.</span><span class="row"><button type="button" class="btn ghost" data-act="e2-code">Sicherheitsnummer</button><button type="button" class="btn ghost" data-act="e2-warnok" data-id="${esc(u)}">OK</button></span></div>`).join('');
-  return msgsHTML0(c); }
+  if (warn.length) return moreHTML() + msgsHTML0(c) + warn.map(u => `<div class="e2warn">${E2_LOCK}<span>${esc(chatWho(u))} hat ein neues Gerät angemeldet oder sich neu angemeldet. Eure Nachrichten bleiben verschlüsselt. Wenn du sichergehen willst, vergleicht eure Sicherheitsnummer.</span><span class="row"><button type="button" class="btn ghost" data-act="e2-code">Sicherheitsnummer</button><button type="button" class="btn ghost" data-act="e2-warnok" data-id="${esc(u)}">OK</button></span></div>`).join('');
+  return moreHTML() + msgsHTML0(c); }
+// Erst die neuesten 60 laden (spart Lesevorgänge), ältere auf Wunsch (Inaya, 2026-10-14)
+const moreHTML = () => CH.mraw && CH.mraw.length >= (CH.lim || 60) ? '<button type="button" class="btn ghost chmore" data-act="ch-more">Ältere Nachrichten laden</button>' : '';
 function msgsHTML0(c){
   const vis = CH.msgs.filter(m => !isBlk(m.from)), lastMine = [...vis].reverse().find(m => m.from === social?.uid && !m._lock && !m._pend);
   return CH.msgs.length ? vis.map(m => msgWrapHTML(m, c?.group, m === lastMine ? readHTML(m, c) : '')).join('')
@@ -9289,7 +9290,7 @@ async function msgJump(id){ rxClose();
     if (el) { el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('mflash'); void el.offsetWidth; el.classList.add('mflash'); return; }
     if (!(await chMore())) break; }
   toast('Diese Nachricht gibt es nicht mehr.'); }
-function chMore(){ if (!CH.open || !CH.mraw || CH.mraw.length < (CH.lim || 200)) return Promise.resolve(false); CH.lim = (CH.lim || 200) + 300; return chSub(CH.open, true); }
+function chMore(){ if (!CH.open || !CH.mraw || CH.mraw.length < (CH.lim || 60)) return Promise.resolve(false); CH.lim = (CH.lim || 60) + 100; return chSub(CH.open, true); }
 // Wischen auf dem Handy: nach rechts = antworten, nach links = reagieren (senkrecht scrollen bleibt frei)
 { let sw = null;
   document.addEventListener('pointerdown', e => { const w = e.target.closest?.('#msgs .mwrap'); sw = null;
@@ -9579,11 +9580,14 @@ async function rulesCheck(){ try { await social.db.collection(`rings/${social.ui
   catch (e) { return e?.code === 'permission-denied' ? '<b>⚠ Die Firestore-Regeln sind veraltet.</b> Anrufe klingeln deshalb nicht beim anderen Gerät. Kopiere den kompletten Inhalt von firebase/firestore.rules in die Firebase-Konsole (Firestore → Regeln) und veröffentliche ihn.' : 'Die Regeln ließen sich gerade nicht prüfen (keine Verbindung?).'; } }
 /* ---- Selbsttest (Inaya, 2026-10-13): prüft auf der echten Seite mit dem echten Konto, woran Anrufe, Sprachnachrichten, Lesebestätigungen oder Namen scheitern ---- */
 function diagCard(){ if (!social) return ''; return `<div class="card"><h2 class="card-h">Selbsttest</h2><div class="card-in"><p class="note">Prüft Anrufe, Sprachnachrichten, Lesebestätigungen und Namen auf diesem Gerät. Es wird nichts verschickt. Das Ergebnis kannst du kopieren und weitergeben.</p><button type="button" class="btn" data-act="diag-run">Selbsttest starten</button><pre id="diag-out" class="diagout" hidden></pre><div class="row" id="diag-btns" hidden style="gap:8px;flex-wrap:wrap"><button type="button" class="btn" data-act="diag-copy">Ergebnis kopieren</button>${navigator.share ? '<button type="button" class="btn ghost" data-act="diag-share">Teilen …</button>' : ''}</div></div></div>`; }
+// Tageskontingent des kostenlosen Firebase-Tarifs: ein Schreibversuch ohne Anmeldung (die Regeln lehnen ihn ab) antwortet mit 429, wenn das Kontingent aufgebraucht ist
+async function quotaCheck(){ try { const pid = window.NF_FIREBASE?.config?.projectId; if (!pid) return null; const r = await fetch(`https://firestore.googleapis.com/v1/projects/${pid}/databases/(default)/documents:commit`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({writes:[{update:{name:`projects/${pid}/databases/(default)/documents/invites/kontingent-pruefung`, fields:{}}, currentDocument:{exists:false}}]})}); return r.status === 429 ? 'leer' : 'ok'; } catch { return null; } }
 async function diagRun(){ const out = document.getElementById('diag-out'); if (!out) return; out.hidden = false; const L = []; const put = (ok, t) => { L.push((ok === true ? '✓ ' : ok === false ? '✗ ' : '• ') + t); out.textContent = L.join('\n'); };
   const lim = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('Zeitüberschreitung')), ms))]);
   const err = e => e?.message === 'Zeitüberschreitung' ? 'keine Antwort vom Server nach 10 s, Schreib-Warteschlange hängt' : e?.code || e?.message || e?.name || String(e);
   const ua = navigator.userAgent, ios = isIOS(), sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   put(null, `Version ${window.NF_BUILD} · ${ios ? 'iPhone/iPad' : /Android/.test(ua) ? 'Android' : 'Computer'} · ${sa ? 'App vom Home-Bildschirm' : 'Browser'} · ${(ua.match(/(Version|Chrome|Firefox|CriOS|FxiOS)\/[\d.]+/) || [''])[0]} · ${new Date().toLocaleString('de-DE')}`);
+  { const q = await quotaCheck(); put(q === 'leer' ? false : q === 'ok' ? true : null, q === 'leer' ? 'Firebase-Tageskontingent AUFGEBRAUCHT: Die Datenbank nimmt bis etwa 9 Uhr (deutscher Zeit) nichts mehr an. Kostenloser Tarif: 20.000 Schreib- und 50.000 Lesevorgänge pro Tag.' : q === 'ok' ? 'Firebase-Tageskontingent: in Ordnung' : 'Firebase-Tageskontingent: ließ sich nicht prüfen'); }
   put(!!social.uid, 'Angemeldet als @' + (me()?.handle || '?') + ' (' + social.uid.slice(0, 6) + '…)');
   { const st = JSON.stringify(S).length; put(st < 3e6, `Kontostand: ${Math.round(st / 1024)} KB${CLOUDSTAT ? `, Sicherung zuletzt ${CLOUDSTAT.w} von ${CLOUDSTAT.n} Stücken geschrieben (${ago(CLOUDSTAT.t)})` : ', noch nicht gesichert seit dem Öffnen'}`); }
   put(null, 'Verbindung: ' + (social.db.lp ? 'Long Polling (iPhone)' : 'Streaming'));
@@ -9639,7 +9643,7 @@ async function presenceStart(){
     lobby = await claude.use('room'); if (!lobby || !social) return;
     lobby.presence({u:social.uid});
     lobby.onPeers(ch => { ONLINE = new Set(ch.peers.map(p => p.by || p.presence?.u).filter(Boolean)); paintOnline(); }, () => {});
-    setInterval(() => { if (social && me()) social.db.doc('profiles/' + social.uid).update({seen:Date.now()}).catch(() => {}); }, 180000);
+    setInterval(() => { if (social && me() && !document.hidden) social.db.doc('profiles/' + social.uid).update({seen:Date.now()}).catch(() => {}); }, 900000);
   } catch {}
 }
 function onlineState(u){
@@ -10823,6 +10827,7 @@ document.addEventListener('click', async e => {
   else if (a === 'call-end') callLeave();
   else if (a === 'ring-yes' || a === 'ring-no') ringAnswer(b.dataset.id, a === 'ring-yes');
   else if (a === 'tk-new') tkDialog(null);
+  else if (a === 'ch-more') { b.disabled = true; b.textContent = 'Lädt …'; await chMore(); }
   else if (a === 'diag-run') { b.disabled = true; try { await diagRun(); } finally { b.disabled = false; } }
   else if (a === 'diag-copy') { const t = document.getElementById('diag-out')?.textContent || ''; // iPhone: zuerst im selben Tippen über ein Textfeld kopieren, das klappt dort zuverlässig
     const ta = document.createElement('textarea'); ta.value = t; ta.readOnly = true; ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px'; document.body.appendChild(ta); ta.focus(); ta.setSelectionRange(0, t.length); let ok = false; try { ok = document.execCommand('copy'); } catch {} ta.remove();
