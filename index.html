@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7f0c14f2cca2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='af40b7f52d0c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1573,15 +1573,38 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .callb svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .callbar{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 12px;border:1px dashed var(--p-line);border-radius:16px;background:var(--p-panel);color:var(--p-fg)}.callbar>span:nth-child(2){flex:1;min-width:0;display:grid}.callbar small{color:var(--p-muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cbic{width:34px;height:34px;border-radius:50%;background:var(--p-fg);color:var(--p-bg);display:grid;place-items:center;flex:none;animation:cpulse 2s ease-in-out infinite}.cbic svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9}
-.talks{min-width:0}.tkrow{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
-.tkcard{flex:0 0 min(210px,70vw);scroll-snap-align:start;display:grid;align-content:start;gap:6px;padding:12px 12px 12px;border:1px solid var(--p-line);border-radius:26px 26px 12px 12px;background:var(--p-panel);color:var(--p-fg);min-width:0;position:relative}
-.tkcard.live{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--p-fg) 35%,transparent)}.tkcard.tkon{border-color:var(--p-fg)}
-.tkh{display:flex;align-items:center;gap:8px;min-width:0}.tkic{width:30px;height:30px;border-radius:50%;border:1px solid var(--p-line);display:grid;place-items:center;flex:none}.tkic svg,.tked svg,.tkadd svg,.tkkind svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.tkn{flex:1;min-width:0;font:400 18px/1.15 var(--p-font);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tked{background:none;border:0;color:inherit;padding:4px;cursor:pointer;opacity:.75}
-.tkm{color:var(--p-muted);font:12px Inter,sans-serif}.tkav{display:flex;align-items:center;min-height:22px}.tkav .cameo{width:22px;height:22px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-panel);margin-left:-6px;background:var(--p-bg)}.tkav .cameo:first-child{margin-left:0}.tkav .cameo svg,.tkav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.tkav b{font:600 11px Inter,sans-serif;margin-left:4px}
-.tkgo{justify-content:center;width:100%}.tkgo[disabled]{opacity:.55;cursor:not-allowed}
-.tkadd{border-style:dashed;place-items:center;align-content:center;cursor:pointer;font:600 14px var(--p-font);gap:8px;min-height:120px}.tkadd svg{width:24px;height:24px}
-.tkform{display:grid;gap:12px;padding:18px}.tkform h3{margin:0;font:400 22px var(--p-font)}.tkkind{display:flex;gap:16px;flex-wrap:wrap;border:0;padding:0}.tkkind label{display:flex;align-items:center;gap:6px}
+/* Talk-Seite der öffentlichen Gruppe: Farben, Muster, Schrift und Hintergrundbild kommen aus dem Gruppendesign */
+.chatmain>.chatpanel.cpanel{grid-template-rows:auto auto minmax(0,1fr) auto auto}.chbars{display:grid;gap:8px;min-width:0}.chbars:not(:has(>:not([hidden]))){margin-top:-10px}
+.chatmain>.chatpanel.tkpanel{grid-template-rows:auto minmax(0,1fr)}
+.tkbtn{position:relative}.tkbtn svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.tkbadge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--p-fg);color:var(--p-bg);font:700 11px/18px Inter,sans-serif;font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--p-bg)}.tkbadge[hidden]{display:none}
+.tkhint{width:100%;text-align:left;font:inherit;cursor:pointer}.tkhint .btn{flex:none;pointer-events:none;padding:6px 12px}
+.tkpage{min-height:0;overflow-y:auto;overscroll-behavior:contain;display:grid;align-content:start;gap:10px;padding:4px 2px 14px;border-radius:14px;background-size:cover;background-position:center}
+.chatpanel.hasbg .tkpage{background-color:#0008;padding:12px}
+.tksec{margin:6px 2px 0;font:400 19px var(--p-font);color:var(--p-fg);display:flex;align-items:center;gap:10px}.tksec::after{content:'';flex:1;height:1px;background:var(--p-line)}
+.tkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:12px}
+.tkcard{display:grid;align-content:start;gap:10px;padding:14px 14px 12px;border:1px solid var(--p-line);border-radius:30px 30px 14px 14px;background:var(--p-panel);color:var(--p-fg);min-width:0;position:relative;transition:box-shadow .3s,border-color .3s}
+.tkcard.live{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--p-fg) 35%,transparent)}.tkcard.tkon{border-color:var(--p-fg)}.tkcard.tkfull{opacity:.85}.tkcard.tkhl{box-shadow:0 0 0 2px var(--p-fg);animation:cpulse 1.2s ease-in-out 2}
+.tkh{display:flex;align-items:center;gap:10px;min-width:0}.tkt{flex:1;min-width:0;display:grid}.tkic{width:38px;height:38px;border-radius:50%;border:1px solid var(--p-line);display:grid;place-items:center;flex:none;background:var(--p-bg)}.tkcard.live .tkic{background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}
+.tkic svg,.tked svg,.tkadd svg,.tknew svg,.tkkind svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tkn{min-width:0;font:400 20px/1.15 var(--p-font);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tked{background:none;border:1px solid transparent;border-radius:50%;color:inherit;padding:7px;cursor:pointer;opacity:.8;align-self:start}.tked:hover{border-color:var(--p-line);opacity:1}
+.tkm{color:var(--p-muted);font:12px Inter,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tkcnt{display:flex;align-items:baseline;gap:8px}.tkn9{font:400 28px/1 var(--p-font)}.tkcnt span{color:var(--p-muted);font:13px Inter,sans-serif}.tkfull .tkcnt span{color:var(--p-fg);font-weight:600}
+.tkseats{display:grid;grid-template-columns:repeat(9,1fr);gap:4px}.tkseats i{height:5px;border-radius:3px;background:var(--p-line)}.tkseats i.on{background:var(--p-fg)}
+.tkav{display:flex;align-items:center;flex-wrap:wrap;gap:6px;min-height:28px}.tkav .cameo{width:28px;height:28px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-panel);margin-right:-12px;background:var(--p-bg);display:block}.tkav .cameo:last-of-type{margin-right:0}.tkav .cameo svg,.tkav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.tkav small{margin-left:8px;color:var(--p-muted);font:12px Inter,sans-serif;min-width:0}
+.tkgo{justify-content:center;width:100%}.tkgo[disabled]{opacity:.6;cursor:not-allowed}
+.tkadd{border-style:dashed;place-items:center;align-content:center;justify-items:center;text-align:center;cursor:pointer;font:400 19px var(--p-font);gap:6px;min-height:150px}.tkadd svg{width:28px;height:28px}.tkadd small{color:var(--p-muted);font:12px Inter,sans-serif}.tkadd:hover{border-color:var(--p-fg)}
+.tknew{gap:6px;white-space:nowrap}.tkback{flex:none}
+.tkjoin{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border:1px dashed var(--p-line);border-radius:16px;background:var(--p-panel)}.tkjoin p{margin:0;flex:1;min-width:180px}
+.tknote{margin:6px 2px 0;color:var(--p-muted)}
+.tkform{display:grid;gap:12px;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}.tkform h3{margin:0;font:400 24px var(--p-font)}
+.tkideas{display:flex;flex-wrap:wrap;gap:6px}.tkideas .chip{border:1px solid var(--p-line);background:none;color:inherit;border-radius:999px;padding:6px 12px;font:13px Inter,sans-serif;cursor:pointer}.tkideas .chip:hover{border-color:var(--p-fg)}
+.tkkind{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;padding:0;margin:0}.tkkind legend{margin-bottom:6px}.tkkind label{display:block;cursor:pointer}.tkkind input{position:absolute;opacity:0;pointer-events:none}
+.tkkind label>span{display:grid;justify-items:center;gap:4px;padding:12px 8px;border:1px solid var(--p-line);border-radius:22px 22px 10px 10px;background:var(--p-panel);text-align:center}.tkkind label>span svg{width:24px;height:24px}.tkkind b{font:400 17px var(--p-font)}.tkkind small{color:var(--p-muted);font:12px Inter,sans-serif}
+.tkkind input:checked+span{border-color:var(--p-fg);box-shadow:inset 0 0 0 1px var(--p-fg)}.tkkind input:focus-visible+span{outline:2px solid var(--p-fg);outline-offset:2px}
+.tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
+.shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
+.chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
+@media (max-width:760px){.tkchat{display:none}.tknew{padding:8px 12px}.tkgrid{grid-template-columns:1fr}}
 
 .mread{display:flex;align-items:center;gap:6px;margin:3px 4px 0;font:12px Inter,sans-serif;color:var(--p-muted,#9a99a3)}.mreadav{display:flex;align-items:center}.mreadav .cameo{width:18px;height:18px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-bg,#0e0e10);margin-left:-5px;background:var(--p-panel,#1c1c1f);display:block}.mreadav .cameo:first-child{margin-left:0}.mreadav .cameo svg,.mreadav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.mreadav b{margin-left:4px;font-weight:600;font-size:11px}
 #stvfr{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -8382,7 +8405,7 @@ const CTICO = {priv:'<path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.5L3.5 20.5l1.4-4.5
 let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz unten (Inaya, 2026-10-10)
 function chatsView(){
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && CH.mode === 'chat' ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${esc(c.id)}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(chatPrevText(c)) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
+  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && (CH.mode === 'chat' || CH.mode === 'talks') ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${esc(c.id)}"><b>${esc(chatName(c))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${c.group ? (c.pub ? 'Öffentlich · ' : '') + c.members.length + ' Leute' : 'Privat'}${c.lastText ? ' · ' + etx(chatPrevText(c)) : ''}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = '<p class="muted" style="margin:auto;text-align:center">Wähl links einen Chat oder fang einen neuen an.</p>';
   if (CH.mode === 'new') right = `<h3 class="ch-h">Neuer privater Chat</h3>${friends.length ? friends.map(f => `<button class="clist" data-act="chat-dm" data-id="${f.id}">${esc(f.name)} <small>@${esc(f.handle)}</small></button>`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`;
   if (CH.mode === 'group') right = groupForm(friends);
@@ -8403,12 +8426,13 @@ function chatsView(){
       ${chatHTML(h)}
     </section>`;
   }
+  if (CH.mode === 'talks' && CH.open) { const c = CH.list.find(x => x.id === CH.open); if (c?.pub) right = talksPanelHTML(c); else CH.mode = 'chat'; }
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
-    if (c) right = `<section class="themed chatpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
+    if (c) right = `<section class="themed chatpanel cpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
       <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}</button>`; })()}${c.group ? `<small class="muted">${c.members.map(chatWho).map(esc).join(', ')}</small>` : ''}<small class="typing" id="chtyping" hidden></small></div>
-        ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>`}</header>
-      ${c.pub ? talksHTML(c) : ''}${callBarHTML(c)}
+        ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${tkBtnHTML(c)}<button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></button></span>`}</header>
+      <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><textarea id="cm-in" class="mlin" rows="1" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
@@ -9252,7 +9276,8 @@ const CI = { // Symbole für Anrufe
   min:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v0"/><path d="M8 19h8"/></svg>',
   chat:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.7 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg>',
   plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
-  pen:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>' };
+  pen:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>',
+  talk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h10a2 2 0 0 1 2 2V11a2 2 0 0 1-2 2H9l-4 3.5V13H4a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z"/><path d="M18.5 8H20a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3.5L15 17h-3a2 2 0 0 1-2-2"/><path d="M6 7.2v2.4M9 6v4.8M12 7.2v2.4"/></svg>' };
 let RTC_TURN = null; // optionaler TURN-Server aus site/rtc (nur wenn Inaya einen einträgt)
 async function rtcTurn(){ if (RTC_TURN !== null || !social) return; RTC_TURN = false; try { const d = await social.db.doc('site/rtc').get(); const x = d.exists ? d.data() : null; if (x?.urls) RTC_TURN = {urls:String(x.urls).split(/[\s,]+/).filter(Boolean), username:x.username || '', credential:x.credential || ''}; } catch {} }
 const rtcIce = () => [{urls:['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']}, {urls:'stun:stun.cloudflare.com:3478'}, ...(RTC_TURN ? [RTC_TURN] : [])];
@@ -9269,20 +9294,43 @@ async function tkEnsure(cid){ const c = CH.list.find(x => x.id === cid); if (!c?
 async function tkSweep(cid){ const now = Date.now();
   for (const t of TK.list) for (const [u, v] of Object.entries(t.p || {})) if (u !== social.uid && now - (+v?.t || 0) > TK_STALE + 2000) tkRef(cid, t.id).update({[`p.${u}`]:firebase.firestore.FieldValue.delete(), gone:u}).catch(() => {}); }
 const tkSorted = () => [...TK.list].sort((a, b) => (b.def || 0) - (a.def || 0) || (a.id === 'audio' ? -1 : b.id === 'audio' ? 1 : 0) || (a.ts || 0) - (b.ts || 0));
-function tkCardHTML(c, t){ const on = tkFresh(t), n = on.length, mine = CALL && CALL.cid === c.id && CALL.tid === t.id, full = n >= 9 && !mine, admin = c.createdBy === social?.uid, mem = (c.members || []).includes(social?.uid);
-  return `<div class="tkcard${mine ? ' tkon' : ''}${n ? ' live' : ''}" data-tk="${esc(t.id)}"><div class="tkh"><span class="tkic" aria-hidden="true">${t.kind === 'video' ? CI.vid : CI.mic}</span><b class="tkn">${esc(t.name || TK_DEF[t.id]?.name || 'Talk')}</b>${admin ? `<button type="button" class="tked" data-act="tk-edit" data-id="${esc(t.id)}" aria-label="Talk umbenennen">${CI.pen}</button>` : ''}</div>
-    <small class="tkm">${t.kind === 'video' ? 'Videochat' : 'Audiochat'} · ${n}/9 · ${9 - n} ${9 - n === 1 ? 'Platz' : 'Plätze'} frei</small>
-    <span class="tkav">${on.slice(0, 5).map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(tkPaint); } return `<span class="cameo" title="${esc(chatWho(u))}">${p ? headPic(p) : ''}</span>`; }).join('')}${n > 5 ? `<b>+${n - 5}</b>` : ''}</span>
-    ${mine ? '<button type="button" class="btn ghost tkgo" data-act="call-open">Du bist drin</button>' : !mem ? '<small class="tkm">Tritt der Gruppe bei, um mitzureden.</small>' : `<button type="button" class="btn tkgo" data-act="tk-join" data-id="${esc(t.id)}"${full ? ' disabled' : ''}>${full ? 'Voll' : 'Beitreten'}</button>`}</div>`; }
-function talksHTML(c){ if (!c?.pub) return ''; const l = tkSorted();
-  return `<div class="talks" id="talks" aria-label="Talks"><div class="tkrow">${l.map(t => tkCardHTML(c, t)).join('') || '<p class="muted tkload">Talks werden eingerichtet …</p>'}${c.createdBy === social?.uid ? `<button type="button" class="tkcard tkadd" data-act="tk-new">${CI.plus}<span>Talk hinzufügen</span></button>` : ''}</div></div>`; }
-function tkPaint(){ const el = document.getElementById('talks'), c = CH.list.find(x => x.id === TK.cid); if (el && c && CH.open === c.id) { const sx = el.querySelector('.tkrow')?.scrollLeft || 0; el.outerHTML = talksHTML(c); const n = document.querySelector('#talks .tkrow'); if (n) n.scrollLeft = sx; } }
+// Talk-Seite der öffentlichen Gruppe (Inaya, 2026-10-13): eigene Unterseite statt Kartenreihe über den Nachrichten
+const tkMay = (c, t) => !!social && (c?.createdBy === social.uid || (t?.by && t.by === social.uid)); // umbenennen/löschen: Admin der Gruppe oder wer den Talk erstellt hat
+const tkName = t => t.name || TK_DEF[t.id]?.name || 'Talk';
+function tkCardHTML(c, t){ const on = tkFresh(t), n = on.length, mine = CALL && CALL.cid === c.id && CALL.tid === t.id, full = n >= 9 && !mine, mem = (c.members || []).includes(social?.uid);
+  const by = !t.def && t.by ? (t.by === social?.uid ? 'von dir' : 'von ' + chatWho(t.by)) : 'Standard';
+  return `<article class="tkcard${mine ? ' tkon' : ''}${n ? ' live' : ''}${full ? ' tkfull' : ''}${TK.hl === t.id ? ' tkhl' : ''}" data-tk="${esc(t.id)}"><div class="tkh"><span class="tkic" aria-hidden="true">${t.kind === 'video' ? CI.vid : CI.mic}</span><span class="tkt"><b class="tkn">${esc(tkName(t))}</b><small class="tkm">${t.kind === 'video' ? 'Videochat' : 'Audiochat'} · ${esc(by)}</small></span>${tkMay(c, t) ? `<button type="button" class="tked" data-act="tk-edit" data-id="${esc(t.id)}" aria-label="Talk „${esc(tkName(t))}“ bearbeiten" title="Bearbeiten">${CI.pen}</button>` : ''}</div>
+    <div class="tkcnt"><b class="tkn9" aria-label="${n} von 9 Plätzen belegt">${n}/9</b><span>${full ? 'Voll' : n ? (9 - n) + (9 - n === 1 ? ' Platz frei' : ' Plätze frei') : 'Noch leer'}</span></div>
+    <div class="tkseats" aria-hidden="true">${Array.from({length:9}, (_, k) => `<i${k < n ? ' class="on"' : ''}></i>`).join('')}</div>
+    ${n ? `<span class="tkav">${on.map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(tkPaint); } return `<span class="cameo" title="${esc(chatWho(u))}">${p ? headPic(p) : ''}</span>`; }).join('')}<small>${on.slice(0, 3).map(chatWho).map(esc).join(', ')}${n > 3 ? ` und ${n - 3} weitere` : ''}</small></span>` : ''}
+    ${mine ? '<button type="button" class="btn ghost tkgo" data-act="call-open">Du bist drin · zum Talk</button>' : !mem ? '' : `<button type="button" class="btn tkgo" data-act="tk-join" data-id="${esc(t.id)}"${full ? ' disabled' : ''}>${full ? '9/9 – Voll' : 'Beitreten'}</button>`}</article>`; }
+const tkLive = () => TK.list.reduce((s, t) => s + tkFresh(t).length, 0);
+// Kopfzeile des Gruppenchats: Talk-Symbol mit Zahl der Leute, die gerade sprechen
+const tkBtnHTML = c => c?.pub ? `<button class="btn ghost iconb tkbtn" data-act="tk-page" aria-label="Talks${tkLive() ? ` (${tkLive()} drin)` : ''}" title="Talks">${CI.talk}<i class="tkbadge" id="tkbadge"${tkLive() ? '' : ' hidden'}>${tkLive()}</i></button>` : '';
+// im Gruppenchat nur ein schmaler Hinweis, wenn gerade jemand in einem Talk ist
+function tkHintHTML(c){ if (!c?.pub || (CALL && CALL.cid === c.id)) return '<div id="tkhint" hidden></div>'; const l = tkSorted().filter(t => tkFresh(t).length); if (!l.length) return '<div id="tkhint" hidden></div>';
+  return `<button type="button" id="tkhint" class="callbar tkhint" data-act="tk-page"><span class="cbic" aria-hidden="true">${CI.talk}</span><span><b>${tkLive() === 1 ? '1 Person' : tkLive() + ' Leute'} in Talks</b><small>${l.map(t => `${esc(tkName(t))} ${tkFresh(t).length}/9`).join(' · ')}</small></span><span class="btn ghost">Ansehen</span></button>`; }
+function talksPageHTML(c){ const l = tkSorted(), d = l.filter(t => t.def), o = l.filter(t => !t.def), mem = (c.members || []).includes(social?.uid), n = tkLive();
+  return `<div class="tkpage" id="talks"${bgImgStyle(chBg(c))}>${callBarHTML(c)}
+    ${mem ? '' : `<div class="tkjoin"><p>Tritt der Gruppe bei, dann kannst du in jeden Talk, ohne eingeladen zu werden.</p><button type="button" class="btn" data-act="pubg-join" data-id="${esc(c.id)}">Gruppe beitreten</button></div>`}
+    <p class="tksec">Standard-Talks</p><div class="tkgrid">${d.map(t => tkCardHTML(c, t)).join('') || '<p class="muted tkload">Talks werden eingerichtet …</p>'}</div>
+    <p class="tksec">Eigene Talks${o.length ? ` · ${o.length}` : ''}</p><div class="tkgrid">${o.map(t => tkCardHTML(c, t)).join('')}${mem ? `<button type="button" class="tkcard tkadd" data-act="tk-new">${CI.plus}<span>Talk erstellen</span><small>Eigener Name, Audio oder Video</small></button>` : o.length ? '' : '<p class="muted">Noch keine eigenen Talks.</p>'}</div>
+    <p class="note tknote">Jeder Talk hat bis zu 9 Plätze, mehrere Talks laufen gleichzeitig. ${n ? `Gerade ${n === 1 ? 'ist 1 Person' : 'sind ' + n + ' Leute'} in Talks.` : 'Gerade ist niemand in einem Talk.'}</p></div>`; }
+function talksPanelHTML(c){ const mem = (c.members || []).includes(social?.uid);
+  return `<section class="themed chatpanel tkpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}" aria-label="Talks">
+    <header class="ch-head"><button class="btn ghost iconb chback tkback" data-act="tk-back" aria-label="Zurück zum Gruppenchat" title="Zurück zum Chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><div class="chtitle"><b class="ch-name">Talks</b><small class="muted">in „${esc(chatName(c))}“</small></div>
+      <span class="row chbtns" style="gap:6px">${mem ? `<button type="button" class="btn tknew" data-act="tk-new">${CI.plus}<span>Talk erstellen</span></button>` : ''}<button type="button" class="btn ghost iconb tkchat" data-act="tk-back" aria-label="Zum Gruppenchat" title="Zum Gruppenchat">${CI.chat}</button></span></header>
+    ${talksPageHTML(c)}</section>`; }
+function tkPaint(){ const c = CH.list.find(x => x.id === TK.cid); if (!c || CH.open !== c.id) return;
+  const pg = document.getElementById('talks'); if (pg && CH.mode === 'talks') { const st = pg.scrollTop; pg.outerHTML = talksPageHTML(c); const n = document.getElementById('talks'); if (n) n.scrollTop = st; }
+  const h = document.getElementById('tkhint'); if (h && CH.mode === 'chat') h.outerHTML = tkHintHTML(c);
+  const b = document.querySelector('.tkbtn'); if (b) b.outerHTML = tkBtnHTML(c); }
 // laufender Anruf im privaten Chat / in der privaten Gruppe: Leiste zum Beitreten
 function callBarHTML(c){ if (c && CALL && CALL.cid === c.id) return `<div id="callbar" class="callbar mine"><span class="cbic" aria-hidden="true">${CALL.kind === 'video' ? CI.vid : CI.ph}</span><span><b>${esc(c.pub ? callTitle(CALL).split(' · ')[0] : 'Dein Anruf')}</b><small class="cbst">${esc(CALL.statusText || '')}</small></span><button type="button" class="btn" data-act="call-open">Zum Anruf</button></div>`; // eigener Anruf in diesem Chat: Leiste statt schwebender Anzeige
   if (!c || c.pub) return '<div id="callbar" hidden></div>'; const t = TK.cid === c.id ? TK.list.find(x => tkFresh(x).some(u => u !== social?.uid) && !(CALL && CALL.cid === c.id && CALL.tid === x.id)) : null;
   if (!t) return '<div id="callbar" hidden></div>'; const n = tkFresh(t).length, full = n >= TK_MAX(c.id);
   return `<div id="callbar" class="callbar"><span class="cbic" aria-hidden="true">${t.kind === 'video' ? CI.vid : CI.ph}</span><span><b>${t.kind === 'video' ? 'Videoanruf läuft' : 'Anruf läuft'}</b><small>${tkFresh(t).map(chatWho).map(esc).join(', ')} · ${n}/${TK_MAX(c.id)}</small></span><button type="button" class="btn" data-act="call-join" data-id="${esc(t.id)}"${full ? ' disabled' : ''}>${full ? 'Voll' : 'Beitreten'}</button></div>`; }
-function callBarPaint(){ const el = document.getElementById('callbar'), c = CH.list.find(x => x.id === TK.cid); if (el && c && CH.open === c.id) el.outerHTML = callBarHTML(c); }
+function callBarPaint(){ const el = document.getElementById('callbar'), c = CH.list.find(x => x.id === TK.cid); if (el && c && CH.open === c.id) el.outerHTML = callBarHTML(c); const h = document.getElementById('tkhint'); if (h && c && CH.mode === 'chat') h.outerHTML = tkHintHTML(c); }
 const callBtnsHTML = c => c && !c.pub ? `<button class="btn ghost iconb callb" data-act="call-start" data-k="audio" aria-label="Anrufen" title="Anrufen">${CI.ph}</button><button class="btn ghost iconb callb" data-act="call-start" data-k="video" aria-label="Videoanruf" title="Videoanruf">${CI.vid}</button>` : '';
 
 /* ---- der laufende Anruf ---- */
@@ -9293,8 +9341,8 @@ async function callJoin(cid, tid, opts = {}){
   if (CALL && CALL.cid === cid && CALL.tid === tid) { callShow(); return; }
   if (CALL) await callLeave(true);
   if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) return toast('Dieser Browser kann keine Anrufe. Probier Safari oder Chrome in der neuesten Version.');
-  const kind = TK_DEF[tid]?.kind || TK.list.find(t => t.id === tid)?.kind || 'audio', max = TK_MAX(cid);
-  const ac = new (window.AudioContext || window.webkitAudioContext)(); // im Tippen anlegen, sonst bleibt es auf dem iPhone stumm
+  const kind = TK_DEF[tid]?.kind || TK.list.find(t => t.id === tid)?.kind || opts.kind || 'audio', max = TK_MAX(cid);
+  const ac = opts.ac || new (window.AudioContext || window.webkitAudioContext)(); // im Tippen anlegen, sonst bleibt es auf dem iPhone stumm
   CALL = {cid, tid, kind, max, sid:e2Rand(10), peers:new Map(), st:{mic:true, cam:kind === 'video'}, sts:{}, room:{p:{}}, ac, t0:Date.now(), joined:0, ring:[], ringing:!!opts.ring, face:'user', out:true, view:'big', status:'Verbindet …'};
   const C = CALL; callShow(); callPaint();
   try { C.local = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}, video:kind === 'video' ? {facingMode:'user', width:{ideal:640}, height:{ideal:480}, frameRate:{ideal:24, max:30}} : false}); }
@@ -9360,7 +9408,7 @@ function callStatus(){ const C = CALL; if (!C) return; const live = [...C.peers.
   else if (/^dm_/.test(C.cid) && !on.length) s = C.ringing ? (C.ring.length ? 'Klingelt …' : 'Ruft an …') : live.length ? 'Verbindet …' : 'Wartet …';
   else if (!on.length) s = 'Du bist allein hier. Warte, bis jemand dazukommt.'; else { const sec = Math.floor((Date.now() - (C.since || (C.since = Date.now()))) / 1000); s = `Im Gespräch · ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`; }
   if (C.status === 'Abgelehnt' || C.status === 'Keine Antwort' || C.status === 'Anruf beendet') s = C.status;
-  const here = !!C.min && V.name === 'chats' && CH.mode === 'chat' && CH.open === C.cid; document.body.classList.toggle('callhere', here); const cb = document.querySelector('#callbar .cbst'); if (cb) cb.textContent = s; else if (here && !document.querySelector('#callbar.mine')) callBarPaint(); const el = document.querySelector('#callov .cstat'), pl = document.querySelector('#callpill .cpst'); if (el) el.textContent = s; if (pl) pl.textContent = s; C.statusText = s; }
+  const here = !!C.min && V.name === 'chats' && (CH.mode === 'chat' || CH.mode === 'talks') && CH.open === C.cid; document.body.classList.toggle('callhere', here); const cb = document.querySelector('#callbar .cbst'); if (cb) cb.textContent = s; else if (here && !document.querySelector('#callbar.mine')) callBarPaint(); const el = document.querySelector('#callov .cstat'), pl = document.querySelector('#callpill .cpst'); if (el) el.textContent = s; if (pl) pl.textContent = s; C.statusText = s; }
 // Sprechen erkennen: Leuchtrand um die Kachel
 function spkStart(C, u, stream){ if (!C.ac || !stream.getAudioTracks().length) return; spkStop(C, u); try { const src = C.ac.createMediaStreamSource(stream), an = C.ac.createAnalyser(); an.fftSize = 512; src.connect(an); const buf = new Uint8Array(an.fftSize); (C.spk = C.spk || {})[u] = {src, an, buf}; C.ac.resume?.(); if (!C.spkT) C.spkT = setInterval(() => spkTick(C), 160); } catch {} }
 function spkStop(C, u){ const s = C.spk?.[u]; if (s) { try { s.src.disconnect(); } catch {} delete C.spk[u]; } }
@@ -9434,16 +9482,28 @@ async function ringAnswer(id, yes){ const r = RING.list.find(x => x.id === id); 
   if (!yes) { if (/^dm_/.test(r.cid)) tkRef(r.cid, r.tid).collection('sig').add({from:social.uid, to:r.from, fs:'', ts:r.sid, type:'decline', d:'{}', at:Date.now()}).catch(() => {}); return; }
   openChat(r.cid); await callJoin(r.cid, r.tid); }
 
-/* ---- Talks verwalten (Admin der öffentlichen Gruppe) ---- */
-function tkDialog(t){ const c = CH.list.find(x => x.id === TK.cid); if (!c || c.createdBy !== social?.uid) return; document.getElementById('tkdlg')?.remove(); const th = callTheme(c.id), el = document.createElement('div'); el.id = 'tkdlg'; el.className = 'shpk';
-  el.innerHTML = `<div class="shpkb" data-act="tk-x"></div><form class="shpkp themed tkform" data-form="talk" style="${th.st}" data-id="${esc(t?.id || '')}"><h3>${t ? 'Talk umbenennen' : 'Neuer Talk'}</h3>
-    <label class="f"><span class="lbl">Name</span><input id="tk-name" type="text" maxlength="40" required value="${esc(t?.name || '')}" placeholder="z. B. Einfach quatschen"></label>
-    ${t ? '' : `<fieldset class="opt tkkind"><legend class="lbl">Art</legend><label><input type="radio" name="tk-kind" value="audio" checked> ${CI.mic} Audiochat</label><label><input type="radio" name="tk-kind" value="video"> ${CI.vid} Videochat</label></fieldset>`}
-    <p class="note">Bis zu 9 Personen gleichzeitig.</p><div class="row">${t && !t.def ? `<button type="button" class="btn ghost" data-act="tk-del" data-id="${esc(t.id)}">Löschen</button>` : ''}<span class="sp"></span><button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button><button class="btn" type="submit">${t ? 'Speichern' : 'Anlegen'}</button></div></form>`;
+/* ---- Talks erstellen und verwalten: jedes Mitglied der öffentlichen Gruppe erstellt, umbenennen/löschen nur Admin oder Ersteller ---- */
+const TK_IDEAS = ['Gaming', 'Einfach quatschen', 'Musik hören', 'Video-Lounge'], TK_CAP = 30;
+function tkDialog(t){ const c = CH.list.find(x => x.id === TK.cid); if (!c?.pub || !(c.members || []).includes(social?.uid)) return; if (t && !tkMay(c, t)) return;
+  if (!t && TK.list.filter(x => !x.def).length >= TK_CAP) return toast(`Diese Gruppe hat schon ${TK_CAP} eigene Talks. Lösch erst einen, den keiner mehr braucht.`);
+  document.getElementById('tkdlg')?.remove(); const th = callTheme(c.id), el = document.createElement('div'); el.id = 'tkdlg'; el.className = 'shpk'; const busy = t ? tkFresh(t).filter(u => u !== social.uid).length : 0;
+  el.innerHTML = `<div class="shpkb" data-act="tk-x"></div><form class="shpkp themed tkform" data-form="talk" style="${th.st}" data-id="${esc(t?.id || '')}"><h3>${t ? 'Talk bearbeiten' : 'Talk erstellen'}</h3>
+    <label class="f"><span class="lbl">Name</span><input id="tk-name" type="text" maxlength="40" required value="${esc(t ? tkName(t) : '')}" placeholder="z. B. Einfach quatschen" autocomplete="off"></label>
+    ${t ? '' : `<div class="tkideas" aria-label="Vorschläge">${TK_IDEAS.map(n => `<button type="button" class="chip" data-act="tk-idea" data-v="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+    <fieldset class="tkkind"><legend class="lbl">Art</legend><label><input type="radio" name="tk-kind" value="audio" checked><span>${CI.mic}<b>Audiochat</b><small>nur Stimme</small></span></label><label><input type="radio" name="tk-kind" value="video"><span>${CI.vid}<b>Videochat</b><small>mit Kamera</small></span></label></fieldset>`}
+    <p class="note">Bis zu 9 Personen gleichzeitig. Alle aus „${esc(chatName(c))}“ können beitreten.</p>
+    ${t ? `<div class="tkfgo"><button class="btn" type="submit">Speichern</button>${!t.def ? `<button type="button" class="btn ghost" data-act="tk-del" data-id="${esc(t.id)}"${busy ? ' disabled title="Gerade sind Leute drin"' : ''}>Talk löschen</button>` : ''}<button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button></div>`
+      : '<div class="tkfgo"><button class="btn" type="button" data-act="tk-mkgo">Erstellen und beitreten</button><button class="btn ghost" type="submit">Nur erstellen</button><button type="button" class="btn ghost" data-act="tk-x">Abbrechen</button></div>'}</form>`;
   document.body.appendChild(el); setTimeout(() => document.getElementById('tk-name')?.focus(), 50); }
-async function tkSave(f){ const name = document.getElementById('tk-name').value.trim().slice(0, 40), id = f.dataset.id, cid = TK.cid; if (!name || !cid) return;
-  try { if (id) await tkRef(cid, id).update({name}); else { const kind = f.querySelector('input[name="tk-kind"]:checked')?.value === 'video' ? 'video' : 'audio'; await tkRef(cid, 't' + Date.now().toString(36) + e2Rand(3).toLowerCase()).set({name, kind, def:0, ts:Date.now(), p:{}}); }
-    document.getElementById('tkdlg')?.remove(); toast(id ? 'Talk umbenannt' : 'Talk angelegt'); } catch { toast('Das hat nicht geklappt. Nur der Admin der Gruppe kann Talks verwalten.'); } }
+async function tkSave(f, go){ const name = document.getElementById('tk-name').value.trim().replace(/\s+/g, ' ').slice(0, 40), id = f.dataset.id, cid = TK.cid; if (!cid) return; if (!name) { document.getElementById('tk-name').focus(); return toast('Gib dem Talk einen Namen.'); }
+  const kind = f.querySelector('input[name="tk-kind"]:checked')?.value === 'video' ? 'video' : 'audio', nid = id || 't' + Date.now().toString(36) + e2Rand(3).toLowerCase().replace(/[^0-9a-z]/g, 'x');
+  const ac = go ? new (window.AudioContext || window.webkitAudioContext)() : null; // noch im Tippen anlegen (iPhone)
+  f.querySelectorAll('button').forEach(x => { x.disabled = true; });
+  try { if (id) await tkRef(cid, id).update({name}); else await tkRef(cid, nid).set({name, kind, def:0, by:social.uid, ts:Date.now(), p:{}}); }
+  catch { f.querySelectorAll('button').forEach(x => { x.disabled = false; }); ac?.close?.(); return toast('Das hat nicht geklappt. Bist du noch Mitglied der Gruppe?'); }
+  document.getElementById('tkdlg')?.remove(); toast(id ? 'Talk gespeichert' : `„${name}“ ist erstellt`);
+  if (!id) { TK.hl = nid; if (CH.mode !== 'talks') { CH.mode = 'talks'; render(); } else tkPaint(); setTimeout(() => document.querySelector(`[data-tk="${nid}"]`)?.scrollIntoView({block:'nearest', behavior:'smooth'}), 60); setTimeout(() => { if (TK.hl === nid) { TK.hl = null; tkPaint(); } }, 4000); }
+  if (go) callJoin(cid, nid, {kind, ac}); }
 function rtcCard(){ if (!amOwner || !social) return ''; rtcTurn().then(() => { const i = document.getElementById('rtc-u'); if (i && !i.value && RTC_TURN) { i.value = RTC_TURN.urls.join(' '); document.getElementById('rtc-n').value = RTC_TURN.username; document.getElementById('rtc-c').value = RTC_TURN.credential; } });
   return `<div class="card"><h2 class="card-h">Anrufe</h2><div class="card-in"><p class="note">Anrufe laufen direkt zwischen den Geräten und kosten nichts. In manchen Mobilfunk- oder Firmennetzen klappt das nur über einen TURN-Server. Wenn du einen einrichtest, trag ihn hier ein (sonst leer lassen).</p><form data-form="rtcturn" class="grid" style="gap:8px"><input id="rtc-u" type="text" autocomplete="off" spellcheck="false" placeholder="turn:… (mehrere mit Leerzeichen)" aria-label="TURN-Adressen"><input id="rtc-n" type="text" autocomplete="off" spellcheck="false" placeholder="Benutzername" aria-label="TURN-Benutzername"><input id="rtc-c" type="text" autocomplete="off" spellcheck="false" placeholder="Passwort" aria-label="TURN-Passwort"><div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form></div></div>`; }
 
@@ -10231,7 +10291,7 @@ function renderInner(){
   restoreX();
   const mb = document.getElementById('msgs'); if (mb) { mb.scrollTop = mb.scrollHeight; msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
-  const full = isMob() && V.name === 'chats' && ((CH.mode === 'chat' && CH.open) || CH.mode === 'helper'); document.body.classList.toggle('chatfull', full); if (full) vvFit(); else document.body.classList.remove('chatkb');
+  const full = isMob() && V.name === 'chats' && (((CH.mode === 'chat' || CH.mode === 'talks') && CH.open) || CH.mode === 'helper'); document.body.classList.toggle('chatfull', full); if (full) vvFit(); else document.body.classList.remove('chatkb');
 }
 
 
@@ -10655,9 +10715,13 @@ document.addEventListener('click', async e => {
   else if (a === 'call-end') callLeave();
   else if (a === 'ring-yes' || a === 'ring-no') ringAnswer(b.dataset.id, a === 'ring-yes');
   else if (a === 'tk-new') tkDialog(null);
+  else if (a === 'tk-page') { if (!CH.open) return; typingNow(false); chatAttach = false; CH.mode = 'talks'; render(); }
+  else if (a === 'tk-back') { CH.mode = 'chat'; render(); }
+  else if (a === 'tk-idea') { const i = document.getElementById('tk-name'); if (i) { i.value = b.dataset.v; i.focus(); } if (/video/i.test(b.dataset.v)) { const r = document.querySelector('#tkdlg input[value="video"]'); if (r) r.checked = true; } }
+  else if (a === 'tk-mkgo') { const f = b.closest('form'); if (f && f.reportValidity()) tkSave(f, true); }
   else if (a === 'tk-edit') tkDialog(TK.list.find(t => t.id === b.dataset.id));
   else if (a === 'tk-x') document.getElementById('tkdlg')?.remove();
-  else if (a === 'tk-del') { if (await askYesNo('Diesen Talk löschen?', 'Ja, löschen', 'Nein')) { tkRef(TK.cid, b.dataset.id).delete().then(() => toast('Talk gelöscht')).catch(() => toast('Das hat nicht geklappt.')); document.getElementById('tkdlg')?.remove(); } }
+  else if (a === 'tk-del') { const t = TK.list.find(x => x.id === b.dataset.id); if (t && tkFresh(t).some(u => u !== social.uid)) return toast('Gerade sind Leute in diesem Talk. Löschen geht, wenn er leer ist.'); if (await askYesNo('Diesen Talk löschen?', 'Ja, löschen', 'Nein')) { if (CALL && CALL.cid === TK.cid && CALL.tid === b.dataset.id) await callLeave(true); tkRef(TK.cid, b.dataset.id).delete().then(() => toast('Talk gelöscht')).catch(() => toast('Das hat nicht geklappt.')); document.getElementById('tkdlg')?.remove(); } }
   else if (a === 'rx-open') { const w = b.closest('.mwrap'); rxOpen(b.dataset.id, w?.querySelector('.bubble') || b); }
   else if (a === 'rx-pick') { const p = b.closest('#rxpop'); if (p) { rxSet(p.dataset.id, b.dataset.e); rxClose(); } }
   else if (a === 'rx-more') { const p = b.closest('#rxpop'), all = p?.querySelector('.rxall'); if (all) { all.hidden = !all.hidden; b.setAttribute('aria-expanded', !all.hidden); const w = document.querySelector(`#msgs .mwrap[data-mid="${CSS.escape(p.dataset.id)}"] .bubble`); if (w) rxPlace(p, w); } }
@@ -11040,7 +11104,7 @@ document.addEventListener('submit', async e => {
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
     if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
-  } else if (t === 'talk') { await tkSave(f);
+  } else if (t === 'talk') { await tkSave(f, false);
   } else if (t === 'rtcturn') { if (!amOwner) return; const urls = val('rtc-u').trim(); try { await social.db.doc('site/rtc').set(urls ? {urls, username:val('rtc-n').trim(), credential:val('rtc-c').trim()} : {urls:''}); RTC_TURN = null; toast(urls ? 'TURN-Server gespeichert' : 'TURN-Server entfernt'); } catch { toast('Speichern ging nicht.'); }
   } else if (t === 'gifkey') {
     if (!amOwner || !social) return; const k = val('gk-in').trim();

@@ -94,15 +94,17 @@ service cloud.firestore {
 
     // Anrufe und Talks (Inaya, 2026-10-13): chats/<cid>/talk/<id> mit Plätzen p:{<uid>:{t, s}}.
     // Höchstens 2 Plätze im privaten Chat, sonst 9 je Talk. Jeder ändert nur den eigenen Platz; verwaiste Plätze (45 s ohne Herzschlag) darf jedes Mitglied freigeben.
+    // Eigene Talks in öffentlichen Gruppen darf jedes Mitglied erstellen (Feld by), umbenennen und löschen nur der Admin der Gruppe oder wer ihn erstellt hat.
     function talkMax(cid) { return isDm(cid) ? 2 : 9; }
     function groupAdmin(cid) { return isGroup(cid) && chatDoc(cid).createdBy == request.auth.uid; }
     function pubGroup(cid) { return isGroup(cid) && chatDoc(cid).pub == true; }
     match /chats/{cid}/talk/{tid} {
       allow read: if invited() && mayRead(cid);
       allow create: if invited() && mayWrite(cid) && request.resource.data.p.size() == 0
-        && request.resource.data.keys().hasOnly(['name', 'kind', 'def', 'ts', 'p'])
+        && request.resource.data.keys().hasOnly(['name', 'kind', 'def', 'ts', 'p', 'by'])
         && request.resource.data.kind in ['audio', 'video'] && request.resource.data.name is string && request.resource.data.name.size() <= 40
-        && ((tid == 'audio' || tid == 'video') ? request.resource.data.kind == tid : (pubGroup(cid) && groupAdmin(cid)));
+        && ((tid == 'audio' || tid == 'video') ? request.resource.data.kind == tid
+          : (pubGroup(cid) && request.resource.data.by == request.auth.uid && request.resource.data.def == 0 && request.resource.data.name.size() > 0));
       allow update: if invited() && mayWrite(cid) && (
         (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['p'])
           && request.resource.data.p.diff(resource.data.p).affectedKeys().hasOnly([request.auth.uid])
@@ -111,9 +113,9 @@ service cloud.firestore {
           && request.resource.data.p.diff(resource.data.p).affectedKeys().hasOnly([request.resource.data.gone])
           && !(request.resource.data.gone in request.resource.data.p)
           && resource.data.p[request.resource.data.gone].t < request.time.toMillis() - 45000)
-        || (groupAdmin(cid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+        || ((groupAdmin(cid) || resource.data.get('by', '') == request.auth.uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40));
-      allow delete: if invited() && groupAdmin(cid) && tid != 'audio' && tid != 'video';
+      allow delete: if invited() && mayWrite(cid) && (groupAdmin(cid) || resource.data.get('by', '') == request.auth.uid) && tid != 'audio' && tid != 'video';
       // Verbindungsaufbau: nur an die Person selbst lesbar
       match /sig/{mid} {
         allow create: if invited() && mayWrite(cid) && request.resource.data.from == request.auth.uid;
