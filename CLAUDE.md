@@ -129,5 +129,5 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Tief sitzende Hosen `sag_*` über `isag()` (Bund `isagY`, Boxershorts `iboxer`, tieferer Schritt `idropFill`, Löcher `iholes`). Gürtel sitzen auf dem Bund der Hose: `IWAIST` (auch für `lw_*`), in `avatarI` über `XW`.
 - Neue Gürtel/Ketten/Jacken/Schuhe siehe Block „Neue Kollektion“ vor `avatarI`. Farbvarianten = eigene IDs mit gleicher Zeichnung und anderer Startfarbe (`IBOTC`, `IJACKC`, `ISHOEC`), damit der Laden verschiedene Farben zeigt.
-- Reiter „Taschen“: Accessoires mit `bag:1` (Filter `inSub`, Reiter-Kennung `topSub === 'tasche'`). Taschen am Körper (`IACC_BODY`) liegen über Jacke und Ketten und bleiben bei Posen am Rumpf; in der Hand: `IACC_FRONT`.
+- Reiter „Taschen“: Accessoires mit `bag:1` (Filter `inSub`, Reiter-Kennung `topSub === 'tasche'`). Taschen am Körper (`IACC_BODY`) liegen über Jacke und Ketten und bleiben bei Posen am Rumpf; Schulter-Rucksäcke: Riemen vorn (`islingStrap`), Tasche seitlich hinter dem Körper (`IACC_BACK`, `isling`); in der Hand: `IACC_FRONT`.
 - Keine echten Markennamen oder Logos im Laden (nur „im Stil von“), Kuscheltiere sind eigene Figuren.
