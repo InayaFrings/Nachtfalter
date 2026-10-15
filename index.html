@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1bdbd6eacfb0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8bed7006c9d3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -6071,7 +6071,8 @@ function snapSave(){ if (!PUB || !S.me || !snapLive()) return; const now = Date.
   const ch = (CH.raw || []).slice(0, 80).map(c => { const x = {...c}; if (typeof x.pic === 'string' && x.pic.length > 40000) delete x.pic; return x; });
   const ids = new Set([...nt.map(n => n.uid), ...ch.flatMap(c => c.group ? [] : c.members || []), ...FR.mine, ...FR.inc]); ids.delete(social.uid);
   const u = {}; for (const id of [...ids].slice(0, 150)) { const x = uidUser(id); if (x) u[id] = {n:x.name || nmOf(id), h:x.handle || '', o:x.outfit || {}}; else if (nmOf(id)) u[id] = {n:nmOf(id)}; }
-  const d = {me:S.me, ts:now, ch, fr:{mine:FR.mine, inc:FR.inc, incTs:FR.incTs}, nt, u};
+  const st = storyUsers().slice(0, 40).map(x => ({id:x.id, s:storiesOf(x.id).map(y => ({id:y.id, ts:y.ts}))})); st.forEach(x => { if (!u[x.id]) { const y = uidUser(x.id); if (y) u[x.id] = {n:y.name, h:y.handle || '', o:y.outfit || {}}; } });
+  const d = {me:S.me, ts:now, ch, fr:{mine:FR.mine, inc:FR.inc, incTs:FR.incTs}, nt, u, st};
   try { localStorage.setItem(snapKey(), JSON.stringify(d)); } catch { try { delete d.u; localStorage.setItem(snapKey(), JSON.stringify(d)); } catch {} } }
 const snapUser = id => { const x = SNAP.d?.u?.[id]; return x ? {id, remote:true, name:x.n || 'Jemand', handle:x.h || '', outfit:normOutfit({...(x.o || {})}), theme:normTheme({...BLANK_THEME()})} : null; };
 function navScroll(y){ if (!(y > 0)) return; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, y); }, ms)); }
@@ -6997,9 +6998,10 @@ function storyUsers(){ // Freunde und alle mit öffentlicher Story
 }
 function storyBar(){
   if (!S.me) return ''; storySweep();
-  const mine = myStories(), fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
+  const mine = myStories(); let fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
+  const sn = SNAP.d?.st; if (sn?.length && !snapLive() && fr.length < sn.length) fr = sn.map(x => { const u = uidUser(x.id) || snapUser(x.id); return u && {...u, _st:(x.s || []).filter(st => Date.now() - st.ts < STORY_H)}; }).filter(u => u?._st.length); // beim Neuladen: Ringe vom letzten Besuch
   const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' + (STUP ? ' upl' : '') : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${nameFont(u)}>${esc(label)}</small></button>`;
-  return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${fr.map(u => ring(u, storiesOf(u.id), u.name)).join('')}</div>`;
+  return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${fr.map(u => ring(u, u._st || storiesOf(u.id), u.name)).join('')}</div>`;
 }
 // Sichtbarkeit der neuen Story: letzte Wahl merken, klein unter „Deine Story“ anzeigen (Inaya, 2026-10-12)
 const stAudV = () => { const v = stNew?.audOk ? (stNew.cf ? 'cf' : stNew.pub ? '1' : '0') : (S.stAud || (S.stPub ? '1' : '0')); return v === 'cf' && !stSetG().cf.length ? '0' : v; };
@@ -8416,7 +8418,9 @@ const PUBF = {ids:[], ts:0, busy:false};
 async function loadPubFeed(force){
   if (!social || PUBF.busy || (!force && Date.now() - PUBF.ts < 60000)) return;
   PUBF.busy = true;
-  try { const q = await social.db.collection('profiles').orderBy('pubTs', 'desc').limit(40).get(); PUBF.ids = []; q.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || x.priv) return; PROF[d.id] = x; PUBF.ids.push(d.id); }); } catch {}
+  const qq = social.db.collection('profiles').orderBy('pubTs', 'desc').limit(40);
+  if (!PUBF.ts) { try { const c = await qq.get({source:'cache'}); if (!c.empty) { PUBF.ids = []; c.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || x.priv) return; if (!PROF[d.id]) PROF[d.id] = x; PUBF.ids.push(d.id); }); PUBF.cached = true; softRender(); } } catch {} } // erst sofort vom Gerät
+  try { const q = await qq.get(); PUBF.ids = []; q.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || x.priv) return; PROF[d.id] = x; PUBF.ids.push(d.id); }); } catch {}
   PUBF.ts = Date.now(); PUBF.busy = false; softRender();
 }
 function pubPosts(){
@@ -8426,13 +8430,13 @@ function pubPosts(){
   return out.filter(p => !isBlk(p.author));
 }
 function homeView(){
-  const pubMode = social && S.salonMode === 'pub';
+  const pubMode = (social || PUB && S.me) && S.salonMode === 'pub'; // Auswahl bleibt auch beim Neuladen stehen
   const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).filter(p => p.type !== 'teilen').sort((a,b) => b.ts - a.ts); // Reposts nur auf dem Profil, nicht im Salon (Inaya, 2026-10-12)
   const compose = isMob() ? pcPlus('hcompose') + (homeCompose ? pcFull('hcompose') : '') : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
   return `${storyBar()}${compose}
-    <section class="salon"><h2 class="salon-h">Salon</h2>${social ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${posts.length ? posts.map(postHTML).join('') : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`}</div></section>`;
+    <section class="salon"><h2 class="salon-h">Salon</h2>${social || PUB && S.me ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${posts.length ? posts.map(postHTML).join('') : (pubMode && !PUBF.ts && !PUBF.cached ? '<p class="empty muted mload" aria-busy="true">Lädt …</p>' : (pubMode && !PUBF.ts && !PUBF.cached ? '<p class="empty muted mload" aria-busy="true">Lädt …</p>' : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`))}</div></section>`;
 }
 let musicEdit = false;
 const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : null;
@@ -11663,7 +11667,7 @@ document.addEventListener('click', async e => {
   else if (a === 'stc-text') stTextStory();
   else if (a === 'stc-pick') { const p = stPickPhotos().find(x => x.id === b.dataset.id); if (p) stPhotoEdit(p.img); }
   else if (a === 'stc-next') stCropDone();
-  else if (a === 'story-view') stOpen(id);
+  else if (a === 'story-view') { if (!social || !storiesOf(id).length && id !== S.me) { const t0 = Date.now(), iv = setInterval(() => { if (social && (storiesOf(id).length || Date.now() - t0 > 4000)) { clearInterval(iv); if (storiesOf(id).length) stOpen(id); } else if (Date.now() - t0 > 8000) clearInterval(iv); }, 120); return; } stOpen(id); } // direkt nach dem Neuladen: öffnen, sobald die Story da ist
   else if (a === 'st-fstep') stFStep(+b.dataset.v);
   else if (a === 'st-aa') stNewText(40);
   else if (a === 'st-music') { if (!stNew) return; stNew.tool = stNew.tool === 'music' || (stNew.tool === 'mutrim' && b.classList.contains('stic')) ? null : 'music'; storyPaint(); }
