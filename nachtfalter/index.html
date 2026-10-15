@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='677ae64ac8f4';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='dfcefddb8a7e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5594,6 +5594,7 @@ const HELPER_POSTS = [
   {id:'n-hilfe', at:1792004400000, author:'juliet', co:'andy', type:'neu', text:'Habt ihr Fragen zu Noctibat oder braucht ihr Hilfe? Schreibt uns einfach, wir sind immer für euch da. Egal ob Garderobe, Zimmer, Chats oder Einstellungen: Wir helfen euch gern weiter.', show:{helpers:1, btns:[['Juliet schreiben', 'helper-chat', 'juliet'], ['Andy schreiben', 'helper-chat', 'andy']]}, reactions:{}, comments:[]},
 ];
 // Beiträge von Andy und Juliet entfernt (Inaya, 2026-10-14); die beiden bleiben als Helfer im Chat
+const coOf = p => HELPERS[p?.author] ? HELPER_POSTS.find(x => x.id === p.id)?.co || null : null; // Mitautor eines Helfer-Beitrags
 const OLD_DEMO = ['nyx','matze','jule','kaspar'];
 function ensureHelpers(st){
   const gone = id => OLD_DEMO.includes(id);
@@ -8283,7 +8284,7 @@ const reqSent = id => !!social && FR.mine.includes(id) && !FR.inc.includes(id);
 const ageShow = u => u.helper ? null : u.remote ? u.age : ageOf(u.birth);
 const profSubHTML = (u, low) => u.id ? `<p class="psub" data-psub="${esc(u.id)}">${ageShow(u) ? `<span class="page">${ageShow(u)} Jahre</span>` : ''}${onlineHTML(u)}${u.remote && !low && reqSent(u.id) ? `<span class="preq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg>Anfrage gesendet</span>` : ''}</p>` : '';
 function profileHead(u, t, mine){
-  const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id).length;
+  const posts = u.remote ? (u.posts || []).length : S.posts.filter(p => p.author === u.id || coOf(p) === u.id).length;
   const circle = u.remote ? (FRL[u.id]?.ids?.length ?? PROF[u.id]?.friends ?? '–') : u.helper && HELPER_BF[u.id] ? 1 : u.id !== S.me ? '–' : friendCount();
   return `<header class="phead">
     <div class="pleft"><h1 class="pname">${u.id === S.me && !u.remote && PUB && NF_AUTH.accounts ? `<button type="button" class="acctbtn" data-act="acct-open" aria-haspopup="dialog" aria-label="Account wechseln oder hinzufügen">${esc(u.name)}${hmark(u)}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>` : `${esc(u.name)}${hmark(u)}`}</h1>${profSubHTML(u)}${u.id ? `<button type="button" class="pbtn${storiesOf(u.id).length ? ' hasst' + (stSeen(u.id, storiesOf(u.id)) ? ' seen' : '') : ''}" data-act="pp-tap" data-id="${esc(u.id)}" aria-label="${storiesOf(u.id).length ? 'Story oder Profilbild ansehen' : 'Profilbild ansehen'}">${portrait(u, t, storiesOf(u.id).length ? 'hasring' : '')}</button>` : portrait(u, t)}
@@ -8364,7 +8365,7 @@ function profileView(id){
   if (u.remote && isBlk(id)) { PROF_WALL = ''; return iBlocked(id) ? `<section class="card blkprof"><h2 class="card-h">${esc(u.name)}</h2><p class="muted">@${esc(u.handle || '')}</p><p>Du hast diese Person blockiert. Ihr seht gegenseitig keine Beiträge, Storys oder Nachrichten.</p><button class="btn" data-act="unblock" data-id="${esc(id)}">Entblockieren</button></section>` : `<section class="card blkprof"><h2 class="card-h">Profil nicht verfügbar</h2><p class="muted">Dieses Profil kannst du gerade nicht ansehen.</p></section>`; }
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
-  const posts = (u.remote ? [...(u.posts || [])].filter(p => ((p.pub && !u.priv) || isFriend(id)) && !isHidden(p)) : S.posts.filter(p => p.author === id)).sort((a,b) => b.ts - a.ts);
+  const posts = (u.remote ? [...(u.posts || [])].filter(p => ((p.pub && !u.priv) || isFriend(id)) && !isHidden(p)) : S.posts.filter(p => p.author === id || coOf(p) === id)).sort((a,b) => b.ts - a.ts); // gemeinsame Helfer-Beiträge auch beim zweiten Helfer (Inaya, 2026-10-14)
   if (u.remote && u.priv && !isFriend(id)) { // privates Profil: nur Avatar, Profilbild und Anfrage (Inaya, 2026-10-10)
     PROF_WALL = '';
     return `<section class="themed" style="${themeStyle(u.theme)}">
