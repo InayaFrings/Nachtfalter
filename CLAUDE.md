@@ -113,3 +113,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Texte, die im Code in Nutzerbereichen landen (z. B. System-Hinweise im Chat), mit `tr('…')` übersetzen; gespeicherte App-Hinweise in Nachrichten über `sysTr` (`SYS_MSG`). Zeiten: `ago()`/`ntAgo()` können Englisch, Datum mit `LOC()`.
 - NEUE TEXTE: deutsch in den Code, die englische Fassung in `I18N_EN` ergänzen. Auf der Seite zeigt `i18nMissing()`, was beim Anschauen noch deutsch geblieben ist.
 - Push-Mitteilungen vom Server: `functions/index.js` (`TXT.de`/`TXT.en`), Sprache steht in `data/users/<uid>/nf-push` (`lang`).
+
+## Neu laden: an derselben Stelle bleiben (seit v462)
+
+- `navSave()` merkt nach jedem Zeichnen und beim Scrollen Ansicht, offenen Chat (auch Talks/Mitglieder/Helfer), Reiter, Scrollstelle und Zurück-Verlauf in `sessionStorage` (`nf-view`, je Browser-Tab). `navBoot()` stellt das vor dem ersten Zeichnen her, `navLive()` verbindet den Chat, sobald `socialStart` läuft. Links aus Mitteilungen/Einladungen (`?c=`, `?p=`, `einladung=`) gehen vor (`NAV_DEEP`).

@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='024b43273f99';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='bf7d36ffe6ac';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -5934,6 +5934,7 @@ function refreshFoot(){ const f = document.getElementById('savestate'); if (f) f
 const saveText = () => PUB ? (cloud?.ok ? 'Dein Konto ist sicher gespeichert.' : 'Wird gespeichert …') : cloud?.ok ? 'Dein Konto ist sicher in deinem Claude-Konto gespeichert.' : 'Dein Konto ist in diesem Browser gespeichert.';
 
 let V = {name:'home', arg:null};
+const NAV_DEEP = /[?&](c|p)=|einladung=/i.test(location.search + location.hash); // Link aus einer Mitteilung oder Einladung: dann gilt der Link, nicht die gemerkte Ansicht
 let PROF_WALL = '';
 let composeType = 'gedanke', shopCat = 'back', trial = null, profTab = 'room', draft = null;
 
@@ -6032,7 +6033,26 @@ const stufe = u => 1 + Math.floor(Math.sqrt((u.earned || 0) / 15));
 // Zurück-Pfeil überall (Inaya, 2026-10-14): jeder Seitenwechsel merkt sich, woher man kam (Seite, Reiter, Suche, offener Chat, Scrollstelle).
 // Die Hauptleiste (Salon, Profil, Chats …) fängt neu an. Android- und Browser-Zurück gehen denselben Weg.
 const NAVH = []; let navSkip = false;
-const navSnap = () => ({name:V.name, arg:V.arg, y:window.scrollY, sr:{...SR}, chatTab, ch:CH.open, chm:CH.mode, profTab, roomMode});
+const navSnap = () => ({name:V.name, arg:V.arg, y:window.scrollY, sr:{...SR}, chatTab, ch:CH.open, chm:CH.mode, hp:CH.helper || null, profTab, roomMode});
+/* Beim Neuladen bleiben, wo man war (Inaya, 2026-10-15): Ansicht, offener Chat, Reiter, Scrollstelle und Zurück-Verlauf stehen je Browser-Tab
+   in sessionStorage (nf-view). navBoot stellt sie VOR dem ersten Zeichnen wieder her (kein kurzer Salon), navLive verbindet den Chat, sobald die
+   Datenbank bereit ist, navScroll springt an die alte Stelle, solange man nicht selbst scrollt. */
+const NAVR = {pending:null, touched:false, t:0};
+function navSave(){ if (!S.me || NAVR.pending) return; try { sessionStorage.setItem('nf-view', JSON.stringify({s:navSnap(), h:NAVH.slice(-15), me:S.me, ts:Date.now()})); } catch {} }
+function navBoot(){ if (NAV_DEEP || !S.me) return; let x = null; try { x = JSON.parse(sessionStorage.getItem('nf-view') || 'null'); } catch {}
+  if (!x?.s || x.me !== S.me || Date.now() - x.ts > 12 * 3600e3) return; const s = x.s;
+  NAVH.splice(0, NAVH.length, ...(Array.isArray(x.h) ? x.h : [])); V = {name:s.name || 'home', arg:s.arg ?? null}; Object.assign(SR, s.sr || {});
+  chatTab = s.chatTab || chatTab; profTab = s.profTab ?? profTab; roomMode = s.roomMode === 'edit' ? '' : s.roomMode || '';
+  if (s.name === 'chats') { if (s.chm === 'helper' && s.hp) { CH.mode = 'helper'; CH.helper = s.hp; } else if (s.ch) { CH.open = s.ch; CH.mode = s.chm || 'chat'; } else if (s.chm) CH.mode = s.chm; }
+  NAVR.pending = s; setTimeout(() => { if (NAVR.pending === s) NAVR.pending = null; }, 20000); }
+function navLive(){ const s = NAVR.pending; if (!s) return; NAVR.pending = null;
+  if (s.name === 'chats' && s.ch && s.chm !== 'helper') { navSkip = true; try { openChat(s.ch); if (s.chm && s.chm !== 'chat') { CH.mode = s.chm; render(); } } finally { navSkip = false; } }
+  else if (s.name === 'profile' && s.arg && S.users[s.arg]?.remote) loadProf(s.arg).then(() => { if (PROF[s.arg] && isFriend(s.arg)) S.users[s.arg] = remoteUser(s.arg, PROF[s.arg]); softRender(); });
+  navScroll(s.y); }
+function navScroll(y){ if (!(y > 0)) return; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, y); }, ms)); }
+['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { NAVR.touched = true; }, {passive:true, once:true}));
+addEventListener('scroll', () => { clearTimeout(NAVR.t); NAVR.t = setTimeout(navSave, 400); }, {passive:true});
+addEventListener('pagehide', navSave);
 const NAV_NAMES = {home:'Salon', find:'Suche', friends:'Freunde', chats:'Chats', room:'Zimmer', wardrobe:'Garderobe', notifs:'Mitteilungen', settings:'Einstellungen', games:'Minigames', design:'Profil gestalten', shop:'Laden'};
 function navLabel(s){ if (!s) return ''; if (s.name === 'profile') return s.arg === S.me ? 'Dein Profil' : 'Profil von ' + (S.users[s.arg]?.name || nmOf(s.arg) || 'jemandem');
   if (s.name === 'chats' && s.ch) { const c = CH.list.find(x => x.id === s.ch); return c ? (c.group ? '„' + chatName(c) + '“' : 'Chat mit ' + chatName(c)) : 'Chat'; }
@@ -8751,7 +8771,7 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; setTimeout(navLive, 0); e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
@@ -11260,6 +11280,7 @@ function renderInner(){
   restoreX();
   const mb = document.getElementById('msgs'); if (mb) { mb.scrollTop = mb.scrollHeight; msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
+  navSave();
   const full = isMob() && V.name === 'chats' && (((CH.mode === 'chat' || CH.mode === 'talks') && CH.open) || CH.mode === 'helper'); document.body.classList.toggle('chatfull', full); if (full) vvFit(); else document.body.classList.remove('chatkb');
 }
 
@@ -12245,7 +12266,7 @@ document.addEventListener('submit', async e => {
   }
 });
 
-i18nStart(); render();
+i18nStart(); navBoot(); render(); if (NAVR.pending) navScroll(NAVR.pending.y);
 const cloudReady = cloudInit();
 
 // Eigenes Farbgitter statt des System-Farbwählers (Inaya, 2026-10-10): nur das Gitter, kein Spektrum, keine Regler.
