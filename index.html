@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0ccb5cff4672';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a939dc432273';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -3751,7 +3751,8 @@ const shR = (seed, k) => { const x = Math.sin(seed * 91.7 + k * 12.9898) * 43758
 // ---- Neue Frisuren (Inaya, 2026-10-11): Cyber-Falls, Wolldreads, Scene mit Streifen, toupierte Mähne, glatt mit Nieten ----
 const hxC2 = (HC, FC) => FC && FC !== HC ? FC : (isLight(HC) ? '#141218' : '#ecebe7'); // zweite Farbe = Pony-Farbe, sonst Kontrast
 // Falls: Bündel oben an beiden Seiten, Schläuche (cyber) oder dicke Wolldreads (woll) hängen bis y1
-const ifalls = (kind, y1) => ({cap:1, b:y1 < 400 ? 'M44 170Q26 -30 172 -34Q318 -30 300 170L306 286Q172 300 38 286Z' : 'M40 170Q20 -40 172 -44Q324 -40 304 170L314 420Q172 440 30 420Z', side:y1 < 400 ? 280 : 400, flat:1, ln:'',
+// Zöpfe ohne Bob (Inaya, 2026-10-14): Haare liegen straff am Kopf und gehen in die Zöpfe, keine Masse bis zum Kinn und keine Seitensträhnen
+const ifalls = (kind, y1) => ({cap:1, b:'M50 168Q30 -30 172 -36Q314 -30 294 168Q172 186 50 168Z', flat:1, ln:'',
   bx:(X, hf, dk, HC, FC) => { const C2 = hxC2(HC, FC), cols = kind === 'cyber' ? [HC, '#141218', shade(HC, isLight(HC) ? .8 : 1.5), HC, '#141218'] : [HC, C2, HC, C2, shade(HC, .7)]; let s = '';
     for (let k = 0; k < 11; k++) { const t = k / 10, dx = -150 + t * 150, ye = y1 - 40 + shR(kind === 'cyber' ? 5 : 9, k) * 80, c = cols[k % cols.length], w = kind === 'cyber' ? 11 : 19;
       const d = `M44 10C${f1(44 + dx * .6)} -10 ${f1(44 + dx)} ${f1(ye * .3)} ${f1(44 + dx * .8 + Math.sin(k) * 14)} ${f1(ye)}`;
