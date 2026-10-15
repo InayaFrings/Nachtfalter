@@ -72,7 +72,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - iPhone/iPad: Firestore mit `experimentalForceLongPolling` (im Shim, beide Kopien). Dort riss die Streaming-Verbindung das Schreiben still ab, Lesen ging weiter. Der Schreib-Wächter baut die Verbindung nach dem Hintergrund oder bei hängenden Schreibvorgängen neu auf (`social.db.reconnect`, `social.db.pending`).
 - Kontosicherung unter `data/users/<uid>`: Form v2 mit Stücken `nf2-<bereich>-<i>` und `nf-meta` = `{v:2, ks, h, ts}`. Geschrieben wird nur, was sich geändert hat (Prüfsumme `h`). Gespeichert wird erst nach erfolgreichem Laden (`cloud.loaded`), sonst überschreibt ein leerer Start den echten Stand. Die alte Form (`nf-0…`, `{n, ts}`) wird weiter gelesen.
 - Seit v414: Vor dem Schreiben wird `nf-meta` gelesen und mit dessen Prüfsummen verglichen (nicht mit dem eigenen `CLAST`), sonst mischen sich Stücke mehrerer Geräte. Ist ein Bereich nicht lesbar, nimmt `cloudRead` ihn aus dem Gerätestand (nur bei gleichem Nutzername) oder der alten Form und schreibt danach alles neu (`CBAD`).
-- Einstellungen → Selbsttest (`diagRun`) prüft auf der echten Seite Schreiben, Regeln, Lesebestätigung, Namen, Sprachspeicher, Mikrofon, Verschlüsselung und Netz.
+- Einstellungen → Nur für dich als Owner → Selbsttest (`diagRun`, seit v460 nur für Inaya) prüft auf der echten Seite Schreiben, Regeln, Lesebestätigung, Namen, Sprachspeicher, Mikrofon, Verschlüsselung und Netz.
 
 ## Firebase-Kontingent (seit v387)
 
