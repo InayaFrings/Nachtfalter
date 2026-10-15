@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a3c0a7121cab';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0ccb5cff4672';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -9155,7 +9155,7 @@ async function e2pvLoad(){ if (E2PV.busy || !social) return; const cache = e2pvC
   finally { E2PV.busy = false; }
   if (ch) { try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} softRender(); } }
 function e2LockHTML(m){ const t = m._lock === 'wait' ? 'Wird entschlüsselt …' : m._lock === 'nokey' ? 'Auf diesem Gerät nicht lesbar' : m._lock === 'off' ? 'Verschlüsselung hier nicht verfügbar' : 'Ließ sich nicht entschlüsseln';
-  return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? (E2A.kp ? '<small class="e2hint">Öffne Noctibat kurz auf einem anderen Gerät, auf dem du angemeldet bist. Dann erscheint die Nachricht hier.</small>' : '<button type="button" class="lnk e2hint" data-act="e2a-ask">Passwort eingeben, um alles zu lesen</button>') : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; }
+  return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? '<small class="e2hint">Öffne Noctibat kurz auf einem anderen Gerät, auf dem du angemeldet bist. Dann erscheint die Nachricht hier.</small>' : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; }
 const E2_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
 // Neues Gerät bei einer Person: Hinweis im Chat, damit man die Sicherheitsnummer vergleichen kann (wie bei Signal)
 function e2KeyCheck(uid, l){ if (!E2E.uid || uid === E2E.uid) return; const K = 'nf-e2kc:' + E2E.uid, h = l.filter(x => !x.revoked && x.dev !== E2A_DEV).map(x => x.dev + ':' + x.pub).sort().join('|'); let m = {};
@@ -9221,37 +9221,50 @@ async function e2aPublish(pub){ const ref = social.db.doc(`profiles/${E2E.uid}/e
 async function e2aUnlock(pw){ if (!pw || !(await e2Init())) return false;
   return E2A.busy = E2A.busy || (async () => { try {
     const d = await e2aRef().get();
-    if (d.exists && d.data().ct) { const x = d.data(); let jwk; try { jwk = await e2aOpen(x, pw); } catch { return false; } await e2aUse(jwk, x.pub); await e2aPublish(x.pub); }
+    if (d.exists && d.data().ct) { const x = d.data(); let jwk; try { jwk = await e2aOpen(x, pw); } catch { return false; } await e2aUse(jwk, x.pub); await e2aPublish(x.pub); e2aShare(jwk, x.pub); }
     else { const kp = await crypto.subtle.generateKey({name:'ECDH', namedCurve:'P-256'}, true, ['deriveBits']), jwk = await crypto.subtle.exportKey('jwk', kp.privateKey), pub = await e2PubOf(kp);
-      await e2aRef().set({v:1, pub, ts:Date.now(), ...(await e2aSeal(jwk, pw))}); await e2aUse(jwk, pub); await e2aPublish(pub); }
+      await e2aRef().set({v:1, pub, ts:Date.now(), ...(await e2aSeal(jwk, pw))}); await e2aUse(jwk, pub); await e2aPublish(pub); e2aShare(jwk, pub); }
     E2E.bad = {}; if (CH.open && CH.mraw) e2Redraw(CH.open); e2pvQueue?.(); setTimeout(e2aMigrate, 4000); return true;
   } catch { return false; } finally { E2A.busy = null; } })(); }
 async function e2aBoot(){ try { const a = await e2Get('a:' + E2E.uid); if (a?.kp?.privateKey && a.pub) { E2A.kp = a.kp; e2aPublish(a.pub).catch(() => {}); setTimeout(e2aMigrate, 8000); return; } } catch {}
   if (E2A.pw && Date.now() - E2A.pwT < 15 * 60e3) { const pw = E2A.pw; E2A.pw = null; if (await e2aUnlock(pw)) return; }
-  setTimeout(() => e2aAsk(), 6000); }
+  e2aWatchShare(); } // keine Abfrage: der Schlüssel kommt von selbst, sobald man sich irgendwo mit Passwort anmeldet
+// Konto-Schlüssel still an die eigenen anderen Geräte weitergeben, verpackt mit deren Geräteschlüssel (kein Passwort nötig)
+const e2aShareAad = dev => E2_TX.encode('nf-ak|' + E2E.uid + '|' + dev);
+async function e2aShare(jwk, pub){ try { const raw = E2_TX.encode(JSON.stringify({kty:jwk.kty, crv:jwk.crv, x:jwk.x, y:jwk.y, d:jwk.d}));
+  for (const x of (await e2Devs(E2E.uid, true)).filter(x => !x.revoked && x.dev !== E2E.dev && x.dev !== E2A_DEV)) {
+    const w = await e2Wrap(raw, e2aShareAad(x.dev), E2E.uid, x.dev); await social.db.doc(`data/users/${E2E.uid}/nf-e2ak-${x.dev}`).set({from:E2E.dev, pub, w, ts:Date.now()}).catch(() => {}); }
+  raw.fill(0); } catch {} }
+function e2aWatchShare(){ if (E2A.kp || E2A.shareUnsub || !social) return; const ref = social.db.doc(`data/users/${E2E.uid}/nf-e2ak-${E2E.dev}`);
+  E2A.shareUnsub = ref.onSnapshot(async d => { if (!d.exists || E2A.kp) return; try { const {from, pub, w} = d.data(), [enc, ct] = String(w).split('.');
+      const r = await E2E.suite.createRecipientContext({recipientKey:E2E.kp, enc:b64d(enc).buffer, senderPublicKey:await e2PubKey(E2E.uid, from), info:E2_INFO});
+      const jwk = JSON.parse(E2_RX.decode(new Uint8Array(await r.open(b64d(ct).buffer, e2aShareAad(E2E.dev)))));
+      await e2aUse(jwk, pub); await e2aPublish(pub); E2A.shareUnsub?.(); E2A.shareUnsub = null; ref.delete().catch(() => {});
+      E2E.bad = {}; if (CH.open && CH.mraw) e2Redraw(CH.open); setTimeout(e2aMigrate, 4000); if (V.name === 'settings') softRender();
+    } catch {} }, () => { E2A.shareUnsub = null; }); }
 // Passwort direkt nach dem Anmelden merken, nur im Arbeitsspeicher und nur kurz, um den Konto-Schlüssel zu entsperren
 function e2aRemember(pw){ E2A.pw = pw; E2A.pwT = Date.now(); if (E2E.on && !E2A.kp && E2E.uid === social?.uid) { const p = E2A.pw; E2A.pw = null; e2aUnlock(p); } setTimeout(() => { E2A.pw = null; }, 15 * 60e3); }
 // Schon angemeldete Geräte: einmal nach dem Passwort fragen
-function e2aAsk(force){ if (!social || E2A.kp || (E2A.asked && !force) || document.getElementById('e2aask')) return; if (!force && [...document.querySelectorAll('.modal, .callov, .ringov, .pcrov, #pushask')].some(x => !x.hidden && getComputedStyle(x).display !== 'none')) { setTimeout(() => e2aAsk(), 5000); return; }
+function e2aAsk(force, out){ if (!social || E2A.kp || (E2A.asked && !force) || document.getElementById('e2aask')) return; E2A.out = !!out;
   E2A.asked = true; const m = document.createElement('div'); m.className = 'modal pushask'; m.id = 'e2aask'; m.style.zIndex = '4900'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
   m.innerHTML = `<form class="card modal-card pacard" data-form="e2aask" style="${myThemeStyle()}"><button type="button" class="pax" data-r="x" aria-label="Später">${'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'}</button>
-    <span class="pabell" aria-hidden="true">${E2_LOCK}</span><h2>Nachrichten auf allen Geräten lesen</h2>
-    <p class="pawhy">Gib einmal dein Passwort ein. Dann kannst du deine privaten Nachrichten auf jedem Gerät lesen, auf dem du dich anmeldest, auch nach dem Abmelden. Du musst nichts mehr einstellen.</p>
+    <span class="pabell" aria-hidden="true">${E2_LOCK}</span><h2>${out ? 'Bevor du dich abmeldest' : 'Nachrichten auf allen Geräten lesen'}</h2>
+    <p class="pawhy">${out ? 'Gib dein Passwort ein, damit du deine privaten Nachrichten nach dem Anmelden wieder lesen kannst.' : 'Gib einmal dein Passwort ein. Dann kannst du deine privaten Nachrichten auf jedem Gerät lesen, auf dem du dich anmeldest, auch nach dem Abmelden.'}</p>
     <label class="f"><span class="lbl">Dein Noctibat-Passwort</span><input type="password" id="e2a-pw" autocomplete="current-password" required></label><p class="err" id="e2a-err" hidden></p>
     <p class="panote">Dein Schlüssel wird mit deinem Passwort verschlüsselt gespeichert. Ein gutes Passwort schützt ihn am besten.</p>
-    <div class="pabtns"><button type="button" class="btn ghost" data-r="x">Später</button><button type="submit" class="btn">Speichern</button></div></form>`;
-  m.addEventListener('click', e => { if (e.target.closest('[data-r="x"]') || e.target === m) m.remove(); });
+    <div class="pabtns"><button type="button" class="btn ghost" data-r="${out ? 'out' : 'x'}">${out ? 'Ohne abmelden' : 'Später'}</button><button type="submit" class="btn">${out ? 'Sichern und abmelden' : 'Speichern'}</button></div></form>`;
+  m.addEventListener('click', e => { if (e.target.closest('[data-r="out"]')) { m.remove(); doLogout(); return; } if (e.target.closest('[data-r="x"]') || e.target === m) m.remove(); });
   document.body.appendChild(m); setTimeout(() => document.getElementById('e2a-pw')?.focus(), 50); }
+async function doLogout(){ clearTimeout(cloudTimer); cloud = null; await e2Logout(); NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.(); location.reload(); }); }
 async function e2aCheckPw(pw){ if (PUB) return !(await NF_AUTH.reauth(pw)).error; return !!me()?.pwh && await hashPw(pw) === me().pwh; }
 // Passwort geändert: Sicherung mit dem neuen Passwort neu verschlüsseln
 async function e2aRepass(oldPw, newPw){ try { const d = await e2aRef().get(); if (!d.exists || !d.data().ct) return e2aUnlock(newPw); const x = d.data(), jwk = await e2aOpen(x, oldPw); await e2aRef().set({...x, ...(await e2aSeal(jwk, newPw)), ts:Date.now()}); return true; } catch { return false; } }
-// Ältere Nachrichten EINMAL pro Konto für den Konto-Schlüssel nachverpacken (nur, was dieses Gerät lesen kann).
-// Sparsam (Firebase-Kontingent): je Chat höchstens die letzten 300, danach steht „mig“ in der Sicherung und kein Gerät liest das nochmal.
+// Ältere Nachrichten EINMAL je Gerät für den Konto-Schlüssel nachverpacken (nur, was dieses Gerät lesen kann; jedes Gerät hat seinen eigenen Verlauf).
+// Sparsam (Firebase-Kontingent): je Chat höchstens die letzten 300, danach nie wieder auf diesem Gerät.
 // Neue Nachrichten brauchen das nicht, sie werden beim Senden gleich auch für den Konto-Schlüssel verpackt.
-async function e2aMigrate(){ if (!E2A.kp || !E2E.on || !social || E2A.migBusy) return; if (!CH.raw) return setTimeout(e2aMigrate, 5000);
-  const K = 'nf-e2a-mig:' + E2E.uid; try { if (localStorage.getItem(K)) return; } catch {}
+async function e2aMigrate(force){ if (!E2A.kp || !E2E.on || !social || E2A.migBusy) return; if (!CH.raw) return force ? undefined : setTimeout(e2aMigrate, 5000);
+  const K = 'nf-e2a-mig:' + E2E.uid + ':' + E2E.dev; try { if (!force && localStorage.getItem(K)) return; } catch {}
   E2A.migBusy = true; try {
-  const st = await e2aRef().get().catch(() => null); if (st?.exists && st.data().mig) { try { localStorage.setItem(K, '1'); } catch {} return; }
   const ak = E2E.uid + '_' + E2A_DEV; let n = 0;
   for (const c of CH.list.filter(c => e2Chat(c.id, c))) {
     const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(300).get().catch(() => null); if (!q) continue;
@@ -9259,7 +9272,7 @@ async function e2aMigrate(){ if (!E2A.kp || !E2E.on || !social || E2A.migBusy) r
     for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[ak] || v.x?.[ak]) continue;
       try { const {cekRaw, aad} = await e2Cek(c.id, doc.id, v); const w = await e2Wrap(cekRaw, aad, E2E.uid, E2A_DEV); cekRaw.fill(0); bt.update(doc.ref, {['x.' + ak]:E2E.dev + '~' + w}); n++; if (++m >= 400) { await bt.commit().catch(() => {}); bt = social.db.batch(); m = 0; } } catch {} }
     if (m) await bt.commit().catch(() => {}); }
-  await e2aRef().set({mig:Date.now(), migN:n}, {merge:true}).catch(() => {}); try { localStorage.setItem(K, '1'); } catch {}
+  try { localStorage.setItem(K, String(n)); } catch {}
   } finally { E2A.migBusy = false; } }
 // Neues Gerät: Verlauf von selbst anfragen, wenn es schon andere Geräte gibt
 async function e2AutoAsk(){ if (!E2E.fresh) return; E2E.fresh = false; try { const l = (await e2Devs(E2E.uid, true)).filter(x => !x.revoked && x.dev !== E2E.dev && x.dev !== E2A_DEV); if (!l.length) return;
@@ -9276,7 +9289,7 @@ function e2Card(){ if (!social) return '';
   const l = (E2C.devs || []).filter(x => !x.revoked).sort((a, b) => (b.dev === E2E.dev) - (a.dev === E2E.dev) || (b.ts || 0) - (a.ts || 0)), req = E2X.list.filter(x => x.st === 'wait' && x.id !== E2E.dev && l.some(y => y.dev === x.id)), mine = E2X.list.find(x => x.id === E2E.dev);
   return `<div class="card e2card"><h2 class="card-h">Verschlüsselung</h2><div class="card-in">
     <p class="note">${E2E.on ? `${E2_LOCK} Private Chats und private Gruppen sind Ende-zu-Ende-verschlüsselt. Die Schlüssel liegen auf deinen Geräten und, mit deinem Passwort verschlüsselt, als Sicherung in deinem Konto. Ohne dein Passwort kann niemand mitlesen, auch Noctibat nicht.` : esc(E2E.err || 'Wird eingerichtet …')}</p>
-    ${E2E.on ? `<div class="setrow e2acc"><div class="setinfo"><span class="lbl">Auf allen Geräten lesen</span><span class="setval">${E2A.kp ? '✓ Aktiv. Wenn du dich auf einem anderen Gerät anmeldest, kannst du dort sofort alles lesen.' : 'Noch nicht eingerichtet. Gib einmal dein Passwort ein, dann kannst du deine Nachrichten auf jedem Gerät lesen.'}</span>${E2A.kp ? '' : '<button class="btn setedit" data-act="e2a-ask">Einrichten</button>'}</div></div>` : ''}
+    ${E2E.on ? `<div class="setrow e2acc"><div class="setinfo"><span class="lbl">Auf allen Geräten lesen</span><span class="setval">${E2A.kp ? '✓ Aktiv. Wenn du dich auf einem anderen Gerät anmeldest, kannst du dort sofort alles lesen.' : 'Wird automatisch eingerichtet, sobald du dich auf einem Gerät mit deinem Passwort anmeldest. Du kannst es auch jetzt einrichten.'}</span>${E2A.kp ? '' : '<button class="btn setedit" data-act="e2a-ask">Einrichten</button>'}</div></div>` : ''}
     <div class="setlist">${l.filter(x => x.dev !== E2A_DEV).map(x => `<div class="setrow"><div class="setinfo"><span class="lbl">${esc(x.name || 'Gerät')}${x.dev === E2E.dev ? ' · dieses Gerät' : ''}</span><span class="setval muted">seit ${new Date(x.ts || 0).toLocaleDateString('de-DE')} · Code ${esc(E2C.codes[x.dev] || '…')}</span>${x.dev === E2E.dev ? '' : `<button class="btn ghost setedit" data-act="e2-rm" data-id="${esc(x.dev)}">Entfernen</button>`}</div></div>`).join('')}</div>
     <p class="note">Deine Geräte geben sich den Chatverlauf automatisch frei. Dein Schlüssel ist mit deinem Passwort gesichert, ein gutes Passwort schützt ihn am besten.</p>
   </div></div>`; }
@@ -11240,7 +11253,7 @@ document.addEventListener('click', async e => {
   else if (a === 'logout-no') document.getElementById('confirm').hidden = true;
   else if (a === 'delacct') { const m = document.getElementById('delacct'); m.hidden = false; m.querySelector('#del-in').value = ''; m.querySelector('#del-pw').value = ''; m.querySelector('#del-pwl').style.display = PUB ? '' : 'none'; m.querySelector('#del-err').hidden = true; m.querySelector('#del-go').disabled = true; m.querySelector('#del-in').focus(); }
   else if (a === 'delacct-no') document.getElementById('delacct').hidden = true;
-  else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; clearTimeout(cloudTimer); cloud = null; await e2Logout(); NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.(); location.reload(); }); }
+  else if (a === 'logout-yes' && PUB) { document.getElementById('confirm').hidden = true; if (E2E.on && !E2A.kp && CH.list.some(c => e2Chat(c.id, c))) { e2aAsk(true, true); return; } doLogout(); }
   else if (a === 'logout-yes') { document.getElementById('confirm').hidden = true; S.me = null; S.unlocked = false; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'new-invite') makeInvite();
   else if (a === 'mem-all') { memAll = !memAll; if (memAll) loadMembers(true); render(); }
@@ -11950,6 +11963,7 @@ document.addEventListener('submit', async e => {
     if (sb) { sb.disabled = true; sb.textContent = 'Einen Moment …'; }
     if (!(await e2aCheckPw(pw))) return bad('Das Passwort stimmt nicht.');
     if (!(await e2aUnlock(pw))) return bad('Das hat gerade nicht geklappt. Versuch es gleich nochmal.');
+    if (E2A.out) { if (sb) sb.textContent = 'Nachrichten werden gesichert …'; await e2aMigrate(true).catch(() => {}); document.getElementById('e2aask')?.remove(); doLogout(); return; }
     document.getElementById('e2aask')?.remove(); toast('Fertig. Du kannst deine Nachrichten jetzt auf allen Geräten lesen.'); if (V.name === 'settings') render();
   } else if (t === 'set-pw') {
     const u = me(), err = document.getElementById('s-pw-err'), fail = m => { err.textContent = m; err.hidden = false; };
