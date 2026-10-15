@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2424333e7e6f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='75478a057a8e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -10389,33 +10389,26 @@ async function resolveLink(url){
   j = await jget('https://noembed.com/embed?url=' + encodeURIComponent(url)) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(url));
   const tid = j && String(j.html || '').match(/data-video-id="(\d+)"/)?.[1]; if (tid) return {u:`https://www.tiktok.com/@x/video/${tid}`, t:String(j.title || '').slice(0, 140), img:String(j.thumbnail_url || '').slice(0, 500), site:'TikTok'};
   if (j && j.url && j.url !== url) return {u:String(j.url).slice(0, 500), t:String(j.title || '').slice(0, 140), img:String(j.thumbnail_url || '').slice(0, 500), site:String(j.provider_name || '').slice(0, 60)};
-  return await linkPreview(url);
+  return null;
 }
 function linkPill(url, lp){ const h = linkHost(lp?.u || url).replace(/^www\./, ''), d = h ? h[0].toUpperCase() + h.slice(1) : url;
   return `<a class="lpill" href="${esc(url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>${esc(d)}</span></a>`; } // Link im Beitrag als Pille mit Domain (Inaya, 2026-10-13)
+// Links nur noch als Pille mit eigenem Symbol und Seitenname (Inaya, 2026-10-14, Datenschutz): keine fremden Vorschaubilder, kein Google-Symbol, keine Abfrage bei microlink.
+// Videos (YouTube, TikTok, Instagram usw.) bleiben zum Antippen-und-Ansehen; Kurzlinks werden erst nach Antippen aufgelöst.
+const SHORT_PROV = u => /tiktok\.com/i.test(u) ? {k:'tt', n:'TikTok'} : /soundcloud\.com/i.test(u) ? {k:'sc', n:'SoundCloud'} : /pin\.it/i.test(u) ? {k:'pin', n:'Pinterest'} : /instagr\.am/i.test(u) ? {k:'ig', n:'Instagram'} : null;
 function linkHTML(url, lp, compact, pill){
-  if (!lp?.u && SHORT_RE.test(url)) { // noch nicht aufgelöst: im Hintergrund nachschlagen und dann neu zeichnen
-    if (LRES[url] === undefined) { LRES[url] = 'busy'; resolveLink(url).then(x => { LRES[url] = x || null; if (x) { const mine = S.posts.find(p => p.author === S.me && p.url === url && !p.lp?.u); if (mine) { mine.lp = {...(mine.lp || {}), ...x}; save(); } softRender(); } }); }
+  const sp = !lp?.u && SHORT_RE.test(url) && !ytId(url) ? SHORT_PROV(url) : null;
+  if (sp) {
     if (LRES[url] && LRES[url] !== 'busy') lp = {...(lp || {}), ...LRES[url]};
+    else if (!extOk(sp.k)) return extPh(sp.k, sp.n + ' und noembed.com', 'ext-short', `data-u="${esc(url)}"`, `${sp.n} laden`, 'emb-' + sp.k);
+    else if (LRES[url] === undefined) { LRES[url] = 'busy'; resolveLink(url).then(x => { LRES[url] = x || null; if (x) { const mine = S.posts.find(p => p.author === S.me && p.url === url && !p.lp?.u); if (mine) { mine.lp = {...(mine.lp || {}), ...x}; save(); } softRender(); } }); }
   }
   const v = ytId(lp?.u || url);
   if (v) return extOk('yt') ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>` : extPh('yt', 'YouTube (Google)', 'vplay', `data-v="${esc(v)}"`, 'YouTube-Video ansehen', 'extyt');
   const e = embedOf(lp?.u || url);
   if (e && !extOk(e.k)) return extPh(e.k, e.name, 'ext-load', `data-u="${esc(lp?.u || url)}"${compact ? ' data-c="1"' : ''}`, `${esc(e.name)} laden`, 'emb-' + e.k);
   if (e) return `<div class="emb emb-${e.k}"><iframe src="${esc(e.src)}" title="${esc(e.name)}" loading="lazy" style="${e.ar ? `aspect-ratio:${e.ar}` : `height:${e.h}px`}" allow="autoplay; encrypted-media; fullscreen; clipboard-write; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
-  if (pill) return linkPill(url, lp);
-  const host = linkHost(lp?.u || url), img = lp?.img && /^https:\/\//.test(lp.img) ? lp.img : '';
-  return `<a class="lcard${img ? '' : ' noimg'}" href="${esc(url)}" target="_blank" rel="noopener">${img ? `<img src="${esc(img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span class="lc-t"><span class="lc-h"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64" alt="" onerror="this.remove()">${esc(lp?.site || host)}</span>${lp?.t ? `<b>${esc(lp.t)}</b>` : ''}${lp?.d ? `<small>${esc(String(lp.d).slice(0, 140))}</small>` : ''}${!lp?.t ? `<small>${esc(url)}</small>` : ''}</span></a>`;
-}
-// Beim Posten einmal nachschlagen: Kurzlinks (vm.tiktok.com usw.) auflösen, Titel und Bild für die Vorschau
-async function linkPreview(url){
-  try {
-    const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 6000);
-    const r = await fetch('https://api.microlink.io/?url=' + encodeURIComponent(url), {signal:ac.signal}); clearTimeout(tm);
-    const d = (await r.json())?.data; if (!d) return null;
-    const lp = {u:d.url && d.url !== url ? String(d.url).slice(0, 500) : '', t:String(d.title || '').slice(0, 140), d:String(d.description || '').slice(0, 200), img:String(d.image?.url || '').slice(0, 500), site:String(d.publisher || '').slice(0, 60)};
-    Object.keys(lp).forEach(k => { if (!lp[k]) delete lp[k]; }); return Object.keys(lp).length ? lp : null;
-  } catch { return null; }
+  return linkPill(url, lp);
 }
 let songOff = null;
 /* Eigene Songs: die Datei liegt in Stücken unter profiles/<uid>/song/c<i> und spielt direkt hier im Player */
@@ -11480,6 +11473,7 @@ document.addEventListener('click', async e => {
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'ext-load') { extAllow(b.dataset.k); b.outerHTML = linkHTML(b.dataset.u, null, !!b.dataset.c); return; }
+  else if (a === 'ext-short') { const u = b.dataset.u; extAllow(b.dataset.k); b.disabled = true; b.querySelector('b').textContent = 'Lädt …'; const x = await resolveLink(u).catch(() => null); LRES[u] = x || null; b.outerHTML = linkHTML(u, x, false); return; }
   else if (a === 'vplay') { extAllow('yt'); b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
   else if (a === 'pc-pin') { const k = b.dataset.k, d = b.dataset.d, w = PI[k], uid = social?.uid; if (!w || !uid || postOwner(w.p) !== uid || !d) return; const cur = w.list.find(x => x.kind === 'pin' && x.by === uid)?.c, ref = social.db.doc('chats/pi_' + k + '/m/pin');
     try { if (cur === d) await ref.delete(); else await ref.set({kind:'pin', c:d, by:uid, ts:Date.now()}); toast(cur === d ? 'Kommentar nicht mehr fixiert' : 'Kommentar fixiert'); } catch { toast('Das hat gerade nicht geklappt.'); } }
@@ -11705,7 +11699,6 @@ document.addEventListener('submit', async e => {
       if (all.length) p.tags = ptagsClean(all); }
     if (url) p.url = url;
     if (PSG && !multi && !postCrop && !PVIDEO) { if (PSG.img) { p.img = PSG.img; p.sgi = 1; } else p.sg = sgClean(PSG); }
-    if (url && !ytId(url) && social) { const sb = f.querySelector('button[type=submit]'); if (sb) { sb.disabled = true; sb.textContent = 'Lädt Vorschau …'; } const lp = SHORT_RE.test(url) ? await resolveLink(url) : await linkPreview(url); if (lp) p.lp = lp; if (sb) { sb.disabled = false; sb.textContent = 'Teilen'; } }
     if (PAUDIO) {
       if (!social) { toast('Musik posten geht, sobald du angemeldet bist.'); return; }
       const sb = f.querySelector('button[type=submit]'); if (sb) sb.disabled = true;
@@ -11729,7 +11722,7 @@ document.addEventListener('submit', async e => {
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
     const text = val('pe-' + p.id);
-    if (p.type === 'video') { const url = val('pe-url-' + p.id); if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; } if (url !== p.url) { p.url = url; delete p.lp; if (!ytId(url) && social) { const lp = await linkPreview(url); if (lp) p.lp = lp; } } }
+    if (p.type === 'video') { const url = val('pe-url-' + p.id); if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; } if (url !== p.url) { p.url = url; delete p.lp; } }
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
     if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');

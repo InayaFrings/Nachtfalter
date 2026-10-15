@@ -90,3 +90,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - 30-Sekunden-Hörproben (iTunes/Deezer) zeigen ihre Quelle mit Link (`muSrcHTML`, Feld `lk` aus der Suche).
 - MP3-Upload nur in privaten Chats/Gruppen und in Beiträgen für Freunde (`chPubNow`, Prüfung beim Posten).
 - Seit v426 ist Musik ganz ausgeschaltet: Schalter `const MUSIK = false` (direkt nach `KEY` in `index.html`). Aus heißt: keine Hörproben (`stMuPv`/`stAuPlay`), keine Musik-Knöpfe in Beitrag, Editor, Story und Profil, keine MP3s; alte MP3-Nachrichten zeigen einen Hinweis. Daten bleiben gespeichert. Sprachnachrichten sind nicht betroffen.
+- Seit v427 sind normale Links nur noch Pillen (`linkPill`: eigenes Symbol + Seitenname), ohne fremde Vorschaubilder, ohne Google-Favicon, ohne microlink. Kurzlinks (vm.tiktok.com usw.) werden erst nach Antippen über noembed aufgelöst (`ext-short`).
