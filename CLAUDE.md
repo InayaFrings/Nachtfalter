@@ -103,3 +103,13 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Sprachnachrichten spulen (seit v457)
 
 - Tippen, Ziehen (Finger oder Maus) und Pfeiltasten auf der Wellenform (`.vmw`) springen an jede Stelle (`vmSeek`, Ziehen über `VMDRAG`). Als Länge gilt notfalls `m.audio.d`, `vmFixDur` ermittelt bei WebM-Aufnahmen ohne Längenangabe (`duration = Infinity`) die echte Länge.
+
+## Sprachen: Deutsch und Englisch (seit v459)
+
+- `LANG` (`de`/`en`) kommt aus dem Konto (`me().lang`, wandert mit der Kontosicherung) und vom Gerät (`localStorage nf-lang`; vor dem Anmelden: Browsersprache). Wählbar auf der Startseite, bei der Registrierung (`#reg-lang`) und in den Einstellungen (Karte „Sprache“). Wechsel über `setLang()`.
+- Die Sprache ändert nur die Anzeige. Nie Inhalte, Profile, Gruppen oder Funktionen nach Sprache oder Land filtern.
+- Der Code schreibt weiter deutsch. `i18nRun`/`i18nNode` übersetzt nach jedem Zeichnen Textknoten und Attribute (placeholder, title, aria-label, alt) über das Wörterbuch `I18N_EN` (zwischen `// I18N_EN_START` und `// I18N_EN_END`). Texte mit Namen/Zahlen als Muster mit `{0}`, `{1}` …; zusammengesetzte Beschriftungen („Farbe: Weiß“) werden in Teilen übersetzt.
+- Was Menschen schreiben, bleibt unübersetzt: Bereiche mit `data-raw` oder den Klassen in `I18N_SKIP` (Beiträge, Nachrichten, Kommentare, Namen, Steckbrief …). Neue Stellen mit Nutzertext bitte mit `data-raw` markieren.
+- Texte, die im Code in Nutzerbereichen landen (z. B. System-Hinweise im Chat), mit `tr('…')` übersetzen; gespeicherte App-Hinweise in Nachrichten über `sysTr` (`SYS_MSG`). Zeiten: `ago()`/`ntAgo()` können Englisch, Datum mit `LOC()`.
+- NEUE TEXTE: deutsch in den Code, die englische Fassung in `I18N_EN` ergänzen. Auf der Seite zeigt `i18nMissing()`, was beim Anschauen noch deutsch geblieben ist.
+- Push-Mitteilungen vom Server: `functions/index.js` (`TXT.de`/`TXT.en`), Sprache steht in `data/users/<uid>/nf-push` (`lang`).
