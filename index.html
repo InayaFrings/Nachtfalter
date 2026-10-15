@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='bb6586aeaf4e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3f028760a4ee';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -531,7 +531,7 @@ dl.steck dd{margin:2px 0 0;white-space:pre-wrap;word-break:break-word}
 @media (max-width:860px){.wardrobe{grid-template-columns:minmax(0,1fr)}}
 /* Am Computer: Figur in der Garderobe und Zimmer beim Einrichten bleiben beim Scrollen stehen (Inaya, 2026-10-15) */
 @media (min-width:861px){.wardrobe > .mirror-card{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));align-self:start;z-index:5}}
-@media (min-width:761px){.rstick{position:sticky;top:44px;z-index:25;background:var(--paper);padding:8px 0 10px;margin-bottom:6px;box-shadow:0 12px 22px -12px #000c}.rstick .room{width:min(100%, calc(56vh * 1.6));margin-inline:auto}}
+@media (min-width:761px){.rstick{position:sticky;top:0;z-index:25;background:var(--paper);padding:0 0 10px;margin-bottom:6px;box-shadow:0 12px 22px -12px #000c}.rstick .room{width:min(100%, calc(56vh * 1.6));margin-inline:auto}}
 .mirror{width:200px;aspect-ratio:9/17}
 .mirror-card{padding:34px 18px 22px;display:grid;gap:26px;justify-items:center;text-align:center}
 .shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
@@ -5210,12 +5210,12 @@ function roomHTML(u, edit, live=edit){
   </div></div>`;
 }
 let roomSel = null, dragging = null;
-const FURN_TABS = [['alle','Alle'],['poster','Poster'],['bett','Betten'],['sofa','Sofas'],['lampe','Lampen'],['fenster','Fenster'],['schrank','Schränke'],['tier','Haustiere'],['teppich','Teppiche'],['deko','Deko']];
+const FURN_TABS = [['raum','Wand & Boden'],['alle','Alle'],['poster','Poster'],['bett','Betten'],['sofa','Sofas'],['lampe','Lampen'],['fenster','Fenster'],['schrank','Schränke'],['tier','Haustiere'],['teppich','Teppiche'],['deko','Deko']];
 let furnTab = 'alle';
 function roomView(){
   const u = me(), r = u.room;
   const placed = new Set(r.items.map(i => i.k));
-  const shop = FURN_IDS.filter(k => (furnTab === 'alle' || FURN[k].r === furnTab)).map(k => {
+  const shop = furnTab === 'raum' ? '' : FURN_IDS.filter(k => (furnTab === 'alle' || FURN[k].r === furnTab)).map(k => {
     const f = FURN[k], owned = true, here = placed.has(k);
     const btn = here ? `<button class="btn ghost" data-act="unplace" data-k="${k}">Wegräumen</button>`
       : owned ? `<button class="btn ghost" data-act="place" data-k="${k}">Hinstellen</button>`
@@ -5249,17 +5249,17 @@ function roomView(){
       ${colItem === 'wallC' ? `<div class="cpanel">${roomColorRow('Wandfarbe', 'wallC', r.wallC)}</div>` : ''}
       <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}${r.floor===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="floorC" style="background:${esc(r.floorC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'floorC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
       ${colItem === 'floorC' ? `<div class="cpanel">${roomColorRow('Bodenfarbe', 'floorC', r.floorC)}</div>` : ''}`;
-  const furnTabs = `<div class="chips" role="tablist" aria-label="Kategorie" style="margin-bottom:14px">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}</button>`).join('')}</div>`, grid = `<div class="shopgrid">${shop}</div>`;
+  const furnTabs = `<div class="chips" role="tablist" aria-label="Kategorie" style="margin-bottom:14px">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}</button>`).join('')}</div>`, grid = furnTab === 'raum' ? `<div class="wfpanel">${wallFloor}</div>` : `<div class="shopgrid">${shop}</div>`; // eigener Reiter für Tapete und Boden (Inaya, 2026-10-15)
   const doneRow = `<div class="row"><span class="sp"></span><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div>`;
   // Handy: alles in einer Karte, damit das Zimmer beim Möbel-Aussuchen oben stehen bleibt
   if (isMob()) return `<div class="card">${head}<div class="card-in">
       <div class="rstick">${roomHTML(u, true)}</div>
-      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${wallFloor}${doneRow}
+      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}
     </div></div>`;
   return `<div class="card">${head}<div class="card-in">
       <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Haustiere, Kuscheltiere und Deko kannst du auf ein Bett, Sofa oder einen Schrank ziehen, dann sitzen bzw. stehen sie darauf. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
       <div class="rstick">${roomHTML(u, true)}</div>
-      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${wallFloor}${doneRow}
+      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}
     </div></div>`; // eine Karte: das Zimmer bleibt beim Möbel-Aussuchen oben stehen (Inaya, 2026-10-15)
 }
 // Griff unten rechts: größer und kleiner ziehen (Mitte und Unterkante bleiben, wo sie sind)
