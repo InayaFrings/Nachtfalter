@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b153f8fced65';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1bdbd6eacfb0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2044,6 +2044,7 @@ body.cmvopen{overflow:hidden}
 .cmvpi .cmts{flex:1;min-height:0;overflow-y:auto;max-height:none!important;padding:12px 2px 6px;display:grid;align-content:start;gap:10px}
 .cmvpi .pbar{padding-top:10px;border-top:1px solid var(--line-soft,#333)}.post.tp .cmvpi .pbar{border-color:var(--p-line)}
 .cmvnone{margin:20px 0;text-align:center;font-style:normal}
+.piwait .pbar>*{pointer-events:none;opacity:.75}
 .vmw{cursor:pointer;touch-action:none}.vmw:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:4px}.vm2 .vmw.vmdrag .vmdot{opacity:1;transform:scale(1.3)}
 .langsw{display:flex;gap:8px;justify-content:center;align-items:center;font-size:14px;margin:-4px 0 4px}.langsw [aria-pressed="true"]{font-weight:700;text-decoration:none}.langpick{display:flex;gap:10px;flex-wrap:wrap}
 /* Kommentarfenster im Design des Beitrags: Muster im Hintergrund, Kopf und Schreibleiste in der Beitragsfarbe, Musterkante unter dem Kopf (Inaya, 2026-10-15) */
@@ -6054,10 +6055,29 @@ function navLive(){ const s = NAVR.pending; if (!s) return; NAVR.pending = null;
   if (s.name === 'chats' && s.ch && s.chm !== 'helper') { navSkip = true; try { openChat(s.ch); if (s.chm && s.chm !== 'chat') { CH.mode = s.chm; render(); } } finally { navSkip = false; } }
   else if (s.name === 'profile' && s.arg && S.users[s.arg]?.remote) loadProf(s.arg).then(() => { if (PROF[s.arg] && isFriend(s.arg)) S.users[s.arg] = remoteUser(s.arg, PROF[s.arg]); softRender(); });
   navScroll(s.y); }
+/* Letzter Stand beim Neuladen (Inaya, 2026-10-15): Chatliste, Freundeslisten und Mitteilungen vom letzten Besuch liegen je Konto im
+   Gerät (localStorage nf-snap:<S.me>). Bis die Verbindung steht (rund 0,7 s, so lange braucht die Anmeldung bei Firebase) und die echten
+   Daten da sind, zeigt die Seite diesen Stand statt „Noch keine …“. Danach gilt nur noch der echte Stand, und er wird neu gemerkt. */
+const SNAP = {d:null, t0:0, tSave:0};
+const snapKey = () => 'nf-snap:' + (S.me || '');
+function snapLoad(){ if (!S.me || !PUB) return; let d = null; try { d = JSON.parse(localStorage.getItem(snapKey()) || 'null'); } catch {} if (!d || d.me !== S.me) return; SNAP.d = d;
+  if (Array.isArray(d.ch) && !CH.raw) { CH.raw = d.ch; CH.list = CH.raw.filter(chVis); CH.snap = true; }
+  if (d.fr && !FR.ready) { FR.mine = d.fr.mine || []; FR.inc = d.fr.inc || []; FR.incTs = d.fr.incTs || {}; } }
+// Solange die Verbindung nicht steht oder die echten Daten noch nachkommen (erste 3 s), gilt der gemerkte Stand
+const snapLive = () => social && SNAP.t0 && Date.now() - SNAP.t0 > 3000;
+function snapSave(){ if (!PUB || !S.me || !snapLive()) return; const now = Date.now(); if (now - SNAP.tSave < 4000) { clearTimeout(SNAP.t); SNAP.t = setTimeout(snapSave, 4200); return; } SNAP.tSave = now;
+  const nt = notifsLive().slice(0, 60).map(n => ({ts:n.ts, uid:n.uid, kind:n.kind, text:n.text, quote:typeof n.quote === 'string' ? n.quote.slice(0, 160) : '', go:n.go, oid:n.oid, k:n.k, d:n.d, sid:n.sid, ico:n.ico,
+    p:n.p ? {id:n.p.id, author:n.p.author, text:String(n.p.text || '').slice(0, 90), ...(n.p.gb ? {gb:n.p.gb} : {})} : undefined}));
+  const ch = (CH.raw || []).slice(0, 80).map(c => { const x = {...c}; if (typeof x.pic === 'string' && x.pic.length > 40000) delete x.pic; return x; });
+  const ids = new Set([...nt.map(n => n.uid), ...ch.flatMap(c => c.group ? [] : c.members || []), ...FR.mine, ...FR.inc]); ids.delete(social.uid);
+  const u = {}; for (const id of [...ids].slice(0, 150)) { const x = uidUser(id); if (x) u[id] = {n:x.name || nmOf(id), h:x.handle || '', o:x.outfit || {}}; else if (nmOf(id)) u[id] = {n:nmOf(id)}; }
+  const d = {me:S.me, ts:now, ch, fr:{mine:FR.mine, inc:FR.inc, incTs:FR.incTs}, nt, u};
+  try { localStorage.setItem(snapKey(), JSON.stringify(d)); } catch { try { delete d.u; localStorage.setItem(snapKey(), JSON.stringify(d)); } catch {} } }
+const snapUser = id => { const x = SNAP.d?.u?.[id]; return x ? {id, remote:true, name:x.n || 'Jemand', handle:x.h || '', outfit:normOutfit({...(x.o || {})}), theme:normTheme({...BLANK_THEME()})} : null; };
 function navScroll(y){ if (!(y > 0)) return; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, y); }, ms)); }
 ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { NAVR.touched = true; }, {passive:true, once:true}));
 addEventListener('scroll', () => { clearTimeout(NAVR.t); NAVR.t = setTimeout(navSave, 400); }, {passive:true});
-addEventListener('pagehide', navSave);
+addEventListener('pagehide', () => { navSave(); SNAP.tSave = 0; snapSave(); });
 const NAV_NAMES = {home:'Salon', find:'Suche', friends:'Freunde', chats:'Chats', room:'Zimmer', wardrobe:'Garderobe', notifs:'Mitteilungen', settings:'Einstellungen', games:'Minigames', design:'Profil gestalten', shop:'Laden'};
 function navLabel(s){ if (!s) return ''; if (s.name === 'profile') return s.arg === S.me ? 'Dein Profil' : 'Profil von ' + (S.users[s.arg]?.name || nmOf(s.arg) || 'jemandem');
   if (s.name === 'chats' && s.ch) { const c = CH.list.find(x => x.id === s.ch); return c ? (c.group ? '„' + chatName(c) + '“' : 'Chat mit ' + chatName(c)) : 'Chat'; }
@@ -6102,7 +6122,7 @@ const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} s
 // Profilbild klein, aber mit Rahmen und Form wie im Profil der Person (Inaya, 2026-10-14)
 const miniPor = (u, cls = 'mini') => { if (!u) return ''; const t = normTheme({...(u.theme || BLANK_THEME())}); return `<span class="minipw" style="${themeStyle(t)}">${portrait(u, t, cls)}</span>`; }; // Farben der Person, damit der Rahmen wie im Profil aussieht
 const headPic = (u, ...a) => safePic(u?.pic) ? `<img class="cpic" src="${esc(safePic(u.pic))}" alt="" draggable="false">` : avatar(u?.outfit, 'head', ...a); // Profilbild, sonst Avatar (Inaya, 2026-10-12)
-const uidUser = id => id === social?.uid ? me() : S.users[id] || (PROF[id] ? profUser(id) : null);
+const uidUser = id => id === social?.uid ? me() : S.users[id] || (PROF[id] ? profUser(id) : null) || (social && snapLive() ? null : snapUser(id));
 const cameo = u => `<span class="cameo">${headPic(u)}</span>`;
 const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Link',clip:'Video',neu:'Neuigkeit',teilen:'Geteilt',musik:'Musik'};
 
@@ -6361,6 +6381,8 @@ const PI = {}, PIMG = {};
 let postDelAsk = null, postEdit = null;
 const postOwner = p => p.remote ? p.author : social && p.author === S.me ? social.uid : social && S.users[p.author]?.helper ? 'helper-' + p.author : null;
 // vor dem Anmelden bei Firebase gibt es noch keine geteilten Reaktionen
+// Bevor die Verbindung steht (kurz nach dem Neuladen): gleich die neue Leiste zeigen, noch ohne Zahlen, nie das alte Kommentarfeld (Inaya, 2026-10-15)
+const piWaitHTML = () => `<div class="pi piwait" aria-busy="true"><div class="reacts pbar"><span class="likebtn">${HEART(false)}<span></span></span><span class="cmbtn">${CMV_ICO}<span></span></span><span class="rpbtn">${RP_SVG}<span></span></span><span class="shbtn">${SEND_ICO}</span></div></div>`;
 function piKey(p){ if (!social) return null; const o = postOwner(p); return o && /^[\w-]+$/.test(p.id) ? o + '_' + p.id : null; }
 // eigene alte Kommentare auf Helfer-Beiträgen (lagen nur auf dem eigenen Gerät) einmal in die geteilten Kommentare übernehmen
 function helperCmMig(p, k){ S.hcMig = S.hcMig || {}; if (S.hcMig[k]) return; const mine = (p.comments || []).filter(c => c.author === S.me && c.text); S.hcMig[k] = 1; if (!mine.length) { save(); return; }
@@ -6516,7 +6538,8 @@ const cmQuote = c => c.text || (c.gif ? 'GIF' : c.stk ? 'Sticker' : c.img ? 'Fot
 function ntLkTs(key, ts){ const m = S.ntLk = S.ntLk || {}; if (!m[key]) { m[key] = ts; const ks = Object.keys(m); if (ks.length > 400) ks.sort((a, b) => m[a] - m[b]).slice(0, ks.length - 400).forEach(x => delete m[x]); clearTimeout(ntLkTs.t); ntLkTs.t = setTimeout(save, 800); } return m[key]; }
 function cmLikeNotifs(w, uid, out, go, oid, k){ const mine = new Map(w.list.filter(c => c.kind === 'c' && c.by === uid).map(c => [c.did, c]));
   for (const x of w.list) if (x.kind === 'cl' && x.by && x.by !== uid && mine.has(x.c)) out.push({ts:ntLkTs(k + '|' + x.c + '|' + x.by, x.ts || 0), uid:x.by, ico:HEART(true), kind:'cl', text:'gefällt dein Kommentar.', quote:cmQuote(mine.get(x.c)), go, oid, k, d:x.c, p:w.p}); }
-function notifs(){
+function notifs(){ const live = social ? notifsLive() : [], sn = SNAP.d?.nt; if (sn?.length && !snapLive() && live.length < sn.length) return sn; return live; }
+function notifsLive(){
   if (!social) return [];
   const uid = social.uid, out = [];
   for (const [k, w] of Object.entries(PI)) {
@@ -6550,13 +6573,13 @@ const ntNew = () => notifs().filter(n => n.ts > (S.notifSeen || 0)).length;
 function ntPing(){ const n = ntNew(); if (n !== NT.last || V.name === 'notifs') { NT.last = n; softRender(); } }
 function ntName(id){
   const u = S.users[id] || (PROF[id] ? profUser(id) : null);
-  if (!u && !PROF[id] && !NT.asked[id]) { NT.asked[id] = 1; loadProf(id).then(softRender); }
-  return u?.name || PROF[id]?.name || 'Jemand';
+  if (!u && !PROF[id] && social && !NT.asked[id]) { NT.asked[id] = 1; loadProf(id).then(softRender); }
+  return u?.name || PROF[id]?.name || nmOf(id) || 'Jemand';
 }
 // Mitteilungen wie bei Instagram: Abschnitte nach Zeit, runde Köpfe mit kleinem Zeichen, rechts der Beitrag oder Knöpfe (Inaya, 2026-10-10)
 const ntAgo = ts => { const m = Math.max(1, Math.round((Date.now() - ts) / 60000)); if (LANG === 'en') return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : m < 10080 ? Math.round(m / 1440) + ' d' : Math.round(m / 10080) + ' w'; return m < 60 ? m + ' Min.' : m < 1440 ? Math.round(m / 60) + ' Std.' : m < 10080 ? Math.round(m / 1440) + ' T.' : Math.round(m / 10080) + ' W.'; };
 const NT_BADGE = {s:'<path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/>', c:'<path d="M4 5h16v11H9l-5 4z"/>', w:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>', q:'<circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c.8-4 3.4-6 6.5-6s5.7 2 6.5 6"/><path d="M19 8v6M16 11h6"/>'};
-function ntHead(id){ const u = S.users[id] || (PROF[id] ? profUser(id) : null); return u?.pic || u?.outfit ? headPic(u) : ''; }
+function ntHead(id){ const u = S.users[id] || (PROF[id] ? profUser(id) : null) || snapUser(id); return u?.pic || u?.outfit ? headPic(u) : ''; }
 // Kleine echte Vorschau vom Beitrag rechts in der Mitteilung (Inaya, 2026-10-12): Foto, Video-Standbild, Song-Cover, Link-Bild oder der Text selbst
 function ntThumb(p, v='post', oid='', k='', cm=false){
   if (!p) return '';
@@ -6611,7 +6634,7 @@ function notifView(){
   for (const g of groups) { if (g.sec !== last) { html += `${last ? '</ul>' : ''}<h3 class="nt-sec">${g.sec}</h3><ul class="ntlist">`; last = g.sec; } html += row(g); }
   if (last) html += '</ul>';
   const empty = `<div class="nt-empty"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.bell}</svg><b>Noch keine Mitteilungen</b><span>Wenn jemand auf deine Beiträge reagiert, sie kommentiert, dir ins Gästebuch schreibt oder dich als Freund hinzufügt, siehst du es hier.</span></div>`;
-  return `<section class="ntpage"><h2 class="nt-h">Mitteilungen</h2>${!social ? '<p class="muted">Mitteilungen gibt es, sobald du angemeldet bist.</p>' : html || empty}</section>`;
+  return `<section class="ntpage"><h2 class="nt-h">Mitteilungen</h2>${html || (!social ? (PUB && S.me ? '<p class="muted mload" aria-busy="true">Lädt …</p>' : '<p class="muted">Mitteilungen gibt es, sobald du angemeldet bist.</p>') : !snapLive() ? '<p class="muted mload" aria-busy="true">Lädt …</p>' : empty)}</section>`;
 }
 // Große Bilder liegen für Freunde in einem eigenen Dokument und werden beim Anzeigen nachgeladen
 function loadPimgs(){
@@ -8012,7 +8035,7 @@ function postHTML(p){
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
       <div class="row" style="align-items:flex-end">${social ? `<label class="f" style="margin:0"><span class="lbl">Wer sieht das?</span><select id="pe-aud-${p.id}" class="bsel" style="width:auto;min-width:150px;padding-right:32px" aria-label="Wer sieht das?"><option value="pub" ${p.pub ? 'selected' : ''}>Öffentlich</option><option value="fr" ${p.pub ? '' : 'selected'}>Nur Freunde</option></select></label>` : ''}<button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" data-act="post-edit-no">Abbrechen</button></div></form>` : ''}
     ${body}
-    ${piKey(p) ? `<div class="pi" data-pi="${piKey(p)}">${piInner(p)}</div>` : `
+    ${piKey(p) ? `<div class="pi" data-pi="${piKey(p)}">${piInner(p)}</div>` : PUB && S.me && /^[\w-]+$/.test(p.id || '') ? piWaitHTML() : `
     ${cm ? `<div class="cmts">${cm}</div>` : ''}
     ${p.remote ? '' : `<form class="cform" data-form="comment" data-id="${p.id}">
       <span class="pcfield"><input type="text" id="c-${p.id}" placeholder="Etwas dazu schreiben…" maxlength="300" aria-label="Kommentar"></span>
@@ -8637,7 +8660,7 @@ function profileView(id){
         : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
   else if (!u.helper) { // eigene Kommentare und die von Juliet und Andy scrollen zusammen in einem Kasten (Inaya, 2026-10-11)
     const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry${wTheme(c.author) ? ' tp' : ''}" style="${wTheme(c.author)}">${ulink(c.author)} <span data-raw>${etx(c.text)}</span> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
-    wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
+    wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social || PUB && !social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
       <form class="cform" data-form="wall" data-id="${id}">
         <input type="text" id="w-${id}" placeholder="${own ? 'Etwas in dein Gästebuch schreiben…' : 'Hinterlass ' + esc(u.name) + ' ein paar Zeilen…'}" maxlength="300" aria-label="Gästebuch-Eintrag">
         <button class="btn ghost" type="submit">Eintragen</button>
@@ -8776,12 +8799,12 @@ const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
   if (social || !cloud?.db || !me()) return;
-  social = {db:cloud.db, uid:cloud.uid}; setTimeout(navLive, 0); e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
+  social = {db:cloud.db, uid:cloud.uid}; SNAP.t0 = Date.now(); setTimeout(navLive, 0); setTimeout(softRender, 0); setTimeout(() => { CH.snap = false; softRender(); snapSave(); }, 3100); setInterval(snapSave, 30000); // Beiträge bekommen sofort ihre echte Leiste e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
     Promise.all(CH.list.flatMap(c => c.members).filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender);
   }, () => {});
   db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; syncFriends(); }).catch(() => {});
@@ -8957,7 +8980,7 @@ function nmWatch(){ social.db.collection('handles').onSnapshot(q => { let ch = f
     if ((!o || o.h !== NM[id].h || o.n !== NM[id].n) && id !== social.uid) { ch = true; if (PROF[id]) { if (NM[id].n) PROF[id].name = NM[id].n; if (NM[id].h) PROF[id].handle = NM[id].h; }
       const u = S.users[id]; if (u?.remote) { if (NM[id].n) u.name = NM[id].n; if (NM[id].h) u.handle = NM[id].h; } } });
   if (ch) { clearTimeout(nmT); nmT = setTimeout(softRender, 300); } }, () => {}); }
-const nmOf = id => NM[id]?.n || PROF[id]?.name || S.users[id]?.name || '';
+const nmOf = id => NM[id]?.n || PROF[id]?.name || S.users[id]?.name || SNAP.d?.u?.[id]?.n || '';
 const chatName = c => c.group ? (c.name || 'Gruppe') : (nmOf(c.members.find(m => m !== social?.uid)) || 'Chat');
 const chatWho = id => id === social?.uid ? 'Du' : nmOf(id) || 'Jemand';
 // Name mit Fledermaus/Owner-Zeichen, überall gleich (Inaya, 2026-10-13)
@@ -9031,7 +9054,7 @@ const moreHTML = () => CH.mraw && CH.mraw.length >= (CH.lim || 60) ? '<button ty
 function msgsHTML0(c){
   const vis = CH.msgs.filter(m => !isBlk(m.from)), lastMine = [...vis].reverse().find(m => m.from === social?.uid && !m._lock && !m._pend);
   return CH.msgs.length ? vis.map(m => msgWrapHTML(m, c?.group, m === lastMine ? readHTML(m, c) : '')).join('')
-    : '<p class="muted" style="margin:auto">Noch keine Nachrichten. Schreib die erste.</p>';
+    : CH.mraw == null ? '<p class="muted mload" style="margin:auto" aria-busy="true">Lädt …</p>' : '<p class="muted" style="margin:auto">Noch keine Nachrichten. Schreib die erste.</p>';
 }
 async function openDM(id){
   if (isBlk(id)) return toast(iBlocked(id) ? 'Du hast diese Person blockiert.' : 'Du kannst dieser Person nicht schreiben.');
@@ -9088,7 +9111,7 @@ function chatsView(){
       <div class="chatside"><div class="chtop">
         <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats'],['pub','Öffentliche Gruppen']].map(([k, l]) => { const n = CH.list.filter(c => ctabOf(c) === k && unread(c)).length + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}" aria-label="${l}" title="${l}"><svg class="cti" viewBox="0 0 24 24" aria-hidden="true">${CTICO[k]}</svg><span class="ctl">${l}</span>${n ? ' <i class="dot" aria-label="neu"></i>' : ''}</button>`; }).join('')}</div>
         ${social ? `<div class="row">${chatTab === 'group' ? '<button class="btn" data-act="chat-group">＋ Neue Gruppe</button>' : chatTab === 'pub' ? '<button class="btn" data-act="chat-group" data-v="pub">＋ Neue öffentliche Gruppe</button>' : '<button class="btn" data-act="chat-new">＋ Neuer Chat</button>'}</div>` : ''}
-        <div class="clscroll">${social ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : chatTab === 'pub' ? 'Du bist noch in keiner öffentlichen Gruppe. Stöber unten und tritt einer bei!' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Noctibat-Seite angemeldet bist.</p>'}
+        <div class="clscroll">${social || CH.snap ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : chatTab === 'pub' ? 'Du bist noch in keiner öffentlichen Gruppe. Stöber unten und tritt einer bei!' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Noctibat-Seite angemeldet bist.</p>'}
         ${social && chatTab === 'pub' ? (() => { loadPubGroups(); const l = PUBG.filter(c => !(c.members || []).includes(social.uid)); return `<p class="lbl" style="margin:14px 0 0">Stöbern: Gruppen zum Beitreten</p>${l.length > 4 ? `<input type="search" id="pubg-q" placeholder="Gruppe suchen …" aria-label="Öffentliche Gruppe suchen" autocomplete="off">` : ''}<div id="pubg-list">${l.length ? l.map(c => `<div class="pubg clist${c.theme ? ' ctheme' : ''}" data-n="${esc((c.name || '').toLowerCase())}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''}><span class="pubgt"><b>${esc(c.name || 'Gruppe')}</b><small>${(c.members || []).length === 1 ? '1 Person' : (c.members || []).length + ' Leute'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></span><button class="btn ghost" data-act="pubg-join" data-id="${esc(c.id)}">Beitreten</button></div>`).join('') : '<p class="note">Gerade gibt es keine weiteren öffentlichen Gruppen. Mach selbst eine auf!</p>'}</div>`; })() : ''}
         </div></div>
         ${chatTab === 'priv' ? `<p class="lbl" style="margin:14px 0 0">Helfer</p>
@@ -9873,9 +9896,9 @@ function wallSync(){
   const target = !social || !u || u.helper ? null : pid === S.me ? social.uid : u.remote ? pid : null;
   if (target === WL.uid) { drawWall(); return; }
   if (WL.unsub) { WL.unsub(); WL.unsub = null; }
-  WL.uid = target; WL.list = [];
+  WL.uid = target; WL.list = []; WL.ready = false;
   if (!target) return;
-  WL.unsub = social.db.collection('chats/wall_' + target + '/m').orderBy('ts', 'desc').limit(100).onSnapshot(snap => { WL.list = snap.docs.filter(d => !isDel(d.id)).map(d => ({mid:d.id, ...d.data()})); drawWall(); }, () => {});
+  WL.unsub = social.db.collection('chats/wall_' + target + '/m').orderBy('ts', 'desc').limit(100).onSnapshot(snap => { WL.list = snap.docs.filter(d => !isDel(d.id)).map(d => ({mid:d.id, ...d.data()})); WL.ready = true; drawWall(); }, () => {});
   drawWall();
 }
 function mediaHTML(c){
@@ -9902,7 +9925,7 @@ function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
   box.innerHTML = WL.list.length ? WL.list.map(c => { const wst = wTheme(c.from === social?.uid ? S.me : c.from); const wp = gbPost(WL.uid, c), wk = piKey(wp); return `<div class="entry wentry${wst ? ' tp' : ''}" style="${wst}" data-gb="${esc(c.mid)}"><b>${c.from ? `<button class="lnk wname" data-act="profile" data-id="${esc(c.from === social?.uid ? S.me : c.from)}">${esc(chatWho(c.from))}</button>` : esc(chatWho(c.from))}${c.from && c.from === OWNER ? hmark({id:c.from, remote:true}) : ''}</b> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${c.text ? `<p data-raw style="margin:4px 0 0;white-space:pre-wrap">${etx(c.text)}</p>` : ''}${mediaHTML(c)}${wk ? `<div class="pi gbpi" data-pi="${wk}">${piInner(wp)}</div>` : ''}${c.from === social?.uid || WL.uid === social?.uid ? `<button class="cdel" data-act="rwall-del" data-id="${esc(c.mid)}">löschen</button>` : ''}</div>`; }).join('')
-    : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
+    : !WL.ready ? '' : '<p class="muted" style="margin:0">Noch keine Kommentare.</p>';
 }
 // Fotos, MP3s und Links im Chat (Inaya, 2026-10-10)
 let chatAttach = false;
@@ -12275,7 +12298,7 @@ document.addEventListener('submit', async e => {
   }
 });
 
-i18nStart(); navBoot(); render(); if (NAVR.pending) navScroll(NAVR.pending.y);
+i18nStart(); snapLoad(); navBoot(); render(); if (NAVR.pending) navScroll(NAVR.pending.y);
 const cloudReady = cloudInit();
 
 // Eigenes Farbgitter statt des System-Farbwählers (Inaya, 2026-10-10): nur das Gitter, kein Spektrum, keine Regler.
