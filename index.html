@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c6764d79cddc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a3ba47374fcb';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1778,6 +1778,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .ytph{display:grid;place-items:center;width:100%;height:100%;min-height:60px;background:#1b1b1d;color:#aaa;font:700 13px var(--f-body);letter-spacing:.04em}
 .musrc{display:inline-block;margin-top:2px;font:500 12px var(--f-body);color:inherit;opacity:.7;text-decoration:underline;text-underline-offset:2px}.musrc:hover{opacity:1}.ph .musrc{margin-left:6px}
 .nosb{position:absolute;left:8px;bottom:8px;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:#000b;color:#fff;font:600 12px var(--f-body)}.nosb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pcrtrim2{display:grid;gap:8px}.pcrtrim2 .vtr{background:var(--p-panel,#3a3a3e);border:1px solid var(--p-line,#ffffff30)}.pcrtrim2 .vtrplay{color:var(--p-fg,#fff);border-right-color:var(--p-line,#0a0a0b)}.pcrtlbl{font:600 14px var(--f-body);font-variant-numeric:tabular-nums;text-align:center}
 .pcrpick .nosb{bottom:auto;top:36px;left:5px}
 .muoff{margin:0;font-size:14px;opacity:.75;font-style:italic}
 .mshself .ph>.cameo{display:none}.mshself .ph{gap:0}
@@ -7912,7 +7913,10 @@ function pcrHTML(){
     <ol class="pcrgrid">${P.items.map((it, i) => `<li class="pcrcell"><button type="button" class="pcrpick" data-act="pcr-edit" data-i="${i}" aria-label="${it.t === 'v' ? 'Video' : 'Foto'} ${i + 1} bearbeiten">${pcrThumb(it)}${it.t === 'v' ? `<i class="pcrvid" aria-hidden="true">${PCR_ICO.play}${it.dur ? stTime(Math.min(it.l, it.dur)) : ''}</i>${it.nos ? NOS_BADGE : ''}` : ''}</button><b class="pcrnum">${i + 1}</b><button type="button" class="pcrx" data-act="pcr-del" data-i="${i}" aria-label="Entfernen">${PCR_ICO.x}</button><span class="pcrmv"><button type="button" data-act="pcr-mv" data-i="${i}" data-v="-1" aria-label="Nach vorn"${i ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" data-act="pcr-mv" data-i="${i}" data-v="1" aria-label="Nach hinten"${i < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button></span></li>`).join('')}${n < PCR_MAX ? `<li class="pcrcell">${add}</li>` : ''}</ol></div></div>`;
   const it = P.items[P.cur] || P.items[0];
   const med = it.t === 'v' ? `<video id="pcrmed" src="${it.url}" playsinline muted autoplay loop class="stvid" data-s="${+it.s || 0}" data-l="${+it.l || 0}" style="${galPos(it, R)}"></video>` : `<img id="pcrmed" src="${it.src}" alt="" draggable="false" style="${galPos(it, R)}">`;
-  const trim = it.t === 'v' ? `<div class="pcrtrim"><label><span>Anfang <b id="pcr-s-l">${stTime(it.s)}</b></span><input type="range" id="pcr-s" min="0" max="${Math.max(0, it.dur - it.l).toFixed(1)}" step=".1" value="${it.s}"${it.dur > it.l + .05 ? '' : ' disabled'}></label><label><span>Länge <b id="pcr-l-l">${Math.round(it.l)} s</b></span><input type="range" id="pcr-l" min="1" max="${Math.min(VID_SEC, it.dur || VID_SEC).toFixed(1)}" step=".5" value="${it.l}"></label>${it.dur > VID_SEC + .5 ? `<small class="note">Dein Video ist länger als ${VID_SEC} Sekunden. Wähl den Teil, der in den Beitrag soll.</small>` : ''}</div>` : '';
+  // Video kürzen wie bei Storys (Inaya, 2026-10-14): Streifen mit Vorschaubildern, Balken an beiden Enden ziehen, Abspielknopf mit Ton
+  const trim = it.t === 'v' ? `<div class="pcrtrim2">${it.dur > VID_SEC + .5 ? `<small class="note">Dein Video ist länger als ${VID_SEC} Sekunden. Zieh die Balken auf den Teil, der in den Beitrag soll.</small>` : ''}
+    <div class="vtr"><button type="button" class="vtrplay" data-act="pcr-vplay" aria-label="Abspielen">${PCR_VPLAY}</button><div class="vtrs" id="pcr-strip" role="group" aria-label="Videolänge wählen"><div class="vtrf" id="pcr-frames">${(it.frames || []).map(u => `<i style="background-image:url('${u}')"></i>`).join('')}</div><i class="vtrdim l" id="pcr-dl"></i><i class="vtrdim r" id="pcr-dr"></i><div class="vtrwin" id="pcr-win"><b class="vtrh l" data-h="l" aria-label="Anfang ziehen">‹</b><b class="vtrh r" data-h="r" aria-label="Ende ziehen">›</b></div><i class="vtrph" id="pcr-ph"></i></div></div>
+    <b id="pcr-tlbl" class="pcrtlbl"></b></div>` : '';
   return `<div class="pcrbox pcrth" style="${myThemeStyle()}">${head}<div class="pcrbody pcred">
     <div class="pcrstage"><button type="button" class="pcrfmt" data-act="pcr-fmt" aria-label="${P.ar === '11' ? 'Ganzes Format zeigen' : 'Quadratisch zuschneiden'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></button><div class="pcrframe${P.tag ? ' tagm' : ''}" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrmask" aria-hidden="true"></i><i class="pcrgrid3" aria-hidden="true"></i>${it.t === 'i' ? (it.tg || []).map((t, j) => `<span class="ptagb pcrtg" style="left:${t.x}%;top:${t.y}%" data-j="${j}"${P.tag ? '' : ' hidden'}>${esc(t.n)}<button type="button" class="pcrtgx" data-act="pcr-tag-x" data-j="${j}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('') : ''}${(it.sk || []).map((k, j) => `<span class="pgsk pcrsk" data-j="${j}" style="${skPos(k)}">${sgItemHTML(k.s, true)}<button type="button" class="pcrskx" data-act="pcr-sk-x" data-j="${j}" aria-label="Sticker entfernen">✕</button></span>`).join('')}${P.tp ? `<i class="pcrtp" style="left:${P.tp.x}%;top:${P.tp.y}%" aria-hidden="true"></i>` : ''}${it.t === 'i' && it.tg?.length && !P.tag ? `<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>
       ${n > 1 ? `<button type="button" class="pcrnav l" data-act="pcr-go" data-v="-1" aria-label="Vorheriges"${P.cur ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" class="pcrnav r" data-act="pcr-go" data-v="1" aria-label="Nächstes"${P.cur < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button><span class="pcrdots" aria-hidden="true">${P.items.map((_, i) => `<i${i === P.cur ? ' class="on"' : ''}></i>`).join('')}</span>` : ''}</div>
@@ -7980,8 +7984,43 @@ function pcrWire(){
   document.getElementById('pcr-z')?.addEventListener('input', e => { it.z = +e.target.value; setF(); put(); });
   document.getElementById('pcr-z')?.addEventListener('change', pcrBarSync);
   // Wischen auf dem Bild wechselt nicht (das verschiebt den Ausschnitt), dafür Pfeile, Punkte und Leiste unten
-  if (it.t === 'v') { const s0 = document.getElementById('pcr-s'), l0 = document.getElementById('pcr-l'), sync = () => { it.l = Math.min(it.l, it.dur || it.l); it.s = Math.min(it.s, Math.max(0, it.dur - it.l)); s0.max = Math.max(0, it.dur - it.l).toFixed(1); s0.value = it.s; s0.disabled = !(it.dur > it.l + .05); document.getElementById('pcr-s-l').textContent = stTime(it.s); document.getElementById('pcr-l-l').textContent = Math.round(it.l) + ' s'; el.dataset.s = it.s; el.dataset.l = it.l; delete el.dataset.done; try { el.currentTime = it.s; } catch {} el.play().catch(() => {}); };
-    s0.addEventListener('input', () => { it.s = +s0.value; sync(); }); l0.addEventListener('input', () => { it.l = +l0.value; sync(); }); }
+  if (it.t === 'v') pcrTrimWire(it, el);
+}
+const PCR_VPLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>', PCR_VPAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+function pcrTrimWire(it, el){
+  const st = document.getElementById('pcr-strip'); if (!st) return;
+  const mx = () => Math.min(VID_SEC, it.dur || VID_SEC), mn = () => Math.min(1, it.dur || 1), pc = x => (x / it.dur * 100) + '%';
+  const paint = () => { if (!it.dur) return; it.l = Math.min(it.l || mx(), mx()); it.s = Math.max(0, Math.min(it.s || 0, it.dur - it.l));
+    const w = document.getElementById('pcr-win'); if (w) { w.style.left = pc(it.s); w.style.width = pc(it.l); document.getElementById('pcr-dl').style.width = pc(it.s); document.getElementById('pcr-dr').style.left = pc(it.s + it.l); }
+    const lb = document.getElementById('pcr-tlbl'); if (lb) lb.textContent = `${stTime(it.s)} – ${stTime(it.s + it.l)} · ${Math.round(it.l)} ${Math.round(it.l) === 1 ? 'Sekunde' : 'Sekunden'}`;
+    el.dataset.s = it.s; el.dataset.l = it.l; delete el.dataset.done; };
+  const ph = () => { const p = document.getElementById('pcr-ph'); if (p && it.dur) p.style.left = (el.currentTime / it.dur * 100) + '%';
+    const b = document.querySelector('[data-act=pcr-vplay]'); if (b) { const on = !el.paused; if (b.dataset.on !== String(on)) { b.dataset.on = on; b.innerHTML = on ? PCR_VPAUSE : PCR_VPLAY; b.setAttribute('aria-label', on ? 'Anhalten' : 'Abspielen'); } } };
+  paint(); pcrFrames(it);
+  // Ton: ist „Ton an“ gewählt, läuft die Vorschau mit Ton; blockiert der Browser das ohne Tippen, bleibt sie stumm, bis man auf Abspielen tippt
+  if (!it.nos) { el.muted = false; el.play().catch(() => { el.muted = true; el.play().catch(() => {}); }); } else el.muted = true;
+  let drag = null;
+  st.addEventListener('pointerdown', e => { if (!it.dur) return; const h = e.target.closest('[data-h]')?.dataset.h || (e.target.closest('#pcr-win') ? 'm' : 'p'); st.setPointerCapture?.(e.pointerId); drag = {h, x:e.clientX, s:it.s, l:it.l}; e.preventDefault(); e.stopPropagation();
+    if (h === 'p') { const r = st.getBoundingClientRect(), t = (e.clientX - r.left) / r.width * it.dur; it.s = Math.max(0, Math.min(it.dur - it.l, t - it.l / 2)); drag.s = it.s; drag.h = 'm'; paint(); try { el.currentTime = it.s; } catch {} } });
+  st.addEventListener('pointermove', e => { if (!drag) return; const r = st.getBoundingClientRect(), dt = (e.clientX - drag.x) / r.width * it.dur;
+    if (drag.h === 'l') { const end = drag.s + drag.l; it.s = Math.max(0, Math.max(end - mx(), Math.min(end - mn(), drag.s + dt))); it.l = end - it.s; }
+    else if (drag.h === 'r') it.l = Math.max(mn(), Math.min(mx(), it.dur - drag.s, drag.l + dt));
+    else it.s = Math.max(0, Math.min(it.dur - it.l, drag.s + dt));
+    paint(); try { el.currentTime = drag.h === 'r' ? it.s + it.l - .05 : it.s; } catch {} ph(); });
+  const end = () => { if (!drag) return; drag = null; try { el.currentTime = it.s; } catch {} el.play().catch(() => {}); }; st.addEventListener('pointerup', end); st.addEventListener('pointercancel', end);
+  ['timeupdate', 'play', 'pause'].forEach(ev => el.addEventListener(ev, ph));
+}
+async function pcrFrames(it){ // kleine Vorschaubilder für den Streifen, einmal je Video
+  const fill = () => { const box = document.getElementById('pcr-frames'); if (box && PCR?.items[PCR.cur] === it && it.frames) box.innerHTML = it.frames.map(u => `<i style="background-image:url('${u}')"></i>`).join(''); };
+  if (it.frames || it.framesBusy || !it.url || !it.dur) return fill(); it.framesBusy = true;
+  const n = 10, v = document.createElement('video'); v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.src = it.url;
+  v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none'; document.body.appendChild(v); const out = [];
+  try { await new Promise(ok => { v.onloadeddata = ok; setTimeout(ok, 4000); }); try { await v.play(); v.pause(); } catch {}
+    const cv = document.createElement('canvas'); cv.height = 80; cv.width = Math.round(80 * (v.videoWidth || 9) / (v.videoHeight || 16)); const g = cv.getContext('2d');
+    for (let i = 0; i < n; i++) { await new Promise(ok => { v.onseeked = ok; try { v.currentTime = Math.min(it.dur - .05, (i + .5) * it.dur / n); } catch { ok(); } setTimeout(ok, 1500); });
+      try { g.drawImage(v, 0, 0, cv.width, cv.height); out.push(cv.toDataURL('image/jpeg', .5)); } catch { out.push(''); } }
+    it.frames = out; fill();
+  } finally { it.framesBusy = false; v.removeAttribute('src'); v.remove(); }
 }
 const skPos = k => `left:${+k.x}%;top:${+k.y}%;width:${+k.w}%`;
 function skClean(l){ return (Array.isArray(l) ? l : []).map(k => ({s:sgClean(k?.s), x:Math.max(0, Math.min(100, +k?.x || 50)), y:Math.max(0, Math.min(100, +k?.y || 50)), w:Math.max(8, Math.min(90, +k?.w || 30))})).filter(k => k.s && !sgIsGif(k.s)).slice(0, 6); }
@@ -11154,7 +11193,8 @@ document.addEventListener('click', async e => {
     const R = pcrR(PCR.ar); PCR.items.forEach(x => { const mm = pcrZmin(x, R); if (x !== it && (x.f || x.z < mm)) x.z = mm; if (x === it && x.f) x.z = Math.max(mm, Math.min(1, x.z)); }); pcrPaint(); }
   else if (a === 'pcr-sk') { if (!PCR) return; PCR.sk = !PCR.sk; PCR.tag = false; PCR.mu = false; PCR.tp = null; if (PCR.sk) { if (SG.form) sgClose(); SG.tgt = 'pcr'; await sgLoad(); } else SG.tgt = null; pcrPaint(); }
   else if (a === 'pcr-sk-x') { const it = PCR?.items[PCR.cur]; if (!it?.sk) return; it.sk.splice(+b.dataset.j, 1); pcrPaint(); }
-  else if (a === 'pcr-nos') { const it = PCR?.items[PCR.cur]; if (!it || it.t !== 'v') return; it.nos = !it.nos; pcrPaint(); toast(it.nos ? 'Video ist stumm. Es spielt bei allen ohne Ton.' : 'Video hat wieder Ton.'); return; }
+  else if (a === 'pcr-vplay') { const v = document.getElementById('pcrmed'), it = PCR?.items[PCR.cur]; if (!v || !it) return; if (v.paused || (v.muted && !it.nos)) { v.muted = !!it.nos; v.play().catch(() => {}); } else v.pause(); return; }
+  else if (a === 'pcr-nos') { const it = PCR?.items[PCR.cur]; if (!it || it.t !== 'v') return; it.nos = !it.nos; pcrPaint(); { const v = document.getElementById('pcrmed'); if (v) { v.muted = !!it.nos; v.play().catch(() => {}); } } toast(it.nos ? 'Video ist stumm. Es spielt bei allen ohne Ton.' : 'Video hat wieder Ton.'); return; }
   else if (a === 'pcr-tag') { if (!PCR) return; PCR.tag = !PCR.tag; PCR.mu = false; PCR.sk = false; PCR.tp = null; pcrPaint(); }
   else if (a === 'pcr-mu') { if (!PCR) return; PCR.mu = !PCR.mu; PCR.tag = false; PCR.sk = false; PCR.tp = null; PMUP = false; pcrPaint(); if (PCR.mu) document.getElementById('pmq')?.focus(); }
   else if (a === 'pcr-mu-x') { PMU = null; stAuStop(); pcrPaint(); paintCompose(); }
