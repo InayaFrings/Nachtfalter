@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c9f79f8fbb87';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f94c94f62f9d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -9710,7 +9710,15 @@ const CI = { // Symbole für Anrufe
   pen:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3C13 4 8.3 8.8 6.8 16.5L5 21"/><path d="M20.5 3c-1 6.3-5.1 10.8-11.7 12.7"/><path d="M9.3 10.8l4.2.5M8 13.6l3.6.2"/></svg>', // Schreibfeder
   talk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h10a2 2 0 0 1 2 2V11a2 2 0 0 1-2 2H9l-4 3.5V13H4a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z"/><path d="M18.5 8H20a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3.5L15 17h-3a2 2 0 0 1-2-2"/><path d="M6 7.2v2.4M9 6v4.8M12 7.2v2.4"/></svg>' };
 let RTC_TURN = null; // optionaler TURN-Server aus site/rtc (nur wenn Inaya einen einträgt)
-async function rtcTurn(){ if (RTC_TURN !== null || !social) return; RTC_TURN = false; try { const d = await social.db.doc('site/rtc').get(); const x = d.exists ? d.data() : null; if (x?.urls) RTC_TURN = {urls:String(x.urls).split(/[\s,]+/).filter(Boolean), username:x.username || '', credential:x.credential || ''}; } catch {} }
+// TURN-Adressen aufräumen (Inaya, 2026-10-14): Safari lehnt eine falsch geschriebene Adresse ab (Fehler 12) und dann klappt gar kein Anruf.
+// „relay1.example.com:3478“, „turn: relay…“, „https://relay…“ werden zu „turn:relay…:3478“; was danach nicht passt, wird weggelassen.
+function turnUrls(raw){ return String(raw || '').replace(/\b(turns?|stun):\s+/gi, '$1:').split(/[\s,;]+/).map(u => { u = u.trim().replace(/^https?:\/\//i, '').replace(/^(turns?|stun):\/\//i, '$1:').replace(/\/+$/, ''); if (!u) return '';
+    if (!/^(turns?|stun):/i.test(u)) u = 'turn:' + u; u = u.replace(/^(turns?|stun):/i, m => m.toLowerCase());
+    return /^(turns?|stun):[a-z0-9-]+(\.[a-z0-9-]+)+(:\d{2,5})?(\?transport=(udp|tcp))?$/i.test(u) ? u : ''; }).filter(Boolean); }
+async function rtcTurn(){ if (RTC_TURN !== null || !social) return; RTC_TURN = false; try { const d = await social.db.doc('site/rtc').get(); const x = d.exists ? d.data() : null; const urls = turnUrls(x?.urls); if (urls.length) RTC_TURN = {urls, username:String(x.username || '').trim(), credential:String(x.credential || '').trim()}; } catch {} }
+// Verbindung mit TURN anlegen; lehnt der Browser die TURN-Angaben trotzdem ab, ohne TURN weitermachen statt den Anruf scheitern zu lassen
+function rtcPC(cfg){ try { return new RTCPeerConnection(cfg); } catch (e) { if (!RTC_TURN) throw e; RTC_TURN_BAD = String(e?.name || e?.code || e); RTC_TURN = false; return new RTCPeerConnection({...cfg, iceServers:rtcIce()}); } }
+let RTC_TURN_BAD = '';
 const rtcIce = () => [{urls:['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']}, {urls:'stun:stun.cloudflare.com:3478'}, ...(RTC_TURN ? [RTC_TURN] : [])];
 
 /* ---- Talks eines Chats beobachten ---- */
@@ -9800,7 +9808,7 @@ function callSync(){ const C = CALL; if (!C || !C.joined) return; const p = C.ro
   if (/^dm_/.test(C.cid) && C.had && !C.peers.size && !C.ending) { C.ending = 1; C.status = 'Anruf beendet'; callStatus(); setTimeout(() => CALL === C && callLeave(true), 1500); } // privat: legt die andere Person auf, ist der Anruf vorbei
   callPaint(); }
 // Verbindung zu einer Person: pro Paar bietet nur die Seite mit der kleineren ID an, die andere antwortet (keine Überschneidungen, auch wenn viele gleichzeitig beitreten)
-function peerOpen(C, u, rs){ const pc = new RTCPeerConnection({iceServers:rtcIce(), bundlePolicy:'max-bundle'});
+function peerOpen(C, u, rs){ const pc = rtcPC({iceServers:rtcIce(), bundlePolicy:'max-bundle'});
   const pr = {u, rs, pc, born:Date.now(), init:social.uid < u, making:false, cand:[], candT:null, rq:[], stream:new MediaStream(), state:'neu', lost:0}; C.peers.set(u, pr);
   if (pr.init) C.local.getTracks().forEach(t => pc.addTrack(t, C.local));
   pc.ontrack = e => { if (!pr.stream.getTracks().includes(e.track)) pr.stream.addTrack(e.track); e.track.onunmute = () => callPaint(); spkStart(C, u, pr.stream); callPaint(); };
@@ -10096,7 +10104,7 @@ async function diagRun(){ const out = document.getElementById('diag-out'); if (!
     try { const st = await lim(navigator.mediaDevices.getUserMedia({audio:true}), 30000); const t = st.getAudioTracks()[0]; put(true, 'Mikrofon: erlaubt (' + (t?.label || 'Mikrofon') + ')'); st.getTracks().forEach(x => x.stop()); } catch (e) { put(false, 'Mikrofon: ' + micErr(e)); }
     const mt = window.MediaRecorder ? ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'].find(t => MediaRecorder.isTypeSupported(t)) : null; put(!!mt, 'Aufnahme: ' + (mt || 'nicht möglich')); }
   if (!window.RTCPeerConnection) put(false, 'Anrufe: dieser Browser kann kein WebRTC'); else { await rtcTurn().catch(() => {});
-    try { const pc = new RTCPeerConnection({iceServers:rtcIce()}); pc.createDataChannel('t'); const seen = {host:0, srflx:0, relay:0}; const done = new Promise(r => { pc.onicecandidate = e => { if (!e.candidate) return r(); const ty = (e.candidate.candidate.match(/ typ (\w+)/) || [])[1]; if (ty in seen) seen[ty]++; }; setTimeout(r, 6000); });
+    try { const had = !!RTC_TURN, pc = rtcPC({iceServers:rtcIce()}); if (had && !RTC_TURN) put(false, `TURN: Der Browser lehnt die eingetragenen Angaben ab (${RTC_TURN_BAD}). Prüf Adresse, Benutzername und Passwort unter Anrufe.`); pc.createDataChannel('t'); const seen = {host:0, srflx:0, relay:0}; const done = new Promise(r => { pc.onicecandidate = e => { if (!e.candidate) return r(); const ty = (e.candidate.candidate.match(/ typ (\w+)/) || [])[1]; if (ty in seen) seen[ty]++; }; setTimeout(r, 6000); });
       await pc.setLocalDescription(await pc.createOffer()); await done; pc.close();
       put(seen.srflx > 0 || seen.relay > 0, `Netz: ${seen.srflx ? 'STUN erreichbar' : 'STUN NICHT erreichbar'}${RTC_TURN ? ', TURN ' + (seen.relay ? 'erreichbar' : 'NICHT erreichbar') : ', kein TURN eingetragen'} (${seen.host}/${seen.srflx}/${seen.relay})`); } catch (e) { put(false, 'Netz: Test fehlgeschlagen (' + err(e) + ')'); } }
   put(null, 'Fertig.'); document.getElementById('diag-btns').hidden = false; }
@@ -11732,7 +11740,7 @@ document.addEventListener('submit', async e => {
     p.text = text; p.edited = Date.now(); postEdit = null; save(); render(); toast('Beitrag geändert');
   } else if (t === 'pushkey') { if (!amOwner) return; const v = val('push-vapid').trim(); try { await social.db.doc('site/push').set({vapid:v}); PUSH.vapid = v; pushPaint(); toast(v ? 'Web-Push-Schlüssel gespeichert' : 'Web-Push-Schlüssel entfernt'); } catch { toast('Speichern ging nicht.'); }
   } else if (t === 'talk') { await tkSave(f, false);
-  } else if (t === 'rtcturn') { if (!amOwner) return; const urls = val('rtc-u').trim(); try { await social.db.doc('site/rtc').set(urls ? {urls, username:val('rtc-n').trim(), credential:val('rtc-c').trim()} : {urls:''}); RTC_TURN = null; toast(urls ? 'TURN-Server gespeichert' : 'TURN-Server entfernt'); } catch { toast('Speichern ging nicht.'); }
+  } else if (t === 'rtcturn') { if (!amOwner) return; const raw = val('rtc-u').trim(), urls = turnUrls(raw).join(' '); if (raw && !urls) { toast('Die TURN-Adresse sieht falsch aus. Beispiel: turn:relay1.expressturn.com:3478'); return; } try { await social.db.doc('site/rtc').set(urls ? {urls, username:val('rtc-n').trim(), credential:val('rtc-c').trim()} : {urls:''}); RTC_TURN = null; toast(urls ? 'TURN-Server gespeichert' : 'TURN-Server entfernt'); } catch { toast('Speichern ging nicht.'); }
   } else if (t === 'gifkey') {
     if (!amOwner || !social) return; const k = val('gk-in').trim();
     try { await social.db.doc('site/gif').set({giphy:k}); SG.key = k; SG.res = []; toast(k ? 'GIF-Suche eingerichtet' : 'GIF-Schlüssel entfernt'); } catch { toast('Speichern hat nicht geklappt.'); }
