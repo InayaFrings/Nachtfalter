@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9dc87214d1e8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='495b301661e3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -118,7 +118,7 @@
     async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
     // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
-    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
+    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {d: d.exists ? d.data() : null}; } catch (e) { return e && e.code === 'permission-denied' ? {old: true} : {error: true}; } }, // seit 2026-10-15 nur noch verschlüsselte Einträge (v:2), alte mit offener E-Mail sind gesperrt
     // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
     async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
     async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
@@ -2211,13 +2211,13 @@ const SH_GRP = '<span class="cameo stgrp"><svg viewBox="0 0 24 24" aria-hidden="
 function shGrid(act, sel, go){ const l = shTargets();
   if (!l.length) return '<p class="note">Du hast noch keine Chats oder Freunde.</p>';
   return `<label class="shsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="shq" placeholder="Suchen" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Personen oder Gruppen suchen"></label>
-    <div class="shgrid">${l.map(x => `<button type="button" class="shti" data-act="${act}" data-id="${esc(x.id)}" data-q="${esc((x.n + ' ' + x.h).toLowerCase())}" aria-pressed="${sel.has(x.id)}"><span class="shav${x.g ? '' : ' shpor'}">${x.g ? (x.pic ? `<span class="cameo grpic"><img src="${x.pic}" alt=""></span>` : SH_GRP) : x.u ? portrait(x.u, normTheme({...(x.u.theme || BLANK_THEME())}), 'small shpt') : '<span class="cameo"></span>'}<i class="shck" aria-hidden="true">${BAT}</i></span><span class="shn">${esc(x.n)}</span>${x.g ? '<small>Gruppe</small>' : ''}</button>`).join('')}<p class="note shnone" hidden>Niemand gefunden.</p></div>
+    <div class="shgrid">${l.map(x => `<button type="button" class="shti" data-act="${act}" data-id="${esc(x.id)}" data-q="${esc((x.n + ' ' + x.h).toLowerCase())}" aria-pressed="${sel.has(x.id)}"><span class="shav${x.g ? '' : ' shpor'}">${x.g ? (safePic(x.pic) ? `<span class="cameo grpic"><img src="${esc(safePic(x.pic))}" alt=""></span>` : SH_GRP) : x.u ? portrait(x.u, normTheme({...(x.u.theme || BLANK_THEME())}), 'small shpt') : '<span class="cameo"></span>'}<i class="shck" aria-hidden="true">${BAT}</i></span><span class="shn">${esc(x.n)}</span>${x.g ? '<small>Gruppe</small>' : ''}</button>`).join('')}<p class="note shnone" hidden>Niemand gefunden.</p></div>
     <div class="shbar"><button type="button" class="btn shgo" data-act="${go}">${shGoTxt(sel.size)}</button></div>`; }
 // Gruppenbild (Inaya, 2026-10-14): klein als JPEG im Chat-Dokument (pic), steht vor dem Gruppennamen
 const grpPic = c => typeof c?.pic === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(c.pic) ? c.pic : '';
 async function grpPicFile(f){ const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = URL.createObjectURL(f); }); const S0 = 192, cv = document.createElement('canvas'); cv.width = cv.height = S0; const x = cv.getContext('2d'), m = Math.min(img.naturalWidth, img.naturalHeight); x.drawImage(img, (img.naturalWidth - m) / 2, (img.naturalHeight - m) / 2, m, m, 0, 0, S0, S0); return cv.toDataURL('image/jpeg', .82); }
 // Bild vor dem Namen: Gruppe = Gruppenbild (sonst Symbol), privater Chat = Profilbild der Person
-function chAvHTML(c, cls = ''){ if (!c) return ''; if (c.group) { const p = grpPic(c); return `<span class="chav ${cls}">${p ? `<img src="${p}" alt="">` : `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg>`}</span>`; }
+function chAvHTML(c, cls = ''){ if (!c) return ''; if (c.group) { const p = grpPic(c); return `<span class="chav ${cls}">${p ? `<img src="${esc(p)}" alt="">` : `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg>`}</span>`; }
   const o = (c.members || []).find(m => m !== social?.uid), u = o ? uidUser(o) : null; if (!u && o && social && !NT.asked[o]) { NT.asked[o] = 1; loadProf(o).then(softRender); } return `<span class="chav ${cls}">${u ? headPic(u) : ''}</span>`; } // rund wie früher (Inaya, 2026-10-14)
 document.addEventListener('change', async e => { if (e.target.id !== 'g-pic' || !e.target.files?.[0]) return; grabGroupDraft(); try { CH.gdraft.pic = await grpPicFile(e.target.files[0]); render(); } catch { toast('Das Bild ließ sich nicht laden.'); } });
 // Freunde in Gruppen hinzufügen: Zeilen wie bei der User-Suche (Profilbild, Name, @Nutzername), Haken rechts (Inaya, 2026-10-14)
@@ -5329,7 +5329,7 @@ function obPatch(full){
   document.querySelectorAll('.obwear .shopgrid .item').forEach(el => { const t = el.querySelector('.thumb'), it = t && item(t.dataset.id); if (it) el.classList.toggle('on', isOn(o, it)); });
   obGridT = setTimeout(() => { if (S.pending?.step === 'avatar') obRender(); }, 650);
 }
-const coverHTML = c => c && /^data:image\//.test(c) ? `<div class="pcover" style="background-image:url('${c}')" role="img" aria-label="Banner"></div>` : '';
+const coverHTML = c => c && /^data:image\//.test(c) ? `<div class="pcover" style="background-image:url('${cssUrl(c)}')" role="img" aria-label="Banner"></div>` : '';
 function coverEd(c){
   return `${c ? coverHTML(c) : '<p class="note" style="margin:0">Kein Banner ausgewählt. Dein Profil beginnt dann direkt mit dem Nutzernamen.</p>'}
     <div class="row"><label class="btn ghost filebtn">${c ? 'Anderes Foto wählen' : 'Foto als Banner hochladen'}<input type="file" accept="image/*" id="cover-file"></label>${c ? '<button type="button" class="btn ghost" data-act="cover-del">Banner entfernen</button>' : ''}</div>`;
@@ -5337,7 +5337,7 @@ function coverEd(c){
 function bannerHTML(b, name, handle=''){ // im Bannerkasten steht der Nutzername (Inayas Wunsch)
   if (!b) return '';
   const t = handle, span = t ? `<span style="font-family:${FONTS[b.font]}">${esc(t)}</span>` : '';
-  if (b.img) return `<div class="pbanner img" style="background-image:url('${b.img}');color:#ecebe7">${span}</div>`;
+  if (b.img) return `<div class="pbanner img" style="background-image:url('${cssUrl(b.img)}');color:#ecebe7">${span}</div>`;
   const day = b.mode === 'tag', bbg = b.bg || (day ? '#eeece7' : '#0e0e10'), fg = /^#[0-9a-f]{6}$/i.test(b.fg || '') ? b.fg : autoFg(bbg); // gewählte Schriftfarbe gilt immer (Inaya, 2026-10-11)
   return `<div class="pbanner" style="background-color:${b.bg || (day ? '#eeece7' : '#0e0e10')};background-image:${patternURL(b.pattern, b.mode, b.fg ? .32 : .14, b.fg || '')};color:${fg}">${span}</div>`;
 }
@@ -5897,12 +5897,26 @@ async function claimHandle(h){
   let old = null;
   try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; } catch {}
   try { await cloud.handles.doc(cloud.uid).set({h, ...(me()?.name ? {n:me().name} : {})}, {merge:true}); } catch {} // n = Anzeigename, damit alle Umbenennungen sofort sehen
-  // Anmelden mit Nutzername: Nutzername → E-Mail (nur einzeln abrufbar, nicht auflistbar)
-  if (PUB && NF_AUTH.email()) {
-    if (old && old !== h) await cloud.db.doc('logins/' + old).delete().catch(() => {});
-    await cloud.db.doc('logins/' + h).set({email:NF_AUTH.email(), uid:cloud.uid}).catch(() => {});
+  // Anmelden mit Nutzername: logins/<nutzername> mit verschlüsselter E-Mail (lgSeal). Beim Umbenennen wandert der Eintrag mit
+  if (PUB && NF_AUTH.email() && old !== h) {
+    let moved = null; if (old) { try { const d = await cloud.db.doc('logins/' + old).get(); if (d.exists && d.data().v === 2) moved = d.data(); } catch {} await cloud.db.doc('logins/' + old).delete().catch(() => {}); }
+    if (LG.pw) await lgSave(LG.pw, h); else if (moved) await cloud.db.doc('logins/' + h).set({...moved, ts:Date.now()}).catch(() => {});
   }
 }
+/* Anmelden mit Nutzername, ohne dass jemand fremde E-Mail-Adressen abfragen kann (Inaya, 2026-10-15)
+   Vorher stand in logins/<nutzername> die E-Mail im Klartext und war für alle abrufbar. Jetzt: {uid, v:2, s, iv, c, ts}, c = E-Mail,
+   verschlüsselt mit einem Schlüssel aus dem Passwort (PBKDF2-SHA256, 200.000 Runden, AES-GCM). Nur wer das Passwort kennt, bekommt die E-Mail.
+   Die Regeln geben nur v:2-Einträge heraus. Alte Einträge werden beim nächsten Anmelden ersetzt (lgSoon). */
+const LG = {pw:null, t:null};
+async function lgKey(pw, salt){ const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']); return crypto.subtle.deriveKey({name:'PBKDF2', hash:'SHA-256', salt, iterations:200000}, base, {name:'AES-GCM', length:256}, false, ['encrypt', 'decrypt']); }
+async function lgSeal(email, pw){ const s = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)); const c = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, await lgKey(pw, s), new TextEncoder().encode(email))); return {v:2, s:b64e(s), iv:b64e(iv), c:b64e(c)}; }
+async function lgOpen(d, pw){ try { if (d?.v !== 2) return null; const p = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64d(d.iv)}, await lgKey(pw, b64d(d.s)), b64d(d.c)); return new TextDecoder().decode(p); } catch { return null; } }
+async function lgSave(pw, h = me()?.handle){ const em = NF_AUTH.email(); if (!PUB || !social || !em || !h || !pw) return false;
+  try { const ref = social.db.doc('logins/' + h); let d = null; try { const x = await ref.get(); d = x.exists ? x.data() : null; } catch {} // alter Eintrag: Lesen gesperrt, wird einfach ersetzt
+    if (d && d.uid === social.uid && (await lgOpen(d, pw)) === em) return true; // schon aktuell, nichts schreiben
+    await ref.set({uid:social.uid, ...(await lgSeal(em, pw)), ts:Date.now()}); return true; } catch { return false; } }
+// Nach dem Anmelden: Passwort kurz merken, bis Profil und Nutzername geladen sind, dann den Eintrag (neu) verschlüsseln
+function lgSoon(pw){ LG.pw = pw; clearTimeout(LG.t); let n = 0; const go = () => { if (me()?.handle && social) { lgSave(pw); return; } if (++n < 40) LG.t = setTimeout(go, 3000); }; go(); setTimeout(() => { if (LG.pw === pw) LG.pw = null; }, 15 * 60e3); }
 function refreshFoot(){ const f = document.getElementById('savestate'); if (f) f.textContent = saveText(); }
 const saveText = () => PUB ? (cloud?.ok ? 'Dein Konto ist sicher gespeichert.' : 'Wird gespeichert …') : cloud?.ok ? 'Dein Konto ist sicher in deinem Claude-Konto gespeichert.' : 'Dein Konto ist in diesem Browser gespeichert.';
 
@@ -5912,6 +5926,13 @@ let composeType = 'gedanke', shopCat = 'back', trial = null, profTab = 'room', d
 
 /* ---------- Helfer ---------- */
 const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Sichere Bilder (Inaya, 2026-10-15): Profil- und Gruppenbilder kommen von anderen Leuten. Erlaubt sind nur echte Rasterbilder als data:-URL
+   (JPEG, PNG, WebP, GIF, kein SVG). Alles andere zählt als „kein Bild“. Jede Bildquelle wird zusätzlich mit esc() bzw. cssUrl() eingesetzt,
+   damit ein präparierter Wert nie aus dem Attribut ausbrechen und Code ausführen kann. */
+const IMG_OK = /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/;
+const safePic = v => typeof v === 'string' && v.length < 600000 && IMG_OK.test(v) ? v : '';
+const safeHref = v => /^https?:\/\/[^\s<>"]+$/i.test(String(v ?? '').trim()) ? String(v).trim() : ''; // Links nur http(s), nie javascript: oder data:
+const cssUrl = v => String(v ?? '').replace(/[\s"'()\\<>]/g, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'));
 const me = () => S.users[S.me];
 const item = id => ITEMS.find(i => i.id === id);
 function ago(ts){
@@ -5976,10 +5997,10 @@ const OWNER_BAT = `<svg class="obat" viewBox="-24 -14 48 26" aria-hidden="true">
 const isSiteOwner = u => !!u && (u.id === S.me ? amOwner : (u.remote && OWNER === u.id));
 const hmark = u => isSiteOwner(u) ? `<span class="hmark omark" title="Owner von Noctibat">${BAT}<span class="sr">Owner</span></span>` : u?.helper ? `<span class="hmark" title="${u.helper} von Noctibat">${BAT}<span class="sr">${u.helper}</span></span>` : '';
 const ulink = id => { const u = S.users[id] || (PROF[id] ? profUser(id) : null); return `<span class="uname"><button class="lnk" data-act="profile" data-id="${id}">${esc(u?.name || nmOf(id) || 'Jemand')}</button>${hmark(u || {id, remote:true})}</span>`; };
-const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}">${cls.includes('hasring') ? '<i class="pring" aria-hidden="true"></i>' : ''}<div class="pic">${u.pic && !cls.includes('mirror') ? `<img src="${u.pic}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
+const portrait = (u, t=u.theme, cls='') => `<div class="portrait fr-${t.frame} shape-${t.shape} ${cls}">${cls.includes('hasring') ? '<i class="pring" aria-hidden="true"></i>' : ''}<div class="pic">${safePic(u.pic) && !cls.includes('mirror') ? `<img src="${esc(safePic(u.pic))}" alt="Profilbild">` : avatar(u.outfit, cls.includes('mirror') ? 'full' : 'bust')}</div></div>`;
 // Profilbild klein, aber mit Rahmen und Form wie im Profil der Person (Inaya, 2026-10-14)
 const miniPor = (u, cls = 'mini') => { if (!u) return ''; const t = normTheme({...(u.theme || BLANK_THEME())}); return `<span class="minipw" style="${themeStyle(t)}">${portrait(u, t, cls)}</span>`; }; // Farben der Person, damit der Rahmen wie im Profil aussieht
-const headPic = (u, ...a) => u?.pic && /^data:image\//.test(u.pic) ? `<img class="cpic" src="${u.pic}" alt="" draggable="false">` : avatar(u?.outfit, 'head', ...a); // Profilbild, sonst Avatar (Inaya, 2026-10-12)
+const headPic = (u, ...a) => safePic(u?.pic) ? `<img class="cpic" src="${esc(safePic(u.pic))}" alt="" draggable="false">` : avatar(u?.outfit, 'head', ...a); // Profilbild, sonst Avatar (Inaya, 2026-10-12)
 const uidUser = id => id === social?.uid ? me() : S.users[id] || (PROF[id] ? profUser(id) : null);
 const cameo = u => `<span class="cameo">${headPic(u)}</span>`;
 const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Link',clip:'Video',neu:'Neuigkeit',teilen:'Geteilt',musik:'Musik'};
@@ -5990,10 +6011,10 @@ const KIND = {gedanke:'Gedanke',foto:'Bild',video:'Link',clip:'Video',neu:'Neuig
    so mischen sich keine Daten. Die Auswahl sieht aus wie das jeweilige Profil (Kastenfarbe, Schrift, Muster, Bild). */
 const ACCT_ON = () => PUB && !!window.NF_AUTH?.accounts;
 function acctRemember(){ if (!ACCT_ON() || !social) return; const u = me(); if (!u || u.remote || !u.handle) return;
-  const t = u.theme || {}, pic = typeof u.pic === 'string' && /^data:image\//.test(u.pic) && u.pic.length < 90000 ? u.pic : '';
+  const t = u.theme || {}, pic = safePic(u.pic).length < 90000 ? safePic(u.pic) : '';
   NF_AUTH.remember({name:u.name || '', handle:u.handle, pic, outfit:pic ? null : u.outfit || null, theme:{box:t.box || '', fg:t.fg || '', pattern:t.pattern || '', font:t.font || '', page:t.page || '', pagePattern:t.pagePattern || ''}}); }
 const acctTheme = a => normTheme({...(a?.theme || {})});
-const acctPic = a => a?.pic && /^data:image\//.test(a.pic) ? `<img class="cpic" src="${a.pic}" alt="" draggable="false">` : avatar(a?.outfit || {}, 'head');
+const acctPic = a => safePic(a?.pic) ? `<img class="cpic" src="${esc(safePic(a.pic))}" alt="" draggable="false">` : avatar(a?.outfit || {}, 'head');
 function acctBackHTML(){ if (!ACCT_ON()) return ''; const b = NF_AUTH.back(); if (!b || NF_AUTH.accounts().some(x => x.slot === NF_AUTH.slot)) return '';
   return `<button class="lnk acctback" data-act="acct-go" data-slot="${esc(b.slot)}">Abbrechen, zurück zu @${esc(b.handle || b.name)}</button>`; }
 const ACCT_CHK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
@@ -6303,7 +6324,7 @@ function piInner(p, full){
   const nC = all.length, bar = `<div class="reacts pbar">${reacts}<button type="button" class="cmbtn" data-act="cmv-open" data-k="${k}" aria-label="Kommentare ansehen">${CMV_ICO}<span>${nC || ''}</span></button>${p.gb ? gbSendBtn(p) : repostBtn(p) + sendBtn(p)}</div>`;
   if (!full) return bar;
   const rp = CMRE[k], rpName = rp ? (rp.u === uid ? me().name : S.users[rp.u]?.name || (PROF[rp.u] ? profUser(rp.u)?.name : '') || byId[rp.d]?.name || 'Jemand') : '';
-  return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<label class="attbtn pcatt" title="Foto anhängen" aria-label="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" hidden></label><span class="cinw">${PCIMG[k] ? `<span class="pcthumb"><img src="${PCIMG[k]}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<textarea class="pcin mlin" id="pc-${k}" rows="1" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Kommentieren …'}" maxlength="300" aria-label="Kommentar" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachkommentar aufnehmen" title="Sprachkommentar: gedrückt halten"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>` : ''}`;
+  return `<div class="cmts">${cm || '<p class="muted cmvnone">Noch keine Kommentare. Schreib den ersten.</p>'}</div>${bar}${can ? `<form class="cform" data-form="pcomment" data-k="${k}">${rp ? `<span class="pcre">Antwort an ${esc(rpName)} <button type="button" class="lnk" data-act="pc-re-x" data-k="${k}" aria-label="Antworten abbrechen">×</button></span>` : ''}<label class="attbtn pcatt" title="Foto anhängen" aria-label="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input type="file" accept="image/*" class="pcfile" data-k="${k}" hidden></label><span class="cinw">${PCIMG[k] ? `<span class="pcthumb"><img src="${esc(PCIMG[k])}" alt="Ausgewähltes Foto"><button type="button" class="pcx" data-act="pc-img-x" data-k="${k}" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''}<textarea class="pcin mlin" id="pc-${k}" rows="1" placeholder="${PCIMG[k] ? 'Text dazu (freiwillig)…' : rp ? 'Antwort an ' + esc(rpName) + '…' : 'Kommentieren …'}" maxlength="300" aria-label="Kommentar" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachkommentar aufnehmen" title="Sprachkommentar: gedrückt halten"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>` : ''}`;
 }
 // Fotos in Kommentaren: klein, weniger als halb so groß wie im Beitrag (Inaya, 2026-10-11)
 // Antworten: auf „antworten“ oder direkt auf die Sprechblase tippen; Fokus sofort, damit die Tastatur aufgeht (Inaya, 2026-10-11)
@@ -6550,8 +6571,8 @@ const STF = [['normal','Normal',''],
 const stF = f => STF.find(x => x[0] === f) || STF[0];
 const stFilter = f => stF(f)[2] || 'none';
 const stVfBg = bg => bg && bg !== 'blur' ? `background-color:${esc(bg.c)};background-image:${stTbPat(bg)}` : 'background:#0a0a0b';
-const stImgHTML = (src, f, alt='', vid, vf) => { const x = stF(f); const vtag = st => `<video class="stimg stvid" src="${src}" playsinline autoplay ${vid === 'loop' ? 'loop muted' : vid === 'loopsnd' ? 'loop' : ''}${vf ? ` data-s="${+vf.s || 0}" data-l="${+vf.l || 0}"` : ''} style="filter:${x[2] || 'none'};${st}"></video>`;
-  return `${vid ? vf ? `<div class="stvf"><div class="stvfbg" style="${stVfBg(vf.bg)}"></div>${vtag(`left:${+vf.x}%;top:${+vf.y}%;width:${+vf.w}%;height:${+vf.h}%${vf.r ? `;transform:rotate(${+vf.r}deg)` : ''}`)}</div>` : vtag('') : `<img class="stimg" draggable="false" src="${src}" alt="${esc(alt)}" style="filter:${x[2] || 'none'}">`}${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`; };
+const stImgHTML = (src, f, alt='', vid, vf) => { const x = stF(f); const vtag = st => `<video class="stimg stvid" src="${esc(src)}" playsinline autoplay ${vid === 'loop' ? 'loop muted' : vid === 'loopsnd' ? 'loop' : ''}${vf ? ` data-s="${+vf.s || 0}" data-l="${+vf.l || 0}"` : ''} style="filter:${x[2] || 'none'};${st}"></video>`;
+  return `${vid ? vf ? `<div class="stvf"><div class="stvfbg" style="${stVfBg(vf.bg)}"></div>${vtag(`left:${+vf.x}%;top:${+vf.y}%;width:${+vf.w}%;height:${+vf.h}%${vf.r ? `;transform:rotate(${+vf.r}deg)` : ''}`)}</div>` : vtag('') : `<img class="stimg" draggable="false" src="${esc(src)}" alt="${esc(alt)}" style="filter:${x[2] || 'none'}">`}${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`; };
 /* ---------- Eigene Sticker für die Story (Inaya, 2026-10-12): selbst gezeichnet, durchsichtiger Hintergrund, weißer Sticker-Rand ---------- */
 const STK_CAT = [['h','Herzen'],['g','Sterne & Glitzer'],['b','Schleifen & Falter'],['n','Niedlich'],['e','Emo & Scene'],['d','Deko']];
 const STK = (() => {
@@ -6771,11 +6792,11 @@ function stActHTML(st){ const g = STV.list[STV.ui], c = stICtx(), hasI = (st.stk
 // Foto/Video liegt frei auf der Story (Inaya, 2026-10-12): m = {cx, cy Mitte in %, w Breite in % der Story, r Drehung}, ar = Höhe/Breite
 const stFitM = ar => ({cx:50, cy:50, w:Math.round(Math.min(100, 100 * 16 / 9 / ar) * 100) / 100, r:0});
 const stMVf = n => { const m = n.m, h = m.w * n.ar * 9 / 16; return {x:m.cx - m.w / 2, y:m.cy - h / 2, w:m.w, h, r:+m.r || 0}; };
-const stMBgStyle = n => n.bg === 'blur' ? `background-image:url('${n.src}')` : stVfBg(n.bg);
+const stMBgStyle = n => n.bg === 'blur' ? `background-image:url('${cssUrl(n.src)}')` : stVfBg(n.bg);
 const stLoadImg = src => new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = src; });
 function stMedHTML(n){
   const x = stF(n.f), v = stMVf(n), pos = `left:${v.x}%;top:${v.y}%;width:${v.w}%;height:${v.h}%;transform:rotate(${v.r}deg)`;
-  const med = n.vid ? `<video class="stimg stvid" id="stmed" src="${n.vid.url}" playsinline autoplay loop${n.snd ? '' : ' muted'}${n.vid.l ? ` data-s="${+n.vid.s || 0}" data-l="${+n.vid.l}"` : ''} style="filter:${x[2] || 'none'};${pos}"></video>` : `<img class="stimg" id="stmed" src="${n.src}" alt="Dein Foto" draggable="false" style="${pos}">`;
+  const med = n.vid ? `<video class="stimg stvid" id="stmed" src="${esc(n.vid.url)}" playsinline autoplay loop${n.snd ? '' : ' muted'}${n.vid.l ? ` data-s="${+n.vid.s || 0}" data-l="${+n.vid.l}"` : ''} style="filter:${x[2] || 'none'};${pos}"></video>` : `<img class="stimg" id="stmed" src="${esc(n.src)}" alt="Dein Foto" draggable="false" style="${pos}">`;
   return `<div class="stvf" id="stmlay" style="filter:${n.vid ? 'none' : x[2] || 'none'}"><div class="stvfbg${n.bg === 'blur' ? ' blur' : ''}" style="${stMBgStyle(n)}"></div>${med}</div>${x[3] ? `<i class="stov" style="background:${x[3]};mix-blend-mode:${x[4] || 'normal'}"></i>` : ''}`;
 }
 const stMBgPanel = n => { const bg = n.bg || 'blur', col = bg === 'blur' ? '' : bg.c, pat = bg === 'blur' ? '' : bg.p || '';
@@ -7307,7 +7328,7 @@ async function stTbRender(tb){
 }
 // Rand um Foto/Video in der Story (Inaya, 2026-10-11): verschwommen (nur Foto), Farbe und Muster wie bei Nur-Text
 const stcBgDef = c => c.vid ? {c:'#0a0a0b', p:''} : 'blur';
-const stcBgStyle = c => { const bg = c.bg || stcBgDef(c); return bg === 'blur' ? `background-image:url('${c.img}')` : `background-color:${esc(bg.c)};background-image:${stTbPat(bg)};background-size:auto;filter:none;inset:0`; };
+const stcBgStyle = c => { const bg = c.bg || stcBgDef(c); return bg === 'blur' ? `background-image:url('${cssUrl(c.img)}')` : `background-color:${esc(bg.c)};background-image:${stTbPat(bg)};background-size:auto;filter:none;inset:0`; };
 const stcBgPanel = c => { const bg = c.bg || stcBgDef(c), col = bg === 'blur' ? '' : bg.c, pat = bg === 'blur' ? '' : bg.p || '';
   return `<div class="stmpanel stbgp stcbgp" id="stcbgp" hidden><b class="sttagh">Rand um ${c.vid ? 'dein Video' : 'dein Foto'}</b><div class="strow stcols">${c.vid ? '' : `<button class="stcblur" data-act="stc-bg" data-v="blur" aria-pressed="${bg === 'blur'}">Verschwommen</button>`}${STBGC.map(x => `<button data-act="stc-bg" data-v="${x}" style="background:${x}" aria-label="Farbe ${x}" aria-pressed="${col === x}"></button>`).join('')}</div><b class="sttagh">Muster</b><div class="stpats">${[['', 'Ohne'], ...PATTERN_OPTS].map(([k, l]) => `<button data-act="stc-bgp" data-v="${k}" aria-pressed="${bg !== 'blur' && pat === k}"><i style="background-color:${esc(col || '#26262b')};background-image:${stTbPat({c:col || '#26262b', p:k})}"></i><small>${l}</small></button>`).join('')}</div><div class="row"><span class="sp"></span><button class="btn" data-act="stc-bgdone">Fertig</button></div></div>`; };
 function stcBgUpdate(){ const c = stCam; if (!c) return; const el = document.getElementById('stcbg'); if (el) el.setAttribute('style', stcBgStyle(c));
@@ -7552,10 +7573,10 @@ function stCamHTML(){
     <div class="stphead"><button class="stic" data-act="stc-x" aria-label="Schließen">${NFI.x}</button><b>Neue Story</b><span class="stpsp"></span></div>
     <p class="stporn" aria-hidden="true">❦&#xFE0E;</p>
     <div class="stptiles"><label class="stpwide"><input type="file" id="st-file" accept="image/*" hidden>${NFI.gal}<span>Foto hochladen</span></label><label class="stpwide"><input type="file" id="st-vfile" accept="video/*" hidden>${NFI.vid}<span>Video hochladen</span></label>${camT}<button data-act="stc-text">${NFI.aa}<span>Nur Text</span></button></div>
-    ${ph.length ? `<div class="stprow"><b>Aus deinem Salon</b></div><div class="stpgrid">${ph.map(p => `<button class="stpph" data-act="stc-pick" data-id="${esc(p.id)}" aria-label="Dieses Foto nehmen"><img src="${p.img}" alt="" draggable="false"></button>`).join('')}</div>` : ''}
+    ${ph.length ? `<div class="stprow"><b>Aus deinem Salon</b></div><div class="stpgrid">${ph.map(p => `<button class="stpph" data-act="stc-pick" data-id="${esc(p.id)}" aria-label="Dieses Foto nehmen"><img src="${esc(p.img)}" alt="" draggable="false"></button>`).join('')}</div>` : ''}
   </div></div>`; }
   if (c.mode === 'vtrim') return `<div class="stbox edit"><div class="stframe stcrop vtr0" id="stcr">
-    <video id="stcimg" src="${c.url}" muted playsinline autoplay loop preload="auto"></video>
+    <video id="stcimg" src="${esc(c.url)}" muted playsinline autoplay loop preload="auto"></video>
     <div class="sttop"><button class="stic" data-act="stc-back" aria-label="Zurück">${STC_ICO.x}</button><span class="sp"></span><span class="stchint">Video kürzen</span></div>
     <input id="stc-zoom" type="hidden" value="1">
     <div class="stvtrim"><p id="stv-note" hidden>Dein Video ist länger als 30 Sekunden. Zieh die Balken auf den Teil, der in deine Story soll.</p>
@@ -7566,7 +7587,7 @@ function stCamHTML(){
       <input type="range" id="stv-start" min="0" max="0" step=".1" value="0" hidden><input type="range" id="stv-len" min="1" max="${ST_VMAX}" step=".5" value="${ST_VMAX}" hidden></div>
     <div class="stbottom"><span class="sp"></span><button class="stshare" data-act="stc-vnext">Weiter <span aria-hidden="true">›</span></button></div></div></div>`;
   if (c.mode === 'crop') return `<div class="stbox edit"><div class="stframe stcrop" id="stcr">
-    <div class="stcbg" id="stcbg" style="${stcBgStyle(c)}" aria-hidden="true"></div><img id="stcimg" src="${c.img}" alt="Dein Foto" draggable="false"><div class="stgridl" aria-hidden="true"></div>
+    <div class="stcbg" id="stcbg" style="${stcBgStyle(c)}" aria-hidden="true"></div><img id="stcimg" src="${esc(c.img)}" alt="Dein Foto" draggable="false"><div class="stgridl" aria-hidden="true"></div>
     <div class="sttop"><button class="stic" data-act="stc-back" aria-label="Zurück">${STC_ICO.x}</button><span class="sp"></span><span class="stchint">Frei verschieben, mit zwei Fingern oder dem Regler größer und kleiner</span></div>
     <input class="stzoom" id="stc-zoom" type="range" min="1" max="4" step=".01" value="${c.zoom}" aria-label="Zoom">
     ${stcBgPanel(c)}
@@ -7772,7 +7793,7 @@ function stFStep(dir){
 document.addEventListener('keydown', e => { if (!stNew || stNew.edit != null || e.target.closest?.('input,textarea')) return; if (e.key === 'ArrowRight') stFStep(1); else if (e.key === 'ArrowLeft') stFStep(-1); else if (e.key === 'Escape') stClose(); });
 function storyArchHTML(){
   const l = S.storyArch || [];
-  return l.length ? `<ul class="starch">${l.map(st => `<li><span class="stth">${st.thumb ? `<img src="${st.thumb}" alt="" style="filter:${stFilter(st.f)}">` : ''}${st.song ? '<i class="stnote" aria-label="mit Song">♪</i>' : ''}</span><small class="muted">${new Date(st.ts).toLocaleDateString('de-DE')}</small><button class="btn ghost" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button></li>`).join('')}</ul><p class="note">Wiederhergestellte Storys sind wieder 24 Stunden für deine Freunde sichtbar.</p>` : '<p class="note">Nach 24 Stunden landen deine Storys automatisch hier. Nur du siehst sie.</p>';
+  return l.length ? `<ul class="starch">${l.map(st => `<li><span class="stth">${st.thumb ? `<img src="${esc(st.thumb)}" alt="" style="filter:${stFilter(st.f)}">` : ''}${st.song ? '<i class="stnote" aria-label="mit Song">♪</i>' : ''}</span><small class="muted">${new Date(st.ts).toLocaleDateString('de-DE')}</small><button class="btn ghost" data-act="st-restore" data-id="${esc(st.id)}">Wiederherstellen</button></li>`).join('')}</ul><p class="note">Wiederhergestellte Storys sind wieder 24 Stunden für deine Freunde sichtbar.</p>` : '<p class="note">Nach 24 Stunden landen deine Storys automatisch hier. Nur du siehst sie.</p>';
 }
 document.addEventListener('change', async e => {
   if (!['st-file', 'st-cap', 'st-vfile'].includes(e.target.id)) return; const f = e.target.files[0]; e.target.value = ''; if (!f) return;
@@ -7907,7 +7928,7 @@ function pmenuHTML(p){ return `<div class="pmback" data-act="post-menu-x"></div>
 // Profilbild antippen (Inaya, 2026-10-11): mit aktiver Story fragen „Story ansehen“ oder „Profilbild ansehen“
 let ppAsk = null, ppView = null;
 function ppSheet(){
-  if (ppView) { const u = profUser(ppView); return u ? `<div class="ppview" data-act="pp-x" role="dialog" aria-label="Profilbild">${u.pic ? `<img src="${u.pic}" alt="Profilbild von ${esc(u.name)}">` : `<div class="ppav">${avatar(u.outfit, 'full')}</div>`}<button class="stic ppclose" data-act="pp-x" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>` : ''; }
+  if (ppView) { const u = profUser(ppView); return u ? `<div class="ppview" data-act="pp-x" role="dialog" aria-label="Profilbild">${safePic(u.pic) ? `<img src="${esc(safePic(u.pic))}" alt="Profilbild von ${esc(u.name)}">` : `<div class="ppav">${avatar(u.outfit, 'full')}</div>`}<button class="stic ppclose" data-act="pp-x" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>` : ''; }
   if (!ppAsk) return '';
   return `<div class="pmback" data-act="pp-x"></div><div class="pmenu" role="menu"><span class="pmgrip" aria-hidden="true"></span><button class="pmi" role="menuitem" data-act="pp-story" data-id="${esc(ppAsk)}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg><span>Story ansehen</span></button><button class="pmi" role="menuitem" data-act="pp-pic" data-id="${esc(ppAsk)}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg><span>Profilbild ansehen</span></button><button class="pmi pmcancel" data-act="pp-x">Abbrechen</button></div>`;
 }
@@ -7930,8 +7951,8 @@ function composeAtt(){
   const tagUI = `${PTAGS.length ? `<div class="ptags"><span class="lbl">Markiert:</span>${PTAGS.map((t, i) => `<span class="ptagc${i === PTAGS.length - 1 && postCrop ? ' cur' : ''}">${esc(t.n)}<button type="button" data-act="ptag-x" data-i="${i}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('')}</div>` : ''}
     ${PTAGP ? `<div class="ptagpick"><label class="f"><span class="lbl">Wen markieren?</span><input id="ptagq" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@Nutzername eingeben"></label><div class="mnlist" id="ptagres"></div><button type="button" class="lnk" data-act="ptag-close">Fertig</button></div>` : ''}`;
   const galA = PCR?.items.length ? `<div class="patt pgatt">${pcrSteps(3)}<div class="pgstrip">${PCR.items.map((x, i) => `<button type="button" data-act="pcr-edit" data-i="${i}" aria-label="${x.t === 'v' ? 'Video' : 'Foto'} ${i + 1} bearbeiten" style="aspect-ratio:${pcrR(PCR.ar)}">${pcrThumb(x)}${x.t === 'v' ? `<i class="pcrvid" aria-hidden="true">${PCR_ICO.play}</i>` : ''}</button>`).join('')}</div><span class="row"><button type="button" class="lnk" data-act="pcr-open">‹ Zurück zum Bearbeiten</button><span class="sp"></span><button type="button" class="lnk" data-act="pcr-clear">Alle entfernen</button></span></div>` : '';
-  return `${galA}${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${postCrop}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
-    ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${PVIDEO.poster}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
+  return `${galA}${postCrop ? `<div class="patt"><div class="ptagbox" id="ptagbox"><img class="pattimg" src="${esc(postCrop)}" alt="Ausgewähltes Foto">${ptagBubbles(PTAGS)}</div>${PTAGS.length ? `<small class="note">Tipp aufs Foto, um ${esc(PTAGS[PTAGS.length - 1].n)} dort hinzusetzen.</small>` : ''}<button type="button" class="lnk" data-act="patt-x" data-v="foto">Foto entfernen</button></div>` : ''}
+    ${PVIDEO ? `<div class="patt">${PVIDEO.busy ? `<span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.clip}</svg>${esc(PVIDEO.busy)}</span>` : `<span class="pattvid"><img src="${esc(PVIDEO.poster)}" alt="Video-Vorschau"><i aria-hidden="true">▶</i></span><button type="button" class="lnk" data-act="patt-x" data-v="clip">Video entfernen</button>`}</div>` : ''}
     ${PMUP && !PMU && !PAUDIO ? `<div class="patt pmus"><div class="pmush"><b>Musik</b><button type="button" class="lnk" data-act="pmu-open">Schließen</button></div>${muSearchHTML('pmq', document.getElementById('pmq')?.value || '')}<div class="stmres" id="pmres">${STMRES.length && document.getElementById('pmq')?.value ? muRows('pmu-pick') : '<p class="stmsmsg">Such nach einem Song oder einer Band.</p>'}</div><label class="lnk pmup"><input id="paudio" type="file" accept="audio/*,.mp3" hidden>Oder eigene MP3 hochladen</label></div>` : ''}
     ${PMU ? `<div class="patt">${pmuHTML(PMU)}${muTrimHTML(PMU, 'post')}<button type="button" class="lnk" data-act="patt-x" data-v="pmu">Musik entfernen</button></div>` : ''}
     ${PAUDIO ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(PAUDIO.name)}</span><button type="button" class="lnk" data-act="patt-x" data-v="musik">MP3 entfernen</button></div>` : ''}
@@ -7994,7 +8015,7 @@ function galBox(it, R){ const ia = +it.a || 1, w = 100 * (+it.z || 1) * Math.max
   return {w, h, l:(100 - w) * (it.x ?? 50) / 100, t:(100 - h) * (it.y ?? 50) / 100}; }
 const galPos = (it, R) => { const b = galBox(it, R); return `left:${b.l.toFixed(2)}%;top:${b.t.toFixed(2)}%;width:${b.w.toFixed(2)}%;height:${b.h.toFixed(2)}%`; };
 const PCR_ICO = {x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', l:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>', r:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>', plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>', play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'};
-function pcrThumb(it){ return it.t === 'v' ? (it.poster ? `<img src="${it.poster}" alt="">` : '<i class="pcrspin" aria-hidden="true"></i>') : `<img src="${it.src}" alt="">`; }
+function pcrThumb(it){ return it.t === 'v' ? (it.poster ? `<img src="${esc(it.poster)}" alt="">` : '<i class="pcrspin" aria-hidden="true"></i>') : `<img src="${esc(it.src)}" alt="">`; }
 async function pcrAddFiles(files){
   if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'};
   const list = [...files].slice(0, PCR_MAX - PCR.items.length); if (files.length > list.length) toast(`Höchstens ${PCR_MAX} Fotos und Videos pro Beitrag.`);
@@ -8025,10 +8046,10 @@ function pcrHTML(){
   if (P.step === 1) return `<div class="pcrbox pcrth" style="${myThemeStyle()}">${head}<div class="pcrbody"><p class="note">Tipp auf die Pfeile, um die Reihenfolge zu ändern. So erscheinen sie später im Beitrag.</p>
     <ol class="pcrgrid">${P.items.map((it, i) => `<li class="pcrcell"><button type="button" class="pcrpick" data-act="pcr-edit" data-i="${i}" aria-label="${it.t === 'v' ? 'Video' : 'Foto'} ${i + 1} bearbeiten">${pcrThumb(it)}${it.t === 'v' ? `<i class="pcrvid" aria-hidden="true">${PCR_ICO.play}${it.dur ? stTime(Math.min(it.l, it.dur)) : ''}</i>${it.nos ? NOS_BADGE : ''}` : ''}</button><b class="pcrnum">${i + 1}</b><button type="button" class="pcrx" data-act="pcr-del" data-i="${i}" aria-label="Entfernen">${PCR_ICO.x}</button><span class="pcrmv"><button type="button" data-act="pcr-mv" data-i="${i}" data-v="-1" aria-label="Nach vorn"${i ? '' : ' disabled'}>${PCR_ICO.l}</button><button type="button" data-act="pcr-mv" data-i="${i}" data-v="1" aria-label="Nach hinten"${i < n - 1 ? '' : ' disabled'}>${PCR_ICO.r}</button></span></li>`).join('')}${n < PCR_MAX ? `<li class="pcrcell">${add}</li>` : ''}</ol></div></div>`;
   const it = P.items[P.cur] || P.items[0];
-  const med = it.t === 'v' ? `<video id="pcrmed" src="${it.url}" playsinline muted autoplay loop class="stvid" data-s="${+it.s || 0}" data-l="${+it.l || 0}" style="${galPos(it, R)}"></video>` : `<img id="pcrmed" src="${it.src}" alt="" draggable="false" style="${galPos(it, R)}">`;
+  const med = it.t === 'v' ? `<video id="pcrmed" src="${esc(it.url)}" playsinline muted autoplay loop class="stvid" data-s="${+it.s || 0}" data-l="${+it.l || 0}" style="${galPos(it, R)}"></video>` : `<img id="pcrmed" src="${esc(it.src)}" alt="" draggable="false" style="${galPos(it, R)}">`;
   // Video kürzen wie bei Storys (Inaya, 2026-10-14): Streifen mit Vorschaubildern, Balken an beiden Enden ziehen, Abspielknopf mit Ton
   const trim = it.t === 'v' ? `<div class="pcrtrim2">${it.dur > VID_SEC + .5 ? `<small class="note">Dein Video ist länger als ${VID_SEC} Sekunden. Zieh die Balken auf den Teil, der in den Beitrag soll.</small>` : ''}
-    <div class="vtr"><button type="button" class="vtrplay" data-act="pcr-vplay" aria-label="Abspielen">${PCR_VPLAY}</button><div class="vtrs" id="pcr-strip" role="group" aria-label="Videolänge wählen"><div class="vtrf" id="pcr-frames">${(it.frames || []).map(u => `<i style="background-image:url('${u}')"></i>`).join('')}</div><i class="vtrdim l" id="pcr-dl"></i><i class="vtrdim r" id="pcr-dr"></i><div class="vtrwin" id="pcr-win"><b class="vtrh l" data-h="l" aria-label="Anfang ziehen">‹</b><b class="vtrh r" data-h="r" aria-label="Ende ziehen">›</b></div><i class="vtrph" id="pcr-ph"></i></div></div>
+    <div class="vtr"><button type="button" class="vtrplay" data-act="pcr-vplay" aria-label="Abspielen">${PCR_VPLAY}</button><div class="vtrs" id="pcr-strip" role="group" aria-label="Videolänge wählen"><div class="vtrf" id="pcr-frames">${(it.frames || []).map(u => `<i style="background-image:url('${cssUrl(u)}')"></i>`).join('')}</div><i class="vtrdim l" id="pcr-dl"></i><i class="vtrdim r" id="pcr-dr"></i><div class="vtrwin" id="pcr-win"><b class="vtrh l" data-h="l" aria-label="Anfang ziehen">‹</b><b class="vtrh r" data-h="r" aria-label="Ende ziehen">›</b></div><i class="vtrph" id="pcr-ph"></i></div></div>
     <b id="pcr-tlbl" class="pcrtlbl"></b></div>` : '';
   return `<div class="pcrbox pcrth" style="${myThemeStyle()}">${head}<div class="pcrbody pcred">
     <div class="pcrstage"><button type="button" class="pcrfmt" data-act="pcr-fmt" aria-label="${P.ar === '11' ? 'Ganzes Format zeigen' : 'Quadratisch zuschneiden'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></button><div class="pcrframe${P.tag ? ' tagm' : ''}" id="pcrfr" style="aspect-ratio:${R};--r:${R}">${med}<i class="pcrmask" aria-hidden="true"></i><i class="pcrgrid3" aria-hidden="true"></i>${it.t === 'i' ? (it.tg || []).map((t, j) => `<span class="ptagb pcrtg" style="left:${t.x}%;top:${t.y}%" data-j="${j}"${P.tag ? '' : ' hidden'}>${esc(t.n)}<button type="button" class="pcrtgx" data-act="pcr-tag-x" data-j="${j}" aria-label="${esc(t.n)} entfernen">✕</button></span>`).join('') : ''}${(it.sk || []).map((k, j) => `<span class="pgsk pcrsk" data-j="${j}" style="${skPos(k)}">${sgItemHTML(k.s, true)}<button type="button" class="pcrskx" data-act="pcr-sk-x" data-j="${j}" aria-label="Sticker entfernen">✕</button></span>`).join('')}${P.tp ? `<i class="pcrtp" style="left:${P.tp.x}%;top:${P.tp.y}%" aria-hidden="true"></i>` : ''}${it.t === 'i' && it.tg?.length && !P.tag ? `<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>
@@ -8124,7 +8145,7 @@ function pcrTrimWire(it, el){
   ['timeupdate', 'play', 'pause'].forEach(ev => el.addEventListener(ev, ph));
 }
 async function pcrFrames(it){ // kleine Vorschaubilder für den Streifen, einmal je Video
-  const fill = () => { const box = document.getElementById('pcr-frames'); if (box && PCR?.items[PCR.cur] === it && it.frames) box.innerHTML = it.frames.map(u => `<i style="background-image:url('${u}')"></i>`).join(''); };
+  const fill = () => { const box = document.getElementById('pcr-frames'); if (box && PCR?.items[PCR.cur] === it && it.frames) box.innerHTML = it.frames.map(u => `<i style="background-image:url('${cssUrl(u)}')"></i>`).join(''); };
   if (it.frames || it.framesBusy || !it.url || !it.dur) return fill(); it.framesBusy = true;
   const n = 10, v = document.createElement('video'); v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.src = it.url;
   v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none'; document.body.appendChild(v); const out = [];
@@ -8169,7 +8190,7 @@ async function galBuild(p, onStep){ // lädt alles hoch, gibt die Liste für den
 function galHTML(p, over=''){
   const R = pcrR(p.gar), o = postOwner(p) || p.author, n = p.gal.length;
   const cell = (x, i) => x.t === 'v' ? `<button type="button" class="pgcell vclip" data-act="gclip" data-u="${esc(o)}" data-id="${esc(p.id)}" data-i="${i}" aria-label="Video abspielen"><img src="${esc(x.clip?.poster || '')}" alt="" style="${galPos(x, R)}">${skHTML(x.sk)}<span class="play" aria-hidden="true">▶</span>${x.clip?.nos ? NOS_BADGE : ''}</button>`
-    : `<div class="pgcell${x.tg?.length ? ' ptagwrap" data-act="ptag-show" role="button" tabindex="0' : ''}"><img class="photo" ${x.img ? `src="${esc(x.img)}"` : PIMG[o + '/' + x.k] ? `src="${PIMG[o + '/' + x.k]}"` : `data-pimg="${esc(o + '/' + x.k)}"`} alt="Bild ${i + 1} von ${n}" draggable="false">${skHTML(x.sk)}${x.tg?.length ? `${ptagBubbles(ptagsClean(x.tg), true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>`;
+    : `<div class="pgcell${x.tg?.length ? ' ptagwrap" data-act="ptag-show" role="button" tabindex="0' : ''}"><img class="photo" ${x.img ? `src="${esc(x.img)}"` : PIMG[o + '/' + x.k] ? `src="${esc(PIMG[o + '/' + x.k])}"` : `data-pimg="${esc(o + '/' + x.k)}"`} alt="Bild ${i + 1} von ${n}" draggable="false">${skHTML(x.sk)}${x.tg?.length ? `${ptagBubbles(ptagsClean(x.tg), true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i>` : ''}</div>`;
   return `<div class="pgal" style="--ar:${R}"><div class="pgbox"><div class="pgtrack" data-n="${n}">${p.gal.map(cell).join('')}</div>${over}${n > 1 ? `<span class="pgcnt" aria-hidden="true">1/${n}</span><button type="button" class="pgnav l" data-act="pg-nav" data-v="-1" aria-label="Vorheriges" hidden>${PCR_ICO.l}</button><button type="button" class="pgnav r" data-act="pg-nav" data-v="1" aria-label="Nächstes">${PCR_ICO.r}</button>` : ''}</div>${n > 1 ? `<span class="pgdots" aria-hidden="true">${p.gal.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span>` : ''}</div>`;
 }
 function pgSync(tr){ const g = tr.closest('.pgal'), n = +tr.dataset.n || 1, i = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth));
@@ -8424,7 +8445,7 @@ function tileHTML(p){
   if (p.img) b += `<img src="${esc(p.img)}" alt="Bild">`;
   else if (p.bigimg) b += `<img data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild">`;
   if (p.audio) b += `<p class="caption">♪ ${esc(p.audio.name || 'Lied')}</p>`;
-  if (p.url) b += `<a class="vid p" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Film ansehen</span></a>`;
+  if (safeHref(p.url)) b += `<a class="vid p" href="${esc(safeHref(p.url))}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Film ansehen</span></a>`;
   if (p.type !== 'gedanke' && p.type !== 'neu' && p.text) b += `<p class="caption">${etx(p.text)}</p>`;
   const n = new Set(Object.values(p.reactions || {}).flat()).size, nc = (p.comments || []).length;
   return `<div class="tile">${b}<span class="meta">${ago(p.ts)}${n ? ` · ${n} ${n === 1 ? 'Like' : 'Likes'}` : ''}${nc ? ` · ${nc} Kommentare` : ''}</span></div>`;
@@ -8683,7 +8704,7 @@ async function loadProf(id){ try { const d = await social.db.doc('profiles/' + i
 function remoteUser(id, p){
   const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
   return {id, remote:true, age:Number.isFinite(+p.age) && +p.age > 0 ? +p.age : null, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
-    banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:p.pic || null, cover:p.cover || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
+    banner:p.banner || {pattern:'schlicht', mode:'nacht', font:'fell', text:''}, pic:safePic(p.pic) || null, cover:safePic(p.cover) || null, pose:p.pose || '', headline:p.headline || '', mood:p.mood || '', about:p.about || '',
     music:p.music || '', films:p.films || '', hobbies:p.hobbies || '', games2:p.games2 || '', links:p.links && typeof p.links === 'object' ? p.links : {}, pins:Array.isArray(p.pins) ? p.pins.slice(0, 4) : [], priv:!!p.priv, songUrl:p.songUrl || '', songSp:p.songSp || '', songMu:p.songMu && typeof p.songMu === 'object' ? p.songMu : null, songFile:p.songFile && p.songFile.n ? p.songFile : null, roomOpen:p.roomOpen || null, looks:Array.isArray(p.looks) ? p.looks : [], room:p.room || DEFAULT_ROOM(), deko:[], points:p.points || 0, earned:p.earned || 0,
     joined:p.joined || Date.now(), wall:[], owned:[], sth:Array.isArray(p.sth) ? p.sth : [], str:p.str || 'all', stcm:p.stcm === 0 ? 0 : 1, hl:Array.isArray(p.hl) ? p.hl : [], stories:Array.isArray(p.stories) ? p.stories.filter(x => x && x.id && Date.now() - x.ts < STORY_H).slice(0, 12) : [], posts:(p.posts || []).map(x => ({...x, author:id, remote:true, reactions:{}, comments:[]}))};
 }
@@ -8701,7 +8722,7 @@ function chRefilter(){ if (CH.raw) CH.list = CH.raw.filter(chVis); }
 async function blockUser(id){
   const u = S.users[id] || profUser(id) || remoteUser(id, PROF[id] || {}); if (!u || !social) return;
   if (!await askYesNo(`Möchtest du ${u.name}${u.handle ? ' (@' + u.handle + ')' : ''} wirklich blockieren? Ihr seid dann keine Freunde mehr und seht gegenseitig keine Beiträge, Storys oder Nachrichten.`, 'Blockieren', 'Abbrechen')) return;
-  const pic = typeof u.pic === 'string' && /^data:image\//.test(u.pic) && u.pic.length < 60000 ? u.pic : '';
+  const pic = safePic(u.pic).length < 60000 ? safePic(u.pic) : '';
   S.blocked = [...(S.blocked || []).filter(x => x.id !== id), {id, name:u.name || '', handle:u.handle || '', pic, outfit:pic ? null : u.outfit || null, ts:Date.now()}];
   save(); chRefilter(); if (FR.mine.includes(id)) await setMine(FR.mine.filter(x => x !== id)); publishProfile();
   if (CH.open && /^dm_/.test(CH.open) && CH.open.includes(id)) { CH.open = null; CH.mode = null; }
@@ -9004,7 +9025,7 @@ function chBg(c){
   return '';
 }
 const bgVars = bg => bg ? `;--bub-me:${bg.me};--bub-me-fg:${bg.meFg};--bub-them:${bg.them};--bub-them-fg:${bg.themFg}` : '';
-const bgImgStyle = img => typeof img === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(img) ? ` style="background-image:url('${img}')"` : '';
+const bgImgStyle = img => typeof img === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(img) ? ` style="background-image:url('${cssUrl(img)}')"` : '';
 let gDelAsk = false, gRmAsk = null; // Gruppen löschen / Mitglieder entfernen (Inaya, 2026-10-10)
 function groupForm(friends){
   const g = CH.gdraft;
@@ -9016,7 +9037,7 @@ function groupForm(friends){
     </section></div>`;
   return `<form data-form="group" class="gform">${g.id ? `<button type="button" class="navback" data-act="chat-open" data-id="${esc(g.id)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Zurück zum Chat</span></button>` : ''}<h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
     ${g.dm ? '' : `<label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>
-      <div class="f gpicrow"><span class="lbl">Gruppenbild</span><span class="row" style="gap:12px;align-items:center"><span class="chav big">${g.pic ? `<img src="${g.pic}" alt="">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg>'}</span><label class="btn ghost filebtn">${g.pic ? 'Bild ändern' : 'Bild wählen'}<input type="file" id="g-pic" accept="image/*" hidden></label>${g.pic ? '<button type="button" class="lnk" data-act="g-pic-x">Entfernen</button>' : ''}</span></div>`}
+      <div class="f gpicrow"><span class="lbl">Gruppenbild</span><span class="row" style="gap:12px;align-items:center"><span class="chav big">${safePic(g.pic) ? `<img src="${esc(safePic(g.pic))}" alt="">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg>'}</span><label class="btn ghost filebtn">${g.pic ? 'Bild ändern' : 'Bild wählen'}<input type="file" id="g-pic" accept="image/*" hidden></label>${g.pic ? '<button type="button" class="lnk" data-act="g-pic-x">Entfernen</button>' : ''}</span></div>`}
     ${g.pub && !g.id ? '<p class="note">Öffentliche Gruppe: Jeder kann sie finden und beitreten. Name und Farbe ändern und Leute entfernen kannst nur du als Admin.</p>' : ''}
     ${g.id || g.pub ? '' : `<fieldset class="opt"><legend class="lbl">Wer ist dabei?</legend>${friends.length > 1 ? '<label class="musearch gmq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="gmqi" placeholder="Freunde suchen …" aria-label="Freunde suchen" autocomplete="off"></label>' : ''}${friends.length ? friends.map(f => `${frPickHTML(f, 'g-mem', g.members.includes(f.id))}`).join('') : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}</fieldset>`}
     ${swatches('box', 'Farbe', BG_COLORS, g.theme.box, 'gopt')}
@@ -9357,7 +9378,7 @@ function e2aWatchShare(){ if (E2A.kp || E2A.shareUnsub || !social) return; const
       E2E.bad = {}; if (CH.open && CH.mraw) e2Redraw(CH.open); setTimeout(e2aMigrate, 4000); if (V.name === 'settings') softRender();
     } catch {} }, () => { E2A.shareUnsub = null; }); }
 // Passwort direkt nach dem Anmelden merken, nur im Arbeitsspeicher und nur kurz, um den Konto-Schlüssel zu entsperren
-function e2aRemember(pw){ E2A.pw = pw; E2A.pwT = Date.now(); if (E2E.on && !E2A.kp && E2E.uid === social?.uid) { const p = E2A.pw; E2A.pw = null; e2aUnlock(p); } setTimeout(() => { E2A.pw = null; }, 15 * 60e3); }
+function e2aRemember(pw){ lgSoon(pw); E2A.pw = pw; E2A.pwT = Date.now(); if (E2E.on && !E2A.kp && E2E.uid === social?.uid) { const p = E2A.pw; E2A.pw = null; e2aUnlock(p); } setTimeout(() => { E2A.pw = null; }, 15 * 60e3); }
 // Schon angemeldete Geräte: einmal nach dem Passwort fragen
 function e2aAsk(force, out){ if (!social || E2A.kp || (E2A.asked && !force) || document.getElementById('e2aask')) return; E2A.out = !!out;
   E2A.asked = true; const m = document.createElement('div'); m.className = 'modal pushask'; m.id = 'e2aask'; m.style.zIndex = '4900'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
@@ -10641,7 +10662,7 @@ async function resolveLink(url){
   if (j && j.url && j.url !== url) return {u:String(j.url).slice(0, 500), t:String(j.title || '').slice(0, 140), img:String(j.thumbnail_url || '').slice(0, 500), site:String(j.provider_name || '').slice(0, 60)};
   return null;
 }
-function linkPill(url, lp){ const h = linkHost(lp?.u || url).replace(/^www\./, ''), d = h ? h[0].toUpperCase() + h.slice(1) : url;
+function linkPill(url, lp){ url = safeHref(url) || '#'; const h = linkHost(lp?.u || url).replace(/^www\./, ''), d = h ? h[0].toUpperCase() + h.slice(1) : url;
   return `<a class="lpill" href="${esc(url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>${esc(d)}</span></a>`; } // Link im Beitrag als Pille mit Domain (Inaya, 2026-10-13)
 // Links nur noch als Pille mit eigenem Symbol und Seitenname (Inaya, 2026-10-14, Datenschutz): keine fremden Vorschaubilder, kein Google-Symbol, keine Abfrage bei microlink.
 // Videos (YouTube, TikTok, Instagram usw.) bleiben zum Antippen-und-Ansehen; Kurzlinks werden erst nach Antippen aufgelöst.
@@ -10789,7 +10810,7 @@ function archiveView(){
   const p0 = posts[0], s0 = sts[0];
   return `<section class="archpage">${head('Archiviert', false)}<p class="note">Nur du siehst, was hier liegt. Öffne ein Archiv, um Beiträge oder Storys wieder zu veröffentlichen oder endgültig zu löschen.</p><div class="archtiles">
     <button class="archtile" data-act="arch-go" data-v="posts"><span class="atprev">${p0 ? (p0.img ? `<img src="${esc(p0.img)}" alt="">` : `<i>${esc(String(p0.text || KIND[p0.type] || '').slice(0, 60))}</i>`) : ARCH_SVG}</span><b>Beitrag-Archiv</b><small>${posts.length} ${posts.length === 1 ? 'Beitrag' : 'Beiträge'}</small></button>
-    <button class="archtile" data-act="arch-go" data-v="story"><span class="atprev st">${s0?.thumb ? `<img src="${s0.thumb}" alt="" style="filter:${stFilter(s0.f)}">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'}</span><b>Story-Archiv</b><small>${sts.length} ${sts.length === 1 ? 'Story' : 'Storys'}</small></button></div></section>`;
+    <button class="archtile" data-act="arch-go" data-v="story"><span class="atprev st">${s0?.thumb ? `<img src="${esc(s0.thumb)}" alt="" style="filter:${stFilter(s0.f)}">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'}</span><b>Story-Archiv</b><small>${sts.length} ${sts.length === 1 ? 'Story' : 'Storys'}</small></button></div></section>`;
 }
 function archCount(){ const n = archPosts().length, m = (S.storyArch || []).length; return `${n} ${n === 1 ? 'Beitrag' : 'Beiträge'}, ${m} ${m === 1 ? 'Story' : 'Storys'}`; }
 // Nur für die Ownerin: alle neuen Mitglieder sehen, ohne mit ihnen befreundet zu sein (Inaya)
@@ -11330,7 +11351,7 @@ document.addEventListener('click', async e => {
   if (a === 'mvplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.clip || !social) return;
     b.disabled = true; b.querySelector('.play').textContent = '…';
-    songURL(m.from, m.clip, 'pv_' + m.clip.k).then(src => { b.outerHTML = `<div class="vframe vclip mvclip on"><video controls autoplay playsinline${m.clip.nos ? ' muted data-nos="1"' : ''} src="${src.url}"></video></div>`; })
+    songURL(m.from, m.clip, 'pv_' + m.clip.k).then(src => { b.outerHTML = `<div class="vframe vclip mvclip on"><video controls autoplay playsinline${m.clip.nos ? ' muted data-nos="1"' : ''} src="${esc(src.url)}"></video></div>`; })
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
     return;
   }
@@ -11340,7 +11361,7 @@ document.addEventListener('click', async e => {
   if (a === 'maplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
     b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
-    songURL(m.from, m.audio, 'pa_' + m.audio.k).then(src => { if (box) box.innerHTML = `<b class="aname">${m.audio.voice ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>Sprachnachricht' : '♪ ' + esc(m.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${src.url}"></audio>`; })
+    songURL(m.from, m.audio, 'pa_' + m.audio.k).then(src => { if (box) box.innerHTML = `<b class="aname">${m.audio.voice ? '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>Sprachnachricht' : '♪ ' + esc(m.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${esc(src.url)}"></audio>`; })
       .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
     return;
   }
@@ -11411,7 +11432,7 @@ document.addEventListener('click', async e => {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === b.dataset.id && (postOwner(x) || x.author) === b.dataset.u), i = +b.dataset.i, x = p?.gal?.[i];
     if (!x?.clip || !social) return; b.disabled = true; const pl = b.querySelector('.play'); if (pl) pl.textContent = '…';
     songURL(b.dataset.u, x.clip, 'pv_' + p.id + '_' + i).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vg' + Math.random().toString(36).slice(2, 8);
-      b.outerHTML = `<div class="pgcell on"><video id="${vid}" class="stvid" controls autoplay playsinline loop${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${mu || x.clip.nos ? ' muted' : ''}${x.clip.nos ? ' data-nos="1"' : ''} poster="${esc(x.clip.poster || '')}" src="${src.url}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}</div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
+      b.outerHTML = `<div class="pgcell on"><video id="${vid}" class="stvid" controls autoplay playsinline loop${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${mu || x.clip.nos ? ' muted' : ''}${x.clip.nos ? ' data-nos="1"' : ''} poster="${esc(x.clip.poster || '')}" src="${esc(src.url)}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}</div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
       .catch(() => { b.disabled = false; if (pl) pl.textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'compose-open') { composeOpen = true; render(); document.getElementById('ptext')?.focus(); }
@@ -11715,14 +11736,14 @@ document.addEventListener('click', async e => {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === id && (postOwner(x) || '') === b.dataset.u);
     if (!p?.audio || !social) return;
     b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';
-    songURL(b.dataset.u, p.audio, 'pa_' + p.id).then(src => { if (box) box.innerHTML = `<b class="aname">♪ ${esc(p.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${src.url}"></audio>`; })
+    songURL(b.dataset.u, p.audio, 'pa_' + p.id).then(src => { if (box) box.innerHTML = `<b class="aname">♪ ${esc(p.audio.name || 'Lied')}</b><audio controls autoplay playsinline src="${esc(src.url)}"></audio>`; })
       .catch(() => { b.disabled = false; if (inf) inf.textContent = 'Das Lied ließ sich gerade nicht laden.'; });
   }
   else if (a === 'clipplay') {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === b.dataset.id && (postOwner(x) || '') === b.dataset.u);
     if (!p?.clip || !social) return;
     b.disabled = true; b.querySelector('.play').textContent = '…';
-    songURL(b.dataset.u, p.clip, 'pv_' + p.id).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vc' + Math.random().toString(36).slice(2, 8); b.outerHTML = `<div class="vframe vclip on"><video id="${vid}" controls autoplay playsinline${p.clip.nos ? ' muted data-nos="1"' : ''}${mu ? ' muted data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(p.clip.poster || '')}" src="${src.url}"></video></div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
+    songURL(b.dataset.u, p.clip, 'pv_' + p.id).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vc' + Math.random().toString(36).slice(2, 8); b.outerHTML = `<div class="vframe vclip on"><video id="${vid}" controls autoplay playsinline${p.clip.nos ? ' muted data-nos="1"' : ''}${mu ? ' muted data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(p.clip.poster || '')}" src="${esc(src.url)}"></video></div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'ext-load') { extAllow(b.dataset.k); b.outerHTML = linkHTML(b.dataset.u, null, !!b.dataset.c); return; }
@@ -11904,7 +11925,12 @@ document.addEventListener('submit', async e => {
     const stop = m => { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = m; err.hidden = false; };
     if (!isMail(contact)) { // Anmelden mit Nutzername
       const h = normHandle(contact.replace(/^@/, '')); if (!h) return stop('Bitte gib deine E-Mail-Adresse oder deinen Nutzernamen ein.');
-      if (PUB) { const r = await NF_AUTH.lookup(h); if (r.error) return stop('Mit Nutzername klappt die Anmeldung gerade nicht. Nimm bitte deine E-Mail-Adresse.'); if (!r.email) return stop('Den Nutzernamen @' + h + ' gibt es nicht. Prüf die Schreibweise oder nimm deine E-Mail-Adresse.'); contact = r.email; }
+      if (PUB) { const r = await NF_AUTH.lookup(h);
+        if (r.old) return stop('Bitte melde dich dieses eine Mal mit deiner E-Mail-Adresse an. Danach klappt auch @' + h + ' wieder.');
+        if (r.error) return stop('Mit Nutzername klappt die Anmeldung gerade nicht. Nimm bitte deine E-Mail-Adresse.');
+        if (!r.d) return stop('Den Nutzernamen @' + h + ' gibt es nicht. Prüf die Schreibweise oder nimm deine E-Mail-Adresse.');
+        const em = r.d.v === 2 ? await lgOpen(r.d, pw) : typeof r.d.email === 'string' ? r.d.email : null; // alte Form nur, solange die neuen Regeln noch nicht eingespielt sind
+        if (!em) return stop('Nutzername oder Passwort stimmt nicht.'); contact = em; }
       else { const x = Object.values(S.users).find(y => !y.helper && !y.remote && y.handle === h); if (!x) return stop('Den Nutzernamen @' + h + ' gibt es nicht.'); contact = contactsOf(x)[0] || contact; }
     }
     if (PUB) {
@@ -12087,7 +12113,7 @@ document.addEventListener('submit', async e => {
     if (nw.length < 6) return fail('Das neue Passwort braucht mindestens 6 Zeichen.');
     if (nw !== document.getElementById('s-new2').value) return fail('Die beiden neuen Passwörter sind nicht gleich.');
     if (PUB) { const r = await NF_AUTH.updatePw(nw); if (r.error) return fail(r.error); }
-    u.pwh = await hashPw(nw); setOpen = null; save(); render(); toast('Passwort geändert'); e2aRepass(oldPw, nw).catch(() => {});
+    u.pwh = await hashPw(nw); setOpen = null; save(); render(); toast('Passwort geändert'); e2aRepass(oldPw, nw).catch(() => {}); lgSoon(nw);
   } else if (t === 'set-handle') {
     const u = me(), nh = normHandle(val('s-handle')), err = document.getElementById('s-handle-err');
     if (nh === u.handle) { setOpen = null; render(); return; }

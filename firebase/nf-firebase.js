@@ -108,7 +108,7 @@
     async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
     // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
-    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {email: d.exists ? d.data().email : null}; } catch (e) { return {error: true}; } },
+    async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {d: d.exists ? d.data() : null}; } catch (e) { return e && e.code === 'permission-denied' ? {old: true} : {error: true}; } }, // seit 2026-10-15 nur noch verschlüsselte Einträge (v:2), alte mit offener E-Mail sind gesperrt
     // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
     async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
     async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },

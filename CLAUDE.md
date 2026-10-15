@@ -92,3 +92,10 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - MP3-Upload nur in privaten Chats/Gruppen und in Beiträgen für Freunde (`chPubNow`, Prüfung beim Posten).
 - Seit v426 ist Musik ganz ausgeschaltet: Schalter `const MUSIK = false` (direkt nach `KEY` in `index.html`). Aus heißt: keine Hörproben (`stMuPv`/`stAuPlay`), keine Musik-Knöpfe in Beitrag, Editor, Story und Profil, keine MP3s; alte MP3-Nachrichten zeigen einen Hinweis. Daten bleiben gespeichert. Sprachnachrichten sind nicht betroffen.
 - Seit v427 sind normale Links nur noch Pillen (`linkPill`: eigenes Symbol + Seitenname), ohne fremde Vorschaubilder, ohne Google-Favicon, ohne microlink. Kurzlinks (vm.tiktok.com usw.) werden erst nach Antippen über noembed aufgelöst (`ext-short`).
+
+## Sicherheit: Bilder, Links, E-Mail-Adressen (seit v456)
+
+- Profil-, Titel- und Gruppenbilder kommen von anderen Leuten: nur über `safePic()` zeigen (echte Rasterbilder als `data:image/(jpeg|png|webp|gif);base64,…`, kein SVG). `remoteUser` säubert `pic`/`cover` schon beim Einlesen.
+- Jede Bild- oder Videoquelle im HTML mit `esc()` einsetzen, CSS-Hintergründe mit `url('${cssUrl(…)}')`, Links aus fremden Daten über `safeHref()` (nur http/https). Nie `src="${wert}"` ohne `esc`.
+- `firestore.rules`: `picOk` prüft `pic` und `cover` in `profiles/<uid>`. Achtung: `match /x/{id}/{rest=**}` trifft auch das Dokument selbst (Regeln v2), darum für Unterordner `{sub}/{rest=**}` nehmen.
+- `logins/<nutzername>` = `{uid, v:2, s, iv, c, ts}`: E-Mail nur verschlüsselt (PBKDF2 aus dem Passwort + AES-GCM, `lgSeal`/`lgOpen`). Die Regeln geben nur `v:2` heraus und lehnen offene E-Mails ab. Geschrieben beim Anmelden und nach Passwortwechsel (`lgSoon`), beim Umbenennen wandert der Eintrag mit (`claimHandle`). Alte Einträge: Hinweis „einmal mit E-Mail anmelden“.
