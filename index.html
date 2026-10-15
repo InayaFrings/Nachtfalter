@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f94c94f62f9d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3972e69adeb3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1771,6 +1771,12 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .vm2 .vmplay:hover::before{transform:scale(1.05)}.vm2 .vmplay:active{transform:scale(.93)}.vm2 .vmplay:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 .vm2 .vmplay.busy::after{background:conic-gradient(currentColor .25turn,color-mix(in srgb,currentColor 20%,transparent) 0);animation:vmspin .8s linear infinite}
 .vm2 .vmspin::before,.vm2 .vmspin::after,.vm2 .vmspin i{display:none}.vm2 .vmspin{width:50px;height:50px;border-radius:50%;border:2.5px solid color-mix(in srgb,currentColor 25%,transparent);border-top-color:currentColor;animation:vmspin .8s linear infinite}
+.extph{display:flex;align-items:center;gap:14px;width:100%;min-height:96px;padding:16px;border:1px dashed var(--p-line,var(--line,#ffffff40));border-radius:16px;background:var(--p-panel,#161618);color:var(--p-fg,var(--fg,#eee));font:inherit;text-align:left;cursor:pointer}
+.extph.extyt{aspect-ratio:16/9;min-height:0;justify-content:center;flex-direction:column;text-align:center}.extph.extsp{min-height:0;padding:10px 12px;background:#000c;color:#fff;border-color:#fff6}
+.extpi{flex:none;width:46px;height:46px;border-radius:50%;background:currentColor;display:grid;place-items:center}.extpi svg{width:20px;height:20px;fill:var(--p-panel,#161618);margin-left:2px}.extsp .extpi svg{fill:#000}
+.extpt{display:grid;gap:4px;min-width:0}.extpt b{font:700 16px var(--f-body)}.extpt small{font:13px/1.4 var(--f-body);opacity:.8}
+.ytph{display:grid;place-items:center;width:100%;height:100%;min-height:60px;background:#1b1b1d;color:#aaa;font:700 13px var(--f-body);letter-spacing:.04em}
+.musrc{display:inline-block;margin-top:2px;font:500 12px var(--f-body);color:inherit;opacity:.7;text-decoration:underline;text-underline-offset:2px}.musrc:hover{opacity:1}.ph .musrc{margin-left:6px}
 .mshself .ph>.cameo{display:none}.mshself .ph{gap:0}
 .pcrth .lnk,.pcrth .pcrrow .lnk{color:var(--p-fg)!important;text-decoration-color:var(--p-line)}.pcrth .pcrtool.on{background:var(--p-fg)!important;color:var(--p-bg)!important}
 @media (min-width:761px){.pcrbox.pcrth{width:min(760px,92vw)!important;height:min(880px,92vh)!important;border:1px solid var(--p-line)!important;border-radius:24px;box-shadow:0 30px 90px #000c}.pcrov{place-items:center!important}}
@@ -6319,7 +6325,7 @@ function ntThumb(p, v='post', oid='', k='', cm=false){
   else if (q.img) inner = `<img src="${esc(q.img)}" alt="">`;
   else if (sh ? sh.bigk : p.bigimg) inner = `<img data-pimg="${esc(sh ? sh.bigk : p.author + '/' + p.id)}" alt="">`;
   else if (q.clip?.poster) { inner = `<img src="${esc(q.clip.poster)}" alt="">`; badge = 'play'; }
-  else if (yt) { inner = `<img src="https://i.ytimg.com/vi/${esc(yt)}/mqdefault.jpg" alt="" onerror="this.remove()">`; badge = 'play'; }
+  else if (yt) { inner = ytImg(yt, 'mqdefault'); badge = 'play'; }
   else if (q.mu?.art || sp?.art) { inner = `<img src="${esc(q.mu?.art || sp.art)}" alt="" onerror="this.remove()">`; badge = 'mu'; }
   else if (q.lp?.img && /^https:\/\//.test(q.lp.img)) inner = `<img src="${esc(q.lp.img)}" alt="" onerror="this.remove()">`;
   if (!inner) { const t = String(q.text || q.lp?.t || (q.mu ? q.mu.t : '') || q.url || '').trim(); inner = `<span class="nt-tx" lang="de">${etx(t.slice(0, 70)) || '…'}</span>`; if (q.mu) badge = 'mu';
@@ -6773,7 +6779,7 @@ const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEA
 function stAuUnlock(){ if (stAuSrc) return; stAuWin = null; stAu.loop = false; /* der stille Ton ist 0 Sekunden lang: in Schleife fror die Seite ein */ try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
 const SPRES = {}; // Spotify-Link -> gefundene Hörprobe
 const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
-function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}</span></span>` : ''; }
+function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}${mu.pv ? ' · ' + muSrc(mu).n : ''}</span></span>` : ''; }
 function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; SPRES[url] = 0; stSongSearch(url, true).then(l => { SPRES[url] = l && l[0] ? {...l[0], sp:url} : null; if (SPRES[url] && STV) storyPaint(); else if (SPRES[url] && !stNew) softRender(); }); return null; }
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
@@ -6793,11 +6799,11 @@ function stAuStop(){ if (!stAuSrc) return; stAuSrc = ''; stAu.pause(); stAu.remo
 const stMuHTML = (mu, mp, edit, sel) => { mp = mp || {x:50, y:80, w:72}; const art = stMuArt(mu);
   return `<div class="stmu${edit ? ' ed' : ''}${sel ? ' sel' : ''}"${edit ? ' id="stmued"' : ' data-act="st-snd" role="button" tabindex="0" aria-label="Ton an oder aus"'} style="left:${+mp.x}%;top:${+mp.y}%;width:${+mp.w}%;--mw:${+mp.w}">${art ? `<img src="${esc(art)}" alt="">` : '<i class="stmuno">♪</i>'}<span><b>${esc(mu.t || 'Song')}</b><small>${esc(mu.a || '')}</small></span><i class="stmeq" aria-hidden="true"><i></i><i></i><i></i></i></div>`; };
 let STMRES = [], stMsT = null, stMsSp = '';
-const stMap = (l, f) => (l || []).map(f).filter(r => r.pv && r.t).map(r => ({t:String(r.t).slice(0, 120), a:String(r.a || '').slice(0, 120), art:String(r.art || '').slice(0, 400), pv:String(r.pv).slice(0, 400), d:Math.round(+r.d || 0)}));
+const stMap = (l, f) => (l || []).map(f).filter(r => r.pv && r.t).map(r => ({t:String(r.t).slice(0, 120), a:String(r.a || '').slice(0, 120), art:String(r.art || '').slice(0, 400), pv:String(r.pv).slice(0, 400), d:Math.round(+r.d || 0), ...(/^https:\/\/(music\.apple\.com|itunes\.apple\.com|www\.deezer\.com)\//.test(r.lk || '') ? {lk:String(r.lk).slice(0, 300)} : {})}));
 async function stSearchItunes(q){ const u = 'https://itunes.apple.com/search?' + new URLSearchParams({term:q, media:'music', entity:'song', limit:'15', country:'DE'}); const j = await jget(u, 8000) || await jsonp(u, 8000);
-  return j ? stMap(j.results, r => ({t:r.trackName, a:r.artistName, art:String(r.artworkUrl100 || '').replace('100x100', '200x200'), pv:r.previewUrl, d:(r.trackTimeMillis || 0) / 1000})) : null; }
+  return j ? stMap(j.results, r => ({t:r.trackName, a:r.artistName, art:String(r.artworkUrl100 || '').replace('100x100', '200x200'), pv:r.previewUrl, d:(r.trackTimeMillis || 0) / 1000, lk:r.trackViewUrl})) : null; }
 async function stSearchDeezer(q){ const j = await jsonp('https://api.deezer.com/search?' + new URLSearchParams({q, limit:'15', output:'jsonp'}), 8000);
-  return j && Array.isArray(j.data) ? stMap(j.data, r => ({t:r.title, a:r.artist?.name, art:r.album?.cover_medium, pv:r.preview, d:r.duration})) : null; }
+  return j && Array.isArray(j.data) ? stMap(j.data, r => ({t:r.title, a:r.artist?.name, art:r.album?.cover_medium, pv:r.preview, d:r.duration, lk:r.link})) : null; }
 async function stSongSearch(q, quiet){
   q = q.trim(); if (!quiet) stMsSp = ''; if (!q) return [];
   if (/open\.spotify\.com\/(?:intl-[\w-]+\/)?track\//i.test(q)) { // Spotify-Link: Titel nachschlagen, dann den Song suchen
@@ -6813,9 +6819,14 @@ const MU_SRCH = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" c
 const MU_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>', MU_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
 const muSearchHTML = (id, val='') => `<label class="musearch">${MU_SRCH}<input id="${id}" type="search" maxlength="300" autocapitalize="none" spellcheck="false" placeholder="Song oder Band suchen …" aria-label="Song oder Band suchen" value="${esc(val)}"></label>`;
 const muArtHTML = r => stMuArt(r) ? `<img src="${esc(r.art)}" alt="" loading="lazy">` : '<i class="stmuno">♪</i>';
-function muRows(act){ return STMRES.map((r, i) => `<div class="murow"><button type="button" class="mupick" data-act="${act}" data-i="${i}">${muArtHTML(r)}<span><b>${esc(r.t)}</b><small>${esc(r.a)}${r.d ? ' · ' + stTime(r.d) : ''}</small></span></button><button type="button" class="muprev" data-act="mu-prev" data-i="${i}" aria-label="Reinhören">${stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`).join(''); }
+function muRows(act){ return STMRES.map((r, i) => `<div class="murow"><button type="button" class="mupick" data-act="${act}" data-i="${i}">${muArtHTML(r)}<span><b>${esc(r.t)}</b><small>${esc(r.a)}${r.d ? ' · ' + stTime(r.d) : ''} · ${muSrc(r).n}</small></span></button><button type="button" class="muprev" data-act="mu-prev" data-i="${i}" aria-label="Reinhören">${stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`).join(''); }
 function stMsShow(l, msg, id='st-msres'){ const box = document.getElementById(id); if (!box) return;
   if (l) STMRES = l; box.innerHTML = msg ? `<p class="stmsmsg">${esc(msg)}</p>` : muRows(id === 'pmres' ? 'pmu-pick' : id === 'e-msres' ? 'e-mpick' : 'st-mpick'); }
+// Quelle der 30-Sekunden-Hörprobe nennen und verlinken (Inaya, 2026-10-14)
+function muSrc(mu){ const dz = /dzcdn\.net\//.test(mu?.pv || ''), q = encodeURIComponent(((mu?.a || '') + ' ' + (mu?.t || '')).trim());
+  const lk = /^https:\/\/(music\.apple\.com|itunes\.apple\.com|www\.deezer\.com)\//.test(mu?.lk || '') ? mu.lk : dz ? 'https://www.deezer.com/search/' + q : 'https://music.apple.com/de/search?term=' + q;
+  return {n:dz ? 'Deezer' : 'Apple Music', u:lk}; }
+const muSrcHTML = mu => { if (!mu?.pv) return ''; const x = muSrc(mu); return `<a class="musrc" href="${esc(x.u)}" target="_blank" rel="noopener" title="Ganzen Song bei ${x.n} öffnen">Hörprobe: ${x.n} ↗</a>`; };
 const phMuHTML = mu => `<button type="button" class="phmu${stAuSrc === stMuPv(mu) && !stAu.paused ? ' on' : ''}" data-act="phmu-play" data-pv="${esc(stMuPv(mu))}" aria-label="Song anhören: ${esc(mu.t)}">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}</span></button>`;
 const VOL_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>', VOL_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>';
 const phSpHTML = url => { const m = spOe(url); return `<button type="button" class="phmu${PSP && PSP.url === url && PSP.playing ? ' on' : ''}" data-act="phsp-play" data-sp="${esc(url)}" aria-label="Song anhören">${STEQ}<span class="sthmt">${m ? esc(m.t) : 'Spotify-Song'}</span></button>`; };
@@ -6852,7 +6863,7 @@ document.addEventListener('pointermove', e => { if (muDrag) muTrimMove(e.clientX
 document.addEventListener('pointerup', () => { if (!muDrag) return; const k = muDrag.bar.dataset.k, mu = muTarget(k); muDrag.bar.classList.remove('drag'); muDrag = null; if (mu) { stAu.loop = true; stMute = false; stAuPlay(mu, true, true); setTimeout(muMarkPrev, 30); } });
 document.addEventListener('keydown', e => { const bar = e.target.closest?.('.mutbar'); if (!bar || !/^Arrow(Left|Right)$/.test(e.key)) return; const mu = muTarget(bar.dataset.k); if (!mu) return; e.preventDefault(); const L = Math.min(muL(mu), muMax(bar.dataset.k)); mu.l = L; mu.s = Math.max(0, Math.min(MU_LEN - L, (+mu.s || 0) + (e.key === 'ArrowRight' ? 1 : -1))); muTrimPaint(bar, mu); stAu.loop = true; stAuPlay(mu, true, true); });
 stAu.addEventListener('timeupdate', () => { document.querySelectorAll('.mutbar').forEach(bar => { const mu = muTarget(bar.dataset.k), ph = bar.querySelector('.mutph'); if (!ph) return; const on = mu && stAuSrc === stMuPv(mu) && !stAu.paused; ph.hidden = !on; if (on) ph.style.left = Math.min(100, stAu.currentTime / MU_LEN * 100) + '%'; }); });
-const pmuHTML = (mu, own) => `<div class="pmu">${muArtHTML(mu)}<span><b>${esc(mu.t)}</b><small>${esc(mu.a)}</small></span><button type="button" class="muprev" data-act="pmu-play" data-pv="${esc(stMuPv(mu))}" data-s="${mu.s != null ? +mu.s : ''}" data-l="${mu.l != null ? +mu.l : ''}" data-t="${esc(mu.t)}" aria-label="Song anhören">${stAuSrc && stAuSrc === stMuPv(mu) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`;
+const pmuHTML = (mu, own) => `<div class="pmu">${muArtHTML(mu)}<span><b>${esc(mu.t)}</b><small>${esc(mu.a)}</small>${muSrcHTML(mu)}</span><button type="button" class="muprev" data-act="pmu-play" data-pv="${esc(stMuPv(mu))}" data-s="${mu.s != null ? +mu.s : ''}" data-l="${mu.l != null ? +mu.l : ''}" data-t="${esc(mu.t)}" aria-label="Song anhören">${stAuSrc && stAuSrc === stMuPv(mu) && !stAu.paused ? MU_PAUSE : MU_PLAY}</button></div>`;
 function storyPaint(){
   let ov = document.getElementById('storyov');
   if (!stNew && !STV && !stCam) { if (ov) ov.remove(); if (document.body.classList.contains('stopen')) { document.body.classList.remove('stopen'); document.body.style.top = ''; window.scrollTo(0, stScrollY); } clearTimeout(stTimer); return; }
@@ -7127,6 +7138,7 @@ function stSpPlace(){ const w = document.getElementById('stspw'), fr = document.
 function stSpPlay(song, key){
   const w = document.getElementById('stspw'), id = String(song || '').match(/track\/([A-Za-z0-9]+)/)?.[1];
   if (!w) return; if (!id) { stSpStop(); return; }
+  if (!extOk('sp')) { stSpStop(); w.hidden = false; stSpPlace(); w.innerHTML = extPh('sp', 'Spotify', 'ext-sp', `data-s="${esc(song)}" data-key="${esc(key)}"`, 'Musik von Spotify laden', 'extsp'); return; }
   w.hidden = false; stSpPlace(); if (stSp && stSp.key === key && w.childElementCount) return;
   stSpStop(); w.hidden = false; const el = document.createElement('div'); w.appendChild(el); const me = stSp = {key};
   spApi().then(api => { if (stSp !== me) return; api.createController(el, {uri:'spotify:track:' + id, width:'100%', height:80}, c => { if (stSp !== me) { try { c.destroy(); } catch {} return; } me.c = c; c.addListener('ready', () => { try { c.play(); } catch {} }); }); })
@@ -7766,7 +7778,7 @@ function postHTML(p){
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
   return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
-    <header class="ph">${cameo(a)}<div><span class="who"${nameFont(a)}>${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}</span>${p.mu && stMuPv(p.mu) ? phMuHTML(p.mu) : spT ? phSpHTML(spT) : ''}</div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}${amOwner && piKey(p) && !a.helper ? `<button class="lnk prep" data-act="post-hide" data-id="${esc(piKey(p))}" aria-label="Beitrag für alle löschen" title="Für alle löschen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
+    <header class="ph">${cameo(a)}<div><span class="who"${nameFont(a)}>${ulink(p.author)}</span><span class="meta">${a.helper ? a.helper + ' · ' : ''}${ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}</span>${p.mu && stMuPv(p.mu) ? phMuHTML(p.mu) + muSrcHTML(p.mu) : spT ? phSpHTML(spT) : ''}</div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}${amOwner && piKey(p) && !a.helper ? `<button class="lnk prep" data-act="post-hide" data-id="${esc(piKey(p))}" aria-label="Beitrag für alle löschen" title="Für alle löschen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
       <textarea id="pe-${p.id}" rows="3" maxlength="600" aria-label="Text">${esc(p.text || '')}</textarea>
@@ -7797,6 +7809,8 @@ function pmenuSheet(){ if (ppAsk || ppView) return ppSheet(); if (!postMenu) ret
 
 const pinSort = (a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (b.pin || 0) - (a.pin || 0) || b.ts - a.ts;
 let postAud = null, composeOpen = false, profEdit = false, designTab = 'look';
+// MP3s nur, wo es privat bleibt (Inaya, 2026-10-14, Urheberrecht): nicht in öffentlichen Gruppen, Zimmern und öffentlichen Beiträgen
+const chPubNow = (cid = CH.open) => { if (!cid) return false; if (/^(zimmer_|wall_)/.test(cid)) return true; const c = CH.list.find(x => x.id === cid); return !!(c && c.group && c.pub); };
 const aud = () => postAud || (amOwner ? 'pub' : 'fr'); // jeder wählt: öffentlich oder nur für Freunde (Inaya, 2026-10-10)
 // Ein Feld „Beitrag erstellen“, darunter Foto, MP3 und Link als Knöpfe; die Art ergibt sich beim Teilen (Inaya, 2026-10-11)
 let PSG = null, PSGP = false; // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
@@ -8132,12 +8146,13 @@ let musicEdit = false;
 const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : null;
 const profFull = mu => ({...mu, s:null, l:null}); // Profil: die ganze 30-Sekunden-Hörprobe, einmal, ohne Ausschnitt
 const SPOE = {};
-function spOe(url){ if (SPOE[url] !== undefined) return SPOE[url] || null; SPOE[url] = 0;
+function spOe(url){ if (!extOk('sp')) return null; if (SPOE[url] !== undefined) return SPOE[url] || null; SPOE[url] = 0;
   (async () => { const j = await jget('https://open.spotify.com/oembed?url=' + encodeURIComponent(url)).catch(() => null) || await jsonp('https://noembed.com/embed?url=' + encodeURIComponent(url)).catch(() => null);
     SPOE[url] = j && j.title ? {t:String(j.title).slice(0, 120), art:/^https:\/\/[\w.-]+\.(scdn\.co|spotifycdn\.com)\//.test(j.thumbnail_url || '') ? j.thumbnail_url : ''} : null; if (STV) storyPaint(); else softRender(); })(); return null; }
 let PSP = null; // {url, c, playing}
 function pspToggle(url){
   const id = String(url).match(/track\/([A-Za-z0-9]+)/)?.[1]; if (!id) return;
+  if (!extOk('sp')) { askYesNo('Musik von Spotify abspielen? Dabei werden Daten wie deine IP-Adresse an Spotify übertragen. Das wird auf diesem Gerät gemerkt.', 'Abspielen', 'Abbrechen').then(y => { if (y) { extAllow('sp'); pspToggle(url); } }); return; }
   if (PSP && PSP.url === url && PSP.c) { try { PSP.c.togglePlay(); } catch {} if (V.name === 'profile') songOff = PSP.playing ? (V.arg || S.me) : null; return; }
   pspStop(); try { stAu.pause(); } catch {}
   let w = document.getElementById('pspw'); if (!w) { w = document.createElement('div'); w.id = 'pspw'; w.className = 'pspw'; document.body.appendChild(w); }
@@ -8808,7 +8823,7 @@ function chatsView(){
         ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${tkBtnHTML(c)}<button class="btn ghost iconb grpsh" data-act="grp-share" aria-label="Gruppe teilen" title="Gruppe in einen Chat teilen">${SEND_ICO}</button><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen">${CROSS_ICO}</button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten">${CI.pen}</button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten">${CI.pen}</button></span>`}</header>
       <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
-      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label><label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label><button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
+      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label>${chPubNow() ? '' : `<label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label>`}<button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><textarea id="cm-in" class="mlin" rows="1" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
     </section>`;
   }
@@ -9518,7 +9533,7 @@ function wallSync(){
 function mediaHTML(c){
   let h = '';
   if (c.img && /^data:image\//.test(c.img)) h += `<img class="wimg" src="${esc(c.img)}" alt="Foto im Kommentar">`;
-  if (c.url && /^https?:\/\//i.test(c.url)) { const v = ytId(c.url); h += v ? `<a class="wvid" href="${esc(c.url)}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt="Video"><span class="play" aria-hidden="true">▶</span></a>` : `<a class="vid p" href="${esc(c.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Video ansehen</span></a>`; }
+  if (c.url && /^https?:\/\//i.test(c.url)) { const v = ytId(c.url); h += v ? `<a class="wvid" href="${esc(c.url)}" target="_blank" rel="noopener">${ytImg(v, 'hqdefault', 'Video')}<span class="play" aria-hidden="true">▶</span></a>` : `<a class="vid p" href="${esc(c.url)}" target="_blank" rel="noopener"><span class="play" aria-hidden="true">▶</span><span>Video ansehen</span></a>`; }
   return h;
 }
 // Jeder Gästebuch-Eintrag in Farbe und Muster vom Profil der Person, die ihn geschrieben hat (Inaya, 2026-10-11)
@@ -9604,7 +9619,7 @@ function msgLink(t){
   const u = (String(t || '').match(/https?:\/\/[^\s<>"]+/i) || [])[0]; if (!u) return '';
   const v = ytId(u); let host = ''; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; }
   if (v || embedOf(u) || SHORT_RE.test(u)) return `<div class="memb">${linkHTML(u, null, false)}</div>`; // Video-Vorschau wie bei Beiträgen (Inaya, 2026-10-11)
-  return v ? `<a class="mlink yt" href="${esc(u)}" target="_blank" rel="noopener"><span class="mthumb"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></span><span class="mhost">YouTube · antippen zum Ansehen</span></a>`
+  return v ? `<a class="mlink yt" href="${esc(u)}" target="_blank" rel="noopener"><span class="mthumb">${ytImg(v)}<span class="play" aria-hidden="true">▶</span></span><span class="mhost">YouTube · antippen zum Ansehen</span></a>`
     : `<a class="mlink" href="${esc(u)}" target="_blank" rel="noopener"><span class="mico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><span class="mhost">${esc(host)}<small>Link öffnen</small></span></a>`;
 }
 /* ---------- Reaktionen und Antworten auf einzelne Nachrichten (Inaya, 2026-10-13) ----------
@@ -10364,6 +10379,12 @@ function ytId(url){
   return m ? m[1] : '';
 }
 // Links direkt im Beitrag ansehen statt wegzuspringen: TikTok, Instagram, Spotify usw. (Inaya, 2026-10-11)
+// Fremde Dienste erst nach Antippen laden (Inaya, 2026-10-14, Datenschutz): YouTube, Spotify, TikTok, Instagram, SoundCloud usw. bekämen sonst schon beim Ansehen Daten wie die IP-Adresse.
+// Die Erlaubnis gilt je Dienst und wird auf diesem Gerät gemerkt (localStorage nf-ext).
+const extGet = () => { try { return JSON.parse(localStorage.getItem('nf-ext') || '{}') || {}; } catch { return {}; } };
+const extOk = k => !!extGet()[k], extAllow = k => { try { localStorage.setItem('nf-ext', JSON.stringify({...extGet(), [k]:1})); } catch {} };
+const extPh = (k, name, act, attrs, label, cls = '') => `<button type="button" class="extph ${cls}" data-act="${act}" data-k="${esc(k)}" ${attrs}><span class="extpi" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg></span><span class="extpt"><b>${label}</b><small>Zum Laden tippen. Dabei werden Daten wie deine IP-Adresse an ${name} übertragen. Das wird auf diesem Gerät gemerkt.</small></span></button>`;
+const ytImg = (v, q = 'hqdefault', alt = '') => extOk('yt') ? `<img src="https://i.ytimg.com/vi/${esc(v)}/${q}.jpg" alt="${alt}" onerror="this.remove()">` : `<span class="ytph" aria-hidden="true">YouTube</span>`;
 function embedOf(url){
   const u = String(url || '').trim(), H = location.hostname || 'localhost'; let m;
   if ((m = u.match(/tiktok\.com\/(?:@[\w.-]+\/(?:video|photo)|v|embed(?:\/v2)?|player\/v1)\/(\d{8,})/i))) return {src:`https://www.tiktok.com/player/v1/${m[1]}?description=1&music_info=1&rel=0`, ar:'9/16', name:'TikTok', k:'tt'};
@@ -10405,9 +10426,10 @@ function linkHTML(url, lp, compact, pill){
     if (LRES[url] && LRES[url] !== 'busy') lp = {...(lp || {}), ...LRES[url]};
   }
   const v = ytId(lp?.u || url);
-  if (v) return `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
+  if (v) return extOk('yt') ? `<button type="button" class="vframe" data-act="vplay" data-v="${v}" aria-label="Film abspielen"><img src="https://i.ytimg.com/vi/${v}/hqdefault.jpg" alt=""><span class="play" aria-hidden="true">▶</span></button>` : extPh('yt', 'YouTube (Google)', 'vplay', `data-v="${esc(v)}"`, 'YouTube-Video ansehen', 'extyt');
   const e = embedOf(lp?.u || url);
   if (e && compact && e.k === 'sp') e.h = 80; // Profilsong: schmale Spotify-Leiste (Inaya, 2026-10-11)
+  if (e && !extOk(e.k)) return extPh(e.k, e.name, 'ext-load', `data-u="${esc(lp?.u || url)}"${compact ? ' data-c="1"' : ''}`, `${esc(e.name)} laden`, 'emb-' + e.k);
   if (e) return `<div class="emb emb-${e.k}"><iframe src="${esc(e.src)}" title="${esc(e.name)}" loading="lazy" style="${e.ar ? `aspect-ratio:${e.ar}` : `height:${e.h}px`}" allow="autoplay; encrypted-media; fullscreen; clipboard-write; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
   if (pill) return linkPill(url, lp);
   const host = linkHost(lp?.u || url), img = lp?.img && /^https:\/\//.test(lp.img) ? lp.img : '';
@@ -10979,6 +11001,7 @@ document.addEventListener('change', async e => {
 });
 document.addEventListener('change', async e => {
   const id = e.target.id; if ((id !== 'cm-img' && id !== 'cm-aud' && id !== 'cm-vid') || !CH.open || !social) return;
+  if (id === 'cm-aud' && chPubNow()) { e.target.value = ''; toast('MP3s gehen nur in privaten Chats und privaten Gruppen.'); return; }
   const f = e.target.files[0], cid = CH.open; if (!f) return;
   chatAttach = false; render();
   if (id !== 'cm-img' && !(await askYesNo(id === 'cm-aud' ? 'Hast du diesen Song selbst gemacht oder darfst du ihn teilen? Songs von anderen Künstlern bitte als Spotify-Link schicken.' : 'Hast du dieses Video selbst gemacht oder darfst du es teilen, auch die Musik darin?', 'Ja, darf ich', 'Abbrechen'))) return; // Rechte bestätigen auch im Chat (Inaya, 2026-10-11)
@@ -11486,7 +11509,9 @@ document.addEventListener('click', async e => {
     songURL(b.dataset.u, p.clip, 'pv_' + p.id).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vc' + Math.random().toString(36).slice(2, 8); b.outerHTML = `<div class="vframe vclip on"><video id="${vid}" controls autoplay playsinline${mu ? ' muted data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(p.clip.poster || '')}" src="${src.url}"></video></div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
-  else if (a === 'vplay') { b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
+  else if (a === 'ext-load') { extAllow(b.dataset.k); b.outerHTML = linkHTML(b.dataset.u, null, !!b.dataset.c); return; }
+  else if (a === 'ext-sp') { extAllow('sp'); const w = document.getElementById('stspw'); if (w) w.innerHTML = ''; stSpPlay(b.dataset.s, b.dataset.key); return; }
+  else if (a === 'vplay') { extAllow('yt'); b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
   else if (a === 'pc-pin') { const k = b.dataset.k, d = b.dataset.d, w = PI[k], uid = social?.uid; if (!w || !uid || postOwner(w.p) !== uid || !d) return; const cur = w.list.find(x => x.kind === 'pin' && x.by === uid)?.c, ref = social.db.doc('chats/pi_' + k + '/m/pin');
     try { if (cur === d) await ref.delete(); else await ref.set({kind:'pin', c:d, by:uid, ts:Date.now()}); toast(cur === d ? 'Kommentar nicht mehr fixiert' : 'Kommentar fixiert'); } catch { toast('Das hat gerade nicht geklappt.'); } }
   else if (a === 'pc-like') {
@@ -11696,6 +11721,7 @@ document.addEventListener('submit', async e => {
     if (PVIDEO?.busy) { toast('Das Video wird noch vorbereitet.'); return; }
     const gal = PCR?.items.length ? PCR : null, galV = !!gal?.items.some(x => x.t === 'v');
     if (gal && gal.items.some(x => x.t === 'v' && !x.poster)) { toast('Ein Video wird noch vorbereitet.'); return; }
+    if (PAUDIO && aud() === 'pub') { toast('MP3s gehen nur in Beiträgen für Freunde. Für öffentliche Beiträge nimm die Musiksuche oder einen Spotify-Link.'); return; }
     if ((PAUDIO || PVIDEO || galV) && !PRIGHTS) { toast(PAUDIO ? 'Bitte bestätige erst, dass du den Song teilen darfst.' : 'Bitte bestätige erst, dass du das Video teilen darfst.'); document.getElementById('prights')?.focus(); return; }
     if (gal && gal.items.length === 1 && gal.items[0].t === 'i' && !gal.items[0].sk?.length) { try { postCrop = await galBake(gal.items[0], pcrR(gal.ar)); } catch { toast('Das Foto ließ sich nicht vorbereiten.'); return; } } // ein Foto: wie bisher
     const multi = gal && !(gal.items.length === 1 && gal.items[0].t === 'i' && !gal.items[0].sk?.length);

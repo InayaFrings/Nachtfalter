@@ -83,3 +83,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Einstellungen → Mitteilungen: Erlaubnis, Geräte-Schlüssel (FCM) nach `data/users/<uid>/nf-push` = `{tokens:{<id>:{t, ts, dev}}, prefs:{calls, msgs, friends, gb}}`. Der öffentliche Web-Push-Schlüssel (VAPID) steht in `site/push`, Inaya trägt ihn in den Einstellungen ein.
 - `functions/index.js` (1. Generation, europe-west3): `pushCall` (rings), `pushMsg` (chats/*/m, nicht an Leute, die gerade online sind; verschlüsselt nur „Neue Nachricht“), `pushFriend` (friends). Im Emulator wird nur protokolliert (`PUSH {…}`).
 - Antippen öffnet `?c=<chat>` bzw. `?p=<person>` (`pushOpen`).
+
+## Fremde Dienste und Musik (seit v423)
+
+- YouTube, Spotify, TikTok, Instagram, SoundCloud usw. laden erst nach Antippen (`extOk`/`extAllow`, je Dienst in `localStorage` `nf-ext`). Platzhalter: `extPh`, YouTube-Vorschaubilder nur über `ytImg`. Neue Einbindungen fremder Dienste bitte genauso absichern.
+- 30-Sekunden-Hörproben (iTunes/Deezer) zeigen ihre Quelle mit Link (`muSrcHTML`, Feld `lk` aus der Suche).
+- MP3-Upload nur in privaten Chats/Gruppen und in Beiträgen für Freunde (`chPubNow`, Prüfung beim Posten).
