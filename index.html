@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5bd9e99f38e0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='71dcda8347a5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1791,7 +1791,6 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .pcrtrim2{display:grid;gap:8px}.pcrtrim2 .vtr{background:var(--p-panel,#3a3a3e);border:1px solid var(--p-line,#ffffff30)}.pcrtrim2 .vtrplay{color:var(--p-fg,#fff);border-right-color:var(--p-line,#0a0a0b)}.pcrtlbl{font:600 14px var(--f-body);font-variant-numeric:tabular-nums;text-align:center}
 .pcrpick .nosb{bottom:auto;top:36px;left:5px}
 .pcam2{display:inline-flex;flex:none}.pcam2>.cameo+.cameo{margin-left:-14px;box-shadow:0 0 0 2px var(--p-bg,#111);border-radius:50%}
-.room.edit .ritem.sel{z-index:900!important}
 .rszh{position:absolute;right:-12px;bottom:-12px;width:26px;height:26px;border-radius:50%;background:var(--fg,#eee);border:2px solid var(--bg,#111);box-shadow:0 1px 6px #000a;cursor:nwse-resize;touch-action:none;z-index:5}
 .rszh::after{content:'';position:absolute;inset:7px;border-right:2px solid var(--bg,#111);border-bottom:2px solid var(--bg,#111)}.ritem[style*="scaleX(-1)"] .rszh{right:auto;left:-12px}
 .rselbar{display:grid;gap:10px;margin:10px 0}.rsize{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 12px}.rsize input{width:100%;accent-color:var(--fg)}.rsize small{grid-column:2;color:var(--muted);font-size:12px}
@@ -4907,6 +4906,16 @@ function itemH(k){ return FURN[k].w * FURN[k].vb[1] / FURN[k].vb[0] * 1.6; }
 const furnScal = k => { const f = FURN[k]; return !!f && (!!f.wall || !!f.rug || f.r === 'poster' || f.r === 'teppich' || f.r === 'fenster' || /kuschel|teddy|plüsch|plusch|pluesch/i.test(k + ' ' + f.name)); };
 const itS = it => { const v = +it.s; return furnScal(it.k) && v >= .4 && v <= 3 ? v : 1; };
 const okHex = c => /^#[0-9a-f]{6}$/i.test(c || '');
+// Ablageflächen (Inaya, 2026-10-14): Haustiere, Kuscheltiere und kleine Deko auf Bett, Sofa oder Schrank setzen; sie werden davor gezeichnet und wandern mit
+const rRect = it => { const f = FURN[it.k], sc = itS(it); return {x:+it.x || 0, y:+it.y || 0, w:f.w * sc, h:itemH(it.k) * sc}; };
+const rFloor = k => { const f = FURN[k]; return !!f && !f.wall && !f.rug; };
+function rHost(items, it){ // größtes Möbel, auf dessen Fläche die Unterkante (Mitte) des Stücks liegt
+  if (!rFloor(it.k)) return null; const a = rRect(it), px = a.x + a.w / 2, py = a.y + a.h; let best = null;
+  for (const o of items) { if (o === it || !rFloor(o.k) || o.on === it.k) continue; const b = rRect(o); if (b.w < a.w * 1.3) continue;
+    if (px > b.x + b.w * .04 && px < b.x + b.w * .96 && py > b.y + b.h * .05 && py < b.y + b.h * .9 && (!best || b.w > rRect(best).w)) best = o; }
+  return best; }
+function rZ(items, it, d = 0){ const f = FURN[it.k]; if (f.rug) return 2; if (f.wall) return 1; const h = it.on && d < 4 ? items.find(o => o.k === it.on && o !== it) : null;
+  return h ? rZ(items, h, d + 1) + 1 + d : 10 + Math.round(+it.y + itemH(it.k) * itS(it)); }
 const ROOM_COLS = [['#141416','Schwarz'],['#3a3a40','Grau'],['#8a8a92','Silber'],['#e9e7e2','Weiß'],['#4a0f1c','Bordeaux'],['#8a1020','Rot'],['#c86a8a','Rosa'],['#3d1f5c','Violett'],['#9a6fd0','Lila'],['#1d2b4a','Nachtblau'],['#5f8fc0','Blau'],['#1f3d2e','Tannengrün'],['#5fae6b','Grün'],['#8a6a2a','Bronze'],['#d4af37','Gold'],['#4a2e1e','Holz']];
 function roomColorRow(label, k, cur){ // k: 'item' (ausgewähltes Möbel), 'wallC' oder 'floorC'
   return `<fieldset class="opt"><legend class="lbl">${esc(label)}</legend><div class="swatches">
@@ -4924,7 +4933,7 @@ function roomHTML(u, edit, live=edit){
   if (r.items.some(it => !FURN[it.k])) { r.items = r.items.filter(it => FURN[it.k]); roomSel = null; } // entfernte Möbel/Poster verschwinden aus dem Zimmer
   const items = r.items.map((it, i) => {
     const f = FURN[it.k]; if (!f) return '';
-    const sc = itS(it), z = f.rug ? 2 : f.wall ? 1 : 10 + Math.round(+it.y + itemH(it.k) * sc);
+    const sc = itS(it), hs = sel != null && sel !== 'av' ? r.items[sel] : null, z = hs === it ? 900 : hs && it.on === hs.k ? 901 : rZ(r.items, it); // ausgewähltes Stück nach vorn, was darauf steht, bleibt davor
     return `<div class="ritem ${sel === i ? 'sel' : ''}" ${edit ? `data-drag="${i}"` : ''} style="left:${+it.x || 0}%;top:${+it.y || 0}%;width:${f.w * sc}%;z-index:${z};${it.f ? 'transform:scaleX(-1);' : ''}${okHex(it.c) ? `filter:url(#${tintId(it.c)})` : ''}">${furnSVG(it.k)}${edit && sel === i && furnScal(it.k) ? `<i class="rszh" data-rsz="${i}" title="Ziehen: größer oder kleiner" aria-hidden="true"></i>` : ''}</div>`;
   }).join('');
   const cols = [...new Set(r.items.map(it => it.c).filter(okHex))];
@@ -4973,7 +4982,7 @@ function roomView(){
   const selRow = `<div class="rselbar">${selName ? `<div class="row"><span class="lbl">Ausgewählt: ${selName}</span>${si ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}</div>
       ${si && furnScal(si.k) ? `<label class="rsize"><span class="lbl">Größe</span><input type="range" id="r-size" min=".4" max="3" step=".05" value="${itS(si)}" aria-label="Größe"><small>Oder am Griff unten rechts ziehen</small></label>` : ''}
       ${si ? `<div class="rselcol"><span class="lbl">Farbe</span><div class="swatches"><button type="button" class="sw orig" data-act="rcol" data-k="item" data-v="" aria-pressed="${!si.c}" title="Original" aria-label="Originalfarbe"></button>${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="rcol" data-k="item" data-v="${c}" aria-pressed="${si.c === c}" title="${l}" aria-label="Farbe: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick rpick" data-k="item" value="${okHex(si.c) ? si.c : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></div>` : ''}`
-    : '<span class="note">Tipp: Tippe ein Möbelstück im Zimmer an, um es zu spiegeln, in der Größe zu ändern, umzufärben oder wegzuräumen.</span>'}</div>`;
+    : '<span class="note">Tipp: Tippe ein Möbelstück im Zimmer an, um es zu spiegeln, in der Größe zu ändern (Wanddeko, Teppiche, Kuscheltiere), umzufärben oder wegzuräumen.</span>'}</div>`;
   const wallFloor = `<fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}${r.wall===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="wallC" style="background:${esc(r.wallC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'wallC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
       ${colItem === 'wallC' ? `<div class="cpanel">${roomColorRow('Wandfarbe', 'wallC', r.wallC)}</div>` : ''}
       <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}${r.floor===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="floorC" style="background:${esc(r.floorC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'floorC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
@@ -4986,7 +4995,7 @@ function roomView(){
       ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${wallFloor}${doneRow}
     </div></div>`;
   return `<div class="card">${head}<div class="card-in">
-      <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
+      <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Haustiere, Kuscheltiere und Deko kannst du auf ein Bett, Sofa oder einen Schrank ziehen, dann sitzen bzw. stehen sie darauf. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
       <div class="rstick">${roomHTML(u, true)}</div>
       ${selRow}
       ${wallFloor}
@@ -5012,7 +5021,8 @@ document.addEventListener('pointerdown', e => {
   const el = e.target.closest('#room [data-drag]'); if (!el) return;
   const room = document.getElementById('room').getBoundingClientRect();
   const key = el.dataset.drag, ref = key === 'av' ? me().room.av : me().room.items[+key];
-  dragging = {el, ref, room, sx:e.clientX, sy:e.clientY, ox:ref.x, oy:ref.y, moved:false, key};
+  const kids = key === 'av' ? [] : me().room.items.map((o, i) => ({o, i})).filter(({o}) => o.on === ref.k && o !== ref).map(({o, i}) => ({o, ox:+o.x, oy:+o.y, el:document.querySelector(`#room [data-drag="${i}"]`)}));
+  dragging = {el, ref, room, sx:e.clientX, sy:e.clientY, ox:ref.x, oy:ref.y, moved:false, key, kids};
   el.setPointerCapture(e.pointerId); e.preventDefault();
 });
 document.addEventListener('pointermove', e => {
@@ -5021,11 +5031,14 @@ document.addEventListener('pointermove', e => {
   if (Math.abs(dx) + Math.abs(dy) > .5) d.moved = true;
   d.ref.x = Math.max(-5, Math.min(95, d.ox + dx)); d.ref.y = Math.max(-5, Math.min(90, d.oy + dy));
   d.el.style.left = d.ref.x + '%'; d.el.style.top = d.ref.y + '%';
+  for (const c of d.kids || []) { c.o.x = c.ox + (d.ref.x - d.ox); c.o.y = c.oy + (d.ref.y - d.oy); if (c.el) { c.el.style.left = c.o.x + '%'; c.el.style.top = c.o.y + '%'; } }
 });
 document.addEventListener('pointerup', () => {
   if (!dragging) return;
   const d = dragging; dragging = null;
   d.ref.x = Math.round(d.ref.x * 10) / 10; d.ref.y = Math.round(d.ref.y * 10) / 10;
+  for (const c of d.kids || []) { c.o.x = Math.round(c.o.x * 10) / 10; c.o.y = Math.round(c.o.y * 10) / 10; }
+  if (d.key !== 'av' && d.moved) { const items = me().room.items, h = rHost(items, d.ref), was = d.ref.on; if (h) { d.ref.on = h.k; if (was !== h.k) toast(`Steht jetzt auf: ${(FURN[h.k].name || '').replace(/\u00ad/g, '')}`); } else delete d.ref.on; }
   roomSel = d.key === 'av' ? 'av' : +d.key;
   save(); render();
 });
@@ -11683,8 +11696,8 @@ document.addEventListener('click', async e => {
     save(); render(); }
   else if (a === 'hcompose') { homeCompose = !homeCompose; render(); if (homeCompose) document.getElementById('ptext')?.focus(); }
   else if (a === 'place') { const f = FURN[b.dataset.k]; me().room.items.push({k:b.dataset.k, x:44, y:f.wall ? 10 : 46}); roomSel = me().room.items.length - 1; save(); render(); document.getElementById('room')?.scrollIntoView({block:'center'}); }
-  else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); roomSel = null; save(); render(); }
-  else if (a === 'unplace-sel') { me().room.items.splice(roomSel, 1); roomSel = null; save(); render(); }
+  else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); r.items.forEach(o => { if (o.on === b.dataset.k) delete o.on; }); roomSel = null; save(); render(); }
+  else if (a === 'unplace-sel') { const r = me().room, gone = r.items[roomSel]; r.items.splice(roomSel, 1); if (gone) r.items.forEach(o => { if (o.on === gone.k) delete o.on; }); roomSel = null; save(); render(); }
   else if (a === 'flip') { const it = me().room.items[roomSel]; if (it) { it.f = !it.f; save(); render(); } }
   else if (a === 'ftab') { furnTab = b.dataset.v; render(); }
   else if (a === 'room-close') closeRoomChat();
