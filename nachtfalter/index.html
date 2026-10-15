@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='495b301661e3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0ab0d3a915dd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2035,6 +2035,7 @@ body.cmvopen{overflow:hidden}
 .cmvpi .cmts{flex:1;min-height:0;overflow-y:auto;max-height:none!important;padding:12px 2px 6px;display:grid;align-content:start;gap:10px}
 .cmvpi .pbar{padding-top:10px;border-top:1px solid var(--line-soft,#333)}.post.tp .cmvpi .pbar{border-color:var(--p-line)}
 .cmvnone{margin:20px 0;text-align:center;font-style:normal}
+.vmw{cursor:pointer;touch-action:none}.vmw:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:4px}.vm2 .vmw.vmdrag .vmdot{opacity:1;transform:scale(1.3)}
 /* Kommentarfenster im Design des Beitrags: Muster im Hintergrund, Kopf und Schreibleiste in der Beitragsfarbe, Musterkante unter dem Kopf (Inaya, 2026-10-15) */
 .cmv .cmvbox.tp{background:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg)}
 .cmv .cmvbox.tp .cmvh{position:relative;background:var(--p-bg);border-bottom:0}.cmv .cmvbox.tp .cmvh::after{content:'';position:absolute;left:0;right:0;top:100%;height:10px;background-image:var(--pp-pat);pointer-events:none;z-index:1}
@@ -9810,26 +9811,46 @@ function vmsgHTML(m){
   const d = +m.audio.d || 0; if (m.id) VMREG[m.id] = m;
   return `<div class="vmsg vm2" data-id="${esc(m.id || '')}">
     ${m._pend && m.from === social?.uid ? '<span class="vmplay vmspin" role="status" aria-label="Wird gesendet"><i></i></span>' : `<button type="button" class="vmplay" data-act="vm-play" data-id="${esc(m.id || '')}" aria-label="Sprachnachricht abspielen">${VM_PLAY}</button>`}
-    <div class="vmr"><div class="vmw" data-act="vm-seek" data-id="${esc(m.id || '')}" role="slider" aria-label="Stelle in der Sprachnachricht" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0"><b class="vmdot" aria-hidden="true">${BAT}</b>${vmBars(m)}</div>
+    <div class="vmr"><div class="vmw" data-act="vm-seek" data-id="${esc(m.id || '')}" tabindex="0" role="slider" aria-label="Stelle in der Sprachnachricht" aria-valuemin="0" aria-valuemax="${d}" aria-valuenow="0"><b class="vmdot" aria-hidden="true">${BAT}</b>${vmBars(m)}</div>
       <div class="vmfoot"><small class="vmt">${stTime(d)}</small><button type="button" class="vmrate" data-act="vm-rate" aria-label="Abspieltempo">${vmRateTxt()}</button></div></div></div>`;
 }
 let VMRATE = 1; const vmRateTxt = () => (VMRATE === 1 ? '1' : String(VMRATE).replace('.', ',')) + '×';
 // eine Sprachnachricht spielt zur Zeit; Fortschritt färbt die Balken
 const VMA = new Audio(); let VMID = null; VMA.preload = 'auto';
-function vmPaint(){ document.querySelectorAll('.vmsg').forEach(x => { const on = x.dataset.id === VMID, d = on && isFinite(VMA.duration) && VMA.duration ? VMA.duration : 0, q = on && d ? VMA.currentTime / d : 0;
+/* Spulen (Inaya, 2026-10-15): An jede Stelle springen, per Tippen, Ziehen (Finger oder Maus) oder Pfeiltasten.
+   Mit dem Handy aufgenommene WebM-Dateien kennen oft ihre Länge nicht (duration = Infinity), dann ließ sich nicht spulen.
+   Darum gilt als Länge notfalls die beim Aufnehmen gespeicherte (m.audio.d), und vmFixDur bringt den Browser dazu, die echte Länge zu ermitteln. */
+const vmDur = m => isFinite(VMA.duration) && VMA.duration > 0 && VMID === m?.id ? VMA.duration : +m?.audio?.d || 0;
+let VMDRAG = null, VMSEEKT = 0;
+function vmSeek(m, q){ const d = vmDur(m); if (!d) return; const t = Math.max(0, Math.min(d - .05, q * d)); try { VMA.currentTime = t; } catch {} VMA._want = t; vmPaint(); }
+function vmFixDur(){ if (isFinite(VMA.duration) || VMA._fixing) return; VMA._fixing = true; const want = VMA._want || 0;
+  const done = () => { if (!isFinite(VMA.duration)) return; VMA.removeEventListener('durationchange', done); VMA._fixing = false; try { VMA.currentTime = VMA._want ?? want; } catch {} vmPaint(); };
+  VMA.addEventListener('durationchange', done); try { VMA.currentTime = 1e101; } catch { VMA._fixing = false; } }
+VMA.addEventListener('loadedmetadata', vmFixDur);
+function vmPaint(){ document.querySelectorAll('.vmsg').forEach(x => { const on = x.dataset.id === VMID, mm = vmFind(x.dataset.id), d = on ? vmDur(mm) : 0, drag = VMDRAG && VMDRAG.id === x.dataset.id, q = drag ? VMDRAG.q : on && d && !VMA._fixing ? Math.min(1, VMA.currentTime / d) : on && VMA._fixing && d ? Math.min(1, (VMA._want || 0) / d) : 0;
   const bars = x.querySelectorAll('.vmw i'); bars.forEach((b, i) => b.classList.toggle('on', i / bars.length < q)); const dot = x.querySelector('.vmdot'); if (dot) dot.style.left = (q * 100) + '%';
   x.classList.toggle('vmon', on && (q > 0 || !VMA.paused));
   const pl = x.querySelector('.vmplay'); pl?.style.setProperty('--q', q.toFixed(3)); const playing = on && !VMA.paused; if (pl && pl.dataset.p !== String(playing)) { pl.dataset.p = playing; pl.innerHTML = playing ? VM_PAUSE : VM_PLAY; pl.setAttribute('aria-label', playing ? 'Anhalten' : 'Sprachnachricht abspielen'); }
-  const t = x.querySelector('.vmt'); const m = vmFind(x.dataset.id); if (t && m) t.textContent = stTime(on && (VMA.currentTime > 0 || !VMA.paused) ? VMA.currentTime : +m.audio.d || 0); }); }
+  const t = x.querySelector('.vmt'); const m = mm; if (t && m) t.textContent = stTime(drag ? VMDRAG.q * (vmDur(m) || 0) : on && (VMA.currentTime > 0 || !VMA.paused) && !VMA._fixing ? VMA.currentTime : on && VMA._fixing ? VMA._want || 0 : +m.audio.d || 0);
+  const w = x.querySelector('.vmw'); if (w) w.setAttribute('aria-valuenow', String(Math.round(q * (d || +m?.audio?.d || 0)))); }); }
 ['timeupdate', 'play', 'pause', 'ended', 'loadedmetadata'].forEach(ev => VMA.addEventListener(ev, vmPaint));
+{ const qAt = (w, x) => { const r = w.getBoundingClientRect(); return Math.max(0, Math.min(1, (x - r.left) / r.width)); };
+  document.addEventListener('pointerdown', e => { const w = e.target.closest?.('.vmw'); if (!w || e.button > 0) return; e.preventDefault(); e.stopPropagation();
+    VMDRAG = {id:w.dataset.id, q:qAt(w, e.clientX), pid:e.pointerId, w}; try { w.setPointerCapture(e.pointerId); } catch {} w.classList.add('vmdrag'); vmPaint(); }, true);
+  document.addEventListener('pointermove', e => { if (!VMDRAG || e.pointerId !== VMDRAG.pid) return; e.preventDefault(); VMDRAG.q = qAt(VMDRAG.w, e.clientX); vmPaint(); }, true);
+  const end = e => { if (!VMDRAG || e.pointerId !== VMDRAG.pid) return; const {id, q, w} = VMDRAG; VMDRAG = null; w.classList.remove('vmdrag'); VMSEEKT = Date.now(); if (e.type !== 'pointercancel') vmPlay(id, q); else vmPaint(); };
+  document.addEventListener('pointerup', end, true); document.addEventListener('pointercancel', end, true);
+  document.addEventListener('keydown', e => { const w = e.target.closest?.('.vmw'); if (!w) return; const m = vmFind(w.dataset.id); const d = vmDur(m); if (!m || !d) return;
+    const cur = VMID === m.id ? (VMA._fixing ? VMA._want || 0 : VMA.currentTime) : 0, k = d < 20 ? 1 : 5, step = {ArrowRight:k, ArrowUp:k, ArrowLeft:-k, ArrowDown:-k}[e.key]; // kurze Nachrichten in Sekundenschritten
+    const t = e.key === 'Home' ? 0 : e.key === 'End' ? d - .1 : step != null ? cur + step : null; if (t == null) return; e.preventDefault(); vmPlay(m.id, Math.max(0, Math.min(1, t / d))); }); }
 VMA.addEventListener('ended', () => { VMA.currentTime = 0; vmPaint(); });
 async function vmPlay(id, at){
   const m = vmFind(id); if (!m?.audio || !social) return;
-  if (VMID === id && VMA.src) { if (at != null && isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; else if (!VMA.paused) return VMA.pause(); VMA.play().catch(() => {}); return; }
-  VMA.pause(); VMID = id; VMA.removeAttribute('src'); VMA.playbackRate = VMRATE; vmPaint(); const pl = document.querySelector(`.vmsg[data-id="${CSS.escape(id)}"] .vmplay`); pl?.classList.add('busy');
+  if (VMID === id && VMA.src) { if (at != null) vmSeek(m, at); else if (!VMA.paused) return VMA.pause(); VMA.play().catch(() => {}); return; }
+  VMA.pause(); VMID = id; VMA._want = 0; VMA._fixing = false; VMA.removeAttribute('src'); VMA.playbackRate = VMRATE; vmPaint(); const pl = document.querySelector(`.vmsg[data-id="${CSS.escape(id)}"] .vmplay`); pl?.classList.add('busy');
   try { VMA.play().catch(() => {}); } catch {} // im Antippen freischalten
   try { const src = VOICEURL[m.audio.k] && m.from === social.uid ? {url:VOICEURL[m.audio.k], data:VOICEURL[m.audio.k]} : await songURL(m.from, m.audio, 'pa_' + m.audio.k); if (VMID !== id) return; VMA.src = src.url;
-    if (at != null) VMA.addEventListener('loadedmetadata', () => { if (isFinite(VMA.duration)) VMA.currentTime = at * VMA.duration; }, {once:true});
+    if (at != null) VMA.addEventListener('loadedmetadata', () => vmSeek(m, at), {once:true});
     await VMA.play().catch(() => { VMA.src = src.data; return VMA.play(); }); }
   catch (e) { toast(VMA.error?.code === 4 || e?.name === 'NotSupportedError' ? 'Dieses Gerät kann das Format der Sprachnachricht nicht abspielen. Aktualisiere den Browser oder hör sie auf einem anderen Gerät.' : e?.name === 'NotAllowedError' ? 'Tipp nochmal auf Play.' : 'Die Sprachnachricht ließ sich gerade nicht laden. Prüf deine Verbindung.'); VMID = null; }
   finally { document.querySelectorAll('.vmplay.busy').forEach(x => x.classList.remove('busy')); vmPaint(); }
@@ -11357,7 +11378,7 @@ document.addEventListener('click', async e => {
   }
   if (a === 'vm-play') { vmPlay(id); return; }
   if (a === 'vm-rate') { VMRATE = VMRATE === 1 ? 1.5 : VMRATE === 1.5 ? 2 : 1; VMA.playbackRate = VMRATE; document.querySelectorAll('.vmrate').forEach(x => { x.textContent = vmRateTxt(); }); return; }
-  if (a === 'vm-seek') { const r = b.getBoundingClientRect(), q = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); vmPlay(id, q); return; }
+  if (a === 'vm-seek') { if (Date.now() - VMSEEKT < 600) return; const r = b.getBoundingClientRect(), q = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); vmPlay(id, q); return; }
   if (a === 'maplay') {
     const m = CH.msgs.find(x => x.id === id); if (!m?.audio || !social) return;
     b.disabled = true; const box = b.closest('.apost'), inf = box?.querySelector('.ainfo .muted'); if (inf) inf.textContent = 'Lädt …';

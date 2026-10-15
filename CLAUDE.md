@@ -99,3 +99,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Jede Bild- oder Videoquelle im HTML mit `esc()` einsetzen, CSS-Hintergründe mit `url('${cssUrl(…)}')`, Links aus fremden Daten über `safeHref()` (nur http/https). Nie `src="${wert}"` ohne `esc`.
 - `firestore.rules`: `picOk` prüft `pic` und `cover` in `profiles/<uid>`. Achtung: `match /x/{id}/{rest=**}` trifft auch das Dokument selbst (Regeln v2), darum für Unterordner `{sub}/{rest=**}` nehmen.
 - `logins/<nutzername>` = `{uid, v:2, s, iv, c, ts}`: E-Mail nur verschlüsselt (PBKDF2 aus dem Passwort + AES-GCM, `lgSeal`/`lgOpen`). Die Regeln geben nur `v:2` heraus und lehnen offene E-Mails ab. Geschrieben beim Anmelden und nach Passwortwechsel (`lgSoon`), beim Umbenennen wandert der Eintrag mit (`claimHandle`). Alte Einträge: Hinweis „einmal mit E-Mail anmelden“.
+
+## Sprachnachrichten spulen (seit v457)
+
+- Tippen, Ziehen (Finger oder Maus) und Pfeiltasten auf der Wellenform (`.vmw`) springen an jede Stelle (`vmSeek`, Ziehen über `VMDRAG`). Als Länge gilt notfalls `m.audio.d`, `vmFixDur` ermittelt bei WebM-Aufnahmen ohne Längenangabe (`duration = Infinity`) die echte Länge.
