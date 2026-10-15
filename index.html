@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d8823308c08c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2424333e7e6f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1777,6 +1777,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .extpt{display:grid;gap:4px;min-width:0}.extpt b{font:700 16px var(--f-body)}.extpt small{font:13px/1.4 var(--f-body);opacity:.8}
 .ytph{display:grid;place-items:center;width:100%;height:100%;min-height:60px;background:#1b1b1d;color:#aaa;font:700 13px var(--f-body);letter-spacing:.04em}
 .musrc{display:inline-block;margin-top:2px;font:500 12px var(--f-body);color:inherit;opacity:.7;text-decoration:underline;text-underline-offset:2px}.musrc:hover{opacity:1}.ph .musrc{margin-left:6px}
+.muoff{margin:0;font-size:14px;opacity:.75;font-style:italic}
 .mshself .ph>.cameo{display:none}.mshself .ph{gap:0}
 .pcrth .lnk,.pcrth .pcrrow .lnk{color:var(--p-fg)!important;text-decoration-color:var(--p-line)}.pcrth .pcrtool.on{background:var(--p-fg)!important;color:var(--p-bg)!important}
 @media (min-width:761px){.pcrbox.pcrth{width:min(760px,92vw)!important;height:min(880px,92vh)!important;border:1px solid var(--p-line)!important;border-radius:24px;box-shadow:0 30px 90px #000c}.pcrov{place-items:center!important}}
@@ -2163,6 +2164,9 @@ setTimeout(() => crashBox('Die Seite hat nach 12 Sekunden nichts angezeigt. ' + 
 // Eigene Webseite (Supabase): Konto läuft über NF_AUTH, Passwort-Reset per E-Mail
 const PUB = !!window.NF_AUTH;
 const KEY = 'nachtfalter-v2' + (window.NF_AUTH?.slot ? ':' + NF_AUTH.slot : ''); // jeder gespeicherte Account hat seinen eigenen Zwischenspeicher (Inaya, 2026-10-12)
+// Musik vorerst ausgeschaltet (Inaya, 2026-10-14, rechtlich unklar): keine Hörproben von Apple Music/Deezer, keine MP3s, keine Musik in Profil, Storys und Beiträgen.
+// Gespeicherte Songs bleiben erhalten und werden nur nicht gezeigt. Wieder einschalten: auf true setzen. Sprachnachrichten sind davon nicht betroffen.
+const MUSIK = false;
 const REACTIONS = ['lach','schock','herz','wein','wut']; // Inayas Totenkopf-Reaktionen (2026-10-10), seit 2026-10-12 nur noch als Likes gezählt
 const LIKE_IN = r => r === 'like' || REACTIONS.includes(r);
 const HEART = on => `<svg class="lheart" viewBox="-2 0 28 24" aria-hidden="true"><path class="lhw" d="M2.6 8.6C.8 7.4-1 8-1.6 9.6c1.1 0 1.8.4 2.2 1.2-.9.1-1.4.6-1.5 1.4 1.3-.4 2.5-.2 3.3.6M21.4 8.6c1.8-1.2 3.6-.6 4.2 1-1.1 0-1.8.4-2.2 1.2.9.1 1.4.6 1.5 1.4-1.3-.4-2.5-.2-3.3.6" fill="none"/><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z" fill="${on ? 'currentColor' : 'none'}"/></svg>`;
@@ -5559,7 +5563,7 @@ const HELPERS = {
     // Juliet: weiße Goth-Geisterhaut und ein weißes Profil (Inaya, 2026-10-11)
     theme:{box:'#f4f4f6',pattern:'spitze',frame:'ornament',shape:'oval',font:'hand',page:'#dcdce2',pagePattern:'fluegel'},banner:{pattern:'spitze',mode:'tag',font:'hand',text:'Juliets Salon'},points:999,
     mood:'immer für dich da',headline:'Ich passe auf, dass sich hier alle wohlfühlen.',
-    about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Noctibat. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Noctibat ist ein Ort für Freunde. Jeder kann sich anmelden. Nimm nur Freundschaftsanfragen von Leuten an, die du magst, und stell dein Profil auf privat, wenn nur Freunde es sehen sollen.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Keine Nacktheit, keine Gewalt und nichts mit Drogen.\n4. Kein Spam und keine Werbung.\n5. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n6. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n7. Lade nur Musik und Videos hoch, die du selbst gemacht hast oder für die du die Rechte hast. Songs von anderen Künstlern teilst du bitte über die Musiksuche. Was gegen fremde Rechte verstößt, wird gelöscht.\n8. Wenn dich etwas stört, schreib Andy oder mir im Chat.',
+    about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Noctibat. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Noctibat ist ein Ort für Freunde. Jeder kann sich anmelden. Nimm nur Freundschaftsanfragen von Leuten an, die du magst, und stell dein Profil auf privat, wenn nur Freunde es sehen sollen.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Keine Nacktheit, keine Gewalt und nichts mit Drogen.\n4. Kein Spam und keine Werbung.\n5. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n6. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n7. Lade nur Fotos und Videos hoch, die du selbst gemacht hast oder für die du die Rechte hast, auch was die Musik darin angeht. Was gegen fremde Rechte verstößt, wird gelöscht.\n8. Wenn dich etwas stört, schreib Andy oder mir im Chat.',
     music:'Siouxsie and the Banshees, Lana Del Rey',films:'Crimson Peak, Wednesday',hobbies:'Briefe schreiben, Friedhofsspaziergänge, Nähen'},
   andy:{id:'andy',name:'Andy',handle:'andy',helper:'Helfer',outfit:{body:'m',back:'lang',front:'p_lang',hacc:{},eyeform:'e_muede',lips:'l_neutral',face:'smokey',top:'band',jacket:'leder',bottom:'bondage',shoes:'creeper',acc:'kette',jewel:{halsband:'#0b0b0f',kreuz:'#c9c9cf'},hairC:'#1c1b20'},
     theme:{box:'#0e0e10',pattern:'fledermaus',frame:'dornen',shape:'bogen',font:'fraktur',page:'#8a1020',pagePattern:'kreuze'},banner:{pattern:'kreuze',mode:'nacht',font:'fraktur',text:'Andys Nachtwache'},points:999,
@@ -6522,7 +6526,7 @@ const STPN = {
   av:['#e0709e', '<svg viewBox="0 0 24 24"><path d="M5 21c.6-3.6 3.3-5.5 7-5.5s6.4 1.9 7 5.5"/><path d="M8 10.5c0-3 1.8-5 4-5s4 2 4 5-1.8 4.5-4 4.5-4-1.5-4-4.5z"/><path d="M8 7.5c-2-1-3.5-.3-4.5 1.5 1.5 0 2.5.5 3 1.5M16 7.5c2-1 3.5-.3 4.5 1.5-1.5 0-2.5.5-3 1.5"/></svg>']};
 // Farben, Muster und Schrift aus dem eigenen Profil (Inaya, 2026-10-14)
 const myThemeStyle = () => themeStyle(normTheme({...(me()?.theme || BLANK_THEME())}));
-const STPG = [['Mitmachen', ['poll', 'sld', 'ask', 'cd', 'dbd']], ['Erwähnen', ['men', 'ht', 'lnk', 'loc']], ['Von dir', ['mu', 'pho', 'av']]];
+const STPG = [['Mitmachen', ['poll', 'sld', 'ask', 'cd', 'dbd']], ['Erwähnen', ['men', 'ht', 'lnk', 'loc']], ['Von dir', [...(MUSIK ? ['mu'] : []), 'pho', 'av']]];
 let ST_DBD = null; // „Du bist dran“: beim Mitmachen kommt der Sticker gleich in die neue Story
 // Avatar-Sticker: immer der eigene, angezogene Avatar in Posen und mit Gesichtern (Inaya, 2026-10-13)
 const STAV = [['Winken','winken','full',{lips:'l_laecheln'}], ['Peace','peace','full',{lips:'l_laecheln'}], ['Sitzen','sitzen','full',{lips:'l_laecheln'}], ['Jubeln','jubeln','full',{lips:'l_offen'}], ['Springen','springen','full',{lips:'l_offen'}], ['Drehen','drehen','full',{}], ['Schüchtern','schuechtern','full',{lips:'l_schmoll'}], ['Verliebt','','bust',{eyeform:'e_herz',lips:'l_laecheln'}], ['Lachen','','bust',{eyeform:'e_zu',lips:'l_offen'}], ['Durcheinander','','bust',{eyeform:'e_spirale',lips:'l_neutral'}]];
@@ -6751,7 +6755,7 @@ let stScrollY = 0;
 // mit der 30-Sekunden-Hörprobe (iTunes-Suche), die beim Antippen der Story sofort losspielt. Platz und Größe wählt man selbst.
 const stAu = new Audio(); stAu.loop = true; stAu.preload = 'auto'; stAu.setAttribute('playsinline', ''); let stAuSrc = '';
 const stOkUrl = (u, re) => typeof u === 'string' && re.test(u) ? u : '';
-const stMuPv = mu => stOkUrl(mu && mu.pv && pvFresh(mu.pv, mu), /^https:\/\/[\w.-]+\.(?:apple\.com|mzstatic\.com|itunes\.com|dzcdn\.net)\//);
+const stMuPv = mu => !MUSIK ? '' : stOkUrl(mu && mu.pv && pvFresh(mu.pv, mu), /^https:\/\/[\w.-]+\.(?:apple\.com|mzstatic\.com|itunes\.com|dzcdn\.net)\//);
 // Deezer-Hörproben laufen nach ein paar Stunden ab (hdnea=exp=…), dann spielt der Song nirgends mehr (Inaya, 2026-10-12: „NotSupportedError“).
 // Darum wird für abgelaufene Links gleich beim Anzeigen eine frische Hörprobe gesucht, bevorzugt von Apple (die laufen nicht ab).
 const PVFIX = {};
@@ -6777,7 +6781,7 @@ const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.co
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function stAuUnlock(){ if (stAuSrc) return; stAuWin = null; stAu.loop = false; /* der stille Ton ist 0 Sekunden lang: in Schleife fror die Seite ein */ try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
 const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
-function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}${mu.pv ? ' · ' + muSrc(mu).n : ''}</span></span>` : ''; }
+function stHeadMu(mu){ return MUSIK && mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}${mu.pv ? ' · ' + muSrc(mu).n : ''}</span></span>` : ''; }
 function stSpMu(){ return null; } // Spotify entfernt (Inaya, 2026-10-14)
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
@@ -6789,7 +6793,7 @@ let stAuWin = null; // {s, e}: nur dieser Teil läuft in Schleife
 stAu.addEventListener('timeupdate', () => { if (!stAuWin || !stAuSrc || stAu.src !== stAuSrc) return; const d = stAu.duration; if (isFinite(d) && stAuWin.s >= d - .05) return;
   if (stAu.currentTime >= stAuWin.e || stAu.currentTime < stAuWin.s - .5) { try { stAu.currentTime = stAuWin.s; } catch {} } });
 function stAuSeek(t){ const go = () => { try { stAu.currentTime = t; } catch {} }; if (stAu.readyState >= 1) go(); else stAu.addEventListener('loadedmetadata', go, {once:true}); }
-function stAuPlay(mu, restart, win){ const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
+function stAuPlay(mu, restart, win){ if (!MUSIK) return stAuStop(); const pv = stMuPv(mu); if (!pv) return stAuStop(); stAu.muted = false; if (typeof PSP !== 'undefined' && PSP) pspStop();
   const L = muL(mu), s0 = Math.max(0, Math.min(MU_LEN - L, +(mu && mu.s) || 0)); stAuWin = win ? {s:s0, e:s0 + L} : null;
   if (stAuSrc !== pv) { stAuSrc = pv; stAu.src = pv; stAuSeek(win ? s0 : 0); } else if (restart) stAuSeek(win ? s0 : 0);
   stAu.muted = stMute; const pr = stAu.play(); if (pr) pr.catch(e => { auDiag('Abspielen: ' + (e?.name || e)); if (stAuSrc !== pv) return; if (e?.name === 'NotSupportedError') { pvRescue(); return; } if (e?.name === 'NotAllowedError') stAuNA = true; stMute = true; stAu.muted = true; stAu.play().catch(() => {}); stSndMark(); }); }
@@ -7751,7 +7755,7 @@ function postHTML(p){
   if (!p.gal?.length && !p.sgi && sgClean(p.sg)) body += volw(`<div class="psg${sgIsGif(sgClean(p.sg)) ? ' gif' : ''}">${sgItemHTML(p.sg, true)}</div>`); // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
   if (p.url && !spT) body += linkHTML(p.url, p.lp, false, true);
   else if (p.type === 'gedanke' || p.type === 'neu') { const tu = String(p.text || '').match(/https?:\/\/[^\s<>"']+/i)?.[0]; if (tu && (ytId(tu) || embedOf(tu))) body += linkHTML(tu); } // Link im Text: auch gleich ansehen
-  if (p.audio) body += audioHTML(p);
+  if (p.audio && MUSIK) body += audioHTML(p);
   if (p.clip && !p.gal) body += clipHTML(p);
   if (p.share) body += sharedHTML(p.share);
   const hs = a.helper && HELPER_POSTS.find(x => x.id === p.id)?.show, sm = body || hs ? txt.replace('class="thought"', 'class="thought sm"') : txt; // mit Foto/Video: Text kleiner, reine Gedanken groß (Inaya, 2026-10-12)
@@ -7853,7 +7857,7 @@ function composeHTML(){
         <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text">${esc(PTXT)}</textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
-        <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${b('musik', 'Musik')}${b('stk', 'GIF')}${b('video', 'Link')}</div>
+        <div class="cbtns">${b('foto', 'Foto', '<input id="pfile" type="file" accept="image/*" multiple hidden>')}${b('clip', 'Video', '<input id="pvideo" type="file" accept="video/*" multiple hidden>')}${MUSIK ? b('musik', 'Musik') : ''}${b('stk', 'GIF')}${b('video', 'Link')}</div>
         <div class="row"><span class="sp"></span><button class="btn" type="submit">Teilen</button></div>
       </form>
 `;
@@ -7921,7 +7925,7 @@ const PCR_TI = {full:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V
 function pcrBar(it){ // Werkzeuge direkt unter der Vorschau, wie bei Insta
   const P = PCR, full = it.z <= pcrZmin(it, pcrR(P.ar)) + .005, one = false;
   const tool = (act, ico, l, on, dis) => `<button type="button" class="pcrtool${on ? ' on' : ''}" data-act="${act}"${dis ? ' disabled' : ''} aria-pressed="${!!on}">${ico}<span>${l}</span></button>`;
-  let h = `<div class="pcrbar">${it.t === 'i' ? tool('pcr-tag', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.tag}</svg>`, it.tg?.length ? `Markiert ${it.tg.length}` : 'Markieren', P.tag) : ''}${tool('pcr-mu', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>`, PMU ? 'Musik ändern' : 'Musik', P.mu)}${tool('pcr-sk', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.stk}</svg>`, 'Sticker', P.sk)}</div>`;
+  let h = `<div class="pcrbar">${it.t === 'i' ? tool('pcr-tag', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.tag}</svg>`, it.tg?.length ? `Markiert ${it.tg.length}` : 'Markieren', P.tag) : ''}${MUSIK ? tool('pcr-mu', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>`, PMU ? 'Musik ändern' : 'Musik', P.mu) : ''}${tool('pcr-sk', `<svg viewBox="0 0 24 24" aria-hidden="true">${CICO.stk}</svg>`, 'Sticker', P.sk)}</div>`;
   if (P.sk) h += `<div class="pcrpan pcrskp"><div id="sgp" class="sgp pcsgp" role="dialog" aria-label="Sticker">${sgPanelHTML()}</div></div>`;
   if (PMU && !P.mu) h += `<div class="pcrpan"><div class="pcrmu">${pmuHTML(PMU)}<button type="button" class="pcric" data-act="pcr-mu-x" aria-label="Musik entfernen">${PCR_ICO.x}</button></div>${muTrimHTML(PMU, 'post')}</div>`;
   if (P.mu) h += `<div class="pcrpan pmus"><div class="pmush"><b>Musik zum Beitrag</b><button type="button" class="lnk" data-act="pcr-mu">Schließen</button></div>${muSearchHTML('pmq', '')}<div class="stmres" id="pmres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div></div>`;
@@ -8161,7 +8165,7 @@ async function psfStart(uid, quiet){ // der Player wird schon beim Tippen angest
   psfMark();
 }
 function musicHTML(u, mine){
-  if (!u.id) return '';
+  if (!u.id || !MUSIK) return '';
   if (!profMu(u) && u.songFile?.n) return `<div class="music mmu"><div class="pmu"><span class="muart mp3art" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.musik}</svg></span><span><b>${esc(u.songFile.name || 'Eigene MP3')}</b><small>Eigene MP3</small></span><button type="button" class="muprev2" data-act="psf-play" data-u="${esc(u.id)}" aria-label="Song anhören">${PSF && PSF.uid === u.id && !PSF.a.paused ? MU_PAUSE : MU_PLAY}</button></div>${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`; // eigene MP3 auf dem Profil (Inaya, 2026-10-12)
   if (u.songMu && stMuPv(u.songMu)) return `<div class="music mmu">${pmuHTML(profFull(u.songMu))}${mine ? `<button class="lnk" data-act="nav" data-v="design">Musik ändern</button>` : ''}</div>`;
   const vid = '', playing = // MP3-Song auf dem Profil entfernt, nur noch Spotify (Inaya, 2026-10-11)
@@ -8415,9 +8419,9 @@ function designView(){
           ${f('about','Über mich',u.about,true)}${f('music','Musik',u.music)}${f('films','Filme',u.films)}
           ${f('hobbies','Hobbys',u.hobbies)}${f('games2','Spiele',u.games2)}
           <fieldset class="opt"><legend class="lbl">Deine Links (freiwillig)</legend><div style="display:grid;gap:10px">${PLINKS.map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}</div></fieldset>
-          <fieldset class="opt emus"><legend class="lbl">♪ Musik auf deinem Profil (freiwillig)</legend>
+          ${MUSIK ? `<fieldset class="opt emus"><legend class="lbl">♪ Musik auf deinem Profil (freiwillig)</legend>
             ${mdraft?.songMu ? `${pmuHTML(profFull(mdraft.songMu))}<p class="note mu30">Spielt 30 Sekunden, wenn jemand auf deinem Profil auf Play drückt.</p><div class="row"><button type="button" class="lnk" data-act="e-mux">Musik entfernen</button></div>` : `${u.songSp && !mdraft?.songSpX ? `<p class="note">Gerade: Spotify-Song. Such unten einen Song, um ihn zu ersetzen. <button type="button" class="lnk" data-act="e-mux">Entfernen</button></p>` : ''}${u.songFile && !mdraft?.songFileX ? `<div class="patt"><span class="pattmp3"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.musik}</svg>${esc(u.songFile.name || 'Eigene MP3')}</span><button type="button" class="lnk" data-act="e-sfx">MP3 entfernen</button></div><p class="note" style="margin:0">Oder such unten einen Song, um sie zu ersetzen.</p>` : ''}${muSearchHTML('e-msq')}<div class="stmres" id="e-msres"><p class="stmsmsg">Such nach einem Song oder einer Band.</p></div>${u.songFile && !mdraft?.songFileX ? '' : `<label class="rights"><input type="checkbox" id="e-songrights" ${SONGRIGHTS ? 'checked' : ''}><span>Ich habe diesen Song selbst gemacht oder darf ihn teilen. Songs von anderen Künstlern bitte über die Musiksuche teilen.</span></label><label class="lnk pmup"><input id="e-songfile" type="file" accept="audio/*,.mp3,.m4a" hidden>Oder eigene MP3 hochladen</label><span class="note" id="e-songname"></span>`}`} <!-- eigene MP3 aufs Profil wie bei Beiträgen (Inaya, 2026-10-12) -->
-          </fieldset>
+          </fieldset>` : ''}
           <div class="row"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit">Speichern</button></div>
         </form>
       </div></div>
@@ -8791,7 +8795,7 @@ function chatsView(){
         ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${tkBtnHTML(c)}<button class="btn ghost iconb grpsh" data-act="grp-share" aria-label="Gruppe teilen" title="Gruppe in einen Chat teilen">${SEND_ICO}</button><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen">${CROSS_ICO}</button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten">${CI.pen}</button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten">${CI.pen}</button></span>`}</header>
       <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
-      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label>${chPubNow() ? '' : `<label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label>`}<button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
+      ${chatAttach ? `<div class="attsheet"><label class="attopt"><input type="file" id="cm-img" accept="image/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span>Foto</label><label class="attopt"><input type="file" id="cm-vid" accept="video/*" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>Video</label>${chPubNow() || !MUSIK ? '' : `<label class="attopt"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>MP3</label>`}<button type="button" class="attopt" data-act="att-link"><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span>Link</button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><textarea id="cm-in" class="mlin" rows="1" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
     </section>`;
   }
@@ -9577,6 +9581,7 @@ function msgMedia(m){
   if (m.img && /^data:image\//.test(m.img)) return `<button type="button" class="mimg" data-act="mimg-open" data-id="${esc(m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(m.img)}" alt="Foto"></button>`;
   if (m.clip && m.clip.n) return `<button type="button" class="vframe vclip mvclip" data-act="mvplay" data-id="${esc(m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(m.clip.poster || '') ? m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
   if (m.audio && m.audio.n && m.audio.voice) return vmsgHTML(m);
+  if (m.audio && m.audio.n && !MUSIK) return '<p class="muoff">♪ Musik ist auf Noctibat gerade ausgeschaltet.</p>';
   if (m.audio && m.audio.n) return `<div class="apost maud"><button type="button" class="aplay" data-act="maplay" data-u="${esc(m.from)}" data-id="${esc(m.id || '')}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(m.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
   return '';
 }
@@ -10968,7 +10973,7 @@ document.addEventListener('change', async e => {
 });
 document.addEventListener('change', async e => {
   const id = e.target.id; if ((id !== 'cm-img' && id !== 'cm-aud' && id !== 'cm-vid') || !CH.open || !social) return;
-  if (id === 'cm-aud' && chPubNow()) { e.target.value = ''; toast('MP3s gehen nur in privaten Chats und privaten Gruppen.'); return; }
+  if (id === 'cm-aud' && (chPubNow() || !MUSIK)) { e.target.value = ''; toast('MP3s gehen nur in privaten Chats und privaten Gruppen.'); return; }
   const f = e.target.files[0], cid = CH.open; if (!f) return;
   chatAttach = false; render();
   if (id !== 'cm-img' && !(await askYesNo(id === 'cm-aud' ? 'Hast du diesen Song selbst gemacht oder darfst du ihn teilen? Songs von anderen Künstlern bitte nicht als MP3 schicken.' : 'Hast du dieses Video selbst gemacht oder darfst du es teilen, auch die Musik darin?', 'Ja, darf ich', 'Abbrechen'))) return; // Rechte bestätigen auch im Chat (Inaya, 2026-10-11)

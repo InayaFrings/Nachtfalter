@@ -89,3 +89,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Spotify ist seit v424 komplett raus (Links sind normale Links). YouTube, TikTok, Instagram, SoundCloud usw. laden erst nach Antippen (`extOk`/`extAllow`, je Dienst in `localStorage` `nf-ext`). Platzhalter: `extPh`, YouTube-Vorschaubilder nur über `ytImg`. Neue Einbindungen fremder Dienste bitte genauso absichern.
 - 30-Sekunden-Hörproben (iTunes/Deezer) zeigen ihre Quelle mit Link (`muSrcHTML`, Feld `lk` aus der Suche).
 - MP3-Upload nur in privaten Chats/Gruppen und in Beiträgen für Freunde (`chPubNow`, Prüfung beim Posten).
+- Seit v426 ist Musik ganz ausgeschaltet: Schalter `const MUSIK = false` (direkt nach `KEY` in `index.html`). Aus heißt: keine Hörproben (`stMuPv`/`stAuPlay`), keine Musik-Knöpfe in Beitrag, Editor, Story und Profil, keine MP3s; alte MP3-Nachrichten zeigen einen Hinweis. Daten bleiben gespeichert. Sprachnachrichten sind nicht betroffen.
