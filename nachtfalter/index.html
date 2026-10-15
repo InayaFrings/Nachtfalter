@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a939dc432273';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a89ea57b9b85';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2358,8 +2358,8 @@ const ITEMS = [
   // Neue Frisuren (Inaya, 2026-10-11): eigene Entwürfe nach ihren Bildern, je kurz und lang
   {id:'hx_cyberk',cat:'back',name:'Cyber-Falls kurz',st:'Cyber'},
   {id:'hx_cyberl',cat:'back',name:'Cyber-Falls lang',st:'Cyber'},
-  {id:'hx_woll_k',cat:'back',name:'Wolldread-Zöpfe kurz',st:'Cyber'},
-  {id:'hx_woll_l',cat:'back',name:'Wolldread-Zöpfe lang',st:'Cyber'},
+  {id:'hx_woll_k',cat:'back',name:'Wolldread-Zöpfe kurz',st:'Cyber',gone:1}, // nicht mehr in der Garderobe (Inaya, 2026-10-14); wer sie trägt, behält sie
+  {id:'hx_woll_l',cat:'back',name:'Wolldread-Zöpfe lang',st:'Cyber',gone:1},
   {id:'hx_racoonk',cat:'back',name:'Scene-Hair mit Streifen kurz',st:'Scene'},
   {id:'hx_racoonl',cat:'back',name:'Scene-Hair mit Streifen lang',st:'Scene'},
   {id:'hx_maehnek',cat:'back',name:'Toupierte Goth-Mähne kurz',st:'Goth'},
@@ -5181,7 +5181,7 @@ function nameView(){
 }
 function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der App
   const p = S.pending, o = p.outfit;
-  const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.price && fits(i, o)).sort(noneFirst).map(i => {
+  const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.gone && !i.price && fits(i, o)).sort(noneFirst).map(i => {
     const on = isOn(o, i), off = on && (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id));
     const t = previewOutfit(o, i), [dot, pan] = itemColUI(i, o, 'ob-color');
     return `<div class="item ${on ? 'on' : ''}">${dot}
@@ -8501,7 +8501,7 @@ function shopView(isShop){
   const has = i => !i.price || u.owned.includes(i.id);
   const cats = isShop ? CATS.filter(([k]) => k !== 'body') : [...BODY_CAT, ...CATS];
   if (!cats.some(([k]) => k === shopCat)) shopCat = 'back';
-  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && (isShop ? !has(i) : has(i)) && fits(i, u.outfit)).sort(noneFirst);
+  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && !i.gone && (isShop ? !has(i) : has(i)) && fits(i, u.outfit)).sort(noneFirst);
   const items = list.map(i => {
     const on = isOn(u.outfit, i);
     const btn = on ? (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id) ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">${MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen'}</button>` : `<button class="btn ghost" disabled>Angezogen</button>`)
