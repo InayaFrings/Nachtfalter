@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='abe6696cc551';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='59ad053fc56c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -4902,7 +4902,7 @@ const hex2hsl = h => { const [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, 
 const hsl2hex = ([hh, s2, l]) => { const c = (1 - Math.abs(2 * l - 1)) * s2, x = c * (1 - Math.abs((hh / 60) % 2 - 1)), m = l - c / 2; const [r, g, b] = hh < 60 ? [c, x, 0] : hh < 120 ? [x, c, 0] : hh < 180 ? [0, c, x] : hh < 240 ? [0, x, c] : hh < 300 ? [x, 0, c] : [c, 0, x];
   return '#' + [r, g, b].map(v => Math.round(Math.max(0, Math.min(1, v + m)) * 255).toString(16).padStart(2, '0')).join(''); };
 const FCOL_RE = /(fill|stroke|stop-color)="(#[0-9a-f]{3}(?:[0-9a-f]{3})?)"/gi, FFAM = {}, FREC = {};
-const FKEEP = {fenster:['#2c2e36'], f_gitter:['#22242c']}, FMAIN = {vorhang:'#5a0f22'}; // Vorhang: der Stoff ist die Hauptfarbe, nicht die Stange // Fenster: nur der Rahmen bekommt die Farbe, der Nachthimmel bleibt
+const FKEEP = {fenster:['#2c2e36'], f_gitter:['#22242c']}, FMAIN = {vorhang:'#5a0f22', girplusch:'#8fd16a'}; // Vorhang: der Stoff ist die Hauptfarbe, nicht die Stange // Fenster: nur der Rahmen bekommt die Farbe, der Nachthimmel bleibt
 function furnFam(k){ if (FFAM[k]) return FFAM[k]; const svg = String(FURN[k]?.svg || ''), all = [...svg.matchAll(FCOL_RE)].map(m => [m[1].toLowerCase(), nHex(m[2])]);
   const H = {}; for (const [, h] of all) H[h] = H[h] || hex2hsl(h);
   if (FURN[k].r === 'poster') { const bg = all.find(([a]) => a === 'fill')?.[1]; if (!bg) return FFAM[k] = {fam:new Set()}; // Poster: nur der Hintergrund bekommt die Farbe
