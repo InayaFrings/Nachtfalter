@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a89ea57b9b85';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='59c8f5ed2654';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -3029,7 +3029,7 @@ const IHAIR = { // b = hinter dem Körper, f = vor dem Kopf (über dem Gesicht),
   dreadk:{cap:1, dreads:330, ln:''}, dreadl:{cap:1, dreads:720, ln:''},
   afrok:{afro:[172,70,150,130], cap:1}, afrol:{afro:[172,150,210,230], cap:1},
   cornk:{corn:0, cap:0}, cornl:{corn:1, cap:0},
-  dutt:{cap:1, buns:1, f:'M60 60Q90 -40 172 -44Q256 -40 288 60Q300 -10 172 -20Q44 -10 60 60Z'},
+  dutt:{cap:1, buns:1}, // ohne Band über den Kopf, sah aus wie ein Helm (Inaya, 2026-10-14)
 };
 const IPO = 'M56 194Q34 -26 172 -30Q310 -26 288 194'; // gleiche Außenlinie wie der Oberkopf, nur die Fransen sind neu
 const IPONY = {
@@ -3083,7 +3083,7 @@ function iHair(o, X){ // gibt {back, front} zurück
     if (h.bx) back += h.bx(X, hf, dk, HC, FC); // eigene Lagen hinter dem Körper (z. B. Falls) // eigene Zusatzlagen (z. B. Stufen beim Scene-Hair)
     if (h.f) front += P(h.f, hf) + lines(h.ln);
     if (h.shave) front = `<path d="${ICAP}" fill="${shade(HC, .5)}" opacity=".18"/>` + front;
-    if (h.braids) { const br = `M104 34Q70 70 62 130Q58 190 60 230Q40 290 56 340Q36 400 54 470Q40 520 56 560`; /* Zöpfe ab Haaransatz */ front += iboF(X.LN(br, IOL, 34) + X.LN(br, HC, 28) + X.LN(br, dk, 26, .5).replace('stroke-linecap="round"', 'stroke-dasharray="10 12" stroke-linecap="round"') + `<path d="M44 556L68 556L62 590L50 590Z" fill="${HC}" ${IO}/><rect x="44" y="548" width="24" height="10" rx="4" fill="#e05aa0" ${IO}/>`); }
+    if (h.braids) { const br = `M56 176Q42 240 54 300Q40 360 52 420Q40 480 54 546`; /* Zöpfe tief seitlich gebunden, nicht mehr oben am Kopf (sah aus wie Ohren, Inaya, 2026-10-14) */ front += iboF(X.LN(br, IOL, 34) + X.LN(br, HC, 28) + X.LN(br, dk, 26, .5).replace('stroke-linecap="round"', 'stroke-dasharray="10 12" stroke-linecap="round"') + `<path d="M42 544L66 544L60 580L48 580Z" fill="${HC}" ${IO}/><rect x="42" y="536" width="24" height="10" rx="4" fill="#e05aa0" ${IO}/><rect x="40" y="166" width="30" height="13" rx="5" fill="#e05aa0" ${IO}/>`); }
     if (h.dreads) { // Dreadlocks (überarbeitet 2026-10-10): dichte Locks hinter dem Körper, vorn nur seitlich neben dem Gesicht, damit jeder Pony frei bleibt
       const y1 = h.dreads, lock = (d, w) => X.LN(d, IOL, w + 6) + X.LN(d, HC, w) + X.LN(d, dk, w * .55, .7).replace('stroke-linecap="round"', `stroke-dasharray="${f1(w * .3)} ${f1(w * .45)}" stroke-linecap="round"`) + X.LN(d, lt, w * .12, .18);
       const tip = (x, y, w) => `<ellipse cx="${x}" cy="${y}" rx="${f1(w / 2 + 1)}" ry="${f1(w / 2 + 3)}" fill="${HC}" ${IO} stroke-width="2"/>`;
@@ -3094,7 +3094,7 @@ function iHair(o, X){ // gibt {back, front} zurück
       front += iCrown('dread', X, HC) + iboF(fr); }
     if (h.corn !== undefined) { front += iCrown('corn', X, HC);
       if (h.corn) back += [70, 110, 234, 274].map((x, k) => X.LN(`M${x} 150Q${x + (x < 172 ? -16 : 16)} 360 ${x + (x < 172 ? -10 : 10)} 560`, IOL, 22) + X.LN(`M${x} 150Q${x + (x < 172 ? -16 : 16)} 360 ${x + (x < 172 ? -10 : 10)} 560`, HC, 16)).join(''); }
-    if (h.buns) front += iboF(P('M40 -6A44 44 0 1 1 128 -6A44 44 0 1 1 40 -6Z', hf) + X.LN('M62 -24Q84 -42 106 -24', lt, 3, .5)) + P(h.f, hf);
+    if (h.buns) front += iboF(P('M40 -6A44 44 0 1 1 128 -6A44 44 0 1 1 40 -6Z', hf) + X.LN('M62 -24Q84 -42 106 -24', lt, 3, .5)) + (h.f ? P(h.f, hf) : '');
     if (o.back === 'gothzopf') front += `<circle cx="292" cy="80" r="10" fill="${shade(HC, 1.6)}" ${IO}/>`;
   }
   if (ISPECP[o.front]) front += iSpecPony(o.front, X, FC, ff);
@@ -3775,8 +3775,8 @@ Object.assign(IHAIR, {
   hx_woll_k:ifalls('woll', 340), hx_woll_l:ifalls('woll', 680),
   hx_racoonk:{b:ISCENE_B(RACOON_K), side:240, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', bx:(X, hf, dk, HC, FC) => ihairStripes(X, ISCENE_B(RACOON_K), hxC2(HC, FC), 'rk', 200), fx:(X, hf, dk, HC, FC) => iboF(ihairStripes(X, ISIDE(240), hxC2(HC, FC), 'rs', 196))},
   hx_racoonl:{b:ISCENE_B(RACOON_L), side:330, cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', bx:(X, hf, dk, HC, FC) => ihairStripes(X, ISCENE_B(RACOON_L), hxC2(HC, FC), 'rk', 200), fx:(X, hf, dk, HC, FC) => iboF(ihairStripes(X, ISIDE(330), hxC2(HC, FC), 'rs', 196))},
-  hx_maehnek:{b:imaehne(380), side:300, cap:1, ln:'', bx:(X, hf, dk) => IMAEHNE_LN(X, dk, 380)},
-  hx_maehnel:{b:imaehne(640), side:460, cap:1, ln:'', bx:(X, hf, dk) => IMAEHNE_LN(X, dk, 640)},
+  hx_maehnek:{b:imaehne(380), cap:1, ln:'', bx:(X, hf, dk) => IMAEHNE_LN(X, dk, 380)},
+  hx_maehnel:{b:imaehne(640), cap:1, ln:'', bx:(X, hf, dk) => IMAEHNE_LN(X, dk, 640)},
   hx_nietenk:{b:'M40 170Q20 -40 172 -44Q324 -40 304 170L312 360L290 348L282 372L252 354L92 354L62 372L54 348L32 360Z', side:340, flat:1, cap:1, ln:'M56 220Q44 290 56 350M288 220Q300 290 288 350',
     bx:() => [[24, 250, -100], [30, 320, -96], [320, 250, 100], [314, 320, 96]].map(([x, y, a]) => ihairSpike(x, y, a)).join(''),
     fx:() => Array.from({length:9}, (_, k) => { const a = Math.PI * (1.08 + k * .84 / 8); return ihairSpike(172 + Math.cos(a) * 126, 70 + Math.sin(a) * 96, a * 180 / Math.PI + 90, 1.1); }).join('') + iboF(ihairSpike(46, 230, -90) + ihairSpike(48, 300, -90, .9))},
