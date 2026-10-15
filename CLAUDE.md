@@ -124,3 +124,10 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - `loadProf` nimmt erst den Zwischenspeicher, dann im Hintergrund den Server.
 - Update-Prüfung über `build.txt` statt die ganze Seite (700 KB) bei jedem Öffnen neu zu laden. `claimHandle` schreibt `handles/<uid>` nur bei Änderung (jede Änderung lesen alle, die online sind).
 - Seit v465: Letzter Stand je Konto in `localStorage nf-snap:<S.me>` (Chatliste, Freundeslisten, Mitteilungen, Story-Ringe (seit v466), Namen und Avatare der Beteiligten). Die Salon-Leiste Freunde/Öffentlich steht immer (auch vor der Verbindung), `loadPubFeed` nimmt erst den Zwischenspeicher. `snapLoad()` beim Start, `snapSave()` nach Änderungen (frühestens 3 s nach Verbindungsstart, höchstens alle 4 s). Bis dahin zeigen `notifs()`, Chatliste, `ntHead`, `nmOf`, `uidUser` diesen Stand. Leer-Hinweise („Noch keine …“) nur, wenn die Daten wirklich geladen sind (`CH.mraw`, `WL.ready`, `snapLive()`), sonst „Lädt …“. Beiträge zeigen vor der Verbindung gleich die neue Leiste (`piWaitHTML`), nie das alte Kommentarfeld.
+
+## Kollektion tief sitzende Hosen, Taschen (seit v467)
+
+- Tief sitzende Hosen `sag_*` über `isag()` (Bund `isagY`, Boxershorts `iboxer`, tieferer Schritt `idropFill`, Löcher `iholes`). Gürtel sitzen auf dem Bund der Hose: `IWAIST` (auch für `lw_*`), in `avatarI` über `XW`.
+- Neue Gürtel/Ketten/Jacken/Schuhe siehe Block „Neue Kollektion“ vor `avatarI`. Farbvarianten = eigene IDs mit gleicher Zeichnung und anderer Startfarbe (`IBOTC`, `IJACKC`, `ISHOEC`), damit der Laden verschiedene Farben zeigt.
+- Reiter „Taschen“: Accessoires mit `bag:1` (Filter `inSub`, Reiter-Kennung `topSub === 'tasche'`). Taschen am Körper (`IACC_BODY`) liegen über Jacke und Ketten und bleiben bei Posen am Rumpf; in der Hand: `IACC_FRONT`.
+- Keine echten Markennamen oder Logos im Laden (nur „im Stil von“), Kuscheltiere sind eigene Figuren.

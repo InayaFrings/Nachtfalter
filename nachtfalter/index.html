@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8bed7006c9d3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='065276c8df59';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2323,14 +2323,14 @@ const RICON = {
 };
 const PTS = {gedanke:10, foto:15, video:15, kommentar:3, reaktion:2};
 
-const TABS = [['eyeform','Gesicht'],['back','Haare'],['front','Pony'],['hacc','Kopfbedeckung'],['top','Oberteile','ober'],['top','Kleider','kleid'],['jacket','Jacken'],['bottom','Unterteile'],['shoes','Schuhe'],['acc','Accessoires'],['jewel','Schmuck']];
+const TABS = [['eyeform','Gesicht'],['back','Haare'],['front','Pony'],['hacc','Kopfbedeckung'],['top','Oberteile','ober'],['top','Kleider','kleid'],['jacket','Jacken'],['bottom','Unterteile'],['shoes','Schuhe'],['acc','Accessoires','zub'],['acc','Taschen','tasche'],['jewel','Schmuck']];
 const FACE_SUB = [['eyeform','Augen'],['lips','Lippen'],['face','Make-up'],['beard','Bart']];
 const CATS = [...TABS.filter(([k, , ts]) => k !== 'eyeform' && ts !== 'kleid'), ...FACE_SUB, ['legw','Strumpfhosen & Socken']];
 const MULTI = ['hacc','jewel','legw','acc'];
 const JEWELC = [['#d8d8de','Silber'],['#d4af37','Gold'],['#e0a090','Roségold'],['#141218','Schwarz'],['#f2f0eb','Weiß'],['#8a1020','Blutrot'],['#e05aa0','Pink'],['#7a3aa0','Lila'],['#3a6ad0','Blau'],['#2aa0a0','Türkis'],['#3a9a4a','Grün'],['#e8d23a','Gelb']];
 const JEWEL_SUB = [['pierc','Piercings'],['kette','Ketten'],['arm','Armbänder &amp; Stulpen'],['ohr','Ohrringe'],['ring','Ringe'],['guertel','Gürtel']];
 let jewelSub = 'pierc';
-const inSub = i => i.cat === 'top' ? (i.id === 't_kein' || isDress(i) === (topSub === 'kleid')) : i.cat === 'bottom' ? (i.id === 'u_kein' || isSkirt(i) === (bottomSub === 'rock')) : i.cat !== 'jewel' || (i.sub || 'kette') === jewelSub;
+const inSub = i => i.cat === 'acc' ? !!i.bag === (topSub === 'tasche') : i.cat === 'top' ? (i.id === 't_kein' || isDress(i) === (topSub === 'kleid')) : i.cat === 'bottom' ? (i.id === 'u_kein' || isSkirt(i) === (bottomSub === 'rock')) : i.cat !== 'jewel' || (i.sub || 'kette') === jewelSub;
 const inFace = c => FACE_SUB.some(([k]) => k === c);
 // Unterteile getrennt in Hosen und Röcke (Inaya, 2026-10-10)
 const BOTTOM_SUB = [['bottom','Hosen','hose'],['bottom','Röcke','rock'],['legw','Strumpfhosen & Socken']];
@@ -3992,6 +3992,168 @@ const ILEGW_OVER = {
 };
 const IARMCLIP = {};
 const MCROP = new Set(['m_raglan', 'm_netztank', 'tank', 'netz', 'mesharm', 'sterne']); // bauchfreie Männer-Oberteile
+/* ---------- Neue Kollektion: tief sitzende Hosen, Gürtel, Ketten, Jacken, Schuhe, Taschen, Kuscheltiere (Inaya, 2026-10-15) ----------
+   Für alle Körper (kein g). Hosen sitzen tief (isagY), oben schauen Boxershorts raus (iboxer), Gürtel rutschen mit (IWAIST).
+   Stil angelehnt an Avantgarde- und Japan-Streetwear, ohne echte Marken und Logos. Farbvarianten teilen sich die Zeichnung, nur die Startfarbe ist anders. */
+const isagY = B => Math.round(B.wy + (B.cy - B.wy) * .8); // Bund der tief sitzenden Hosen
+const IBOXER = {karo:X => X.pat('plaid', '#a0202c'), streifen:X => X.pat('stripe', '#f2f0eb', '#3a5aa0', 12), schwarz:() => '#1a181e', weiss:() => '#ecebe7', herz:X => X.pat('check', '#e86aa6', '#f6c6dc', 14), gruen:X => X.pat('plaid', '#2f6a3a')};
+const ihipBand = (B, y0, y1, out) => { const L = [], R = []; for (let y = y0; ; y = Math.min(y + 10, y1)) { const [a, b] = ihipX(B, y, out); L.push(f1(a) + ' ' + y); R.push(f1(b) + ' ' + y); if (y >= y1) break; } return 'M' + L.join('L') + 'L' + R.reverse().join('L') + 'Z'; };
+// Boxershorts: Streifen zwischen Oberteil und Hosenbund, oben Gummibund mit Schrift-Strichen
+function iboxer(X, kind, y0, y1){ const B = X.B, [a, b] = ihipX(B, y0, 2);
+  return X.G(ihipBand(B, y0, y1, 2), (IBOXER[kind] || IBOXER.karo)(X)) + X.P(ihipBand(B, y0, y0 + 13, 3), '#1d1b22')
+    + X.LN(`M${f1(a + 10)} ${y0 + 7}H${f1(b - 10)}`, '#ecebe7', 2.2, .85).replace('stroke-linecap="round"', 'stroke-dasharray="10 5 3 5"'); }
+// Schritt tiefer (Drop-Crotch): füllt zwischen den Beinen bis cy + drop
+function idropFill(B, drop, out){ const P = [], Q = [], y1 = B.cy + drop;
+  for (let y = B.cy - 14; ; y = Math.min(y + 12, y1)) { P.push(f1(ilegE(B, 0, y)[1] + out * .6 - 2) + ' ' + y); Q.push(f1(ilegE(B, 1, y)[0] - out * .6 + 2) + ' ' + y); if (y >= y1) break; }
+  return 'M' + P.join('L') + `Q${B.cx} ${y1 + 34} ${Q[Q.length - 1]}L` + Q.reverse().slice(1).join('L') + 'Z'; }
+// Grundform: tief sitzende Hose mit Boxershorts, Bund, Schlaufen, Schlitz, Taschen und gestauten Falten über dem Schuh
+function isag(X, c, o={}){
+  const B = X.B, wy = isagY(B), y1 = o.y1 || B.fy - 22, out = o.out ?? 20, flare = o.flare ?? 22, ln = shade(c, isLight(c) ? .72 : 1.75);
+  const drop = o.drop ?? 70; // tief sitzend: auch der Schritt hängt tiefer
+  let s = iboxer(X, o.boxer || 'karo', wy - 64, wy + 16) + X.G(ipants(B, y1, out, flare, wy), c);
+  if (drop) s += X.G(idropFill(B, drop, out), c);
+  const [a, b] = ihipX(B, wy, out), [a2, b2] = ihipX(B, wy + 20, out);
+  s += X.P(`M${f1(a)} ${wy}Q${B.cx} ${wy + 8} ${f1(b)} ${wy}L${f1(b2)} ${wy + 20}Q${B.cx} ${wy + 28} ${f1(a2)} ${wy + 20}Z`, shade(c, isLight(c) ? .9 : 1.15));
+  s += X.LN([.16, .36, .64, .84].map(t => `M${f1(a + (b - a) * t)} ${wy - 3}V${wy + 24}`).join(''), shade(c, isLight(c) ? .8 : 1.3), 6);
+  s += X.LN(`M${B.cx} ${wy + 26}V${B.cy + drop - 24}`, ln, 2);
+  if (o.pockets !== false) s += X.LN(`M${f1(a + 14)} ${wy + 26}Q${f1(a + 48)} ${wy + 40} ${f1(a + 58)} ${wy + 84}M${f1(b - 14)} ${wy + 26}Q${f1(b - 48)} ${wy + 40} ${f1(b - 58)} ${wy + 84}`, ln, 2);
+  if (o.stack !== false) s += X.LN([0, 1].map(i => { const [l, r] = ilegE(B, i, y1 - 40), w = out + flare * .7; return [0, 1, 2, 3].map(k => `M${f1(l - w + 4)} ${y1 - 26 - k * 36}Q${f1((l + r) / 2)} ${y1 - 14 - k * 36 + (k % 2 ? -12 : 12)} ${f1(r + w - 4)} ${y1 - 26 - k * 36}`).join(''); }).join(''), ln, 2, .75);
+  return s; }
+// Löcher mit Hautfarbe, Querfäden und ausgefransten Rändern
+const iholes = (X, c, spots) => { const B = X.B, sk = X.o?.skin || '#f7f6f3', edge = shade(c, isLight(c) ? .55 : 1.9);
+  return spots.map(([i, t, y, w, h]) => { const x = ilegLine(B, i, t, y);
+    const d = `M${f1(x - w)} ${f1(y)}Q${f1(x - w * .4)} ${f1(y - h)} ${f1(x + w * .2)} ${f1(y - h * .8)}Q${f1(x + w)} ${f1(y - h * .3)} ${f1(x + w * .9)} ${f1(y + h * .4)}Q${f1(x + w * .2)} ${f1(y + h)} ${f1(x - w * .6)} ${f1(y + h * .7)}Z`;
+    return `<path d="${d}" fill="${sk}" stroke="${edge}" stroke-width="2"/>` + X.LN([1, 2, 3].map(k => `M${f1(x - w * .85)} ${f1(y - h * .75 + k * h * .38)}Q${f1(x)} ${f1(y - h * .55 + k * h * .38 + 3)} ${f1(x + w * .85)} ${f1(y - h * .75 + k * h * .38)}`).join(''), '#ece6dc', 2, .95)
+      + X.LN(`M${f1(x - w - 6)} ${f1(y - 3)}l8 4M${f1(x - w - 4)} ${f1(y + 6)}l7 -2M${f1(x + w)} ${f1(y + 4)}l8 -3M${f1(x + w - 2)} ${f1(y - 6)}l7 2`, '#ece6dc', 1.6, .85); }).join(''); };
+// helle Abnutzung auf Oberschenkeln und Knien
+const iwash = (X, c, k=1) => [0, 1].map(i => [[X.B.ky - 170, 110], [X.B.ky + 10, 46]].map(([y, ry]) => `<ellipse cx="${f1(ilegLine(X.B, i, .5, y))}" cy="${y}" rx="${f1(30 * k)}" ry="${ry}" fill="${shade(c, 1.45)}" opacity=".16"/>`).join('')).join('');
+const iseam = (X, d, c) => X.LN(d, shade(c, isLight(c) ? .62 : 1.9), 1.6, .9).replace('stroke-linecap="round"', 'stroke-dasharray="5 4"');
+Object.assign(IBOT, {
+  sag_jeans:(X, c) => isag(X, c, {boxer:'karo'}) + iwash(X, c),
+  sag_ripped:(X, c) => { const B = X.B; return isag(X, c, {boxer:'schwarz'}) + iwash(X, c, 1.2) + iholes(X, c, [[0, .45, B.ky - 10, 34, 20], [1, .55, B.ky + 4, 36, 22], [0, .55, B.ky - 190, 18, 10], [1, .4, B.ky - 230, 22, 9], [0, .35, B.ky - 290, 14, 7], [1, .62, B.ky - 120, 12, 6], [0, .5, B.ay - 150, 16, 8], [1, .45, B.ay - 190, 13, 7], [0, .6, B.cy + 60, 15, 8]]) + ilegHem(X, c, B.fy - 26, 34, 34, 71); },
+  sag_destroy:(X, c) => { const B = X.B, pat = X.pat('plaid', '#7a1c24'); return isag(X, c, {boxer:'gruen'}) + iwash(X, c, 1.1)
+    + [[0, .5, B.ky - 150, 70, 90, pat], [1, .45, B.ky + 120, 64, 70, '#2a3a5a'], [1, .5, B.cy + 70, 56, 64, X.pat('check', '#141218', '#d8d8de', 10)]].map(([i, t, y, w, h, f]) => { const x = ilegLine(B, i, t, y); return `<path d="M${f1(x - w / 2)} ${y - h / 2}L${f1(x + w / 2 + 4)} ${y - h / 2 + 5}L${f1(x + w / 2)} ${y + h / 2}L${f1(x - w / 2 - 3)} ${y + h / 2 - 3}Z" fill="${f}" ${IO} stroke-width="1.4"/>` + iseam(X, `M${f1(x - w / 2 + 5)} ${y - h / 2 + 6}L${f1(x + w / 2 - 2)} ${y - h / 2 + 10}L${f1(x + w / 2 - 5)} ${y + h / 2 - 5}L${f1(x - w / 2 + 2)} ${y + h / 2 - 7}Z`, '#ecebe7'); }).join('')
+    + iholes(X, c, [[0, .5, B.ky + 30, 30, 18], [1, .5, B.ky - 160, 20, 10], [0, .4, B.ay - 170, 14, 7]])
+    + [[0, .3, B.ky + 90], [1, .7, B.ky - 60]].map(([i, t, y]) => { const x = ilegLine(B, i, t, y); return `<path d="M${f1(x)} ${y}h22a6 6 0 0 1 0 12h-22" fill="none" stroke="#d8d8de" stroke-width="3"/><circle cx="${f1(x)}" cy="${y + 6}" r="3.4" fill="#d8d8de"/>`; }).join(''); }, // Sicherheitsnadeln
+  sag_drop:(X, c) => { const B = X.B, y1 = B.fy - 70; return isag(X, c, {boxer:isLight(c) ? 'schwarz' : 'streifen', out:12, flare:-4, drop:150, y1, stack:false, pockets:false})
+    + [0, 1].map(i => { const [l, r] = ilegE(B, i, y1 - 10); return izip(X, `M${f1(i ? r + 8 : l - 8)} ${y1 - 4}V${y1 - 110}`) + X.LN(`M${f1(l - 8)} ${y1 - 8}H${f1(r + 8)}`, shade(c, isLight(c) ? .7 : 1.6), 3); }).join('')
+    + iseam(X, `M${f1(ilegLine(B, 0, .5, B.cy + 150))} ${B.cy + 150}Q${f1(ilegLine(B, 0, .55, B.ky))} ${B.ky} ${f1(ilegLine(B, 0, .5, y1 - 20))} ${y1 - 20}M${f1(ilegLine(B, 1, .5, B.cy + 150))} ${B.cy + 150}Q${f1(ilegLine(B, 1, .45, B.ky))} ${B.ky} ${f1(ilegLine(B, 1, .5, y1 - 20))} ${y1 - 20}`, c); },
+  sag_cargo:(X, c) => { const B = X.B; return isag(X, c, {boxer:'streifen', out:24, flare:26})
+    + [0, 1].map(i => { const [l, r] = ilegE(B, i, B.ky - 120), x = i ? r - 10 : l - 40, y = B.ky - 170, fl = shade(c, isLight(c) ? .9 : 1.12);
+      return X.P(`M${f1(x)} ${y}h52v86h-52Z`, fl) + X.P(`M${f1(x - 2)} ${y - 4}h56v26h-56Z`, shade(c, isLight(c) ? .82 : 1.25)) + `<rect x="${f1(x + 21)}" y="${y + 12}" width="10" height="8" fill="#c9c9cf"/>`
+        + X.LN(`M${f1(l - 20)} ${B.ay - 80}H${f1(r + 20)}`, shade(c, isLight(c) ? .7 : 1.6), 7); }).join(''); },
+  sag_bondage:(X, c) => { const B = X.B, L = [0, 1].map(i => ilegE(B, i, B.ky - 30)); return isag(X, c, {boxer:'karo', out:18, flare:20})
+    + X.LN(`M${f1(L[0][0] + 20)} ${B.ky - 40}Q${B.cx} ${B.ky + 30} ${f1(L[1][1] - 20)} ${B.ky - 40}`, '#0b0a0d', 10) + istuds(X, [[L[0][0] + 20, B.ky - 40], [L[1][1] - 20, B.ky - 40]], 6)
+    + [0, 1].map(i => { const [l, r] = ilegE(B, i, B.cy + 80), x0 = l - 18, x1 = r + 18; return ibuckle(X, `M${f1(x0)} ${B.cy + 80}H${f1(x1)}`, (x0 + x1) / 2, B.cy + 80) + izip(X, `M${f1(ilegLine(B, i, .5, B.ky + 60))} ${B.ky + 60}V${B.ay - 60}`)
+      + `<path d="M${f1(i ? x1 - 6 : x0 + 6)} ${B.ky - 120}a14 14 0 1 0 0 28" fill="none" stroke="#c9c9cf" stroke-width="4"/>`; }).join('')
+    + X.LN(`M${f1(ihipX(B, isagY(B) + 20, 18)[0] + 20)} ${isagY(B) + 22}Q${f1(ihipX(B, isagY(B), 18)[0] - 10)} ${isagY(B) + 150} ${f1(ihipX(B, isagY(B) + 20, 18)[0] + 50)} ${isagY(B) + 80}`, '#d8d8de', 5).replace('stroke-linecap="round"', 'stroke-dasharray="7 4"'); },
+  sag_leder:(X, c) => { const B = X.B; return isag(X, c, {boxer:'karo', out:10, flare:6, pockets:true}) + [0, 1].map(i => { const x = ilegLine(B, i, i ? .35 : .65, B.ky); return X.LN(`M${f1(x)} ${B.cy + 20}Q${f1(x - (i ? 8 : -8))} ${B.ky} ${f1(x)} ${B.ay - 60}`, '#ffffff', 5, .18) + iseam(X, `M${f1(ilegLine(B, i, .1, B.ky))} ${B.ky - 6}Q${f1(ilegLine(B, i, .5, B.ky + 20))} ${B.ky + 20} ${f1(ilegLine(B, i, .9, B.ky))} ${B.ky - 6}`, c); }).join(''); },
+  sag_carpenter:(X, c) => { const B = X.B, sw = isagY(B); return isag(X, c, {boxer:'herz', out:22, flare:20}) + [0, 1].map(i => { const [l, r] = ilegE(B, i, B.ky); return X.P(`M${f1(l - 14)} ${B.ky - 70}H${f1(r + 14)}V${B.ky + 70}H${f1(l - 14)}Z`, shade(c, isLight(c) ? .9 : 1.12)) + iseam(X, `M${f1(l - 8)} ${B.ky - 64}H${f1(r + 8)}M${f1(l - 8)} ${B.ky + 64}H${f1(r + 8)}`, c); }).join('')
+    + X.LN(`M${f1(ihipX(B, sw + 40, 22)[0] + 4)} ${sw + 40}V${sw + 120}`, shade(c, isLight(c) ? .7 : 1.6), 8) + X.P(`M${f1(ihipX(B, sw + 70, 22)[1] - 40)} ${sw + 70}h30v90h-30Z`, shade(c, isLight(c) ? .88 : 1.15)); },
+});
+// Farbvarianten (gleiche Zeichnung, andere Startfarbe bzw. Boxershorts)
+Object.assign(IBOT, {sag_jeans_hell:(X, c) => isag(X, c, {boxer:'streifen'}) + iwash(X, c, .9), sag_jeans_schwarz:(X, c) => isag(X, c, {boxer:'weiss'}) + iwash(X, c, .8), sag_ripped_hell:IBOT.sag_ripped, sag_drop_milch:IBOT.sag_drop, sag_cargo_sand:IBOT.sag_cargo});
+Object.assign(IBOTC, {sag_jeans:'#3f5f8a', sag_jeans_hell:'#86a6c8', sag_jeans_schwarz:'#1f1f25', sag_ripped:'#4a6a96', sag_ripped_hell:'#a7bfda', sag_destroy:'#5c5c62', sag_drop:'#16151a', sag_drop_milch:'#e6e0d4', sag_cargo:'#4b5136', sag_cargo_sand:'#c2ab80', sag_bondage:'#121115', sag_leder:'#0d0c10', sag_carpenter:'#c8b48a'});
+const SAGS = ['sag_jeans', 'sag_jeans_hell', 'sag_jeans_schwarz', 'sag_ripped', 'sag_ripped_hell', 'sag_destroy', 'sag_drop', 'sag_drop_milch', 'sag_cargo', 'sag_cargo_sand', 'sag_bondage', 'sag_leder', 'sag_carpenter'];
+IWIDE.push(...SAGS.filter(k => !/^sag_(drop|leder)/.test(k))); // schmale Hosen: Schuh liegt über dem Saum (wie reingesteckt)
+// Gürtel sitzen auf dem Bund der Hose: tief sitzende Hosen ziehen sie mit nach unten
+const IWAIST = Object.fromEntries([...SAGS.map(k => [k, isagY]), ...['lw_jeans', 'lw_baggy', 'lw_mini', 'lw_falten'].map(k => [k, ILOW])]);
+
+// Gürtel
+Object.assign(IBELT, {
+  g_kreuz:(X, c) => { const B = X.B, y = B.wy; return ibelt(X, c, 26) + ibeltDots(X, () => `<circle r="4" fill="#d8d8de" stroke="${IOL}" stroke-width=".8"/>`) + `<path d="M${B.cx - 7} ${y - 12}h14v14h14v12h-14v28h-14v-28h-14v-12h14Z" fill="#d8d8de" ${IO} stroke-width="1.6"/>`; },
+  g_patrone:(X, c) => { const B = X.B, [a, b] = ihipX(B, B.wy, 4); let s = ibelt(X, c, 24); for (let k = 1; k < 13; k++) { const t = k / 13, x = a + (b - a) * t, y = B.wy + 4 + Math.sin(t * Math.PI) * 10; if (Math.abs(x - B.cx) < 20) continue; s += `<rect x="${f1(x - 4)}" y="${f1(y - 6)}" width="8" height="22" rx="4" fill="#c9a43a" ${IO} stroke-width="1"/>`; } return s + `<rect x="${B.cx - 14}" y="${B.wy}" width="28" height="26" rx="3" fill="none" stroke="#d8d8de" stroke-width="4"/>`; },
+  g_doppel_tief:(X, c) => { const B = X.B; return ibelt(X, c, 18, -14, 30) + ibelt(X, shade(c, isLight(c) ? .8 : 1.5), 18, 34, -12) + `<rect x="${B.cx + 30}" y="${B.wy + 14}" width="22" height="20" rx="2" fill="none" stroke="#d8d8de" stroke-width="4"/><rect x="${B.cx - 56}" y="${B.wy + 30}" width="22" height="20" rx="2" fill="none" stroke="#d8d8de" stroke-width="4"/>`; },
+  g_dring:(X, c) => { const B = X.B, [a, b] = ihipX(B, B.wy, 4); return ibelt(X, c, 22) + [.2, .8].map(t => { const x = a + (b - a) * t; return `<path d="M${f1(x - 10)} ${B.wy + 24}h20a10 12 0 0 1 -20 0" fill="none" stroke="#d8d8de" stroke-width="4"/>` + X.LN(`M${f1(x)} ${B.wy + 34}Q${f1(x + (t < .5 ? -14 : 14))} ${B.wy + 110} ${f1(x + (t < .5 ? -4 : 4))} ${B.wy + 170}`, c, 9); }).join(''); },
+  g_wallet:(X, c) => { const B = X.B, [a] = ihipX(B, B.wy + 20, 8); return X.LN(`M${f1(a + 16)} ${B.wy + 14}Q${f1(a - 30)} ${B.wy + 200} ${f1(a + 40)} ${B.wy + 230}Q${f1(a + 70)} ${B.wy + 150} ${f1(a + 20)} ${B.wy + 60}M${f1(a + 16)} ${B.wy + 14}Q${f1(a - 10)} ${B.wy + 140} ${f1(a + 34)} ${B.wy + 170}`, c, 5).replace('stroke-linecap="round"', 'stroke-dasharray="6 3"') + `<circle cx="${f1(a + 16)}" cy="${B.wy + 14}" r="7" fill="none" stroke="${c}" stroke-width="3"/>`; },
+});
+// Ketten
+Object.assign(INECK, {
+  k_panzer:(X, c) => X.LN(`M${X.B.nl} ${X.B.ny - 8}Q${X.B.cx} ${X.B.ny + 130} ${X.B.nr} ${X.B.ny - 8}`, c, 9).replace('stroke-linecap="round"', 'stroke-dasharray="10 4"') + `<path d="M${X.B.cx - 7} ${X.B.ny + 64}h14v18h18v14h-18v40h-14v-40h-18v-14h18Z" fill="${c}" ${IO} stroke-width="1.6"/>`,
+  k_schloss:(X, c) => { const B = X.B, y = B.ny + 72; return X.LN(`M${B.nl + 2} ${B.ny - 8}Q${B.cx} ${B.ny + 110} ${B.nr - 2} ${B.ny - 8}`, c, 6).replace('stroke-linecap="round"', 'stroke-dasharray="7 3"') + `<path d="M${B.cx - 10} ${y}v-8a10 10 0 0 1 20 0v8" fill="none" stroke="${c}" stroke-width="4"/><rect x="${B.cx - 16}" y="${y}" width="32" height="28" rx="4" fill="${c}" ${IO} stroke-width="1.6"/><circle cx="${B.cx}" cy="${y + 13}" r="3.4" fill="${IOL}"/>`; },
+  k_lagen:(X, c) => { const B = X.B; return X.LN(`M${B.nl + 2} ${B.ny - 8}Q${B.cx} ${B.ny + 90} ${B.nr - 2} ${B.ny - 8}`, c, 3).replace('stroke-linecap="round"', 'stroke-dasharray="4 2"') + X.LN(`M${B.nl - 6} ${B.ny - 2}Q${B.cx} ${B.ny + 230} ${B.nr + 6} ${B.ny - 2}`, c, 4).replace('stroke-linecap="round"', 'stroke-dasharray="6 3"') + `<rect x="${B.cx - 14}" y="${B.ny + 114}" width="28" height="40" rx="8" fill="${c}" ${IO} stroke-width="1.4"/>` + X.LN(`M${B.cx - 7} ${B.ny + 126}h14M${B.cx - 7} ${B.ny + 136}h14`, IOL, 1.6, .6); },
+});
+// Jacken
+const ixzip = (X, c) => { const B = X.B, h = B.hem; return ijacket(X, c, h + 6, {gap:4, out:11})
+  + izip(X, `M${B.nl - 36} ${B.ny + 26}L${B.cx + 54} ${h - 10}`) + izip(X, `M${B.nr + 36} ${B.ny + 26}L${B.cx - 54} ${h - 10}`)
+  + X.P(`M${B.nl - 6} ${B.ny - 4}L${B.nl - 64} ${B.ny + 42}L${B.nl - 24} ${B.ny + 86}L${B.cx - 10} ${B.ny + 40}Z`, shade(c, isLight(c) ? .88 : 1.18)) + X.P(`M${B.nr + 6} ${B.ny - 4}L${B.nr + 64} ${B.ny + 42}L${B.nr + 24} ${B.ny + 86}L${B.cx + 10} ${B.ny + 40}Z`, shade(c, isLight(c) ? .88 : 1.18))
+  + [[B.cx + 54, h - 10], [B.cx - 54, h - 10]].map(([x, y]) => `<rect x="${x - 4}" y="${y - 16}" width="8" height="16" rx="2" fill="#d8d8de" ${IO} stroke-width="1"/>`).join('')
+  + X.LN(`M${f1(ihemX(B, h - 40)[0] + 20)} ${h - 40}h48M${f1(ihemX(B, h - 40)[1] - 20)} ${h - 40}h-48`, '#c9c9cf', 2.4, .9); };
+Object.assign(IJACK, {
+  xzip:ixzip,
+  xzip_fell:(X, c) => { const B = X.B; return ixzip(X, c) + X.G(`M${B.nl - 2} ${B.ny - 14}Q${B.nl - 90} ${B.ny - 10} ${B.nl - 76} ${B.ny + 70}Q${B.nl - 30} ${B.ny + 110} ${B.cx - 6} ${B.ny + 54}Q${B.cx} ${B.ny + 30} ${B.cx + 6} ${B.ny + 54}Q${B.nr + 30} ${B.ny + 110} ${B.nr + 76} ${B.ny + 70}Q${B.nr + 90} ${B.ny - 10} ${B.nr + 2} ${B.ny - 14}Q${B.cx} ${B.ny + 20} ${B.nl - 2} ${B.ny - 14}Z`, X.pat('fur', '#141218')); },
+  jk_destroy:(X, c) => { const B = X.B; return ijacket(X, c, B.hem + 10, {gap:30}) + istuds(X, [-1, 1].flatMap(s => [0, 1, 2].map(k => [B.cx + s * (B.nr - B.cx + 30 + k * 16), B.ny + 30 + k * 10])), 4)
+    + [[B.cx - 70, B.chest + 40, 22, 14], [B.cx + 80, B.chest + 120, 16, 10], [B.cx - 60, B.hem - 50, 14, 8]].map(([x, y, w, h]) => `<path d="M${x - w} ${y}Q${x} ${y - h * 2} ${x + w} ${y}Q${x} ${y + h * 1.4} ${x - w} ${y}Z" fill="${X.o?.top && X.o.top !== 't_kein' ? '#141218' : X.o?.skin || '#f7f6f3'}" stroke="${shade(c, 1.8)}" stroke-width="1.8"/>` + X.LN(`M${x - w + 4} ${y - 3}H${x + w - 4}M${x - w + 6} ${y + 4}H${x + w - 6}`, '#ece6dc', 1.6, .8)).join('')
+    + iseam(X, `M${B.cx - 120} ${B.chest - 20}h60v50h-60Z`, c) + `<rect x="${B.cx - 118}" y="${B.chest - 18}" width="56" height="46" fill="${X.pat('plaid', '#7a1c24')}" opacity=".9"/>`; },
+  jk_bondage:(X, c) => { const B = X.B; return ijacket(X, c, B.hem + 8, {gap:6}) + [B.chest - 10, B.chest + 70, B.wy - 20].map((y, k) => { const [a, b] = ihemX(B, y, 6); const bx = B.cx + (k % 2 ? 40 : -40); return X.LN(`M${f1(a + 8)} ${y}L${f1(b - 8)} ${y + (k % 2 ? 10 : -6)}`, isLight(c) ? '#141218' : '#55535c', 12) + `<rect x="${f1(bx - 9)}" y="${y - 6}" width="18" height="16" rx="2" fill="none" stroke="#d8d8de" stroke-width="4"/>`; }).join('')
+    + `<path d="M${B.cx - 8} ${B.ny + 40}h16a8 10 0 0 1 -16 0" fill="none" stroke="#d8d8de" stroke-width="4"/>` + X.LN(`M${B.cx + 60} ${B.wy - 14}Q${B.cx + 80} ${B.wy + 60} ${B.cx + 56} ${B.wy + 120}`, '#0b0a0d', 9); },
+  jk_drape:(X, c) => { const B = X.B; return ijacket(X, c, B.ky + 60, {flare:50, gap:52}) + X.G(`M${B.cx - 52} ${B.ny + 80}Q${B.cx + 20} ${B.chest + 80} ${B.cx - 20} ${B.wy + 40}Q${B.cx - 60} ${B.cy} ${B.cx - 120} ${B.ky + 90}L${B.cx - 52} ${B.ky + 60}Z`, shade(c, isLight(c) ? .9 : 1.12)) + X.LN(`M${B.cx - 40} ${B.chest}Q${B.cx - 70} ${B.wy + 60} ${B.cx - 100} ${B.ky}`, shade(c, isLight(c) ? .7 : 1.7), 2, .7); },
+});
+IJACK.xzip_rot = IJACK.xzip_fell;
+Object.assign(IJACKC, {xzip:'#141218', xzip_fell:'#8a1020', xzip_rot:'#141218', jk_destroy:'#3a3a40', jk_bondage:'#121115', jk_drape:'#2a2a2e'});
+// Schuhe
+const igeo = (X, c, sole) => [0, 1].map(i => { const B = X.B, [a, b] = ilegE(B, i, B.ay - 120); return ishoe(X, i, B.ay - 190, c, sole, 30, 12) + X.P(`M${f1(i ? b + 10 : a - 10)} ${B.ay - 90}Q${f1((a + b) / 2)} ${B.ay - 160} ${f1(i ? a - 6 : b + 6)} ${B.ay - 60}L${f1(i ? a - 10 : b + 10)} ${B.ay + 20}Q${f1((a + b) / 2)} ${B.ay} ${f1(i ? b + 12 : a - 12)} ${B.ay - 20}Z`, shade(c, isLight(c) ? .86 : 1.3)) + X.LN([0, 1, 2, 3].map(k => `M${f1((a + b) / 2 - 12)} ${B.ay - 150 + k * 26}l24 8`).join(''), sole, 3) + X.P(`M${f1((a + b) / 2 - 14)} ${B.ay - 196}L${f1((a + b) / 2 - 10)} ${B.ay - 234}L${f1((a + b) / 2 + 10)} ${B.ay - 234}L${f1((a + b) / 2 + 14)} ${B.ay - 196}Z`, c); }).join('');
+Object.assign(ISHOE, {
+  ro_geo:(X, c) => igeo(X, c, '#ecebe7'),
+  ro_geo_w:(X, c) => igeo(X, c, '#ecebe7'),
+  ro_ramones:(X, c) => [0, 1].map(i => { const B = X.B, [a, b] = ilegE(B, i, B.ay - 100), m = (a + b) / 2; return ishoe(X, i, B.ay - 150, c, '#f2f0eb', 26, 10) + X.P(`M${f1(m - 30)} ${B.fy - 40}Q${f1(m)} ${B.fy - 64} ${f1(m + 30)} ${B.fy - 40}L${f1(m + 34)} ${B.fy - 8}L${f1(m - 34)} ${B.fy - 8}Z`, '#f2f0eb') + X.P(`M${f1(m - 13)} ${B.ay - 146}L${f1(m - 16)} ${B.ay - 210}Q${f1(m)} ${B.ay - 222} ${f1(m + 16)} ${B.ay - 210}L${f1(m + 13)} ${B.ay - 146}Z`, c) + X.LN([0, 1, 2, 3].map(k => `M${f1(m - 12)} ${B.ay - 130 + k * 24}H${f1(m + 12)}`).join(''), '#f2f0eb', 2.4); }).join(''),
+  ro_ramones_w:(X, c) => ISHOE.ro_ramones(X, c),
+  ishii_boot:(X, c) => [0, 1].map(i => { const B = X.B, [a, b] = ilegE(B, i, B.ky + 160); return ishoe(X, i, B.ky + 120, c, '#0e0d10', 12, 4) + izip(X, `M${f1(i ? b + 2 : a - 2)} ${B.ky + 130}V${B.fy - 40}`) + ibuckle(X, `M${f1(a - 6)} ${B.ay - 30}L${f1(b + 6)} ${B.ay - 50}`, (a + b) / 2, B.ay - 40, 3); }).join(''),
+});
+Object.assign(ISHOEC, {ro_geo:'#141218', ro_geo_w:'#e9e4da', ro_ramones:'#141218', ro_ramones_w:'#ecebe7', ishii_boot:'#1b1a1e'});
+// Taschen am Körper (liegen über der Jacke und bleiben bei Posen am Rumpf): Schulterrucksack, Umhänge- und Brusttasche
+const IACC_BODY = {};
+const islingPos = B => ({sx:B.nl - 26, sy:B.ny + 6, x:ihipX(B, B.wy - 30, 0)[0] + 30, y:B.wy - 150}); // Schulter links im Bild, Tasche vorn an der Seite
+function isling(X, c, face){ const B = X.B, p = islingPos(B), w = 170, h = 210, ln = shade(c, isLight(c) ? .7 : 1.6), st = isLight(c) ? shade(c, .6) : '#3a3842';
+  const strap = X.LN(`M${p.sx} ${p.sy}Q${p.sx - 16} ${p.y - 40} ${p.x + 40} ${p.y + 6}`, IOL, 19) + X.LN(`M${p.sx} ${p.sy}Q${p.sx - 16} ${p.y - 40} ${p.x + 40} ${p.y + 6}`, st, 14) + X.LN(`M${p.sx} ${p.sy}Q${p.sx - 16} ${p.y - 40} ${p.x + 40} ${p.y + 6}`, '#ffffff', 2, .25);
+  const bag = face ? face(p.x, p.y, c) : X.G(`M${p.x - w / 2} ${p.y + 20}Q${p.x - w / 2} ${p.y - 6} ${p.x - w / 2 + 26} ${p.y - 6}L${p.x + w / 2 - 26} ${p.y - 6}Q${p.x + w / 2} ${p.y - 6} ${p.x + w / 2} ${p.y + 20}L${p.x + w / 2 - 6} ${p.y + h}Q${p.x} ${p.y + h + 12} ${p.x - w / 2 + 6} ${p.y + h}Z`, c)
+    + X.P(`M${p.x - 58} ${p.y + 88}h116v90q-58 14 -116 0Z`, shade(c, isLight(c) ? .9 : 1.18)) + izip(X, `M${p.x - 64} ${p.y + 18}Q${p.x} ${p.y + 4} ${p.x + 64} ${p.y + 18}`) + izip(X, `M${p.x - 54} ${p.y + 100}H${p.x + 54}`) + `<rect x="${p.x + 56}" y="${p.y + 10}" width="10" height="28" rx="4" fill="#d8d8de" ${IO} stroke-width="1"/>` + X.LN(`M${p.x - 52} ${p.y + 132}h104`, ln, 1.8, .7);
+  const loose = X.LN(`M${p.x - w / 2 + 18} ${p.y + h - 10}Q${p.x - w / 2 - 26} ${p.y + h + 70} ${p.x - w / 2 + 8} ${p.y + h + 150}`, IOL, 17) + X.LN(`M${p.x - w / 2 + 18} ${p.y + h - 10}Q${p.x - w / 2 - 26} ${p.y + h + 70} ${p.x - w / 2 + 8} ${p.y + h + 150}`, st, 12);
+  return strap + `<g transform="rotate(-18 ${p.x} ${p.y})">${loose}${bag}</g>`; }
+// Katzen-Rucksack (eigenes Kätzchen mit Fledermausschleife, keine bekannte Figur)
+const ikittyFace = (x, y, c, bow='#141218', s=1, zombie=false) => { const k = v => f1(v * s);
+  return `<g transform="translate(${x} ${y + k(70)})"><path d="M${k(-70)} ${k(-20)}L${k(-62)} ${k(-78)}L${k(-28)} ${k(-50)}Q0 ${k(-60)} ${k(28)} ${k(-50)}L${k(62)} ${k(-78)}L${k(70)} ${k(-20)}Q${k(78)} ${k(40)} 0 ${k(48)}Q${k(-78)} ${k(40)} ${k(-70)} ${k(-20)}Z" fill="${c}" ${IO}/>`
+    + `<ellipse cx="${k(-26)}" cy="${k(2)}" rx="${k(7)}" ry="${k(10)}" fill="#141218"/><ellipse cx="${k(26)}" cy="${k(2)}" rx="${k(7)}" ry="${k(10)}" fill="${zombie ? '#e8e2c8' : '#141218'}" ${zombie ? IO : ''}/><circle cx="${k(-24)}" cy="${k(-2)}" r="${k(2.4)}" fill="#fff"/>`
+    + `<path d="${heartPath(0, k(10), .9 * s)}" fill="#e86aa6"/>` + `<path d="M${k(-56)} ${k(-60)}l${k(14)} ${k(10)}M${k(-58)} ${k(-50)}l${k(6)} ${k(-8)}M${k(-50)} ${k(-56)}l${k(6)} ${k(-8)}" stroke="${IOL}" stroke-width="${k(2.2)}" stroke-linecap="round"/>` + `<g><path d="M${k(-6)} ${k(22)}l${k(3)} ${k(6)}l${k(3)} ${k(-5)}" fill="#f2f0eb" stroke="${IOL}" stroke-width="1"/></g>` // kleiner Eckzahn, Herznase, genähte Narbe am Ohr: eigenes Kätzchen
+    + `<path d="M${k(-40)} ${k(12)}h${k(-26)}M${k(-40)} ${k(20)}l${k(-24)} ${k(6)}M${k(40)} ${k(12)}h${k(26)}M${k(40)} ${k(20)}l${k(24)} ${k(6)}" stroke="${IOL}" stroke-width="2" stroke-linecap="round"/>`
+    + `<g transform="translate(${k(36)} ${k(-52)})"><path d="M0 0C${k(-14)} ${k(-14)} ${k(-34)} ${k(-14)} ${k(-44)} ${k(-4)}C${k(-36)} ${k(-2)} ${k(-34)} ${k(6)} ${k(-38)} ${k(12)}C${k(-26)} ${k(6)} ${k(-14)} ${k(10)} 0 0ZM0 0C${k(14)} ${k(-14)} ${k(34)} ${k(-14)} ${k(44)} ${k(-4)}C${k(36)} ${k(-2)} ${k(34)} ${k(6)} ${k(38)} ${k(12)}C${k(26)} ${k(6)} ${k(14)} ${k(10)} 0 0Z" fill="${bow}" ${IO} stroke-width="1.6"/><circle r="${k(7)}" fill="${bow}" ${IO} stroke-width="1.6"/></g>`
+    + (zombie ? `<path d="M${k(-60)} ${k(-10)}l${k(20)} ${k(8)}M${k(-56)} ${k(-14)}l${k(4)} ${k(10)}M${k(-48)} ${k(-11)}l${k(4)} ${k(10)}" stroke="${IOL}" stroke-width="1.6"/>` : '') + '</g>'; };
+// Robo-Hund-Rucksack (grün, große Augen)
+const irobo = (x, y, c) => `<g transform="translate(${x} ${y + 70})"><path d="M-62 -40Q-74 -96 -40 -70Q0 -84 40 -70Q74 -96 62 -40Q76 30 0 46Q-76 30 -62 -40Z" fill="${c}" ${IO}/><ellipse cx="-24" cy="-12" rx="18" ry="20" fill="#1f2a2a" ${IO}/><ellipse cx="24" cy="-12" rx="18" ry="20" fill="#1f2a2a" ${IO}/><circle cx="-24" cy="-12" r="10" fill="#38e0e8"/><circle cx="24" cy="-12" r="10" fill="#38e0e8"/><circle cx="-20" cy="-17" r="3.4" fill="#fff"/><circle cx="28" cy="-17" r="3.4" fill="#fff"/><path d="M-26 22h52" stroke="#c9c9cf" stroke-width="4" stroke-dasharray="3 2"/><path d="M-8 -78l4 -24l8 0l4 24" fill="${c}" ${IO} stroke-width="1.6"/></g>`;
+Object.assign(IACC_BODY, {
+  sling:(X, c) => isling(X, c || '#141218'),
+  sling_rot:(X, c) => isling(X, c || '#8a1020'),
+  katzrucksack:(X, c) => isling(X, c || '#f4f2f0', (x, y, k) => ikittyFace(x, y + 30, k, '#141218', 1.45)),
+  roborucksack:(X, c) => isling(X, c || '#8fd16a', (x, y, k) => `<g transform="translate(${x} ${y + 40}) scale(1.4) translate(${-x} ${-y})">${irobo(x, y, k)}</g>`),
+  messenger:(X, c) => { const B = X.B, k = c || '#4a4852', x = ihipX(B, B.wy + 20, 0)[0] + 50, y = B.wy - 10; return X.LN(`M${B.nr + 24} ${B.ny + 6}L${x + 50} ${y}`, IOL, 17) + X.LN(`M${B.nr + 24} ${B.ny + 6}L${x + 50} ${y}`, shade(k, isLight(k) ? .7 : 1.25), 12) + X.G(`M${x - 100} ${y}h200v140h-200Z`, k) + X.P(`M${x - 104} ${y - 6}h208v84q-104 18 -208 0Z`, shade(k, isLight(k) ? .88 : 1.18)) + `<rect x="${x - 12}" y="${y + 60}" width="24" height="26" rx="3" fill="#d8d8de" ${IO} stroke-width="1"/>` + iseam(X, `M${x - 92} ${y + 8}h184`, k); },
+  brusttasche:(X, c) => { const B = X.B, k = c || '#4a4852', x = B.cx + 30, y = B.chest + 30; return X.LN(`M${B.nl - 20} ${B.ny + 4}L${x - 40} ${y - 4}M${x + 60} ${y + 26}L${f1(ihemX(B, B.wy + 30, 0)[1] - 10)} ${B.wy + 30}`, '#1d1b22', 11) + `<g transform="rotate(-24 ${x} ${y}) translate(${x} ${y}) scale(1.4) translate(${-x} ${-y})">${X.G(`M${x - 70} ${y - 26}Q${x - 76} ${y + 36} ${x} ${y + 40}Q${x + 76} ${y + 36} ${x + 70} ${y - 26}Q${x} ${y - 40} ${x - 70} ${y - 26}Z`, k)}${izip(X, `M${x - 56} ${y - 14}Q${x} ${y - 24} ${x + 56} ${y - 14}`)}<rect x="${x + 50}" y="${y - 20}" width="8" height="18" rx="3" fill="#d8d8de" ${IO} stroke-width="1"/></g>`; },
+});
+// Tragetasche in der rechten Hand, Kuscheltiere in der linken
+Object.assign(IACC_FRONT, {
+  tote:(X, c) => { const [x, y] = X.B.hr, k = c || '#ecebe7'; return X.LN(`M${x - 34} ${y + 50}Q${x - 26} ${y - 30} ${x} ${y + 6}Q${x + 26} ${y - 30} ${x + 34} ${y + 50}`, shade(k, isLight(k) ? .6 : 1.8), 6) + X.G(`M${x - 64} ${y + 44}h128l6 170h-140Z`, k) + `<path d="M${x - 30} ${y + 120}C${x - 20} ${y + 100} ${x - 6} ${y + 104} ${x} ${y + 114}C${x + 6} ${y + 104} ${x + 20} ${y + 100} ${x + 30} ${y + 120}C${x + 18} ${y + 118} ${x + 8} ${y + 126} ${x} ${y + 138}C${x - 8} ${y + 126} ${x - 18} ${y + 118} ${x - 30} ${y + 120}Z" fill="${ICON(k)}"/>`; },
+  kitty:(X, c) => { const [x, y] = X.B.hl; return ikittyFace(x + 4, y + 10, c || '#f6f4f2', '#141218', 1.25); },
+  kitty_zombie:(X, c) => { const [x, y] = X.B.hl; return ikittyFace(x + 4, y + 10, c || '#b8e0b0', '#5a1a5a', 1.25, true); },
+  kitty_rosa:(X, c) => { const [x, y] = X.B.hl; return ikittyFace(x + 4, y + 10, c || '#f6c6dc', '#141218', 1.25); },
+});
+// Einträge für Laden und Garderobe (bag:1 = Reiter „Taschen“)
+ITEMS.push(
+  {id:'sag_jeans', cat:'bottom', name:'Sagging-Baggy-Jeans', st:'Streetwear'}, {id:'sag_jeans_hell', cat:'bottom', name:'Sagging-Baggy-Jeans hell', st:'Streetwear'}, {id:'sag_jeans_schwarz', cat:'bottom', name:'Sagging-Baggy-Jeans schwarz', st:'Streetwear'},
+  {id:'sag_ripped', cat:'bottom', name:'Zerrissene Baggy-Jeans, tief', st:'Grunge'}, {id:'sag_ripped_hell', cat:'bottom', name:'Zerrissene Baggy-Jeans hellblau', st:'Grunge'},
+  {id:'sag_destroy', cat:'bottom', name:'Destroyed-Denim mit Flicken', st:'Japan-Punk'}, {id:'sag_drop', cat:'bottom', name:'Drop-Crotch-Hose schwarz', st:'Avantgarde'}, {id:'sag_drop_milch', cat:'bottom', name:'Drop-Crotch-Hose milchweiß', st:'Avantgarde'},
+  {id:'sag_cargo', cat:'bottom', name:'Tiefe Cargo-Baggy oliv', st:'Streetwear'}, {id:'sag_cargo_sand', cat:'bottom', name:'Tiefe Cargo-Baggy sand', st:'Streetwear'}, {id:'sag_bondage', cat:'bottom', name:'Bondage-Baggy mit Ketten', st:'Japan-Punk'},
+  {id:'sag_leder', cat:'bottom', name:'Tief sitzende Lederhose', st:'Avantgarde'}, {id:'sag_carpenter', cat:'bottom', name:'Carpenter-Baggy, tief', st:'Skater'},
+  {id:'g_kreuz', cat:'jewel', sub:'guertel', name:'Gürtel mit Kreuzschnalle', c:'#141218', st:'Japan-Punk'}, {id:'g_patrone', cat:'jewel', sub:'guertel', name:'Patronengürtel', c:'#2a2522', st:'Metal'},
+  {id:'g_doppel_tief', cat:'jewel', sub:'guertel', name:'Doppelgürtel, schräg', c:'#141218', st:'Japan-Punk'}, {id:'g_dring', cat:'jewel', sub:'guertel', name:'Gürtel mit D-Ringen und Riemen', c:'#141218', st:'Japan-Punk'}, {id:'g_wallet', cat:'jewel', sub:'guertel', name:'Wallet Chain', c:'#d8d8de', st:'Streetwear'},
+  {id:'k_panzer', cat:'jewel', sub:'kette', name:'Dicke Panzerkette mit Kreuz', c:'#d8d8de', st:'Japan-Punk'}, {id:'k_schloss', cat:'jewel', sub:'kette', name:'Kette mit Vorhängeschloss', c:'#d8d8de', st:'Punk'}, {id:'k_lagen', cat:'jewel', sub:'kette', name:'Lagenkette mit Marke', c:'#d8d8de', st:'Streetwear'},
+  {id:'xzip', cat:'jacket', name:'Cross-Zip-Lederjacke schwarz', st:'Japan-Punk'}, {id:'xzip_fell', cat:'jacket', name:'Cross-Zip-Jacke rot mit Fellkragen', st:'Japan-Punk'}, {id:'xzip_rot', cat:'jacket', name:'Cross-Zip-Jacke schwarz mit Fellkragen', st:'Japan-Punk'},
+  {id:'jk_destroy', cat:'jacket', name:'Destroyed-Jacke mit Nieten', st:'Japan-Punk'}, {id:'jk_bondage', cat:'jacket', name:'Bondage-Jacke mit Riemen', st:'Japan-Punk'}, {id:'jk_drape', cat:'jacket', name:'Lange Drape-Jacke', st:'Avantgarde'},
+  {id:'ro_geo', cat:'shoes', name:'Klobige Hightops schwarz', st:'Avantgarde'}, {id:'ro_geo_w', cat:'shoes', name:'Klobige Hightops milchweiß', st:'Avantgarde'}, {id:'ro_ramones', cat:'shoes', name:'Canvas-Hightops mit langer Lasche', st:'Avantgarde'}, {id:'ro_ramones_w', cat:'shoes', name:'Canvas-Hightops weiß', st:'Avantgarde'}, {id:'ishii_boot', cat:'shoes', name:'Spitze Stiefel mit Reißverschluss', st:'Japan-Punk'},
+  {id:'sling', cat:'acc', bag:1, name:'Schulter-Rucksack schwarz', st:'Avantgarde'}, {id:'sling_rot', cat:'acc', bag:1, name:'Schulter-Rucksack rot', st:'Avantgarde'}, {id:'katzrucksack', cat:'acc', bag:1, name:'Kätzchen-Rucksack', st:'Kawaii'}, {id:'roborucksack', cat:'acc', bag:1, name:'Robo-Hund-Rucksack', st:'Scene'},
+  {id:'messenger', cat:'acc', bag:1, name:'Umhängetasche', st:'Streetwear'}, {id:'brusttasche', cat:'acc', bag:1, name:'Bauchtasche quer über der Brust', st:'Streetwear'}, {id:'tote', cat:'acc', bag:1, name:'Tragetasche mit Herz', st:'Casual'},
+  {id:'kitty', cat:'acc', name:'Kätzchen mit Fledermausschleife', st:'Kawaii'}, {id:'kitty_zombie', cat:'acc', name:'Zombie-Kätzchen', st:'Kawaii'}, {id:'kitty_rosa', cat:'acc', name:'Rosa Kätzchen', st:'Kawaii'},
+);
+ITEMS.forEach(i => { if (i.id === 'tasche' || i.id === 'sargtasche') i.bag = 1; }); // bisherige Taschen in den neuen Reiter
+
 function avatarI(o0, view='full', pose='', lite=false){
   const o = normOutfit({...o0, ...(o0?.acc && typeof o0.acc === 'object' ? {acc:{...o0.acc}} : {}), hacc:{...(o0?.hacc || {})}, jewel:{...(o0?.jewel || {})}, ...(o0?.legw ? {legw:{...o0.legw}} : {})});
   const B = IBODY(o), u = 'ai' + (++avN), defs = [], seen = {};
@@ -4076,12 +4238,14 @@ function avatarI(o0, view='full', pose='', lite=false){
   for (const k in J) if (/^st_/.test(k) && IARMB[k]) { X.cur = k; body += IARMB[k](X, J[k]); } // Armstulpen liegen unter allem anderen (Inaya, 2026-10-11)
   if (ITOP[o.top]) body += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif);
   if (bot && isDress({id:o.top || ''}) && isSkirt({id:o.bottom || ''})) body += bot; // Rock liegt über dem Kleid (Inaya, 2026-10-11)
-  let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](X, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
+  const XW = IWAIST[o.bottom] ? {...X, B:{...B, wy:IWAIST[o.bottom](B)}} : X; // Gürtel sitzt auf dem Bund der Hose, auch wenn sie tief sitzt (Inaya, 2026-10-15)
+  let belts = ''; for (const k in J) if (IBELT[k]) belts += IBELT[k](XW, J[k]); // Gürtel liegt über Oberteil, Rock und Hose
   body += belts;
   const JK = Object.keys(J).sort((a, b) => /^(st|h)_/.test(b) - /^(st|h)_/.test(a)); // Armstulpen und Handschuhe zuerst, Armbänder darüber, die Jacke liegt über beidem (Inaya, 2026-10-10)
   for (const k of JK) if (IARMB[k] && !/^st_/.test(k)) { X.cur = k; body += IARMB[k](X, J[k]); }
   if (IJACK[o.jacket]) body += IJACK[o.jacket](XL, o.jacketC || IJACKC[o.jacket] || '#141218');
   for (const k of JK) { if (INECK[k]) body += INECK[k](X, J[k]); if (IRINGS[k]) { X.cur = k; body += IRINGS[k](X, J[k]); } }
+  for (const k of Object.keys(o.acc || {})) if (IACC_BODY[k]) body += IACC_BODY[k](X, AC(k)); // Taschen am Körper: über Jacke und Ketten
   // Gegenstände in der Hand (Tasche, Kuscheltier, Schirm …) gehören zur Hand: bei Posen drehen sie ganz mit dem Arm mit und werden nicht zerschnitten (Inaya)
   const held = ['', ''];
   for (const k of Object.keys(o.acc || {})) if (IACC_FRONT[k] && k !== 'kette') held[/B\.hl\b/.test(String(IACC_FRONT[k])) ? 0 : 1] += IACC_FRONT[k](X, AC(k));
