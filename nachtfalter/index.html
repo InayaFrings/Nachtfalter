@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1d4feace5b80';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b153f8fced65';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -31,6 +31,9 @@
   // iPhone/iPad (Inaya, 2026-10-14): Die Streaming-Verbindung verlor dort das Schreiben still (Lesen ging weiter). Long Polling ist robuster.
   const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   fs.settings({ignoreUndefinedProperties: true, merge: true, ...(IOS ? {experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false} : {})});
+  // Zwischenspeicher im Browser (Inaya, 2026-10-15): Nach dem Neuladen kommen Chats, Freunde, Mitteilungen und Nachrichten sofort vom Gerät,
+  // der Server gleicht im Hintergrund ab (spart auch Lesevorgänge). Mehrere Tabs teilen ihn. Beim Abmelden wird er gelöscht.
+  const CACHE = fs.enablePersistence({synchronizeTabs: true}).then(() => true).catch(() => false);
   auth.languageCode = 'de';
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
@@ -111,7 +114,7 @@
     email: () => user ? user.email : null,
     async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
     async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    async signOut(){ try { await auth.signOut(); } catch {} user = null; },
+    async signOut(){ try { await auth.signOut(); } catch {} user = null; try { if (await CACHE) { await fs.terminate(); await fs.clearPersistence(); } } catch {} }, // Zwischenspeicher dieses Kontos vom Gerät löschen
     async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
     async updatePw(pw){ try { await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
@@ -5909,8 +5912,9 @@ document.addEventListener('input', e => {
 async function claimHandle(h){
   if (!cloud?.handles) return;
   let old = null;
-  try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; } catch {}
-  try { await cloud.handles.doc(cloud.uid).set({h, ...(me()?.name ? {n:me().name} : {})}, {merge:true}); } catch {} // n = Anzeigename, damit alle Umbenennungen sofort sehen
+  let oldN = null; try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; oldN = d.exists ? d.data().n : null; } catch {}
+  // nur schreiben, wenn sich etwas geändert hat: jede Änderung lesen alle, die gerade online sind (nmWatch)
+  if (old !== h || (me()?.name && oldN !== me().name)) { try { await cloud.handles.doc(cloud.uid).set({h, ...(me()?.name ? {n:me().name} : {})}, {merge:true}); } catch {} } // n = Anzeigename, damit alle Umbenennungen sofort sehen
   // Anmelden mit Nutzername: logins/<nutzername> mit verschlüsselter E-Mail (lgSeal). Beim Umbenennen wandert der Eintrag mit
   if (PUB && NF_AUTH.email() && old !== h) {
     let moved = null; if (old) { try { const d = await cloud.db.doc('logins/' + old).get(); if (d.exists && d.data().v === 2) moved = d.data(); } catch {} await cloud.db.doc('logins/' + old).delete().catch(() => {}); }
@@ -8797,7 +8801,11 @@ function softRender(){
     if (a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'checkbox')) && a.value) return;
     render(); }, 150);
 }
-async function loadProf(id){ try { const d = await social.db.doc('profiles/' + id).get(); if (d.exists) { const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; } } catch {} }
+// Profil laden: erst sofort aus dem Zwischenspeicher, dann im Hintergrund frisch vom Server (Inaya, 2026-10-15)
+const profPut = (id, d) => { if (!d?.exists) return false; const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; return true; };
+async function loadProf(id){ const ref = social.db.doc('profiles/' + id);
+  try { if (profPut(id, await ref.get({source:'cache'}))) { ref.get().then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); return; } } catch {} // nicht im Zwischenspeicher
+  try { profPut(id, await ref.get()); } catch {} }
 function remoteUser(id, p){
   const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
   return {id, remote:true, age:Number.isFinite(+p.age) && +p.age > 0 ? +p.age : null, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
@@ -10296,7 +10304,7 @@ function ringWatch(){ if (RING.unsub || !social) return; let first = true;
   RING.unsub = social.db.collection(`rings/${social.uid}/r`).onSnapshot(q => { const now = Date.now(); RING.err = null;
     q.docChanges().forEach(ch => { const k = ch.doc.id + '|' + ch.doc.data().sid; if (ch.type !== 'removed' && !RING.seen[k]) RING.seen[k] = {t:now, live:!first}; }); // je Anruf (sid), auch wenn das Dokument wiederverwendet wird
     const gone = RING.list.filter(r => !q.docs.some(d => d.id === r.id)); // verschwunden ohne Antwort = verpasst (oder anderswo angenommen)
-    RING.raw = q.docs.map(d => ({id:d.id, ref:d.ref, ...d.data()})); first = false; ringFilter();
+    RING.raw = q.docs.map(d => ({id:d.id, ref:d.ref, ...d.data()})); if (!q.metadata.fromCache) first = false; ringFilter(); // erst die Antwort vom Server zählt als Anfangsstand
     gone.forEach(r => { if (!RING.done[r.id + r.sid] && !(CALL && CALL.cid === r.cid)) toast(`Verpasster ${r.kind === 'video' ? 'Videoanruf' : 'Anruf'} von ${chatWho(r.from)}`); }); },
   e => { RING.err = e?.code || 'fehler'; RING.unsub = null; setTimeout(ringWatch, 60000); }); } // vorher endete das Zuhören nach einem Fehler still für immer
 setInterval(() => { if (RING.list.length) ringFilter(); }, 3000);

@@ -18,7 +18,7 @@ Soziale Website „für den Zirkel“ von Inaya, live unter https://www.noctibat
 ## Veröffentlichen
 
 1. `index.html` bearbeiten.
-2. `window.NF_BUILD='…'` (Zeile 6) auf einen neuen 12-stelligen Hex-Wert setzen. Sonst laden installierte Handy-Apps die neue Version nicht.
+2. `window.NF_BUILD='…'` (Zeile 6) auf einen neuen 12-stelligen Hex-Wert setzen und denselben Wert in `build.txt` schreiben. Sonst laden installierte Handy-Apps die neue Version nicht. (Die App fragt nur die winzige `build.txt` ab; erst wenn sie abweicht, wird die Seite selbst geprüft.)
 3. `cp index.html nachtfalter/index.html`
 4. Commit `vNNN: …` und Push auf `main` (live nach etwa 30 Sekunden).
 
@@ -117,3 +117,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Neu laden: an derselben Stelle bleiben (seit v462)
 
 - `navSave()` merkt nach jedem Zeichnen und beim Scrollen Ansicht, offenen Chat (auch Talks/Mitglieder/Helfer), Reiter, Scrollstelle und Zurück-Verlauf in `sessionStorage` (`nf-view`, je Browser-Tab). `navBoot()` stellt das vor dem ersten Zeichnen her, `navLive()` verbindet den Chat, sobald `socialStart` läuft. Links aus Mitteilungen/Einladungen (`?c=`, `?p=`, `einladung=`) gehen vor (`NAV_DEEP`).
+
+## Schnelles Laden (seit v464)
+
+- Firestore-Zwischenspeicher im Browser (`enablePersistence({synchronizeTabs:true})` im Shim, beide Kopien): Chats, Freunde, Mitteilungen und Nachrichten kommen nach dem Neuladen sofort vom Gerät. `signOut` löscht ihn (`clearPersistence`). Bei Listenern, die den ersten Stand anders behandeln (z. B. `ringWatch`), auf `q.metadata.fromCache` achten.
+- `loadProf` nimmt erst den Zwischenspeicher, dann im Hintergrund den Server.
+- Update-Prüfung über `build.txt` statt die ganze Seite (700 KB) bei jedem Öffnen neu zu laden. `claimHandle` schreibt `handles/<uid>` nur bei Änderung (jede Änderung lesen alle, die online sind).

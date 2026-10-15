@@ -21,6 +21,9 @@
   // iPhone/iPad (Inaya, 2026-10-14): Die Streaming-Verbindung verlor dort das Schreiben still (Lesen ging weiter). Long Polling ist robuster.
   const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   fs.settings({ignoreUndefinedProperties: true, merge: true, ...(IOS ? {experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false} : {})});
+  // Zwischenspeicher im Browser (Inaya, 2026-10-15): Nach dem Neuladen kommen Chats, Freunde, Mitteilungen und Nachrichten sofort vom Gerät,
+  // der Server gleicht im Hintergrund ab (spart auch Lesevorgänge). Mehrere Tabs teilen ihn. Beim Abmelden wird er gelöscht.
+  const CACHE = fs.enablePersistence({synchronizeTabs: true}).then(() => true).catch(() => false);
   auth.languageCode = 'de';
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
@@ -101,7 +104,7 @@
     email: () => user ? user.email : null,
     async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
     async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
-    async signOut(){ try { await auth.signOut(); } catch {} user = null; },
+    async signOut(){ try { await auth.signOut(); } catch {} user = null; try { if (await CACHE) { await fs.terminate(); await fs.clearPersistence(); } } catch {} }, // Zwischenspeicher dieses Kontos vom Gerät löschen
     async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
     async updatePw(pw){ try { await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
