@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='72bf0430e1c1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d8823308c08c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -6776,10 +6776,9 @@ function pvRescue(){ // Song lädt nicht (z. B. abgelaufener Link): einmal frisc
 const stMuArt = mu => stOkUrl(mu && mu.art, /^https:\/\/[\w.-]+\.(?:mzstatic\.com|dzcdn\.net)\//);
 const ST_SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function stAuUnlock(){ if (stAuSrc) return; stAuWin = null; stAu.loop = false; /* der stille Ton ist 0 Sekunden lang: in Schleife fror die Seite ein */ try { stAu.src = ST_SILENT; stAu.muted = false; stAu.play().catch(() => {}); } catch {} } // iPhone: Ton nur, wenn er beim Antippen einmal angestoßen wurde
-const SPRES = {}; // Spotify-Link -> gefundene Hörprobe
 const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
 function stHeadMu(mu){ return mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}${mu.pv ? ' · ' + muSrc(mu).n : ''}</span></span>` : ''; }
-function stSpMu(url){ if (SPRES[url] !== undefined) return SPRES[url] || null; SPRES[url] = 0; stSongSearch(url, true).then(l => { SPRES[url] = l && l[0] ? {...l[0], sp:url} : null; if (SPRES[url] && STV) storyPaint(); else if (SPRES[url] && !stNew) softRender(); }); return null; }
+function stSpMu(){ return null; } // Spotify entfernt (Inaya, 2026-10-14)
 function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
 // Fehlersuche Ton (Inaya, 2026-10-12): zeigt kurz, warum ein Song nicht spielt
@@ -6804,7 +6803,7 @@ async function stSearchItunes(q){ const u = 'https://itunes.apple.com/search?' +
 async function stSearchDeezer(q){ const j = await jsonp('https://api.deezer.com/search?' + new URLSearchParams({q, limit:'15', output:'jsonp'}), 8000);
   return j && Array.isArray(j.data) ? stMap(j.data, r => ({t:r.title, a:r.artist?.name, art:r.album?.cover_medium, pv:r.preview, d:r.duration, lk:r.link})) : null; }
 async function stSongSearch(q, quiet){
-  q = q.trim(); if (!quiet) stMsSp = ''; if (!q) return [];
+  q = q.trim(); if (!quiet) stMsSp = ''; if (!q || /https?:\/\/|www\./i.test(q)) return []; // keine Links, nur Titel oder Band
   const [it, dz] = await Promise.all([stSearchItunes(q).catch(() => null), stSearchDeezer(q).catch(() => null)]); // Apple zuerst: deren Hörproben laufen nicht ab
   return it && it.length ? it : dz && dz.length ? dz : it || dz ? [] : null;
 }
@@ -6829,9 +6828,13 @@ function pvolMark(){ document.querySelectorAll('.pvol').forEach(b => { const on 
 function muMarkPrev(){ pvolMark(); document.querySelectorAll('.phmu').forEach(b => b.classList.toggle('on', stAuSrc === b.dataset.pv && !stAu.paused)); document.querySelectorAll('.muprev').forEach(b => { const r = STMRES[+b.dataset.i]; b.innerHTML = r && stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY; });
   document.querySelectorAll('[data-act=pmu-play]').forEach(b => { b.innerHTML = stAuSrc === b.dataset.pv && !stAu.paused ? MU_PAUSE : MU_PLAY; }); }
 stAu.addEventListener('pause', () => setTimeout(muMarkPrev)); stAu.addEventListener('play', () => setTimeout(muMarkPrev));
+// Musiksuche nur mit Titel oder Band, keine Links (Inaya, 2026-10-14): Songs kommen ausschließlich aus Apple Music und Deezer
+const MU_LINK = /https?:\/\/|www\.|\b[\w-]+\.(com|de|net|org|io|link|ly|fm|me|app|to)\b/i, MU_LINK_MSG = 'Links gehen hier nicht. Gib einfach Titel oder Band ein.';
+const MU_IDS = {'st-msq':'st-msres', pmq:'pmres', 'e-msq':'e-msres'};
+document.addEventListener('paste', e => { const box = MU_IDS[e.target.id]; if (!box) return; const t = e.clipboardData?.getData('text') || ''; if (MU_LINK.test(t)) { e.preventDefault(); stMsShow([], MU_LINK_MSG, box); } });
 document.addEventListener('input', e => { // Musiksuche in Story und Beitrag
   const id = e.target.id; if (id !== 'st-msq' && id !== 'pmq' && id !== 'e-msq') return; const mq = e.target, box = id === 'pmq' ? 'pmres' : id === 'e-msq' ? 'e-msres' : 'st-msres';
-  clearTimeout(stMsT); const q = mq.value; if (!q.trim()) return stMsShow([], 'Tippe einen Song oder eine Band ein.', box); stMsShow(null, 'Suche …', box);
+  clearTimeout(stMsT); const q = mq.value; if (!q.trim()) return stMsShow([], 'Tippe einen Song oder eine Band ein.', box); if (MU_LINK.test(q)) return stMsShow([], MU_LINK_MSG, box); stMsShow(null, 'Suche …', box);
   stMsT = setTimeout(async () => { const l = await stSongSearch(q); if (mq.value !== q) return; stMsShow(l || [], l == null ? 'Die Suche hat gerade nicht geklappt. Versuch es gleich nochmal.' : l.length ? '' : 'Nichts gefunden.', box); }, 400);
 });
 // Song-Ausschnitt frei wählen (Inaya, 2026-10-12): Anfang und Ende ziehen, Fenster verschieben. Die Suche liefert pro Song eine 30-Sekunden-Hörprobe, das ist die ganze Zeitleiste.
