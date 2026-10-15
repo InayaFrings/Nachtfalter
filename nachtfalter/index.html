@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='12eb48e72d8b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='40065d4746b9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -1791,6 +1791,12 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .pcrtrim2{display:grid;gap:8px}.pcrtrim2 .vtr{background:var(--p-panel,#3a3a3e);border:1px solid var(--p-line,#ffffff30)}.pcrtrim2 .vtrplay{color:var(--p-fg,#fff);border-right-color:var(--p-line,#0a0a0b)}.pcrtlbl{font:600 14px var(--f-body);font-variant-numeric:tabular-nums;text-align:center}
 .pcrpick .nosb{bottom:auto;top:36px;left:5px}
 .pcam2{display:inline-flex;flex:none}.pcam2>.cameo+.cameo{margin-left:-14px;box-shadow:0 0 0 2px var(--p-bg,#111);border-radius:50%}
+.fback{width:100%;-webkit-mask:var(--m) center/100% 100% no-repeat;mask:var(--m) center/100% 100% no-repeat;filter:drop-shadow(1.5px 0 0 #0a0a0b) drop-shadow(-1.5px 0 0 #0a0a0b) drop-shadow(0 1.5px 0 #0a0a0b) drop-shadow(0 -1.5px 0 #0a0a0b)}
+.room.edit .ritem.sel{z-index:900!important}
+.rszh{position:absolute;right:-12px;bottom:-12px;width:26px;height:26px;border-radius:50%;background:var(--fg,#eee);border:2px solid var(--bg,#111);box-shadow:0 1px 6px #000a;cursor:nwse-resize;touch-action:none;z-index:5}
+.rszh::after{content:'';position:absolute;inset:7px;border-right:2px solid var(--bg,#111);border-bottom:2px solid var(--bg,#111)}.ritem[style*="scaleX(-1)"] .rszh{right:auto;left:-12px}
+.rselbar{display:grid;gap:10px;margin:10px 0}.rsize{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 12px}.rsize input{width:100%;accent-color:var(--fg)}.rsize small{grid-column:2;color:var(--muted);font-size:12px}
+.rselcol{display:grid;gap:6px}.rselcol .swatches{display:flex;flex-wrap:wrap;gap:6px}.sw.orig{background:repeating-linear-gradient(45deg,#ddd 0 4px,#888 4px 8px)!important}
 .muoff{margin:0;font-size:14px;opacity:.75;font-style:italic}
 .mshself .ph>.cameo{display:none}.mshself .ph{gap:0}
 .pcrth .lnk,.pcrth .pcrrow .lnk{color:var(--p-fg)!important;text-decoration-color:var(--p-line)}.pcrth .pcrtool.on{background:var(--p-fg)!important;color:var(--p-bg)!important}
@@ -4898,6 +4904,14 @@ function tintDefs(cols){
   }).join('')}</defs></svg>` : '';
 }
 function itemH(k){ return FURN[k].w * FURN[k].vb[1] / FURN[k].vb[0] * 1.6; }
+// Zimmer-Update (Inaya, 2026-10-14): Wanddeko, Teppiche und Kuscheltiere größer/kleiner ziehen, Möbel umdrehen (Rückseite), Farbe direkt beim ausgewählten Stück
+const furnScal = k => { const f = FURN[k]; return !!f && (!!f.wall || !!f.rug || f.r === 'poster' || f.r === 'teppich' || f.r === 'fenster' || /kuschel|teddy|plüsch|plusch|pluesch/i.test(k + ' ' + f.name)); };
+const furnTurn = k => { const f = FURN[k]; return !!f && !f.wall && !f.rug; };
+const itS = it => { const v = +it.s; return furnScal(it.k) && v >= .4 && v <= 3 ? v : 1; };
+const okHex = c => /^#[0-9a-f]{6}$/i.test(c || '');
+function furnBack(k, c){ // Rückseite: Umriss des Möbels als schlichte Rückwand in seiner Farbe
+  const f = FURN[k], svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f.vb[0]} ${f.vb[1]}">${f.svg}</svg>`, base = okHex(c) ? shade(c, .75) : '#2c2420';
+  return `<div class="fback" style="aspect-ratio:${f.vb[0]}/${f.vb[1]};--m:url(&quot;data:image/svg+xml;utf8,${encodeURIComponent(svg).replace(/'/g, '%27')}&quot;);background:repeating-linear-gradient(0deg,#0003 0 2px,#0000 2px 16%),linear-gradient(170deg,#ffffff18,#0000 40%,#0004),${base}"></div>`; }
 const ROOM_COLS = [['#141416','Schwarz'],['#3a3a40','Grau'],['#8a8a92','Silber'],['#e9e7e2','Weiß'],['#4a0f1c','Bordeaux'],['#8a1020','Rot'],['#c86a8a','Rosa'],['#3d1f5c','Violett'],['#9a6fd0','Lila'],['#1d2b4a','Nachtblau'],['#5f8fc0','Blau'],['#1f3d2e','Tannengrün'],['#5fae6b','Grün'],['#8a6a2a','Bronze'],['#d4af37','Gold'],['#4a2e1e','Holz']];
 function roomColorRow(label, k, cur){ // k: 'item' (ausgewähltes Möbel), 'wallC' oder 'floorC'
   return `<fieldset class="opt"><legend class="lbl">${esc(label)}</legend><div class="swatches">
@@ -4915,10 +4929,10 @@ function roomHTML(u, edit, live=edit){
   if (r.items.some(it => !FURN[it.k])) { r.items = r.items.filter(it => FURN[it.k]); roomSel = null; } // entfernte Möbel/Poster verschwinden aus dem Zimmer
   const items = r.items.map((it, i) => {
     const f = FURN[it.k]; if (!f) return '';
-    const z = f.rug ? 2 : f.wall ? 1 : 10 + Math.round(it.y + itemH(it.k));
-    return `<div class="ritem ${sel === i ? 'sel' : ''}" ${edit ? `data-drag="${i}"` : ''} style="left:${it.x}%;top:${it.y}%;width:${f.w}%;z-index:${z};${it.f ? 'transform:scaleX(-1);' : ''}${it.c ? `filter:url(#${tintId(it.c)})` : ''}">${furnSVG(it.k)}</div>`;
+    const sc = itS(it), back = !!it.b && furnTurn(it.k), z = f.rug ? 2 : f.wall ? 1 : 10 + Math.round(+it.y + itemH(it.k) * sc);
+    return `<div class="ritem ${sel === i ? 'sel' : ''}${back ? ' rback' : ''}" ${edit ? `data-drag="${i}"` : ''} style="left:${+it.x || 0}%;top:${+it.y || 0}%;width:${f.w * sc}%;z-index:${z};${it.f ? 'transform:scaleX(-1);' : ''}${okHex(it.c) && !back ? `filter:url(#${tintId(it.c)})` : ''}">${back ? furnBack(it.k, it.c) : furnSVG(it.k)}${edit && sel === i && furnScal(it.k) ? `<i class="rszh" data-rsz="${i}" title="Ziehen: größer oder kleiner" aria-hidden="true"></i>` : ''}</div>`;
   }).join('');
-  const cols = [...new Set(r.items.map(it => it.c).filter(c => /^#[0-9a-f]{6}$/i.test(c || '')))];
+  const cols = [...new Set(r.items.map(it => it.c).filter(okHex))];
   const z = 10 + Math.round(r.av.y + 45);
   return `<div class="rscroll"><div class="room ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}" ${live && !edit ? 'data-live="1"' : ''}>
     ${tintDefs(cols)}
@@ -4943,7 +4957,7 @@ function roomView(){
       : `<button class="btn" disabled>Noch ${f.price - u.points} Punkte</button>`;
     const fc = here ? r.items.find(x => x.k === k).c : null, open = here && colItem === 'f:' + k;
     const dot = here ? `<span class="cdot" role="button" tabindex="0" data-act="fcol" data-k="f:${k}" style="background:${esc(fc || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe von ${esc(f.name.replace(/\u00ad/g, ''))} ändern" aria-expanded="${open}"></span>` : '';
-    return `<div class="item ${here ? 'on' : ''}">${dot}<div class="thumb fthumb" data-act="ftap" data-k="${k}">${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
+    return `<div class="item ${here ? 'on' : ''}">${dot}<div class="thumb fthumb" data-act="ftap" data-k="${k}"${okHex(fc) ? ` style="filter:url(#${tintId(fc)})"` : ''}>${furnSVG(k)}</div><span class="iname">${f.name}</span><span class="price">${here ? 'steht im Zimmer' : ''}</span>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k]?.name || '' : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
@@ -4960,7 +4974,11 @@ function roomView(){
       ${chatOn ? '' : `<p class="note">Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
     </div></div>
     ${roomMode === 'chat' ? roomChatExtra() : ''}`;
-  const selRow = `<div class="row">${selName ? `<span class="lbl">Ausgewählt: ${selName}</span>${roomSel !== 'av' ? `<button class="btn ghost" data-act="flip">Spiegeln</button><button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}` : '<span class="note">Tipp: Tippe ein Möbelstück an, um es zu spiegeln oder wegzuräumen.</span>'}</div>`;
+  const si = roomSel !== 'av' && roomSel != null ? r.items[roomSel] : null;
+  const selRow = `<div class="rselbar">${selName ? `<div class="row"><span class="lbl">Ausgewählt: ${selName}</span>${si ? `<button class="btn ghost" data-act="flip">Spiegeln</button>${furnTurn(si.k) ? `<button class="btn ghost" data-act="rturn" aria-pressed="${!!si.b}">${si.b ? 'Vorderseite zeigen' : 'Umdrehen (Rückseite)'}</button>` : ''}<button class="btn ghost" data-act="unplace-sel">Wegräumen</button>` : ''}</div>
+      ${si && furnScal(si.k) ? `<label class="rsize"><span class="lbl">Größe</span><input type="range" id="r-size" min=".4" max="3" step=".05" value="${itS(si)}" aria-label="Größe"><small>Oder am Griff unten rechts ziehen</small></label>` : ''}
+      ${si ? `<div class="rselcol"><span class="lbl">Farbe</span><div class="swatches"><button type="button" class="sw orig" data-act="rcol" data-k="item" data-v="" aria-pressed="${!si.c}" title="Original" aria-label="Originalfarbe"></button>${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="rcol" data-k="item" data-v="${c}" aria-pressed="${si.c === c}" title="${l}" aria-label="Farbe: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick rpick" data-k="item" value="${okHex(si.c) ? si.c : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></div>` : ''}`
+    : '<span class="note">Tipp: Tippe ein Möbelstück im Zimmer an, um es zu spiegeln, umzudrehen, in der Größe zu ändern, umzufärben oder wegzuräumen.</span>'}</div>`;
   const wallFloor = `<fieldset class="opt"><legend class="lbl">Tapete</legend><div class="chips">${WALLS.map(([v,l]) => `<button type="button" data-act="wall" data-v="${v}" aria-pressed="${r.wall===v}">${l}${r.wall===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="wallC" style="background:${esc(r.wallC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'wallC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
       ${colItem === 'wallC' ? `<div class="cpanel">${roomColorRow('Wandfarbe', 'wallC', r.wallC)}</div>` : ''}
       <fieldset class="opt"><legend class="lbl">Boden</legend><div class="chips">${FLOORS.map(([v,l]) => `<button type="button" data-act="floor" data-v="${v}" aria-pressed="${r.floor===v}">${l}${r.floor===v ? `<span class="cdot in" role="button" tabindex="0" data-act="fcol" data-k="floorC" style="background:${esc(r.floorC || '#2a2a2e')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === 'floorC'}"></span>` : ''}</button>`).join('')}</div></fieldset>
@@ -4984,6 +5002,17 @@ function roomView(){
       ${grid}
       ${doneRow}</div></div>`;
 }
+// Griff unten rechts: größer und kleiner ziehen (Mitte und Unterkante bleiben, wo sie sind)
+let rsz = null;
+document.addEventListener('pointerdown', e => { const h = e.target.closest?.('#room .rszh'); if (!h) return; const it = me().room.items[+h.dataset.rsz]; if (!it) return;
+  const room = document.getElementById('room').getBoundingClientRect(), f = FURN[it.k]; rsz = {it, f, el:h.parentElement, room, sx:e.clientX, s0:itS(it), cx:+it.x + f.w * itS(it) / 2, by:+it.y + itemH(it.k) * itS(it)};
+  h.setPointerCapture?.(e.pointerId); e.preventDefault(); e.stopImmediatePropagation(); }, true);
+const rszApply = (it, f, s, cx, by) => { it.s = Math.round(Math.max(.4, Math.min(3, s)) * 100) / 100; it.x = Math.round((cx - f.w * it.s / 2) * 10) / 10; it.y = Math.round((by - itemH(it.k) * it.s) * 10) / 10; };
+document.addEventListener('pointermove', e => { if (!rsz) return; const d = rsz, w0 = d.f.w * d.s0, dw = (e.clientX - d.sx) / d.room.width * 100 * 2;
+  rszApply(d.it, d.f, (w0 + dw) / d.f.w, d.cx, d.by); Object.assign(d.el.style, {width:d.f.w * d.it.s + '%', left:d.it.x + '%', top:d.it.y + '%'}); const r = document.getElementById('r-size'); if (r) r.value = d.it.s; });
+document.addEventListener('pointerup', () => { if (!rsz) return; rsz = null; save(); render(); });
+document.addEventListener('input', e => { if (e.target.id !== 'r-size') return; const it = me().room.items[roomSel]; if (!it) return; const f = FURN[it.k], s0 = itS(it), cx = +it.x + f.w * s0 / 2, by = +it.y + itemH(it.k) * s0;
+  rszApply(it, f, +e.target.value, cx, by); const el = document.querySelector(`#room [data-drag="${roomSel}"]`); if (el) Object.assign(el.style, {width:f.w * it.s + '%', left:it.x + '%', top:it.y + '%'}); clearTimeout(rsz?.t); setTimeout(save, 300); });
 document.addEventListener('pointerdown', e => {
   const el = e.target.closest('#room [data-drag]'); if (!el) return;
   const room = document.getElementById('room').getBoundingClientRect();
@@ -11662,6 +11691,7 @@ document.addEventListener('click', async e => {
   else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); roomSel = null; save(); render(); }
   else if (a === 'unplace-sel') { me().room.items.splice(roomSel, 1); roomSel = null; save(); render(); }
   else if (a === 'flip') { const it = me().room.items[roomSel]; if (it) { it.f = !it.f; save(); render(); } }
+  else if (a === 'rturn') { const it = me().room.items[roomSel]; if (it && furnTurn(it.k)) { it.b = !it.b; if (!it.b) delete it.b; save(); render(); } }
   else if (a === 'ftab') { furnTab = b.dataset.v; render(); }
   else if (a === 'room-close') closeRoomChat();
   else if (a === 'fcol') { colItem = colItem === b.dataset.k ? null : b.dataset.k; render(); }
