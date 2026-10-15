@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e936e1dc82bc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a3c0a7121cab';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -9186,7 +9186,7 @@ async function e2XferGo(dev, quiet){ const x = E2X.list.find(y => y.id === dev);
   const d = await social.db.doc(`profiles/${social.uid}/e2ee/${dev}`).get(); if (!d.exists || d.data().revoked) { if (quiet) social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${dev}`).delete().catch(() => {}); else toast('Dieses Gerät ist nicht mehr angemeldet.'); return; }
   if (!quiet) toast('Verlauf wird übertragen …'); let n = 0; const key = social.uid + '_' + dev;
   for (const c of CH.list.filter(c => e2Chat(c.id, c))) {
-    const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(500).get().catch(() => null); if (!q) continue;
+    const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(200).get().catch(() => null); if (!q) continue; // sparsam: je Chat die letzten 200
     let bt = social.db.batch(), m = 0;
     const ak = social.uid + '_' + E2A_DEV, akOk = (await e2Devs(social.uid, true)).some(x => x.dev === E2A_DEV && !x.revoked);
     for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[key] || v.x?.[key] || (akOk && (v.k?.[ak] || v.x?.[ak]))) continue;
@@ -9245,17 +9245,22 @@ function e2aAsk(force){ if (!social || E2A.kp || (E2A.asked && !force) || docume
 async function e2aCheckPw(pw){ if (PUB) return !(await NF_AUTH.reauth(pw)).error; return !!me()?.pwh && await hashPw(pw) === me().pwh; }
 // Passwort geändert: Sicherung mit dem neuen Passwort neu verschlüsseln
 async function e2aRepass(oldPw, newPw){ try { const d = await e2aRef().get(); if (!d.exists || !d.data().ct) return e2aUnlock(newPw); const x = d.data(), jwk = await e2aOpen(x, oldPw); await e2aRef().set({...x, ...(await e2aSeal(jwk, newPw)), ts:Date.now()}); return true; } catch { return false; } }
-// Ältere Nachrichten einmal für den Konto-Schlüssel nachverpacken (nur, was dieses Gerät lesen kann)
-async function e2aMigrate(){ if (!E2A.kp || !E2E.on || !social) return; if (!CH.raw) return setTimeout(e2aMigrate, 5000);
-  const K = 'nf-e2a-mig:' + E2E.uid + ':' + E2E.dev; let since = 0; try { since = +localStorage.getItem(K) || 0; } catch {} if (Date.now() - since < 6 * 3600e3) return;
-  const start = Date.now(), ak = E2E.uid + '_' + E2A_DEV; let n = 0;
+// Ältere Nachrichten EINMAL pro Konto für den Konto-Schlüssel nachverpacken (nur, was dieses Gerät lesen kann).
+// Sparsam (Firebase-Kontingent): je Chat höchstens die letzten 300, danach steht „mig“ in der Sicherung und kein Gerät liest das nochmal.
+// Neue Nachrichten brauchen das nicht, sie werden beim Senden gleich auch für den Konto-Schlüssel verpackt.
+async function e2aMigrate(){ if (!E2A.kp || !E2E.on || !social || E2A.migBusy) return; if (!CH.raw) return setTimeout(e2aMigrate, 5000);
+  const K = 'nf-e2a-mig:' + E2E.uid; try { if (localStorage.getItem(K)) return; } catch {}
+  E2A.migBusy = true; try {
+  const st = await e2aRef().get().catch(() => null); if (st?.exists && st.data().mig) { try { localStorage.setItem(K, '1'); } catch {} return; }
+  const ak = E2E.uid + '_' + E2A_DEV; let n = 0;
   for (const c of CH.list.filter(c => e2Chat(c.id, c))) {
-    const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(since ? 100 : 500).get().catch(() => null); if (!q) continue;
+    const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(300).get().catch(() => null); if (!q) continue;
     let bt = social.db.batch(), m = 0;
-    for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[ak] || v.x?.[ak] || (since && v.ts < since - 864e5)) continue;
+    for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[ak] || v.x?.[ak]) continue;
       try { const {cekRaw, aad} = await e2Cek(c.id, doc.id, v); const w = await e2Wrap(cekRaw, aad, E2E.uid, E2A_DEV); cekRaw.fill(0); bt.update(doc.ref, {['x.' + ak]:E2E.dev + '~' + w}); n++; if (++m >= 400) { await bt.commit().catch(() => {}); bt = social.db.batch(); m = 0; } } catch {} }
     if (m) await bt.commit().catch(() => {}); }
-  try { localStorage.setItem(K, String(start)); } catch {} }
+  await e2aRef().set({mig:Date.now(), migN:n}, {merge:true}).catch(() => {}); try { localStorage.setItem(K, '1'); } catch {}
+  } finally { E2A.migBusy = false; } }
 // Neues Gerät: Verlauf von selbst anfragen, wenn es schon andere Geräte gibt
 async function e2AutoAsk(){ if (!E2E.fresh) return; E2E.fresh = false; try { const l = (await e2Devs(E2E.uid, true)).filter(x => !x.revoked && x.dev !== E2E.dev && x.dev !== E2A_DEV); if (!l.length) return;
   const cur = await social.db.doc(`data/users/${E2E.uid}/nf-e2/xfer/${E2E.dev}`).get(); if (!cur.exists) await e2XferAsk(true); } catch {} }
