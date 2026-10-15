@@ -30,7 +30,8 @@ Die Content-Security-Policy steht als `<meta>` im `<head>`. Wer ein neues extern
 - HPKE (DHKEM P-256, HKDF-SHA256, AES-256-GCM, Auth-Modus) über `vendor/hpke-core`. Jedes Gerät hat ein eigenes Schlüsselpaar. Der private Schlüssel ist nicht exportierbar und liegt nur in IndexedDB (`nf-e2ee`). Öffentliche Schlüssel liegen unter `profiles/<uid>/e2ee/<gerät>`.
 - Nachrichten-Dokument: `{from, ts, e2e:1, sd, iv, c (Bytes), k:{<uid>_<gerät>: enc.ct}, x?}`. Kein `text` im Klartext, `lastText` ist nur `🔒`.
 - Medien (Sprachnachrichten, MP3, Videos) werden vor dem Hochladen mit eigenem Schlüssel verschlüsselt (`mk`/`miv` stehen nur in der verschlüsselten Nachricht).
-- Neue Geräte lesen alte Nachrichten erst nach Freigabe von einem bisherigen Gerät (Einstellungen → Verschlüsselung, Code-Vergleich, Feld `x`).
+- Neue Geräte fragen selbst nach dem Verlauf (`e2AutoAsk`), eigene Geräte geben ihn automatisch frei (`e2AutoGo`, Feld `x`), kein Code-Vergleich mehr (seit v438).
+- Konto-Schlüssel (seit v438): öffentlich als Pseudo-Gerät `profiles/<uid>/e2ee/nfkonto1` (`E2A_DEV`), dadurch wird jede Nachricht auch dafür verpackt. Privat mit dem Passwort verschlüsselt (PBKDF2-SHA256 310.000, AES-GCM) unter `data/users/<uid>/nf-e2acct`. Entsperrt beim Anmelden (`e2aRemember`), sonst einmalige Passwort-Abfrage (`e2aAsk`); Passwort-Wechsel verschlüsselt neu (`e2aRepass`). Alte Nachrichten verpackt `e2aMigrate` nach (Feld `x`). `e2Cek` probiert erst den Geräteschlüssel, dann den Konto-Schlüssel.
 - Code: Abschnitt „Ende-zu-Ende-Verschlüsselung“ vor `sendMsg` in `index.html`. Nie Klartext an Firestore schicken, wenn `e2Chat(cid)` wahr ist.
 
 ## Reaktionen und Antworten im Chat (seit v375)

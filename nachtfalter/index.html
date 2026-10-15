@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='dfcefddb8a7e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e936e1dc82bc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -9058,13 +9058,13 @@ function e2Init(){ if (!social) return Promise.resolve(false); if (E2E.ready && 
       if (!window.crypto?.subtle || !window.indexedDB) throw new Error('Dieser Browser kann Schlüssel nicht sicher speichern.');
       E2E.suite = await e2Lib();
       const make = async () => { const kp = await crypto.subtle.generateKey({name:'ECDH', namedCurve:'P-256'}, false, ['deriveBits']); const rec = {dev:e2Rand(12), kp, ts:Date.now()}; await e2Put('u:' + E2E.uid, rec); return rec; };
-      let rec = await e2Get('u:' + E2E.uid); if (!rec?.kp?.privateKey || !rec.dev) rec = await make();
+      let rec = await e2Get('u:' + E2E.uid); if (!rec?.kp?.privateKey || !rec.dev) { rec = await make(); E2E.fresh = true; }
       let ref = social.db.doc(`profiles/${E2E.uid}/e2ee/${rec.dev}`), cur = await ref.get();
-      if (cur.exists && cur.data().revoked) { rec = await make(); ref = social.db.doc(`profiles/${E2E.uid}/e2ee/${rec.dev}`); cur = await ref.get(); } // dieses Gerät wurde woanders entfernt: neu anmelden
+      if (cur.exists && cur.data().revoked) { rec = await make(); E2E.fresh = true; ref = social.db.doc(`profiles/${E2E.uid}/e2ee/${rec.dev}`); cur = await ref.get(); } // dieses Gerät wurde woanders entfernt: neu anmelden
       const pub = await e2PubOf(rec.kp);
       if (!cur.exists || cur.data().pub !== pub) await ref.set({pub, ts:rec.ts, seen:Date.now(), name:e2DevName(), v:1});
       else if ((cur.data().seen || 0) < Date.now() - 864e5) ref.set({seen:Date.now()}, {merge:true}).catch(() => {}); // einmal am Tag: Gerät noch aktiv
-      E2E.dev = rec.dev; E2E.kp = rec.kp; E2E.on = true; E2E.err = ''; e2XferWatch(); return true;
+      E2E.dev = rec.dev; E2E.kp = rec.kp; E2E.on = true; E2E.err = ''; e2XferWatch(); e2aBoot(); e2AutoAsk(); return true;
     } catch (e) { E2E.on = false; E2E.err = e?.message || 'Die Verschlüsselung ist auf diesem Gerät nicht verfügbar.'; E2E.ready = null; return false; }
   })(); }
 const e2DevList = q => q.docs.map(d => ({dev:d.id, ...d.data()})).filter(x => typeof x.pub === 'string' && /^[A-Za-z0-9]{6,40}$/.test(x.dev));
@@ -9113,8 +9113,12 @@ async function e2Cek(cid, mid, d){ // Inhaltsschlüssel für dieses Gerät auspa
   if (!(await e2Init())) throw new Error('off');
   const me = E2E.uid + '_' + E2E.dev, aad = e2Aad(cid, mid, d.from, d.sd, d.ts); let w = d.k?.[me], bu = d.from, bd = d.sd;
   if (!w && typeof d.x?.[me] === 'string') { const i = d.x[me].indexOf('~'); bu = E2E.uid; bd = d.x[me].slice(0, i); w = d.x[me].slice(i + 1); } // übertragener Verlauf: von einem eigenen Gerät neu verpackt
+  let rk = E2E.kp;
+  if (typeof w !== 'string' && E2A.kp) { const ak = E2E.uid + '_' + E2A_DEV; // Konto-Schlüssel (mit dem Passwort gesichert)
+    if (typeof d.k?.[ak] === 'string') { w = d.k[ak]; bu = d.from; bd = d.sd; rk = E2A.kp; }
+    else if (typeof d.x?.[ak] === 'string') { const i = d.x[ak].indexOf('~'); bu = E2E.uid; bd = d.x[ak].slice(0, i); w = d.x[ak].slice(i + 1); rk = E2A.kp; } }
   if (typeof w !== 'string' || !w.includes('.')) throw new Error('nokey');
-  const [enc, ct] = w.split('.'), r = await E2E.suite.createRecipientContext({recipientKey:E2E.kp, enc:b64d(enc).buffer, senderPublicKey:await e2PubKey(bu, bd), info:E2_INFO});
+  const [enc, ct] = w.split('.'), r = await E2E.suite.createRecipientContext({recipientKey:rk, enc:b64d(enc).buffer, senderPublicKey:await e2PubKey(bu, bd), info:E2_INFO});
   return {cekRaw:new Uint8Array(await r.open(b64d(ct).buffer, aad)), aad}; }
 async function e2Open(cid, mid, d){ const {cekRaw, aad} = await e2Cek(cid, mid, d);
   try { const cek = await crypto.subtle.importKey('raw', cekRaw, 'AES-GCM', false, ['decrypt']), ct = d.c?.toUint8Array ? d.c.toUint8Array() : null; if (!ct || typeof d.iv !== 'string') throw new Error('bad');
@@ -9151,10 +9155,10 @@ async function e2pvLoad(){ if (E2PV.busy || !social) return; const cache = e2pvC
   finally { E2PV.busy = false; }
   if (ch) { try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} softRender(); } }
 function e2LockHTML(m){ const t = m._lock === 'wait' ? 'Wird entschlüsselt …' : m._lock === 'nokey' ? 'Auf diesem Gerät nicht lesbar' : m._lock === 'off' ? 'Verschlüsselung hier nicht verfügbar' : 'Ließ sich nicht entschlüsseln';
-  return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? '<small class="e2hint">Verlauf holen: Einstellungen → Verschlüsselung</small>' : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; }
+  return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? (E2A.kp ? '<small class="e2hint">Öffne Noctibat kurz auf einem anderen Gerät, auf dem du angemeldet bist. Dann erscheint die Nachricht hier.</small>' : '<button type="button" class="lnk e2hint" data-act="e2a-ask">Passwort eingeben, um alles zu lesen</button>') : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; }
 const E2_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
 // Neues Gerät bei einer Person: Hinweis im Chat, damit man die Sicherheitsnummer vergleichen kann (wie bei Signal)
-function e2KeyCheck(uid, l){ if (!E2E.uid || uid === E2E.uid) return; const K = 'nf-e2kc:' + E2E.uid, h = l.filter(x => !x.revoked).map(x => x.dev + ':' + x.pub).sort().join('|'); let m = {};
+function e2KeyCheck(uid, l){ if (!E2E.uid || uid === E2E.uid) return; const K = 'nf-e2kc:' + E2E.uid, h = l.filter(x => !x.revoked && x.dev !== E2A_DEV).map(x => x.dev + ':' + x.pub).sort().join('|'); let m = {};
   try { m = JSON.parse(localStorage.getItem(K) || '{}'); } catch {}
   if (m[uid] && m[uid] !== h && h) m['!' + uid] = 1; if (m[uid] !== h && h) { m[uid] = h; try { localStorage.setItem(K, JSON.stringify(m)); } catch {} } }
 const e2Warned = uid => { try { return !!JSON.parse(localStorage.getItem('nf-e2kc:' + E2E.uid) || '{}')['!' + uid]; } catch { return false; } };
@@ -9176,30 +9180,100 @@ async function e2CodeOpen(cid){ const c = CH.list.find(x => x.id === cid), mem =
 const E2X = {list:[], unsub:null, mine:null};
 function e2XferWatch(){ if (E2X.unsub || !social) return; E2X.unsub = social.db.collection(`data/users/${social.uid}/nf-e2/xfer`).onSnapshot(s => { E2X.list = s.docs.map(d => ({id:d.id, ...d.data()}));
   const mine = E2X.list.find(x => x.id === E2E.dev); if (mine?.st === 'done' && E2X.mine !== 'done') { E2X.mine = 'done'; E2E.bad = {}; toast(`Verlauf übertragen (${mine.n || 0} Nachrichten).`); if (CH.open && CH.mraw) e2Redraw(CH.open); }
-  if (V.name === 'settings') softRender(); }, () => {}); }
-async function e2XferAsk(){ if (!(await e2Init())) return toast(E2E.err); await social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${E2E.dev}`).set({dev:E2E.dev, name:e2DevName(), ts:Date.now(), st:'wait'}); E2X.mine = 'wait'; render(); }
-async function e2XferGo(dev){ const x = E2X.list.find(y => y.id === dev); if (!x || dev === E2E.dev) return;
-  const d = await social.db.doc(`profiles/${social.uid}/e2ee/${dev}`).get(); if (!d.exists || d.data().revoked) return toast('Dieses Gerät ist nicht mehr angemeldet.');
-  toast('Verlauf wird übertragen …'); let n = 0; const key = social.uid + '_' + dev;
+  if (V.name === 'settings') softRender(); e2AutoGo(); }, () => {}); }
+async function e2XferAsk(quiet){ if (!(await e2Init())) return toast(E2E.err); await social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${E2E.dev}`).set({dev:E2E.dev, name:e2DevName(), ts:Date.now(), st:'wait'}); E2X.mine = 'wait'; if (!quiet) render(); }
+async function e2XferGo(dev, quiet){ const x = E2X.list.find(y => y.id === dev); if (!x || dev === E2E.dev) return;
+  const d = await social.db.doc(`profiles/${social.uid}/e2ee/${dev}`).get(); if (!d.exists || d.data().revoked) { if (quiet) social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${dev}`).delete().catch(() => {}); else toast('Dieses Gerät ist nicht mehr angemeldet.'); return; }
+  if (!quiet) toast('Verlauf wird übertragen …'); let n = 0; const key = social.uid + '_' + dev;
   for (const c of CH.list.filter(c => e2Chat(c.id, c))) {
     const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(500).get().catch(() => null); if (!q) continue;
     let bt = social.db.batch(), m = 0;
-    for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[key] || v.x?.[key]) continue;
+    const ak = social.uid + '_' + E2A_DEV, akOk = (await e2Devs(social.uid, true)).some(x => x.dev === E2A_DEV && !x.revoked);
+    for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[key] || v.x?.[key] || (akOk && (v.k?.[ak] || v.x?.[ak]))) continue;
       try { const {cekRaw, aad} = await e2Cek(c.id, doc.id, v); const w = await e2Wrap(cekRaw, aad, social.uid, dev); cekRaw.fill(0); bt.update(doc.ref, {['x.' + key]:E2E.dev + '~' + w}); n++; if (++m >= 400) { await bt.commit(); bt = social.db.batch(); m = 0; } } catch {} }
     if (m) await bt.commit().catch(() => {}); }
-  await social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${dev}`).set({st:'done', n, by:E2E.dev, done:Date.now()}, {merge:true}); toast(`Verlauf übertragen: ${n} Nachrichten.`); }
+  await social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${dev}`).set({st:'done', n, by:E2E.dev, done:Date.now()}, {merge:true}); if (!quiet) toast(`Verlauf übertragen: ${n} Nachrichten.`); }
 async function e2DevRemove(dev){ if (dev === E2E.dev) return; await social.db.doc(`profiles/${social.uid}/e2ee/${dev}`).set({revoked:Date.now()}, {merge:true}); delete E2E.devs[social.uid]; social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${dev}`).delete().catch(() => {}); render(); }
-async function e2Logout(){ try { if (E2E.on && E2E.dev) { await social.db.doc(`profiles/${social.uid}/e2ee/${E2E.dev}`).set({revoked:Date.now()}, {merge:true}); await e2Del('u:' + social.uid); } } catch {} } // Abmelden entfernt die Schlüssel dieses Geräts
+async function e2Logout(){ try { if (E2E.on && E2E.dev) { await social.db.doc(`profiles/${social.uid}/e2ee/${E2E.dev}`).set({revoked:Date.now()}, {merge:true}); await e2Del('u:' + social.uid); } await e2Del('a:' + social.uid); E2A.kp = null; } catch {} } // Abmelden entfernt die Schlüssel dieses Geräts
+/* ---------- Konto-Schlüssel und automatische Freigabe (Inaya, 2026-10-14) ----------
+   Viele waren verwirrt, warum sie auf einem neuen Gerät oder nach dem Abmelden ihre Nachrichten nicht lesen konnten. Darum:
+   1. Konto-Schlüssel: ein zusätzlicher Schlüssel fürs ganze Konto. Sein öffentlicher Teil steht wie ein Gerät unter profiles/<uid>/e2ee/E2A_DEV,
+      dadurch wird jede neue Nachricht auch für ihn verpackt. Der private Teil liegt mit dem Passwort verschlüsselt (PBKDF2-SHA256, AES-256-GCM)
+      unter data/users/<uid>/nf-e2acct, lesen kann das nur die Person selbst. Beim Anmelden wird er mit dem Passwort entsperrt und liegt dann
+      nicht exportierbar in der IndexedDB. Ältere Nachrichten verpackt ein Gerät, das sie lesen kann, einmal nach (Feld x).
+      Einschränkung: Wer an die Datenbank kommt und ein schwaches Passwort errät, könnte mitlesen.
+   2. Neue Geräte fragen selbst nach dem Verlauf, eigene Geräte geben ihn ohne Code-Vergleich frei (anmelden ging ohnehin nur mit Passwort). */
+const E2A_DEV = 'nfkonto1', E2A_IT = 310000, E2A = {kp:null, pw:null, pwT:0, busy:null, asked:false};
+const e2aRef = () => social.db.doc(`data/users/${social.uid}/nf-e2acct`);
+async function e2aDerive(pw, salt, it){ const base = await crypto.subtle.importKey('raw', E2_TX.encode(pw), 'PBKDF2', false, ['deriveKey']); return crypto.subtle.deriveKey({name:'PBKDF2', hash:'SHA-256', salt, iterations:it}, base, {name:'AES-GCM', length:256}, false, ['encrypt', 'decrypt']); }
+async function e2aSeal(jwk, pw){ const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), k = await e2aDerive(pw, salt, E2A_IT);
+  return {salt:b64e(salt), iv:b64e(iv), it:E2A_IT, ct:b64e(new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, k, E2_TX.encode(JSON.stringify(jwk)))))}; }
+async function e2aOpen(d, pw){ const k = await e2aDerive(pw, b64d(d.salt), +d.it || E2A_IT); return JSON.parse(E2_RX.decode(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:b64d(d.iv)}, k, b64d(d.ct))))); }
+async function e2aUse(jwk, pub){ // nicht exportierbar auf diesem Gerät ablegen
+  const privateKey = await crypto.subtle.importKey('jwk', {kty:jwk.kty, crv:jwk.crv, x:jwk.x, y:jwk.y, d:jwk.d}, {name:'ECDH', namedCurve:'P-256'}, false, ['deriveBits']);
+  const publicKey = await crypto.subtle.importKey('raw', b64d(pub), {name:'ECDH', namedCurve:'P-256'}, true, []);
+  E2A.kp = {privateKey, publicKey}; await e2Put('a:' + E2E.uid, {kp:E2A.kp, pub}); }
+async function e2aPublish(pub){ const ref = social.db.doc(`profiles/${E2E.uid}/e2ee/${E2A_DEV}`), cur = await ref.get();
+  if (!cur.exists || cur.data().pub !== pub || cur.data().revoked) await ref.set({pub, ts:Date.now(), seen:Date.now(), name:'Konto-Schlüssel', acct:1, v:1});
+  else if ((cur.data().seen || 0) < Date.now() - 864e5) ref.set({seen:Date.now()}, {merge:true}).catch(() => {}); // damit Absender ihn weiter als aktiv sehen
+  delete E2E.devs[E2E.uid]; }
+// Mit dem Passwort entsperren; gibt es noch keinen Konto-Schlüssel, wird er angelegt. Das Passwort ist vorher geprüft (Anmeldung oder erneute Bestätigung).
+async function e2aUnlock(pw){ if (!pw || !(await e2Init())) return false;
+  return E2A.busy = E2A.busy || (async () => { try {
+    const d = await e2aRef().get();
+    if (d.exists && d.data().ct) { const x = d.data(); let jwk; try { jwk = await e2aOpen(x, pw); } catch { return false; } await e2aUse(jwk, x.pub); await e2aPublish(x.pub); }
+    else { const kp = await crypto.subtle.generateKey({name:'ECDH', namedCurve:'P-256'}, true, ['deriveBits']), jwk = await crypto.subtle.exportKey('jwk', kp.privateKey), pub = await e2PubOf(kp);
+      await e2aRef().set({v:1, pub, ts:Date.now(), ...(await e2aSeal(jwk, pw))}); await e2aUse(jwk, pub); await e2aPublish(pub); }
+    E2E.bad = {}; if (CH.open && CH.mraw) e2Redraw(CH.open); e2pvQueue?.(); setTimeout(e2aMigrate, 4000); return true;
+  } catch { return false; } finally { E2A.busy = null; } })(); }
+async function e2aBoot(){ try { const a = await e2Get('a:' + E2E.uid); if (a?.kp?.privateKey && a.pub) { E2A.kp = a.kp; e2aPublish(a.pub).catch(() => {}); setTimeout(e2aMigrate, 8000); return; } } catch {}
+  if (E2A.pw && Date.now() - E2A.pwT < 15 * 60e3) { const pw = E2A.pw; E2A.pw = null; if (await e2aUnlock(pw)) return; }
+  setTimeout(() => e2aAsk(), 6000); }
+// Passwort direkt nach dem Anmelden merken, nur im Arbeitsspeicher und nur kurz, um den Konto-Schlüssel zu entsperren
+function e2aRemember(pw){ E2A.pw = pw; E2A.pwT = Date.now(); if (E2E.on && !E2A.kp && E2E.uid === social?.uid) { const p = E2A.pw; E2A.pw = null; e2aUnlock(p); } setTimeout(() => { E2A.pw = null; }, 15 * 60e3); }
+// Schon angemeldete Geräte: einmal nach dem Passwort fragen
+function e2aAsk(force){ if (!social || E2A.kp || (E2A.asked && !force) || document.getElementById('e2aask')) return; if (!force && [...document.querySelectorAll('.modal, .callov, .ringov, .pcrov, #pushask')].some(x => !x.hidden && getComputedStyle(x).display !== 'none')) { setTimeout(() => e2aAsk(), 5000); return; }
+  E2A.asked = true; const m = document.createElement('div'); m.className = 'modal pushask'; m.id = 'e2aask'; m.style.zIndex = '4900'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+  m.innerHTML = `<form class="card modal-card pacard" data-form="e2aask" style="${myThemeStyle()}"><button type="button" class="pax" data-r="x" aria-label="Später">${'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'}</button>
+    <span class="pabell" aria-hidden="true">${E2_LOCK}</span><h2>Nachrichten auf allen Geräten lesen</h2>
+    <p class="pawhy">Gib einmal dein Passwort ein. Dann kannst du deine privaten Nachrichten auf jedem Gerät lesen, auf dem du dich anmeldest, auch nach dem Abmelden. Du musst nichts mehr einstellen.</p>
+    <label class="f"><span class="lbl">Dein Noctibat-Passwort</span><input type="password" id="e2a-pw" autocomplete="current-password" required></label><p class="err" id="e2a-err" hidden></p>
+    <p class="panote">Dein Schlüssel wird mit deinem Passwort verschlüsselt gespeichert. Ein gutes Passwort schützt ihn am besten.</p>
+    <div class="pabtns"><button type="button" class="btn ghost" data-r="x">Später</button><button type="submit" class="btn">Speichern</button></div></form>`;
+  m.addEventListener('click', e => { if (e.target.closest('[data-r="x"]') || e.target === m) m.remove(); });
+  document.body.appendChild(m); setTimeout(() => document.getElementById('e2a-pw')?.focus(), 50); }
+async function e2aCheckPw(pw){ if (PUB) return !(await NF_AUTH.reauth(pw)).error; return !!me()?.pwh && await hashPw(pw) === me().pwh; }
+// Passwort geändert: Sicherung mit dem neuen Passwort neu verschlüsseln
+async function e2aRepass(oldPw, newPw){ try { const d = await e2aRef().get(); if (!d.exists || !d.data().ct) return e2aUnlock(newPw); const x = d.data(), jwk = await e2aOpen(x, oldPw); await e2aRef().set({...x, ...(await e2aSeal(jwk, newPw)), ts:Date.now()}); return true; } catch { return false; } }
+// Ältere Nachrichten einmal für den Konto-Schlüssel nachverpacken (nur, was dieses Gerät lesen kann)
+async function e2aMigrate(){ if (!E2A.kp || !E2E.on || !social) return; if (!CH.raw) return setTimeout(e2aMigrate, 5000);
+  const K = 'nf-e2a-mig:' + E2E.uid + ':' + E2E.dev; let since = 0; try { since = +localStorage.getItem(K) || 0; } catch {} if (Date.now() - since < 6 * 3600e3) return;
+  const start = Date.now(), ak = E2E.uid + '_' + E2A_DEV; let n = 0;
+  for (const c of CH.list.filter(c => e2Chat(c.id, c))) {
+    const q = await social.db.collection('chats/' + c.id + '/m').orderBy('ts', 'desc').limit(since ? 100 : 500).get().catch(() => null); if (!q) continue;
+    let bt = social.db.batch(), m = 0;
+    for (const doc of q.docs) { const v = doc.data(); if (!v.e2e || v.k?.[ak] || v.x?.[ak] || (since && v.ts < since - 864e5)) continue;
+      try { const {cekRaw, aad} = await e2Cek(c.id, doc.id, v); const w = await e2Wrap(cekRaw, aad, E2E.uid, E2A_DEV); cekRaw.fill(0); bt.update(doc.ref, {['x.' + ak]:E2E.dev + '~' + w}); n++; if (++m >= 400) { await bt.commit().catch(() => {}); bt = social.db.batch(); m = 0; } } catch {} }
+    if (m) await bt.commit().catch(() => {}); }
+  try { localStorage.setItem(K, String(start)); } catch {} }
+// Neues Gerät: Verlauf von selbst anfragen, wenn es schon andere Geräte gibt
+async function e2AutoAsk(){ if (!E2E.fresh) return; E2E.fresh = false; try { const l = (await e2Devs(E2E.uid, true)).filter(x => !x.revoked && x.dev !== E2E.dev && x.dev !== E2A_DEV); if (!l.length) return;
+  const cur = await social.db.doc(`data/users/${E2E.uid}/nf-e2/xfer/${E2E.dev}`).get(); if (!cur.exists) await e2XferAsk(true); } catch {} }
+// Eigene Geräte geben den Verlauf ohne Code-Vergleich frei; nur eines macht es (wer zuerst übernimmt)
+const E2XD = {};
+async function e2AutoGo(){ if (!E2E.on) return; for (const x of E2X.list) { if (x.id === E2E.dev || E2XD[x.id]) continue;
+    const busy = x.st === 'busy' && Date.now() - (x.bts || 0) < 3 * 60e3; if (x.st !== 'wait' && !(x.st === 'busy' && !busy)) continue;
+    if (!CH.raw) { setTimeout(e2AutoGo, 4000); return; }
+    E2XD[x.id] = 1; try { await social.db.doc(`data/users/${E2E.uid}/nf-e2/xfer/${x.id}`).set({st:'busy', by:E2E.dev, bts:Date.now()}, {merge:true}); await e2XferGo(x.id, true); } catch {} } }
 let E2C = {devs:null, codes:{}, t:0};
 function e2Card(){ if (!social) return '';
   if (Date.now() - E2C.t > 5000) { E2C.t = Date.now(); e2Init().then(async ok => { if (!ok) return softRender(); const l = await e2Devs(social.uid, true); E2C.devs = l; for (const x of l) E2C.codes[x.dev] = E2C.codes[x.dev] || await e2Short(x.pub); softRender(); }).catch(() => {}); }
   const l = (E2C.devs || []).filter(x => !x.revoked).sort((a, b) => (b.dev === E2E.dev) - (a.dev === E2E.dev) || (b.ts || 0) - (a.ts || 0)), req = E2X.list.filter(x => x.st === 'wait' && x.id !== E2E.dev && l.some(y => y.dev === x.id)), mine = E2X.list.find(x => x.id === E2E.dev);
   return `<div class="card e2card"><h2 class="card-h">Verschlüsselung</h2><div class="card-in">
-    <p class="note">${E2E.on ? `${E2_LOCK} Private Chats und private Gruppen sind Ende-zu-Ende-verschlüsselt. Die Schlüssel liegen nur auf deinen Geräten, Noctibat kann nichts mitlesen.` : esc(E2E.err || 'Wird eingerichtet …')}</p>
-    ${req.map(x => `<div class="e2req"><b>${esc(x.name || 'Neues Gerät')} möchte deinen Chatverlauf.</b><span>Steht auf dem neuen Gerät derselbe Code? <b class="e2sc">${esc(E2C.codes[x.id] || '…')}</b></span><div class="row"><button class="btn" data-act="e2-xok" data-id="${esc(x.id)}">Code stimmt, übertragen</button><button class="btn ghost" data-act="e2-xno" data-id="${esc(x.id)}">Ablehnen</button></div></div>`).join('')}
-    <div class="setlist">${l.map(x => `<div class="setrow"><div class="setinfo"><span class="lbl">${esc(x.name || 'Gerät')}${x.dev === E2E.dev ? ' · dieses Gerät' : ''}</span><span class="setval muted">seit ${new Date(x.ts || 0).toLocaleDateString('de-DE')} · Code ${esc(E2C.codes[x.dev] || '…')}</span>${x.dev === E2E.dev ? '' : `<button class="btn ghost setedit" data-act="e2-rm" data-id="${esc(x.dev)}">Entfernen</button>`}</div></div>`).join('')}</div>
-    ${E2E.on && l.length > 1 ? (mine?.st === 'wait' ? `<p class="note">Warte auf Freigabe. Öffne Noctibat auf einem deiner anderen Geräte unter Einstellungen → Verschlüsselung und bestätige dort den Code <b class="e2sc">${esc(E2C.codes[E2E.dev] || '…')}</b>.</p>` : mine?.st === 'done' ? '<p class="note">Der Verlauf wurde auf dieses Gerät übertragen.</p>' : '<button class="btn ghost" data-act="e2-xask">Chatverlauf von einem anderen Gerät holen</button>') : ''}
-    <p class="note">Ein neues Gerät liest ältere Nachrichten erst, wenn du sie von einem bisherigen Gerät freigibst. Beim Abmelden werden die Schlüssel dieses Geräts gelöscht.</p>
+    <p class="note">${E2E.on ? `${E2_LOCK} Private Chats und private Gruppen sind Ende-zu-Ende-verschlüsselt. Die Schlüssel liegen auf deinen Geräten und, mit deinem Passwort verschlüsselt, als Sicherung in deinem Konto. Ohne dein Passwort kann niemand mitlesen, auch Noctibat nicht.` : esc(E2E.err || 'Wird eingerichtet …')}</p>
+    ${E2E.on ? `<div class="setrow e2acc"><div class="setinfo"><span class="lbl">Auf allen Geräten lesen</span><span class="setval">${E2A.kp ? '✓ Aktiv. Wenn du dich auf einem anderen Gerät anmeldest, kannst du dort sofort alles lesen.' : 'Noch nicht eingerichtet. Gib einmal dein Passwort ein, dann kannst du deine Nachrichten auf jedem Gerät lesen.'}</span>${E2A.kp ? '' : '<button class="btn setedit" data-act="e2a-ask">Einrichten</button>'}</div></div>` : ''}
+    <div class="setlist">${l.filter(x => x.dev !== E2A_DEV).map(x => `<div class="setrow"><div class="setinfo"><span class="lbl">${esc(x.name || 'Gerät')}${x.dev === E2E.dev ? ' · dieses Gerät' : ''}</span><span class="setval muted">seit ${new Date(x.ts || 0).toLocaleDateString('de-DE')} · Code ${esc(E2C.codes[x.dev] || '…')}</span>${x.dev === E2E.dev ? '' : `<button class="btn ghost setedit" data-act="e2-rm" data-id="${esc(x.dev)}">Entfernen</button>`}</div></div>`).join('')}</div>
+    <p class="note">Deine Geräte geben sich den Chatverlauf automatisch frei. Dein Schlüssel ist mit deinem Passwort gesichert, ein gutes Passwort schützt ihn am besten.</p>
   </div></div>`; }
 async function sendMsg(cid, text, extra={}){
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
@@ -11521,6 +11595,7 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'ext-load') { extAllow(b.dataset.k); b.outerHTML = linkHTML(b.dataset.u, null, !!b.dataset.c); return; }
   else if (a === 'ext-short') { const u = b.dataset.u; extAllow(b.dataset.k); b.disabled = true; b.querySelector('b').textContent = 'Lädt …'; const x = await resolveLink(u).catch(() => null); LRES[u] = x || null; b.outerHTML = linkHTML(u, x, false); return; }
+  else if (a === 'e2a-ask') { e2aAsk(true); return; }
   else if (a === 'vplay') { extAllow('yt'); b.outerHTML = `<div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.v}?autoplay=1&playsinline=1&rel=0" title="Film" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; }
   else if (a === 'pc-pin') { const k = b.dataset.k, d = b.dataset.d, w = PI[k], uid = social?.uid; if (!w || !uid || postOwner(w.p) !== uid || !d) return; const cur = w.list.find(x => x.kind === 'pin' && x.by === uid)?.c, ref = social.db.doc('chats/pi_' + k + '/m/pin');
     try { if (cur === d) await ref.delete(); else await ref.set({kind:'pin', c:d, by:uid, ts:Date.now()}); toast(cur === d ? 'Kommentar nicht mehr fixiert' : 'Kommentar fixiert'); } catch { toast('Das hat gerade nicht geklappt.'); } }
@@ -11653,7 +11728,7 @@ document.addEventListener('submit', async e => {
     if (contactTaken(contact)) return fail('Dafür gibt es schon ein Konto. Melde dich stattdessen an.');
     if (PUB) {
       if (!isMail(contact)) return fail('Bitte gib deine E-Mail-Adresse ein. Damit kannst du dein Passwort später zurücksetzen.');
-      const r = await NF_AUTH.signUp(contact, pw); if (r.error) return fail(r.error);
+      const r = await NF_AUTH.signUp(contact, pw); if (r.error) return fail(r.error); e2aRemember(pw);
       if (S.itoken) { await NF_AUTH.claimInvite(S.itoken).catch(() => {}); delete S.itoken; } // Einladungslink zählt nur noch als Gruß; Anmelden geht auch ohne
 
       if (r.needsConfirm) toast('Wir haben dir eine Mail geschickt. Bitte bestätige deine E-Mail-Adresse.');
@@ -11705,12 +11780,13 @@ document.addEventListener('submit', async e => {
       if (r.error) { if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; } err.textContent = r.error; err.hidden = false; return; }
       await cloudReinit();
       u = Object.values(S.users).find(x => !x.helper && !x.remote && contactsOf(x).includes(normContact(contact)));
+      e2aRemember(pw); // Konto-Schlüssel gleich mit entsperren
       if (u) u.pwh = await hashPw(pw);
       else { // Konto da, aber Profil noch nicht fertig: Einrichtung fortsetzen
         S.pending = {outfit:{...DEFAULT_OUTFIT, lipC:LIP_DEF, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:S.pending?.step || 'name', contact, pwh: await hashPw(pw)};
         S.unlocked = true; save(); render(); return;
       }
-    } else u = await findLogin(contact, pw);
+    } else { u = await findLogin(contact, pw); if (u) e2aRemember(pw); }
     if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; }
     if (!u) {
       const known = Object.values(S.users).some(x => !x.helper && !x.remote && contactsOf(x).includes(normContact(contact)));
@@ -11864,15 +11940,21 @@ document.addEventListener('submit', async e => {
     if (contactTaken(c, u.id)) return fail('Damit gibt es schon ein anderes Konto.');
     if (PUB && k === 'email') { const r = await NF_AUTH.updateEmail(c); if (r.error) return fail(r.error); toast('Bestätige die neue E-Mail über den Link, den wir dir geschickt haben.'); }
     u[k] = c; u.contact = u.email || u.phone; setOpen = null; save(); render(); toast(k === 'email' ? 'E-Mail-Adresse gespeichert' : 'Handynummer gespeichert');
+  } else if (t === 'e2aask') {
+    const pw = document.getElementById('e2a-pw')?.value || '', er = document.getElementById('e2a-err'), sb = f.querySelector('[type=submit]'), bad = m => { er.textContent = m; er.hidden = false; if (sb) { sb.disabled = false; sb.textContent = 'Speichern'; } };
+    if (sb) { sb.disabled = true; sb.textContent = 'Einen Moment …'; }
+    if (!(await e2aCheckPw(pw))) return bad('Das Passwort stimmt nicht.');
+    if (!(await e2aUnlock(pw))) return bad('Das hat gerade nicht geklappt. Versuch es gleich nochmal.');
+    document.getElementById('e2aask')?.remove(); toast('Fertig. Du kannst deine Nachrichten jetzt auf allen Geräten lesen.'); if (V.name === 'settings') render();
   } else if (t === 'set-pw') {
     const u = me(), err = document.getElementById('s-pw-err'), fail = m => { err.textContent = m; err.hidden = false; };
-    const nw = document.getElementById('s-new').value;
+    const nw = document.getElementById('s-new').value, oldPw = document.getElementById('s-old').value;
     if (PUB) { const r = await NF_AUTH.signIn(NF_AUTH.email() || u.email, document.getElementById('s-old').value); if (r.error) return fail('Das aktuelle Passwort stimmt nicht.'); }
     else if (await hashPw(document.getElementById('s-old').value) !== u.pwh) return fail('Das aktuelle Passwort stimmt nicht.');
     if (nw.length < 6) return fail('Das neue Passwort braucht mindestens 6 Zeichen.');
     if (nw !== document.getElementById('s-new2').value) return fail('Die beiden neuen Passwörter sind nicht gleich.');
     if (PUB) { const r = await NF_AUTH.updatePw(nw); if (r.error) return fail(r.error); }
-    u.pwh = await hashPw(nw); setOpen = null; save(); render(); toast('Passwort geändert');
+    u.pwh = await hashPw(nw); setOpen = null; save(); render(); toast('Passwort geändert'); e2aRepass(oldPw, nw).catch(() => {});
   } else if (t === 'set-handle') {
     const u = me(), nh = normHandle(val('s-handle')), err = document.getElementById('s-handle-err');
     if (nh === u.handle) { setOpen = null; render(); return; }
