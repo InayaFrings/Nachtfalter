@@ -158,20 +158,22 @@ service cloud.firestore {
     match /site/{rest=**} { allow read: if invited(); allow write: if isOwner(); }
 
     /* ---------- Nocti-Coins, XP, Level, Inventar und Geschenke (Inaya, 2026-10-16) ----------
-       wallet/<uid> = {c: Coins, x: XP, l: Level, inv: {<item>: true}, dd: Tag der letzten Tagesbelohnung,
+       wallet/<uid> = {c: Coins, x: XP, l: Level, inv: {<item>: true}, dd: Tag der letzten Tagesbelohnung, wb: Startbonus erhalten, kp: Bestand übernommen,
                        xd: {d: Tag, n: {<art>: Anzahl heute}, r: {<beleg>: true}}, fx: {<freund>: true}, gx: {<j|k><gruppe>: true}, op: {t, …}}
-       Jede Änderung beschreibt in op, was passiert ist; die Regeln rechnen nach. Nichts davon lässt sich im Browser ausdenken:
-       Preise stehen hier, Tageslimits und Belege verhindern Farmen, XP gibt es nur mit Nachweis (Like, Kommentar, Freundschaft, Gruppe …).
-       Tag = Kalendertag in deutscher Winterzeit (UTC+1). Level L ab 25·L·(L-1) XP. Coins für Level: 30 je Level, +100 alle 5 Level. */
+       Jede Änderung beschreibt in op, was passiert ist; die Regeln rechnen nach. Preise stehen in site/prices (schreibt nur Inaya, die App gleicht sie ab).
+       Tag = Kalendertag in deutscher Zeit (Europe/Berlin mit Sommerzeit), Wechsel um 00:00 Uhr. Level L ab 25·L·(L-1) XP. Coins für Level: 30 je Level, +100 alle 5 Level. */
     function W() { return resource.data; }
     function N() { return request.resource.data; }
-    function today() { return math.floor((request.time.toMillis() + 3600000) / 86400000); }
+    function berlinSummer() { let t = request.time; let m = t.month(); let w = t.dayOfWeek(); let ls = t.day() - (w % 7);
+      return (m > 3 && m < 10) || (m == 3 && ls >= 25 && !(w == 7 && t.hours() < 1)) || (m == 10 && (ls < 25 || (w == 7 && t.hours() < 1))); }
+    function today() { return math.floor((request.time.toMillis() + (berlinSummer() ? 7200000 : 3600000)) / 86400000); }
     function lvT(l) { return 25 * l * (l - 1); }
     function lvOk(l, x) { return l is int && l >= 1 && lvT(l) <= x && x < lvT(l + 1); }
     function lvC(l) { return 30 * (l - 1) + 100 * math.floor(l / 5); }
     function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && N().c == W().c + coins + lvC(N().l) - lvC(W().l); }
-    function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 5, 'j': 15, 'k': 30, 'm': 2}[k]; }
-    function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 6, 'j': 3, 'k': 1, 'm': 10}[k]; }
+    function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2}[k]; }
+    function xc(k) { return k == 'g' ? 15 : 0; }
+    function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 4, 'j': 3, 'k': 1, 'm': 10}[k]; }
     function xdOld() { return W().xd.d == today() ? W().xd : {'d': today(), 'n': {}, 'r': {}}; }
     function xdOk(k, rk) { let o = xdOld();
       return N().xd.keys().hasOnly(['d', 'n', 'r']) && N().xd.d == today()
@@ -179,7 +181,7 @@ service cloud.firestore {
         && (rk == '' ? N().xd.r == o.r : (!(rk in o.r) && N().xd.r.diff(o.r).affectedKeys().hasOnly([rk]) && N().xd.r[rk] == true)); }
     function piDoc(ref, d) { return get(/databases/$(database)/documents/chats/$('pi_' + ref)/m/$(d)).data; }
     function xpProof(op) { let k = op.k; let ref = op.ref; let u = request.auth.uid;
-      return k == 'g' ? true
+      return k == 'g' ? ref in ['mem', 'ttt', 'hang', 'bat']
         : k == 'f' ? ref != u && friendsWith(ref)
         : k == 'p' ? get(/databases/$(database)/documents/profiles/$(u)).data.lastPost.id == ref
         : k == 'l' ? ref.split('_')[0] != u && piDoc(ref, u + '_klike').by == u
@@ -191,54 +193,73 @@ service cloud.firestore {
     function xpOp(op) { let k = op.k; let ref = op.ref;
       return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm'] && ref is string && ref.size() > 0 && ref.size() < 160
         && N().diff(W()).affectedKeys().hasOnly(['x', 'l', 'c', 'xd', 'fx', 'gx', 'op']) && N().inv == W().inv && N().dd == W().dd
-        && gain(xv(k), 0) && xpProof(op)
+        && gain(xv(k), xc(k)) && xpProof(op)
         && (k == 'f' ? (!(ref in W().fx) && N().fx.diff(W().fx).affectedKeys().hasOnly([ref]) && N().gx == W().gx && xdOk(k, ''))
           : (k == 'j' || k == 'k') ? (!((k + ref) in W().gx) && N().gx.diff(W().gx).affectedKeys().hasOnly([k + ref]) && N().fx == W().fx && xdOk(k, ''))
-          : (N().fx == W().fx && N().gx == W().gx && xdOk(k, k + ':' + ((k == 'c' || k == 'p' || k == 'l') ? ref : (k == 'm' ? op.d : ref))))); }
-    // Preise im Shop (Coins). Muss zu NC in index.html passen (Test t_prices).
-    function price(i) { return {
-      'nc_fkrone': 140, 'nc_hexenhut': 120, 'nc_dornhalo': 110, 'nc_widder': 100, 'nc_neonohr': 80, 'nc_rosenkr': 100,
-      'nc_mondhaar': 180, 'nc_twintails': 160, 'nc_webpulli': 130, 'nc_samtcape': 170, 'nc_flammen': 120, 'nc_schwarm': 150,
-      'nc_orgel': 260, 'nc_aquarium': 200, 'nc_kamin': 190, 'nc_mondbett': 240, 'nc_knochenthron': 220, 'nc_hexkessel': 160, 'nc_neonbat': 120, 'nc_zauberspiegel': 150
-    }.get(i, 0); }
+          : (N().fx == W().fx && N().gx == W().gx && xdOk(k, k + ':' + (k == 'm' ? op.d : ref)))); }
+    // Preise: site/prices = {p: {<item>: Coins}}; was dort fehlt, ist gratis oder nicht käuflich
+    function price(i) { return get(/databases/$(database)/documents/site/prices).data.p.get(i, 0); }
+    // Einkaufstasche: bis zu 12 Teile auf einmal
+    function pAt(l, n) { return l.size() > n ? price(l[n]) : 0; }
+    function sumP(l) { return pAt(l, 0) + pAt(l, 1) + pAt(l, 2) + pAt(l, 3) + pAt(l, 4) + pAt(l, 5) + pAt(l, 6) + pAt(l, 7) + pAt(l, 8) + pAt(l, 9) + pAt(l, 10) + pAt(l, 11); }
+    function okAt(l, n) { return l.size() <= n || price(l[n]) > 0; }
+    function allP(l) { return okAt(l, 0) && okAt(l, 1) && okAt(l, 2) && okAt(l, 3) && okAt(l, 4) && okAt(l, 5) && okAt(l, 6) && okAt(l, 7) && okAt(l, 8) && okAt(l, 9) && okAt(l, 10) && okAt(l, 11); }
+    function invAdded(l) { return N().inv.diff(W().inv).addedKeys() == l.toSet() && N().inv.diff(W().inv).removedKeys().size() == 0 && N().inv.diff(W().inv).changedKeys().size() == 0; }
+    // Was man vor dem Shop schon trug bzw. im Zimmer stehen hatte (einmalig übernommen)
+    function wornSet(o) { return [o.get('back', ''), o.get('front', ''), o.get('top', ''), o.get('bottom', ''), o.get('shoes', ''), o.get('jacket', ''), o.get('eyeform', ''), o.get('lips', ''), o.get('face', ''), o.get('beard', '')].toSet()
+      .union(o.get('hacc', {}).keys().toSet()).union(o.get('jewel', {}).keys().toSet()).union(o.get('acc', {}).keys().toSet()).union(o.get('legw', {}).keys().toSet()); }
+    function hadSet() { let p = get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data; return wornSet(p.get('outfit', {})).union(p.get('rk', []).toSet()); }
     function hasItem(uid, i) { return exists(/databases/$(database)/documents/wallet/$(uid)) && i in get(/databases/$(database)/documents/wallet/$(uid)).data.inv; }
     function giftDoc(g) { return /databases/$(database)/documents/gifts/$(g); }
+    function giftId(g, uid, to, i) { return g is string && g.size() < 220 && g.matches(uid + '_' + to + '_' + i + '_[0-9a-z]+'); }
     match /wallet/{uid} {
       allow read: if signedIn();
-      allow create: if me(uid) && N() == {'c': 150, 'x': 0, 'l': 1, 'inv': {}, 'dd': 0, 'xd': {'d': 0, 'n': {}, 'r': {}}, 'fx': {}, 'gx': {}, 'op': {'t': 'new'}};
+      allow create: if me(uid) && N() == {'c': 2000, 'x': 0, 'l': 1, 'inv': {}, 'dd': 0, 'wb': true, 'kp': false, 'xd': {'d': 0, 'n': {}, 'r': {}}, 'fx': {}, 'gx': {}, 'op': {'t': 'new'}};
       allow update: if me(uid) && N().op is map && (
+        // Startbonus für alle, die ihr Wallet schon vorher hatten: einmal 2000 Coins
+        (N().op.t == 'bonus' && W().get('wb', false) == false && N().wb == true && N().c == W().c + 2000 && N().diff(W()).affectedKeys().hasOnly(['c', 'wb', 'op']))
+        // Einmalig: was man trägt bzw. im Zimmer hat, gehört einem (laut eigenem Profil)
+        || (N().op.t == 'keep' && W().get('kp', false) == false && N().kp == true && N().diff(W()).affectedKeys().hasOnly(['inv', 'kp', 'op'])
+          && N().inv.diff(W().inv).removedKeys().size() == 0 && N().inv.diff(W().inv).changedKeys().size() == 0
+          && N().inv.diff(W().inv).addedKeys().size() <= 150 && N().inv.diff(W().inv).addedKeys().difference(hadSet()).size() == 0)
         // Tagesbelohnung: einmal je Tag 25 Coins und 20 XP
-        (N().op.t == 'daily' && W().dd < today() && N().dd == today() && gain(20, 25)
+        || (N().op.t == 'daily' && W().dd < today() && N().dd == today() && gain(20, 25)
           && N().diff(W()).affectedKeys().hasOnly(['c', 'x', 'l', 'dd', 'op']))
-        // XP für eine echte Aktivität
+        // XP (bei Minigames auch Coins) für eine echte Aktivität
         || (N().op.t == 'xp' && xpOp(N().op))
-        // Kaufen: Preis aus dieser Datei, Gegenstand neu im Inventar
-        || (N().op.t == 'buy' && price(N().op.i) > 0 && !(N().op.i in W().inv) && N().c == W().c - price(N().op.i) && N().c >= 0
-          && N().inv.diff(W().inv).affectedKeys().hasOnly([N().op.i]) && N().inv[N().op.i] == true
+        // Kaufen: ein oder mehrere Teile (Einkaufstasche), Preise aus site/prices
+        || (N().op.t == 'buy' && N().op.its is list && N().op.its.size() >= 1 && N().op.its.size() <= 12 && N().op.its.toSet().size() == N().op.its.size()
+          && allP(N().op.its) && invAdded(N().op.its) && N().c == W().c - sumP(N().op.its) && N().c >= 0
           && N().diff(W()).affectedKeys().hasOnly(['c', 'inv', 'op']))
-        // Verschenken: Coins gehen ab, im selben Schritt entsteht gifts/<ich>_<freund>_<item>
-        || (N().op.t == 'gift' && price(N().op.i) > 0 && N().op.g == uid + '_' + N().op.to + '_' + N().op.i
+        // Im Shop für jemanden kaufen: Coins gehen ab, im selben Schritt entsteht das Geschenk
+        || (N().op.t == 'gift' && price(N().op.i) > 0 && giftId(N().op.g, uid, N().op.to, N().op.i)
           && N().c == W().c - price(N().op.i) && N().c >= 0 && N().diff(W()).affectedKeys().hasOnly(['c', 'op'])
           && !exists(giftDoc(N().op.g)) && existsAfter(giftDoc(N().op.g)))
-        // Geschenk annehmen: Gegenstand ins Inventar; hat man ihn schon, gibt es den Preis als Coins
-        || (N().op.t == 'take' && get(giftDoc(N().op.g)).data.to == uid && get(giftDoc(N().op.g)).data.st == 'open'
+        // Aus dem eigenen Bestand verschenken: das Teil verlässt das Inventar und liegt im Geschenk, bis es angenommen wird
+        || (N().op.t == 'give' && N().op.i is string && N().op.i in W().inv && price(N().op.i) > 0 && giftId(N().op.g, uid, N().op.to, N().op.i)
+          && N().inv.diff(W().inv).removedKeys() == [N().op.i].toSet() && N().inv.diff(W().inv).addedKeys().size() == 0 && N().inv.diff(W().inv).changedKeys().size() == 0
+          && N().diff(W()).affectedKeys().hasOnly(['inv', 'op']) && !exists(giftDoc(N().op.g)) && existsAfter(giftDoc(N().op.g)))
+        // Geschenk annehmen: Teil ins Inventar; hat man es schon, gibt es den Preis als Coins
+        || (N().op.t == 'take' && get(giftDoc(N().op.g)).data.to == uid && get(giftDoc(N().op.g)).data.st in ['open', 'seen']
           && getAfter(giftDoc(N().op.g)).data.st == 'taken' && N().diff(W()).affectedKeys().hasOnly(['c', 'inv', 'op'])
           && (!(get(giftDoc(N().op.g)).data.i in W().inv)
-            ? (N().c == W().c && N().inv.diff(W().inv).affectedKeys().hasOnly([get(giftDoc(N().op.g)).data.i]) && N().inv[get(giftDoc(N().op.g)).data.i] == true)
+            ? (N().c == W().c && invAdded([get(giftDoc(N().op.g)).data.i]))
             : (N().inv == W().inv && N().c == W().c + price(get(giftDoc(N().op.g)).data.i)))));
     }
     match /gifts/{g} {
       allow get: if signedIn() && (resource == null || resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
       allow list: if signedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
       allow create: if signedIn() && N().from == request.auth.uid && N().to is string && N().to != request.auth.uid
-        && g == request.auth.uid + '_' + N().to + '_' + N().i && N().st == 'open' && N().keys().hasOnly(['from', 'to', 'i', 'st', 'ts'])
+        && giftId(g, request.auth.uid, N().to, N().i) && N().st == 'open' && N().k in ['buy', 'inv'] && N().keys().hasOnly(['from', 'to', 'i', 'st', 'ts', 'k'])
         && price(N().i) > 0 && friendsWith(N().to) && !hasItem(N().to, N().i)
-        && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.t == 'gift'
+        && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.t == (N().k == 'buy' ? 'gift' : 'give')
         && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.g == g;
-      allow update: if signedIn() && W().to == request.auth.uid && W().st == 'open' && N().st == 'taken'
-        && N().diff(W()).affectedKeys().hasOnly(['st', 'tts'])
-        && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.t == 'take'
-        && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.g == g;
+      // Empfänger: öffnen (gesehen) und annehmen
+      allow update: if signedIn() && W().to == request.auth.uid && (
+        (W().st == 'open' && N().st == 'seen' && N().diff(W()).affectedKeys().hasOnly(['st', 'sts']))
+        || (W().st in ['open', 'seen'] && N().st == 'taken' && N().diff(W()).affectedKeys().hasOnly(['st', 'tts'])
+          && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.t == 'take'
+          && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.g == g));
     }
   }
 }
