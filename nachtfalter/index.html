@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='873f953a8405';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='c37175a02402';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2131,7 +2131,9 @@ body.cmvopen{overflow:hidden}
 @keyframes acctin{from{opacity:0}to{opacity:1}}
 .acctback{margin-top:4px}
 /* Blockieren (Inaya, 2026-10-13) */
-.pactw{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pactw>.row,.pactw>.frq{flex:1 1 auto;min-width:0}
+.pactw{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}.pactw>.row,.pactw>.frq{flex:1 1 auto;min-width:0}.pactw>.row{flex-wrap:nowrap;gap:8px}
+/* Anfrage-Knöpfe und drei Punkte in einer Zeile, wie bei Freunden (.pbtns), auch bei privaten Profilen (Inaya, 2026-10-16) */
+@media (max-width:760px){.pactw .row>.btn{flex:1 1 0;min-width:0;width:auto!important;white-space:normal;padding:12px 6px;font-size:14px;line-height:1.2}.pactw .frsent{flex:1 1 0;min-width:0;white-space:normal;justify-content:center;line-height:1.2;padding:8px 10px}}
 .pmorebtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--p-line,#444);background:none;color:inherit;display:inline-grid;place-items:center;cursor:pointer;padding:0}.pmorebtn svg{width:20px;height:20px;fill:currentColor}
 .pmoresh .modal-card{display:grid;gap:12px;max-width:340px}.pmorel{display:grid;gap:8px}.btn.danger{background:#8a1020;border-color:#8a1020;color:#fff}
 .blkprof{display:grid;gap:10px;justify-items:start}.blkprof p{margin:0}
@@ -9652,7 +9654,7 @@ async function e2CodeOpen(cid){ const c = CH.list.find(x => x.id === cid), mem =
 // Verlauf auf ein neues Gerät übertragen: das neue Gerät fragt an und zeigt einen Code, ein bisheriges Gerät vergleicht ihn und gibt frei
 const E2X = {list:[], unsub:null, mine:null};
 function e2XferWatch(){ if (E2X.unsub || !social) return; E2X.unsub = social.db.collection(`data/users/${social.uid}/nf-e2/xfer`).onSnapshot(s => { E2X.list = s.docs.map(d => ({id:d.id, ...d.data()}));
-  const mine = E2X.list.find(x => x.id === E2E.dev); if (mine?.st === 'done' && E2X.mine !== 'done') { E2X.mine = 'done'; E2E.bad = {}; toast(`Verlauf übertragen (${mine.n || 0} Nachrichten).`); if (CH.open && CH.mraw) e2Redraw(CH.open); }
+  const mine = E2X.list.find(x => x.id === E2E.dev); if (mine?.st === 'done' && E2X.mine !== 'done') { E2X.mine = 'done'; E2E.bad = {}; if (CH.open && CH.mraw) e2Redraw(CH.open); } /* ohne Meldung: kam sonst bei jedem Neuladen (Inaya, 2026-10-16) */
   if (V.name === 'settings') softRender(); e2AutoGo(); }, () => {}); }
 async function e2XferAsk(quiet){ if (!(await e2Init())) return toast(E2E.err); await social.db.doc(`data/users/${social.uid}/nf-e2/xfer/${E2E.dev}`).set({dev:E2E.dev, name:e2DevName(), ts:Date.now(), st:'wait'}); E2X.mine = 'wait'; if (!quiet) render(); }
 async function e2XferGo(dev, quiet){ const x = E2X.list.find(y => y.id === dev); if (!x || dev === E2E.dev) return;
