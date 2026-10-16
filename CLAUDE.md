@@ -120,7 +120,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 ## Schnelles Laden (seit v464)
 
-- Firestore-Zwischenspeicher im Browser (`enablePersistence({synchronizeTabs:true})` im Shim, beide Kopien): Chats, Freunde, Mitteilungen und Nachrichten kommen nach dem Neuladen sofort vom Gerät. `signOut` löscht ihn (`clearPersistence`). Bei Listenern, die den ersten Stand anders behandeln (z. B. `ringWatch`), auf `q.metadata.fromCache` achten.
+- Firestore-Zwischenspeicher im Browser (`enablePersistence()` im Shim, beide Kopien; nur der erste Tab, weitere Tabs ohne Zwischenspeicher): Chats, Freunde, Mitteilungen und Nachrichten kommen nach dem Neuladen sofort vom Gerät. `signOut` löscht ihn (`clearPersistence`). Bei Listenern, die den ersten Stand anders behandeln (z. B. `ringWatch`), auf `q.metadata.fromCache` achten.
 - `loadProf` nimmt erst den Zwischenspeicher, dann im Hintergrund den Server.
 - Update-Prüfung über `build.txt` statt die ganze Seite (700 KB) bei jedem Öffnen neu zu laden. `claimHandle` schreibt `handles/<uid>` nur bei Änderung (jede Änderung lesen alle, die online sind).
 - Seit v465: Letzter Stand je Konto in `localStorage nf-snap:<S.me>` (Chatliste, Freundeslisten, Mitteilungen, Story-Ringe (seit v466), Namen und Avatare der Beteiligten). Die Salon-Leiste Freunde/Öffentlich steht immer (auch vor der Verbindung), `loadPubFeed` nimmt erst den Zwischenspeicher. `snapLoad()` beim Start, `snapSave()` nach Änderungen (frühestens 3 s nach Verbindungsstart, höchstens alle 4 s). Bis dahin zeigen `notifs()`, Chatliste, `ntHead`, `nmOf`, `uidUser` diesen Stand. Leer-Hinweise („Noch keine …“) nur, wenn die Daten wirklich geladen sind (`CH.mraw`, `WL.ready`, `snapLive()`), sonst „Lädt …“. Beiträge zeigen vor der Verbindung gleich die neue Leiste (`piWaitHTML`), nie das alte Kommentarfeld.
@@ -131,3 +131,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Neue Gürtel/Ketten/Jacken/Schuhe siehe Block „Neue Kollektion“ vor `avatarI`. Farbvarianten = eigene IDs mit gleicher Zeichnung und anderer Startfarbe (`IBOTC`, `IJACKC`, `ISHOEC`), damit der Laden verschiedene Farben zeigt.
 - Reiter „Taschen“: Accessoires mit `bag:1` (Filter `inSub`, Reiter-Kennung `topSub === 'tasche'`). Taschen am Körper (`IACC_BODY`) liegen über Jacke und Ketten und bleiben bei Posen am Rumpf; Schulter-Rucksäcke: Riemen vorn (`islingStrap`), Tasche seitlich hinter dem Körper (`IACC_BACK`, `isling`); in der Hand: `IACC_FRONT`.
 - Keine echten Markennamen oder Logos im Laden (nur „im Stil von“), Kuscheltiere sind eigene Figuren.
+
+## Profil teilen (seit v471)
+
+- Knopf „Profil teilen“ in jedem Profilkopf (`pshBtnHTML`), Fenster `pshPaint` in den Farben des Profils (`postTheme`), QR-Code aus eigenem Erzeuger `QR` (Fehlerkorrektur H, Avatar-Kopf in der Mitte), Link `profLink` = `noctibat.com/?u=<nutzername>`. Speichern als Bild `pshImage`.
+- Öffnen: `pushOpen` kann `?u=` (über `pshFind`), merkt den Link in `sessionStorage nf-open` bis nach dem Anmelden. Der alte `locRestore` greift nicht, wenn ein Link offen ist oder `navBoot` schon hergestellt hat.
+- ACHTUNG beim Bearbeiten: viele Zeilen enthalten mehrere Anweisungen. Ein `//`-Kommentar mitten in der Zeile verschluckt den Rest (so fielen in v465–v470 Verschlüsselung, Anrufe, Uhr-Abgleich und Namen beim Start aus). In langen Zeilen nur `/* … */` verwenden.

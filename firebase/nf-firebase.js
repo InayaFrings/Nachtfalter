@@ -23,7 +23,7 @@
   fs.settings({ignoreUndefinedProperties: true, merge: true, ...(IOS ? {experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false} : {})});
   // Zwischenspeicher im Browser (Inaya, 2026-10-15): Nach dem Neuladen kommen Chats, Freunde, Mitteilungen und Nachrichten sofort vom Gerät,
   // der Server gleicht im Hintergrund ab (spart auch Lesevorgänge). Mehrere Tabs teilen ihn. Beim Abmelden wird er gelöscht.
-  const CACHE = fs.enablePersistence({synchronizeTabs: true}).then(() => true).catch(() => false);
+  const CACHE = fs.enablePersistence().then(() => true).catch(() => false); // nur ein Tab nutzt den Zwischenspeicher, weitere Tabs laufen ohne (die Mehr-Tab-Abstimmung der Bibliothek stürzte in Tests gelegentlich ab)
   auth.languageCode = 'de';
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
