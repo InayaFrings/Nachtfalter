@@ -181,3 +181,5 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Beim Senden schreibt `chMentNotify` je erwähnter Person ein Dokument nach `chats/ment_<uid>/m` (wie bei Kommentaren) mit `c` = Chat, `all` bei @Alle. In verschlüsselten Chats (`e2Chat`) ohne Nachrichtentext. Mitteilung in der Glocke, Antippen öffnet den Chat. In der Blase werden Erwähnungen hervorgehoben (`chMenHL`).
 
 - Reiterleisten in Garderobe, Mall, Möbelhaus und Zimmer sind eine waagerechte Zeile mit eigenem Schieberegler darunter (`hslFit`, Auswahl `HSL_SEL`, Klasse `.hslbar`), sichtbar nur, wenn etwas übersteht. Möbel-Raster am Handy wie Garderobe und Mall mit drei Spalten.
+
+- Chat (seit v493): Profilbilder an Nachrichten nur in Gruppen und nur bei den anderen (links, `bubbleHTML` mit `group`); im Privatchat keine, das eigene nie.
