@@ -143,3 +143,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Glocke (`S.notifSeen`) und Chats (`S.seen`) zusätzlich in `data/users/<uid>/nf-seen` = `{n, c:{<cid>:ts}}`: nur vorwärts (`seenPush` mit merge, `seenApply` nimmt immer das Spätere), live über `seenWatch`. Beim Laden der Kontosicherung wird der Gerätestand nicht zurückgedreht (`seenMax`). Grund: ein länger offenes Gerät schrieb mit der Kontosicherung seinen älteren Gelesen-Stand zurück.
 - Profil-Link SoundCloud (`PLINKS`, `plinkURL`): Name oder soundcloud.com-Link.
+
+## Mindestalter (seit v477)
+
+- Registrieren ab 12 Jahren (`MIN_AGE`, vorher 16). Geprüft in `birthProblem` (Registrierung und Abfrage `birthView` für Konten ohne Geburtsdatum). Das Geburtsdatum bleibt privat, im Profil steht nur das Alter.
