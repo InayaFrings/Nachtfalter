@@ -135,5 +135,6 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Profil teilen (seit v471)
 
 - Knopf „Profil teilen“ in jedem Profilkopf (`pshBtnHTML`), Fenster `pshPaint` in den Farben des Profils (`postTheme`), QR-Code aus eigenem Erzeuger `QR` (Fehlerkorrektur H, Avatar-Kopf in der Mitte), Link `profLink` = `noctibat.com/?u=<nutzername>`. Speichern als Bild `pshImage`.
+- Unten im Fenster: „Teilen …“ (ohne Teilen-Menü: Link kopieren), „QR-Code scannen“ (`qrsOpen`: Kamera oder Foto, BarcodeDetector, sonst `vendor/jsqr-1.4.0.js` (Apache 2.0, wird erst dann geladen); öffnet nur Noctibat-Links), „QR-Code speichern“.
 - Öffnen: `pushOpen` kann `?u=` (über `pshFind`), merkt den Link in `sessionStorage nf-open` bis nach dem Anmelden. Der alte `locRestore` greift nicht, wenn ein Link offen ist oder `navBoot` schon hergestellt hat.
 - ACHTUNG beim Bearbeiten: viele Zeilen enthalten mehrere Anweisungen. Ein `//`-Kommentar mitten in der Zeile verschluckt den Rest (so fielen in v465–v470 Verschlüsselung, Anrufe, Uhr-Abgleich und Namen beim Start aus). In langen Zeilen nur `/* … */` verwenden.
