@@ -172,3 +172,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Minigames: jedes Spiel einmal pro Tag 15 Coins + 10 XP (XP-Art `g`, ref = mem/ttt/hang/bat, Beleg `g:<spiel>`), danach Hinweis im Spiel.
 - Weitere XP wie in v482 (Freundschaft, Beitrag, Like, Kommentar, Gruppen).
 - Geschenke `gifts/<von>_<an>_<teil>_<zeit>` mit `k`: `buy` (im Shop für jemanden gekauft) oder `inv` (aus dem eigenen Bestand über das Plus im privaten Chat; das Teil verlässt das Inventar sofort, op `give`). Status `open` → `seen` (geöffnet) → `taken` (angenommen). Nachricht im Chat über `sendMsg` mit Feld `gift` (verschlüsselt, `e2Clean` lässt es durch), Karte `giftMsgHTML`. Getragenes und Möbel im Zimmer lassen sich nicht verschenken, Level-Teile auch nicht.
+
+## @-Erwähnungen im Chat (seit v488)
+
+- Im Chat-Feld (`#cm-in`) zeigt `@` Vorschläge aus den Mitgliedern des offenen Chats (`chMembers`), in Gruppen zuerst `@Alle` (englisch `@everyone`, beide werden erkannt: `CHM_ALL_RX`). Auswahl über `chMention`.
+- Beim Senden schreibt `chMentNotify` je erwähnter Person ein Dokument nach `chats/ment_<uid>/m` (wie bei Kommentaren) mit `c` = Chat, `all` bei @Alle. In verschlüsselten Chats (`e2Chat`) ohne Nachrichtentext. Mitteilung in der Glocke, Antippen öffnet den Chat. In der Blase werden Erwähnungen hervorgehoben (`chMenHL`).
