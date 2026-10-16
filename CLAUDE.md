@@ -138,3 +138,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Unten im Fenster: „Teilen …“ (ohne Teilen-Menü: Link kopieren), „QR-Code scannen“ (`qrsOpen`: Kamera oder Foto, BarcodeDetector, sonst `vendor/jsqr-1.4.0.js` (Apache 2.0, wird erst dann geladen); öffnet nur Noctibat-Links), „QR-Code speichern“.
 - Öffnen: `pushOpen` kann `?u=` (über `pshFind`), merkt den Link in `sessionStorage nf-open` bis nach dem Anmelden. Der alte `locRestore` greift nicht, wenn ein Link offen ist oder `navBoot` schon hergestellt hat.
 - ACHTUNG beim Bearbeiten: viele Zeilen enthalten mehrere Anweisungen. Ein `//`-Kommentar mitten in der Zeile verschluckt den Rest (so fielen in v465–v470 Verschlüsselung, Anrufe, Uhr-Abgleich und Namen beim Start aus). In langen Zeilen nur `/* … */` verwenden.
+
+## Gelesen-Stand über Geräte (seit v474)
+
+- Glocke (`S.notifSeen`) und Chats (`S.seen`) zusätzlich in `data/users/<uid>/nf-seen` = `{n, c:{<cid>:ts}}`: nur vorwärts (`seenPush` mit merge, `seenApply` nimmt immer das Spätere), live über `seenWatch`. Beim Laden der Kontosicherung wird der Gerätestand nicht zurückgedreht (`seenMax`). Grund: ein länger offenes Gerät schrieb mit der Kontosicherung seinen älteren Gelesen-Stand zurück.
+- Profil-Link SoundCloud (`PLINKS`, `plinkURL`): Name oder soundcloud.com-Link.
