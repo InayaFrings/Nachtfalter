@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c37175a02402';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='77ee3cdd11d2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2131,6 +2131,7 @@ body.cmvopen{overflow:hidden}
 @keyframes acctin{from{opacity:0}to{opacity:1}}
 .acctback{margin-top:4px}
 /* Blockieren (Inaya, 2026-10-13) */
+.fskel{display:grid;gap:14px}.fsk{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:center;padding:18px;border-radius:18px;border:1px solid var(--line,#2a2a2e);background:color-mix(in srgb,var(--panel,#16161a) 85%,transparent)}.fsk>*{display:block;background:color-mix(in srgb,currentColor 12%,transparent);border-radius:8px;animation:fskp 1.1s ease-in-out infinite alternate}.fsk i{width:42px;height:42px;border-radius:50%}.fsk b{height:14px;width:45%}.fsk span{grid-column:1/-1;height:12px}.fsk span:last-child{width:65%}@keyframes fskp{to{opacity:.4}}@media (prefers-reduced-motion:reduce){.fsk>*{animation:none}}
 .pactw{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}.pactw>.row,.pactw>.frq{flex:1 1 auto;min-width:0}.pactw>.row{flex-wrap:nowrap;gap:8px}
 /* Anfrage-Knöpfe und drei Punkte in einer Zeile, wie bei Freunden (.pbtns), auch bei privaten Profilen (Inaya, 2026-10-16) */
 @media (max-width:760px){.pactw .row>.btn{flex:1 1 0;min-width:0;width:auto!important;white-space:normal;padding:12px 6px;font-size:14px;line-height:1.2}.pactw .frsent{flex:1 1 0;min-width:0;white-space:normal;justify-content:center;line-height:1.2;padding:8px 10px}}
@@ -6267,7 +6268,7 @@ function snapSave(){ if (!PUB || !S.me || !snapLive()) return; const now = Date.
   const d = {me:S.me, ts:now, ch, fr:{mine:FR.mine, inc:FR.inc, incTs:FR.incTs}, nt, u, st};
   try { localStorage.setItem(snapKey(), JSON.stringify(d)); } catch { try { delete d.u; localStorage.setItem(snapKey(), JSON.stringify(d)); } catch {} } }
 const snapUser = id => { const x = SNAP.d?.u?.[id]; return x ? {id, remote:true, name:x.n || 'Jemand', handle:x.h || '', outfit:normOutfit({...(x.o || {})}), theme:normTheme({...BLANK_THEME()})} : null; };
-function navScroll(y){ if (!(y > 0)) return; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, y); }, ms)); }
+function navScroll(y){ if (!(y > 0)) return; NAVR.lastY = y; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, y); }, ms)); }
 ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { NAVR.touched = true; }, {passive:true, once:true}));
 addEventListener('scroll', () => { clearTimeout(NAVR.t); NAVR.t = setTimeout(navSave, 400); }, {passive:true});
 addEventListener('pagehide', () => { navSave(); SNAP.tSave = 0; snapSave(); });
@@ -8613,10 +8614,10 @@ document.addEventListener('change', e => {
   PAUDIO = f; PMU = null; PMUP = false; paintCompose();
 });
 // Beiträge, die Inaya (Owner) „für alle“ teilt, sieht jedes Mitglied im Salon, auch ohne Freundschaft
-let OWNW = false;
+let OWNW = false, OWNR = false, OWNK = false; // OWNK: wissen, wer Owner ist
 function ownerPubPosts(){
   if (!social || !OWNER || OWNER === social.uid || S.users[OWNER]) return [];
-  if (!OWNW) { OWNW = true; social.db.doc('profiles/' + OWNER).onSnapshot(d => { if (d.exists) { PROF[OWNER] = d.data(); softRender(); } }, () => { OWNW = false; }); }
+  if (!OWNW) { OWNW = true; social.db.doc('profiles/' + OWNER).onSnapshot(d => { OWNR = true; if (d.exists) { PROF[OWNER] = d.data(); softRender(); } }, () => { OWNW = false; OWNR = true; softRender(); }); }
   return PROF[OWNER] ? remoteUser(OWNER, PROF[OWNER]).posts.filter(p => p.pub) : [];
 }
 // Salon: Beiträge von Freunden oder öffentliche Beiträge von allen (Inaya, 2026-10-10)
@@ -8635,14 +8636,24 @@ function pubPosts(){
   for (const p of [...S.posts.filter(p => (p.author === S.me && p.pub) || S.users[p.author]?.helper), ...PUBF.ids.flatMap(id => PROF[id] ? remoteUser(id, PROF[id]).posts.filter(p => p.pub) : []), ...ownerPubPosts()]) { const k = p.author + '_' + p.id; if (!seen.has(k)) { seen.add(k); out.push(p); } }
   return out.filter(p => !isBlk(p.author));
 }
+/* Salon ohne Springen (Inaya, 2026-10-16): Der Feed erscheint erst, wenn alle Quellen da sind (Freundesprofile mit dem Stand vom Server,
+   öffentliche Beiträge, Beiträge der Owner für alle), dann einmal in der richtigen Reihenfolge. Vorher Platzhalter, höchstens FEEDW.max ms.
+   Vorher kamen erst ältere Beiträge (Gerätestand, eigene, Helfer) und die neueren schoben sich nach und nach darüber. */
+const FEEDW = {t0:Date.now(), max:6000, was:false};
+const FEED_SKEL = `<div class="fskel" aria-busy="true" aria-label="Lädt …">${'<div class="fsk"><i></i><b></b><span></span><span></span></div>'.repeat(3)}</div>`;
+function feedWait(pubMode){ if (!(social || PUB && S.me) || Date.now() - FEEDW.t0 > FEEDW.max) return false;
+  const own = !social || (OWNK && (!OWNER || OWNER === social.uid || S.users[OWNER] || OWNR));
+  return pubMode ? !PUBF.ts || !own : !FR.synced || !own; }
+setTimeout(() => { if (FEEDW.was) softRender(); }, FEEDW.max + 60);
 function homeView(){
   const pubMode = (social || PUB && S.me) && S.salonMode === 'pub'; // Auswahl bleibt auch beim Neuladen stehen
   const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).filter(p => p.type !== 'teilen').sort((a,b) => b.ts - a.ts); // Reposts nur auf dem Profil, nicht im Salon (Inaya, 2026-10-12)
+  const fwait = feedWait(pubMode); if (FEEDW.was && !fwait) { FEEDW.was = false; if (NAVR.lastY && !NAVR.touched) setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, NAVR.lastY); }, 60); } else if (fwait) FEEDW.was = true;
   const compose = isMob() ? pcPlus('hcompose') + (homeCompose ? pcFull('hcompose') : '') : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
   return `${storyBar()}${compose}
-    <section class="salon"><h2 class="salon-h">Salon</h2>${social || PUB && S.me ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${posts.length ? posts.map(postHTML).join('') : (pubMode && !PUBF.ts && !PUBF.cached ? '<p class="empty muted mload" aria-busy="true">Lädt …</p>' : (pubMode && !PUBF.ts && !PUBF.cached ? '<p class="empty muted mload" aria-busy="true">Lädt …</p>' : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`))}</div></section>`;
+    <section class="salon"><h2 class="salon-h">Salon</h2>${social || PUB && S.me ? `<div class="seg salonseg"><button data-act="salon-mode" data-v="fr" aria-pressed="${!pubMode}">Freunde</button><button data-act="salon-mode" data-v="pub" aria-pressed="${pubMode}">Öffentlich</button></div>` : ''}<div class="feed insta">${fwait ? FEED_SKEL : posts.length ? posts.map(postHTML).join('') : (pubMode && !PUBF.ts && !PUBF.cached ? '<p class="empty muted mload" aria-busy="true">Lädt …</p>' : (pubMode && !PUBF.ts && !PUBF.cached ? '<p class="empty muted mload" aria-busy="true">Lädt …</p>' : `<p class="empty muted">${pubMode ? 'Noch hat niemand etwas öffentlich geteilt.' : 'Noch ist es still. Teil den ersten Gedanken.'}</p>`))}</div></section>`;
 }
 let musicEdit = false;
 const profMu = u => u.songMu && stMuPv(u.songMu) ? u.songMu : null;
@@ -9014,14 +9025,17 @@ function socialStart(){
   social = {db:cloud.db, uid:cloud.uid}; SNAP.t0 = Date.now(); seenWatch(); try { const po = sessionStorage.getItem('nf-open'); if (po) setTimeout(() => pushOpen(po), 300); } catch {} /* geteilter Link von vor dem Anmelden */ setTimeout(navLive, 0); setTimeout(softRender, 0); setTimeout(() => { CH.snap = false; softRender(); snapSave(); }, 3100); setInterval(snapSave, 30000); /* Beiträge bekommen sofort ihre echte Leiste */ e2Init(); ringWatch(); clkSync(); nmWatch(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
-  db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
+  db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incReady = true; FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
     CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
     Promise.all(CH.list.flatMap(c => c.members).filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender);
   }, () => {});
-  db.doc('friends/' + social.uid).get().then(d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; syncFriends(); }).catch(() => {});
+  { const fd = db.doc('friends/' + social.uid), frPut = d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; };
+    fd.get({source:'cache'}).then(d => { if (!FR.ready && d.exists) { frPut(d); syncFriends(); } }).catch(() => {}); /* erst sofort vom Gerät, dann vom Server (Inaya, 2026-10-16) */
+    fd.get().then(d => { const was = FR.ready ? JSON.stringify(FR.mine) : null; frPut(d); if (was !== JSON.stringify(FR.mine)) syncFriends(); }).catch(() => {}); }
+  db.doc('site/owner').get({source:'cache'}).then(d => { if (!OWNK && d.exists) { OWNER = d.data().uid; OWNK = true; softRender(); } }).catch(() => {}); /* erst vom Gerät */
   db.doc('site/owner').get().then(async d => {
-    OWNER = d.exists ? d.data().uid : null;
+    OWNER = d.exists ? d.data().uid : null; OWNK = true;
     if (amOwner && OWNER !== social.uid) { try { await db.doc('site/owner').set({uid:social.uid}); OWNER = social.uid; } catch {} } if (amOwner && !MEMBERS) loadMembers();
     softRender();
   }).catch(() => {});
@@ -9038,8 +9052,9 @@ function softRender(){
 }
 // Profil laden: erst sofort aus dem Zwischenspeicher, dann im Hintergrund frisch vom Server (Inaya, 2026-10-15)
 const profPut = (id, d) => { if (!d?.exists) return false; const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; return true; };
+const LPS = {}; // laufende Server-Abfragen je Profil
 async function loadProf(id){ const ref = social.db.doc('profiles/' + id);
-  try { if (profPut(id, await ref.get({source:'cache'}))) { ref.get().then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); return; } } catch {} // nicht im Zwischenspeicher
+  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy) { const pr = LPS[id] = ref.get().then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
   try { profPut(id, await ref.get()); } catch {} }
 function remoteUser(id, p){
   const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
@@ -9104,14 +9119,16 @@ function pubRooms(){ // nur Zimmer, deren Besitzer gerade da ist (online oder vo
 // Anzahl Freunde fürs Profil: mit geteilter Datenbank die gegenseitigen, sonst alle anderen außer den Helfern
 const friendCount = () => social ? FR.mine.filter(isFriend).length : Object.values(S.users).filter(x => x.id !== S.me && !x.helper).length;
 let lastFC = null;
-async function syncFriends(){
-  if (!FR.ready) return;
+async function syncFriends(){ /* läuft nie doppelt; wer währenddessen ruft, löst danach genau einen weiteren Lauf aus */
+  if (!FR.ready) return; if (FR.busy) { FR.again = true; return; } FR.busy = true; try { await syncFriends0(); } finally { FR.busy = false; } if (FR.again) { FR.again = false; syncFriends(); } }
+async function syncFriends0(){
   const ids = [...new Set([...FR.mine, ...FR.inc])];
   await Promise.all(ids.map(loadProf));
+  if (!FR.synced) await Promise.race([Promise.all(ids.map(id => LPS[id]).filter(Boolean)), new Promise(r => setTimeout(r, 1500))]); /* beim Start: frischen Stand abwarten, damit der Salon nur einmal zeichnet */
   for (const u of Object.values(S.users)) if (u.remote && !isFriend(u.id)) delete S.users[u.id];
   for (const id of ids) if (isFriend(id) && PROF[id]) S.users[id] = remoteUser(id, PROF[id]);
   if (friendCount() !== lastFC) { lastFC = friendCount(); publishProfile(); }
-  softRender();
+  if (FR.incReady) FR.synced = true; softRender();
 }
 // Neue oder erneut gesendete Anfrage: der andere sieht sie wieder und bekommt eine Mitteilung, auch wenn er sie vorher abgelehnt hat
 function frReqFresh(){

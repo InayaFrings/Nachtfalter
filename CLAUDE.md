@@ -147,3 +147,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Mindestalter (seit v477)
 
 - Registrieren ab 12 Jahren (`MIN_AGE`, vorher 16). Geprüft in `birthProblem` (Registrierung und Abfrage `birthView` für Konten ohne Geburtsdatum). Das Geburtsdatum bleibt privat, im Profil steht nur das Alter.
+
+## Salon ohne Springen (seit v481)
+
+- Der Salon zeichnet die Beiträge erst, wenn alle Quellen da sind (`feedWait`): Freunde (`FR.synced`, erster `syncFriends` mit frischem Serverstand, höchstens 1,5 s Warten), Öffentlich (`PUBF.ts`), Owner-Beiträge für alle (`OWNK`, `OWNR`). Vorher Platzhalter `FEED_SKEL`, höchstens 6 s (`FEEDW.max`). Danach einmal richtig sortiert, die alte Scrollstelle wird dann noch einmal hergestellt (`NAVR.lastY`).
+- Freundesliste und `site/owner` kommen zuerst aus dem Zwischenspeicher, dann vom Server. `syncFriends` läuft nie doppelt (`FR.busy`/`FR.again`), `loadProf` startet je Profil nur eine Server-Abfrage gleichzeitig (`LPS`). Spart Lesevorgänge beim Start.
