@@ -168,7 +168,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Coins sieht man nur im Shop (und kurz in der Leiste nach einer Belohnung, `ncBar`). Level steht auf jedem Profil als Flügel-Abzeichen über dem Namen (`ncLvHTML` mit `lvEmblem`, mindestens 1, fremde Level aus `wallet/<uid>`); das eigene öffnet das Level-Fenster.
 - Mall (`mallView`) nutzt die Abteilungen der Garderobe (`catTabs`), Möbelhaus (`moebelView`) die Raum-Kategorien. Karten nur mit Bild, Preis und Geschenk-Symbol. Antippen = anprobieren bzw. im Zimmer ansehen UND in die Tasche (nochmal antippen nimmt es heraus; je Abteilung ohne Mehrfachauswahl nur ein Teil). Farben in der Vorschau: Mall `colorPanel(…, 'nc-color')` auf `MTRY`, Möbelhaus `MSELC` (wird beim Aufstellen übernommen). Der Shop öffnet erst nach der Übernahme (`kp`); erkennt die App veraltete Regeln (Bonus/Übernahme abgelehnt), zeigt sie „öffnet in Kürze“ (`WAL.old`). Einkaufstasche `NCCART`, Kauf bis 12 Teile je Transaktion (op `buy` mit `its`). Shopping-Straße: der Avatar fliegt erst beim Antippen ins Bild (`swGo`).
 - Tag = deutsche Zeit mit Sommerzeit (`ncDay`/`berlinOff`, in den Regeln `today()`/`berlinSummer()`), Wechsel um 00:00.
-- Tägliche Belohnung auf dem eigenen Profil (`dailyBtnHTML`) und im Level-Fenster (eigenes Level antippen, `lvOpen`: XP bis zum nächsten Level): 25 Coins + 20 XP, danach Leiste oben.
+- Tägliche Belohnung nur im Level-Fenster (eigenes Level-Abzeichen antippen, `lvOpen`: XP bis zum nächsten Level), nicht mehr im Profil: 25 Coins + 20 XP, danach Leiste oben.
 - Minigames: jedes Spiel einmal pro Tag 15 Coins + 10 XP (XP-Art `g`, ref = mem/ttt/hang/bat, Beleg `g:<spiel>`), danach Hinweis im Spiel.
 - Weitere XP wie in v482 (Freundschaft, Beitrag, Like, Kommentar, Gruppen).
 - Höchstens Level 50 (`LV_MAX`, Regeln `lvOk`); Level-Belohnungen bei 5, 10, 15, 20, 25, 30, 35, 40, 45, 50. Level-Fenster und Levelaufstieg in den Farben des eigenen Profils (`lvTheme`, Abzeichen `lvEmblem`).
@@ -184,3 +184,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Chat (seit v493): Profilbilder an Nachrichten nur in Gruppen und nur bei den anderen (links, `bubbleHTML` mit `group`); im Privatchat keine, das eigene nie.
 - Unterteile: Hosen, Röcke, Strumpfhosen, Socken, Overknees, Beinstulpen (`BOTTOM_SUB`, `legSub`). Schmuck: Armbänder und Stulpen (inkl. Handschuhe, `sub:'stulpe'`) getrennt. Reiterleisten merken ihre Schiebe-Stelle (`HSLPOS`). Nocti-Coins lila (`NC_ICO`).
+- Möbelhaus: nichts vorausgewählt, nochmal antippen wählt ab, ausgewähltes Möbel in der Vorschau verschiebbar (`MSELPOS`, beim Aufstellen übernommen). Taschen-Markierung als Abzeichen auf dem Bild (`.ncbagb`).
