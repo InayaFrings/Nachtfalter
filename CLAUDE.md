@@ -183,3 +183,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Reiterleisten in Garderobe, Mall, Möbelhaus und Zimmer sind eine waagerechte Zeile mit eigenem Schieberegler darunter (`hslFit`, Auswahl `HSL_SEL`, Klasse `.hslbar`), sichtbar nur, wenn etwas übersteht. Möbel-Raster am Handy wie Garderobe und Mall mit drei Spalten.
 
 - Chat (seit v493): Profilbilder an Nachrichten nur in Gruppen und nur bei den anderen (links, `bubbleHTML` mit `group`); im Privatchat keine, das eigene nie.
+- Unterteile: Hosen, Röcke, Strumpfhosen, Socken, Overknees, Beinstulpen (`BOTTOM_SUB`, `legSub`). Schmuck: Armbänder und Stulpen (inkl. Handschuhe, `sub:'stulpe'`) getrennt. Reiterleisten merken ihre Schiebe-Stelle (`HSLPOS`). Nocti-Coins lila (`NC_ICO`).
