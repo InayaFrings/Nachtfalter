@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d102dd49553d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='873f953a8405';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -407,7 +407,6 @@ ul.zlist small{display:block;font:14px var(--f-ital);color:var(--muted)}
 .phl{font:19px/1.35 var(--f-ital);color:var(--p-muted);margin:8px 0 0}
 .pstats{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:16px;font-size:16px;color:var(--p-muted)}
 .pstats b{color:var(--p-fg);font-weight:500;font-variant-numeric:tabular-nums}
-.pstats{align-items:center}.pstats .pshbtn{margin:0;padding:7px 13px 7px 10px;font-size:13.5px;gap:6px}.pstats .pshbtn svg{width:16px;height:16px}
 .pmeta{display:grid;grid-template-columns:auto auto;justify-content:start;gap:3px 14px;margin:14px 0 16px;font-size:16px}
 .pabout{margin:-4px 0 16px;white-space:pre-wrap;font:17px/1.45 var(--f-ital);color:var(--p-fg)}
 .pmeta dt{font:400 13px/1.9 var(--f-display);letter-spacing:.09em;color:var(--p-muted)}
@@ -2050,6 +2049,7 @@ body.cmvopen{overflow:hidden}
 .cmvnone{margin:20px 0;text-align:center;font-style:normal}
 /* Profil teilen (Inaya, 2026-10-15) */
 .pshbtn{display:inline-flex;align-items:center;gap:8px;justify-self:start;margin-top:4px;padding:9px 16px 9px 12px;border-radius:999px;border:1px solid var(--p-line,var(--line));background:color-mix(in srgb,var(--p-panel,#1c1c20) 80%,transparent);color:var(--p-fg,var(--fg));font:600 14px/1 var(--f-body);cursor:pointer;transition:transform .15s,background .15s}.pshbtn:hover{transform:translateY(-1px);background:var(--p-panel,#1c1c20)}
+.phead .pshbtn{display:flex;width:fit-content;margin:26px auto -22px}/* mittig zwischen den Knöpfen darüber und dem Steckbrief (Inaya, 2026-10-16) */
 .pshbtn svg,.pshx svg,.pshcp svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .pshov{position:fixed;inset:0;z-index:4000;display:grid;place-items:center;padding:16px;background:#000b;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:pshin .22s ease-out}
 @keyframes pshin{from{opacity:0}to{opacity:1}}@keyframes pshup{from{transform:translateY(24px) scale(.96);opacity:0}to{transform:none;opacity:1}}
@@ -8760,7 +8760,7 @@ function profileHead(u, t, mine){
     <div style="min-width:0">
       ${ownerBadge(u)}${u.helper ? `<span class="badge">${u.helper} · erklärt die Regeln</span>` : ''}
       ${u.headline ? `<p class="phl">${esc(u.headline)}</p>` : ''}
-      <div class="pstats"><span><b>${posts}</b> Beiträge</span><span><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</span>${pshBtnHTML(u)}</div>
+      <div class="pstats"><span><b>${posts}</b> Beiträge</span><span><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</span></div>
       ${plinksHTML(u)}
       <dl class="pmeta"><dt>Gemüt</dt><dd>${etx(u.mood) || '–'}</dd></dl>
       ${musicHTML(u, mine)}
@@ -8768,8 +8768,9 @@ function profileHead(u, t, mine){
         : u.helper ? `<button class="btn" data-act="helper-chat" data-id="${u.id}">Schreib mir</button>`
         : u.remote && !isFriend(u.id) ? `<div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div>`
         : u.remote ? `<div class="row pbtns"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button>${profMoreBtn(u.id)}</div>` : ''}
+      ${pshBtnHTML(u)}
     </div>
-  </header>`; /* „Profil teilen“ steht seit v478 in der Zeile mit Beiträgen und Freunden, weg von den Knöpfen darunter */
+  </header>`;
 }
 function tileHTML(p){
   let b = '';
