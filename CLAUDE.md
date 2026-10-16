@@ -171,6 +171,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Tägliche Belohnung auf dem eigenen Profil (`dailyBtnHTML`) und im Level-Fenster (eigenes Level antippen, `lvOpen`: XP bis zum nächsten Level): 25 Coins + 20 XP, danach Leiste oben.
 - Minigames: jedes Spiel einmal pro Tag 15 Coins + 10 XP (XP-Art `g`, ref = mem/ttt/hang/bat, Beleg `g:<spiel>`), danach Hinweis im Spiel.
 - Weitere XP wie in v482 (Freundschaft, Beitrag, Like, Kommentar, Gruppen).
+- Höchstens Level 50 (`LV_MAX`, Regeln `lvOk`); Level-Belohnungen bei 5, 10, 15, 20, 25, 30, 35, 40, 45, 50. Level-Fenster und Levelaufstieg in den Farben des eigenen Profils (`lvTheme`, Abzeichen `lvEmblem`).
+- Mall sieht aus wie die Garderobe (gleiche `.wardrobe`-Aufteilung, keine rechte Spalte); Farbe in der Vorschau über den Farbpunkt am Teil (`itemColUI` mit `nc-color`), im Möbelhaus Farbpunkt am ausgewählten Möbel.
 - Geschenke `gifts/<von>_<an>_<teil>_<zeit>` mit `k`: `buy` (im Shop für jemanden gekauft) oder `inv` (aus dem eigenen Bestand über das Plus im privaten Chat; das Teil verlässt das Inventar sofort, op `give`). Status `open` → `seen` (geöffnet) → `taken` (angenommen). Nachricht im Chat über `sendMsg` mit Feld `gift` (verschlüsselt, `e2Clean` lässt es durch), Karte `giftMsgHTML`. Getragenes und Möbel im Zimmer lassen sich nicht verschenken, Level-Teile auch nicht.
 
 ## @-Erwähnungen im Chat (seit v488)
