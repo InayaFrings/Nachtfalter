@@ -205,3 +205,10 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Möbelhaus (seit v502): Zimmer und Reiter in einer Karte, die beim Scrollen oben stehen bleibt (`.moebel .ncroom` sticky, `--railb` = Unterkante der Handy-Leiste, am PC 0).
 - Minigames heißen Memory, Tic-Tac-Toe, Galgenmännchen, Fledermausjagd. Tic-Tac-Toe-Computer (`tttAI`) gewinnt immer, wenn er kann, wehrt zu 85 % ab und spielt zu 25 % einen zufälligen Zug (gute Spieler gewinnen etwa jedes dritte Spiel).
 - Eigenes Gästebuch (seit v503): mit Verbindung dasselbe Formular wie bei Freunden (`rwall`: Textfeld mit Totenkopf, Foto, Video-Link, schreibt nach `chats/wall_<eigene uid>/m`). Das alte `wall`-Formular (lokal, `u.wall`) gibt es nur noch ohne Verbindung.
+
+## Horror-Kollektion (seit v504)
+
+- In der Hand (`IACC_FRONT`): `h_messer` (rechts), `h_axt` und `h_saege` (links). Masken unter Make-up (`cat:'face'`, `IMASK`): `m_blechbaer`, `m_blechhase`, `m_blechrabe` (kaputte Blech-Tiere), `m_clown` (stummer Clown); werden nach Lippen und Piercings, aber unter dem Pony gezeichnet, Grundfarbe über `makeC`. Lippen: `l_schnitt` (Schnitt-Grinsen, `ICUT`, wird immer gezeichnet).
+- Eigene Entwürfe: erinnern an Animatronic-Horror bzw. Horror-Clowns, aber ohne echte Namen, Figuren oder Erkennungszeichen (keine Hüte, Fliegen, Lätzchen, Augenklappen). Bitte so lassen.
+- Preise stehen direkt am Teil (`nc`). Sie gelten erst, wenn Inaya Noctibat einmal öffnet (Abgleich `site/prices`); bis dahin sind die neuen Teile nicht kaufbar.
+
