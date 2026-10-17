@@ -213,7 +213,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Zombie-Haut, blaue Flecken, Wunden (seit v507): `z_haut` (färbt die Haut `ZSKIN`, Fäulnis `irot`, Gesicht `IZFACE`), `z_blau` (`ibruise`, Gesicht `IBRFACE`) liegen auf der Haut unter der Kleidung (`iSkinClip`; Arme extra nach dem Neuzeichnen der Arme, Teil `'arms'`). Wunden `w_schnitte`, `w_biss`, `w_klaffend` (`iwound`) liegen über der Kleidung wie das Blut, `w_kopf` im Gesicht (`IKOPFW`).
 - Blutgetränkte Stulpen (seit v508): Arm `st_blut` (Schmuck → Stulpen, `IARMB`), Bein `l_stulpen_blut` (Beinstulpen, `ILEGW`), Blut über `isoak`.
 - Teile, die nach der Liste `HACC_C` dazukommen (Horror-Blöcke vor `avatarI`), bekommen ihre Startfarbe über die Schleife am Ende dieser Blöcke; sonst wären Accessoires schwarz statt Originalfarbe.
-- Reiter „Horror“ (seit v507) unter Accessoires: alle `acc`-Teile mit `st:'Horror'` (`inSub`, `topSub === 'horror'`). Neue Horror-Accessoires bekommen `st:'Horror'`.
+- Kein eigener Horror-Reiter (v509 wieder entfernt): Horror-Teile stehen dort, wo sie hingehören (Accessoires, Make-up, Lippen, Stulpen …).
+- Farben (seit v509): alle Horror-Teile über den normalen Farbpunkt frei wählbar. Blut/Wunden/Kopfwunde/Schnitt-Grinsen über `ibc` (ersetzt `IBLOOD`/`IBLOOD2`), Zombie-Haut = Hautton, blaue Flecken = Farbton des Flecks, Darm = Darmfarbe, Waffen = Griff/Kopf/Motor, Masken und Zombie-Make-up über `makeC`, Stulpen = Grundfarbe.
 - Eigene Entwürfe: erinnern an Animatronic-Horror bzw. Horror-Clowns, aber ohne echte Namen, Figuren oder Erkennungszeichen (keine Hüte, Fliegen, Lätzchen, Augenklappen). Bitte so lassen.
 - Preise stehen direkt am Teil (`nc`). Sie gelten erst, wenn Inaya Noctibat einmal öffnet (Abgleich `site/prices`); bis dahin sind die neuen Teile nicht kaufbar.
 
