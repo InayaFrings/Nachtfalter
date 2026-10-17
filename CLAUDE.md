@@ -232,3 +232,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Wand/Boden-Deko (seit v521): Einzelstücke wie Blut, Risse, Schimmel, Graffiti, Spinnweben liegen als eine Ebene `ov` über der ganzen Fläche (`ovSet`, Bildmaß Wand 1000×425, Boden 1000×200 = Seitenverhältnis im Zimmer, `0 0/100% 100% no-repeat`), das Grundmuster (`svg`) wiederholt sich darunter. Neue Flächen mit Deko bitte genauso bauen; nur echte Muster (Backstein, Kacheln, Parkett) wiederholen.
 - Profilbanner (seit v521): Muster wie der Seitenhintergrund (`patternURL(b.pattern, hell/dunkel nach Bannerfarbe, .12)`), nicht mehr in Schriftfarbe.
 - Organ-Lichterketten (seit v522): `hw_darmkette` (zwei Darm-Stränge kreuz und quer, 52 % breit) und `hw_organkette` (ein Strang), Wanddeko unter Lampen, Organe als leuchtende „Birnen“ (`hwGut`, `hwOrg`).
+
+## Mitteilungen für Likes, Kommentare, Teilen (seit v523)
+
+- Glocke (`notifsLive`) meldet von allen (nicht nur Freunden): Likes, Kommentare und Teilen eigener Beiträge (`pi_<owner>_<post>`, Arten `r`, `c`, `s` = Repost, `sd` = in Chat weitergeleitet über `shMark`), Kommentare, Likes und Weiterleitungen eigener Storys. Story-Likes liegen in `chats/sl_<owner>_<story>/m/<uid>`, Weiterleitungen in `chats/ssh_<owner>_<story>/m` (geschrieben in `st-sendgo`), beobachtet über `stNtWatch` (aus `ntWatch`).
