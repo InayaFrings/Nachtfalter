@@ -65,6 +65,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Namen und Owner-Zeichen (seit v382)
 
 - `handles/<uid>` = `{h: Nutzername, n: Anzeigename}` (immer mit `merge`). Alle hören live auf die ganze Sammlung (`nmWatch`), Umbenennungen sind sofort überall sichtbar. Namen über `chatWho`/`nmOf` holen, nie gespeicherte Kopien anzeigen.
+- Eigener Nutzername über mehrere Geräte (seit v513): beim Umbenennen schreibt `claimHandle` `ht` (Zeitpunkt) nach `handles/<uid>` und merkt `u.handleTs`. `handleSync()` (in `nmWatch` und vor `publishProfile`) übernimmt einen neueren Namen von einem anderen Gerät; ein Gerät mit älterem Namen schreibt ihn nicht mehr zurück. Grund: ein zweites Gerät bzw. die Kontosicherung hatte den alten Namen wieder eingetragen.
 - Name mit Fledermaus/Owner-Zeichen: `whoH(uid)` bzw. `markOf(uid)` (nutzt `hmark`). Neue Stellen, die Namen zeigen, bitte damit bauen.
 
 ## Verbindung und Kontosicherung (seit v385)

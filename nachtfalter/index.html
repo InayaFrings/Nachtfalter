@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ed92747824ce';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='48107c12945f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -6407,7 +6407,7 @@ async function claimHandle(h){
   let old = null;
   let oldN = null; try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; oldN = d.exists ? d.data().n : null; } catch {}
   // nur schreiben, wenn sich etwas geändert hat: jede Änderung lesen alle, die gerade online sind (nmWatch)
-  if (old !== h || (me()?.name && oldN !== me().name)) { try { await cloud.handles.doc(cloud.uid).set({h, ...(me()?.name ? {n:me().name} : {})}, {merge:true}); } catch {} } // n = Anzeigename, damit alle Umbenennungen sofort sehen
+  if (old !== h || (me()?.name && oldN !== me().name)) { const ht = old !== h ? Date.now() : 0; if (ht && me()) me().handleTs = ht; try { await cloud.handles.doc(cloud.uid).set({h, ...(ht ? {ht} : {}), ...(me()?.name ? {n:me().name} : {})}, {merge:true}); } catch {} } /* ht = wann umbenannt: neuerer Name gewinnt auf allen Geräten (Inaya, 2026-10-17) */ // n = Anzeigename, damit alle Umbenennungen sofort sehen
   // Anmelden mit Nutzername: logins/<nutzername> mit verschlüsselter E-Mail (lgSeal). Beim Umbenennen wandert der Eintrag mit
   if (PUB && NF_AUTH.email() && old !== h) {
     let moved = null; if (old) { try { const d = await cloud.db.doc('logins/' + old).get(); if (d.exists && d.data().v === 2) moved = d.data(); } catch {} await cloud.db.doc('logins/' + old).delete().catch(() => {}); }
@@ -9484,10 +9484,12 @@ function publishProfile(){
     for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
       else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
       delete x.full; }
+    handleSync(); /* neuerer Name von einem anderen Gerät zuerst übernehmen */
     const doc = {handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
       pic:u.pic && u.pic.length < 90000 ? u.pic : null, cover:null, pose:u.pose || '', headline:u.headline || '', mood:u.mood || '', about:u.about || '', music:u.music || '', films:u.films || '',
       hobbies:u.hobbies || '', games2:u.games2 || '', links:u.links || {}, pins:(S.best || []).slice(0, 4), songUrl:u.songUrl || '', songSp:u.songSp || '', songMu:u.songMu || null, songFile:u.songFile || null, roomOpen:u.roomOpen || null, room:u.room, seen:Date.now(), friends:friendCount(), points:u.points || 0, earned:u.earned || 0, joined:u.joined || Date.now(), posts, hts:u.priv ? [] : [...new Set(posts.filter(p => p.pub).flatMap(p => htOf(p.text)))].slice(0, 60), stories:(storySweep(), myStories()).map(({img, thumb, ...r}) => (r = r.stk ? {...r, stk:r.stk.map(({p, ...q}) => q)} : r, r).cf ? {...r, cfl:stSetG().cf} : r), sth:stSetG().hide, str:stSetG().rep, stcm:stSetG().cm ? 1 : 0, hl:hlPub(), priv:u.priv ? 1 : 0, pubTs:u.priv ? 0 : Math.max(0, ...posts.filter(p => p.pub).map(p => p.ts), ...myStories().filter(x => x.pub).map(x => x.ts)), ts:Date.now()};
-    if (NM[social.uid]?.n !== u.name || NM[social.uid]?.v !== window.NF_BUILD || (u.handle && NM[social.uid]?.h !== u.handle)) social.db.doc('handles/' + social.uid).set({...(u.handle ? {h:u.handle} : {}), n:u.name || '', v:window.NF_BUILD || '', vt:Date.now()}, {merge:true}).catch(() => {});
+    const hOld = (NM[social.uid]?.ht || 0) > (u.handleTs || 0) && NM[social.uid]?.h !== u.handle; /* dieses Gerät kennt nur den älteren Namen */
+    if (NM[social.uid]?.n !== u.name || NM[social.uid]?.v !== window.NF_BUILD || (u.handle && NM[social.uid]?.h !== u.handle && !hOld)) social.db.doc('handles/' + social.uid).set({...(u.handle && !hOld ? {h:u.handle} : {}), n:u.name || '', v:window.NF_BUILD || '', vt:Date.now()}, {merge:true}).catch(() => {});
     doc.age = ageOf(u.birth) ?? null; // Alter im Profil sichtbar, das Geburtsdatum selbst bleibt privat (Inaya, 2026-10-14)
     doc.bk = (S.blocked || []).map(x => bkHash(social.uid + '>' + x.id)); // wen ich blockiert habe, nur als Kennung (Inaya, 2026-10-13)
     { const lp = S.posts.filter(p => p.author === S.me && !p.arch && p.type !== 'teilen').sort((a, b) => b.ts - a.ts)[0]; doc.lastPost = lp ? {id:lp.id, ts:lp.ts} : null; }
@@ -9531,9 +9533,11 @@ const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id))
 
 /* ---------- Chats ---------- */
 // Namen und Nutzernamen aller Mitglieder live (Inaya, 2026-10-13): wer sich umbenennt, ist sofort überall neu zu sehen, auch bei Leuten, die das Profil schon geladen hatten
+/* Eigener Nutzername über mehrere Geräte: wer zuletzt umbenannt hat (handles/<uid>.ht), gewinnt. Ein älteres Gerät oder eine alte Kontosicherung schreibt den alten Namen nicht mehr zurück (Inaya, 2026-10-17) */
+function handleSync(){ const u = me(), n = NM[social?.uid]; if (!u || !n?.h || !n.ht || n.h === u.handle || n.ht <= (u.handleTs || 0)) return false; u.handle = n.h; u.handleTs = n.ht; save(); setTimeout(() => softRender?.(), 0); return true; }
 const NM = {}; let nmT = null;
 function nmWatch(){ social.db.collection('handles').onSnapshot(q => { let ch = false;
-  q.docChanges().forEach(c => { const id = c.doc.id, d = c.doc.data() || {}; if (c.type === 'removed') { delete NM[id]; return; } const o = NM[id]; NM[id] = {h:d.h || '', n:d.n || '', v:d.v || '', vt:+d.vt || 0};
+  q.docChanges().forEach(c => { const id = c.doc.id, d = c.doc.data() || {}; if (c.type === 'removed') { delete NM[id]; return; } const o = NM[id]; NM[id] = {h:d.h || '', n:d.n || '', v:d.v || '', vt:+d.vt || 0, ht:+d.ht || 0}; if (id === social.uid) handleSync();
     if ((!o || o.h !== NM[id].h || o.n !== NM[id].n) && id !== social.uid) { ch = true; if (PROF[id]) { if (NM[id].n) PROF[id].name = NM[id].n; if (NM[id].h) PROF[id].handle = NM[id].h; }
       const u = S.users[id]; if (u?.remote) { if (NM[id].n) u.name = NM[id].n; if (NM[id].h) u.handle = NM[id].h; } } });
   if (ch) { clearTimeout(nmT); nmT = setTimeout(softRender, 300); } }, () => {}); }
