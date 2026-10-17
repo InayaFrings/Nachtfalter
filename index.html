@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1d9190b106c9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e685ff51e31d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -386,8 +386,8 @@ ul.zlist small{display:block;font:14px var(--f-ital);color:var(--muted)}
 .emobtn{background:none;border:1px solid var(--line,#444);border-radius:999px;width:38px;height:38px;padding:5px;cursor:pointer;flex:none;display:inline-grid;place-items:center}
 .emobtn:hover,.emobtn:focus-visible{border-color:#ecebe7}
 .ptwrap{position:relative;display:grid}.ptwrap .emobtn{position:absolute;top:8px;right:8px;border:0;background:none;width:38px;height:38px;padding:5px;opacity:.9}.ptwrap:has(.emobtn) textarea{padding-right:50px} /* Handy: Totenkopf oben rechts im Textfeld (Inaya, 2026-10-12) */.emobtn .emo{width:24px;height:24px;margin:0;vertical-align:0}
-.emopop{position:absolute;z-index:3000;background:#0e0e10;border:1px solid #6a6a70;padding:8px;display:grid;grid-template-columns:repeat(4,40px);gap:4px;box-shadow:0 10px 30px #000a;max-width:calc(100vw - 16px)}
-.emopop.dock{position:absolute;left:0;right:0;bottom:calc(100% + 6px);max-width:none;max-height:min(34vh,200px);overflow-y:auto;overscroll-behavior:contain;grid-template-columns:repeat(auto-fill,40px);justify-content:center;border-radius:14px}
+.emopop{position:absolute;z-index:3000;background:#0e0e10;border:1px solid #6a6a70;border-radius:14px;padding:8px;display:grid;grid-template-columns:repeat(4,40px);gap:4px;box-shadow:0 10px 30px #000a;max-width:calc(100vw - 16px)}
+.emopop.dock{position:absolute;left:auto;top:auto;border-radius:14px}
 .emopop button{background:none;border:1px solid transparent;width:40px;height:40px;padding:4px;cursor:pointer;border-radius:6px}
 .emopop button:hover,.emopop button:focus-visible{border-color:#ecebe7;background:#1c1c20}.emopop .emo{width:30px;height:30px;margin:0;vertical-align:0}
 .pcover{width:100%;aspect-ratio:1200/340;background:#0e0e10 center/cover no-repeat;border:1px solid var(--p-line);margin:0 0 14px}
@@ -2165,7 +2165,7 @@ body.cmvopen{overflow:hidden}
 @media (max-width:760px){.sworld{grid-template-columns:1fr;padding:14px 12px}.nct{font-size:26px}.ncshop{margin-left:0}}
 .mobnav .mb span{white-space:nowrap}
 @media (max-width:760px){.mobnav .mb>span{display:none}.mobnav .mb{min-height:58px;align-content:center}.mobnav .mb svg{width:28px;height:28px}} /* Handy unten: nur Symbole (Inaya, 2026-10-16) */@media (max-width:400px){.mobnav .mb{font-size:11px;letter-spacing:0;padding-inline:0}}
-.ncgrid .ncitem{display:grid;gap:6px;align-content:start;justify-items:center;text-align:center}.ncroom .ritem.av{display:none}.ncgrid .ncitem.on{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor}.ncgrid .ncitem .thumb{width:100%}
+.ncgrid .ncitem{display:grid;gap:6px;align-content:start;justify-items:center;text-align:center}.ncroom .ritem.av{display:none}.moebel .ncroom{position:sticky;top:var(--railb,0px);z-index:6}.moebel .ncroom>.card-in{padding-bottom:4px}.moebel .ncroom .tabs{margin-top:10px}@media (min-width:761px){.moebel .ncroom .room{max-width:calc(45vh * 1.6);margin:0 auto}}@media (max-width:760px){.moebel .ncroom .nchint2{font-size:12.5px;margin:6px 0 0}.moebel .ncroom .tabs{margin-top:6px}} /* Möbelhaus: Zimmer und Reiter bleiben beim Scrollen oben (Inaya, 2026-10-17) */.ncgrid .ncitem.on{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor}.ncgrid .ncitem .thumb{width:100%}
 .ncact{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}.ncact .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 12px}.ncact .btn .ncico{width:18px;height:18px}.ncact .btn[aria-disabled=true]{opacity:.55}
 .ncgift{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:none;font-size:18px;cursor:pointer;line-height:1}.nctag{font-size:12.5px;padding:4px 10px;border-radius:999px;background:#ffffff12}.nctag.lock{opacity:.85}.ncsub{opacity:.7;font-size:12px;margin-top:-4px}
 .ncroom .room{pointer-events:none}.ncsel{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}.ncsel b{font-size:16px;margin-right:auto}
@@ -10156,42 +10156,54 @@ document.addEventListener('click', e => { if (!e.target.closest('.sgmini,[data-a
 // Inaya: GIPHY-Schlüssel nur für die Seiten-Besitzerin
 function gifKeyCard(){ if (!amOwner || !social) return ''; sgGifKey().then(k => { const i = document.getElementById('gk-in'); if (i && !i.value && k) i.value = k; });
   return `<div class="card"><h2 class="card-h">GIF-Suche</h2><div class="card-in"><p class="note">Trag hier deinen kostenlosen GIPHY-Schlüssel ein (developers.giphy.com → Create an API Key). Danach können alle GIFs suchen.</p><form data-form="gifkey" class="row" style="gap:8px;flex-wrap:wrap"><input id="gk-in" type="text" autocomplete="off" spellcheck="false" placeholder="GIPHY-Schlüssel" aria-label="GIPHY-Schlüssel" style="flex:1;min-width:200px"><button class="btn" type="submit">Speichern</button></form></div></div>`; }
+/* Totenkopf-Emojis (Inaya, 2026-10-17): überall gleich, 4 × 4 Kästchen, direkt über dem Schreibfeld angedockt und rechtsbündig mit ihm.
+   Wird das Feld neu gezeichnet (Chat aktualisiert sich), hängt sich die Auswahl an das neue Feld (emoKeep). Würde ein Rahmen sie abschneiden, steht sie fest am Bildschirm über dem Feld. */
+let EMO = null;
 function emoPick(btn){
-  document.querySelectorAll('.emopop').forEach(x => x.remove());
+  document.querySelectorAll('.emopop').forEach(x => x.remove()); EMO = null;
   const f = btn.closest('form')?.querySelector('#' + CSS.escape(btn.dataset.for)) || document.getElementById(btn.dataset.for); if (!f) return; // im Kommentarfenster gibt es dieselbe ID noch im Salon dahinter
-  const pop = document.createElement('div'); pop.className = 'emopop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Totenkopf-Emojis');
+  const pop = document.createElement('div'); pop.className = 'emopop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Totenkopf-Emojis'); pop.dataset.for = btn.dataset.for;
   pop.innerHTML = Object.keys(EMOS).map(k => `<button type="button" data-emo="${k}" title="${EMOS[k][0]}">${emoSVG(k)}</button>`).join('');
-  /* Chat: fest unten am Schreibfeld angedockt, wandert mit ihm mit (auch wenn die Tastatur aufgeht), springt nicht hoch (Inaya, 2026-10-17) */
-  const dock = f.form?.matches('[data-form=cmsg]') ? f.form : null;
-  if (dock) { pop.classList.add('dock'); if (getComputedStyle(dock).position === 'static') dock.style.position = 'relative'; dock.appendChild(pop); }
-  else document.body.appendChild(pop);
-  // fest am Bildschirm, über dem Knopf, wenn unten kein Platz ist (Chat am Handy, Inaya 2026-10-11)
-  // direkt über dem Eingabefeld, auch wenn die Tastatur auf- oder zugeht (Inaya, 2026-10-12)
-  if (!dock) pop.style.position = 'fixed';
-  const place = () => { if (!pop.isConnected || dock) return; const box = f.getBoundingClientRect(), r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, vv = window.visualViewport, top0 = vv ? vv.offsetTop : 0, vh = vv ? vv.height : innerHeight;
-    pop.style.left = Math.max(8, Math.min(r.right - w, document.documentElement.clientWidth - w - 8)) + 'px';
-    pop.style.top = (box.top - h - 6 >= top0 + 4 ? box.top - h - 6 : Math.min(box.bottom + 6, top0 + vh - h - 4)) + 'px'; };
-  place(); requestAnimationFrame(place);
-  const vvOn = () => place(); window.visualViewport?.addEventListener('resize', vvOn); window.visualViewport?.addEventListener('scroll', vvOn);
-  new MutationObserver((m, o) => { if (!pop.isConnected) { o.disconnect(); window.visualViewport?.removeEventListener('resize', vvOn); window.visualViewport?.removeEventListener('scroll', vvOn); } }).observe(document.body, {childList:true});
   pop.addEventListener('pointerdown', e => e.preventDefault()); pop.addEventListener('mousedown', e => e.preventDefault()); // Feld und Tastatur bleiben offen
-  const done = () => setTimeout(() => { if (document.activeElement !== f && !pop.contains(document.activeElement)) pop.remove(); }, 250);
-  f.addEventListener('blur', done); f.form?.addEventListener('submit', () => pop.remove(), {once:true});
   pop.addEventListener('click', e => {
-    const b = e.target.closest('[data-emo]'); if (!b) return;
-    e.stopPropagation();
+    const b = e.target.closest('[data-emo]'); if (!b || !EMO) return;
+    e.stopPropagation(); const f = EMO.f;
     const code = ':' + b.dataset.emo + ':', a = f.selectionStart ?? f.value.length, z = f.selectionEnd ?? a;
     const pre = f.value.slice(0, a), ins = (pre && !/\s$/.test(pre) ? ' ' : '') + code + ' ';
     if (f.maxLength > 0 && f.value.length - (z - a) + ins.length > f.maxLength) return;
     f.value = pre + ins + f.value.slice(z); f.focus(); f.selectionStart = f.selectionEnd = a + ins.length;
     f.dispatchEvent(new Event('input', {bubbles:true}));
   });
+  EMO = {pop, id:btn.dataset.for, form:f.form?.dataset.form || ''}; emoDock(f);
 }
+function emoDock(f){ const pop = EMO.pop; EMO.f = f; EMO.off?.(); pop.classList.remove('dock'); pop.style.cssText = '';
+  const fld = f.closest('.cinw, .ptwrap, .pcfield') || f, dock = f.form || f.parentElement;
+  pop.classList.add('dock'); if (getComputedStyle(dock).position === 'static') dock.style.position = 'relative'; dock.appendChild(pop);
+  const put = () => { const D = dock.getBoundingClientRect(), F = fld.getBoundingClientRect(); pop.style.bottom = Math.round(D.bottom - dock.clientTop - F.top + 6) + 'px'; pop.style.right = Math.max(0, Math.round(D.right - dock.clientLeft - F.right)) + 'px'; };
+  put();
+  const clipped = () => { const P = pop.getBoundingClientRect(); for (let a = dock; a && a !== document.body; a = a.parentElement) { const cs = getComputedStyle(a); if (/(hidden|clip|auto|scroll)/.test(cs.overflow + cs.overflowY + cs.overflowX)) { const A = a.getBoundingClientRect(); if (P.top < A.top - 1 || P.left < A.left - 1 || P.right > A.right + 1) return true; } } return P.top < 0; };
+  const fixed = clipped(); if (fixed) { pop.classList.remove('dock'); pop.style.bottom = pop.style.right = ''; document.body.appendChild(pop); pop.style.position = 'fixed'; }
+  const place = () => { if (!pop.isConnected) return; if (!fixed) return put(); const box = fld.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, vv = window.visualViewport, top0 = vv ? vv.offsetTop : 0, vh = vv ? vv.height : innerHeight;
+    pop.style.left = Math.max(8, Math.min(box.right - w, document.documentElement.clientWidth - w - 8)) + 'px';
+    pop.style.top = (box.top - h - 6 >= top0 + 4 ? box.top - h - 6 : Math.min(box.bottom + 6, top0 + vh - h - 4)) + 'px'; };
+  place(); requestAnimationFrame(place);
+  const ro = new ResizeObserver(place); ro.observe(dock); ro.observe(fld); /* wächst das Feld, bleibt die Auswahl dran */
+  const vv = window.visualViewport; vv?.addEventListener('resize', place); vv?.addEventListener('scroll', place);
+  const done = () => setTimeout(() => { if (EMO?.f === f && f.isConnected && document.activeElement !== f && !pop.contains(document.activeElement)) { pop.remove(); EMO.off?.(); EMO = null; } }, 250);
+  const sub = () => { pop.remove(); EMO?.off?.(); EMO = null; };
+  f.addEventListener('blur', done); f.form?.addEventListener('submit', sub, {once:true});
+  EMO.off = () => { ro.disconnect(); vv?.removeEventListener('resize', place); vv?.removeEventListener('scroll', place); f.removeEventListener('blur', done); f.form?.removeEventListener('submit', sub); };
+}
+function emoKeep(){ if (!EMO) return; const p = EMO.pop; if (p.isConnected) return;
+  if (!p.parentElement) { EMO.off?.(); EMO = null; return; } /* absichtlich geschlossen */
+  const nf = (EMO.form && document.querySelector(`form[data-form="${EMO.form}"] #${CSS.escape(EMO.id)}`)) || document.getElementById(EMO.id);
+  if (!nf) { EMO.off?.(); EMO = null; return; }
+  const had = document.activeElement === document.body || !document.activeElement; emoDock(nf); if (had) nf.focus({preventScroll:true}); }
 document.addEventListener('pointerdown', e => { if (e.target.closest?.('.emobtn')) e.preventDefault(); }, true); // Tippen auf den Totenkopf schließt die Tastatur nicht
 document.addEventListener('click', e => {
   const b = e.target.closest('.emobtn');
-  if (b) { e.preventDefault(); e.stopPropagation(); const open = document.querySelector('.emopop'); if (open && open.dataset.for === b.dataset.for) { open.remove(); return; } emoPick(b); const p = document.querySelector('.emopop'); if (p) p.dataset.for = b.dataset.for; return; }
-  if (!e.target.closest('.emopop')) document.querySelectorAll('.emopop').forEach(x => x.remove());
+  if (b) { e.preventDefault(); e.stopPropagation(); const open = document.querySelector('.emopop'); if (open && open.dataset.for === b.dataset.for) { open.remove(); EMO?.off?.(); EMO = null; return; } emoPick(b); const p = document.querySelector('.emopop'); if (p) p.dataset.for = b.dataset.for; return; }
+  if (!e.target.closest('.emopop') && document.querySelector('.emopop')) { document.querySelectorAll('.emopop').forEach(x => x.remove()); EMO?.off?.(); EMO = null; }
 }, true);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.emopop').forEach(x => x.remove()); });
 const delWord = () => ['LÖSCHEN', 'DELETE'].includes((document.getElementById('del-in')?.value || '').trim().toUpperCase().replace(/OE/g, 'Ö')); // auf Englisch heißt das Wort DELETE
@@ -10244,6 +10256,7 @@ function addEmoButtons(){
     const inp = f.querySelector('textarea, input[type="text"]'), sub = f.querySelector('button[type="submit"]');
     if (!inp || !inp.id || !sub) return;
     const eb = `<button type="button" class="emobtn" data-for="${inp.id}" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button>` + (social && /^(cmsg|pcomment)$/.test(f.dataset.form) ? `<button type="button" class="sgbtn" data-act="sg-open" aria-expanded="false" aria-label="Sticker und GIFs" title="Sticker und GIFs">${SG_ICO.stk}</button>` : '');
+    if (inp.tagName === 'TEXTAREA' && !/^(cmsg|pcomment)$/.test(f.dataset.form) && !inp.closest('.ptwrap, .pcfield, .cinw')) { const w = document.createElement('span'); w.className = 'ptwrap'; inp.before(w); w.appendChild(inp); } /* Gästebuch & Co.: Totenkopf oben rechts im Textfeld (Inaya, 2026-10-17) */
     const pf = f.querySelector('.pcfield'), tw = f.querySelector('.ptwrap'); /* Beitrag: Emoji oben rechts im Schreibfeld (Inaya, 2026-10-14) */ if (tw) tw.insertAdjacentHTML('beforeend', eb); else if (pf) pf.insertAdjacentHTML('beforeend', eb); else if (sub.classList.contains('csend')) f.insertAdjacentHTML('beforeend', eb); else sub.insertAdjacentHTML('beforebegin', eb); // Chat: Pfeil steckt im Feld, Emoji ganz rechts
   });
 }
@@ -10253,7 +10266,7 @@ function sgReattach(){ // nach dem Neuzeichnen bleibt das Sticker-Menü offen
   if (!nf) { SG.form = null; SG.el = null; return; }
   SG.form = nf; nf.classList.add('sgopen'); nf.querySelector('.sgbtn')?.setAttribute('aria-expanded', 'true'); nf.insertAdjacentElement('afterend', el);
 }
-new MutationObserver(() => { addEmoButtons(); sgReattach(); if (GST || document.querySelector('.gst')) gstPaint(); if (CH.re || document.querySelector('.chre')) chRePaint(); }).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(() => { addEmoButtons(); sgReattach(); emoKeep(); if (document.querySelector('.ncpage.moebel')) { const r = document.querySelector('.rail'), v = r && innerWidth <= 760 && getComputedStyle(r).position === 'sticky' ? Math.max(0, Math.round(r.getBoundingClientRect().bottom)) + 'px' : '0px'; if (document.documentElement.style.getPropertyValue('--railb') !== v) document.documentElement.style.setProperty('--railb', v); } if (GST || document.querySelector('.gst')) gstPaint(); if (CH.re || document.querySelector('.chre')) chRePaint(); }).observe(document.documentElement, {childList:true, subtree:true});
 /* ---------- Kommentare auf Profilen (geteilt, in chats/wall_<uid>/m) ---------- */
 const WL = {uid:null, unsub:null, list:[]};
 function wallSync(){
@@ -11422,8 +11435,8 @@ function moebelView(){ if (!social || !ncShopOk()) return `<section class="ncpag
   const pos0 = (k, n) => FURN[k].wall ? {x:8 + (n * 23) % 72, y:10} : {x:6 + (n * 21) % 72, y:50};
   const room = {...u.room, items:[...others.map((k, n) => ({k, ...(MSTASH[k]?.pos || pos0(k, n)), ...(MSTASH[k]?.c ? {c:MSTASH[k].c} : {})})), ...(!MSEL ? [] : placed ? [{...pl, ...(MSELC ? {c:MSELC} : {})}] : [{k:MSEL, x:MSELPOS?.x ?? (f.wall ? 40 : 42), y:MSELPOS?.y ?? (f.wall ? 12 : 48), ...(MSELC ? {c:MSELC} : {})}])]};
   return `<section class="ncpage moebel">${ncHead('Möbelhaus', true)}
-    <div class="card ncroom${MSEL && !placed ? ' ncdrag' : ''}"><div class="card-in">${roomHTML({...u, room}, false, false)}${MSEL && !placed ? '<p class="note nchint2">Zieh das Möbelstück im Zimmer dorthin, wo es stehen soll.</p>' : ''}${MSEL && own && !placed ? `<div class="ncsel"><button type="button" class="btn" data-act="nc-place" data-id="${MSEL}">In mein Zimmer stellen</button></div>` : ''}</div></div>
-    <div class="card"><div class="card-in"><div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-act="nc-ftab" data-v="${k}" aria-selected="${furnShop === k}">${l}</button>`).join('')}</div>
+    <div class="card ncroom${MSEL && !placed ? ' ncdrag' : ''}"><div class="card-in">${roomHTML({...u, room}, false, false)}${MSEL && !placed ? '<p class="note nchint2">Zieh das Möbelstück im Zimmer dorthin, wo es stehen soll.</p>' : ''}${MSEL && own && !placed ? `<div class="ncsel"><button type="button" class="btn" data-act="nc-place" data-id="${MSEL}">In mein Zimmer stellen</button></div>` : ''}<div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-act="nc-ftab" data-v="${k}" aria-selected="${furnShop === k}">${l}</button>`).join('')}</div></div></div>
+    <div class="card"><div class="card-in">
       <div class="shopgrid ncgrid">${ids.map(k => ncCard(ncF(k), furnSVG(k, k === MSEL ? MSELC : null), 'nc-msel', k === MSEL ? `<span class="cdot" role="button" tabindex="0" data-act="icol" data-id="${ncF(k)}" style="background:${esc(MSELC || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === ncF(k)}"></span>` : '', k === MSEL) + (k === MSEL && colItem === ncF(k) ? `<div class="cpanel">${ncFurnCol()}</div>` : '')).join('')}</div></div></div></section>`; }
 const ncFurnCol = () => `<fieldset class="opt"><legend class="lbl">Farbe</legend><div class="swatches"><button type="button" class="sw swo" data-act="nc-fcol" data-v="" aria-pressed="${!MSELC}" title="Original" aria-label="Originalfarbe">✕</button>${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="nc-fcol" data-v="${c}" aria-pressed="${MSELC === c}" title="${l}" aria-label="Farbe: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick ncfpick" value="${/^#[0-9a-f]{6}$/i.test(MSELC || '') ? MSELC : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></fieldset>`;
 let MSELC = null, MSELPOS = null, MSTASH = {}; /* Vorschau-Farbe und -Stelle im Möbelhaus; MSTASH merkt sie für die anderen Stücke in der Tasche */

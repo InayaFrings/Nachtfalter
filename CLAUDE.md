@@ -201,6 +201,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Teilen-Fenster: Profilbilder ohne Rahmen (`frame:'none'` in `shGrid`), damit Namen lesbar bleiben.
 - Freundschaftsanfrage ablehnen: abgelehnte (`S.ignoredReq`) zeigen auf Profil und in Listen keine Annehmen/Ablehnen-Knöpfe mehr.
 - Geschenk-Arten als schwarz-weiße Linien-Symbole (`GF_WARD`, `GF_ROOM`).
-- Emoji-Auswahl im Chat hängt im Formular direkt über dem Schreibfeld (`.emopop.dock`), nicht mehr frei positioniert.
+- Emoji-Auswahl (seit v502) überall gleich: 4 × 4, im Formular direkt über dem Schreibfeld und rechtsbündig mit ihm (`emoPick` → `emoDock`, `.emopop.dock`). Wird das Feld neu gezeichnet, hängt `emoKeep` (im MutationObserver) sie ans neue Feld; schneidet ein Rahmen ab, steht sie fest am Bildschirm über dem Feld. Große Textfelder (Gästebuch u. a., nicht Chat/Kommentar) bekommen den Totenkopf oben rechts im Feld (`.ptwrap`, in `addEmoButtons`).
+- Möbelhaus (seit v502): Zimmer und Reiter in einer Karte, die beim Scrollen oben stehen bleibt (`.moebel .ncroom` sticky, `--railb` = Unterkante der Handy-Leiste, am PC 0).
 - Minigames heißen Memory, Tic-Tac-Toe, Galgenmännchen, Fledermausjagd. Tic-Tac-Toe-Computer (`tttAI`) gewinnt immer, wenn er kann, wehrt zu 85 % ab und spielt zu 25 % einen zufälligen Zug (gute Spieler gewinnen etwa jedes dritte Spiel).
 
