@@ -245,6 +245,9 @@ service cloud.firestore {
           && (!(get(giftDoc(N().op.g)).data.i in W().inv)
             ? (N().c == W().c && invAdded([get(giftDoc(N().op.g)).data.i]))
             : (N().inv == W().inv && N().c == W().c + price(get(giftDoc(N().op.g)).data.i)))));
+      // Owner (Inaya) kann einzelnen Mitgliedern Coins schenken (Einstellungen → Nur für dich als Owner), höchstens 10.000 auf einmal
+      allow update: if isOwner() && N().op is map && N().op.t == 'grant' && N().op.n is int && N().op.n > 0 && N().op.n <= 10000
+        && N().c == W().c + N().op.n && N().diff(W()).affectedKeys().hasOnly(['c', 'op']);
     }
     match /gifts/{g} {
       allow get: if signedIn() && (resource == null || resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
