@@ -193,3 +193,14 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - CSP erlaubt gstatic, apis.google.com und jsDelivr nicht mehr. Firebase Auth (compat) versucht beim Start einmal `apis.google.com/js/api.js` zu laden (nur für Popup-Anmeldung, die wir nicht nutzen); das blockiert die CSP absichtlich, die Meldung in der Konsole ist harmlos.
 - GIFs (GIPHY) wie andere fremde Dienste erst nach Antippen (`extOk('giphy')`, Platzhalter `gifPh`, GIF-Suche `gifAsk`, Aktion `ext-giphy`).
 - Datenschutzerklärung: `datenschutz.html` (eigene Seite, Schwarz-Weiß). Verlinkt auf Startseite, Registrierung und Einstellungen, aber nur mit `const DSE = true` (direkt nach `MUSIK`). Erst einschalten, wenn Name, Anschrift, E-Mail, Firestore-Standort, TURN-Anbieter, Aufsichtsbehörde und Datum eingetragen sind. Bei neuen Diensten oder Datenarten die Erklärung mit anpassen.
+
+## Kleinigkeiten (v501)
+
+- Profil-Zimmer: `.proom{isolation:isolate}`, damit „Zimmer betreten“ (z-index 2000) vor den Möbeln, aber unter der Leiste oben liegt.
+- Beitragskopf: `@nutzername · Zeit` immer in einer Zeile (`.ph .meta` flex/nowrap, zu lange Namen mit „…“). Nutzernamen 3–20 Zeichen (`handleProblem`).
+- Teilen-Fenster: Profilbilder ohne Rahmen (`frame:'none'` in `shGrid`), damit Namen lesbar bleiben.
+- Freundschaftsanfrage ablehnen: abgelehnte (`S.ignoredReq`) zeigen auf Profil und in Listen keine Annehmen/Ablehnen-Knöpfe mehr.
+- Geschenk-Arten als schwarz-weiße Linien-Symbole (`GF_WARD`, `GF_ROOM`).
+- Emoji-Auswahl im Chat hängt im Formular direkt über dem Schreibfeld (`.emopop.dock`), nicht mehr frei positioniert.
+- Minigames heißen Memory, Tic-Tac-Toe, Galgenmännchen, Fledermausjagd. Tic-Tac-Toe-Computer (`tttAI`) gewinnt immer, wenn er kann, wehrt zu 85 % ab und spielt zu 25 % einen zufälligen Zug (gute Spieler gewinnen etwa jedes dritte Spiel).
+
