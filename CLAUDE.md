@@ -221,3 +221,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Eigene Entwürfe: erinnern an Animatronic-Horror bzw. Horror-Clowns, aber ohne echte Namen, Figuren oder Erkennungszeichen (keine Hüte, Fliegen, Lätzchen, Augenklappen). Bitte so lassen.
 - Preise stehen direkt am Teil (`nc`). Sie gelten erst, wenn Inaya Noctibat einmal öffnet (Abgleich `site/prices`); bis dahin sind die neuen Teile nicht kaufbar.
 - Garderobe (seit v512): Lookbuch, Look speichern, Komplett ausziehen als drei gleiche Kacheln mit Symbol (`.ltools`/`.ltool`, Symbole `LT_SAVE`, `LT_UNDRESS`). Mall: „Komplett ausziehen“ als Pille in der Zeile mit Coins und Tasche (`.ltool.ltsm`, nur während der Anprobe, setzt `MTRY` zurück).
+
+## Halloween-Möbel (seit v515)
+
+- 14 Möbel `hw_*` (Block „Halloween- und Horror-Möbel“ vor `FURN_IDS.push`): Horrorclown-Pappaufsteller, Leichensack, abgetrennte Gliedmaßen, Fenster mit Mörder, kaputtes Kuscheltier, Köpfe in Gläsern, Krankenhausbett, zerfetztes Sofa, flackernde Glühbirne, Kürbislaterne, Grabstein mit Zombiehand, Blutlache, Blutschrift „HILF MIR“, rostiger Spind. Eigene Entwürfe.
+- Wand und Boden zum Kaufen: Möbel mit `surf:'wall'|'floor'` und `key` (`w_blut` → `room.wall = 'blut'`, `f_kaputt` → `room.floor = 'kaputt'`), Muster `HW_WALL`/`HW_FLOOR` in `wallBG`/`floorBG`. Im Möbelhaus Reiter „Wand & Boden“ (Vorschau setzt Tapete/Boden, Knopf „In meinem Zimmer verwenden“), im Zimmer-Editor nur, wenn wirklich gekauft (`hwSurfList`). Nicht als Möbelstück aufstellbar.
+
