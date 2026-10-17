@@ -208,7 +208,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 ## Horror-Kollektion (seit v504)
 
-- In der Hand (`IACC_FRONT`): `h_messer` (rechts), `h_axt` und `h_saege` (links). Masken unter Make-up (`cat:'face'`, `IMASK`): `m_blechbaer`, `m_blechhase`, `m_blechrabe` (kaputte Blech-Tiere), `m_clown` (stummer Clown); werden nach Lippen und Piercings, aber unter dem Pony gezeichnet, Grundfarbe über `makeC`. Lippen: `l_schnitt` (Schnitt-Grinsen, `ICUT`, wird immer gezeichnet).
+- In der Hand (`IACC_FRONT`): `h_messer` (rechts), `h_axt` und `h_saege` (links). Masken unter Make-up (`cat:'face'`, `IMASK`): `m_blechbaer`, `m_blechhase`, `m_blechrabe` (kaputte Blech-Tiere), `m_clown` (stummer Clown); werden nach Lippen und Piercings, aber unter dem Pony gezeichnet, Grundfarbe über `makeC`. Lippen: `l_schnitt` (Schnitt-Grinsen, `ICUT`, wird immer gezeichnet). Make-up `zombiepop` (seit v505, `IMAKE.zombiepop` unter den Augen mit Maske für die Augenlöcher, schwarze Lippen und Kreuz im rechten Auge über `IZOMBIE_LIPS`/`IZOMBIE_EYE`).
 - Eigene Entwürfe: erinnern an Animatronic-Horror bzw. Horror-Clowns, aber ohne echte Namen, Figuren oder Erkennungszeichen (keine Hüte, Fliegen, Lätzchen, Augenklappen). Bitte so lassen.
 - Preise stehen direkt am Teil (`nc`). Sie gelten erst, wenn Inaya Noctibat einmal öffnet (Abgleich `site/prices`); bis dahin sind die neuen Teile nicht kaufbar.
 
