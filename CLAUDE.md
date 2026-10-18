@@ -208,7 +208,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Minigames heißen Memory, Tic-Tac-Toe, Galgenmännchen, Fledermausjagd. Tic-Tac-Toe-Computer (`tttAI`) gewinnt immer, wenn er kann, wehrt zu 85 % ab und spielt zu 25 % einen zufälligen Zug (gute Spieler gewinnen etwa jedes dritte Spiel).
 - Eigenes Gästebuch (seit v503): mit Verbindung dasselbe Formular wie bei Freunden (`rwall`: Textfeld mit Totenkopf, Foto, Video-Link, schreibt nach `chats/wall_<eigene uid>/m`). Das alte `wall`-Formular (lokal, `u.wall`) gibt es nur noch ohne Verbindung.
 
-## Horror-Kollektion (seit v504)
+## Horror-Kollektion (seit v504, ab v536 entschärft, siehe unten)
 
 - In der Hand (`IACC_FRONT`): `h_messer` (rechts), `h_axt` und `h_saege` (links). Masken unter Make-up (`cat:'face'`, `IMASK`): `m_blechbaer`, `m_blechhase`, `m_blechrabe` (kaputte Blech-Tiere), `m_clown` (stummer Clown); werden nach Lippen und Piercings, aber unter dem Pony gezeichnet, Grundfarbe über `makeC`. Lippen: `l_schnitt` (Schnitt-Grinsen, `ICUT`, wird immer gezeichnet). Make-up `zombiepop` (seit v505, `IMAKE.zombiepop` unter den Augen mit Maske für die Augenlöcher, schwarze Lippen und Kreuz im rechten Auge über `IZOMBIE_LIPS`/`IZOMBIE_EYE`).
 - Blut und Organe (seit v506, `IACC_BODY`): `b_spritzer`, `b_flecken`, `b_getraenkt` (über jedem Outfit, nur innerhalb von Körper, Armen und Beinen über `iBloodClip`; Flecken aus `istain`/`iblob`, fest gesät mit `ihash`), `organe` (Darm hängt aus dem Bauch). Vorschaubild über `thumb` am Teil.
@@ -263,3 +263,10 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Steckbrief von Andy und Juliet (seit v535)
 
 - Helfer zeigen jetzt auch den Steckbrief: „Über mich“ kommt aus `steck` (nicht aus `about`, das sind Hausregeln bzw. „So geht’s“), dazu `music`, `films`, `hobbies`, `games2` aus `HELPERS`. `ensureHelpers` überträgt diese Felder bei jedem Start. Helfer-Texte im Steckbrief laufen über `tr()`, weil `.steck dd` sonst nicht übersetzt wird.
+
+## Horror entschärft (seit v536)
+
+- Grund: Noctibat ist ab 16, ohne Jugendschutzbeauftragten. Darum nichts Verstümmelndes, kein echtes Blutbad, nichts, was an Selbstverletzung erinnert. Bitte neue Teile in diesem Rahmen halten (gruselig ja, brutal nein).
+- Gleiche IDs, neue Zeichnung und neuer Name, damit Gekauftes und Getragenes bleibt: `organe` = Krabbelnde Spinnen, `w_schnitte` = Mumien-Bandagen, `w_klaffend` = Skelett zum Aufmalen, `w_biss` = Vampirbiss (zwei Punkte am Hals), `w_kopf` = Frankenstein-Narbe (`IKOPFW`), `z_blau` = Glitzer-Grusel-Make-up (nur Gesicht, `IBRFACE`, ohne eigene Farbe lila), `h_gehirn` = Gehirn-Haarreif (`IBRAIN`), `l_schnitt` = Genähtes Grinsen (`ICUT`, ohne Blut), `b_getraenkt` = Kunstblut-Kleckse, `b_spritzer`/`b_flecken` = Kunstblut ohne Laufspuren, Stulpen mit Kunstblut (`isoak` nur Spritzer). Messer, Axt, Kettensäge und Clown-Maske ohne Blut.
+- Möbel: `hw_leichensack` = Mumien-Sarkophag, `hw_glieder` = Haufen alter Puppen, `hw_moerder` = Fenster mit Geist, `hw_koepfe` = Hexenküchen-Gläser, `hw_bett` = Altes Krankenhausbett (ohne Blut und Gurte), `hw_lache` = Nebel am Boden, `hw_schrift` = Kreideschrift „Buh!“, `hw_darmkette` = Kürbis-Lichterkette (`hwPump`), `hw_organkette` = Fledermaus-Lichterkette (`hwBatL`); Sofa und Spind ohne Blut. Wand `blut` = Verwitterte Tapete, Boden `blutfliesen` = Rostige Fliesen, Kacheln und kaputter Boden ohne Blut.
+- Entfernt: `iwound`, `idrip`, `hwHand`, `hwDrips`, `HW_WALL`, `ovSplat`. `IBLOOD`/`ibc`/`istain` gibt es weiter für Kunstblut.
