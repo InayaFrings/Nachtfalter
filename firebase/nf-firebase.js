@@ -114,6 +114,7 @@
     async lookup(h){ try { const d = await fs.doc('logins/' + h).get(); return {d: d.exists ? d.data() : null}; } catch (e) { return e && e.code === 'permission-denied' ? {old: true} : {error: true}; } }, // seit 2026-10-15 nur noch verschlüsselte Einträge (v:2), alte mit offener E-Mail sind gesperrt
     // Einmal-Einladungslinks: vor der Anmeldung prüfen, direkt nach dem Registrieren verbrauchen
     async checkInvite(t){ try { const d = await fs.doc('invites/' + t).get(); return {ok: d.exists && !d.data().usedBy}; } catch (e) { return {error: true}; } },
+    async claimRef(r){ try { const uid = auth.currentUser.uid; if (!r || r === uid) return {ok: false}; const b = fs.batch(); b.set(fs.doc('refd/' + uid), {by: r, ts: Date.now()}); b.set(fs.doc('refc/' + r), {u: {[uid]: true}}, {merge: true}); await b.commit(); return {ok: true}; } catch (e) { return {error: true}; } }, // Einladen mit eigenem Link (Inaya, 2026-10-17)
     async claimInvite(t){ try { const uid = auth.currentUser.uid; await fs.doc('invites/' + t).update({usedBy: uid, usedTs: Date.now()}); await fs.doc('members/' + uid).set({inv: t, ts: Date.now()}); return {ok: true}; } catch (e) { return {error: true}; } },
     // Mehrere Accounts
     slot: SLOT,

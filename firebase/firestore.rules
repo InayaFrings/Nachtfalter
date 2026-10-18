@@ -26,6 +26,20 @@ service cloud.firestore {
     match /friends/{uid} { allow read: if invited(); allow write: if me(uid); }
 
     // Einladungslinks: jeder Link gilt nur einmal
+    // Einladen mit eigenem Link (Inaya, 2026-10-17): refd/<neu> = {by, ts} einmal beim Registrieren (bevor es ein Profil gibt), refc/<einlader>.u sammelt die Neuen; je 10 → 3000 Coins (wallet op 'ref')
+    function refNew(inv) { return !exists(/databases/$(database)/documents/refd/$(request.auth.uid))
+      && getAfter(/databases/$(database)/documents/refd/$(request.auth.uid)).data.by == inv
+      && !exists(/databases/$(database)/documents/profiles/$(request.auth.uid)); }
+    match /refd/{uid} { allow get: if signedIn();
+      allow create: if request.auth.uid == uid && !exists(/databases/$(database)/documents/profiles/$(uid))
+        && request.resource.data.keys().hasOnly(['by', 'ts']) && request.resource.data.by is string && request.resource.data.by != uid
+        && exists(/databases/$(database)/documents/profiles/$(request.resource.data.by)); }
+    match /refc/{inv} { allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.keys().hasOnly(['u']) && request.resource.data.u.keys().hasOnly([request.auth.uid]) && refNew(inv);
+      allow update: if signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['u'])
+        && request.resource.data.u.diff(resource.data.u).addedKeys() == [request.auth.uid].toSet()
+        && request.resource.data.u.diff(resource.data.u).removedKeys().size() == 0 && request.resource.data.u.diff(resource.data.u).changedKeys().size() == 0
+        && refNew(inv); }
     match /invites/{t} {
       allow get: if true;
       allow create: if invited() && t.size() >= 16 && request.resource.data.by == request.auth.uid
@@ -216,8 +230,11 @@ service cloud.firestore {
       allow read: if signedIn();
       allow create: if me(uid) && N() == {'c': 2000, 'x': 0, 'l': 1, 'inv': {}, 'dd': 0, 'wb': true, 'kp': false, 'xd': {'d': 0, 'n': {}, 'r': {}}, 'fx': {}, 'gx': {}, 'op': {'t': 'new'}};
       allow update: if me(uid) && N().op is map && (
+        // Einladen: je 10 neue Konten über den eigenen Link 3000 Coins (rf = schon abgeholte Belohnungen)
+        (N().op.t == 'ref' && N().rf == W().get('rf', 0) + 1 && exists(/databases/$(database)/documents/refc/$(uid))
+          && get(/databases/$(database)/documents/refc/$(uid)).data.u.size() >= N().rf * 10 && N().c == W().c + 3000 && N().diff(W()).affectedKeys().hasOnly(['c', 'rf', 'op']))
         // Startbonus für alle, die ihr Wallet schon vorher hatten: einmal 2000 Coins
-        (N().op.t == 'bonus' && W().get('wb', false) == false && N().wb == true && N().c == W().c + 2000 && N().diff(W()).affectedKeys().hasOnly(['c', 'wb', 'op']))
+        ||         (N().op.t == 'bonus' && W().get('wb', false) == false && N().wb == true && N().c == W().c + 2000 && N().diff(W()).affectedKeys().hasOnly(['c', 'wb', 'op']))
         // Einmalig: was man trägt bzw. im Zimmer hat, gehört einem (laut eigenem Profil)
         || (N().op.t == 'keep' && W().get('kp', false) == false && N().kp == true && N().diff(W()).affectedKeys().hasOnly(['inv', 'kp', 'op'])
           && N().inv.diff(W().inv).removedKeys().size() == 0 && N().inv.diff(W().inv).changedKeys().size() == 0
