@@ -243,3 +243,5 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - `?ref=` wird in `sessionStorage nf-ref` gemerkt; bei der Registrierung schreibt der Shim `claimRef` in einem Batch `refd/<neu>` = {by, ts} und `refc/<einlader>.u.<neu>` = true. Regeln: nur neue Konten (noch kein Profil), jedes nur einmal (`refd` existiert danach), Einladende Person muss ein Profil haben. Shim-Änderung in beiden Kopien.
 - Braucht die eingespielten Regeln ab v524.
 - Memory (seit v527): Kreuz und Totenkopf als dieselben Icons wie bei Tic-Tac-Toe (`memSym` → `TTT_X`/`TTT_O`), nicht als Emoji.
+- Preise gestaffelt (seit v528): je Abteilung nach Aufwand der Zeichnung (`ncCx`: Länge der Zeichenfunktion in `NC_MAPS`, Augen über `ncEye`; Möbel: Länge des SVG), `ncTiers`: unterstes Viertel ×0,7, Mitte ×1, oberes ×1,5, Spitze ×2,2, auf 5 gerundet. Teile mit eigenem `nc` behalten ihren Preis. Gilt erst, wenn Inaya Noctibat öffnet (Abgleich `site/prices`).
+- Galgenmännchen (seit v528): bekannte, kurze Wörter (Ø 5 Buchstaben). Tic-Tac-Toe-Computer: Abwehr 60 %, 40 % unbedachte Züge (normal gespielt gewinnt man etwa 4 von 10).
