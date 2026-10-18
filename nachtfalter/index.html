@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4e0bab189fbe';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='96a884bc3ac9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2792,7 +2792,7 @@ const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein'
 function undressAll(o){ Object.assign(o, {back:'h_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
 function wearItem(o, i){ const k = i.cat; if (k === 'lips' && !o.lipC) o.lipC = LIP_DEF; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
 // Farben gelten nur für das Teil, das man gerade umgefärbt hat: jedes Kleidungsstück merkt sich seine eigene Farbe, alle anderen bleiben im Originaldesign (Inaya, 2026-10-10)
-const ICF = {top:['topC', 'motifC'], bottom:['bottomC'], shoes:['shoesC'], jacket:['jacketC']};
+const ICF = {top:['topC', 'motifC'], bottom:['bottomC'], shoes:['shoesC'], jacket:['jacketC'], face:['makeC']};
 function icolSwap(o, k, nv){
   const ic = o.icol = {...(o.icol || {})}, prev = o[k], fs = ICF[k];
   if (prev) { const sv = {}; fs.forEach(f => { if (o[f] != null) sv[f] = o[f]; }); if (Object.keys(sv).length) ic[prev] = sv; else delete ic[prev]; }
@@ -4317,16 +4317,18 @@ Object.assign(IACC_FRONT, {
 const IMASK_EYES = (glow, X) => IEYES((E, i) => `<ellipse cx="2" cy="0" rx="31" ry="25" fill="#0b0b0d" ${IO} stroke-width="3"/><circle cx="4" cy="2" r="10" fill="#2a2a2e"/>` + (glow[i] ? `<circle cx="4" cy="2" r="4.6" fill="${glow[i]}"/><circle cx="1" cy="-1" r="1.6" fill="#fff"/>` : X.LN('M-4 -6L12 10M12 -6L-4 10', '#55555c', 2)));
 const IMASK_WIRES = (X, pts) => X.P(pts, '#202024') + X.LN('M98 216Q92 236 100 258', '#b8302a', 2.6) + X.LN('M106 218Q114 240 106 264', '#2f6fb0', 2.6) + X.LN('M102 224Q90 246 95 272', '#c8a030', 2.4) + `<circle cx="100" cy="258" r="2.6" fill="#b8302a"/><circle cx="95" cy="272" r="2.4" fill="#c8a030"/>`;
 const IMASK_RIVETS = (pts, c) => pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="${c}" ${IO} stroke-width="1"/>`).join('');
+/* Masken und Monster-Make-up haben eigene Grundfarben (Inaya, 2026-10-18): Schwarz bzw. keine Make-up-Farbe heißt Originalfarbe */
+const mkC = (c, d) => c && lum(c) > .1 ? c : d;
 const IMASK = {
-  m_blechbaer:(c, X) => { const k = c || '#7a6450', in2 = shade(k, .65);
+  m_blechbaer:(c, X) => { const k = mkC(c, '#7a4aa8'), in2 = shade(k, .65);
     return [[86, 92], [262, 80]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="34" fill="${k}" ${IO} stroke-width="3"/><circle cx="${x}" cy="${y}" r="18" fill="${in2}"/>`).join('')
       + X.P(IFACE(X), k, 'stroke-width="3"') + X.LN('M70 150Q176 120 280 146', shade(k, .6), 2.6, .8) + X.LN('M176 92V128', shade(k, .6), 2, .6)
       + IMASK_RIVETS([[84, 150], [124, 140], [228, 134], [266, 144]], in2)
       + X.LN('M232 112L246 132L238 146L256 166', '#241a12', 2.6) + `<ellipse cx="150" cy="120" rx="26" ry="10" fill="#2a1c12" opacity=".25"/>`
       + IMASK_WIRES(X, 'M82 198L120 212L114 246L86 238Z') + IMASK_EYES(['#f2f0e8', '#e0303a'], X)
-      + X.P('M122 232Q176 206 230 230Q228 262 176 270Q124 262 122 232Z', '#b9a48a') + X.P('M160 204Q176 196 192 204Q186 220 176 222Q166 220 160 204Z', '#1a1416')
+      + X.P('M122 232Q176 206 230 230Q228 262 176 270Q124 262 122 232Z', shade(k, 1.55)) + X.P('M160 204Q176 196 192 204Q186 220 176 222Q166 220 160 204Z', '#1a1416')
       + X.LN('M128 248Q176 266 226 246', IOL, 3) + [0, 1, 2, 3, 4, 5].map(i => `<rect x="${140 + i * 13}" y="${236 + Math.abs(i - 2.5) * 1.6}" width="9" height="11" rx="1.5" fill="#e8e2d0" ${IO} stroke-width="1.3"/>`).join(''); },
-  m_blechhase:(c, X) => { const k = c || '#cfc9c0', in2 = '#d49aa4';
+  m_blechhase:(c, X) => { const k = mkC(c, '#9c9ca4'), in2 = '#d49aa4';
     return X.P('M96 112Q70 20 94 -72Q118 -84 126 -62Q132 20 128 106Z', k, 'stroke-width="3"') + X.P('M104 98Q88 20 102 -54Q114 -60 116 -48Q120 20 118 96Z', in2, 'stroke-width="1.4"')
       + X.P('M234 100Q248 44 284 12L292 6L296 20L288 22L298 30Q272 54 262 106Z', k, 'stroke-width="3"') + X.LN('M290 14Q302 30 296 46M294 22Q310 34 312 52', '#b8302a', 2.2) + X.LN('M292 18Q300 40 290 58', '#2f6fb0', 2.2)
       + X.P(IFACE(X), k, 'stroke-width="3"') + X.LN('M70 152Q176 124 280 148', shade(k, .7), 2.6, .8) + IMASK_RIVETS([[90, 150], [128, 140], [226, 134], [264, 144]], shade(k, .7))
@@ -4334,17 +4336,17 @@ const IMASK = {
       + X.P('M136 238Q156 220 176 230Q196 220 218 236Q206 256 176 252Q146 256 136 238Z', '#e6e0d8') + X.P('M168 208L188 208L178 222Z', '#c06070')
       + `<rect x="168" y="244" width="9" height="15" rx="1.5" fill="#f2efe6" ${IO} stroke-width="1.3"/><rect x="179" y="244" width="9" height="15" rx="1.5" fill="#f2efe6" ${IO} stroke-width="1.3"/>`
       + X.P('M206 244L240 232L234 262L204 262Z', '#202024') + [0, 1, 2].map(i => `<rect x="${212 + i * 8}" y="${246 - i * 3}" width="5" height="8" fill="#9a9aa0"/>`).join(''); },
-  m_blechrabe:(c, X) => { const k = c || '#26242a', ln = '#6a6a72';
+  m_blechrabe:(c, X) => { const k = mkC(c, '#e8609e'), ln = shade(k, .6);
     return X.P('M110 100L120 40L140 92L162 26L178 88L204 30L214 94L240 46L240 104Z', shade(k, 1.3), 'stroke-width="3"')
       + X.P(IFACE(X), k, 'stroke-width="3"') + X.LN('M70 150Q176 120 280 146', ln, 2.4, .8) + IMASK_RIVETS([[84, 150], [124, 140], [228, 134], [266, 144]], ln)
       + X.LN('M250 150L262 176L252 186L268 210', '#8a8a92', 2.4) + IMASK_WIRES(X, 'M84 196L120 210L114 244L88 236Z') + IMASK_EYES(['#e8c040', ''], X)
       + X.P('M142 202Q178 192 214 202L186 292Q178 300 170 292Z', '#3a3a40', 'stroke-width="3"') + X.LN('M150 224Q178 230 206 222', '#1f1b1f', 3) + X.LN('M178 206V230', '#55555c', 2)
       + X.LN('M190 248L182 262L192 272', '#8a8a92', 2) + `<circle cx="164" cy="214" r="3" fill="#0b0b0d"/><circle cx="192" cy="214" r="3" fill="#0b0b0d"/>`; },
-  m_clown:(c, X) => { const k = c || '#f2f0ea';
+  m_clown:(c, X) => { const k = mkC(c, '#f6f4ee'), eo = '#f07a1a', nose = '#d8262a';
     return X.P(IFACE(X), k, 'stroke-width="3"') + `<ellipse cx="96" cy="210" rx="20" ry="30" fill="#000" opacity=".06"/><ellipse cx="258" cy="200" rx="20" ry="30" fill="#000" opacity=".06"/>`
       + X.LN('M84 144Q112 106 146 130', '#111', 4.5) + X.LN('M210 122Q240 94 270 120', '#111', 4.5)
-      + IEYES(() => `<path d="M0 -54L7 -22L-7 -22Z M0 54L7 24L-7 24Z" fill="#111"/><ellipse cx="2" cy="0" rx="25" ry="19" fill="#141416"/><circle cx="4" cy="1" r="3.4" fill="#f2f0ea"/>`)
-      + `<circle cx="176" cy="214" r="12" fill="#111" ${IO}/><circle cx="172" cy="210" r="3" fill="#fff" opacity=".5"/>`
+      + IEYES(() => `<path d="M0 -54L7 -22L-7 -22Z M0 54L7 24L-7 24Z" fill="${eo}"/><ellipse cx="2" cy="0" rx="25" ry="19" fill="${eo}" ${IO} stroke-width="2"/><circle cx="4" cy="1" r="7" fill="#141416"/><circle cx="6" cy="-1" r="2.4" fill="#fff"/>`)
+      + `<circle cx="176" cy="214" r="12" fill="${nose}" ${IO}/><circle cx="172" cy="210" r="3" fill="#fff" opacity=".5"/>`
       + X.P('M120 234Q176 278 234 228Q226 254 176 266Q130 258 120 234Z', '#111') + [0, 1, 2, 3, 4, 5, 6].map(i => `<rect x="${140 + i * 11}" y="${246 + Math.abs(i - 3) * -1.2}" width="7" height="9" rx="1" fill="#e8e4d8"/>`).join('')
       + X.LN('M228 120L240 140L232 152L246 170M96 230L108 246L100 258', '#9a9690', 1.8); },
 };
@@ -4361,7 +4363,7 @@ ITEMS.push(
 /* Zombie-Pop-Art-Make-up (Inaya, 2026-10-17): grüne Haut, Gehirn auf der Stirn, pinkes genähtes Herz ums rechte Auge, aufgerissene Wange mit Zähnen, schwarze Lippen, Nähte */
 const ZPINK = '#e0408a', ZPINK2 = '#a01a5a';
 const istitch = (X, d, ticks) => X.LN(d, IOL, 2.2) + X.LN(ticks.map(([x, y, a]) => { const r = a * Math.PI / 180, dx = f1(Math.cos(r) * 6), dy = f1(Math.sin(r) * 6); return `M${f1(x - dx)} ${f1(y - dy)}L${f1(x + dx)} ${f1(y + dy)}`; }).join(''), IOL, 1.8);
-IMAKE.zombiepop = (c, X) => { const g = c && c !== '#141218' ? c : '#8fd14f';
+IMAKE.zombiepop = (c, X) => { const g = mkC(c, '#8fd14f');
   const m = `${X.u}zm`; /* Farbe nur im Gesicht und mit Aussparung für die Augen, damit sie durchschauen */
   return `<defs><mask id="${m}" maskUnits="userSpaceOnUse" x="-200" y="-200" width="800" height="800"><path d="${IFACE(X)}" fill="#fff"/>${IEYES(() => `<ellipse cx="2" cy="-1" rx="33" ry="22" fill="#000" filter="url(#${X.u}bl)"/>`)}</mask></defs>`
     + `<g mask="url(#${m})"><path d="${IFACE(X)}" fill="${g}" opacity=".93"/><path d="${IFACE(X)}" fill="none" stroke="${shade(g, .6)}" stroke-width="16" opacity=".35" filter="url(#${X.u}bl)"/>`
@@ -12148,7 +12150,7 @@ function ncCard(id, thumb, tryAct, dot = '', on = false){ const p = NCPRICE?.[id
     : p ? `<span class="ncprice">${NC_ICO}${p}</span><button type="button" class="ncic" data-act="nc-gift" data-id="${esc(id)}" aria-label="Verschenken" title="Verschenken">${NC_GIFT}</button>` : '';
   return `<div class="item ncitem${own ? ' own' : ''}${inBag ? ' bag' : ''}${on ? ' on' : ''}">${dot}${inBag && !own ? `<span class="ncbagb" title="In der Einkaufstasche">${NC_BAG}</span>` : ''}<button type="button" class="thumb${i.furn ? ' fthumb' : ''}" data-act="${tryAct}" data-id="${esc(id)}" aria-label="${esc(ncName(id))}">${thumb}</button><div class="ncfoot">${foot}</div></div>`; }
 /* Mall: Anprobe auf der nackten Figur (nur Körper, Haut, Augen und Mund), man sieht nur, was man auswählt (Inaya, 2026-10-16) */
-function ncBare(){ const o = JSON.parse(JSON.stringify(me().outfit)); undressAll(o); Object.assign(o, {back:'h_kein', front:'p_kein', beard:'b_kein', face:'natur'}); delete o.lipC; return o; }
+function ncBare(){ const o = JSON.parse(JSON.stringify(me().outfit)); undressAll(o); Object.assign(o, {back:'h_kein', front:'p_kein', beard:'b_kein', face:'natur'}); delete o.lipC; delete o.makeC; return o; }
 function mallView(){ if (!social || !ncShopOk()) return `<section class="ncpage">${ncHead('Mall', true)}${ncWait()}</section>`;
   const bare = ncBare(), shown = MTRY || bare; if (mallCat === 'body') mallCat = 'back';
   const list = ITEMS.filter(i => i.cat === mallCat && inSub(i) && !i.gone && ncPaid(i) && fits(i, me().outfit, showAllG)).sort((a, b) => (ncHas(a.id) - ncHas(b.id)) || (a.ex ? -1 : 0) - (b.ex ? -1 : 0) || (a.lv || 0) - (b.lv || 0));

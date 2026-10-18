@@ -297,3 +297,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Firebase erlaubt nur Platzhalter (%DISPLAY_NAME%, %EMAIL%, %LINK%, %APP_NAME%), kein eigenes Avatarbild und kein Profilmuster je Person. Dafür bräuchte es eigenen Versand (Cloud Function + Mail-Dienst, Blaze-Tarif, kostet) – nicht eingebaut.
 - Sprache (seit v554): `auth.languageCode` im Shim (beide Kopien) = `localStorage nf-lang`, sonst Browsersprache; `setLang` setzt es mit. Englische Vorlage `firebase/email-passwort-en.html` (in der Konsole unter Vorlagensprache „Englisch“ eintragen). Speichert Firebase nur eine eigene Vorlage für alle Sprachen, gilt `firebase/email-passwort-2sprachig.html` (Deutsch oben, Englisch unten).
 - `authNameSync()` (in `publishProfile`) schreibt den Nutzernamen als displayName ins Firebase-Konto, damit %DISPLAY_NAME% gefüllt ist.
+
+## Masken-Farben (seit v555)
+
+- Masken und Monster-Make-up haben eigene Grundfarben: Blechbär lila, Blechrabe (Küken) pink, Blechhase grau, Clown weißes Gesicht mit orangen Augen und roter Nase, `zombiepop` grün (Pink bleibt `ZPINK`). `mkC(c, d)`: Schwarz bzw. keine Make-up-Farbe heißt Originalfarbe, sonst gilt die gewählte Farbe.
+- Make-up-Farbe merkt sich jedes Gesichts-Teil selbst (`ICF.face = ['makeC']`), `ncBare` nimmt sie heraus. Vorher färbte das schwarze Make-up jede Maske schwarz.
