@@ -308,7 +308,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Links aus Firebase-E-Mails (`?mode=resetPassword|verifyEmail|verifyAndChangeEmail|recoverEmail&oobCode=…`) erledigt der Shim selbst (`ACT`, beide Kopien): Parameter werden sofort aus der Adresse genommen, `verifyPasswordResetCode` → `NF_AUTH.onRecovery` → Formular `recover` mit Feld „Dein Konto“ (`autocomplete="username"`), `updatePw` macht dann `confirmPasswordReset` und meldet direkt an. Andere Arten über `applyActionCode`, Meldung über `NF_AUTH.action`.
 - Grund: auf der Firebase-Seite (firebaseapp.com) speicherte das iPhone das neue Passwort unter der falschen Adresse. Greift erst, wenn in der Firebase-Konsole unter Authentication → Vorlagen → (Stift) → „Aktions-URL anpassen“ `https://www.noctibat.com/` steht.
 
-## Plus oben links am Handy (seit v558)
+## Handy-Kopfzeile wie bei Insta (seit v558/v559)
 
-- Runder Plus-Knopf `.mfab` (Aktion `fab-post`) links in der Handy-Kopfzeile, bleibt beim Scrollen stehen wie die Glocke: öffnet von überall den neuen Beitrag im Salon (`homeCompose`, Vollbild `pcFull`). Der gestrichelte Plus-Kasten im Salon ist dafür weg (im Profil bleibt er).
+- Links Plus, Mitte beim Öffnen das Logo und danach „Öffentlich ▾“/„Freunde ▾“ (`mobHead`, `MH`; Menü `mh-pick`, Auswahl `salon-mode`, geht in den Salon), rechts die Glocke. Plus und Glocke schlicht als Linien-Symbol ohne Kreis (`.mfab`, `.mti.round`). Der Freunde/Öffentlich-Schalter im Salon ist am Handy ausgeblendet. Beim Öffnen steht der Salon immer auf „Öffentlich“ (`MH.boot`).
+- Minigames und Einstellungen sind am Handy aus der Kopfzeile ins eigene Profil gewandert: zwei Symbol-Knöpfe neben „Profil bearbeiten“ (`.ebtns`/`.ebico`, Punkt bei neuen Mitgliedern für Inaya).
+- Plus-Knopf `.mfab` (Aktion `fab-post`) links in der Handy-Kopfzeile, bleibt beim Scrollen stehen wie die Glocke: öffnet von überall den neuen Beitrag im Salon (`homeCompose`, Vollbild `pcFull`). Der gestrichelte Plus-Kasten im Salon ist dafür weg (im Profil bleibt er).
 - Vorauswahl Freunde/Öffentlich = gewählter Salon-Bereich (`S.salonMode` → `postAud`, auch beim Umschalten des Bereichs).
