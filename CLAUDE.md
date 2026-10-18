@@ -239,6 +239,6 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 ## Einladen mit eigenem Link (seit v524)
 
-- In der Suche (`findView`) als eigener Kasten unter der Suchkarte (seit v525) die Box `refBoxHTML` (Knöpfe „Teilen“ und „Kopieren“ unter dem Link): eigener Link `noctibat.com/?ref=<uid>` (Teilen/Kopieren), Fortschritt bis 10, je 10 neue Konten 3000 Coins (`REF_N`, `REF_C`, Abholen `refClaim`, wallet op `ref`, Feld `rf` = schon abgeholte Belohnungen).
+- In der Suche (`findView`) als eigener Kasten unter der Suchkarte (seit v525) die Box `refBoxHTML` (Knöpfe „Teilen“ und „Kopieren“ unter dem Link; seit v526 gestaltet wie die Suchkarte mit Überschrift „Freunde einladen“, Fortschritt als 10 Fledermäuse `.refb`): eigener Link `noctibat.com/?ref=<uid>` (Teilen/Kopieren), Fortschritt bis 10, je 10 neue Konten 3000 Coins (`REF_N`, `REF_C`, Abholen `refClaim`, wallet op `ref`, Feld `rf` = schon abgeholte Belohnungen).
 - `?ref=` wird in `sessionStorage nf-ref` gemerkt; bei der Registrierung schreibt der Shim `claimRef` in einem Batch `refd/<neu>` = {by, ts} und `refc/<einlader>.u.<neu>` = true. Regeln: nur neue Konten (noch kein Profil), jedes nur einmal (`refd` existiert danach), Einladende Person muss ein Profil haben. Shim-Änderung in beiden Kopien.
 - Braucht die eingespielten Regeln ab v524.
