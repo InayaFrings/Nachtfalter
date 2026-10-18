@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='95e21777cf25';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='715a25e4ed54';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -689,7 +689,8 @@ body.custom-page footer.foot{background:var(--paper);padding:10px;border:1px sol
 
 .snack{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;transition:transform .22s ease,opacity .22s ease;z-index:1300;display:flex;align-items:center;gap:16px;min-width:min(340px,calc(100% - 24px));max-width:calc(100% - 24px);background:#262429;color:#f4f2ee;border:1px solid #ffffff1c;border-radius:12px;padding:12px 16px;font:500 15.5px var(--f-display);box-shadow:0 8px 30px #000b}
 .snack.in{transform:translate(-50%,0);opacity:1}.snack span{flex:1}.snack button{background:none;border:0;color:#fff;font:700 15.5px var(--f-display);padding:4px 2px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-.rpbtn.on{color:var(--fg)}.rpbtn.on svg{stroke-width:2.6}
+.rpbtn.on svg .rpchk{stroke-width:2.2}
+.snico{display:grid;place-items:center;flex:none;width:26px;height:26px}.snico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--ink);font:400 17px var(--f-display);padding:9px 18px;z-index:1300;max-width:calc(100% - 32px);box-shadow:0 6px 30px #000a}
 footer.foot{grid-column:1/-1;font:14px var(--f-ital);color:var(--dim);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-top:10px}
 footer.foot .lnk{color:var(--muted)}
@@ -2482,8 +2483,9 @@ const SH_KINDS = {s:1, sd:1, st:1};
 const shCount = p => { const w = piKey(p) ? piWatch(p) : null; return w ? w.list.filter(x => SH_KINDS[x.kind]).length : 0; };
 function shMark(owner, pid, kind){ if (!social || !owner || !/^[\w-]+$/.test(String(owner) + pid) || /^helper-/.test(owner)) return; social.db.doc(`chats/pi_${owner}_${pid}/m/${social.uid}_${kind}_${Date.now().toString(36)}`).set({kind, by:social.uid, ts:Date.now()}).catch(() => {}); }
 const RP_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.7"/><path d="M4 12a8 8 0 0 1 13.7-5.7"/><path d="M17.9 2.6v3.9H14M6.1 21.4v-3.9H10"/></svg>'; // Ouroboros
+const RP_ON_SVG = RP_SVG.replace('</svg>', '<path class="rpchk" d="M8.4 12.3l2.5 2.5 4.8-5"/></svg>'); /* selbst gerepostet: Häkchen im Kreis, wie bei Insta (nur man selbst sieht es) */
 const repostBtn = p => { const n = shCount(p); return p.author === S.me && !p.remote ? `<span class="rpbtn rpown" title="So oft wurde dein Beitrag geteilt" aria-label="${n ? n + '-mal geteilt' : 'Noch nicht geteilt'}">${RP_SVG}<span>${n || ''}</span></span>`
-  : (on => `<button type="button" class="rpbtn${on ? ' on' : ''}" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-pressed="${on}" aria-label="${on ? 'Repost zurücknehmen' : 'Beitrag reposten'}${n ? ` (${n}-mal geteilt)` : ''}">${RP_SVG}<span>${n || ''}</span></button>`)(!!myRepost(p.share ? p.share.pid : p.id, p.share ? p.share.a : p.author)); };
+  : (on => `<button type="button" class="rpbtn${on ? ' on' : ''}" data-act="post-share" data-id="${esc(p.id)}" data-a="${esc(p.author)}" aria-pressed="${on}" aria-label="${on ? 'Repost zurücknehmen' : 'Beitrag reposten'}${n ? ` (${n}-mal geteilt)` : ''}">${on ? RP_ON_SVG : RP_SVG}<span>${n || ''}</span></button>`)(!!myRepost(p.share ? p.share.pid : p.id, p.share ? p.share.a : p.author)); };
 /* Reposten wie bei Insta (seit v560): nochmal tippen nimmt den Repost zurück, unten „Gerepostet“ mit „Rückgängig“ */
 const myRepost = (pid, aid) => S.posts.find(x => x.author === S.me && x.share && x.share.a === aid && x.share.pid === pid);
 function unsharePost(pid, aid){ const r = myRepost(pid, aid); if (!r) return; S.posts = S.posts.filter(x => x !== r); save();
@@ -2491,9 +2493,9 @@ function unsharePost(pid, aid){ const r = myRepost(pid, aid); if (!r) return; S.
   if (social && k && !/^helper-/.test(k)) social.db.doc('chats/pi_' + k + '/m/' + social.uid + '_share').delete().catch(() => {});
   render(); snack('Repost entfernt'); }
 let snackT = null;
-function snack(msg, act, fn){ document.getElementById('snack')?.remove(); clearTimeout(snackT);
+function snack(msg, act, fn, ico){ document.getElementById('snack')?.remove(); clearTimeout(snackT);
   const el = document.createElement('div'); el.id = 'snack'; el.className = 'snack'; el.setAttribute('role', 'status');
-  el.innerHTML = `<span>${esc(tr(msg))}</span>${act ? `<button type="button">${esc(tr(act))}</button>` : ''}`; document.body.appendChild(el);
+  el.innerHTML = `${ico ? `<i class="snico">${ico}</i>` : ''}<span>${esc(tr(msg))}</span>${act ? `<button type="button">${esc(tr(act))}</button>` : ''}`; document.body.appendChild(el);
   if (act) el.querySelector('button').onclick = () => { el.remove(); fn?.(); };
   requestAnimationFrame(() => el.classList.add('in')); snackT = setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 250); }, act ? 5000 : 2600); }
 const likeBtn = (attrs, on, n, can=true) => can ? `<button class="likebtn" ${attrs} aria-pressed="${on}" aria-label="${on ? 'Gefällt mir nicht mehr' : 'Gefällt mir'}">${HEART(on)}<span>${n || ''}</span></button>` : n ? `<span class="likebtn muted">${HEART(false)}<span>${n}</span></span>` : '';
@@ -8815,7 +8817,7 @@ function sharePost(pid, aid){
   S.posts.push(p); if (!save()) { S.posts.pop(); return; }
   const k0 = src.share ? (/^[\w-]+$/.test(String(sh.a) + sh.pid) && social && sh.a !== S.me ? sh.a + '_' + sh.pid : null) : piKey(src); // Besitzer bekommt „hat deinen Beitrag geteilt“ (Inaya, 2026-10-12)
   if (social && k0 && !/^helper-/.test(k0)) social.db.doc('chats/pi_' + k0 + '/m/' + social.uid + '_share').set({kind:'s', by:social.uid, ts:Date.now()}).catch(() => {});
-  render(); snack('Gerepostet', 'Rückgängig', () => unsharePost(sh.pid, sh.a));
+  render(); snack('Gerepostet', 'Rückgängig', () => unsharePost(sh.pid, sh.a), RP_ON_SVG);
 }
 // Beiträge tragen den Kasten vom Profil: Muster nur als Rahmen außen, die Fläche mit der Schrift ist einfarbig, Schrift automatisch hell/dunkel (Inaya, 2026-10-10)
 function postTheme(t){ const box = t.box || '#0e0e10'; return themeStyle(t) + `;--pp-pat:${patternURL(t.pattern, isLight(box) ? 'tag' : 'nacht', .28)}`; }
