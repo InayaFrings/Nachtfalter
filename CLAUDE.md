@@ -245,3 +245,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Memory (seit v527): Kreuz und Totenkopf als dieselben Icons wie bei Tic-Tac-Toe (`memSym` → `TTT_X`/`TTT_O`), nicht als Emoji.
 - Preise gestaffelt (seit v528): je Abteilung nach Aufwand der Zeichnung (`ncCx`: Länge der Zeichenfunktion in `NC_MAPS`, Augen über `ncEye`; Möbel: Länge des SVG), `ncTiers`: unterstes Viertel ×0,7, Mitte ×1, oberes ×1,5, Spitze ×2,2, auf 5 gerundet. Teile mit eigenem `nc` behalten ihren Preis. Mindestpreise `NC_MIN` (seit v529: Haare `back` nie unter 250, Grundpreis 300, also 250 bis 660). Gilt erst, wenn Inaya Noctibat öffnet (Abgleich `site/prices`).
 - Galgenmännchen (seit v528): bekannte, kurze Wörter (Ø 5 Buchstaben). Tic-Tac-Toe-Computer: Abwehr 60 %, 40 % unbedachte Züge (normal gespielt gewinnt man etwa 4 von 10).
+
+## Level-Belohnungen 25 und 45 (seit v530)
+
+- Die Flügel (`nc_seraph`, `nc_rabenfl`) sind raus (Inaya mochte sie nicht), getragene werden beim Laden entfernt. Stattdessen Level 25 `nc_fledfreund` (kleine Fledermaus auf der rechten Schulter) und Level 45 `nc_katze` (Schattenkatze mit Mondhalsband neben den Füßen, `IACC_BACK`, Vorschau `thumb:'pet'` = eigener Ausschnitt in `IVIEWS`).
+- `self.IACC_OVER`: Accessoires in Körper-Koordinaten, die über den Haaren liegen (in `avatarI` mit der Umkehrung von `B.head` an `headFront` gehängt).
