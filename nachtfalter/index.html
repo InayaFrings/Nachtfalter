@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='15b81003fee7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='13b0d0f0a79d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -11607,7 +11607,7 @@ const ncNext = () => { const now = srvNow(), d = ncDay(now); let t = (d + 1) * 8
 for (const i of ITEMS) if (/^nc_/.test(i.id)) i.ex = 1;
 for (const k of FURN_IDS) if (/^nc_/.test(k)) FURN[k].ex = 1;
 const NC_FREE = new Set([...Object.values(NONE_ITEM), ...ITEMS.filter(i => i.none).map(i => i.id)]); /* gratis nur „Keine …“; was jemand trägt bzw. im Zimmer hat, kommt über die Übernahme ins Inventar */
-const NC_CATP = {back:120, front:60, hacc:50, top:80, jacket:110, bottom:80, shoes:70, acc:60, jewel:25, legw:30, eyeform:40, lips:20, face:30, beard:30};
+const NC_CATP = {back:300, front:60, hacc:50, top:80, jacket:110, bottom:80, shoes:70, acc:60, jewel:25, legw:30, eyeform:40, lips:20, face:30, beard:30};
 const NC_FURP = {poster:40, bett:150, sofa:120, lampe:60, fenster:70, schrank:110, tier:80, teppich:60, deko:50};
 /* Preise gestaffelt (Inaya, 2026-10-17): je Abteilung nach Aufwand der Zeichnung. Schlichtes billiger (×0,7), Mittelfeld wie bisher, Aufwendiges ×1,5, das Aufwendigste ×2,2.
    Farbvarianten haben dieselbe Zeichnung und kosten deshalb gleich viel. Teile mit eigenem Preis (nc) behalten ihn. */
@@ -11620,6 +11620,8 @@ function ncTiers(list, cx, base, set){ const u = [...new Set(list.map(cx))].sort
   for (const g of Object.values(groups)) ncTiers(g, i => ncCx(i.id), i => i.bag ? 70 : i.cat === 'top' && isDress(i) ? 120 : NC_CATP[i.cat], (i, v) => { i.nc = v; }); }
 { const groups = {}; for (const k of FURN_IDS) { const f = FURN[k]; if (!f.nc && !f.lv && !NC_FREE.has(k)) (groups[f.r] ||= []).push(k); }
   for (const g of Object.values(groups)) ncTiers(g, k => String(FURN[k].svg || '').length, k => NC_FURP[FURN[k].r] || 50, (k, v) => { FURN[k].nc = v; }); }
+const NC_MIN = {back:250}; /* Mindestpreise je Abteilung (Inaya, 2026-10-17: Haare nie unter 250) */
+for (const i of ITEMS) if (i.nc && NC_MIN[i.cat] && !NC_FREE.has(i.id) && i.nc < NC_MIN[i.cat]) i.nc = NC_MIN[i.cat];
 const NC_PRICES = Object.fromEntries([...ITEMS.filter(i => i.nc).map(i => [i.id, i.nc]), ...FURN_IDS.filter(k => FURN[k].nc).map(k => ['m:' + k, FURN[k].nc])]); /* Möbel als m:<id>, weil es Kleidung und Möbel mit gleicher ID gibt (teddy, kreuz …) */
 const ncItem = id => { id = String(id || ''); if (id.startsWith('m:')) { const k = id.slice(2); return FURN[k] ? {...FURN[k], id, k, furn:1} : null; } return item(id) || null; };
 const ncF = k => 'm:' + k;
