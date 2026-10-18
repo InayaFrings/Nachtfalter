@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='053ad44c7f83';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='4e0bab189fbe';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -34,7 +34,7 @@
   // Zwischenspeicher im Browser (Inaya, 2026-10-15): Nach dem Neuladen kommen Chats, Freunde, Mitteilungen und Nachrichten sofort vom Gerät,
   // der Server gleicht im Hintergrund ab (spart auch Lesevorgänge). Mehrere Tabs teilen ihn. Beim Abmelden wird er gelöscht.
   const CACHE = fs.enablePersistence().then(() => true).catch(() => false); // nur ein Tab nutzt den Zwischenspeicher, weitere Tabs laufen ohne (die Mehr-Tab-Abstimmung der Bibliothek stürzte in Tests gelegentlich ab)
-  auth.languageCode = 'de';
+  auth.languageCode = (() => { try { const l = localStorage.getItem('nf-lang'); if (l === 'de' || l === 'en') return l; } catch (e) {} return /^de/i.test(navigator.language || '') ? 'de' : 'en'; })(); // Sprache der Firebase-E-Mails und der Passwort-Seite = Noctibat-Sprache (Inaya, 2026-10-18)
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
   auth.onAuthStateChanged(u => { user = u; });
@@ -6667,7 +6667,7 @@ function i18nStart(){ document.documentElement.lang = LANG; I18N.ob?.disconnect(
   ob.observe(document.documentElement, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:I18N_ATTR}); I18N.ob = ob;
   if (!I18N.dlg) { I18N.dlg = true; for (const k of ['alert', 'confirm', 'prompt']) { const f = window[k].bind(window); window[k] = (m, ...a) => f(trWrap(String(m ?? '')), ...a); } } }
 // Sprache wechseln: im Konto und auf dem Gerät merken und alles neu zeichnen (ohne Neuladen, Eingetipptes bleibt)
-function setLang(l){ if (!LANGS[l]) return; try { localStorage.setItem('nf-lang', l); } catch {} const u = S.me ? S.users[S.me] : null; if (u) { u.lang = l; save(); } if (social && pushMine()) social.db.doc(`data/users/${social.uid}/nf-push`).set({lang:l}, {merge:true}).catch(() => {});
+function setLang(l){ if (!LANGS[l]) return; try { localStorage.setItem('nf-lang', l); } catch {} try { window.firebase?.auth?.() && (firebase.auth().languageCode = l); } catch {} const u = S.me ? S.users[S.me] : null; if (u) { u.lang = l; save(); } if (social && pushMine()) social.db.doc(`data/users/${social.uid}/nf-push`).set({lang:l}, {merge:true}).catch(() => {});
   if (l === LANG) return; LANG = l; I18N.cache.clear(); I18N.seen.clear();
   { const v = id => document.getElementById(id)?.value?.trim() || ''; if (document.getElementById('reg-contact')) S.pending = {...(S.pending || {}), contact:v('reg-contact'), birth:v('reg-birth') || S.pending?.birth || ''}; } // Eingetipptes bleibt beim Wechsel stehen
   i18nStart(); render(); if (l === 'de') document.querySelectorAll('body > :not(#app):not(script)').forEach(e => { if (e.id === 'toast' || e.classList.contains('toast')) e.hidden = true; }); } /* nur ausblenden: entfernt, ging danach keine Meldung mehr */

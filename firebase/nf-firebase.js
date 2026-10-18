@@ -24,7 +24,7 @@
   // Zwischenspeicher im Browser (Inaya, 2026-10-15): Nach dem Neuladen kommen Chats, Freunde, Mitteilungen und Nachrichten sofort vom Gerät,
   // der Server gleicht im Hintergrund ab (spart auch Lesevorgänge). Mehrere Tabs teilen ihn. Beim Abmelden wird er gelöscht.
   const CACHE = fs.enablePersistence().then(() => true).catch(() => false); // nur ein Tab nutzt den Zwischenspeicher, weitere Tabs laufen ohne (die Mehr-Tab-Abstimmung der Bibliothek stürzte in Tests gelegentlich ab)
-  auth.languageCode = 'de';
+  auth.languageCode = (() => { try { const l = localStorage.getItem('nf-lang'); if (l === 'de' || l === 'en') return l; } catch (e) {} return /^de/i.test(navigator.language || '') ? 'de' : 'en'; })(); // Sprache der Firebase-E-Mails und der Passwort-Seite = Noctibat-Sprache (Inaya, 2026-10-18)
   let user = null;
   const ready = new Promise(res => { const off = auth.onAuthStateChanged(u => { user = u; off(); res(); }); });
   auth.onAuthStateChanged(u => { user = u; });

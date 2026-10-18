@@ -295,4 +295,5 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Vorlage `firebase/email-passwort.html` (Noctibat-Stil, Logo und Fledermaus-Banner aus `pwa/mail/`, Arial groß und kontrastreich). Wird NICHT automatisch eingespielt: Inaya kopiert sie in der Firebase-Konsole unter Authentication → Vorlagen → Passwort zurücksetzen (Sprache Deutsch, Absendername „Noctibat“, Betreff „Dein neues Passwort für Noctibat“).
 - Firebase erlaubt nur Platzhalter (%DISPLAY_NAME%, %EMAIL%, %LINK%, %APP_NAME%), kein eigenes Avatarbild und kein Profilmuster je Person. Dafür bräuchte es eigenen Versand (Cloud Function + Mail-Dienst, Blaze-Tarif, kostet) – nicht eingebaut.
+- Sprache (seit v554): `auth.languageCode` im Shim (beide Kopien) = `localStorage nf-lang`, sonst Browsersprache; `setLang` setzt es mit. Englische Vorlage `firebase/email-passwort-en.html` (in der Konsole unter Vorlagensprache „Englisch“ eintragen).
 - `authNameSync()` (in `publishProfile`) schreibt den Nutzernamen als displayName ins Firebase-Konto, damit %DISPLAY_NAME% gefüllt ist.
