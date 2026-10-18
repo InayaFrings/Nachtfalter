@@ -253,7 +253,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 ## Halloween zum Verkleiden, Gehirn-Schädel, neue Kleider (seit v531)
 
-- Accessoire `h_gehirn` (Offener Schädel mit Gehirn, `IBRAIN`): im Kopf über den Haaren, unter Hüten (in `avatarI` in `headFront`). Farbe = Gehirn, Blut fest.
+- Kopfbedeckung `h_gehirn` (Offener Schädel mit Gehirn, `IBRAIN`, seit v532 unter Kopfbedeckung statt Accessoires; alte `acc.h_gehirn` wandern beim Laden nach `hacc`). Liegt über den Haaren, andere Hüte darüber. Farbe = Gehirn, Blut fest.
 - Harmlose Halloween-Teile `hl_*`: Pullis `hl_kuerbis`, `hl_geist`, `hl_candy`, `hl_katze` (Grundform `ipulli`), Kleid `hl_hexenkleid`, Unterteile `hl_skelettleg`, `hl_kuerbisrock`, `hl_netzrock`, Kopfbedeckungen `hl_kmuetze` (Haare wie bei `muetze` abgeschnitten, `HATCLIP`), `hl_fledreif`, `hl_geistreif`, `hl_spinnreif`, `hl_minihut`. NICHT `hw_` nehmen: das sind Hosen bzw. Halloween-Möbel.
 - Zwölf neue Kleider (alle mit „kleid“ in der ID → Reiter Kleider): süß `babydollkleid`, `lolitakleid`, `feenkleid` (NICHT „tuell…“ nennen, `isSkirt` hält das sonst für einen Rock); Gothic `korsettkleid`, `gothmaxikleid`; Trad Goth `tradgothkleid`, `batcavekleid`; `viktoriakleid`; elegant `abendkleid` (Beinschlitz über `ilegSlit`), `slipkleid`, `etuikleid`, `cocktailkleid`. Längen mini bis bodenlang.
 - Zweite Farbe dieser Teile wird nicht automatisch auf Schwarz/Weiß gestellt (`self.MOTIF_KEEP`), außer man färbt das Teil selbst so, dass sie nicht mehr zu sehen wäre.

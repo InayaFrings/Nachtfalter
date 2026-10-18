@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8df470e1969f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='45b4d5250566';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3001,6 +3001,7 @@ function normOutfit(o){
   if (!o.hacc || Array.isArray(o.hacc)) o.hacc = {};
   if (o.jewel && typeof o.jewel === 'object' && 'armreif' in o.jewel) { o.jewel = {...o.jewel}; delete o.jewel.armreif; } // Nietenarmband entfernt, Stachelarmband bleibt (Inaya, 2026-10-10)
   if (o.acc && typeof o.acc === 'object' && ('nc_seraph' in o.acc || 'nc_rabenfl' in o.acc)) { o.acc = {...o.acc}; delete o.acc.nc_seraph; delete o.acc.nc_rabenfl; } /* Level-Flügel ersetzt (Inaya, 2026-10-17) */
+  if (o.acc && typeof o.acc === 'object' && 'h_gehirn' in o.acc) { o.hacc = {...(o.hacc || {}), h_gehirn:o.acc.h_gehirn === 'auto' ? '#e8a0b0' : o.acc.h_gehirn}; o.acc = {...o.acc}; delete o.acc.h_gehirn; } /* Gehirn-Schädel jetzt Kopfbedeckung */
   if (o.acc && typeof o.acc === 'object' && 'buch' in o.acc) { o.acc = {...o.acc}; delete o.acc.buch; } // Zauberbuch entfernt (Inaya, 2026-10-10)
   if (o.acc === 'schleife' || o.acc === 'ohren') { o.hacc[o.acc] = HACC_C[o.acc]; o.acc = 'none'; }
   if (/^sd_/.test(o.top || '')) o.top = 'md_' + o.top.slice(3); // nur noch Minikleider (Inaya, 2026-10-11)
@@ -4486,8 +4487,8 @@ const IBRAIN = (X, c) => { const k = ihex(c) || '#e8a0b0', dk = shade(k, .62), l
     + `<g clip-path="url(#${id})">${X.LN(gy, dk, 3.4)}<g transform="translate(346 4) scale(-1 1)">${X.LN(gy, dk, 3.4)}</g>${X.LN(gy, lt, 1.6, .55).replace('<path', '<path transform="translate(-2 -3)"')}<path d="M70 70Q172 110 274 70V120H70Z" fill="${IBLOOD}" opacity=".55"/></g>`
     + X.LN('M172 -34C166 0 178 34 170 74', dk, 4) + X.P(rim, '#efe9da') + X.LN('M112 70L104 96M212 56L222 84M150 58L146 74', '#6a5a4a', 1.6, .8)
     + ibdrip(116, 74, 46, 7) + ibdrip(206, 66, 78, 6) + ibdrip(150, 64, 30, 5) + ibdrip(246, 70, 54, 6) + `<path d="${iblob(178, 52, 10, 701, 9)}" fill="${IBLOOD}"/>`; };
-ITEMS.push({id:'h_gehirn', cat:'acc', name:'Offener Schädel mit Gehirn', st:'Horror', nc:110, thumb:'bust'});
-HACC_C.h_gehirn = 'auto';
+ITEMS.push({id:'h_gehirn', cat:'hacc', name:'Offener Schädel mit Gehirn', st:'Horror', nc:110});
+HACC_C.h_gehirn = '#e8a0b0'; IHACC.h_gehirn = (c, X) => IBRAIN(X, c); /* Kopfbedeckung (Inaya, 2026-10-17) */
 
 /* Halloween zum Verkleiden, harmlos (Inaya, 2026-10-17): Pullis, Hexenkleid, Röcke, Leggings, Kopfbedeckungen. IDs hl_* */
 const iclipG = (X, d, svg) => { const id = `${X.u}cl${X.clN = (X.clN || 0) + 1}`; return `<defs><clipPath id="${id}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${id})">${svg}</g>`; };
@@ -4678,7 +4679,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   for (const k in J) { if (IPIERC[k]) { if (IEARP.includes(k)) ears += pmt(k, IPIERC[k](J[k])); else face += pmt(k, IPIERC[k](J[k])); } if (IEARR[k]) ears += IEARR[k](J[k]); }
   if (o.acc?.w_kopf) face += ibc(IKOPFW(X), o.acc.w_kopf);
   if (IMASK[o.face]) face += IMASK[o.face](o.makeC, X); /* Masken über Augen, Mund und Piercings, unter dem Pony */
-  let headFront = face + hair.front + ears + (o.acc?.h_gehirn ? IBRAIN(X, AC('h_gehirn')) : '') + Object.keys(o.hacc || {}).filter(k => IHACC[k] && !IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k] && o.hacc[k] !== 'auto' ? o.hacc[k] : (HACC_C[k] && HACC_C[k] !== 'auto' ? HACC_C[k] : '#141218'), X)).join('');
+  let headFront = face + hair.front + ears + Object.keys(o.hacc || {}).filter(k => IHACC[k] && !IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k] && o.hacc[k] !== 'auto' ? o.hacc[k] : (HACC_C[k] && HACC_C[k] !== 'auto' ? HACC_C[k] : '#141218'), X)).join('');
   { const OV = self.IACC_OVER || {}, ov = Object.keys(o.acc || {}).filter(k => OV[k]).map(k => OV[k](X, AC(k))).join(''); if (ov) { const m = /translate\(([-\d.]+) ([-\d.]+)\) scale\(([\d.]+)\)/.exec(B.head || ''); headFront += m ? `<g transform="scale(${1 / m[3]}) translate(${-m[1]} ${-m[2]})">${ov}</g>` : ov; } } /* über den Haaren, z. B. Fledermaus auf der Schulter */
   // Körper
   let back = Object.keys(o.acc || {}).filter(k => IACC_BACK[k]).map(k => IACC_BACK[k](X, AC(k))).join('') + (IJACK_BACK[o.jacket] ? IJACK_BACK[o.jacket](X) : '');
