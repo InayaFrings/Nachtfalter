@@ -283,11 +283,10 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - `hw_instrtisch` (Instrumententisch, eine Rolle abgebrochen, Ablagefläche über „tisch“ in der ID, `rHostK`), `hw_medschrank` (Schrank mit gesprungener Glastür), `hw_infusion` (umgeknickter Infusionsständer, tropft), `hw_roentgen` (flackernder Röntgen-Leuchtkasten, Wand), `hw_sehtafel` (zerrissene Sehtafel, Wand). Rost über `hwRust`.
 - Kein Rotes Kreuz als Zeichen (Emblem gesetzlich geschützt), stattdessen grünes Erste-Hilfe-Kreuz.
 
-## Gästebuch-Feld wie die Kommentarleiste (seit v548)
+## Kommentarleiste im Salon und im Gästebuch (seit v548, überarbeitet v551)
 
-- `rwFormHTML(ph)` (eigenes und fremdes Gästebuch): `.cform` wie unter Beiträgen im Salon: Plus = Foto, Ketten-Symbol = Video-Link (`data-act="rw-link"` klappt `#rw-url` auf), einzeiliges Textfeld (`.pcin.mlin`), Pfeil nur bei Inhalt, Totenkopf rechts, Platzhalter überall „Kommentieren …“ (auch im eigenen Gästebuch, seit v550). IDs `rw-in`, `rw-img`, `rw-url`, `rw-file` bleiben, der Absenden-Code (`rwall`) ist unverändert.
-
-## Klamotten für alle Körper nur in der Mall (seit v550)
-
-- Schalter `allgBtn` (`showAllG`, `localStorage nf-allg`) gibt es nur noch in der Mall, nicht mehr in Garderobe und Anmeldung. `fits(i, o, all)` filtert nur noch mit `all` für alle Körper.
-- Garderobe nutzt `fitsW`: eigenes Geschlecht plus alles, was im Inventar liegt (gekauft, geschenkt, übernommen) oder gerade getragen wird. Gekauftes fürs andere Geschlecht erscheint dort ganz normal (auch der Reiter Kleider, über `catTabs(…, ok)`).
+- Beide gleich: Plus, Textfeld, Pfeil (nur bei Inhalt), Mikrofon (leer), Totenkopf, Sticker/GIF. Gästebuch über `rwFormHTML(ph)` (Platzhalter „Kommentieren …“), Salon in `piInner`.
+- Plus (`attMenuHTML`, `data-att="menu"`) klappt eine Leiste wie im Chat auf (`attSheetHTML`, runde Symbole `.attsheet/.attopt/.atti`): Foto, Video, Link (kein Geschenk). NICHT `data-act="att-…"` nehmen: `att-link` ist schon eine Chat-Aktion, die neu zeichnet.
+- Link: Feld `.curl` (Salon: Wert in `PCURL[k]`, Gästebuch `#rw-url`), wird als Feld `url` gespeichert; Anzeige `cLinkHTML` (YouTube mit Vorschaubild über `ytImg`, sonst `linkPill`). Im Gästebuch zeigt `mediaHTML` andere Webseiten auch als Pille.
+- Video: `cmVideoSend(file, {pc}|{wall})` wie im Chat (`prepVideo`, `uploadPostVideo` → `profiles/<uid>/pv_<k>`), geht sofort als eigener Kommentar/Eintrag mit Feld `clip` raus; Anzeige `cvClipHTML` (Register `CVREG`, Aktion `cvplay`).
+- Gästebuch kann jetzt auch Sprachkommentare (`voiceStart` mit Ziel `wall_<uid>`) und GIFs/Sticker (`gstKey` „w:“), Anzeige in `drawWall`.
