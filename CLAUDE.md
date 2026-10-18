@@ -290,3 +290,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Link: Feld `.curl` (Salon: Wert in `PCURL[k]`, Gästebuch `#rw-url`), wird als Feld `url` gespeichert; Anzeige `cLinkHTML` (YouTube mit Vorschaubild über `ytImg`, sonst `linkPill`). Im Gästebuch zeigt `mediaHTML` andere Webseiten auch als Pille.
 - Video: `cmVideoSend(file, {pc}|{wall})` wie im Chat (`prepVideo`, `uploadPostVideo` → `profiles/<uid>/pv_<k>`), geht sofort als eigener Kommentar/Eintrag mit Feld `clip` raus; Anzeige `cvClipHTML` (Register `CVREG`, Aktion `cvplay`).
 - Gästebuch kann jetzt auch Sprachkommentare (`voiceStart` mit Ziel `wall_<uid>`) und GIFs/Sticker (`gstKey` „w:“), Anzeige in `drawWall`.
+
+## E-Mail „Passwort zurücksetzen“ (seit v553)
+
+- Vorlage `firebase/email-passwort.html` (Noctibat-Stil, Logo und Fledermaus-Banner aus `pwa/mail/`, Arial groß und kontrastreich). Wird NICHT automatisch eingespielt: Inaya kopiert sie in der Firebase-Konsole unter Authentication → Vorlagen → Passwort zurücksetzen (Sprache Deutsch, Absendername „Noctibat“, Betreff „Dein neues Passwort für Noctibat“).
+- Firebase erlaubt nur Platzhalter (%DISPLAY_NAME%, %EMAIL%, %LINK%, %APP_NAME%), kein eigenes Avatarbild und kein Profilmuster je Person. Dafür bräuchte es eigenen Versand (Cloud Function + Mail-Dienst, Blaze-Tarif, kostet) – nicht eingebaut.
+- `authNameSync()` (in `publishProfile`) schreibt den Nutzernamen als displayName ins Firebase-Konto, damit %DISPLAY_NAME% gefüllt ist.
