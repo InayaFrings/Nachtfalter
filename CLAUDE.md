@@ -220,7 +220,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Farben (seit v509): alle Horror-Teile über den normalen Farbpunkt frei wählbar. Blut/Wunden/Kopfwunde/Schnitt-Grinsen über `ibc` (ersetzt `IBLOOD`/`IBLOOD2`), Zombie-Haut = Hautton, blaue Flecken = Farbton des Flecks, Darm = Darmfarbe, Waffen = Griff/Kopf/Motor, Masken und Zombie-Make-up über `makeC`, Stulpen = Grundfarbe.
 - Eigene Entwürfe: erinnern an Animatronic-Horror bzw. Horror-Clowns, aber ohne echte Namen, Figuren oder Erkennungszeichen (keine Hüte, Fliegen, Lätzchen, Augenklappen). Bitte so lassen.
 - Preise stehen direkt am Teil (`nc`). Sie gelten erst, wenn Inaya Noctibat einmal öffnet (Abgleich `site/prices`); bis dahin sind die neuen Teile nicht kaufbar.
-- Garderobe (seit v512): Lookbuch, Look speichern, Komplett ausziehen als drei gleiche Kacheln mit Symbol (`.ltools`/`.ltool`, Symbole `LT_SAVE`, `LT_UNDRESS`). Mall: „Komplett ausziehen“ als Pille in der Zeile mit Coins und Tasche (`.ltool.ltsm`, nur während der Anprobe, setzt `MTRY` zurück).
+- Garderobe (seit v512): Lookbuch, Look speichern, Komplett ausziehen als drei gleiche Kacheln mit Symbol (`.ltools`/`.ltool`, Symbole `LT_SAVE`, `LT_UNDRESS`). Mall: „Komplett ausziehen“ als Pille über den Reitern (`.ltool.ltsm`, nur während der Anprobe, setzt `MTRY` zurück). Seit v547 stehen Coins und Einkaufstasche in der Mall oben im Kopf (`ncHead`) wie im Möbelhaus.
 
 ## Halloween-Möbel (seit v515)
 

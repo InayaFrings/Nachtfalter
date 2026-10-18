@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='50d216ccbc63';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='06d7314debee';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -12133,12 +12133,12 @@ function mallView(){ if (!social || !ncShopOk()) return `<section class="ncpage"
   const bare = ncBare(), shown = MTRY || bare; if (mallCat === 'body') mallCat = 'back';
   const list = ITEMS.filter(i => i.cat === mallCat && inSub(i) && !i.gone && ncPaid(i) && fits(i, me().outfit)).sort((a, b) => (ncHas(a.id) - ncHas(b.id)) || (a.ex ? -1 : 0) - (b.ex ? -1 : 0) || (a.lv || 0) - (b.lv || 0));
   const cards = list.map(i => { const [dot, pan] = itemColUI(i, shown, 'nc-color'); return ncCard(i.id, avatar(previewOutfit(bare, i), thumbView(i), '', true), 'nc-try', dot, isOn(shown, i)) + pan; }).join('');
-  return `<div class="wardrobe mall">
+  return `<section class="ncpage mallpg">${ncHead('Mall', true)}<div class="wardrobe mall">
     <div class="card mirror-card">${portrait({outfit:shown}, {frame:'ornament', shape:'bogen'}, 'mirror')}${MTRY ? '' : '<p class="note">Klick auf ein Teil, um es anzuprobieren.</p>'}</div>
-    <div class="card"><h2 class="card-h">Mall</h2><div class="card-in">
-      <div class="row lookbar ncbar2">${WAL.d ? `<span class="ncpill" title="Deine Nocti-Coins">${NC_ICO}<b data-ncc>${WAL.d.c}</b></span>` : ''}${ncBagHTML()}${MTRY ? `<button type="button" class="ltool ltsm" data-act="nc-untry">${LT_UNDRESS}<span>Komplett ausziehen</span></button>` : ''}</div>
+    <div class="card"><div class="card-in">
+      ${MTRY ? `<div class="row lookbar ncbar2"><button type="button" class="ltool ltsm" data-act="nc-untry">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>` : ''}
       <div class="ctabs">${catTabs(mallCat, 'nc-cat', false, me().outfit)}</div>
-      <div class="shopgrid ncgrid">${cards}</div></div></div></div>`; }
+      <div class="shopgrid ncgrid">${cards}</div></div></div></div></section>`; } /* Coins und Tasche oben im Kopf wie im Möbelhaus (Inaya, 2026-10-18) */
 /* Möbelhaus: alle Möbel; im eigenen Zimmer probestellen, in die Tasche legen, verschenken */
 function moebelView(){ if (!social || !ncShopOk()) return `<section class="ncpage">${ncHead('Möbelhaus', true)}${ncWait()}</section>`;
   const tabs = [...FURN_TABS.filter(([k]) => k !== 'wand' && k !== 'boden'), ['wand', 'Wand'], ['boden', 'Boden']], ids = FURN_IDS.filter(k => ncPaid(FURN[k]) && (furnShop === 'alle' || FURN[k].r === furnShop)).sort((a, b) => (ncHas(ncF(a)) - ncHas(ncF(b))) || (FURN[a].ex ? -1 : 0) - (FURN[b].ex ? -1 : 0));
