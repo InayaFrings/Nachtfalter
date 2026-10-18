@@ -250,3 +250,11 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Die Flügel (`nc_seraph`, `nc_rabenfl`) sind raus (Inaya mochte sie nicht), getragene werden beim Laden entfernt. Stattdessen Level 25 `nc_fledfreund` (kleine Fledermaus auf der rechten Schulter) und Level 45 `nc_katze` (Schattenkatze mit Mondhalsband neben den Füßen, `IACC_BACK`, Vorschau `thumb:'pet'` = eigener Ausschnitt in `IVIEWS`).
 - `self.IACC_OVER`: Accessoires in Körper-Koordinaten, die über den Haaren liegen (in `avatarI` mit der Umkehrung von `B.head` an `headFront` gehängt).
+
+## Halloween zum Verkleiden, Gehirn-Schädel, neue Kleider (seit v531)
+
+- Accessoire `h_gehirn` (Offener Schädel mit Gehirn, `IBRAIN`): im Kopf über den Haaren, unter Hüten (in `avatarI` in `headFront`). Farbe = Gehirn, Blut fest.
+- Harmlose Halloween-Teile `hl_*`: Pullis `hl_kuerbis`, `hl_geist`, `hl_candy`, `hl_katze` (Grundform `ipulli`), Kleid `hl_hexenkleid`, Unterteile `hl_skelettleg`, `hl_kuerbisrock`, `hl_netzrock`, Kopfbedeckungen `hl_kmuetze` (Haare wie bei `muetze` abgeschnitten, `HATCLIP`), `hl_fledreif`, `hl_geistreif`, `hl_spinnreif`, `hl_minihut`. NICHT `hw_` nehmen: das sind Hosen bzw. Halloween-Möbel.
+- Zwölf neue Kleider (alle mit „kleid“ in der ID → Reiter Kleider): süß `babydollkleid`, `lolitakleid`, `feenkleid` (NICHT „tuell…“ nennen, `isSkirt` hält das sonst für einen Rock); Gothic `korsettkleid`, `gothmaxikleid`; Trad Goth `tradgothkleid`, `batcavekleid`; `viktoriakleid`; elegant `abendkleid` (Beinschlitz über `ilegSlit`), `slipkleid`, `etuikleid`, `cocktailkleid`. Längen mini bis bodenlang.
+- Zweite Farbe dieser Teile wird nicht automatisch auf Schwarz/Weiß gestellt (`self.MOTIF_KEEP`), außer man färbt das Teil selbst so, dass sie nicht mehr zu sehen wäre.
+- Preise stehen am Teil (`nc`), wo die Staffel nach Zeichnungslänge zu niedrig wäre (Teile aus Hilfsfunktionen).
