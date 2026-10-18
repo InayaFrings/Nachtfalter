@@ -282,3 +282,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - `hw_instrtisch` (Instrumententisch, eine Rolle abgebrochen, Ablagefläche über „tisch“ in der ID, `rHostK`), `hw_medschrank` (Schrank mit gesprungener Glastür), `hw_infusion` (umgeknickter Infusionsständer, tropft), `hw_roentgen` (flackernder Röntgen-Leuchtkasten, Wand), `hw_sehtafel` (zerrissene Sehtafel, Wand). Rost über `hwRust`.
 - Kein Rotes Kreuz als Zeichen (Emblem gesetzlich geschützt), stattdessen grünes Erste-Hilfe-Kreuz.
+
+## Gästebuch-Feld wie die Kommentarleiste (seit v548)
+
+- `rwFormHTML(ph)` (eigenes und fremdes Gästebuch): `.cform` wie unter Beiträgen im Salon: Plus = Foto, Ketten-Symbol = Video-Link (`data-act="rw-link"` klappt `#rw-url` auf), einzeiliges Textfeld (`.pcin.mlin`), Pfeil nur bei Inhalt, Totenkopf rechts. IDs `rw-in`, `rw-img`, `rw-url`, `rw-file` bleiben, der Absenden-Code (`rwall`) ist unverändert.

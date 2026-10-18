@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='06d7314debee';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9661d52c7f2f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -317,7 +317,7 @@ label.f{display:grid;gap:4px}
 .cname{all:unset;cursor:pointer;font:inherit;font-weight:600}.cname:hover,.cname:focus-visible{text-decoration:underline}
 .cthread{display:grid;gap:6px}.cmore{justify-self:start;margin-left:48px;font-size:13px;opacity:.85}.creplies{display:grid;gap:8px;margin-left:48px}.creplies .cmh{width:30px;height:30px}
 .cform:has(.pcre){flex-wrap:wrap}[data-form=pcomment] .pcre{order:-2}
-#rw-file{display:block;margin:4px 0}#rw-file:empty{display:none}#rw-file .pcthumb,#rw-file .pcthumb img{width:64px;height:64px}
+#rw-file{display:block;margin:4px 0}#rw-file:empty{display:none}.rwform #rw-file{flex-basis:100%;order:9;margin:0}form[data-form=rwall]:is(:has(.pcin:not(:placeholder-shown)),:has(.pcthumb),:has(.rwurl:not([hidden]):not(:placeholder-shown))) .csend{display:grid}.rwform .rwurl{order:8}.rwform .rwurl[hidden]{display:none}.rwlinkb[aria-pressed="true"]{background:color-mix(in srgb,currentColor 14%,transparent)}.rwlinkb[aria-pressed="true"] svg{transform:none}#rw-file .pcthumb,#rw-file .pcthumb img{width:64px;height:64px}
 .bubble .memb{width:min(320px,68vw);max-width:100%;margin-top:6px}.bubble .memb .emb,.bubble .memb .vframe{width:100%;margin:0}
 .cthread .bub{cursor:pointer}.pcre{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:13px;font-style:normal;opacity:.85;flex-basis:100%}
 .bub{position:relative;background:var(--paper-2,#1c1c20);border:1px solid var(--line);border-radius:16px;padding:7px 13px 6px;min-width:0;max-width:calc(100% - 48px);overflow-wrap:anywhere;font-size:16px;line-height:1.35}
@@ -9378,20 +9378,12 @@ function profileView(id){
   const steckHTML = u.helper && !u.steck ? '' : `<div class="psteck"><h3 class="lbl">Steckbrief</h3><div class="steck2"><dl class="steck">${sf('Über mich', u.helper ? u.steck : u.about)}</dl><dl class="steck">${sf('Musik',u.music)}${sf('Filme',u.films)}${sf('Hobbys',u.hobbies)}${sf('Spiele',u.games2)}</dl></div></div>`;
   let wallP = '';
   if (!u.helper && u.remote) wallP = `<div class="gb"><div id="rwall"><p class="muted" style="margin:0">Kommentare werden geladen …</p></div>
-      ${isFriend(u.id) ? `<form class="wform" data-form="rwall">
-        <textarea id="rw-in" placeholder="Schreib ${esc(u.name)} einen Kommentar …" maxlength="500" aria-label="Kommentar"></textarea>
-        <div class="wmedia"><label class="btn ghost filebtn">📷 Foto anhängen<input type="file" id="rw-img" accept="image/*"></label><input type="url" id="rw-url" placeholder="Video-Link (YouTube, TikTok …), freiwillig" aria-label="Video-Link"></div>
-        <span id="rw-file" class="note"></span>
-        <div class="row"><span class="sp"></span><button class="btn" type="submit">Kommentieren</button></div></form>`
+      ${isFriend(u.id) ? rwFormHTML('Kommentieren …')
         : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
   else if (!u.helper) { // eigene Kommentare und die von Juliet und Andy scrollen zusammen in einem Kasten (Inaya, 2026-10-11)
     const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry${wTheme(c.author) ? ' tp' : ''}" style="${wTheme(c.author)}">${ulink(c.author)} <span data-raw>${etx(c.text)}</span> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
     wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social || PUB && !social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
-      ${own && social ? `<form class="wform" data-form="rwall">
-        <textarea id="rw-in" placeholder="Etwas in dein Gästebuch schreiben …" maxlength="500" aria-label="Gästebuch-Eintrag"></textarea>
-        <div class="wmedia"><label class="btn ghost filebtn">📷 Foto anhängen<input type="file" id="rw-img" accept="image/*"></label><input type="url" id="rw-url" placeholder="Video-Link (YouTube, TikTok …), freiwillig" aria-label="Video-Link"></div>
-        <span id="rw-file" class="note"></span>
-        <div class="row"><span class="sp"></span><button class="btn" type="submit">Eintragen</button></div></form>` /* eigenes Gästebuch wie bei Freunden: Foto, Video-Link, Emoji im Feld (Inaya, 2026-10-17) */
+      ${own && social ? rwFormHTML('In dein Gästebuch schreiben …') /* eigenes Gästebuch wie bei Freunden */
       : `<form class="cform" data-form="wall" data-id="${id}">
         <input type="text" id="w-${id}" placeholder="${own ? 'Etwas in dein Gästebuch schreiben…' : 'Hinterlass ' + esc(u.name) + ' ein paar Zeilen…'}" maxlength="300" aria-label="Gästebuch-Eintrag">
         <button class="btn ghost" type="submit">Eintragen</button>
@@ -10687,6 +10679,11 @@ function gbOpen(w, mid, cm, did){ // zum Eintrag im Gästebuch springen, bei Kom
     el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash');
     const k = el.querySelector('[data-pi]')?.dataset.pi; if (cm && k) setTimeout(() => { if (PI[k]) { cmvOpen(k); cmvShow(k, did); } }, 500); };
   setTimeout(find, 150); }
+/* Gästebuch-Feld wie die Kommentarleiste im Salon (Inaya, 2026-10-18): Plus = Foto, Ketten-Symbol = Video-Link (klappt ein Feld auf), Textfeld, Pfeil. IDs rw-in/rw-img/rw-url/rw-file bleiben für den Absenden-Code */
+function rwFormHTML(ph){ return `<form class="cform rwform" data-form="rwall"><label class="attbtn pcatt" title="Foto anhängen" aria-label="Foto anhängen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><input type="file" id="rw-img" accept="image/*" hidden></label>`
+  + `<button type="button" class="attbtn rwlinkb" data-act="rw-link" title="Video-Link anhängen" aria-label="Video-Link anhängen" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>`
+  + `<span class="cinw"><textarea class="pcin mlin" id="rw-in" rows="1" placeholder="${esc(ph)}" maxlength="500" aria-label="Gästebuch-Eintrag" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>`
+  + `<input type="url" id="rw-url" class="rwurl" placeholder="Video-Link (YouTube, TikTok …)" aria-label="Video-Link" hidden><span id="rw-file" class="note"></span></form>`; }
 function drawWall(){
   const box = document.getElementById('rwall'); if (!box) return;
   WL.list.forEach(c => { if (!PROF[c.from] && c.from !== social?.uid && !WL.asked?.[c.from]) { (WL.asked = WL.asked || {})[c.from] = 1; loadProf(c.from).then(drawWall); } });
@@ -13183,6 +13180,7 @@ document.addEventListener('change', async e => {
 });
 // Gästebuch: kleine Vorschau vom gewählten Foto wie bei Kommentaren (Inaya, 2026-10-11)
 document.addEventListener('change', e => { if (e.target.id === 'rw-img') { const f = e.target.files[0], n = document.getElementById('rw-file'); if (n) n.innerHTML = f ? `<span class="pcthumb"><img src="${URL.createObjectURL(f)}" alt="Ausgewähltes Foto"><button type="button" class="pcx" id="rw-img-x" aria-label="Foto wieder entfernen" title="Foto entfernen">×</button></span>` : ''; } });
+document.addEventListener('click', e => { const b = e.target.closest?.('[data-act="rw-link"]'); if (!b) return; const u = document.getElementById('rw-url'); if (!u) return; u.hidden = !u.hidden; b.setAttribute('aria-pressed', String(!u.hidden)); if (!u.hidden) u.focus(); else u.value = ''; });
 document.addEventListener('click', e => { if (e.target.id !== 'rw-img-x') return; const i = document.getElementById('rw-img'), n = document.getElementById('rw-file'); if (i) i.value = ''; if (n) n.innerHTML = ''; });
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
