@@ -277,3 +277,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Wand-Deko `hw_kreuze` (180 Coins): 13 Kreuze in einem Teil, Formen über `HWX` (latein, lilie, orthodox, knospe, doppel, ankh, gotik, tau) und `hwCross(x, y, Größe, Form, Farbe, {ring, gem, wood, heart, fil})`, jedes an einem Nagel. Dunkle Kreuze bekommen einen helleren Rand.
 - Seit v544 mehr Auswahl: `hw_kreuze_schwarz`, `hw_kreuze_gold`, `hw_kreuze_reihe`, `hw_kreuz_gross`, `hw_kreuz_rosenkranz`, `hw_kreuze_holz`.
 - Kaputte Deckenlampe `hw_deckenlampe` (seit v542, 110 Coins, Lampe, oben an die Wand hängen): schiefer Schirm, flackernde zersplitterte Birne, herunterhängendes Kabel mit Funken.
+
+## Kaputtes Arztzimmer (seit v545)
+
+- `hw_instrtisch` (Instrumententisch, eine Rolle abgebrochen, Ablagefläche über „tisch“ in der ID, `rHostK`), `hw_medschrank` (Schrank mit gesprungener Glastür), `hw_infusion` (umgeknickter Infusionsständer, tropft), `hw_roentgen` (flackernder Röntgen-Leuchtkasten, Wand), `hw_sehtafel` (zerrissene Sehtafel, Wand). Rost über `hwRust`.
+- Kein Rotes Kreuz als Zeichen (Emblem gesetzlich geschützt), stattdessen grünes Erste-Hilfe-Kreuz.
