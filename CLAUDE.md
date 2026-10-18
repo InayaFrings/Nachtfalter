@@ -259,3 +259,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Zwölf neue Kleider (alle mit „kleid“ in der ID → Reiter Kleider): süß `babydollkleid`, `lolitakleid`, `feenkleid` (NICHT „tuell…“ nennen, `isSkirt` hält das sonst für einen Rock); Gothic `korsettkleid`, `gothmaxikleid`; Trad Goth `tradgothkleid`, `batcavekleid`; `viktoriakleid`; elegant `abendkleid` (Beinschlitz über `ilegSlit`), `slipkleid`, `etuikleid`, `cocktailkleid`. Längen mini bis bodenlang.
 - Zweite Farbe dieser Teile wird nicht automatisch auf Schwarz/Weiß gestellt (`self.MOTIF_KEEP`), außer man färbt das Teil selbst so, dass sie nicht mehr zu sehen wäre.
 - Preise stehen am Teil (`nc`), wo die Staffel nach Zeichnungslänge zu niedrig wäre (Teile aus Hilfsfunktionen).
+
+## Steckbrief von Andy und Juliet (seit v535)
+
+- Helfer zeigen jetzt auch den Steckbrief: „Über mich“ kommt aus `steck` (nicht aus `about`, das sind Hausregeln bzw. „So geht’s“), dazu `music`, `films`, `hobbies`, `games2` aus `HELPERS`. `ensureHelpers` überträgt diese Felder bei jedem Start. Helfer-Texte im Steckbrief laufen über `tr()`, weil `.steck dd` sonst nicht übersetzt wird.
