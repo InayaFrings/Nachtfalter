@@ -302,3 +302,8 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Masken und Monster-Make-up haben eigene Grundfarben: Blechbär lila, Blechrabe (Küken) pink, Blechhase grau, Clown weißes Gesicht mit orangen Augen und roter Nase, `zombiepop` grün (Pink bleibt `ZPINK`). `mkC(c, d)`: Schwarz bzw. keine Make-up-Farbe heißt Originalfarbe, sonst gilt die gewählte Farbe.
 - Make-up-Farbe merkt sich jedes Gesichts-Teil selbst (`ICF.face = ['makeC']`), `ncBare` nimmt sie heraus. Vorher färbte das schwarze Make-up jede Maske schwarz.
+
+## Passwort-Links auf noctibat.com (seit v557)
+
+- Links aus Firebase-E-Mails (`?mode=resetPassword|verifyEmail|verifyAndChangeEmail|recoverEmail&oobCode=…`) erledigt der Shim selbst (`ACT`, beide Kopien): Parameter werden sofort aus der Adresse genommen, `verifyPasswordResetCode` → `NF_AUTH.onRecovery` → Formular `recover` mit Feld „Dein Konto“ (`autocomplete="username"`), `updatePw` macht dann `confirmPasswordReset` und meldet direkt an. Andere Arten über `applyActionCode`, Meldung über `NF_AUTH.action`.
+- Grund: auf der Firebase-Seite (firebaseapp.com) speicherte das iPhone das neue Passwort unter der falschen Adresse. Greift erst, wenn in der Firebase-Konsole unter Authentication → Vorlagen → (Stift) → „Aktions-URL anpassen“ `https://www.noctibat.com/` steht.

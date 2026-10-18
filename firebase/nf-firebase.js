@@ -98,15 +98,25 @@
     return 'Das hat gerade nicht geklappt. Probier es gleich nochmal.';
   };
   const back = () => location.origin + location.pathname;
+  /* Links aus den Firebase-E-Mails (Inaya, 2026-10-18): Noctibat erledigt sie selbst auf noctibat.com statt auf der Firebase-Seite (firebaseapp.com).
+     Sonst speichert das iPhone das neue Passwort unter der falschen Adresse. Braucht in der Firebase-Konsole: Vorlagen → Aktions-URL anpassen → https://www.noctibat.com/ */
+  const ACT = (() => { try { const q = new URLSearchParams(location.search), mode = q.get('mode'), oob = q.get('oobCode'); if (!mode || !oob) return null;
+    const u = new URL(location.href); ['mode', 'oobCode', 'apiKey', 'lang', 'continueUrl', 'tenantId'].forEach(k => u.searchParams.delete(k)); history.replaceState(history.state, '', u.pathname + u.search + u.hash); return {mode, oob}; } catch (e) { return null; } })();
+  let RESET = null, recCb = null;
+  const action = !ACT ? Promise.resolve(null) : ACT.mode === 'resetPassword'
+    ? auth.verifyPasswordResetCode(ACT.oob).then(email => { RESET = {oob: ACT.oob, email}; if (recCb) recCb(); return {ok: true, mode: ACT.mode}; }, e => ({error: de(e), code: e && e.code, mode: ACT.mode}))
+    : auth.applyActionCode(ACT.oob).then(() => ({ok: true, mode: ACT.mode}), e => ({error: de(e), code: e && e.code, mode: ACT.mode}));
   window.NF_AUTH = {
     ready,
-    resetViaMail: true, // Firebase zeigt die Seite zum neuen Passwort selbst an
+    resetViaMail: true, // Link aus der E-Mail öffnet Noctibat selbst (?mode=resetPassword), sonst die Seite von Firebase
+    action, // Ergebnis eines E-Mail-Links (Adresse bestätigt usw.)
+    resetEmail: () => RESET ? RESET.email : null,
     email: () => user ? user.email : null,
     async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
     async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async signOut(){ try { await auth.signOut(); } catch {} user = null; try { if (await CACHE) { await fs.terminate(); await fs.clearPersistence(); } } catch {} }, // Zwischenspeicher dieses Kontos vom Gerät löschen
     async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
-    async updatePw(pw){ try { await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    async updatePw(pw){ try { if (RESET) { await auth.confirmPasswordReset(RESET.oob, pw); const r = await auth.signInWithEmailAndPassword(RESET.email, pw); user = r.user; RESET = null; return {ok: true}; } await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
@@ -129,7 +139,7 @@
     async remove(sl){ if (sl === SLOT) return; saveAccts(accts().filter(x => x.slot !== sl)); await dropSlot(sl); },
     forget(){ const l = accts().filter(x => x.slot !== SLOT); saveAccts(l); LS.set('nf-acct', l[0] ? l[0].slot || null : null); }, // nach Abmelden: zum nächsten gespeicherten Account
     back(){ const l = accts().filter(x => x.slot !== SLOT); return l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
-    onRecovery(){},
-    get recovering(){ return false; }
+    onRecovery(cb){ recCb = cb; if (RESET) cb(); },
+    get recovering(){ return !!RESET; }
   };
 })();
