@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='dc22a0b30b32';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='41cc3f8b3aeb';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -898,12 +898,16 @@ footer.foot .lnk{color:var(--muted)}
 }
 
 /* Handy wie Momio: kompakte Kopfzeile mit Freunde/Chats, Teile antippen statt Knöpfe, Zimmer oben fest */
-.mtop{display:none}
+.mtop{display:none}.mfab{display:none}
 /* Glocke für Mitteilungen auch am PC, oben rechts in der Seitenleiste (Inaya, 2026-10-11) */
 .pcbell{position:absolute;top:14px;right:14px;width:44px;height:44px;display:grid;place-items:center;background:none;border:1px solid var(--line-soft);border-radius:50%;color:var(--fg);padding:0;cursor:pointer}.pcbell svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pcbell:hover,.pcbell.on{border-color:var(--fg)}.pcbell .dot{position:absolute;top:7px;right:8px;margin:0}
 @media (max-width:760px){.pcbell{display:none}}
 @media (max-width:760px){
   .mtop{display:flex;gap:6px;margin-left:auto}
+  /* Plus oben links wie bei Insta (seit v558): neuer Beitrag von überall, bleibt beim Scrollen in der Kopfzeile */
+  .mfab{display:grid;place-items:center;flex:none;width:42px;height:42px;padding:0;border-radius:50%;background:var(--fg);color:var(--bg);border:0;cursor:pointer;box-shadow:0 2px 10px #0006}
+  .mfab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+  .mfab:active{transform:scale(.92)}
   .mti{position:relative;width:42px;height:42px;display:grid;place-items:center;background:none;border:1px solid var(--line-soft);color:var(--fg);padding:0}
   .mti svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
   .mti .dot{position:absolute;top:5px;right:5px}
@@ -6891,6 +6895,7 @@ function rail(){
   const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(reqOpen) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['wardrobe','Garderobe'],['shopping','Shopping'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
   const cur = V.name === 'design' ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
+    <button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
     <button class="pcbell${cur === 'notifs' ? ' on' : ''}" data-act="nav" data-v="notifs" aria-label="Mitteilungen${ntN ? ` (${ntN} neu)` : ''}" title="Mitteilungen"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.bell}</svg>${ntN ? `<i class="dot" aria-hidden="true"></i>` : ''}</button>
     ${mobTop(nNew, ntN)}
@@ -8816,7 +8821,7 @@ const pinSort = (a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || (b.pin || 0) - (a
 let postAud = null, composeOpen = false, profEdit = false, designTab = 'look';
 // MP3s nur, wo es privat bleibt (Inaya, 2026-10-14, Urheberrecht): nicht in öffentlichen Gruppen, Zimmern und öffentlichen Beiträgen
 const chPubNow = (cid = CH.open) => { if (!cid) return false; if (/^(zimmer_|wall_)/.test(cid)) return true; const c = CH.list.find(x => x.id === cid); return !!(c && c.group && c.pub); };
-const aud = () => postAud || (amOwner ? 'pub' : 'fr'); // jeder wählt: öffentlich oder nur für Freunde (Inaya, 2026-10-10)
+const aud = () => postAud || (S.salonMode === 'pub' || amOwner ? 'pub' : 'fr'); // jeder wählt: öffentlich oder nur für Freunde (Inaya, 2026-10-10)
 // Ein Feld „Beitrag erstellen“, darunter Foto, MP3 und Link als Knöpfe; die Art ergibt sich beim Teilen (Inaya, 2026-10-11)
 let PSG = null, PSGP = false; // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
 function pcSgAdd(p){ if (p.img && p.img.length > 300000) return toast('Dieser Sticker ist zu groß.'); PSG = p; PSGP = false; SG.tgt = null; paintCompose(); }
@@ -9194,7 +9199,7 @@ function homeView(){
   const pubMode = (social || PUB && S.me) && S.salonMode === 'pub'; // Auswahl bleibt auch beim Neuladen stehen
   const posts = (pubMode ? pubPosts() : [...S.posts, ...Object.values(S.users).filter(u => u.remote).flatMap(u => u.posts || []), ...ownerPubPosts()]).filter(p => p.type !== 'teilen').sort((a,b) => b.ts - a.ts); // Reposts nur auf dem Profil, nicht im Salon (Inaya, 2026-10-12)
   const fwait = feedWait(pubMode); if (FEEDW.was && !fwait) { FEEDW.was = false; if (NAVR.lastY && !NAVR.touched) setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, NAVR.lastY); }, 60); } else if (fwait) FEEDW.was = true;
-  const compose = isMob() ? pcPlus('hcompose') + (homeCompose ? pcFull('hcompose') : '') : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
+  const compose = isMob() ? (homeCompose ? pcFull('hcompose') : '') : `<div class="card"><h2 class="card-h">Beitrag erstellen</h2><div class="card-in">
 ${composeHTML()}${isMob() ? '<button class="lnk" data-act="hcompose">Abbrechen</button>' : ''}
     </div></div>`;
   return `${storyBar()}${compose}
@@ -12976,7 +12981,7 @@ document.addEventListener('click', async e => {
   else if (a === 'chat-group') { CH.gdraft = {pub:b.dataset.v === 'pub', name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
   else if (a === 'set-priv') { me().priv = b.dataset.v === '1' ? 1 : 0; save(); publishProfile(); render(); toast(me().priv ? 'Dein Profil ist jetzt privat' : 'Dein Profil ist jetzt öffentlich'); }
-  else if (a === 'salon-mode') { S.salonMode = b.dataset.v === 'pub' ? 'pub' : 'fr'; save(); if (S.salonMode === 'pub') loadPubFeed(true); render(); }
+  else if (a === 'salon-mode') { S.salonMode = b.dataset.v === 'pub' ? 'pub' : 'fr'; postAud = S.salonMode; save(); /* neuer Beitrag: Freunde/Öffentlich wie der gewählte Bereich */ if (S.salonMode === 'pub') loadPubFeed(true); render(); }
   else if (a === 'ref-go') { go('find'); const hi = (k = 0) => { const c = document.querySelector('.refcard'); if (!c) { if (k < 20) setTimeout(() => hi(k + 1), 150); return; } c.scrollIntoView({behavior:'smooth', block:'center'}); c.classList.remove('refhi'); void c.offsetWidth; c.classList.add('refhi'); }; setTimeout(hi, 250); } /* aus dem Beitrag von Juliet und Andy zum Einladen-Kasten */
   else if (a === 'helper-chat') { chatTab = 'priv'; go('chats'); CH.mode = 'helper'; CH.helper = id; CH.open = null; render(); window.scrollTo(0,0); const l = document.getElementById('chatlog'); if (l) l.scrollTop = l.scrollHeight; }
   else if (a === 'chat-tab') { chatTab = ['group', 'pub'].includes(b.dataset.v) ? b.dataset.v : 'priv'; if (chatTab === 'pub') pubgAt = 0; render(); }
@@ -13775,6 +13780,7 @@ document.addEventListener('click', async e => {
   else if (a === 'ftap') { if (!isMob()) return; const r = me().room, k = b.dataset.k;
     if (r.items.some(i => i.k === k)) { r.items = r.items.filter(i => i.k !== k); roomSel = null; } else { const f = FURN[k]; r.items.push({k, x:44, y:f.wall ? 10 : 46}); roomSel = r.items.length - 1; }
     save(); render(); }
+  else if (a === 'fab-post') { if (social || PUB && S.me) postAud = S.salonMode === 'pub' ? 'pub' : 'fr'; homeCompose = true; if (V.name !== 'home') go('home'); render(); document.getElementById('ptext')?.focus(); }
   else if (a === 'hcompose') { homeCompose = !homeCompose; render(); if (homeCompose) document.getElementById('ptext')?.focus(); }
   else if (a === 'place') { const f = FURN[b.dataset.k]; me().room.items.push({k:b.dataset.k, x:44, y:f.wall ? 10 : 46}); roomSel = me().room.items.length - 1; save(); render(); document.getElementById('room')?.scrollIntoView({block:'center'}); }
   else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); r.items.forEach(o => { if (o.on === b.dataset.k) delete o.on; }); roomSel = null; save(); render(); }
