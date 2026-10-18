@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e3d2fe5a502d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a427f1d2e1ff';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4389,13 +4389,21 @@ Object.assign(IACC_BODY, {
     + istain(iarmC(B, 1, B.wr - 60), B.wr - 60, 8, 53, 0, 3)), c); },
   b_getraenkt:(X, c) => { const B = X.B; /* seit v536: nur noch ein paar Kleckse, nicht mehr durchgetränkt */
     return ibc(iBloodClip(X, istain(B.cx - 30, B.chest + 10, 16, 61, 0, 5) + istain(B.cx + 40, B.wy - 20, 12, 67, 0, 4) + istain(ilegC(B, 1, B.cy + 80), B.cy + 80, 12, 73, 0, 4) + istain(iarmC(B, 0, B.pit + 80), B.pit + 80, 9, 89, 0, 3)), c); },
-  organe:(X, c) => { const B = X.B, k = ihex(c) || '#141218', ln = isLight(k) ? '#3a3a40' : '#d8d8de'; /* seit v536: krabbelnde Spinnen statt Darm, Farbe = Spinnen */
+  organe:(X, c) => { const B = X.B, x = B.cx + 4, y = B.wy - 44;
+    const g = ihex(c) || '#c85a6a'; /* Farbe = Darm */
+    const tube = (d, w = 26) => X.LN(d, IOL, w + 6) + X.LN(d, g, w) + `<path d="${d}" fill="none" stroke="${shade(g, .65)}" stroke-width="${w}" stroke-dasharray="2.4 16" opacity=".6"/>` + X.LN(d, shade(g, 1.35), w * .2, .7);
+    return `<path d="${iblob(x, y + 6, 46, 101, 12)}" fill="${IBLOOD2}" ${IO}/>` + `<path d="${iblob(x, y + 2, 32, 103, 10)}" fill="#3a0608"/>`
+      + tube(`M${x - 12} ${y}C${x - 64} ${y + 56} ${x + 54} ${y + 82} ${x + 12} ${y + 142}S${x - 54} ${y + 214} ${x - 14} ${y + 262}S${x + 40} ${y + 330} ${x + 4} ${y + 372}`, 28)
+      + tube(`M${x + 18} ${y + 6}C${x + 84} ${y + 26} ${x + 76} ${y + 104} ${x + 34} ${y + 112}S${x - 6} ${y + 156} ${x + 36} ${y + 176}`, 22)
+      + tube(`M${x - 20} ${y + 2}C${x - 76} ${y + 14} ${x - 70} ${y + 70} ${x - 30} ${y + 64}S${x + 4} ${y + 22} ${x + 30} ${y + 46}S${x + 30} ${y + 80} ${x - 4} ${y + 84}`, 24)
+      + istain(x - 30, y + 20, 14, 107, 50, 5) + istain(x + 40, y + 30, 12, 109, 70, 4) + ibdrip(x + 4, y + 380, 40, 9); },
+  h_spinnen:(X, c) => { const B = X.B, k = ihex(c) || '#141218', ln = isLight(k) ? '#3a3a40' : '#d8d8de'; /* Krabbelnde Spinnen (seit v539 eigenes Teil; v536–v538 hatten sie den Darm ersetzt), Farbe = Spinnen */
     const sp = (x, y, s, r) => `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${r}) scale(${s})">${X.LN('M-6 -4L-18 -12L-22 -4M-6 0L-20 0L-24 8M-6 4L-16 12L-18 20M-5 7L-10 18L-8 26M6 -4L18 -12L22 -4M6 0L20 0L24 8M6 4L16 12L18 20M5 7L10 18L8 26', k, 2.6)}<ellipse cx="0" cy="6" rx="9" ry="11" fill="${k}" stroke="${ln}" stroke-width="1.4"/><circle cx="0" cy="-7" r="6.5" fill="${k}" stroke="${ln}" stroke-width="1.4"/><circle cx="-2.4" cy="-8" r="1.6" fill="#fff"/><circle cx="2.4" cy="-8" r="1.6" fill="#fff"/></g>`;
     return X.LN(`M${B.nr - 6} ${B.ny - 30}Q${B.nr} ${B.ny + 20} ${B.nr + 10} ${B.sy + 30}`, ln, 1.4, .7) + sp(B.nr + 10, B.sy + 40, 1.3, 20) + sp(B.cx - 40, B.chest + 30, 1.6, -30) + sp(B.cx + 30, B.wy - 10, 1.2, 50)
       + sp(iarmC(B, 0, B.pit + 120), B.pit + 120, 1, -70) + sp(ilegC(B, 1, B.ky - 60), B.ky - 60, 1.3, 160) + sp(ilegC(B, 0, B.cy + 90), B.cy + 90, 1, 110); },
 });
 ITEMS.push({id:'b_spritzer', cat:'acc', name:'Kunstblut-Spritzer', st:'Horror', nc:40, thumb:'top'}, {id:'b_flecken', cat:'acc', name:'Kunstblut-Flecken', st:'Horror', nc:60}, {id:'b_getraenkt', cat:'acc', name:'Kunstblut-Kleckse', st:'Horror', nc:90},
-  {id:'organe', cat:'acc', name:'Krabbelnde Spinnen', st:'Halloween', nc:100});
+  {id:'organe', cat:'acc', name:'Heraushängender Darm', st:'Horror', nc:100, thumb:'top'}, {id:'h_spinnen', cat:'acc', name:'Krabbelnde Spinnen', st:'Halloween', nc:100});
 /* Zombie-Haut, blaue Flecken, Wunden (Inaya, 2026-10-17). Haut und Flecken liegen auf der Haut (Kleidung deckt sie ab), Wunden liegen wie das Blut über der Kleidung. */
 const ZSKIN = '#9aa88a';
 /* part 'arms': nur die Arme (die Figur zeichnet ihre Arme später noch einmal drüber), sonst Rumpf, Hals und Beine */
@@ -4408,8 +4416,9 @@ const ibruise = (x, y, r, seed) => `<path d="${iblob(x, y, r * 1.3, seed)}" fill
 const iveins = (X, d) => X.LN(d, '#4a3a5a', 1.6, .55);
 const IZFACE = X => (irot(118, 236, 24, 201) + irot(246, 120, 20, 203) + irot(232, 252, 14, 207) + `<path d="${iblob(250, 230, 20, 205)}" fill="#5f6b4a" opacity=".6" filter="url(#BL)"/><path d="${iblob(140, 140, 22, 209)}" fill="#5f6b4a" opacity=".5" filter="url(#BL)"/>`
   + IEYES(() => `<ellipse cx="2" cy="24" rx="34" ry="12" fill="#4a4a3a" opacity=".45" filter="url(#BL)"/>`) + iveins(X, 'M84 196Q96 206 92 222M98 200Q104 214 116 218M268 182Q262 198 270 210M276 176Q284 190 280 204')).replace(/url\(#BL\)/g, `url(#${X.u}bl)`);
-/* Glitzer-Grusel-Make-up (seit v536 statt blauer Flecken): Lidschatten-Schimmer, Glitzersterne auf den Wangen, Strass-Träne. Farben #3e4e96/#4a1e62/#2a1240 werden in avatarI umgefärbt */
-const IBRFACE = X => { const st = (x, y, r, f) => `<path d="M${x} ${y - r}L${f1(x + r * .28)} ${f1(y - r * .28)}L${x + r} ${y}L${f1(x + r * .28)} ${f1(y + r * .28)}L${x} ${y + r}L${f1(x - r * .28)} ${f1(y + r * .28)}L${x - r} ${y}L${f1(x - r * .28)} ${f1(y - r * .28)}Z" fill="${f}"/>`;
+const IBRFACE = X => (ibruise(252, 222, 20, 301) + ibruise(112, 250, 12, 303)).replace(/url\(#BL\)/g, `url(#${X.u}bl)`);
+/* Glitzer-Grusel-Make-up (seit v539 eigenes Teil z_glitzer; v536–v538 hatte es die blauen Flecken ersetzt): Lidschatten-Schimmer, Glitzersterne auf den Wangen, Strass-Träne. Farben #3e4e96/#4a1e62/#2a1240 werden in avatarI umgefärbt */
+const IGLITZ = X => { const st = (x, y, r, f) => `<path d="M${x} ${y - r}L${f1(x + r * .28)} ${f1(y - r * .28)}L${x + r} ${y}L${f1(x + r * .28)} ${f1(y + r * .28)}L${x} ${y + r}L${f1(x - r * .28)} ${f1(y + r * .28)}L${x - r} ${y}L${f1(x - r * .28)} ${f1(y - r * .28)}Z" fill="${f}"/>`;
   return (`<ellipse cx="116" cy="160" rx="46" ry="20" fill="#4a1e62" opacity=".45" filter="url(#BL)"/><ellipse cx="240" cy="150" rx="46" ry="20" fill="#4a1e62" opacity=".45" filter="url(#BL)"/>`
     + [[92, 228, 15], [112, 246, 8], [130, 230, 6], [262, 214, 15], [244, 232, 8], [278, 234, 6], [80, 150, 7], [270, 138, 7]].map(([x, y, r]) => st(x, y, r, '#3e4e96') + st(x, y, r * .45, '#ffffff')).join('')
     + `<path d="M238 198Q246 212 238 220Q230 212 238 198Z" fill="#3e4e96" ${IO} stroke-width="1"/><circle cx="236" cy="210" r="1.6" fill="#fff"/>`).replace(/url\(#BL\)/g, `url(#${X.u}bl)`); };
@@ -4425,7 +4434,10 @@ Object.assign(IACC_BODY, {
     for (const i of [0, 1]) s += irot(ilegC(B, i, B.ky - 120 + i * 60), B.ky - 120 + i * 60, 30, 221 + i * 10) + irot(ilegC(B, i, B.ky + 140 - i * 40), B.ky + 140 - i * 40, 24, 223 + i * 10) + irot(ilegC(B, i, B.cy + 60), B.cy + 60, 22, 229 + i * 10) + irot(ilegC(B, i, B.ay - 90), B.ay - 90, 16, 241 + i * 10);
     s += iveins(X, `M${B.cx - 10} ${B.ny - 30}Q${B.cx + 4} ${B.ny} ${B.cx - 6} ${B.ny + 30}M${B.cx + 14} ${B.ny - 26}Q${B.cx + 22} ${B.ny} ${B.cx + 18} ${B.ny + 26}`);
     return iSkinClip(X, s.replace(/url\(#BL\)/g, `url(#${X.u}bl)`)); },
-  z_blau:() => '', /* seit v536 Glitzer-Grusel-Make-up: nur im Gesicht (IBRFACE) */
+  z_blau:(X, c, part) => { const B = X.B, bc = s => ihex(c) ? s.split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)) : s; if (part === 'arms') return iSkinClip(X, bc(ibruise(iarmC(B, 0, B.pit + 70), B.pit + 70, 26, 311) + ibruise(iarmC(B, 1, B.wr - 90), B.wr - 90, 22, 313) + ibruise(iarmC(B, 1, B.sy + 50), B.sy + 50, 20, 327)).replace(/url\(#BL\)/g, `url(#${X.u}bl)`), 'arms');
+    return iSkinClip(X, bc(ibruise(B.cx + 20, B.ny - 10, 18, 315) + ibruise(B.cx - 40, B.chest - 40, 24, 317) + ibruise(B.cx + 34, B.wy - 10, 30, 319) + ibruise(ilegC(B, 0, B.ky - 60), B.ky - 60, 32, 321) + ibruise(ilegC(B, 1, B.ky + 60), B.ky + 60, 28, 323)
+    + ibruise(ilegC(B, 0, B.ay - 160), B.ay - 160, 22, 325) + ibruise(ilegC(B, 1, B.cy + 110), B.cy + 110, 26, 329)).replace(/url\(#BL\)/g, `url(#${X.u}bl)`)); },
+  z_glitzer:() => '', /* Glitzer-Grusel-Make-up: nur im Gesicht (IGLITZ) */
   w_schnitte:(X, c) => { const B = X.B, k = ihex(c) || '#e8e2d0', dk = shade(k, isLight(k) ? .72 : 1.5); /* seit v536: Mumien-Bandagen statt Schnittwunden */
     const band = (x0, y0, x1, y1, w) => X.G(`M${f1(x0)} ${f1(y0 - w / 2)}L${f1(x1)} ${f1(y1 - w / 2)}L${f1(x1)} ${f1(y1 + w / 2)}L${f1(x0)} ${f1(y0 + w / 2)}Z`, k) + X.LN(`M${f1(x0)} ${f1(y0)}L${f1(x1)} ${f1(y1)}`, dk, 1.4, .6);
     let s = ''; for (const k2 of [0, 1]) { const r = y => iarm(B, y), xa = y => (k2 ? r(y)[3] : r(y)[1]) - 14, xb = y => (k2 ? r(y)[4] : r(y)[2]) + 14; for (const y of [B.pit + 60, B.pit + 110, B.wr - 120, B.wr - 70, B.wr - 24]) s += band(xa(y), y + (k2 ? 10 : -10), xb(y), y + (k2 ? -10 : 10), 22); }
@@ -4441,7 +4453,7 @@ Object.assign(IACC_BODY, {
       + bone(ax(B.sy + 50), B.sy + 50, ax(B.pit + 150), B.pit + 150, 10) + bone(ax(B.pit + 190), B.pit + 190, ax(B.wr - 30), B.wr - 30, 8); }
     return `<g opacity=".92">${iBloodClip(X, s)}</g>`; },
 });
-ITEMS.push({id:'z_haut', cat:'acc', name:'Verweste Zombie-Haut', st:'Horror', nc:120}, {id:'z_blau', cat:'acc', name:'Glitzer-Grusel-Make-up', st:'Halloween', nc:40, thumb:'bust'},
+ITEMS.push({id:'z_haut', cat:'acc', name:'Verweste Zombie-Haut', st:'Horror', nc:120}, {id:'z_blau', cat:'acc', name:'Blaue Flecken', st:'Horror', nc:40}, {id:'z_glitzer', cat:'acc', name:'Glitzer-Grusel-Make-up', st:'Halloween', nc:40, thumb:'face'},
   {id:'w_schnitte', cat:'acc', name:'Mumien-Bandagen', st:'Halloween', nc:70}, {id:'w_biss', cat:'acc', name:'Vampirbiss', st:'Halloween', nc:70, thumb:'bust'}, {id:'w_klaffend', cat:'acc', name:'Skelett zum Aufmalen', st:'Halloween', nc:100}, {id:'w_kopf', cat:'acc', name:'Frankenstein-Narbe', st:'Halloween', nc:60, thumb:'bust'});
 /* Blutgetränkte Stulpen (Inaya, 2026-10-17): Arm- und Beinstulpen, unten durchgeweicht, Blut tropft heraus */
 /* Stulpen mit Kunstblut (seit v536 nur ein paar Spritzer statt durchgetränkt) */
@@ -4648,7 +4660,8 @@ function avatarI(o0, view='full', pose='', lite=false){
   let face = '';
   const drawn = o.eyeform === 'e_leer' || IEYEFORMS.includes(o.eyeform); // andere Augen als Inayas: ihre Augen werden mit Haut abgedeckt
   if (drawn) face += IEYE_COVER(X, ISKIN(o, B)); else face += IEYE_TINT(o.eyes, X);
-  if (o.acc?.z_haut) face += IZFACE(X); if (o.acc?.z_blau) { const c = ihex(o.acc.z_blau) || '#b070e0'; face += IBRFACE(X).split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)); } /* Glitzer-Make-up, ohne eigene Farbe lila */
+  if (o.acc?.z_haut) face += IZFACE(X); if (o.acc?.z_blau) { const c = ihex(o.acc.z_blau); face += c ? IBRFACE(X).split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)) : IBRFACE(X); }
+  if (o.acc?.z_glitzer) { const c = ihex(o.acc.z_glitzer) || '#b070e0'; face += IGLITZ(X).split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)); } /* Glitzer-Make-up, ohne eigene Farbe lila */
   // Flächiges Make-up liegt unter den Augen, Linien und Motive darüber (sonst verdeckt die gezeichnete Lidlinie den Liner)
   const mc = o.makeC || ({lidschatten:'#6a3a8a', neon:'#7ad04a', glitzerlid:'#e8e6ee'})[o.face] || '#141218', under = ['smokey', 'panda', 'corpse', 'lidschatten', 'regenbogen', 'blass', 'kontur', 'rouge', 'zombiepop'].includes(o.face);
   if (IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYES(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
