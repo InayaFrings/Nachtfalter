@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='320f54dc7c35';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ba7b4be448e0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2480,9 +2480,9 @@ function mobWear(id){ // Handy wie Momio: Spiegel und Häkchen sofort, Vorschaub
   document.querySelectorAll('.wardrobe .shopgrid .item').forEach(el => { const t = el.querySelector('.thumb'), it = t && item(t.dataset.id); if (it) el.classList.toggle('on', isOn(o, it)); });
   clearTimeout(wearTimer); wearTimer = setTimeout(() => { if (V.name === 'wardrobe') softRender(); }, 650);
 }
-function catTabs(cur, act, withBody, o){
+function catTabs(cur, act, withBody, o, ok = i => fits(i, o)){
   const sub = FACE_SUB.filter(([k]) => k !== 'beard' || o?.body === 'm');
-  const dressOk = !o || ITEMS.some(i => isDress(i) && fits(i, o)); if (!dressOk) topSub = 'ober'; // Kleider-Reiter nur, wenn es passende Kleider gibt
+  const dressOk = !o || ITEMS.some(i => isDress(i) && ok(i)); if (!dressOk) topSub = 'ober'; // Kleider-Reiter nur, wenn es passende Kleider gibt
   const tabs = (withBody ? [['body','Körper'], ...TABS] : TABS).filter(([, , ts]) => ts !== 'kleid' || dressOk);
   return `<div class="tabs" role="tablist">${tabs.map(([k,l,ts]) => `<button role="tab" data-act="${act}" data-c="${k}" ${ts ? `data-ts="${ts}"` : ''} aria-selected="${(k === cur && (!ts || ts === topSub)) || (k === 'eyeform' && inFace(cur)) || (k === 'bottom' && inBottom(cur))}">${l}</button>`).join('')}</div>`
     + (inBottom(cur) ? `<div class="tabs subtabs" role="tablist" aria-label="Unterteile">${BOTTOM_SUB.map(([k,l,bs]) => `<button role="tab" data-act="${act}" data-c="${k}" ${bs ? `data-bs="${bs}"` : ''} aria-selected="${k === cur && (!bs || bs === bottomSub)}">${l}</button>`).join('')}</div>` : '')
@@ -2778,7 +2778,8 @@ ITEMS.push(
 // Kleidung ist nach Körper getrennt; der Knopf „Klamotten für alle Körper“ zeigt alles (Inaya, 2026-10-10)
 const GCATS = ['top','bottom','jacket','shoes','legw','acc'];
 let showAllG = (() => { try { return localStorage.getItem('nf-allg') === '1'; } catch (e) { return false; } })();
-const fits = (i, o) => showAllG || !i.g || !GCATS.includes(i.cat) || i.g === (o.body === 'm' ? 'm' : 'w');
+const fits = (i, o, all = false) => all || !i.g || !GCATS.includes(i.cat) || i.g === (o.body === 'm' ? 'm' : 'w'); /* „Klamotten für alle Körper“ gibt es seit v550 nur noch in der Mall (all = showAllG) */
+const fitsW = (i, o) => fits(i, o) || !!WAL.d?.inv?.[i.id] || isOn(o, i); /* Garderobe: Gekauftes/Geschenktes fürs andere Geschlecht erscheint ganz normal */
 const allgBtn = () => `<button type="button" class="allgbtn" data-act="allg" aria-pressed="${showAllG}"><span class="knob" aria-hidden="true"></span>Klamotten für alle Körper</button>`;
 const noneFirst = (a, b) => isNoneItem(b) - isNoneItem(a); // „Kein …“-Karte immer vorne, damit man sie gleich findet
 const isNoneItem = i => +!!(i.none || NONE_ITEM[i.cat] === i.id);
@@ -5985,7 +5986,6 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
     <div class="wardrobe">
       <div class="card mirror-card">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}<p class="note">Tipp ein Teil an, um es anzuziehen.</p></div>
       <div class="card"><h2 class="card-h">Garderobe</h2><div class="card-in">
-        ${obCat === 'body' ? '' : allgBtn()}
         <div class="ctabs">${catTabs(obCat, 'ob-cat', true, o)}</div>
         ${obCat === 'body' ? colorPanel(obCat, o, 'ob-color') : ''}
         ${sideBar(obCat, o, 'ob-color')}${items ? `<div class="shopgrid">${items}</div>` : ''}
@@ -9383,7 +9383,7 @@ function profileView(id){
   else if (!u.helper) { // eigene Kommentare und die von Juliet und Andy scrollen zusammen in einem Kasten (Inaya, 2026-10-11)
     const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry${wTheme(c.author) ? ' tp' : ''}" style="${wTheme(c.author)}">${ulink(c.author)} <span data-raw>${etx(c.text)}</span> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
     wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social || PUB && !social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
-      ${own && social ? rwFormHTML('In dein Gästebuch schreiben …') /* eigenes Gästebuch wie bei Freunden */
+      ${own && social ? rwFormHTML('Kommentieren …') /* eigenes Gästebuch wie bei Freunden */
       : `<form class="cform" data-form="wall" data-id="${id}">
         <input type="text" id="w-${id}" placeholder="${own ? 'Etwas in dein Gästebuch schreiben…' : 'Hinterlass ' + esc(u.name) + ' ein paar Zeilen…'}" maxlength="300" aria-label="Gästebuch-Eintrag">
         <button class="btn ghost" type="submit">Eintragen</button>
@@ -9482,7 +9482,7 @@ function shopView(isShop){
   const has = i => ncOwns(i.id); /* alles Bisherige gratis; Shop-Teile erst nach Kauf, Geschenk oder Level */
   const cats = isShop ? CATS.filter(([k]) => k !== 'body') : [...BODY_CAT, ...CATS];
   if (!cats.some(([k]) => k === shopCat)) shopCat = 'back';
-  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && !i.gone && (isShop ? !has(i) : has(i)) && fits(i, u.outfit)).sort(noneFirst);
+  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && !i.gone && (isShop ? !has(i) : has(i)) && fitsW(i, u.outfit)).sort(noneFirst);
   const items = list.map(i => {
     const on = isOn(u.outfit, i);
     const btn = on ? (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id) ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">${MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen'}</button>` : `<button class="btn ghost" disabled>Angezogen</button>`)
@@ -9504,8 +9504,7 @@ function shopView(isShop){
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
       ${isShop ? '' : `<div class="ltools"><button type="button" class="ltool" data-act="lb-open" data-id="${u.id}" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="ltool" data-act="look-save">${LT_SAVE}<span>Look speichern</span></button><button type="button" class="ltool" data-act="undress">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>`}
-      ${isShop || shopCat === 'body' ? '' : allgBtn()}
-      <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit)}</div>
+      <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit, i => fitsW(i, u.outfit))}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${isShop ? '' : sideBar(shopCat, u.outfit, 'color')}${items ? `<div class="shopgrid">${items}</div>` : empty}
       ${!isShop && LB === u.id ? lookModal(u, true) : ''}
@@ -12128,13 +12127,13 @@ function ncCard(id, thumb, tryAct, dot = '', on = false){ const p = NCPRICE?.[id
 function ncBare(){ const o = JSON.parse(JSON.stringify(me().outfit)); undressAll(o); Object.assign(o, {back:'h_kein', front:'p_kein', beard:'b_kein', face:'natur'}); delete o.lipC; return o; }
 function mallView(){ if (!social || !ncShopOk()) return `<section class="ncpage">${ncHead('Mall', true)}${ncWait()}</section>`;
   const bare = ncBare(), shown = MTRY || bare; if (mallCat === 'body') mallCat = 'back';
-  const list = ITEMS.filter(i => i.cat === mallCat && inSub(i) && !i.gone && ncPaid(i) && fits(i, me().outfit)).sort((a, b) => (ncHas(a.id) - ncHas(b.id)) || (a.ex ? -1 : 0) - (b.ex ? -1 : 0) || (a.lv || 0) - (b.lv || 0));
+  const list = ITEMS.filter(i => i.cat === mallCat && inSub(i) && !i.gone && ncPaid(i) && fits(i, me().outfit, showAllG)).sort((a, b) => (ncHas(a.id) - ncHas(b.id)) || (a.ex ? -1 : 0) - (b.ex ? -1 : 0) || (a.lv || 0) - (b.lv || 0));
   const cards = list.map(i => { const [dot, pan] = itemColUI(i, shown, 'nc-color'); return ncCard(i.id, avatar(previewOutfit(bare, i), thumbView(i), '', true), 'nc-try', dot, isOn(shown, i)) + pan; }).join('');
   return `<section class="ncpage mallpg">${ncHead('Mall', true)}<div class="wardrobe mall">
     <div class="card mirror-card">${portrait({outfit:shown}, {frame:'ornament', shape:'bogen'}, 'mirror')}${MTRY ? '' : '<p class="note">Klick auf ein Teil, um es anzuprobieren.</p>'}</div>
     <div class="card"><div class="card-in">
       ${MTRY ? `<div class="row lookbar ncbar2"><button type="button" class="ltool ltsm" data-act="nc-untry">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>` : ''}
-      <div class="ctabs">${catTabs(mallCat, 'nc-cat', false, me().outfit)}</div>
+      ${allgBtn()}<div class="ctabs">${catTabs(mallCat, 'nc-cat', false, me().outfit, i => fits(i, me().outfit, showAllG))}</div>
       <div class="shopgrid ncgrid">${cards}</div></div></div></div></section>`; } /* Coins und Tasche oben im Kopf wie im Möbelhaus (Inaya, 2026-10-18) */
 /* Möbelhaus: alle Möbel; im eigenen Zimmer probestellen, in die Tasche legen, verschenken */
 function moebelView(){ if (!social || !ncShopOk()) return `<section class="ncpage">${ncHead('Möbelhaus', true)}${ncWait()}</section>`;
