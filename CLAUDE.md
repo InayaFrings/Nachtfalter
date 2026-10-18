@@ -271,3 +271,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Möbel: `hw_leichensack` = Ritualkreis mit Kerzen (seit v538, Mumie mochte Inaya nicht), `hw_glieder` = Haufen alter Puppen, `hw_moerder` = Fenster mit Geist, `hw_koepfe` = Hexenküchen-Gläser, `hw_bett` = Altes Krankenhausbett (Design wie vorher mit Gurten, ohne Blut, dafür aufgerissene Matratze mit herausstehender Sprungfeder, seit v537), `hw_lache` = Nebel am Boden, `hw_darmkette` = Kürbis-Lichterkette (`hwPump`), `hw_organkette` = Fledermaus-Lichterkette (`hwBatL`); Sofa und Spind ohne Blut. Wand `blut` = Verwitterte Tapete, Boden `blutfliesen` = Rostige Fliesen, Kacheln und kaputter Boden ohne Blut.
 - Blutschrift „HILF MIR“ (`hw_schrift`, mit `hwHand`/`hwDrips`) ist seit v538 wieder wie vorher: Inaya findet Blut allein ok, entschärft wird nur Verstümmelung, Organe, Wunden.
 - Entfernt: `iwound`, `idrip`, `HW_WALL`, `ovSplat`. `IBLOOD`/`ibc`/`istain` gibt es weiter für Kunstblut.
+
+## Wand voller Kreuze (seit v541)
+
+- Wand-Deko `hw_kreuze` (180 Coins): 13 Kreuze in einem Teil, Formen über `HWX` (latein, lilie, orthodox, knospe) und `hwCross(x, y, Größe, Form, Farbe, {ring, gem, wood})`, jedes an einem Nagel.
