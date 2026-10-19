@@ -421,3 +421,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Neuladen auf fremdem Profil (seit v664): Ist das Profil noch nicht geladen, zeigt `profileView` „Lädt …“ (`.ploadw`) und holt es selbst (`PWAIT`), statt kurz den Salon (`homeView`) zu zeigen. Nach 15 s ohne Profil geht es in den Salon.
 - „Beste Freunde und Partner ändern“ (seit v665) im selben gefüllten Stil wie „Bearbeiten“ (`.pshbtn.bestbtn`).
 - Seit v666: Profil-Knöpfe in genau der Kastenfarbe (`--p-bg`) statt `--p-panel` (Inaya), Beschriftung mittig.
+- Seit v667: Profil-Knöpfe in der Farbe des Seiten-Hintergrunds (`--p-page`/`--p-pagefg`/`--p-pageln` aus `themeStyle`, `t.page`), nicht des Kastens (Inaya).
