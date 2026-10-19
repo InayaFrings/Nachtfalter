@@ -423,3 +423,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v666: Profil-Knöpfe in genau der Kastenfarbe (`--p-bg`) statt `--p-panel` (Inaya), Beschriftung mittig.
 - Seit v667: Profil-Knöpfe in der Farbe des Seiten-Hintergrunds (`--p-page`/`--p-pagefg`/`--p-pageln` aus `themeStyle`, `t.page`), nicht des Kastens (Inaya).
 - Seit v668: Profil-Knöpfe auch mit dem Muster des Seiten-Hintergrunds (`--p-pagepat` aus `t.pagePattern`).
+- Seit v669 (Inaya): Profil-Knöpfe wieder durchsichtig mit Rahmen wie „Bearbeiten“ vor v663 (keine Füllung, kein Muster). Beschriftungen „Befreundet ▾“/„Nachricht“ und das ⋯-Menü bleiben.
