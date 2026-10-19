@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f5878f67d103';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2f8ff141eeef';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2703,6 +2703,54 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 #splash small{position:absolute;bottom:calc(34px + env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;color:var(--muted,#8a8790);font:400 13px/1.3 var(--f-display,system-ui);letter-spacing:.12em;text-transform:lowercase}
 #splash.out{opacity:0;visibility:hidden}
 @keyframes splin{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+
+/* v601 Anmeldung (Inaya, 2026-10-19): Schritte in einer Reihe, ruhigeres Layout */
+.obstep{width:100%;max-width:400px;margin:2px auto 0}
+.obstep li{font:500 12px/1.2 var(--f-display);letter-spacing:.03em}.obstep li span{white-space:nowrap}
+.obstep li>button{all:unset;display:grid;justify-items:center;gap:5px;cursor:pointer;min-width:0;max-width:100%}.obstep li>button:focus-visible i{outline:2px solid var(--fg);outline-offset:2px}
+.obstep li.done span{color:var(--fg);opacity:.8}
+@media (max-width:380px){.obstep li:not(.on) span{visibility:visible}.obstep li{font-size:10.5px}}
+.gate-card{border-radius:22px;gap:18px}
+.gate-card .tabs{margin-top:2px}
+.obwear .obhead .logo-mark{width:min(200px,60%);margin-inline:auto}
+.obwear .obhead .ob-h{font-size:clamp(22px,6vw,30px)}
+@media (max-width:760px){
+  .gate{padding-block:24px}.gate-card{padding:28px 20px 24px}
+  .gate-card .logo-mark.big{width:min(240px,78%)}
+  .obwear .obhead{padding:12px 12px 14px;gap:10px}.obwear .obhead .logo-mark{width:130px}
+  .obwear .wardrobe .mirror-card{height:clamp(180px,27vh,240px)}
+  .obwear .wardrobe .ctabs{top:calc(env(safe-area-inset-top,0px) + clamp(180px,27vh,240px))}
+  /* Begleiter: Auswahl-Knopf klebt unten, kompaktere Karten */
+  .ppick{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  .ppick .ppgo{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;min-width:0;margin:0;box-shadow:0 8px 24px #000c}
+  .ppick .ppgo:disabled{opacity:1;background:var(--paper,#141216);color:var(--muted);border:1px dashed var(--line)}
+  .ppcard{padding:8px 12px}.ppcard .ppfig{width:92px;height:92px}
+  .ppcards{grid-template-columns:1fr}.ppcard{grid-template-columns:92px 1fr}.ppcard .ppfig{grid-row:1/6}
+}
+/* Schlüpfen flach und zweidimensional statt Kugel mit 3D-Glanz (Inaya, 2026-10-19) */
+.phatch{background:#0b0a0d}
+.phrays{-webkit-mask:none;mask:none;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--pg) 18%,transparent) 0 8deg,transparent 8deg 24deg)}
+.phorb{background:var(--pg);border:4px solid #f4f2ee;box-shadow:none;box-sizing:border-box}
+.phcrack{stroke:#0b0a0d;stroke-width:4}
+.phflash{background:var(--pg)}
+.phatch.p3 .phflash{animation:phflash2 .45s steps(3) both}@keyframes phflash2{0%{opacity:.9}100%{opacity:0}}
+.phring{border-width:4px;border-style:solid}
+.phpet svg{filter:none}
+.phname input{border-radius:4px}
+
+/* Einführung im Noctibat-Look: flach, Rahmen statt Glanz, Ornament (Inaya, 2026-10-19) */
+.introv .iart{border:1px solid var(--line);outline:1px solid var(--line-soft,#ffffff14);outline-offset:5px;background:var(--paper,#141216)}
+.introv .iart::before,.introv .iart::after{content:"❦";position:absolute;left:50%;transform:translateX(-50%);font-size:18px;line-height:1;color:var(--muted);background:var(--bg);padding:0 8px;z-index:2}
+.introv .iart::before{top:-14px}.introv .iart::after{bottom:-14px;transform:translateX(-50%) rotate(180deg)}
+.introv .iart{overflow:visible}.ihi{overflow:hidden!important}.introv .ihi::before,.introv .ihi::after{display:none}
+.islide h1{font-weight:400;letter-spacing:.01em}
+.istep li.on i{box-shadow:none}
+.icoin .ncico{animation:ilogo 2.6s ease-in-out infinite}
+.iicon{box-shadow:none;border:2px solid var(--fg)}
+.ipost,.igrid i,.iorb{border-radius:4px}.iorb{border-radius:50%}
+.ibub{border-radius:4px}.ibub.b1{border:1px solid var(--line)}
+.iphone{border-radius:18px}
+.ibtns .btn{border-radius:0}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -6328,8 +6376,9 @@ function inviteHTML(){
 
 function obSteps(cur){
   const keys = ['konto','name','avatar','seite'];
-  return `<ol class="steps">${['Konto','Name','Avatar','Deine Seite'].map((l, i) =>
-    `<li class="${i < cur ? 'done' : i === cur ? 'cur' : ''}">${i < cur ? `<button type="button" class="lnk" data-act="ob-back" data-v="${keys[i]}">${l}</button>` : l}</li>`).join('')}</ol>`;
+  const ok = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'; // Schritte nebeneinander in einer Reihe (Inaya, 2026-10-19)
+  return `<ol class="istep obstep" aria-label="Schritte">${['Konto','Name','Avatar','Deine Seite'].map((l, i) => { const in_ = `<i>${i < cur ? ok : i + 1}</i><span>${l}</span>`;
+    return `<li class="${i < cur ? 'done' : i === cur ? 'on' : ''}"${i === cur ? ' aria-current="step"' : ''}>${i < cur ? `<button type="button" data-act="ob-back" data-v="${keys[i]}" aria-label="Zurück zu ${l}">${in_}</button>` : in_}</li>`; }).join('')}</ol>`;
 }
 function regView(){
   return `<div class="gate"><div class="card gate-card">
@@ -6341,7 +6390,6 @@ function regView(){
       <button role="tab" data-act="auth" data-v="login" aria-selected="${authMode==='login'}">Anmelden</button>
     </div>
     ${authMode === 'reg' ? `<form data-form="reg">
-      <label class="f" for="reg-lang"><span class="lbl">Sprache · Language</span><select id="reg-lang" data-raw>${Object.entries(LANGS).map(([k, l]) => `<option value="${k}"${k === LANG ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
       <label class="f" for="reg-contact"><span class="lbl">E-Mail-Adresse</span><input id="reg-contact" type="text" autocomplete="username" value="${esc(S.pending?.contact || '')}" required></label>
       ${birthInput('reg-birth', S.pending?.birth || '')}
       <label class="f" for="reg-pw"><span class="lbl">Passwort (mindestens 6 Zeichen)</span><input id="reg-pw" type="password" autocomplete="new-password" minlength="6" required></label>
@@ -6410,8 +6458,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
   }).join('');
   return `<div class="obwear">
     <div class="card obhead">${logoSVG()}${obSteps(2)}
-      <h1 class="ob-h">Gestalte deinen Avatar</h1>
-      <p class="note">Fang bei „Körper“ an: Mädchen oder Junge. Danach Haare, Kleidung und Schmuck. Alles ist gratis und jede Farbe frei wählbar.</p></div>
+      <h1 class="ob-h">Gestalte deinen Avatar</h1></div>
     <div class="wardrobe">
       <div class="card mirror-card">${portrait({outfit:o}, {frame:'ornament',shape:'bogen'}, 'mirror')}<p class="note">Tipp ein Teil an, um es anzuziehen.</p></div>
       <div class="card"><h2 class="card-h">Garderobe</h2><div class="card-in">
@@ -13652,8 +13699,8 @@ function renderInner(){
   if (birthProblem(S.users[S.me].birth)) { const rb = regBirth(); if (rb) { S.users[S.me].birth = rb; save(); } }
   if (tooYoung()) { applyPage(null); app.innerHTML = youngView(); return; }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
-  if (introNeed()) { applyPage(null); app.innerHTML = introView(); return; } /* Einführung für neue Leute (v566) */
-  if (petNeedPick()) { applyPage(null); app.innerHTML = petPickView(); return; } /* Begleiter wählen, einmal und für immer */
+  if (introNeed() && !obDesign) { applyPage(null); app.innerHTML = introView(); return; } /* Einführung für neue Leute (v566), erst nach Schritt 4 „Deine Seite“ (Inaya, 2026-10-19) */
+  if (!obDesign && petNeedPick()) { applyPage(null); app.innerHTML = petPickView(); return; } /* Begleiter wählen, einmal und für immer */
   if (V.name === 'games') V = {name:'home', arg:null}; /* Minigames seit v565 entfernt (Inaya) */
   const wide = ['pet','design','shop','wardrobe','friends','find','room','chats','visit','browse','shopping','mall','moebel'].includes(V.name);
   const body = {pet:petView, home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, archive:archiveView, visit:visitView, shopping:shoppingView, mall:mallView, moebel:moebelView}[V.name] || homeView;
