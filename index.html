@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4273ea9cbd8c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='737b63c587b7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7285,7 +7285,13 @@ function snapSave(){ if (!PUB || !S.me || !snapLive()) return; const now = Date.
   const d = {me:S.me, ts:now, ch, fr:{mine:FR.mine, inc:FR.inc, incTs:FR.incTs}, nt, u, st};
   try { localStorage.setItem(snapKey(), JSON.stringify(d)); } catch { try { delete d.u; localStorage.setItem(snapKey(), JSON.stringify(d)); } catch {} } }
 const snapUser = id => { const x = SNAP.d?.u?.[id]; return x ? {id, remote:true, name:x.n || 'Jemand', handle:x.h || '', outfit:normOutfit({...(x.o || {})}), theme:normTheme({...BLANK_THEME()})} : null; };
-function navScroll(y){ if (!(y > 0)) return; NAVR.lastY = y; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (!NAVR.touched) window.scrollTo(0, y); }, ms)); }
+function navScroll(y){ if (!(y > 0)) return; NAVR.lastY = y; let done = false; [0, 250, 700, 1500, 2600].forEach(ms => setTimeout(() => { if (NAVR.touched || done) return; if (Math.abs(window.scrollY - y) < 2) { done = true; return; } window.scrollTo(0, y); }, ms)); } /* v621: nur bis die Stelle einmal erreicht ist, danach hält ANC die Stelle */
+/* v621: Beiträge bleiben stehen, wenn darüber etwas nachlädt (Bilder, Kommentare, neue Reihenfolge). Safari kennt kein Scroll-Anchoring, darum selbst: der oberste sichtbare Beitrag behält seine Höhe am Bildschirm. */
+const ANC = {id:null, top:0, fix:false};
+function ancFind(){ if (ANC.fix) return; ANC.id = null; if (window.scrollY < 8) return; for (const el of document.querySelectorAll('#app article.post[data-pid]')) { const r = el.getBoundingClientRect(); if (r.bottom > 90) { ANC.id = el.dataset.pid; ANC.top = r.top; return; } } }
+function ancFix(){ if (!ANC.id) return; const el = document.querySelector(`#app article.post[data-pid="${CSS.escape(ANC.id)}"]`); if (!el) { ANC.id = null; return; } const d = el.getBoundingClientRect().top - ANC.top; if (Math.abs(d) > 1) { ANC.fix = true; window.scrollBy(0, d); requestAnimationFrame(() => { ANC.fix = false; }); } }
+addEventListener('scroll', ancFind, {passive:true});
+if (window.ResizeObserver) { const ancObs = () => { const app = document.getElementById('app'); if (app) new ResizeObserver(() => ancFix()).observe(app); }; if (document.readyState === 'loading') addEventListener('DOMContentLoaded', ancObs); else ancObs(); }
 ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { NAVR.touched = true; }, {passive:true, once:true}));
 addEventListener('scroll', () => { clearTimeout(NAVR.t); NAVR.t = setTimeout(navSave, 400); }, {passive:true});
 addEventListener('pagehide', () => { navSave(); SNAP.tSave = 0; snapSave(); });
@@ -9363,7 +9369,7 @@ function postHTML(p){
   const lk = new Set(Object.values(p.reactions || {}).flat()), reacts = likeBtn(`data-act="react" data-id="${p.id}"`, lk.has(S.me), lk.size);
   const cm = p.comments.map(c => cbub(c.author, S.users[c.author]?.name || 'Jemand', c.text, c.ts, '')).join('');
   const pt = a.theme && a.theme.box ? postTheme(a.theme) : '';
-  return `<article class="post${pt ? ' tp' : ''}"${pt ? ` style="${pt}"` : ''}>
+  return `<article class="post${pt ? ' tp' : ''}" data-pid="${esc(p.author + '_' + p.id)}"${pt ? ` style="${pt}"` : ''}>
     ${(co => `<header class="ph">${co && S.users[co] ? `<span class="pcam2">${cameo(a)}${cameo(S.users[co])}</span>` : cameo(a)}<div><span class="who">${ulinkH(p.author)}${co ? ` <span class="pco">&amp;</span> ${ulinkH(co)}` : ''}</span><span class="meta">${a.helper ? (co ? 'Helfer' : a.helper) + ' · ' : ''}`)(a.helper && HELPER_POSTS.find(x => x.id === p.id)?.co)}${ago(p.ts)}${p.edited ? ' · bearbeitet' : ''}${p.pin && pinCtx ? ' · <span class="ppin">' + PIN_SVG + 'angepinnt</span>' : ''}</span>${p.mu && stMuPv(p.mu) ? phMuHTML(p.mu) + muSrcHTML(p.mu) : ''}</div>${p.author === S.me && !p.remote ? (postDelAsk === p.id ? '' : `<span class="pdel row"><button class="lnk pmore" data-act="post-menu" data-id="${p.id}" aria-expanded="${postMenu === p.id}" aria-label="Mehr" title="Mehr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></span>`) : `<span class="pdel row">${piKey(p) && !a.helper ? `<button class="lnk prep" data-act="rep-open" data-k="${esc(piKey(p))}" aria-label="Beitrag melden" title="Melden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg></button>` : ''}${amOwner && piKey(p) && !a.helper ? `<button class="lnk prep" data-act="post-hide" data-id="${esc(piKey(p))}" aria-label="Beitrag für alle löschen" title="Für alle löschen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</span>`}</header>${postDelAsk === p.id && p.author === S.me && !p.remote ? `<div class="pdelask"><span>Diesen Beitrag wirklich löschen?</span><span class="row"><button class="btn ghost" data-act="post-del-no">Nein</button><button class="btn" data-act="post-del-yes" data-id="${p.id}">Ja, löschen</button></span></div>` : ''}
     ${postEdit === p.id ? `<form class="pedit" data-form="pedit" data-id="${p.id}" style="display:grid;gap:8px">
       ${p.type === 'video' ? `<input type="url" id="pe-url-${p.id}" value="${esc(p.url || '')}" aria-label="Link zum Film">` : ''}
@@ -13522,9 +13528,10 @@ async function loadNewbies(){
 const BR = {ids:null, n:30, busy:false};
 async function loadBrowse(){
   if (!social || BR.busy) return; BR.busy = true;
-  try { const docs = (await social.db.collection('profiles').orderBy('joined', 'desc').limit(BR.n + 1).get()).docs; /* v618: Neueste Mitglieder zuerst (Inaya) */
-    BR.ids = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); BR.more = docs.length > BR.n;
-  } catch { BR.ids = BR.ids || []; }
+  /* v621: erst sofort vom Gerät (Zwischenspeicher), dann frisch vom Server */
+  const q = social.db.collection('profiles').orderBy('joined', 'desc').limit(BR.n + 1), put = docs => { BR.ids = docs.filter(d => d.id !== social.uid && d.data().handle && !isTestHandle(d.data().handle)).map(d => { PROF[d.id] = d.data(); return d.id; }); BR.more = docs.length > BR.n; };
+  try { const c = await q.get({source:'cache'}); if (c.docs.length > 1) { put(c.docs); if (V.name === 'browse') softRender(); } } catch {}
+  try { put((await q.get()).docs); } catch { BR.ids = BR.ids || []; }
   BR.busy = false; if (V.name === 'browse') softRender();
 }
 const browseBtn = () => `<button class="btn ghost brbtn" data-act="browse"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5"/><rect x="13.5" y="3" width="7.5" height="7.5"/><rect x="3" y="13.5" width="7.5" height="7.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5"/></svg>Stöbern</button>`;
@@ -13587,7 +13594,7 @@ function srBody(){
   }
   return `<div class="srtabs" role="tablist">${tab('u', 'User')}${tab('h', 'Hashtags')}</div>${body}`;
 }
-function findView(){ // eine Suche für User und Hashtags, Vorschläge schon beim Tippen; fremde Profile nur über Stöbern (Inaya, 2026-10-12)
+function findView(){ if (social && !BR.ids && !BR.busy) setTimeout(loadBrowse, 400); /* v621: Stöbern schon vorladen */ // eine Suche für User und Hashtags, Vorschläge schon beim Tippen; fremde Profile nur über Stöbern (Inaya, 2026-10-12)
   return `<div class="card"><h2 class="card-h">Suchen</h2><div class="card-in">
     <form data-form="fsearch" class="srform"><label class="musearch srbar"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.search}</svg><input type="search" id="fs-q" placeholder="Nutzer oder #Hashtag suchen" value="${esc(SR.q)}" aria-label="Nutzer oder Hashtag suchen" autocapitalize="none" spellcheck="false" autocomplete="off" enterkeyhint="search"></label></form>
     <div id="srres">${srBody()}</div>
@@ -13769,7 +13776,7 @@ function scrollXs(root){
   });
   return out;
 }
-function render(){ renderInner(); if (VREC || document.getElementById('vrbar')) voicePaint(); if (VSEND.length) voicePend(); }
+function render(){ const ancV = V.name + '|' + V.arg; renderInner(); if (ancV === ANC.v) ancFix(); else ANC.id = null; ANC.v = ancV; if (VREC || document.getElementById('vrbar')) voicePaint(); if (VSEND.length) voicePend(); }
 function renderInner(){
   if (softT) { clearTimeout(softT); softT = null; }
   const app = document.getElementById('app');
@@ -14503,7 +14510,7 @@ document.addEventListener('click', async e => {
   else if (a === 'pin') { document.querySelector('.pinpop')?.remove(); const key = b.dataset.k === 'f' ? 'pinF' : 'pinC', l = S[key] || [];
     if (!l.includes(id) && l.length >= pinMax(b.dataset.k)) { toast(b.dataset.k === 'f' ? 'Du kannst höchstens 4 Freunde anpinnen.' : `Du kannst höchstens ${PIN_MAX} anpinnen.`); return; }
     S[key] = l.includes(id) ? l.filter(x => x !== id) : [...l, id]; save(); if (key === 'pinF') publishProfile(); render(); toast(S[key].includes(id) ? (key === 'pinF' ? 'Angepinnt, steht jetzt auf deinem Profil' : 'Angepinnt') : 'Gelöst'); return; }
-  else if (a === 'browse') { fpOpen = false; BR.ids = null; go('browse'); }
+  else if (a === 'browse') { fpOpen = false; go('browse'); if (BR.ids) loadBrowse(); } /* v621: alte Liste sofort zeigen, im Hintergrund auffrischen */
   else if (a === 'browse-more') { BR.n += 30; loadBrowse(); }
   else if (a === 'post-share') { sharePost(id, b.dataset.a); }
   else if (a === 'post-del') { postMenu = null; postDelAsk = b.dataset.id; postEdit = null; render(); }
