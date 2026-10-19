@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9593acab0d79';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='34c6cbc597d6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -145,10 +145,10 @@
       const l = l0.filter(x => x.uid !== user.uid || x.slot === SLOT), e = {...info, slot: SLOT, uid: user.uid, ts: Date.now()}, i = l.findIndex(x => x.slot === SLOT);
       if (i < 0) l.push(e); else l[i] = e; saveAccts(l); },
     switchTo(sl){ if (sl === SLOT || !accts().some(x => x.slot === sl)) return; go(sl); },
-    addNew(){ if (accts().length >= 8) return false; let sl; do { sl = 'a' + Date.now().toString(36).slice(-6) + Math.random().toString(36).slice(2, 4); } while (accts().some(x => x.slot === sl)); go(sl); return true; },
+    addNew(){ if (accts().length >= 8) return false; let sl; do { sl = 'a' + Date.now().toString(36).slice(-6) + Math.random().toString(36).slice(2, 4); } while (accts().some(x => x.slot === sl)); LS.set('nf-prev', SLOT); go(sl); return true; },
     async remove(sl){ if (sl === SLOT) return; saveAccts(accts().filter(x => x.slot !== sl)); await dropSlot(sl); },
     forget(){ const l = accts().filter(x => x.slot !== SLOT); saveAccts(l); LS.set('nf-acct', l[0] ? l[0].slot || null : null); }, // nach Abmelden: zum nächsten gespeicherten Account
-    back(){ const l = accts().filter(x => x.slot !== SLOT); return l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
+    back(){ const l = accts().filter(x => x.slot !== SLOT), p = LS.get('nf-prev'); return l.find(x => x.slot === p) || l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
     onRecovery(cb){ recCb = cb; if (RESET) cb(); },
     get recovering(){ return !!RESET; }
   };
@@ -2758,7 +2758,7 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
   .obbar{display:block;position:sticky;top:0;z-index:950;background:var(--bg);border-bottom:1px solid var(--line-soft,#ffffff1a);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 8px}
   .obbar .obstep{margin:0 auto}
   .gate-card>.obstep,.obhead>.obstep,.obwelcome .obstep{display:none}
-  .gate{padding-block:16px 32px;min-height:auto}
+  .gate:has(.obbar),.obbar~.gate,#app:has(.obbar) .gate{padding-block:16px 32px;min-height:auto} /* Startseite bleibt mittig (Inaya, 2026-10-19) */
   .obwear .wardrobe .mirror-card{top:calc(64px + env(safe-area-inset-top,0px))}
   .obwear .wardrobe .ctabs{top:calc(64px + env(safe-area-inset-top,0px) + clamp(180px,27vh,240px))}
   .rail.obrail>*:not(.obstep){display:none!important}

@@ -135,10 +135,10 @@
       const l = l0.filter(x => x.uid !== user.uid || x.slot === SLOT), e = {...info, slot: SLOT, uid: user.uid, ts: Date.now()}, i = l.findIndex(x => x.slot === SLOT);
       if (i < 0) l.push(e); else l[i] = e; saveAccts(l); },
     switchTo(sl){ if (sl === SLOT || !accts().some(x => x.slot === sl)) return; go(sl); },
-    addNew(){ if (accts().length >= 8) return false; let sl; do { sl = 'a' + Date.now().toString(36).slice(-6) + Math.random().toString(36).slice(2, 4); } while (accts().some(x => x.slot === sl)); go(sl); return true; },
+    addNew(){ if (accts().length >= 8) return false; let sl; do { sl = 'a' + Date.now().toString(36).slice(-6) + Math.random().toString(36).slice(2, 4); } while (accts().some(x => x.slot === sl)); LS.set('nf-prev', SLOT); go(sl); return true; },
     async remove(sl){ if (sl === SLOT) return; saveAccts(accts().filter(x => x.slot !== sl)); await dropSlot(sl); },
     forget(){ const l = accts().filter(x => x.slot !== SLOT); saveAccts(l); LS.set('nf-acct', l[0] ? l[0].slot || null : null); }, // nach Abmelden: zum nächsten gespeicherten Account
-    back(){ const l = accts().filter(x => x.slot !== SLOT); return l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
+    back(){ const l = accts().filter(x => x.slot !== SLOT), p = LS.get('nf-prev'); return l.find(x => x.slot === p) || l[0] || null; }, // beim Hinzufügen: zurück zum vorherigen Account
     onRecovery(cb){ recCb = cb; if (RESET) cb(); },
     get recovering(){ return !!RESET; }
   };
