@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7267ed588875';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3400ad05ce9e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7436,7 +7436,7 @@ function rail(){
   const tabs = [['home','Salon'],['find','Suchen'],['shopping','Shop'],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN + FR.inc.filter(reqOpen).length ? '⁠<i class="dot" aria-label="neu"></i>' : '')],['create','Erstellen', 'fab-post'],['profile','Profil' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
   const cur = ['design', 'room', 'wardrobe', 'pet', 'friends', 'settings', 'archive'].includes(V.name) ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'profile' && V.arg && V.arg !== S.me ? '' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}${obDesign ? ' obrail' : ''}">${obDesign ? obSteps(3) : ''}
-    ${!mhRoot() ? `<button type="button" class="mfab mback2" data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
+    ${!mhRoot() ? `<button type="button" class="mfab mback2" ${chSubPg() ? chSubBack() : `data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}"`} aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
       : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}
     ${mobHead()}
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
@@ -7456,7 +7456,7 @@ function mobTop(nNew, ntN){ // Handy: Freunde und Chats oben rechts wie bei Momi
   const b = (act, v, ico, label, n) => `<button class="mti" data-act="${act}" ${v ? `data-v="${v}"` : ''} aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>${n ? `<i class="dot" aria-label="${n} neu"></i>` : ''}</button>`;
   /* Handy oben (Inaya, 2026-10-16): Mitteilungen, Minigames, Einstellungen; Chats und Suche sind unten, Freunde über die Freundesanzahl im Profil */
   /* seit v559 wie bei Insta: nur noch die Glocke, schlicht wie das Plus links; Minigames und Einstellungen stehen im eigenen Profil neben „Profil bearbeiten“ */
-  if (MH_PAGES[V.name]) return '<div class="mtop"><span class="mti round" aria-hidden="true" style="visibility:hidden"></span></div>';
+  if (MH_PAGES[V.name] || chSubPg()) return '<div class="mtop"><span class="mti round" aria-hidden="true" style="visibility:hidden"></span></div>';
   if (V.name === 'profile' && (!V.arg || V.arg === S.me)) return `<div class="mtop">${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', newMembers()).replace('class="mti"', 'class="mti round"')}</div>`; /* eigenes Profil: Zahnrad statt Glocke (Inaya) */
   return `<div class="mtop">${b('nav', 'notifs', MOB_ICONS.bell, 'Mitteilungen', ntN + reqs).replace('class="mti"', `class="mti round${V.name === 'notifs' ? ' on' : ''}"`)}</div>`;
 }
@@ -7477,7 +7477,9 @@ SPL.iv = setInterval(() => { if (!(splReady() || Date.now() - SPL.t0 > 4000)) re
 const MH_PAGES = {notifs:'Mitteilungen', settings:'Einstellungen', browse:'Stöbern', pet:'Begleiter', wardrobe:'Garderobe', room:'Zimmer', friends:'Freunde', mall:'Mall', moebel:'Möbelhaus', archive:'Archiv', visit:'Zimmer'};
 const MH_KEEP = {notifs:1, settings:1}; /* aus der Kopfzeile geöffnet: Verlauf bleibt */
 const MH_UP = {mall:'shopping', moebel:'shopping', browse:'find', pet:'profile', wardrobe:'profile', room:'profile', friends:'profile', settings:'profile', archive:'profile', design:'profile', notifs:'home'}; /* wohin der Pfeil führt, wenn es keinen Verlauf gibt (z. B. nach dem Neuladen) */
-const mhRoot = () => ['home', 'shopping', 'chats', 'find'].includes(V.name) || (V.name === 'profile' && (!V.arg || V.arg === S.me));
+const chSubPg = () => V.name === 'chats' && ['new', 'group', 'gadd'].includes(CH.mode); /* v633: Chat-Unterseiten: Pfeil oben statt Plus, ohne Glocke (Inaya) */
+const chSubBack = () => CH.mode === 'gadd' && CH.open ? `data-act="chat-open" data-id="${esc(CH.open)}"` : CH.mode === 'group' && CH.gdraft?.id ? `data-act="chat-open" data-id="${esc(CH.gdraft.id)}"` : 'data-act="chat-back"';
+const mhRoot = () => !chSubPg() && ['home', 'shopping', 'chats', 'find'].includes(V.name) || (V.name === 'profile' && (!V.arg || V.arg === S.me));
 setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me) softRender(); } }, 9000);
 function mobHead(){
   if (MH_PAGES[V.name]) return `<div class="mhead"><b class="mhtitle">${MH_PAGES[V.name]}</b></div>`;
@@ -10538,7 +10540,7 @@ function chatsView(){
   if (CH.mode === 'gadd') { // Jedes Mitglied darf nach dem Erstellen noch Freunde dazuholen (Inaya, 2026-10-10)
     const c = CH.list.find(x => x.id === CH.open), cand = c && !c.pub ? friends.filter(f => !c.members.includes(f.id)) : [];
     const mems = c ? c.members.filter(m => m !== social.uid) : []; // Mitglieder wieder entfernen (Inaya, 2026-10-10)
-    right = `<form data-form="gadd" class="gform"><button type="button" class="navback" data-act="chat-open" data-id="${esc(CH.open || '')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Zurück zum Chat</span></button><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
+    right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>
       <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : whoH(c.createdBy)}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span class="gmwho"><button type="button" class="cameo gmav" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(chatWho(id))}">${gmPic(id)}</button><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span></span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
       ${c?.pub ? '<p class="note">In öffentliche Gruppen kann man niemanden hinzufügen. Jeder tritt selbst bei.</p>' : `<h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
       ${cand.length > 1 ? '<label class="musearch gmq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="gmqi" placeholder="Freunde suchen …" aria-label="Freunde suchen" autocomplete="off"></label>' : ''}${cand.length ? cand.map(f => `${frPickHTML(f, 'ga-mem', false)}`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}`}
@@ -10576,7 +10578,7 @@ function chatsView(){
         ${chatTab === 'priv' ? `<p class="lbl" style="margin:14px 0 0">Helfer</p>
         ${['juliet', 'andy'].map(id => `<button class="clist ${CH.mode === 'helper' && CH.helper === id ? 'on' : ''}" data-act="helper-chat" data-id="${id}"><b>${esc(S.users[id].name)}${hmark(S.users[id])}</b>${hNew(id) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${etx(hLast(id))}</small></button>`).join('')}` : ''}
       </div>
-      <div class="chatmain">${CH.mode ? '<button class="btn ghost mback" data-act="chat-back">← Alle Chats</button>' : ''}${right}</div>
+      <div class="chatmain">${right}</div>
     </div>
     ${chatTab === 'priv' || chatTab === 'group' ? `<p class="note">${E2_LOCK} Deine Nachrichten sind <b style="font-weight:600">Ende-zu-Ende-verschlüsselt</b></p>` : ''}
   </div></div>`;
@@ -10622,7 +10624,7 @@ function groupForm(friends){
       <header class="ch-head"><div><b class="ch-name" id="g-prevname">${esc(g.dm ? (who[0] || 'Freund') : (g.name || 'Eure Gruppe'))}</b>${g.dm ? '' : `<small class="muted">${esc(['Du', ...who].join(', '))}</small>`}</div></header>
       <div class="chat msgs"${bgImgStyle(g.theme.bg ? g.bgNew || chBg({id:g.id, theme:g.theme}) : '')}><div class="bubble them">${g.dm ? '' : `<small class="who">${esc(who[0] || 'Freundin')}</small>`}${etx('Wer kommt heute Abend mit auf den Friedhof? :lach:')}<small class="meta">vor 2 Min.</small></div><div class="bubble me">Ich bin dabei!<small class="meta">gerade eben</small></div></div>
     </section></div>`;
-  return `<form data-form="group" class="gform">${g.id ? `<button type="button" class="navback" data-act="chat-open" data-id="${esc(g.id)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Zurück zum Chat</span></button>` : ''}<h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
+  return `<form data-form="group" class="gform"><h3 class="ch-h">${g.dm ? 'Chat gestalten' : g.id ? 'Gruppe bearbeiten' : g.pub ? 'Neue öffentliche Gruppe' : 'Neue Gruppe'}</h3>${prev}
     ${g.dm ? '' : `<label class="f" for="g-name"><span class="lbl">Name der Gruppe</span><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" required></label>
       <div class="f gpicrow"><span class="lbl">Gruppenbild</span><span class="row" style="gap:12px;align-items:center"><span class="chav big">${safePic(g.pic) ? `<img src="${esc(safePic(g.pic))}" alt="">` : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg>'}</span><label class="btn ghost filebtn">${g.pic ? 'Bild ändern' : 'Bild wählen'}<input type="file" id="g-pic" accept="image/*" hidden></label>${g.pic ? '<button type="button" class="lnk" data-act="g-pic-x">Entfernen</button>' : ''}</span></div>`}
     ${g.pub && !g.id ? '<p class="note">Öffentliche Gruppe: Jeder kann sie finden und beitreten. Name und Farbe ändern und Leute entfernen kannst nur du als Admin.</p>' : ''}
