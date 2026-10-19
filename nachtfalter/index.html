@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0de16b3057ff';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='db338cf8e0c0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -13836,51 +13836,69 @@ const PET_KINDS = {
   rabe:{name:'Rabe', typ:'Sturm', desc:'Klug, frech und sammelt alles, was glitzert.', grp:'Die Rabenschar', acc:'den Raben', born:'Dein Rabe ist geschlüpft!', ask:'Wie soll er heißen?', nick:'Krah', fav:'nuesse', c:'#232a3b', glow:'#8fb4ff'},
 };
 const PET_IDS = ['fled', 'katze', 'rabe'];
-/* Seit v571 (Inaya): mit Farbe, aber flach wie ein Sticker: keine Schatten, kein Glanz, keine Verläufe */
-/* Augen je nach Stimmung: happy, love (Bögen), sleep (zu), sad (traurig), eat (Mund offen, Augen zu) */
-function petEyes(m, xs, y, o){ const {r = 12, iris = '#1a1420', hi = '#fff', sclera = '#fbf7ff'} = o || {};
-  return xs.map((x, i) => {
-    if (m === 'love' || m === 'eat') return `<path d="M${x - r} ${y + 3}Q${x} ${y - r + 1} ${x + r} ${y + 3}" fill="none" stroke="#120e16" stroke-width="4" stroke-linecap="round"/>`;
-    if (m === 'sleep') return `<path d="M${x - r} ${y}Q${x} ${y + r * .7} ${x + r} ${y}" fill="none" stroke="#120e16" stroke-width="3.6" stroke-linecap="round"/>`;
-    const dy = m === 'sad' ? 3 : 0, br = m === 'sad' ? `<path d="M${x - r + (i ? 2 : 0)} ${y - r - 6 + (i ? 4 : 0)}L${x + r - (i ? 0 : 2)} ${y - r - 6 + (i ? 0 : 4)}" stroke="#120e16" stroke-width="3" stroke-linecap="round"/>` : '';
-    return `<g class="pblink"><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 1.12}" fill="${sclera}" stroke="#120e16" stroke-width="2"/><circle cx="${x + (i ? -1.5 : 1.5)}" cy="${y + 2 + dy}" r="${r * .72}" fill="${iris}"/><circle cx="${x + (i ? -1.5 : 1.5)}" cy="${y + 3 + dy}" r="${r * .4}" fill="#0c0a10"/><circle cx="${x - r * .28}" cy="${y - r * .3 + dy}" r="${r * .3}" fill="${hi}"/><circle cx="${x + r * .3}" cy="${y + r * .38 + dy}" r="${r * .13}" fill="${hi}"/></g>${br}`;
-  }).join(''); }
-const petMouth = (m, x, y, fang) => m === 'eat' ? `<ellipse class="pchew" cx="${x}" cy="${y + 3}" rx="7" ry="6" fill="#5a1a2a" stroke="#120e16" stroke-width="2"/>`
-  : m === 'sad' ? `<path d="M${x - 6} ${y + 5}Q${x} ${y - 1} ${x + 6} ${y + 5}" fill="none" stroke="#120e16" stroke-width="2.6" stroke-linecap="round"/>`
-  : `<path d="M${x - 8} ${y}Q${x - 4} ${y + 6} ${x} ${y + 1}Q${x + 4} ${y + 6} ${x + 8} ${y}" fill="none" stroke="#120e16" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>${fang ? `<path d="M${x + 2} ${y + 3}L${x + 4.5} ${y + 9}L${x + 6} ${y + 2.5}Z" fill="#fff" stroke="#120e16" stroke-width="1.2" stroke-linejoin="round"/>` : ''}`;
-const petBlush = (xs, y, c = '#f08aae') => xs.map(x => `<ellipse cx="${x}" cy="${y}" rx="8" ry="4.6" fill="${c}" opacity=".55"/>`).join('');
+/* v571 (Inaya): mit Farbe, aber flach wie ein Sticker: keine Schatten, kein Glanz, keine Verläufe */
+/* Seit v644 (Inaya): Stofftier-Look wie geflickte Kuscheltiere: dicke schwarze Linien, Nähte, Flicken, ein X-Auge und ein Knopf-Auge. Eigene Entwürfe, flach ohne Verläufe */
+const PO = '#141016';
+/* Naht: Linie mit Querstichen */
+const pStl = (x1, y1, x2, y2, n, s = 4.5, c = PO, w = 2.2) => { const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, px = -dy / L * s, py = dx / L * s; let d = `M${x1} ${y1}L${x2} ${y2}`;
+  for (let i = 0; i < n; i++) { const t = (i + .5) / n, cx = x1 + dx * t, cy = y1 + dy * t; d += `M${(cx - px).toFixed(1)} ${(cy - py).toFixed(1)}L${(cx + px).toFixed(1)} ${(cy + py).toFixed(1)}`; }
+  return `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`; };
+const pX = (x, y, s, w = 4, c = PO) => `<path d="M${x - s} ${y - s}L${x + s} ${y + s}M${x + s} ${y - s}L${x - s} ${y + s}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+const pPatch = (x, y, w, h, r, c, dc) => `<g transform="translate(${x} ${y}) rotate(${r})"><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="2" fill="${c}" stroke="${PO}" stroke-width="2.6"/><rect x="${-w / 2 + 3.5}" y="${-h / 2 + 3.5}" width="${w - 7}" height="${h - 7}" fill="none" stroke="${dc}" stroke-width="1.6" stroke-dasharray="3 2.6"/></g>`;
+const pHeart = (x, y, s, c) => `<path d="M${x} ${y + s * .9}C${x - s * 1.4} ${y} ${x - s * .9} ${y - s} ${x} ${y - s * .35}C${x + s * .9} ${y - s} ${x + s * 1.4} ${y} ${x} ${y + s * .9}Z" fill="${c}" stroke="${PO}" stroke-width="2"/>`;
+const pPin = (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r})"><path d="M0 0V-18A4 4 0 0 1 8 -18V-3" fill="none" stroke="${PO}" stroke-width="5" stroke-linecap="round"/><path d="M0 0V-18A4 4 0 0 1 8 -18V-3" fill="none" stroke="#d4d4dc" stroke-width="2.4" stroke-linecap="round"/><circle cx="0" cy="1" r="3" fill="#d4d4dc" stroke="${PO}" stroke-width="1.6"/></g>`;
+/* Augen je nach Stimmung: links immer ein aufgesticktes X, rechts ein großes Knopf-Auge. happy, love (Herz), sleep (zu), sad (Träne), eat (zugekniffen) */
+function petEyes(m, xs, y, o){ const {r = 13, xc} = o || {}, [xl, xr] = xs;
+  const left = xc ? pX(xl, y, r * .62, 7.4) + pX(xl, y, r * .62, 3.8, xc) : pX(xl, y, r * .62, 4.6); /* auf dunklem Stoff mit hellem Garn */
+  let right;
+  if (m === 'love') right = pHeart(xr, y, r * .8, '#e8436e');
+  else if (m === 'eat') right = `<path d="M${xr - r} ${y + 2}Q${xr} ${y - r * .8} ${xr + r} ${y + 2}" fill="none" stroke="${PO}" stroke-width="4.2" stroke-linecap="round"/>`;
+  else if (m === 'sleep') right = `<path d="M${xr - r} ${y}Q${xr} ${y + r * .7} ${xr + r} ${y}" fill="none" stroke="${PO}" stroke-width="4" stroke-linecap="round"/>`;
+  else { const dy = m === 'sad' ? r * .35 : 0;
+    right = `<g class="pblink"><ellipse cx="${xr}" cy="${y}" rx="${r}" ry="${r * 1.15}" fill="#fbf8f0" stroke="${PO}" stroke-width="3.4"/><circle cx="${xr - r * .2}" cy="${y + r * .2 + dy}" r="${r * .4}" fill="${PO}"/><circle cx="${xr - r * .35}" cy="${y + dy}" r="${r * .12}" fill="#fff"/></g>${m === 'sad' ? `<path d="M${xr + r * .5} ${y + r * 1.3}Q${xr + r * .9} ${y + r * 2} ${xr + r * .5} ${y + r * 2.3}Q${xr + r * .1} ${y + r * 2} ${xr + r * .5} ${y + r * 1.3}Z" fill="#9cc8f0" stroke="${PO}" stroke-width="1.6"/>` : ''}`; }
+  return left + right; }
+/* Mund: aufgenähtes Lächeln, beim Essen offen */
+const petMouth = (m, x, y, fang) => m === 'eat' ? `<ellipse class="pchew" cx="${x}" cy="${y + 3}" rx="7" ry="6" fill="#5a1a2a" stroke="${PO}" stroke-width="2.4"/>`
+  : m === 'sad' ? `<path d="M${x - 8} ${y + 5}Q${x} ${y - 1} ${x + 8} ${y + 5}" fill="none" stroke="${PO}" stroke-width="2.6" stroke-linecap="round"/>${[-5, 0, 5].map(d => `<path d="M${x + d} ${y + (d ? 0 : -2.5)}V${y + (d ? 6 : 4)}" stroke="${PO}" stroke-width="1.8" stroke-linecap="round"/>`).join('')}`
+  : `<path d="M${x - 9} ${y}Q${x} ${y + 7} ${x + 9} ${y}" fill="none" stroke="${PO}" stroke-width="2.6" stroke-linecap="round"/>${[-5, 0, 5].map(d => `<path d="M${x + d} ${y + (d ? 0 : 1.5)}V${y + (d ? 6 : 8)}" stroke="${PO}" stroke-width="1.8" stroke-linecap="round"/>`).join('')}${fang ? `<path d="M${x + 3} ${y + 4}L${x + 5} ${y + 10}L${x + 7} ${y + 3}Z" fill="#fff" stroke="${PO}" stroke-width="1.4" stroke-linejoin="round"/>` : ''}`;
+const petBlush = (xs, y, c = '#f08aae') => xs.map(x => `<ellipse cx="${x}" cy="${y}" rx="7" ry="4" fill="${c}" opacity=".6"/>`).join('');
 const PET_DRAW = {
-  fled:(m, nk = '', ht = '') => { const b = '#4d4166', w = '#3a3050', wl = '#6c5d8a', ear = '#e9a5be';
-    const wing = `<path d="M70 112C56 90 34 82 10 92C18 98 20 106 18 115C28 109 37 113 40 123C48 116 58 118 63 128C68 124 72 120 74 116Z" fill="${w}" stroke="#120e16" stroke-width="3" stroke-linejoin="round"/><path d="M68 112L18 96M64 118L40 110M66 124L58 112" stroke="${wl}" stroke-width="2" stroke-linecap="round" fill="none"/>`;
-    return `    <g class="pbody"><g class="pwing pwl">${wing}</g><g class="pwing pwr"><g transform="matrix(-1 0 0 1 200 0)">${wing}</g></g>
-    <path d="M64 92L56 38L94 72Z" fill="${b}" stroke="#120e16" stroke-width="3" stroke-linejoin="round"/><path d="M67 84L62 52L86 74Z" fill="${ear}"/>
-    <path d="M136 92L144 38L106 72Z" fill="${b}" stroke="#120e16" stroke-width="3" stroke-linejoin="round"/><path d="M133 84L138 52L114 74Z" fill="${ear}"/>
-    <ellipse cx="100" cy="122" rx="48" ry="46" fill="${b}" stroke="#120e16" stroke-width="3"/>
-    <path d="M90 78Q96 68 100 78Q104 68 110 78" fill="${b}" stroke="#120e16" stroke-width="2.6" stroke-linejoin="round"/>
-    <ellipse cx="100" cy="146" rx="26" ry="18" fill="#6e6189"/>
-    <path d="M70 160Q66 172 76 172M86 166Q86 176 94 174M114 166Q114 176 106 174M130 160Q134 172 124 172" fill="none" stroke="#120e16" stroke-width="2.6" stroke-linecap="round"/>
-    ${petEyes(m, [80, 120], 114, {r:13, iris:'#7a52c8'})}${petBlush([66, 134], 132)}${petMouth(m, 100, 132, true)}${nk}${ht}</g>`; },
-  katze:(m, nk = '', ht = '') => { const b = '#2c2a34', b2 = '#3a3744', ear = '#e9a5be';
-    return `    <g class="ptail"><path d="M132 166C164 166 172 140 160 120C152 106 160 92 172 96" fill="none" stroke="#120e16" stroke-width="16" stroke-linecap="round"/><path d="M132 166C164 166 172 140 160 120C152 106 160 92 172 96" fill="none" stroke="${b}" stroke-width="10" stroke-linecap="round"/></g>
-    <g class="pbody"><ellipse cx="100" cy="150" rx="40" ry="28" fill="${b}" stroke="#120e16" stroke-width="3"/>
-    <ellipse cx="84" cy="174" rx="12" ry="7" fill="${b2}" stroke="#120e16" stroke-width="2.6"/><ellipse cx="116" cy="174" rx="12" ry="7" fill="${b2}" stroke="#120e16" stroke-width="2.6"/>
-    <g class="phead"><path d="M58 92L58 40L96 66Z" fill="${b}" stroke="#120e16" stroke-width="3" stroke-linejoin="round"/><path d="M63 82L63 52L86 68Z" fill="${ear}"/>
-    <path d="M142 92L142 40L104 66Z" fill="${b}" stroke="#120e16" stroke-width="3" stroke-linejoin="round"/><path d="M137 82L137 52L114 68Z" fill="${ear}"/>
-    <ellipse cx="100" cy="100" rx="50" ry="42" fill="${b}" stroke="#120e16" stroke-width="3"/>
-    <path d="M97 66A9 9 0 1 0 107 78A7 7 0 1 1 97 66Z" fill="#e8e0ff" opacity=".85"/>
-    ${petEyes(m, [78, 122], 100, {r:13, iris:'#b8cf3a', sclera:'#f6f8e8'})}${petBlush([62, 138], 118)}
-    <path d="M96 112L104 112L100 117Z" fill="#ef8fac" stroke="#120e16" stroke-width="1.6" stroke-linejoin="round"/>${petMouth(m, 100, 119, false)}
-    <path d="M54 112L30 106M54 118L30 120M146 112L170 106M146 118L170 120" stroke="#8a8598" stroke-width="2" stroke-linecap="round"/>${ht}</g>${nk}</g>`; },
-  rabe:(m, nk = '', ht = '') => { const b = '#232a3b', b2 = '#1a1f2d', sh = '#46557a';
-    const wing = `<path d="M58 112C44 120 40 140 48 158C54 150 58 148 62 152C62 144 66 140 70 142Z" fill="${b2}" stroke="#120e16" stroke-width="3" stroke-linejoin="round"/>`;
-    return `    <g class="pbody"><path d="M84 164L76 176M84 164L84 177M84 164L92 175M116 164L108 175M116 164L116 177M116 164L124 176" stroke="#4a4f5e" stroke-width="3.6" stroke-linecap="round"/>
-    <path d="M86 70Q80 50 92 44Q90 58 98 66Q100 46 112 42Q106 56 108 68Q118 56 126 60Q116 64 114 74Z" fill="${b}" stroke="#120e16" stroke-width="2.6" stroke-linejoin="round"/>
-    <ellipse cx="100" cy="118" rx="48" ry="50" fill="${b}" stroke="#120e16" stroke-width="3"/>
-        <ellipse cx="100" cy="146" rx="26" ry="20" fill="#2e3850"/><path d="M84 140Q90 146 96 140Q102 146 108 140Q114 146 118 140M88 152Q94 158 100 152Q106 158 112 152" fill="none" stroke="#3f4c6a" stroke-width="2" stroke-linecap="round"/>
+  /* Fledermaus: cremefarbenes Kuscheltier mit dunklen Stoffflügeln, Sicherheitsnadel im Ohr, rotem Herz auf der Brust */
+  fled:(m, nk = '', ht = '') => { const b = '#ece5d3', w = '#3a3441', st = '#9a92a6';
+    const wing = `<path d="M70 112C56 90 34 82 10 92C18 98 20 106 18 115C28 109 37 113 40 123C48 116 58 118 63 128C68 124 72 120 74 116Z" fill="${w}" stroke="${PO}" stroke-width="4" stroke-linejoin="round"/>${pStl(66, 110, 24, 97, 5, 3, st, 1.8)}${pStl(64, 118, 42, 112, 3, 3, st, 1.8)}`;
+    return `    <g class="pbody"><g class="pwing pwl">${wing}</g><g class="pwing pwr"><g transform="matrix(-1 0 0 1 200 0)">${wing}${pPatch(36, 104, 14, 12, 8, '#6d5f7a', '#b6abc4')}</g></g>
+    <path d="M64 92L56 38L94 72Z" fill="${b}" stroke="${PO}" stroke-width="4" stroke-linejoin="round"/><path d="M68 84L63 54L84 74Z" fill="#e2b3c2"/>${pStl(58, 56, 72, 50, 3, 3.4)}
+    <path d="M136 92L148 42L106 72Z" fill="${b}" stroke="${PO}" stroke-width="4" stroke-linejoin="round"/><path d="M132 84L141 56L116 74Z" fill="#e2b3c2"/>${pPin(136, 74, 12)}
+    <ellipse cx="100" cy="122" rx="48" ry="46" fill="${b}" stroke="${PO}" stroke-width="4"/>
+    ${pStl(66, 100, 96, 84, 5)}${pPatch(130, 150, 20, 17, -12, '#3a3441', '#9a92a6')}
+    ${pHeart(100, 154, 7, '#c8283c')}${pStl(100, 146, 100, 162, 2, 3, PO, 1.4)}
+    <ellipse cx="84" cy="170" rx="11" ry="7" fill="${b}" stroke="${PO}" stroke-width="3.4"/><ellipse cx="116" cy="170" rx="11" ry="7" fill="${b}" stroke="${PO}" stroke-width="3.4"/>
+    ${petEyes(m, [80, 120], 116, {r:13})}${petBlush([64, 136], 134)}${petMouth(m, 100, 133, true)}${nk}${ht}</g>`; },
+  /* Katze: giftgrüne Stoffkatze mit pinken Streifen, eingerissenem Ohr und X-Nase */
+  katze:(m, nk = '', ht = '') => { const b = '#7ad94c', pk = '#ff4fae';
+    return `    <g class="ptail"><path d="M132 166C164 166 172 140 160 120C152 106 160 92 172 96" fill="none" stroke="${PO}" stroke-width="19" stroke-linecap="round"/><path d="M132 166C164 166 172 140 160 120C152 106 160 92 172 96" fill="none" stroke="${b}" stroke-width="11" stroke-linecap="round"/><path d="M140 165C164 164 170 140 160 120C153 107 159 96 168 96" fill="none" stroke="${pk}" stroke-width="11" stroke-dasharray="4 10"/></g>
+    <g class="pbody"><ellipse cx="100" cy="150" rx="38" ry="28" fill="${b}" stroke="${PO}" stroke-width="4"/>
+    <path d="M90 126L94 136L97 128L100 140L103 128L106 136L110 126" fill="${pk}" stroke="${PO}" stroke-width="2" stroke-linejoin="round"/>${pStl(120, 142, 128, 162, 4)}
+    <ellipse cx="84" cy="174" rx="12" ry="7" fill="${b}" stroke="${PO}" stroke-width="3.4"/><ellipse cx="116" cy="174" rx="12" ry="7" fill="${b}" stroke="${PO}" stroke-width="3.4"/><ellipse cx="84" cy="175" rx="6" ry="3.4" fill="${pk}"/><ellipse cx="116" cy="175" rx="6" ry="3.4" fill="${pk}"/>
+    <g class="phead"><path d="M58 92L54 36L96 66Z" fill="${b}" stroke="${PO}" stroke-width="4" stroke-linejoin="round"/>${pStl(56, 52, 72, 48, 3, 3.4)}
+    <path d="M142 92L150 40L136 50L138 56L104 66Z" fill="${b}" stroke="${PO}" stroke-width="4" stroke-linejoin="round"/>
+    <ellipse cx="100" cy="98" rx="52" ry="42" fill="${b}" stroke="${PO}" stroke-width="4"/>
+    <path d="M84 57Q86 70 90 76Q92 66 92 57Z M96 56Q98 72 101 78Q104 70 104 56Z M110 57Q110 68 112 76Q116 68 117 59Z" fill="${pk}"/>
+    ${petEyes(m, [78, 122], 98, {r:14})}${petBlush([62, 138], 116)}
+    ${pX(100, 112, 3.4, 3)}${petMouth(m, 100, 120, false)}
+    <path d="M52 108L28 102M52 116L28 118M148 108L172 102M148 116L172 118" stroke="${PO}" stroke-width="1.8" stroke-linecap="round"/>${ht}</g>${nk}</g>`; },
+  /* Rabe: dunkelblauer Stoffrabe mit Flicken, genähtem Schnabel und Stich-Füßen */
+  rabe:(m, nk = '', ht = '') => { const b = '#3b4157', b2 = '#2b3044';
+    const wing = `<path d="M58 112C44 120 40 140 48 158C54 150 58 148 62 152C62 144 66 140 70 142Z" fill="${b2}" stroke="${PO}" stroke-width="4" stroke-linejoin="round"/>${pStl(58, 122, 52, 146, 3, 3, '#7c84a0', 1.8)}`;
+    return `    <g class="pbody"><path d="M84 164L76 176M84 164L84 177M84 164L92 175M116 164L108 175M116 164L116 177M116 164L124 176" stroke="${PO}" stroke-width="6.4" stroke-linecap="round"/><path d="M84 164L76 176M84 164L84 177M84 164L92 175M116 164L108 175M116 164L116 177M116 164L124 176" stroke="#a7abb8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M86 70Q80 50 92 44Q90 58 98 66Q100 46 112 42Q106 56 108 68Q118 56 126 60Q116 64 114 74Z" fill="${b}" stroke="${PO}" stroke-width="3.4" stroke-linejoin="round"/>
+    <ellipse cx="100" cy="118" rx="48" ry="50" fill="${b}" stroke="${PO}" stroke-width="4"/>
+    <ellipse cx="100" cy="148" rx="26" ry="19" fill="#555c7a" stroke="${PO}" stroke-width="2.6"/><ellipse cx="100" cy="148" rx="22" ry="15" fill="none" stroke="#a3aac6" stroke-width="1.6" stroke-dasharray="3 2.6"/>
+    ${pPatch(128, 84, 18, 15, 12, '#e7dfcc', '#8a8070')}${pStl(64, 126, 72, 148, 3)}
     <g class="pwing pwl">${wing}</g><g class="pwing pwr"><g transform="matrix(-1 0 0 1 200 0)">${wing}</g></g>
-    ${petEyes(m, [80, 120], 106, {r:13, iris:'#5f7fd0'})}${petBlush([64, 136], 126)}
-    ${m === 'eat' ? `<path d="M88 122L112 122L100 116Z" fill="#7d8294" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><path class="pchew" d="M90 126L110 126L100 140Z" fill="#6a6f80" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/>`
-      : `<path d="M88 120Q100 112 112 120L100 140Z" fill="#7d8294" stroke="#120e16" stroke-width="2.6" stroke-linejoin="round"/><path d="M92 121Q100 117 106 121" fill="none" stroke="#b5b9c6" stroke-width="2" stroke-linecap="round"/>`}${nk}${ht}</g>`; },
+    ${petEyes(m, [80, 120], 106, {r:13, xc:'#e7dfcc'})}${petBlush([64, 136], 126, '#c9a2d8')}
+    ${m === 'eat' ? `<path d="M88 122L112 122L100 116Z" fill="#a7abb8" stroke="${PO}" stroke-width="3" stroke-linejoin="round"/><path class="pchew" d="M90 126L110 126L100 140Z" fill="#8d92a2" stroke="${PO}" stroke-width="3" stroke-linejoin="round"/>`
+      : `<path d="M88 120Q100 112 112 120L100 140Z" fill="#a7abb8" stroke="${PO}" stroke-width="3.2" stroke-linejoin="round"/>${pStl(100, 118, 100, 136, 3, 3, PO, 1.6)}`}${nk}${ht}</g>`; },
 };
 /* Deko: Kopf (hat), Hals (neck), Zuhause (bg). lv = ab welchem Level */
 const PET_DECO = {
