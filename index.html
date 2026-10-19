@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='65de2afc558d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8d2fb958507d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7458,7 +7458,7 @@ function friendPanel(nNew){
   </aside>` : ''}`;
 }
 /* Begleiter im Profil (seit v570, Inaya): klein neben dem Avatar, bei der Pose „Sitzen“ (Schneidersitz) auf dem Schoß */
-function petBeside(u){ if (!u || u.helper) return ''; const own = u.id === S.me, p = own ? petMe() : (PROF[u.id]?.pet || u.pet); if (!p?.k || !PET_KINDS[p.k] || (!own && !(p.lv >= 3))) return '';
+function petBeside(u){ if (!u || u.helper) return ''; const own = u.id === S.me, p = own ? petMe() : (PROF[u.id]?.pet || u.pet); if (!p?.k || !PET_KINDS[p.k]) return ''; /* seit v579 immer im Profil (Inaya), kein Schalter mehr */
   const pos = u.pose === 'sitzen' ? 'lap' : u.pose === 'liegen' ? 'lie' : 'side', svg = petSVG(p.k, own ? petMood(p) : 'happy', p.d || {}, 'pidle');
   return own ? `<span class="pbes ${pos}" role="button" tabindex="0" data-act="nav" data-v="pet" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</span>` : `<span class="pbes ${pos}" role="img" aria-label="${esc(p.n)}">${svg}</span>`; }
 function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
@@ -13693,7 +13693,7 @@ function petVals(p, now = Date.now()){ const h = Math.max(0, (now - (p.t || now)
 function petSet(p, ch = {}){ const v = petVals(p); for (const [k, d] of Object.entries(ch)) v[k] = Math.max(0, Math.min(100, v[k] + d)); for (const k in v) v[k] = Math.round(v[k] * 10) / 10; p.v = v; p.t = Date.now(); return v; }
 function petMood(p){ if (PETS.temp) return PETS.temp; if (p.sl) return 'sleep'; const v = petVals(p); return Object.values(v).some(x => x < 25) ? 'sad' : 'happy'; }
 const petMe = () => me()?.pet?.k ? me().pet : null;
-const petPubOf = p => p?.k && p.show && p.lv >= 3 ? {k:p.k, n:p.n, lv:p.lv, d:{hat:p.d?.hat || '', neck:p.d?.neck || '', bg:p.d?.bg || 'gruft'}} : null;
+const petPubOf = p => p?.k ? {k:p.k, n:p.n, lv:p.lv, d:{hat:p.d?.hat || '', neck:p.d?.neck || '', bg:p.d?.bg || 'gruft'}} : null;
 /* seit v569: Die Wahl steht zusätzlich auf dem Gerät und in data/users/<uid>/nf-pet. Vorher kam nach dem Neuladen wieder die Auswahl,
    wenn die Kontosicherung den Begleiter noch nicht hatte und die neuen Regeln (pets/<uid>) noch nicht eingespielt waren. */
 const petLSK = () => 'nf-pet:' + (S.me || '');
@@ -13706,7 +13706,7 @@ function petXP(n){ const p = petMe(); if (!p || n <= 0) return 0; const day = nc
   if (up) { petLvUp(p); petSave(true); if (V.name === 'pet' && !PETS.game) setTimeout(render, 50); } else setTimeout(petPaint, 30); return n; }
 function petLvUp(p){ const news = Object.entries(PET_DECO).flatMap(([s, o]) => Object.entries(o).filter(([, x]) => x.lv === p.lv).map(([, x]) => x.n));
   setTimeout(() => { const el = document.createElement('div'); el.className = 'petlvup'; el.setAttribute('role', 'status');
-    el.innerHTML = `<div><small>${esc(tr('Level-Aufstieg'))}</small><b>${esc(p.n)} · ${esc(tr('Level {0}').replace('{0}', p.lv))}</b>${news.length ? `<span>${esc(tr('Neu freigeschaltet'))}: ${news.map(x => esc(tr(x))).join(', ')}</span>` : ''}${p.lv === 3 ? `<span>${esc(tr('Du kannst {0} jetzt im Profil zeigen.').replace('{0}', p.n))}</span>` : ''}</div>`;
+    el.innerHTML = `<div><small>${esc(tr('Level-Aufstieg'))}</small><b>${esc(p.n)} · ${esc(tr('Level {0}').replace('{0}', p.lv))}</b>${news.length ? `<span>${esc(tr('Neu freigeschaltet'))}: ${news.map(x => esc(tr(x))).join(', ')}</span>` : ''}</div>`;
     document.body.appendChild(el); requestAnimationFrame(() => el.classList.add('in')); setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 400); }, 3800); }, 300); }
 
 /* Server: gewählte Art (für die Gruppen-Regeln), Owner legt die drei Gruppen an, man tritt der eigenen bei */
@@ -13716,7 +13716,7 @@ async function petChk(){ if (!social || PETS.chk || PETS.busy) return; PETS.busy
     if (PET_KINDS[k]) { if (u.pet?.k !== k) { u.pet = petNew(k, u.pet?.n); save(); } PETS.chk = 'ok'; }
     else { PETS.chk = 'none'; if (u.pet?.k) await petSrvSave(); } }
   catch { PETS.chk = u.pet?.k ? 'ok' : 'err'; } /* Regeln noch nicht eingespielt: Gerät und Kontoeintrag gelten */
-  if (u.pet?.k) petKeep(u.pet, !PETS.kept); PETS.kept = true;
+  if (u.pet?.k) { petKeep(u.pet, !PETS.kept); if (!PETS.kept) publishProfile(); } PETS.kept = true; /* Begleiter steht seit v579 immer im Profil: einmal veröffentlichen */
   PETS.busy = false; petGroups(); softRender(); }
 async function petSrvSave(){ const p = petMe(); if (!social || !p) return false;
   try { await social.db.doc('pets/' + social.uid).set({k:p.k, ts:p.ts || Date.now()}); PETS.chk = 'ok'; return true; }
@@ -13785,7 +13785,6 @@ function petView(){ const p = petMe(); if (!p) return '<p class="note">' + esc(t
     <div class="pacts">${act('feed', 'Füttern', 'feed', PETSHEET === 'feed')}${act('play', 'Spielen', 'play')}${act('bath', 'Baden', 'bath')}${p.sl ? act('sleep', 'Aufwecken', 'wake', true) : act('sleep', 'Schlafen', 'sleep')}${act('deco', 'Deko', 'deco', PETSHEET === 'deco')}</div>
     ${sheet}
     <div class="card pcfg"><div class="card-in">
-      <label class="pshow${p.lv < 3 ? ' lock' : ''}"><input type="checkbox" data-act="pet-show" ${p.show && p.lv >= 3 ? 'checked' : ''} ${p.lv < 3 ? 'disabled' : ''}><span>${esc(tr('Im Profil zeigen'))}</span><small>${p.lv < 3 ? esc(tr('ab Level 3')) : esc(tr('Alle sehen {0} auf deinem Profil.').replace('{0}', p.n))}</small></label>
       ${social ? `<button type="button" class="pgrp" data-act="pet-group"><svg viewBox="0 0 24 24" aria-hidden="true">${CTICO.group}</svg><span><b>${esc(tr(K.grp))}</b><small>${esc(tr('Die Gruppe nur für {0}-Besitzer').replace('{0}', tr(K.name)))}</small></span><i aria-hidden="true">›</i></button>` : ''}
     </div></div>
   </section>`; }
