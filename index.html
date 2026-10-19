@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a7545071da35';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='39f2086f38f3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2778,6 +2778,7 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 .pfxi.drop{width:8px;height:14px;margin:-7px 0 0 -4px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#8fc7ff;border:2px solid #20202a;animation:pfdrop .9s linear both}
 @keyframes pfdrop{to{transform:translateY(220px);opacity:.2}}
 .pbathbar{position:absolute;left:18%;right:18%;top:10px;height:8px;border:2px solid #f4f2ee;background:#0b0a0d;z-index:5;pointer-events:none}.pbathbar i{display:block;height:100%;width:0;background:#f4f2ee;transition:width .15s}
+@keyframes ibat{from{transform:translateX(0)}to{transform:translateX(140vw)}}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -13759,7 +13760,7 @@ function renderInner(){
   if (tooYoung()) { applyPage(null); app.innerHTML = youngView(); return; }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
   if (me()?.obOpen && (V.name !== 'design' || !obDesign)) { V = {name:'design', arg:null}; obDesign = true; } /* Schritt 4 erst mit „Fertig“ verlassen */
-  if (introNeed() && !obDesign) { applyPage(null); app.innerHTML = introView(); return; } /* Einführung für neue Leute (v566), erst nach Schritt 4 „Deine Seite“ (Inaya, 2026-10-19) */
+  if (introNeed() && !obDesign) { applyPage(null); const ih = introView(); if (INTRO.html !== ih || !app.querySelector('.introv')) { app.innerHTML = ih; INTRO.html = ih; } return; } /* gleiche Seite nicht neu zeichnen, sonst springen die Bilder (Inaya, 2026-10-19) */ /* Einführung für neue Leute (v566), erst nach Schritt 4 „Deine Seite“ (Inaya, 2026-10-19) */
   if (!obDesign && petNeedPick()) { applyPage(null); app.innerHTML = petPickView(); return; } /* Begleiter wählen, einmal und für immer */
   if (V.name === 'games') V = {name:'home', arg:null}; /* Minigames seit v565 entfernt (Inaya) */
   const wide = ['pet','design','shop','wardrobe','friends','find','room','chats','visit','browse','shopping','mall','moebel'].includes(V.name);
@@ -13941,7 +13942,7 @@ async function petGroupOpen(){ const p = petMe(); if (!p || !social) return; con
   if (!CH.list.some(c => c.id === gid)) { PETS.joined = false; await petGroups(); for (let i = 0; i < 16 && !CH.list.some(c => c.id === gid); i++) await new Promise(r => setTimeout(r, 250)); }
   if (!CH.list.some(c => c.id === gid)) return toast('Die Gruppe öffnet, sobald Inaya sie freigeschaltet hat.');
   chatTab = 'pub'; openChat(gid); }
-function petNeedPick(){ petRestore(); const u = me(); if (!u || u.helper || u.pet?.k) return false; if (cloud && !cloud.loaded) return false;
+function petNeedPick(){ petRestore(); const u = me(); if (!u || u.helper || u.pet?.k) return false; if (u.introPet) { if (social) petChk(); return true; } /* direkt nach der Einführung, ohne Umweg übers Profil */ if (cloud && !cloud.loaded) return false;
   if (social) { petChk(); return PETS.chk === 'none' || PETS.chk === 'err'; } return !PUB; }
 
 /* ---------- Auswahl wie bei Pokémon, danach epische Animation und Name ---------- */
