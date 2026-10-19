@@ -420,3 +420,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Profilkopf (seit v663): bei Freunden „Befreundet ▾“ (öffnet `profFrMenu` mit „Freund entfernen“, wie „Gefolgt“ bei Insta), „Nachricht“ und ⋯ (Profil teilen, Freund entfernen, Blockieren, Owner). Alle Knöpfe im Profilkopf eckig wie „Bearbeiten“ und gefüllt mit `--p-panel` (CSS-Block „v663: Knöpfe im Profilkopf“), damit sie über dem Muster lesbar sind.
 - Neuladen auf fremdem Profil (seit v664): Ist das Profil noch nicht geladen, zeigt `profileView` „Lädt …“ (`.ploadw`) und holt es selbst (`PWAIT`), statt kurz den Salon (`homeView`) zu zeigen. Nach 15 s ohne Profil geht es in den Salon.
 - „Beste Freunde und Partner ändern“ (seit v665) im selben gefüllten Stil wie „Bearbeiten“ (`.pshbtn.bestbtn`).
+- Seit v666: Profil-Knöpfe in genau der Kastenfarbe (`--p-bg`) statt `--p-panel` (Inaya), Beschriftung mittig.
