@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1a6d496e2a70';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='bf093eef6c11';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -903,6 +903,7 @@ footer.foot .lnk{color:var(--muted)}
 
 /* Handy wie Momio: kompakte Kopfzeile mit Freunde/Chats, Teile antippen statt Knöpfe, Zimmer oben fest */
 .mtop{display:none}.mfab{display:none}.mhead{display:none}
+.pshrow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.phead .pshrow{margin:26px auto -22px}.phead .pshrow .pshbtn{margin:0}
 .ebtns{display:flex;align-items:center;gap:8px}.ebico{display:none;position:relative;place-items:center;width:42px;height:42px;padding:0;background:none;border:1px solid var(--line);border-radius:8px;color:var(--fg);cursor:pointer}.ebico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.ebico .dot{position:absolute;top:5px;right:5px;margin:0}
 /* Glocke für Mitteilungen auch am PC, oben rechts in der Seitenleiste (Inaya, 2026-10-11) */
 .pcbell{position:absolute;top:14px;right:14px;width:44px;height:44px;display:grid;place-items:center;background:none;border:1px solid var(--line-soft);border-radius:50%;color:var(--fg);padding:0;cursor:pointer}.pcbell svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pcbell:hover,.pcbell.on{border-color:var(--fg)}.pcbell .dot{position:absolute;top:7px;right:8px;margin:0}
@@ -2350,13 +2351,14 @@ body.pcropen{overflow:hidden}
 .pgdots{display:flex;gap:5px;justify-content:center;margin-top:7px}.pgdots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25}.pgdots i.on{opacity:.85}
 /* Startbildschirm wie bei Insta (seit v563): Logo in der Mitte, nur solange die Seite lädt */
 #splash{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;background:var(--bg,#0a0a0b);transition:opacity .35s ease,visibility .35s}
-#splash .logo-img{width:min(210px,56vw);animation:splin .6s ease both}
+#splash .logo-img{width:min(210px,56vw);margin-bottom:12vh;animation:splin .6s ease both}
 #splash small{position:absolute;bottom:calc(34px + env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;color:var(--muted,#8a8790);font:400 13px/1.3 var(--f-display,system-ui);letter-spacing:.12em;text-transform:lowercase}
 #splash.out{opacity:0;visibility:hidden}
 @keyframes splin{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
+<script>/* nur beim Start der App, nicht beim Neuladen oder innerhalb derselben Sitzung (Inaya, seit v565) */(function(){try{var n=performance.getEntriesByType('navigation')[0],again=(n&&n.type!=='navigate')||sessionStorage.getItem('nf-spl');if(again){var e=document.getElementById('splash');if(e)e.remove();}else sessionStorage.setItem('nf-spl','1');}catch(e){}})();</script>
 <div id="app"></div>
 <script>
 // Wenn beim Start etwas schiefgeht: Fehler sichtbar machen statt schwarzem Bildschirm
@@ -6448,13 +6450,13 @@ const HELPERS = {
     theme:{box:'#f4f4f6',pattern:'spitze',frame:'ornament',shape:'oval',font:'hand',page:'#dcdce2',pagePattern:'fluegel'},banner:{pattern:'spitze',mode:'tag',font:'hand',text:'Juliets Salon'},points:999,
     mood:'immer für dich da',headline:'Ich passe auf, dass sich hier alle wohlfühlen.',
     about:'Hallo, ich bin Juliet. Andy und ich sind die guten Geister von Noctibat. Wir sind automatisch mit allen befreundet.\n\nDie Hausregeln:\n1. Noctibat ist ein Ort für Freunde. Jeder kann sich anmelden. Nimm nur Freundschaftsanfragen von Leuten an, die du magst, und stell dein Profil auf privat, wenn nur Freunde es sehen sollen.\n2. Sei lieb zueinander. Kein Mobbing, keine Beleidigungen.\n3. Keine Nacktheit, keine Gewalt und nichts mit Drogen.\n4. Kein Spam und keine Werbung.\n5. Teile Fotos von anderen nur, wenn sie einverstanden sind.\n6. Was hier geteilt wird, bleibt hier. Keine Screenshots nach draußen.\n7. Lade nur Fotos und Videos hoch, die du selbst gemacht hast oder für die du die Rechte hast, auch was die Musik darin angeht. Was gegen fremde Rechte verstößt, wird gelöscht.\n8. Wenn dich etwas stört, schreib Andy oder mir im Chat.',
-    music:'Siouxsie and the Banshees, Lana Del Rey',films:'Crimson Peak, Wednesday',hobbies:'Briefe schreiben, Friedhofsspaziergänge, Nähen',games2:'Memory, Galgenmännchen',
+    music:'Siouxsie and the Banshees, Lana Del Rey',films:'Crimson Peak, Wednesday',hobbies:'Briefe schreiben, Friedhofsspaziergänge, Nähen',games2:'Brettspiele, Schach',
     steck:'Ich bin Juliet, der gute Geist von Noctibat. Ich mag stille Nächte, alte Spitze, weiße Rosen und lange Briefe. Wenn dich etwas bedrückt, schreib mir einfach.'}, /* Steckbrief (Inaya, 2026-10-18); about = Hausregeln */
   andy:{id:'andy',name:'Andy',handle:'andy',helper:'Helfer',outfit:{body:'m',back:'lang',front:'p_lang',hacc:{},eyeform:'e_muede',lips:'l_neutral',face:'smokey',top:'band',jacket:'leder',bottom:'bondage',shoes:'creeper',acc:'kette',jewel:{halsband:'#0b0b0f',kreuz:'#c9c9cf'},hairC:'#1c1b20'},
     theme:{box:'#0e0e10',pattern:'fledermaus',frame:'dornen',shape:'bogen',font:'fraktur',page:'#8a1020',pagePattern:'kreuze'},banner:{pattern:'kreuze',mode:'nacht',font:'fraktur',text:'Andys Nachtwache'},points:999,
     mood:'erklärt gern',headline:'Frag mich alles zu Garderobe, Zimmer und Profil.',
     about:'Hey, ich bin Andy. Juliet und ich helfen dir, dich hier zurechtzufinden. Hier ist alles, was du wissen musst.\n\nGarderobe: Hier liegt alles für deinen Avatar, komplett gratis. Tipp auf ein Teil, dann trägt dein Avatar es. Mit dem Farbfilm färbst du jedes Teil einzeln um. Deine Lieblingslooks speicherst du im Sammelalbum.\n\nProfil gestalten: Bei Noctibat gestaltest du alles selbst. Farbe, Muster, Rahmen und Schrift deines Profils stellst du unter „Profil gestalten“ ein. Deine Beiträge bekommen automatisch denselben Look. Dazu kommen Profilbild, Steckbrief, Pose und ein eigenes Lied.\n\nZimmer: Unter „Zimmer“ richtest du deinen Raum mit Möbeln, Postern, Deko und Haustieren ein. Tipp auf den Boden, dann läuft dein Avatar dorthin.\n\nRaumchats: In deinem Zimmer kannst du einen Raumchat öffnen. Du wählst, ob nur deine Freunde reinkommen oder alle. Mit „Andere Räume“ springst du in offene Raumchats von anderen.\n\nChats: Unter Chats schreibst du deinen Freunden privat oder machst eine Gruppe auf. Mit dem Stift oben im Chat stellst du Farbe, Muster und Schrift für euren Chat ein.\n\nSalon: Hier siehst du die Beiträge deiner Freunde oder, umgestellt auf „Öffentlich“, die öffentlichen Beiträge von allen. Beim Posten wählst du, wer ihn sieht. Mit den Totenköpfen reagierst du, darunter kannst du kommentieren.\n\nFreunde: Über „Freunde finden“ suchst du Leute und schickst eine Anfrage. Bis zu vier Freunde pinnst du an dein Profil. In den Einstellungen stellst du dein Profil auf öffentlich oder privat.\n\nFragen? Schreib Juliet oder mir einfach im Chat.',
-    music:'Bauhaus, The Used, Joy Division',films:'Donnie Darko, The Lost Boys',hobbies:'Gitarre, Skaten, Horrorfilm-Nächte',games2:'Fledermausjagd, Tic-Tac-Toe',
+    music:'Bauhaus, The Used, Joy Division',films:'Donnie Darko, The Lost Boys',hobbies:'Gitarre, Skaten, Horrorfilm-Nächte',games2:'Silent Hill, Little Nightmares',
     steck:'Ich bin Andy, Nachteule und Helfer bei Noctibat. Tagsüber schlafe ich, nachts skate ich, höre alte Platten und schaue Horrorfilme mit viel Popcorn. Frag mich gern alles.'}, /* Steckbrief (Inaya, 2026-10-18); about = So geht’s */
 };
 // Juliets Zimmer: weiß wie ein Geisterschloss, rote Akzente (Inaya, 2026-10-11)
@@ -6835,7 +6837,7 @@ function navBack(){ const s = NAVH.pop(); if (!s) return false; navSkip = true;
   const y = s.y || 0; requestAnimationFrame(() => window.scrollTo(0, y)); setTimeout(() => window.scrollTo(0, y), 350); return true; }
 addEventListener('popstate', () => { if (NAVH.length) navBack(); });
 // Nach dem Neuladen dort weitermachen, wo man war (Inaya, 2026-10-14): Seite, offener Chat, Reiter, Suche, Scrollstelle
-const LOC_OK = ['home', 'profile', 'friends', 'find', 'browse', 'chats', 'room', 'wardrobe', 'notifs', 'settings', 'games', 'design', 'shop', 'visit'];
+const LOC_OK = ['home', 'profile', 'friends', 'find', 'browse', 'chats', 'room', 'wardrobe', 'notifs', 'settings', 'design', 'shop', 'visit'];
 function locSave(){ try { sessionStorage.setItem('nf-loc', JSON.stringify({name:V.name, arg:V.arg, ch:CH.open, chm:CH.mode === 'talks' ? 'talks' : CH.open ? 'chat' : null, chatTab, sr:{q:SR.q, tab:SR.tab}, y:scrollY, ts:Date.now()})); } catch {} }
 addEventListener('pagehide', locSave); document.addEventListener('visibilitychange', () => { if (document.hidden) locSave(); });
 let locDone = false;
@@ -6949,7 +6951,7 @@ function gateView(){
 function rail(){
   const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
   ntWatch();
-  const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(reqOpen) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['wardrobe','Garderobe'],['shopping','Shopping'],['games','Minigames'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
+  const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(reqOpen) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['wardrobe','Garderobe'],['shopping','Shopping'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
   const cur = V.name === 'design' ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${MH_PAGES[V.name] ? `<button type="button" class="mfab" data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="home" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
@@ -6986,15 +6988,15 @@ const splReady = () => { const app = document.getElementById('app'); if (!app?.c
   if (PUB && !social) return false;
   return V.name !== 'home' || (!feedWait(S.salonMode === 'pub') && !!app.querySelector('.feed')); };
 { const sm = document.querySelector('#splash small'); if (sm) sm.textContent = tr('ein Ort für Freunde'); }
-SPL.iv = setInterval(() => { const el = document.getElementById('splash'); if (!el) return clearInterval(SPL.iv);
-  if (splReady() || Date.now() - SPL.t0 > 7000) { clearInterval(SPL.iv); el.classList.add('out'); if (MH.logo) { MH.logo = false; if (S.me && S.unlocked) softRender(); } setTimeout(() => el.remove(), 400); } }, 100);
+SPL.iv = setInterval(() => { if (!(splReady() || Date.now() - SPL.t0 > 4000)) return; clearInterval(SPL.iv);
+  const el = document.getElementById('splash'); if (el) { el.classList.add('out'); setTimeout(() => el.remove(), 400); }
+  setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me && S.unlocked) softRender(); } }, 1000); /* oben noch kurz das Logo, dann Öffentlich/Freunde */ }, 100);
 const MH_PAGES = {notifs:'Mitteilungen', settings:'Einstellungen'}; /* Seiten mit Pfeil zurück und Titel in der Handy-Kopfzeile */
-setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me) softRender(); } }, 4000);
+setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me) softRender(); } }, 9000);
 function mobHead(){
   if (MH_PAGES[V.name]) return `<div class="mhead"><b class="mhtitle">${MH_PAGES[V.name]}</b></div>`;
   const can = social || PUB && S.me;
   if (!MH.boot && S.me) { MH.boot = true; if (S.salonMode !== 'pub') { S.salonMode = 'pub'; postAud = null; } } /* beim Öffnen immer „Öffentlich“ (Inaya), Freunde nur bis zum nächsten Öffnen */
-  if (MH.logo && can && Date.now() - FEEDW.t0 > 900 && !feedWait(S.salonMode === 'pub')) { MH.logo = false; MH.anim = true; }
   if (MH.logo || !can) return `<div class="mhead">${logoSVG('mhlogo')}</div>`;
   const pub = S.salonMode === 'pub', anim = MH.anim; MH.anim = false;
   const opt = (v, l, d) => `<button type="button" role="menuitemradio" aria-checked="${(v === 'pub') === pub}" data-act="salon-mode" data-v="${v}"><b>${l}</b><small>${d}</small>${(v === 'pub') === pub ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : ''}</button>`;
@@ -8356,7 +8358,7 @@ function stTrimWire(c, im){ // Balken ziehen wie in der Apple-Galerie
 function stTrimSet(c, im, at){ c.moved = c.moved || false; const s0 = document.getElementById('stv-start'), l0 = document.getElementById('stv-len'); if (s0) s0.value = c.start; if (l0) l0.value = c.len; stTrimPaint(); try { im.currentTime = at ?? c.start; } catch {} stTrimPh(); }
 async function stVidDone(){ // Weiter: nur kürzen (Inaya, 2026-10-12); Größe, Lage und Drehung macht man danach im Editor
   const c = stCam, v = document.getElementById('stcimg'); if (!c || !v || !c.dur) return;
-  const fast = c.file.size <= VID_MAX; // klein genug: Datei bleibt, nur Anfang und Länge werden gemerkt
+  const slim = c.file.size <= VID_MAX && vidFast(c.file, c.dur), fast = c.file.size <= VID_MAX && !slim; // klein genug: Datei bleibt, nur Anfang und Länge werden gemerkt; mittelgroß mit hoher Bitrate: im Hintergrund schlanker rechnen (v565)
   let ac0 = null; if (!fast) { try { const AC = window.AudioContext || window.webkitAudioContext; ac0 = new AC(); ac0.resume?.().catch(() => {}); } catch {} } // im Antippen, falls in Echtzeit aufgenommen werden muss
   const busy = document.createElement('p'); busy.className = 'stpbusy stvbusy'; busy.id = 'stbusy'; busy.textContent = 'Video wird vorbereitet …'; document.getElementById('stcr')?.appendChild(busy);
   try {
@@ -8367,7 +8369,7 @@ async function stVidDone(){ // Weiter: nur kürzen (Inaya, 2026-10-12); Größe,
     if (fast) r = {blob:c.file, type:c.file.type || 'video/mp4', s:c.start, l:c.len};
     else if (window.VideoDecoder && window.VideoEncoder && window.VideoFrame) { // im Hintergrund verkleinern, man kann gleich weiter bearbeiten; gewartet wird erst beim Posten (Inaya, 2026-10-12)
       const k = Math.min(1, 1280 / Math.max(vw, vh), 720 / Math.min(vw, vh)), W = Math.round(vw * k / 2) * 2, H = Math.round(vh * k / 2) * 2, job = {q:0};
-      job.p = wcShrink(c.file, {start:c.start, len:c.len, W, H, bg:null, rect:() => [0, 0, W, H]}, q => { job.q = q; }); job.p.catch(err => console.warn('wc', err));
+      job.p = wcShrink(c.file, {start:c.start, len:c.len, W, H, bg:null, rect:() => [0, 0, W, H], ...(slim ? {br:VID_FAST_BR} : {})}, q => { job.q = q; }); /* schief gegangen: beim Posten nimmt der catch dort das Original mit Anfang/Länge */ job.p.catch(err => console.warn('wc', err));
       r = {blob:null, type:'video/mp4', s:c.start, l:c.len, job}; }
     else { // jetzt im Antippen: Ton freigeben, dann den gewählten Teil aufnehmen
       const ac = ac0; try { ac?.resume?.(); } catch {}
@@ -8420,7 +8422,7 @@ async function wcShrink(file, o, onProg){
   const dcfg = {codec:vt.codec.startsWith('vp08') ? 'vp8' : vt.codec, codedWidth:cw, codedHeight:ch, description:desc(vt)};
   if (!(await VideoDecoder.isConfigSupported(dcfg)).supported) throw new Error('nodec ' + vt.codec);
   let aBytes = 0, as = []; if (at && samples[at.id]) { as = samples[at.id].filter(x => { const t = x.cts / at.timescale; return t >= t0 - .01 && t < t1; }); as.forEach(x => aBytes += x.size); }
-  const W = o.W, H = o.H, abps = aBytes * 8 / Math.max(.5, t1 - t0), bitrate = Math.max(400000, Math.min(2500000, Math.floor((VID_MAX * 8 * .85) / Math.max(1, t1 - t0) - abps)));
+  const W = o.W, H = o.H, abps = aBytes * 8 / Math.max(.5, t1 - t0), bitrate = Math.max(400000, Math.min(o.br || 2500000, Math.floor((VID_MAX * 8 * .85) / Math.max(1, t1 - t0) - abps)));
   const ecodec = window.__wcCodec || 'avc1.42001f', ecfg = {codec:ecodec, width:W, height:H, bitrate, framerate:30, ...(ecodec.startsWith('avc') ? {avc:{format:'avc'}} : {})};
   if (!(await VideoEncoder.isConfigSupported(ecfg)).supported) throw new Error('noenc');
   let aCfg = null; if (as.length) { try { const e = mp4.getTrackById(at.id).mdia.minf.stbl.stsd.entries[0], dsi = e.esds.esd.descs[0].descs[0].data; aCfg = {codec:at.codec, sampleRate:at.audio.sample_rate, numberOfChannels:at.audio.channel_count, description:dsi}; } catch { aCfg = null; } }
@@ -8455,7 +8457,7 @@ document.addEventListener('timeupdate', e => { const v = e.target; if (!v.matche
 async function putChunks(path, b64, size, ver, onStep){ // bis zu 6 Stücke gleichzeitig statt eins nach dem anderen (Inaya, 2026-10-12: viel schneller)
   const n = Math.ceil(b64.length / size); let next = 0, done = 0;
   const work = async () => { while (next < n) { const i = next++; await social.db.doc(`${path}/c${i}`).set({v:ver, d:b64.slice(i * size, (i + 1) * size)}); onStep?.(++done, n); } };
-  await Promise.all(Array.from({length:Math.min(6, n)}, work)); return n;
+  await Promise.all(Array.from({length:Math.min(8, n)}, work)); return n;
 }
 function vidAudioBuf(file){
   if (!file || file.size > 160 * 1024 * 1024) return Promise.resolve(null); if (VABUF.has(file)) return VABUF.get(file);
@@ -9171,7 +9173,9 @@ document.addEventListener('change', e => { if (e.target.id !== 'pcr-more' && e.t
   e.stopImmediatePropagation(); const fresh = !PCR || !PCR.items.length; pcrAddFiles(f).then(() => { if (PCR?.items.length) { if (fresh) PCR.step = 1; pcrOpen(); } }); if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'}; PCR.open = true; pcrPaint(); }, true);
 
 // Eigene Videos im Salon (Inaya, 2026-10-11): große Videos werden im Browser kleiner gerechnet (max. 720 px, bis 2,5 Mbit/s)
-const VID_MAX = 12 * 1024 * 1024, VID_HARD = 24 * 1024 * 1024, VID_SEC = 30, VID_CHUNK = 900000; // bis VID_MAX bleibt das Original; geht das Verkleinern schief, nimmt die Seite bis VID_HARD lieber das Original (Inaya, 2026-10-12: kaputte Videos)
+const VID_MAX = 12 * 1024 * 1024, VID_HARD = 24 * 1024 * 1024, VID_SEC = 30, VID_CHUNK = 900000;
+/* schneller hochladen (seit v565, Inaya): Videos ab 4 MB mit mehr als 3 Mbit/s werden mit WebCodecs (schneller als Echtzeit) auf 720p mit 1,8 Mbit/s gebracht, das spart meist die Hälfte bis drei Viertel */
+const VID_FAST_BR = 1800000, vidFast = (f, dur) => !!(window.VideoDecoder && window.VideoEncoder && window.VideoFrame) && f.size > 4 * 1024 * 1024 && dur > 0 && f.size * 8 / dur > 3000000; // bis VID_MAX bleibt das Original; geht das Verkleinern schief, nimmt die Seite bis VID_HARD lieber das Original (Inaya, 2026-10-12: kaputte Videos)
 function vidPoster(v){ const c = document.createElement('canvas'), k = Math.min(1, 360 / Math.max(v.videoWidth, v.videoHeight)); c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .6); }
 async function prepVideo(file, onProg){
   const url = URL.createObjectURL(file), v = document.createElement('video'); v.playsInline = true; v.setAttribute('playsinline', ''); v.muted = true; v.defaultMuted = true; v.preload = 'auto';
@@ -9184,6 +9188,8 @@ async function prepVideo(file, onProg){
     await new Promise(ok => { v.onseeked = ok; try { v.currentTime = Math.min(.5, v.duration / 3); } catch { ok(); } setTimeout(ok, 2500); });
     let poster = ''; try { poster = v.videoWidth ? vidPoster(v) : ''; } catch {}
     if (!poster) { const c = document.createElement('canvas'); c.width = 202; c.height = 360; const g = c.getContext('2d'); g.fillStyle = '#131314'; g.fillRect(0, 0, 202, 360); poster = c.toDataURL('image/jpeg', .6); }
+    if (file.size <= VID_MAX && vidFast(file, v.duration)) { try { const s0 = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight), 720 / Math.min(v.videoWidth, v.videoHeight)), W = Math.round(v.videoWidth * s0 / 2) * 2, H = Math.round(v.videoHeight * s0 / 2) * 2;
+      const r = await wcShrink(file, {start:0, len:v.duration, W, H, br:VID_FAST_BR, rect:() => [0, 0, W, H]}, q => onProg?.(q)); if (r.blob.size < file.size * .8) return {...r, poster:r.poster || poster}; } catch (err) { console.warn('wc fast', err); } }
     if (file.size <= VID_MAX) return {blob:file, type:file.type || 'video/mp4', poster};
     try { const s0 = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), W = Math.round(v.videoWidth * s0 / 2) * 2, H = Math.round(v.videoHeight * s0 / 2) * 2; // schnell: WebCodecs, sonst wie bisher in Echtzeit
       const r = await wcShrink(file, {start:0, len:v.duration, W, H, rect:() => [0, 0, W, H]}, q => { onProg?.(q); toastKeep(`Video wird verkleinert … ${Math.round(q * 100)} %`); }); toastKeep(''); return {...r, poster:r.poster || poster}; }
@@ -9279,7 +9285,7 @@ const FEEDW = {t0:Date.now(), max:6000, was:false};
 const FEED_SKEL = `<div class="fskel" aria-busy="true" aria-label="Lädt …">${'<div class="fsk"><i></i><b></b><span></span><span></span></div>'.repeat(3)}</div>`;
 function feedWait(pubMode){ if (!(social || PUB && S.me) || Date.now() - FEEDW.t0 > FEEDW.max) return false;
   const own = !social || (OWNK && (!OWNER || OWNER === social.uid || S.users[OWNER] || OWNR));
-  return pubMode ? !PUBF.ts || !own : !FR.synced || !own; }
+  return pubMode ? !(PUBF.ts || PUBF.cached) || !own : !FR.synced && !Object.values(S.users).some(u => u.remote && (u.posts || []).length) || !own; } /* seit v565: Gerätestand reicht, der Server gleicht danach ab (Inaya: Beiträge sofort da) */
 setTimeout(() => { if (FEEDW.was) softRender(); }, FEEDW.max + 60);
 function homeView(){
   const pubMode = (social || PUB && S.me) && S.salonMode === 'pub'; // Auswahl bleibt auch beim Neuladen stehen
@@ -9417,7 +9423,7 @@ function profileHead(u, t, mine){
         : u.helper ? `<button class="btn" data-act="helper-chat" data-id="${u.id}">Schreib mir</button>`
         : u.remote && !isFriend(u.id) ? `<div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div>`
         : u.remote ? `<div class="row pbtns"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button>${profMoreBtn(u.id)}</div>` : ''}
-      ${pshBtnHTML(u)}
+      ${u.id === S.me && !u.helper ? `<div class="pshrow"><button type="button" class="pshbtn" data-act="nav" data-v="design"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Bearbeiten</span></button>${pshBtnHTML(u)}</div>` : pshBtnHTML(u)}
     </div>
   </header>`;
 }
@@ -9524,7 +9530,7 @@ function profileView(id){
   }
   return `<section class="themed" style="${themeStyle(u.theme)}">
     ${bannerHTML(u.banner, u.name, u.handle || '')}
-    ${own ? `<div class="editbar"><span class="note">So sehen andere dein Profil.</span><span class="ebtns"><button class="btn" data-act="nav" data-v="design">✎ Profil bearbeiten</button><button type="button" class="ebico" data-act="nav" data-v="games" aria-label="Minigames" title="Minigames"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.games}</svg></button></span></div>` : ''}
+    ${/* seit v565: kein „So sehen andere dein Profil“, Bearbeiten steht unten neben „Profil teilen“ (Inaya) */ ''}
     ${roomOpenHTML(u, own)}
     ${/* Lookbuch und Zimmerbuch nicht mehr im Profil (seit v563, Inaya): nur noch in Garderobe und Zimmer */ ''}
     ${profileHead(u, u.theme, mine)}
@@ -13189,7 +13195,8 @@ function renderInner(){
   if (birthProblem(S.users[S.me].birth)) { const rb = regBirth(); if (rb) { S.users[S.me].birth = rb; save(); } }
   if (tooYoung()) { applyPage(null); app.innerHTML = youngView(); return; }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
-  const wide = ['games','design','shop','wardrobe','friends','find','room','chats','visit','browse','shopping','mall','moebel'].includes(V.name);
+  if (V.name === 'games') V = {name:'home', arg:null}; /* Minigames seit v565 entfernt (Inaya) */
+  const wide = ['design','shop','wardrobe','friends','find','room','chats','visit','browse','shopping','mall','moebel'].includes(V.name);
   const body = {home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, archive:archiveView, visit:visitView, shopping:shoppingView, mall:mallView, moebel:moebelView}[V.name] || homeView;
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
