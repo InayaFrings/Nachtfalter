@@ -407,3 +407,9 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Abgebrochen = neue Sitzung (`sessionStorage nf-ob` fehlt): `obBoot` verwirft alles auf dem Gerät und löscht die Firebase-Anmeldung (`deleteUser`, klappt nur kurz nach dem Anlegen; sonst nur abmelden). Wer sich später mit derselben E-Mail neu registriert, darf sie übernehmen, wenn Passwort stimmt und es weder Profil noch Sicherung gibt (`obReuse`).
 - Seit v625: Von der Owner entfernte Konten (`banned/<uid>`) geben ihre E-Mail frei: Registriert sich jemand mit derselben E-Mail und dem alten Passwort, löscht `obReuse` die alte Sicherung und die alte Anmeldung und legt ein neues Konto (neue UID) an. Ohne das alte Passwort geht das nur über Firebase → Authentication.
 - Baden (seit v605): geht immer (weckt das Tier auf). Antippen startet das Bad (`petBathStart`), Wischen über das Tier legt Schaum (`petFoamAt`, `.pfb`, Leiste `#pbathbar`), nach `PET_FOAM_N` Schaum-Tupfern wird abgespült (`petBathEnd`). `petGroups` legt `pets/<uid>` nach, falls es wegen alter Regeln fehlte.
+
+## Begleiter: Füttern, Schlafen, Streicheln (seit v657/v658)
+
+- Streicheln gibt nur XP, solange die Laune (`p`) nicht voll ist. Ein Beitrag in einer Story (`.ststk .stpost`) hat keine Einblend-Animation mehr (vorher erbte er `rise` von `.post`).
+- Füttern: Das Essen fliegt im Bogen in den Mund (`petFeedFly`, Mund-Stelle je Art `PET_MOUTH` im 200er-Feld), danach kurzes Kauen.
+- Schlafen: Nur das runde Auge geht zu (`petLid`, `PET_EYE` = Lage, Größe, Fellfarbe), das X-Auge bleibt, weil dort kein Auge ist (Inaya).
