@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='841c5833d910';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2f180f853472';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -9816,11 +9816,12 @@ function ownerPubPosts(){
 // Salon: Beiträge von Freunden oder öffentliche Beiträge von allen (Inaya, 2026-10-10)
 const PUBF = {ids:[], ts:0, busy:false};
 async function loadPubFeed(force){
-  if (!social || PUBF.busy || (!force && Date.now() - PUBF.ts < 60000)) return;
+  if (!social || PUBF.busy || (!force && Date.now() - PUBF.ts < 300000)) return; /* v655: alle 5 statt jede Minute */
   PUBF.busy = true;
   const qq = social.db.collection('profiles').orderBy('pubTs', 'desc').limit(40);
   if (!PUBF.ts) { try { const c = await qq.get({source:'cache'}); if (!c.empty) { PUBF.ids = []; c.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || x.priv) return; if (!PROF[d.id]) PROF[d.id] = x; PUBF.ids.push(d.id); }); PUBF.cached = true; softRender(); } } catch {} } // erst sofort vom Gerät
-  try { const q = await qq.get(); PUBF.ids = []; q.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || x.priv) return; PROF[d.id] = x; PUBF.ids.push(d.id); }); } catch {}
+  if (PUBF.cached && !force) { let lt = 0; try { lt = +localStorage.getItem('nf-pubft') || 0; } catch {} if (Date.now() - lt < 300000) { PUBF.ts = Date.now(); PUBF.busy = false; return; } await new Promise(r => setTimeout(r, 4000)); } /* v655: Gerätestand reicht, wenn der Server-Stand frisch ist */
+  try { const q = await pqGet(() => qq.get()); if (!q) throw 0; try { localStorage.setItem('nf-pubft', Date.now()); } catch {} PUBF.ids = []; q.forEach(d => { const x = d.data(); if (d.id === social.uid || isTestHandle(x.handle) || x.priv) return; PROF[d.id] = x; PUBF.ids.push(d.id); }); } catch {}
   PUBF.ts = Date.now(); PUBF.busy = false; softRender();
 }
 function pubPosts(){
@@ -10270,7 +10271,7 @@ function socialStart(){
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incReady = true; FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
     CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
-    Promise.all(CH.list.flatMap(c => c.members).filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender);
+    Promise.all([...new Set(CH.list.filter(c => !c.group).flatMap(c => c.members))].filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender); /* v655: Gruppenmitglieder erst, wenn ihr Bild gebraucht wird */
   }, () => {});
   { const fd = db.doc('friends/' + social.uid), frPut = d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; };
     fd.get({source:'cache'}).then(d => { if (!FR.ready && d.exists) { frPut(d); syncFriends(); } }).catch(() => {}); /* erst sofort vom Gerät, dann vom Server (Inaya, 2026-10-16) */
@@ -10295,9 +10296,17 @@ function softRender(){
 // Profil laden: erst sofort aus dem Zwischenspeicher, dann im Hintergrund frisch vom Server (Inaya, 2026-10-15)
 const profPut = (id, d) => { if (!d?.exists) return false; const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; return true; };
 const LPS = {}; // laufende Server-Abfragen je Profil
+/* v655 (Inaya: alles lädt zu lange): Profile sind groß (bis 240 KB). Vom Server nur, wenn der letzte Abruf länger als 15 Minuten her ist,
+   höchstens 3 gleichzeitig, und solange ein Chat lädt, warten sie (der Chat hat Vorrang). */
+const LPT = (() => { try { return JSON.parse(localStorage.getItem('nf-lpt') || '{}') || {}; } catch { return {}; } })(), LPT_MS = 900000;
+const lptMark = id => { LPT[id] = Date.now(); clearTimeout(LPT.t); LPT.t = setTimeout(() => { try { const o = {}; Object.entries(LPT).filter(([k, v]) => k !== 't' && Date.now() - v < LPT_MS).forEach(([k, v]) => { o[k] = v; }); localStorage.setItem('nf-lpt', JSON.stringify(o)); } catch {} }, 2000); };
+const PQ = {n:0, q:[]};
+const pqRun = () => { while (PQ.n < 3 && PQ.q.length && !chBusy()) { const [f, res] = PQ.q.shift(); PQ.n++; f().then(res, () => res(null)).finally(() => { PQ.n--; pqRun(); }); } if (PQ.q.length && chBusy()) { clearTimeout(PQ.t); PQ.t = setTimeout(pqRun, 300); } };
+const pqGet = f => new Promise(res => { PQ.q.push([f, res]); pqRun(); });
+const chBusy = () => !!(CH.open && CH.mode === 'chat' && CH.mraw == null && V.name === 'chats' && Date.now() - (CH.t0 || 0) < 8000);
 async function loadProf(id){ const ref = social.db.doc('profiles/' + id);
-  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy) { const pr = LPS[id] = ref.get().then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
-  try { profPut(id, await ref.get()); } catch {} }
+  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy && Date.now() - (LPT[id] || 0) > LPT_MS) { const pr = LPS[id] = pqGet(() => ref.get()).then(d => { if (d) lptMark(id); return d; }).then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
+  try { const d = await pqGet(() => ref.get()); if (profPut(id, d)) lptMark(id); } catch {} }
 function remoteUser(id, p){
   const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
   return {id, remote:true, age:Number.isFinite(+p.age) && +p.age > 0 ? +p.age : null, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
@@ -10509,7 +10518,7 @@ function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
-  CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.lim = 60; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
+  CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.t0 = Date.now(); CH.lim = 60; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
   chSub(id); rdWatch(id); tkWatch(id);
   go('chats');
 }

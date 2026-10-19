@@ -154,6 +154,13 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Der Salon zeichnet die Beiträge erst, wenn alle Quellen da sind (`feedWait`): Freunde (`FR.synced`, erster `syncFriends` mit frischem Serverstand, höchstens 1,5 s Warten), Öffentlich (`PUBF.ts`), Owner-Beiträge für alle (`OWNK`, `OWNR`). Vorher Platzhalter `FEED_SKEL`, höchstens 6 s (`FEEDW.max`). Danach einmal richtig sortiert, die alte Scrollstelle wird dann noch einmal hergestellt (`NAVR.lastY`).
 - Freundesliste und `site/owner` kommen zuerst aus dem Zwischenspeicher, dann vom Server. `syncFriends` läuft nie doppelt (`FR.busy`/`FR.again`), `loadProf` startet je Profil nur eine Server-Abfrage gleichzeitig (`LPS`). Spart Lesevorgänge beim Start.
 
+## Laden mit Vorrang für Chats (seit v655)
+
+- Profile sind groß (bis 240 KB) und liefen beim Start massenhaft über dieselbe Verbindung wie die Chats: Chats hingen bei „Lädt …“, Entschlüsselung kam nie (nachgestellt mit 2 Mbit/s und 20 großen Profilen).
+- `loadProf` holt ein Profil vom Server nur, wenn der letzte Abruf länger als 15 Minuten her ist (`LPT`, `localStorage nf-lpt`), über die Warteschlange `PQ`/`pqGet` (höchstens 3 gleichzeitig). Solange ein geöffneter Chat noch lädt (`chBusy`, höchstens 8 s), wartet die Schlange.
+- Die Chatliste lädt nur Profile der Leute aus privaten Chats, Gruppenmitglieder erst, wenn ihr Bild gebraucht wird.
+- Öffentlicher Salon (`loadPubFeed`): Server höchstens alle 5 Minuten (`localStorage nf-pubft`), beim Start erst der Gerätestand, der Server 4 s später.
+
 ## Navigation am Handy (seit v483)
 
 - Unten genau fünf, nur Symbole: Salon, Shop, Chat, Suche, Profil (`mobNav`). Shopping-Straße am Handy ohne Scrollen (`swFit`), am PC größer und untereinander. Oben drei: Mitteilungen, Minigames, Einstellungen (`mobTop`; Freundschaftsanfragen zählen bei der Glocke mit).
