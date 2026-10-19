@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='01312ee40f8a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f4c20b46d218';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -180,6 +180,7 @@
 *{box-sizing:border-box}
 html,body{min-height:100%}
 html{background-color:#0a0a0b} /* v594: über und unter der Seite (Nachfedern) immer Schwarz, nicht die Profilfarbe */
+html.standalone,html.standalone body{overscroll-behavior-y:none}
 body{min-height:100vh;background-color:var(--bg);color:var(--fg);font:17px/1.55 var(--f-body)}
 button{font:inherit;cursor:pointer;color:inherit}
 :focus-visible{outline:2px solid var(--fg);outline-offset:3px}
@@ -11698,11 +11699,11 @@ function batFly(){ if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
   document.body.appendChild(el); setTimeout(() => el.remove(), 4200); }
 try { if (performance.getEntriesByType('navigation')[0]?.type === 'reload' || sessionStorage.getItem('nf-pull')) { sessionStorage.removeItem('nf-pull'); setTimeout(batFly, 600); } } catch {}
 // Runterziehen zum Neuladen, nur in der installierten App (Browser haben es selbst)
-(() => { const sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; if (!sa) return;
+(() => { const sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; if (!sa) return; document.documentElement.classList.add('standalone'); /* v595: in der App kein Nachfedern der ganzen Seite (Spalt in Profilfarbe), nur das eigene Runterziehen */
   let y0 = null, dy = 0, ind = null; const blocked = t => !!t.closest?.('.storyov,.callov,.ringov,.shpk,.chatpanel,#cmv,.mview,.sgp,.stmpanel,dialog,[role=dialog],input,textarea,.tkpage,.petpg,.pstudio') || document.body.dataset.pg === 'pet' || document.body.classList.contains('chatfull') || document.body.classList.contains('stopen');
   addEventListener('touchstart', e => { if (scrollY > 0 || e.touches.length > 1 || blocked(e.target)) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, {passive:true});
   /* seit v569 wie bei Insta: Kopfzeile und Seite rutschen nach unten, die weiße Fledermaus erscheint darüber */
-  const shift = (px, anim) => { document.body.style.setProperty('--pullh', (px || 0) + 'px'); document.querySelectorAll('.shell > .rail, .shell > .main, .shell > .aside').forEach(el => { el.style.transition = anim ? 'transform .25s ease' : ''; el.style.transform = px ? `translateY(${px}px)` : ''; }); };
+  const shift = (px, anim) => { const rt = document.querySelector('.shell > .rail')?.getBoundingClientRect().top || 0; document.body.style.setProperty('--pullh', (px ? Math.max(px, rt + px) : 0) + 'px'); document.querySelectorAll('.shell > .rail, .shell > .main, .shell > .aside').forEach(el => { el.style.transition = anim ? 'transform .25s ease' : ''; el.style.transform = px ? `translateY(${px}px)` : ''; }); };
   addEventListener('touchmove', e => { if (y0 == null) return; dy = e.touches[0].clientY - y0; if (scrollY > 0 || dy < 0) { dy = 0; ind?.remove(); ind = null; shift(0); return; }
     if (!ind && dy > 12) { ind = document.createElement('div'); ind.id = 'pullbat'; ind.innerHTML = BAT; document.body.appendChild(ind); }
     if (ind) { const q = Math.min(1, dy / 110), off = Math.min(dy, 150) * .5; shift(off); ind.style.transform = `translate(-50%, ${Math.max(0, off - 40) * .5}px) rotate(${q * 360}deg) scale(${.6 + q * .5})`; ind.style.opacity = String(.3 + q * .7); ind.classList.toggle('go', dy > 110); } }, {passive:true});
