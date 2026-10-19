@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='609826bf0b3c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b95d2e0fe2f8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -12020,6 +12020,7 @@ const pshUser = id => id === S.me ? me() : S.users[id] || profUser(id);
 function pshQrC(box){ let q = box || '#26262b'; for (let k = 0; k < 8 && lum(q) > .16; k++) q = shade(q, .62); return q; } // dunkle Variante der Profilfarbe, gut scanbar
 function pshOpen(id){ if (!pshUser(id)) return; PSH = {id, copied:false}; pshPaint(); }
 function pshClose(){ PSH = null; document.getElementById('pshov')?.remove(); }
+const PSH_CP = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2.4"/><path d="M15.5 8.5V6.4A1.9 1.9 0 0 0 13.6 4.5H6.4A1.9 1.9 0 0 0 4.5 6.4v7.2a1.9 1.9 0 0 0 1.9 1.9h2.1"/></svg>', PSH_OK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function pshPaint(){ document.getElementById('pshov')?.remove(); if (!PSH) return; const u = pshUser(PSH.id); if (!u) return;
   const t = normTheme({...(u.theme || BLANK_THEME())}), link = profLink(u), panel = '#fbf9f6';
   const el = document.createElement('div'); el.id = 'pshov'; el.className = 'pshov'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Profil teilen');
@@ -12028,13 +12029,13 @@ function pshPaint(){ document.getElementById('pshov')?.remove(); if (!PSH) retur
     <span class="pshk">Profil teilen</span>
     <h2 class="pshname" data-raw>${esc(u.name || '')}${hmark(u)}</h2>${u.handle ? `<span class="pshh" data-raw>@${esc(u.handle)}</span>` : ''}
     <div class="pshqr">${QR.svg(link, {fg:pshQrC(t.box), bg:panel})}<span class="pshav">${headPic(u)}</span></div>
-    <div class="pshlink"><span data-raw>${esc(link.replace(/^https:\/\/(www\.)?/, ''))}</span><button type="button" class="pshcp${PSH.copied ? ' done' : ''}" data-act="psh-copy" aria-label="Link kopieren" title="Link kopieren"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2.4"/><path d="M15.5 8.5V6.4A1.9 1.9 0 0 0 13.6 4.5H6.4A1.9 1.9 0 0 0 4.5 6.4v7.2a1.9 1.9 0 0 0 1.9 1.9h2.1"/></svg></button></div>
+    <div class="pshlink"><span data-raw>${esc(link.replace(/^https:\/\/(www\.)?/, ''))}</span><button type="button" class="pshcp${PSH.copied ? ' done' : ''}" data-act="psh-copy" aria-label="Link kopieren" title="Link kopieren">${PSH.copied ? PSH_OK : PSH_CP}</button></div>
     <div class="pshbtns"><button type="button" class="pshb main" data-act="psh-share">Teilen …</button><button type="button" class="pshb" data-act="qrs-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M4 12h16"/></svg>QR-Code scannen</button><button type="button" class="pshb wide" data-act="psh-save">QR-Code speichern</button></div>
     <small class="pshnote">Scannen öffnet das Profil auf Noctibat.</small></div>`;
   el.addEventListener('click', e => { if (e.target === el) pshClose(); });
   document.body.appendChild(el); el.querySelector('.pshb.main')?.focus({preventScroll:true}); }
 async function copyText(t){ try { await navigator.clipboard.writeText(t); return true; } catch {}
-  try { const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(a); a.select(); a.setSelectionRange(0, t.length); const ok = document.execCommand('copy'); a.remove(); return ok; } catch { return false; } }
+  try { const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;left:-9999px;top:0;font-size:16px'; document.body.appendChild(a); a.select(); a.setSelectionRange(0, t.length); const ok = document.execCommand('copy'); a.remove(); return ok; } catch { return false; } }
 // Bild zum Speichern: Profilfarbe, Name, QR-Code mit Avatar, Link
 async function pshImage(u){ const t = normTheme({...(u.theme || BLANK_THEME())}), link = profLink(u), W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d');
   const load = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
@@ -12056,7 +12057,7 @@ async function pshSave(){ const u = pshUser(PSH?.id); if (!u) return; let blob; 
 document.addEventListener('click', async e => { const b = e.target.closest?.('[data-act]'); if (!b) return; const a = b.dataset.act;
   if (a === 'pshare') { e.preventDefault(); pshOpen(b.dataset.id); }
   else if (a === 'psh-x') pshClose();
-  else if (a === 'psh-copy') { const u = pshUser(PSH?.id); if (!u) return; if (await copyText(profLink(u))) { PSH.copied = true; pshPaint(); toast('Link kopiert'); } else toast('Kopieren ging nicht. Halte den Link gedrückt, um ihn zu kopieren.'); }
+  else if (a === 'psh-copy') { const u = pshUser(PSH?.id); if (!u) return; if (await copyText(profLink(u))) { PSH.copied = true; const b = document.querySelector('#pshov .pshcp'); if (b) { b.classList.add('done'); b.innerHTML = PSH_OK; b.setAttribute('aria-label', 'Kopiert'); } /* v619: nur das Symbol tauschen, nicht das ganze Fenster neu zeichnen (zoomte und ruckelte) */ } else toast('Kopieren ging nicht. Halte den Link gedrückt, um ihn zu kopieren.'); }
   else if (a === 'psh-share') { const u = pshUser(PSH?.id); if (!u) return; if (navigator.share) { try { await navigator.share({title:(u.name || '') + ' auf Noctibat', text:'Schau dir das Profil von ' + (u.name || '') + ' auf Noctibat an', url:profLink(u)}); } catch {} return; }
     if (await copyText(profLink(u))) { PSH.copied = true; pshPaint(); toast('Link kopiert. Füg ihn ein, wo du ihn teilen möchtest.'); } } // ohne Teilen-Menü (z. B. Chrome am PC): Link kopieren
   else if (a === 'qrs-open') qrsOpen();
