@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0b3a9bc21bf7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='032c7bc80a09';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -6600,6 +6600,10 @@ function obBoot(){ if (!obOpen()) return; let same = false; try { same = session
 /* Registrieren mit einer E-Mail, deren Anmeldung nie fertig wurde: gleiches Passwort, kein Profil und keine Sicherung → neu anfangen */
 async function obReuse(contact, pw){ try { const r = await NF_AUTH.signIn(contact, pw); if (r.error) return false;
     const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]); const uid = await user.id();
+    /* v625: von der Owner entferntes Konto: alte Reste und die Anmeldung löschen, dann ist die E-Mail frei für ein neues Konto (Inaya) */
+    let ban = false; try { ban = (await db.collection('banned').doc(uid).get()).exists; } catch {}
+    if (ban) { try { const c = db.collection('data/users/' + uid), q = await c.get(); await Promise.all(q.docs.map(d => c.doc(d.id).delete().catch(() => {}))); } catch {}
+      const d = await NF_AUTH.deleteUser(); if (!d.error) { const r2 = await NF_AUTH.signUp(contact, pw); if (!r2.error) return true; } await NF_AUTH.signOut().catch(() => {}); return false; }
     const [pf, mt] = await Promise.all([db.collection('profiles').doc(uid).get(), db.collection('data/users/' + uid).doc('nf-meta').get()]);
     if (!pf.exists && !mt.exists) return true; await NF_AUTH.signOut(); } catch {} return false; }
 function finishOb(){
