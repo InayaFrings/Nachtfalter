@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2a6707c2ceae';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='de5c7ce0d4da';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2528,7 +2528,8 @@ body.pcropen{overflow:hidden}
 
 
 /* Profil bearbeiten wie bei Instagram (seit v569) */
-.peig .pecol{display:grid;gap:14px;min-width:0}
+.peig .pecol{display:grid;gap:14px;min-width:0;--fg:#eeedf2;--muted:#9a96a0;--line:#ffffff30;--line-soft:#ffffff1c;--bg:#0e0d11;--paper:#16151a;--ink:#0e0d11;background:#0e0d11;color:#eeedf2;border:1px solid #ffffff1f;border-radius:18px;padding:6px 18px 18px;box-shadow:0 10px 40px #0006} /* v570: eigene dunkle Fläche, lesbar auf jedem Profil-Hintergrund */
+.peig .pecol .lnk{color:#eeedf2}.peig .pecol input::placeholder,.peig .pecol textarea::placeholder{color:#6f6b76}
 .pehead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:6px 0 10px;border-bottom:1px solid var(--line-soft)}
 .pehead b{font:700 18px var(--f-display)}.pehead .lnk{justify-self:start;text-decoration:none;font-size:16px}.pehead .pedone{justify-self:end;font-weight:700}
 .pepic{display:grid;justify-items:center;gap:8px;padding:6px 0 4px}.pepic #picprev .portrait,.pepic #picprev>*{width:96px}
@@ -2548,7 +2549,7 @@ body.pcropen{overflow:hidden}
 .pesave{margin-top:4px}
 @media (max-width:760px){
   .design.peig{display:block;height:auto;margin:0;gap:0}.peig .preview{display:none!important}
-  .design.peig > .pecol{overflow:visible;padding:0 0 24px;gap:14px!important}
+  .design.peig > .pecol{overflow:visible;padding:0 14px 24px;gap:14px!important;border-radius:0;border-left:0;border-right:0;margin:0 -12px}
   .shell:has(.peig){padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
   body:has(.pehead) .main > .navback{display:none}
   .pehead{position:sticky;top:calc(77px + env(safe-area-inset-top,0px));z-index:50;background:var(--bg);margin:0 -2px;padding:10px 2px}
