@@ -88,7 +88,9 @@ service cloud.firestore {
     function petMine(cid) { return exists(/databases/$(database)/documents/pets/$(request.auth.uid))
       && cid == 'gpet' + get(/databases/$(database)/documents/pets/$(request.auth.uid)).data.k; }
     match /pets/{uid} { allow read: if invited();
-      allow create: if me(uid) && request.resource.data.keys().hasOnly(['k', 'ts']) && request.resource.data.k in ['fled', 'katze', 'rabe'];
+      allow create: if me(uid) && request.resource.data.keys().hasOnly(['k', 'ts']) && request.resource.data.k in ['fled', 'katze', 'hase'];
+      // v645: den Raben gibt es nicht mehr, wer ihn hatte, darf einmal neu wählen
+      allow update: if me(uid) && resource.data.k == 'rabe' && request.resource.data.keys().hasOnly(['k', 'ts']) && request.resource.data.k in ['fled', 'katze', 'hase'];
       allow delete: if me(uid) && !exists(/databases/$(database)/documents/profiles/$(uid)); }
     function mayRead(cid) { return isDm(cid) ? inDm(cid) : isGroup(cid) ? (inGroup(cid) || (groupOpen(cid) && !petG(cid))) : true; }
     function mayWrite(cid) { return isDm(cid) ? inDm(cid) : isGroup(cid) ? inGroup(cid) : true; }
