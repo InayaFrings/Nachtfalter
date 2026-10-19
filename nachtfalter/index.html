@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='318d32c5a45a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1e733858a87b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10581,7 +10581,7 @@ function chatsView(){
       </div>
       <div class="chatmain">${right}</div>
     </div>
-    ${!chSubPg() && (chatTab === 'priv' || chatTab === 'group') ? `<p class="note">${E2_LOCK} Deine Nachrichten sind <b style="font-weight:600">Ende-zu-Ende-verschlüsselt</b></p>` : ''}
+    ${chatTab === 'priv' || chatTab === 'group' ? `<p class="note">${E2_LOCK} Deine Nachrichten sind <b style="font-weight:600">Ende-zu-Ende-verschlüsselt</b></p>` : ''}
   </div></div>`;
 }
 document.addEventListener('input', e => { if (e.target.id !== 'g-name') return; const n = document.getElementById('g-prevname'); if (n) n.textContent = e.target.value || 'Eure Gruppe'; });
@@ -10636,7 +10636,7 @@ function groupForm(friends){
     ${g.id && gDelAsk ? `<div class="gdel"><span>Gruppe wirklich für alle löschen? Alle Nachrichten sind dann weg.</span><div class="row"><button class="btn" type="button" data-act="chat-del-yes">Ja, löschen</button><button class="btn ghost" type="button" data-act="chat-del-no">Nein</button></div></div>` : ''}
 
     <div class="row">${g.id && !g.dm ? `<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button><button class="btn ghost" type="button" data-act="chat-del">Gruppe löschen</button>` : g.id && g.dm ? `<button class="btn ghost" type="button" data-act="chat-rm" data-id="${esc(g.id)}">Chat löschen</button>` : ''}<span class="sp"></span><button class="btn" type="submit">${g.id ? 'Speichern' : 'Gruppe erstellen'}</button></div>
-    ${g.id && e2Chat(g.id) ? `<div class="e2box"><span class="e2seal" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.3" r="1.4"/><path d="M12 16.7v1.6"/></svg></span><span class="e2txt"><b>Ende-zu-Ende-verschlüsselt</b><small>Nur ${g.dm ? 'ihr beide könnt' : 'die Mitglieder können'} die Nachrichten lesen, nicht einmal Noctibat. Mit der Sicherheitsnummer prüft ihr, dass niemand dazwischen sitzt.</small></span><button class="btn ghost e2go" type="button" data-act="e2-code">Sicherheitsnummer vergleichen</button></div>` : ''}
+    ${false && g.id && e2Chat(g.id) ? `<div class="e2box"><span class="e2seal" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.3" r="1.4"/><path d="M12 16.7v1.6"/></svg></span><span class="e2txt"><b>Ende-zu-Ende-verschlüsselt</b><small>Nur ${g.dm ? 'ihr beide könnt' : 'die Mitglieder können'} die Nachrichten lesen, nicht einmal Noctibat. Mit der Sicherheitsnummer prüft ihr, dass niemand dazwischen sitzt.</small></span><button class="btn ghost e2go" type="button" data-act="e2-code">Sicherheitsnummer vergleichen</button></div>` : ''}
   </form>`;
 }
 async function chBgSave(cid, g){ if (!g.bgNew || !g.theme.bg) return; await social.db.doc('chats/' + cid + '/bg/img').set({img:g.bgNew, by:social.uid, ts:Date.now()}); CHBG[cid + ':' + g.theme.bg.v] = g.bgNew; delete g.bgNew; }
