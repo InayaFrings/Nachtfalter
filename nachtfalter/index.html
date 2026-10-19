@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='39f2086f38f3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d0dfab88a1d5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -11283,19 +11283,20 @@ const delWord = () => ['LÖSCHEN', 'DELETE'].includes((document.getElementById('
 document.addEventListener('input', e => { if (e.target.id === 'del-in') document.getElementById('del-go').disabled = !delWord(); });
 async function deleteAccount(pw){ // Konto und alles Zugehörige entfernen
   if (PUB) { const r = await NF_AUTH.reauth(pw); if (r.error) return r.error; }
-  if (PUB) { clearTimeout(cloudTimer); if (cloud) { try { const d = await cloud.col.get(); for (const x of d.docs) await cloud.col.doc(x.id).delete().catch(() => {}); } catch {} cloud = null; } }
-  if (social) { // das Profil zuletzt: daran erkennt die Datenbank ältere Mitglieder ohne Einladungslink
-    const uid = social.uid; clearTimeout(pubTimer); pubTimer = null; deleting = true;
-    for (const p of ['handles/' + uid, 'friends/' + uid]) await social.db.doc(p).delete().catch(() => {});
-    if (me()?.handle) await social.db.doc('logins/' + me().handle).delete().catch(() => {});
-    try { const w = await social.db.collection('chats/wall_' + uid + '/m').get(); for (const d of w.docs) await social.db.doc('chats/wall_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
-    try { const z = await social.db.collection('chats/zimmer_' + uid + '/m').get(); for (const d of z.docs) await social.db.doc('chats/zimmer_' + uid + '/m/' + d.id).delete().catch(() => {}); } catch {}
-    try { const k = await social.db.collection('profiles/' + uid + '/e2ee').get(); for (const d of k.docs) await d.ref.delete().catch(() => {}); await e2Del('u:' + uid); } catch {} // Geräteschlüssel
-    await social.db.doc('profiles/' + uid).delete().catch(() => {});
-    await social.db.doc('pets/' + uid).delete().catch(() => {}); /* erst nach dem Profil erlaubt */
-  }
+  /* alles gleichzeitig löschen, jeweils mit Zeitgrenze (Inaya, 2026-10-19: vorher nacheinander, das dauerte ewig) */
+  const cap = (p, ms) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise(r => setTimeout(r, ms))]), all = ps => Promise.all(ps.map(p => Promise.resolve(p).catch(() => {})));
+  const jobs = [];
+  if (PUB) { clearTimeout(cloudTimer); if (cloud) { const col = cloud.col; jobs.push(col.get().then(d => all(d.docs.map(x => col.doc(x.id).delete())))); cloud = null; } }
+  if (social) {
+    const uid = social.uid, db = social.db; clearTimeout(pubTimer); pubTimer = null; deleting = true;
+    const sub = c => db.collection(c).get().then(w => all(w.docs.map(d => db.doc(c + '/' + d.id).delete())));
+    jobs.push(db.doc('handles/' + uid).delete(), db.doc('friends/' + uid).delete(), sub('chats/wall_' + uid + '/m'), sub('chats/zimmer_' + uid + '/m'),
+      db.collection('profiles/' + uid + '/e2ee').get().then(k => all(k.docs.map(d => d.ref.delete()))), Promise.resolve().then(() => e2Del('u:' + uid))); // Geräteschlüssel
+    if (me()?.handle) jobs.push(db.doc('logins/' + me().handle).delete());
+    await cap(all(jobs), 6000);
+    await cap(db.doc('profiles/' + uid).delete().then(() => db.doc('pets/' + uid).delete()), 4000); /* Begleiter erst nach dem Profil erlaubt */
+  } else await cap(all(jobs), 6000);
   if (PUB) {
-    if (social) await social.db.doc('profiles/' + social.uid).delete().catch(() => {}); // falls zwischendurch noch gespeichert wurde
     const r = await NF_AUTH.deleteUser(); if (r.error) return r.error;
     try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.();
     location.reload(); return null;
