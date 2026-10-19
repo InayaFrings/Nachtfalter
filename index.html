@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d5311bf00318';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='70238e34ad86';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -710,7 +710,7 @@ footer.foot .lnk{color:var(--muted)}
 .prow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);padding:8px 12px;flex-wrap:wrap}
 .prow .cameo{width:46px;height:46px}.pgo{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit}.frq{display:grid;gap:8px}.pinfo{display:grid;flex:1;min-width:120px}.pbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.pinfo .pstat{display:none;color:var(--muted);font-style:normal;font-size:14px}
 .chatwrap{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:18px;align-items:start}
-@media all /*760*/{.chatwrap{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:761px){.chatwrap{grid-template-columns:minmax(0,1fr)}} /* v581: am PC wieder zwei Spalten */
 .chatside{display:grid;gap:6px}.chatside .row{margin-bottom:6px}
 .clist{display:grid;text-align:left;gap:2px;background:transparent;border:1px solid var(--line);color:var(--fg);padding:9px 12px;font:inherit;cursor:pointer;width:100%}
 .clist:hover,.clist.on{border-color:var(--fg)}
@@ -1762,8 +1762,8 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .cmrow.cmme{justify-content:flex-end;align-self:flex-end}.cmrow.cmme>.bubble{margin-left:auto}
 @media all /*760*/{.ch-head .grpsh{display:none}}
 .grpsh2{gap:8px;justify-content:center}.grpsh2 svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-@media (min-width:99999px) /*761*/{.chatside .chtop{height:clamp(420px,calc(100dvh - 240px),680px);display:flex;flex-direction:column;gap:10px;min-height:0}.chatside .clscroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:grid;gap:10px;align-content:start;padding-right:4px;scrollbar-width:thin}.chatside .chtop>.row,.chatside .ctabs2{flex:none}}
-@media all /*760*/{.chatside .chtop,.chatside .clscroll{display:contents}}
+@media (min-width:762px) /*761*/{.chatside .chtop{height:clamp(420px,calc(100dvh - 240px),680px);display:flex;flex-direction:column;gap:10px;min-height:0}.chatside .clscroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:grid;gap:10px;align-content:start;padding-right:4px;scrollbar-width:thin}.chatside .chtop>.row,.chatside .ctabs2{flex:none}}
+@media (max-width:761px){.chatside .chtop,.chatside .clscroll{display:contents}}
 .batsend path:first-of-type{fill:none}.batsend{overflow:visible}
 .lheart .lhw{stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 .seth{margin:22px 0 4px;font:400 20px var(--f-display,serif);display:flex;align-items:center;gap:10px}.seth::after{content:'';flex:1;height:1px;background:var(--line)}
@@ -2611,12 +2611,25 @@ body.psopen{overflow:hidden}
 .psexpl{margin:4px 0 2px;font-size:15px;color:#d8d4dc}.psexpl b{color:#fff}
 
 /* Begleiter-Seite passt ohne Scrollen auf den Bildschirm (v580) */
-body[data-pg="pet"] .shell{padding-bottom:0!important}body[data-pg="pet"] #app{min-height:0!important}html:has(body[data-pg="pet"]),body[data-pg="pet"]{overscroll-behavior:none}
+body[data-pg="pet"] .shell{padding-bottom:0!important}body[data-pg="pet"] #app{min-height:0!important}
+html:has(body[data-pg="pet"]){overflow:hidden;height:100%;overscroll-behavior:none}body[data-pg="pet"]{overflow:hidden;position:fixed;inset:0;width:100%;height:100%;overscroll-behavior:none} /* v581: Begleiter-Seite steht still, auch am iPhone */
 .petpg{display:flex!important;flex-direction:column;gap:8px;height:calc(100dvh - 77px - env(safe-area-inset-top,0px) - 62px - 112px - env(safe-area-inset-bottom,0px));min-height:340px;padding-bottom:0!important;overflow:hidden}
 .petpg .pscene{flex:1 1 auto;min-height:120px;height:auto!important;aspect-ratio:auto!important}
 .petpg .pethead h1{font-size:22px!important}.petpg .ptyp{font-size:13px}.petpg .plv{margin-top:2px}
 .petpg .pneed{padding:5px 2px!important;gap:3px}.petpg .pneed i,.petpg .pneed svg{width:20px;height:20px}
 @media (min-width:762px){.petpg{height:calc(100vh - 77px - 68px - 112px)}}
+
+/* v581: Chat am PC wie früher (Liste links, Gespräch rechts), Shopping-Straße am PC nebeneinander, Coins und Tasche im Vorschaufeld */
+.ncfloat{position:absolute;top:8px;right:8px;z-index:6;display:flex;align-items:center;gap:6px}.mirror-card,.ncroom>.card-in{position:relative}
+.ncfloat .ncpill{background:color-mix(in srgb,var(--bg,#0a0a0b) 82%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+@media (min-width:762px){
+  body[data-pg="chats"]{--colw:min(1100px,100vw)}
+  .chatwrap{grid-template-columns:minmax(220px,300px) minmax(0,1fr)!important}
+  .chatwrap.open .chatside{display:block!important}.chatmain .mback{display:none!important}
+  .chatmain>.chatpanel{height:clamp(420px,calc(100vh - 240px),760px)!important}
+  body[data-pg="shopping"]{--colw:min(1100px,100vw)}
+  .sworld{grid-template-columns:1fr 1fr!important;grid-template-rows:1fr!important}
+}
 /* PC (seit v575, Inaya; v580 wieder ohne Seitenleiste): Leisten oben und unten wie am Handy, im PC-Format über die ganze Fensterbreite,
    Inhalt als Spalte in der Mitte; Profil ab 1200 px dreispaltig (links Avatar, Mitte Profil, rechts Helfer und Gästebuch). */
 .mobnav .pconly{display:none!important}
@@ -11634,7 +11647,7 @@ function batFly(){ if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
 try { if (performance.getEntriesByType('navigation')[0]?.type === 'reload' || sessionStorage.getItem('nf-pull')) { sessionStorage.removeItem('nf-pull'); setTimeout(batFly, 600); } } catch {}
 // Runterziehen zum Neuladen, nur in der installierten App (Browser haben es selbst)
 (() => { const sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; if (!sa) return;
-  let y0 = null, dy = 0, ind = null; const blocked = t => !!t.closest?.('.storyov,.callov,.ringov,.shpk,.chatpanel,#cmv,.mview,.sgp,.stmpanel,dialog,[role=dialog],input,textarea,.tkpage') || document.body.classList.contains('chatfull') || document.body.classList.contains('stopen');
+  let y0 = null, dy = 0, ind = null; const blocked = t => !!t.closest?.('.storyov,.callov,.ringov,.shpk,.chatpanel,#cmv,.mview,.sgp,.stmpanel,dialog,[role=dialog],input,textarea,.tkpage,.petpg,.pstudio') || document.body.dataset.pg === 'pet' || document.body.classList.contains('chatfull') || document.body.classList.contains('stopen');
   addEventListener('touchstart', e => { if (scrollY > 0 || e.touches.length > 1 || blocked(e.target)) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, {passive:true});
   /* seit v569 wie bei Insta: Kopfzeile und Seite rutschen nach unten, die weiße Fledermaus erscheint darüber */
   const shift = (px, anim) => document.querySelectorAll('.shell > .rail, .shell > .main, .shell > .aside').forEach(el => { el.style.transition = anim ? 'transform .25s ease' : ''; el.style.transform = px ? `translateY(${px}px)` : ''; });
@@ -12590,7 +12603,8 @@ const SW_MOEB = `<svg class="swsvg" viewBox="0 0 320 250" aria-hidden="true"><pa
   <rect x="92" y="96" width="136" height="26" rx="4" fill="#0a0a0b" stroke="#ece9e3" stroke-width="2"/><rect x="96" y="100" width="128" height="18" rx="3" fill="none" stroke="#ece9e3" stroke-width=".8" opacity=".5"/><text x="160" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" letter-spacing="2" fill="#f4f2f0">MÖBELHAUS</text>
   <path d="M126 236V146Q126 134 138 134H182Q194 134 194 146V236Z" fill="#ece9e3" stroke="#0a0a0b" stroke-width="3"/><g class="sdoor"><path class="sdl" d="M129 236V146Q129 137 140 137H160V236Z" fill="#232326" stroke="#0a0a0b" stroke-width="2"/><path class="sdr" d="M191 236V146Q191 137 180 137H160V236Z" fill="#232326" stroke="#0a0a0b" stroke-width="2"/><circle cx="153" cy="186" r="3" fill="#c9c6c0"/><circle cx="167" cy="186" r="3" fill="#c9c6c0"/></g>
   <path d="M112 132V152M208 132V152" stroke="#3a3a3d" stroke-width="3"/><circle cx="112" cy="156" r="9" fill="#ffffff" opacity=".12"/><circle cx="208" cy="156" r="9" fill="#ffffff" opacity=".12"/><circle cx="112" cy="156" r="6" fill="#f4f2f0" stroke="#0a0a0b"/><circle cx="208" cy="156" r="6" fill="#f4f2f0" stroke="#0a0a0b"/></svg>`;
-function ncHead(title, back){ return `<div class="nchead"><h1 class="nct">${title}</h1><span class="sp"></span>${WAL.d ? `<span class="ncpill" title="Deine Nocti-Coins">${NC_ICO}<b data-ncc>${WAL.d.c}</b></span>` : ''}${back ? ncBagHTML() : ''}</div>`; }
+function ncHead(title, back, inner){ return `<div class="nchead"><h1 class="nct">${title}</h1><span class="sp"></span>${inner ? '' : ncPills(back)}</div>`; }
+const ncPills = bag => `${WAL.d ? `<span class="ncpill" title="Deine Nocti-Coins">${NC_ICO}<b data-ncc>${WAL.d.c}</b></span>` : ''}${bag ? ncBagHTML() : ''}`; /* v581: in Mall und Möbelhaus im Vorschaufeld (bleibt beim Scrollen sichtbar) */
 const ncWait = () => `<div class="card"><div class="card-in"><p class="note">${!social ? 'Shopping geht, sobald du mit Noctibat verbunden bist.' : WAL.err === 'permission-denied' || WAL.old || (WAL.d && NCPRICE && !Object.keys(NCPRICE).length) ? (amOwner ? '⚠ Der Shop braucht die neuen Firestore-Regeln. Kopiere firebase/firestore.rules in die Firebase-Konsole (Firestore → Regeln) und veröffentliche sie, dann öffne Noctibat einmal als Owner (die Preise werden dabei eingetragen).' : 'Der Shop öffnet in Kürze.') : 'Lädt …'}</p></div></div>`;
 function shoppingView(){
   return `<section class="ncpage">${ncHead('Shopping', false)}
@@ -12622,8 +12636,8 @@ function mallView(){ if (!social || !ncShopOk()) return `<section class="ncpage"
   const bare = ncBare(), shown = MTRY || bare; if (mallCat === 'body') mallCat = 'back';
   const list = ITEMS.filter(i => i.cat === mallCat && inSub(i) && !i.gone && ncPaid(i) && fits(i, me().outfit, showAllG)).sort((a, b) => (ncHas(a.id) - ncHas(b.id)) || (a.ex ? -1 : 0) - (b.ex ? -1 : 0) || (a.lv || 0) - (b.lv || 0));
   const cards = list.map(i => { const [dot, pan] = itemColUI(i, shown, 'nc-color'); return ncCard(i.id, avatar(previewOutfit(bare, i), thumbView(i), '', true), 'nc-try', dot, isOn(shown, i)) + pan; }).join('');
-  return `<section class="ncpage mallpg">${ncHead('Mall', true)}<div class="wardrobe mall">
-    <div class="card mirror-card">${portrait({outfit:shown}, {frame:'ornament', shape:'bogen'}, 'mirror')}${MTRY ? '' : '<p class="note">Klick auf ein Teil, um es anzuprobieren.</p>'}</div>
+  return `<section class="ncpage mallpg">${ncHead('Mall', true, true)}<div class="wardrobe mall">
+    <div class="card mirror-card"><div class="ncfloat">${ncPills(true)}</div>${portrait({outfit:shown}, {frame:'ornament', shape:'bogen'}, 'mirror')}${MTRY ? '' : '<p class="note">Klick auf ein Teil, um es anzuprobieren.</p>'}</div>
     <div class="card"><div class="card-in">
       ${MTRY ? `<div class="row lookbar ncbar2"><button type="button" class="ltool ltsm" data-act="nc-untry">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>` : ''}
       ${allgBtn()}<div class="ctabs">${catTabs(mallCat, 'nc-cat', false, me().outfit, i => fits(i, me().outfit, showAllG))}</div>
@@ -12637,8 +12651,8 @@ function moebelView(){ if (!social || !ncShopOk()) return `<section class="ncpag
   const others = [...NCCART.keys()].filter(id => /^m:/.test(id)).map(id => id.slice(2)).filter(k => FURN[k] && !FURN[k].surf && k !== MSEL);
   const pos0 = (k, n) => FURN[k].wall ? {x:8 + (n * 23) % 72, y:10} : {x:6 + (n * 21) % 72, y:50};
   const room = {...u.room, items:[...others.map((k, n) => ({k, ...(MSTASH[k]?.pos || pos0(k, n)), ...(MSTASH[k]?.c ? {c:MSTASH[k].c} : {})})), ...(!MSEL || sf ? [] : placed ? [{...pl, ...(MSELC ? {c:MSELC} : {})}] : [{k:MSEL, x:MSELPOS?.x ?? (f.wall ? 40 : 42), y:MSELPOS?.y ?? (f.wall ? 12 : 48), ...(MSELC ? {c:MSELC} : {})}])]};
-  return `<section class="ncpage moebel">${ncHead('Möbelhaus', true)}
-    <div class="card ncroom${MSEL && !placed && !sf ? ' ncdrag' : ''}"><div class="card-in">${roomHTML({...u, room:{...room, ...(MPREV.wall ? {wall:MPREV.wall, wallC:null} : {}), ...(MPREV.floor ? {floor:MPREV.floor, floorC:null} : {})}}, false, false)}${MSEL && own && !placed ? `<div class="ncsel"><button type="button" class="btn" data-act="nc-place" data-id="${MSEL}">${sf ? 'In meinem Zimmer verwenden' : 'In mein Zimmer stellen'}</button></div>` : ''}<div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-act="nc-ftab" data-v="${k}" aria-selected="${furnShop === k}">${l}</button>`).join('')}</div></div></div>
+  return `<section class="ncpage moebel">${ncHead('Möbelhaus', true, true)}
+    <div class="card ncroom${MSEL && !placed && !sf ? ' ncdrag' : ''}"><div class="card-in"><div class="ncfloat">${ncPills(true)}</div>${roomHTML({...u, room:{...room, ...(MPREV.wall ? {wall:MPREV.wall, wallC:null} : {}), ...(MPREV.floor ? {floor:MPREV.floor, floorC:null} : {})}}, false, false)}${MSEL && own && !placed ? `<div class="ncsel"><button type="button" class="btn" data-act="nc-place" data-id="${MSEL}">${sf ? 'In meinem Zimmer verwenden' : 'In mein Zimmer stellen'}</button></div>` : ''}<div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-act="nc-ftab" data-v="${k}" aria-selected="${furnShop === k}">${l}</button>`).join('')}</div></div></div>
     <div class="card"><div class="card-in">
       <div class="shopgrid ncgrid">${ids.map(k => ncCard(ncF(k), furnSVG(k, k === MSEL ? MSELC : null), 'nc-msel', k === MSEL && !FURN[k].surf ? `<span class="cdot" role="button" tabindex="0" data-act="icol" data-id="${ncF(k)}" style="background:${esc(MSELC || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe ändern" aria-expanded="${colItem === ncF(k)}"></span>` : '', k === MSEL) + (k === MSEL && colItem === ncF(k) ? `<div class="cpanel">${ncFurnCol()}</div>` : '')).join('')}</div></div></div></section>`; }
 const ncFurnCol = () => `<fieldset class="opt"><legend class="lbl">Farbe</legend><div class="swatches"><button type="button" class="sw swo" data-act="nc-fcol" data-v="" aria-pressed="${!MSELC}" title="Original" aria-label="Originalfarbe">✕</button>${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="nc-fcol" data-v="${c}" aria-pressed="${MSELC === c}" title="${l}" aria-label="Farbe: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick ncfpick" value="${/^#[0-9a-f]{6}$/i.test(MSELC || '') ? MSELC : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></fieldset>`;
@@ -13407,6 +13421,9 @@ const kbSoon = () => { kbDone = null; kbArm(350); };
 if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (kbDone !== document.activeElement) kbArm(250); }); // nur solange die Tastatur noch aufgeht
 document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) { document.body.classList.remove('kbopen'); kbDone = null; } if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
+/* v581: Safari meldet kein focusout, wenn das Eingabefeld beim Neuzeichnen verschwindet. Dann blieb „Tastatur offen“ stehen und die untere Leiste war weg. */
+function kbCheck(){ if (!document.body.classList.contains('kbopen') && !document.body.classList.contains('chatkb')) return; const a = document.activeElement; if (!isTyping(a) || !a.isConnected) { document.body.classList.remove('kbopen'); kbDone = null; } if (!chatKb(a) || !a?.isConnected) document.body.classList.remove('chatkb'); }
+window.visualViewport?.addEventListener('resize', () => setTimeout(kbCheck, 150)); document.addEventListener('touchstart', () => setTimeout(kbCheck, 300), {passive:true}); setInterval(kbCheck, 1500);
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
   const n = document.getElementById('g-name'); if (n) g.name = n.value;
@@ -13568,7 +13585,7 @@ function renderInner(){
   const mb = document.getElementById('msgs'); if (mb) { mb.scrollTop = mb.scrollHeight; msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
   navSave();
-  const full = isMob() && V.name === 'chats' && (((CH.mode === 'chat' || CH.mode === 'talks') && CH.open) || CH.mode === 'helper'); document.body.classList.toggle('chatfull', full); if (full) vvFit(); else document.body.classList.remove('chatkb');
+  const full = isMob() && !matchMedia('(min-width:762px)').matches && V.name === 'chats' && (((CH.mode === 'chat' || CH.mode === 'talks') && CH.open) || CH.mode === 'helper'); document.body.classList.toggle('chatfull', full); if (full) vvFit(); else document.body.classList.remove('chatkb');
 }
 
 
@@ -13832,6 +13849,7 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-show') { if (p.lv < 3) { b.checked = false; return toast(tr('Ab Level 3 kannst du deinen Begleiter im Profil zeigen.')); } p.show = !!b.checked; save(); publishProfile(); toast(p.show ? tr('{0} ist jetzt auf deinem Profil.').replace('{0}', p.n) : tr('{0} ist nicht mehr auf deinem Profil.').replace('{0}', p.n)); } }
 document.addEventListener('submit', e => { const f = e.target; if (f.dataset?.form !== 'pet-rename') return; e.preventDefault(); e.stopImmediatePropagation(); const p = petMe(); if (!p) return;
   const n = (document.getElementById('pn-in')?.value || '').trim().slice(0, 16); if (n) p.n = n; PETNAME = false; petSave(true); render(); }, true);
+document.addEventListener('touchmove', e => { if (document.body.dataset.pg === 'pet' && !e.target.closest?.('.psheet')) e.preventDefault(); }, {passive:false}); /* v581: Seite wackelt nicht beim Wischen */
 /* Raum des Begleiters = eigenes Zimmer (seit v572, Inaya): dieselbe Tapete und derselbe Boden */
 function petRoomBG(){ const r = me()?.room || {}; return `<div class="psbg" aria-hidden="true"><div class="pswall" style="background:${wallCSS(r.wall, r.wallC)}"></div><div class="psfloor" style="background:${floorBG(r.floor, r.floorC)}"></div></div>`; }
 /* Profil: Karte mit dem Begleiter (eigener immer, fremde ab Level 3 und wenn gezeigt) */
