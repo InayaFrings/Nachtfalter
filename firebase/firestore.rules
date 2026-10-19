@@ -7,6 +7,9 @@ service cloud.firestore {
     // Offene Anmeldung (Inaya, 2026-10-10): jedes angemeldete Konto ist Mitglied, ein Einladungslink ist nicht mehr nötig
     function invited() { return signedIn(); }
     function me(uid) { return invited() && request.auth.uid == uid; }
+    // Von der Owner entfernte Konten (Inaya, 2026-10-19): banned/<uid>; solche Konten legen kein Profil und keinen Namen mehr an
+    function notBanned() { return !exists(/databases/$(database)/documents/banned/$(request.auth.uid)); }
+    match /banned/{uid} { allow read: if invited(); allow write: if isOwner(); }
 
     // Eigene Daten: nur die Person selbst
     match /data/users/{uid}/{rest=**} { allow read, write: if me(uid); }
@@ -18,12 +21,12 @@ service cloud.firestore {
     function picOk(d, k) { return !(k in d) || d[k] == null || (d[k] is string && d[k].size() < 600000
       && d[k].matches('data:image/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/]+=*')); }
     match /profiles/{uid} { allow read: if invited();
-      allow create, update: if me(uid) && picOk(request.resource.data, 'pic') && picOk(request.resource.data, 'cover');
-      allow delete: if me(uid); }
+      allow create, update: if me(uid) && notBanned() && picOk(request.resource.data, 'pic') && picOk(request.resource.data, 'cover');
+      allow delete: if me(uid) || isOwner(); }
     // nur Unterordner (z. B. e2ee); {rest=**} allein würde auch das Profil selbst treffen und die Bildprüfung aushebeln
     match /profiles/{uid}/{sub}/{rest=**} { allow read: if invited(); allow write: if me(uid); }
-    match /handles/{uid} { allow read: if invited(); allow write: if me(uid); }
-    match /friends/{uid} { allow read: if invited(); allow write: if me(uid); }
+    match /handles/{uid} { allow read: if invited(); allow create, update: if me(uid) && notBanned(); allow delete: if me(uid) || isOwner(); }
+    match /friends/{uid} { allow read: if invited(); allow write: if me(uid); allow delete: if isOwner(); }
 
     // Einladungslinks: jeder Link gilt nur einmal
     // Einladen mit eigenem Link (Inaya, 2026-10-17): refd/<neu> = {by, ts} einmal beim Registrieren (bevor es ein Profil gibt), refc/<einlader>.u sammelt die Neuen; je 10 → 3000 Coins (wallet op 'ref')

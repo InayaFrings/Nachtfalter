@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2f8ff141eeef';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='28e3f339b718';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2751,6 +2751,21 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 .ibub{border-radius:4px}.ibub.b1{border:1px solid var(--line)}
 .iphone{border-radius:18px}
 .ibtns .btn{border-radius:0}
+
+/* Handy: Schritte der Anmeldung als feste Leiste oben, statt Pfeil, Logo und Glocke (Inaya, 2026-10-19) */
+.obbar{display:none}.rail>.obstep{display:none}
+@media (max-width:760px){
+  .obbar{display:block;position:sticky;top:0;z-index:950;background:var(--bg);border-bottom:1px solid var(--line-soft,#ffffff1a);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 8px}
+  .obbar .obstep{margin:0 auto}
+  .gate-card>.obstep,.obhead>.obstep,.obwelcome .obstep{display:none}
+  .gate{padding-block:16px 32px;min-height:auto}
+  .obwear .wardrobe .mirror-card{top:calc(64px + env(safe-area-inset-top,0px))}
+  .obwear .wardrobe .ctabs{top:calc(64px + env(safe-area-inset-top,0px) + clamp(180px,27vh,240px))}
+  .rail.obrail>*:not(.obstep){display:none!important}
+  .rail.obrail>.obstep{display:flex;padding:2px 0}
+}
+/* Konto löschen: Abbrechen und Löschen nebeneinander */
+#delacct .row{flex-wrap:nowrap;gap:10px}#delacct .row .sp{display:none}#delacct .row .btn{flex:1 1 0;min-width:0;padding-inline:10px;justify-content:center;text-align:center}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -6380,8 +6395,9 @@ function obSteps(cur){
   return `<ol class="istep obstep" aria-label="Schritte">${['Konto','Name','Avatar','Deine Seite'].map((l, i) => { const in_ = `<i>${i < cur ? ok : i + 1}</i><span>${l}</span>`;
     return `<li class="${i < cur ? 'done' : i === cur ? 'on' : ''}"${i === cur ? ' aria-current="step"' : ''}>${i < cur ? `<button type="button" data-act="ob-back" data-v="${keys[i]}" aria-label="Zurück zu ${l}">${in_}</button>` : in_}</li>`; }).join('')}</ol>`;
 }
+const obBar = n => `<div class="obbar">${obSteps(n)}</div>`; // Handy: Schritte als feste Leiste ganz oben (Inaya, 2026-10-19)
 function regView(){
-  return `<div class="gate"><div class="card gate-card">
+  return `${authMode === 'reg' ? obBar(0) : ''}<div class="gate"><div class="card gate-card">
     ${logoSVG('big')}
     ${authMode === 'reg' ? obSteps(0) : ''}
     ${langSwHTML()}
@@ -6434,7 +6450,7 @@ function forgotHTML(){
     </form>`;
 }
 function nameView(){
-  return `<div class="gate"><div class="card gate-card">
+  return `${obBar(1)}<div class="gate"><div class="card gate-card">
     ${logoSVG('big')}${obSteps(1)}
     <form data-form="uname">
       <label class="f" for="uhandle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="uhandle" type="text" maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false" value="${esc(S.pending?.handle || '')}" required></span></label>
@@ -6456,7 +6472,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
       ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}
       ${on && !off ? '<button class="btn ghost" disabled>Angezogen</button>' : `<button type="button" class="btn ghost" data-act="ob-item" data-id="${i.id}">${off ? (MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen') : 'Anziehen'}</button>`}</div>${pan}`;
   }).join('');
-  return `<div class="obwear">
+  return `${obBar(2)}<div class="obwear">
     <div class="card obhead">${logoSVG()}${obSteps(2)}
       <h1 class="ob-h">Gestalte deinen Avatar</h1></div>
     <div class="wardrobe">
@@ -6526,7 +6542,7 @@ function mediaEditor(st, name, only){
 }
 function seiteView(){
   const p = S.pending;
-  return `<div class="gate"><div class="card gate-card creator-card">
+  return `${obBar(3)}<div class="gate"><div class="card gate-card creator-card">
     ${logoSVG()}${obSteps(3)}
     <h1 class="ob-h">Deine Seite, ${esc(p.name)}</h1>
     <p class="note">Leg ein Profilbild fest und gestalte den Kasten mit deinem Nutzernamen. Alles lässt sich später unter „Profil gestalten“ ändern.</p>
@@ -7013,6 +7029,7 @@ async function cloudInit(){
     const col = db.collection('data/users/' + uid);
     const meta = await col.doc('nf-meta').get();
     try { amOwner = await user.isOwner(); } catch {}
+    try { if ((await db.collection('banned').doc(uid).get()).exists) { BANNED = true; render(); setTimeout(() => doLogout(), 6000); return; } } catch {}
     cloud = {col, ok:false, uid, db, handles: db.collection('handles'), loaded:!meta.exists}; if (meta.exists && meta.data().v === 2) CLAST = meta.data().h || null;
     const localEmpty = !Object.values(S.users || {}).some(u => !u.helper && !u.remote);
     if (meta.exists && (localEmpty || (meta.data().ts || 0) > (S.savedAt || 0))) {
@@ -7357,7 +7374,7 @@ function rail(){
      Freunde, Zimmer, Garderobe und Begleiter erreicht man wie am Handy über das Profil. */
   const tabs = [['home','Salon'],['find','Suchen'],['shopping','Shop'],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN + FR.inc.filter(reqOpen).length ? '⁠<i class="dot" aria-label="neu"></i>' : '')],['create','Erstellen', 'fab-post'],['profile','Profil' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
   const cur = ['design', 'room', 'wardrobe', 'pet', 'friends', 'settings', 'archive'].includes(V.name) ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'profile' && V.arg && V.arg !== S.me ? '' : V.name;
-  return `<header class="rail ${mobMore ? 'more' : ''}">
+  return `<header class="rail ${mobMore ? 'more' : ''}${obDesign ? ' obrail' : ''}">${obDesign ? obSteps(3) : ''}
     ${!mhRoot() ? `<button type="button" class="mfab mback2" data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
       : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}
     ${mobHead()}
@@ -10214,14 +10231,26 @@ async function blockUser(id){
   save(); chRefilter(); if (FR.mine.includes(id)) await setMine(FR.mine.filter(x => x !== id)); publishProfile();
   if (CH.open && /^dm_/.test(CH.open) && CH.open.includes(id)) { CH.open = null; CH.mode = null; }
   toast(`${u.name} ist jetzt blockiert`); render(); }
+// Owner entfernt ein fremdes Konto (Inaya, 2026-10-19): Profil, Name und Freundesliste weg, Eintrag in banned/<uid>,
+// damit das Konto nichts Neues mehr anlegen kann (Regeln). Das Login selbst löscht nur die Firebase-Konsole (Authentication).
+async function ownerRemoveAcct(id){ if (!amOwner || !social || !id || id === social.uid) return;
+  const u = S.users[id] || profUser(id) || remoteUser(id, PROF[id] || {}), who = `${u?.name || 'Dieses Konto'}${u?.handle ? ' (@' + u.handle + ')' : ''}`;
+  if (!await askYesNo(`${who} wirklich entfernen? Profil, Name und Freundesliste werden gelöscht und das Konto kann sich nicht mehr neu eintragen. Das lässt sich nicht rückgängig machen.`, 'Entfernen', 'Abbrechen')) return;
+  try { const b = social.db.batch(); b.set(social.db.doc('banned/' + id), {ts:Date.now(), h:u?.handle || '', n:u?.name || ''});
+    b.delete(social.db.doc('profiles/' + id)); b.delete(social.db.doc('handles/' + id)); b.delete(social.db.doc('friends/' + id)); await b.commit(); }
+  catch (e) { console.warn('rmacct', e?.code); return toast(e?.code === 'permission-denied' ? 'Das ging nicht: Bitte zuerst die neuen Firestore-Regeln einspielen.' : 'Das hat gerade nicht geklappt. Versuch es nochmal.'); }
+  delete PROF[id]; delete NM[id]; if (S.users[id]?.remote) delete S.users[id]; if (FR.mine.includes(id)) await setMine(FR.mine.filter(x => x !== id));
+  if (Array.isArray(MEMBERS)) MEMBERS = MEMBERS.filter(x => x !== id); FR.newbies = (FR.newbies || []).filter(x => x !== id);
+  save(); toast(`${who} wurde entfernt`); go('home'); render(); }
+var BANNED = false; // eigenes Konto wurde von der Owner entfernt
 function unblockUser(id){ const x = (S.blocked || []).find(y => y.id === id); S.blocked = (S.blocked || []).filter(y => y.id !== id); S.ignoredReq = (S.ignoredReq || []).filter(y => y !== id);
   save(); chRefilter(); publishProfile(); toast(`${x?.name || 'Die Person'} ist nicht mehr blockiert`); render(); }
 const PMORE_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
 const profMoreBtn = id => social && id && id !== social.uid && !S.users[id]?.helper ? `<button type="button" class="pmorebtn" data-act="pmore-open" data-id="${esc(id)}" aria-label="Weitere Optionen" title="Weitere Optionen">${PMORE_ICO}</button>` : '';
 function profMoreOpen(id){ const u = S.users[id] || profUser(id); if (!u) return; document.getElementById('pmorebox')?.remove();
   const m = document.createElement('div'); m.className = 'modal pmoresh'; m.id = 'pmorebox'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Optionen');
-  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(u.name)}</h2><div class="pmorel">${iBlocked(id) ? `<button type="button" class="btn ghost" data-act="unblock" data-id="${esc(id)}">Blockierung aufheben</button>` : `<button type="button" class="btn danger" data-act="block" data-id="${esc(id)}">Blockieren</button>`}<button type="button" class="btn ghost" data-act="pmore-x">Abbrechen</button></div></div>`;
-  m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=pmore-x],[data-act=block],[data-act=unblock]')) setTimeout(() => m.remove()); });
+  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(u.name)}</h2><div class="pmorel">${iBlocked(id) ? `<button type="button" class="btn ghost" data-act="unblock" data-id="${esc(id)}">Blockierung aufheben</button>` : `<button type="button" class="btn danger" data-act="block" data-id="${esc(id)}">Blockieren</button>`}${amOwner ? `<button type="button" class="btn danger" data-act="own-rmacct" data-id="${esc(id)}">Konto entfernen (Owner)</button>` : ''}<button type="button" class="btn ghost" data-act="pmore-x">Abbrechen</button></div></div>`;
+  m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=pmore-x],[data-act=block],[data-act=unblock],[data-act=own-rmacct]')) setTimeout(() => m.remove()); });
   document.body.appendChild(m); }
 function blockedCard(){ if (!social) return ''; const l = (S.blocked || []).slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
   return `<div class="card blkcard"><h2 class="card-h">Blockierte Nutzer</h2><div class="card-in">${l.length ? l.map(x => { const u = {pic:x.pic, outfit:x.outfit || {}}; return `<div class="prow"><div class="pgo"><span class="cameo">${headPic(u)}</span><div class="pinfo"><b>${esc(x.name || 'Unbekannt')}</b><span class="muted">@${esc(x.handle || '')}</span></div></div><div class="pbtns"><button class="btn ghost" data-act="unblock" data-id="${esc(x.id)}">Entblockieren</button></div></div>`; }).join('') : '<p class="note" style="margin:0">Du hast niemanden blockiert. Blockieren kannst du auf dem Profil einer Person über die drei Punkte.</p>'}</div></div>`; }
@@ -13693,6 +13722,7 @@ function renderInner(){
   const viewKey = (S.me && S.users[S.me] ? V.name + '|' + V.arg : 'ob|' + (S.pending?.step || '')), keepX = viewKey === lastViewKey ? scrollXs(app) : [];
   lastViewKey = viewKey;
   const restoreX = () => keepX.forEach(([cls, i, x]) => { const el = app.querySelectorAll(`[class="${CSS.escape(cls)}"]`)[i]; if (el) el.scrollLeft = x; });
+  if (BANNED) { applyPage(null); app.innerHTML = `<div class="gate"><div class="card gate-card">${logoSVG('big')}<p style="margin:0">Dieses Konto wurde entfernt. Du wirst abgemeldet.</p></div></div>`; return; }
   if (!S.unlocked) { applyPage(null); app.innerHTML = gateView(); return; }
   if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); restoreX(); return; }
   { const u = S.users[S.me]; if (!u.lang) { u.lang = LANG; save(); } else if (u.lang !== LANG && LANGS[u.lang] && !I18N.re) { I18N.re = true; try { localStorage.setItem('nf-lang', u.lang); } catch {} location.reload(); return; } } // Sprache aus dem Konto (Inaya, 2026-10-15)
@@ -14447,6 +14477,7 @@ document.addEventListener('click', async e => {
   else if (a === 'sg-close') { if (SG.tgt === 'story' && stNew) { stNew.tool = null; stNew.sgTab = false; SG.tgt = null; storyPaint(); } else if (SG.tgt === 'post') pcSgClose(); else if (SG.tgt === 'pcr') { if (PCR) PCR.sk = false; SG.tgt = null; pcrPaint(); } else sgClose(); }
   else if (a === 'pmore-open') profMoreOpen(b.dataset.id);
   else if (a === 'block') blockUser(b.dataset.id);
+  else if (a === 'own-rmacct') ownerRemoveAcct(b.dataset.id);
   else if (a === 'unblock') unblockUser(b.dataset.id);
   else if (a === 'acct-open') acctOpen();
   else if (a === 'acct-x') acctClose();
