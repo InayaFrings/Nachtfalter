@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0fac7881d3ac';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='02a57127fd09';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2822,6 +2822,12 @@ html:has(.ppick),body:has(.ppick){overflow:hidden;overscroll-behavior:none}
 .php{background:none;-webkit-mask:none;mask:none;width:30px;height:30px;left:-15px;top:-15px}.php svg{width:100%;height:100%;display:block;overflow:visible}
 
 .fullhints.solo{justify-content:flex-end}.petbox .pbfig{display:block;width:min(190px,58%);aspect-ratio:1;margin:0 auto}.petbox .pbfig svg{width:100%;height:100%}.petbox .pbname{font:400 20px var(--f-display);text-align:left}.petbox .fullhints{margin-top:6px}
+
+/* v663: Knöpfe im Profilkopf eckig wie „Bearbeiten“, voll in der Kastenfarbe des Profils (besser lesbar über dem Muster) */
+.phead .pshbtn,.phead .pbtns .btn,.phead .pactw .btn,.phead > .btn,.phead .pactw .frsent,.phead .pmorebtn{border-radius:0!important;background:var(--p-panel,var(--panel))!important;color:var(--p-fg,var(--fg))!important;border:1px solid var(--p-line,var(--line))!important;font:400 16px var(--f-display);letter-spacing:.04em;box-shadow:none}
+.phead .pbtns .btn,.phead .pactw .row>.btn{padding:12px 6px;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.phead .pmorebtn{width:48px;height:auto;align-self:stretch;min-height:44px}
+.pchev{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9991,7 +9997,7 @@ function profileHead(u, t, mine){
       ${mine ? `<div class="row"><button class="btn ghost" data-act="nav" data-v="design">Profil gestalten</button><button class="btn ghost" data-act="nav" data-v="room">Zimmer einrichten</button><button class="btn ghost" data-act="settings">⚙ Einstellungen</button></div>`
         : u.helper ? `<button class="btn" data-act="helper-chat" data-id="${u.id}">Schreib mir</button>`
         : u.remote && !isFriend(u.id) ? `<div class="pactw">${frReqHTML(u.id)}${profMoreBtn(u.id)}</div>`
-        : u.remote ? `<div class="row pbtns"><button class="btn" data-act="dm" data-id="${u.id}">Nachricht schreiben</button><button class="btn ghost" data-act="fr-remove" data-id="${u.id}">Freund entfernen</button>${profMoreBtn(u.id)}</div>` : ''}
+        : u.remote ? `<div class="row pbtns"><button type="button" class="btn" data-act="pfr-menu" data-id="${u.id}">Befreundet${PCHEV_ICO}</button><button class="btn" data-act="dm" data-id="${u.id}">Nachricht</button>${profMoreBtn(u.id)}</div>` : ''}
       ${u.id === S.me && !u.helper ? `<div class="pshrow"><button type="button" class="pshbtn" data-act="nav" data-v="design"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Bearbeiten</span></button>${pshBtnHTML(u)}</div>` : u.helper ? pshBtnHTML(u) : ''}
     </div>
   </header>`;
@@ -10350,12 +10356,19 @@ var BANNED = false; // eigenes Konto wurde von der Owner entfernt
 function unblockUser(id){ const x = (S.blocked || []).find(y => y.id === id); S.blocked = (S.blocked || []).filter(y => y.id !== id); S.ignoredReq = (S.ignoredReq || []).filter(y => y !== id);
   save(); chRefilter(); publishProfile(); toast(`${x?.name || 'Die Person'} ist nicht mehr blockiert`); render(); }
 const BLK_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>'; /* v662: Symbole im ⋯-Menü */
+const UNFR_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="3.6"/><path d="M3.5 20c.6-3.6 3.2-5.6 6.5-5.6s5.9 2 6.5 5.6"/><path d="M16 11h5.5"/></svg>', PCHEV_ICO = '<svg class="pchev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9.5l5.5 5.5 5.5-5.5"/></svg>'; /* v663 */
+/* v663: „Befreundet ▾“ wie „Gefolgt“ bei Instagram: kleines Menü zum Entfreunden */
+function profFrMenu(id){ const u = S.users[id] || profUser(id); if (!u) return; document.getElementById('pmorebox')?.remove();
+  const m = document.createElement('div'); m.className = 'modal pmoresh'; m.id = 'pmorebox'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Befreundet');
+  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(u.name)}</h2><div class="pmorel"><button type="button" class="btn ghost" data-act="fr-remove" data-id="${esc(id)}">${UNFR_ICO}<span>Freund entfernen</span></button><button type="button" class="btn ghost" data-act="pmore-x">Abbrechen</button></div></div>`;
+  m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=pmore-x],[data-act=fr-remove]')) setTimeout(() => m.remove()); });
+  document.body.appendChild(m); }
 const PMORE_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
 const profMoreBtn = id => social && id && id !== social.uid && !S.users[id]?.helper ? `<button type="button" class="pmorebtn" data-act="pmore-open" data-id="${esc(id)}" aria-label="Weitere Optionen" title="Weitere Optionen">${PMORE_ICO}</button>` : '';
 function profMoreOpen(id){ const u = S.users[id] || profUser(id); if (!u) return; document.getElementById('pmorebox')?.remove();
   const m = document.createElement('div'); m.className = 'modal pmoresh'; m.id = 'pmorebox'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Optionen');
-  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(u.name)}</h2><div class="pmorel"><button type="button" class="btn ghost" data-act="pshare" data-id="${esc(id)}">${PSH_ICO}<span>Profil teilen</span></button>${iBlocked(id) ? `<button type="button" class="btn ghost" data-act="unblock" data-id="${esc(id)}">${BLK_ICO}<span>Blockierung aufheben</span></button>` : `<button type="button" class="btn ghost" data-act="block" data-id="${esc(id)}">${BLK_ICO}<span>Blockieren</span></button>`}${amOwner ? `<button type="button" class="btn danger" data-act="own-rmacct" data-id="${esc(id)}">Konto entfernen (Owner)</button>` : ''}<button type="button" class="btn ghost" data-act="pmore-x">Abbrechen</button></div></div>`;
-  m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=pmore-x],[data-act=pshare],[data-act=block],[data-act=unblock],[data-act=own-rmacct]')) setTimeout(() => m.remove()); });
+  m.innerHTML = `<div class="card modal-card"><h2 class="ch-h">${esc(u.name)}</h2><div class="pmorel"><button type="button" class="btn ghost" data-act="pshare" data-id="${esc(id)}">${PSH_ICO}<span>Profil teilen</span></button>${isFriend(id) ? `<button type="button" class="btn ghost" data-act="fr-remove" data-id="${esc(id)}">${UNFR_ICO}<span>Freund entfernen</span></button>` : ''}${iBlocked(id) ? `<button type="button" class="btn ghost" data-act="unblock" data-id="${esc(id)}">${BLK_ICO}<span>Blockierung aufheben</span></button>` : `<button type="button" class="btn ghost" data-act="block" data-id="${esc(id)}">${BLK_ICO}<span>Blockieren</span></button>`}${amOwner ? `<button type="button" class="btn danger" data-act="own-rmacct" data-id="${esc(id)}">Konto entfernen (Owner)</button>` : ''}<button type="button" class="btn ghost" data-act="pmore-x">Abbrechen</button></div></div>`;
+  m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=pmore-x],[data-act=pshare],[data-act=fr-remove],[data-act=block],[data-act=unblock],[data-act=own-rmacct]')) setTimeout(() => m.remove()); });
   document.body.appendChild(m); }
 function blockedCard(){ if (!social) return ''; const l = (S.blocked || []).slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
   return `<div class="card blkcard"><h2 class="card-h">Blockierte Nutzer</h2><div class="card-in">${l.length ? l.map(x => { const u = {pic:x.pic, outfit:x.outfit || {}}; return `<div class="prow"><div class="pgo"><span class="cameo">${headPic(u)}</span><div class="pinfo"><b>${esc(x.name || 'Unbekannt')}</b><span class="muted">@${esc(x.handle || '')}</span></div></div><div class="pbtns"><button class="btn ghost" data-act="unblock" data-id="${esc(x.id)}">Entblockieren</button></div></div>`; }).join('') : '<p class="note" style="margin:0">Du hast niemanden blockiert. Blockieren kannst du auf dem Profil einer Person über die drei Punkte.</p>'}</div></div>`; }
@@ -12113,6 +12126,7 @@ async function pshSave(){ const u = pshUser(PSH?.id); if (!u) return; let blob; 
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast('QR-Code gespeichert'); }
 document.addEventListener('click', async e => { const b = e.target.closest?.('[data-act]'); if (!b) return; const a = b.dataset.act;
   if (a === 'pshare') { e.preventDefault(); pshOpen(b.dataset.id); }
+  if (a === 'pfr-menu') { e.preventDefault(); profFrMenu(b.dataset.id); }
   else if (a === 'psh-x') pshClose();
   else if (a === 'psh-copy') { const u = pshUser(PSH?.id); if (!u) return; if (await copyText(profLink(u))) { PSH.copied = true; const b = document.querySelector('#pshov .pshcp'); if (b) { b.classList.add('done'); b.innerHTML = PSH_OK; b.setAttribute('aria-label', 'Kopiert'); } /* v619: nur das Symbol tauschen, nicht das ganze Fenster neu zeichnen (zoomte und ruckelte) */ } else toast('Kopieren ging nicht. Halte den Link gedrückt, um ihn zu kopieren.'); }
   else if (a === 'psh-share') { const u = pshUser(PSH?.id); if (!u) return; if (navigator.share) { try { await navigator.share({title:(u.name || '') + ' auf Noctibat', text:'Schau dir das Profil von ' + (u.name || '') + ' auf Noctibat an', url:profLink(u)}); } catch {} return; }
