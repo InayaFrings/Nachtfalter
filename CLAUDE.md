@@ -425,3 +425,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v668: Profil-Knöpfe auch mit dem Muster des Seiten-Hintergrunds (`--p-pagepat` aus `t.pagePattern`).
 - Seit v669 (Inaya): Profil-Knöpfe wieder durchsichtig mit Rahmen wie „Bearbeiten“ vor v663 (keine Füllung, kein Muster). Beschriftungen „Befreundet ▾“/„Nachricht“ und das ⋯-Menü bleiben.
 - Seit v670 (Inaya): Profil-Knöpfe, runde Profil-Links (`.plink.pic`) und Steckbrief (`.psteck`) mit derselben fast deckenden Füllung wie die Felder in „Profil bearbeiten“ (`color-mix(--p-field 93 %, transparent)`), das Muster schimmert leicht durch.
+- Seit v671: „Zimmer betreten“, „Garderobe betreten“ und „Begleiter →“ (`.proom-hint`, `.fullhint`) eckig im selben Stil wie die anderen Profil-Knöpfe.
