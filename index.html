@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a048bdeec207';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0b3a9bc21bf7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2795,6 +2795,7 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 #batfly.dark{color:#111}#batfly.dark span,#batfly.dark svg{color:#111;fill:#111}
 .acctgo .acctn{flex:1}.acctgo .acctchk{margin-left:auto} /* Haken ganz rechts wie das ✕ (Inaya, 2026-10-19) */
 body.pulling::before{display:none} /* v615: keine eigene Fläche mehr in der Lücke, dort scheint der Seitenhintergrund durch (überlappte sonst das Profil) */
+.pfood:disabled{opacity:.35;filter:grayscale(1);pointer-events:none} /* v624: satt = Essen grau */
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -14009,7 +14010,7 @@ function petView(){ PETS.bath = null; const p = petMe(); if (!p) return '<p clas
   const bars = PET_NEEDS.map(([k, l]) => `<div class="pneed${v[k] < 25 ? ' low' : ''}" data-n="${k}" style="--pv:${Math.round(v[k])}" title="${esc(tr(l))}: ${Math.round(v[k])} %"><i><svg viewBox="0 0 24 24" aria-hidden="true">${PN_ICO[k]}</svg></i><small>${esc(tr(l))}</small></div>`).join(''); /* v590: wie die Knöpfe unten, Füllstand als Ring */
   const act = (a, l, ico, on) => `<button type="button" class="pact${on ? ' on' : ''}" data-act="pet-${a}" aria-label="${esc(tr(l))}"><i><svg viewBox="0 0 24 24" aria-hidden="true">${PTA_ICO[ico]}</svg></i><small>${esc(tr(l))}</small></button>`;
   let sheet = '';
-  if (PETSHEET === 'feed') sheet = `<div class="psheet"><b>${esc(tr('Was möchte {0} essen?').replace('{0}', p.n))}</b><div class="pfoods">${Object.entries(PET_FOOD).map(([id, f]) => `<button type="button" class="pfood${K.fav === id ? ' fav' : ''}" data-act="pet-eat" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${PET_FOOD_SVG[id]}</svg><small>${esc(tr(f.n))}</small>${K.fav === id ? `<i>${esc(tr('Lieblingsessen'))}</i>` : ''}</button>`).join('')}</div></div>`;
+  if (PETSHEET === 'feed') sheet = `<div class="psheet"><b>${esc(tr('Was möchte {0} essen?').replace('{0}', p.n))}</b><div class="pfoods">${Object.entries(PET_FOOD).map(([id, f]) => `<button type="button" class="pfood" data-act="pet-eat" data-v="${id}"${v.f >= 99.5 ? ' disabled' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${PET_FOOD_SVG[id]}</svg><small>${esc(tr(f.n))}</small></button>`).join('')}</div></div>`;
   if (PETDECO === 'bg') PETDECO = 'hat';
   if (PETSHEET === 'deco') { const tabs = [['hat', 'Kopf'], ['neck', 'Hals']]; /* Zuhause = eigenes Zimmer (v572) */
     sheet = `<div class="psheet"><div class="pdtabs" role="tablist">${tabs.map(([k, l]) => `<button role="tab" data-act="pet-dtab" data-v="${k}" aria-selected="${PETDECO === k}">${esc(tr(l))}</button>`).join('')}</div><div class="pdgrid">${PETDECO !== 'bg' ? `<button type="button" class="pdi${!p.d?.[PETDECO] ? ' on' : ''}" data-act="pet-wear" data-s="${PETDECO}" data-v=""><span class="pdnone">✕</span><small>${esc(tr('Nichts'))}</small></button>` : ''}${Object.entries(PET_DECO[PETDECO]).map(([id, x]) => { const lock = p.lv < x.lv, on = (p.d?.[PETDECO] || (PETDECO === 'bg' ? 'gruft' : '')) === id;
@@ -14088,7 +14089,7 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-feed') { PETSHEET = PETSHEET === 'feed' ? '' : 'feed'; render(); }
   else if (a === 'pet-deco') { PETSHEET = PETSHEET === 'deco' ? '' : 'deco'; render(); }
   else if (a === 'pet-dtab') { PETDECO = b.dataset.v; render(); }
-  else if (a === 'pet-eat') { if (p.sl) return toast(tr('{0} schläft gerade.').replace('{0}', p.n)); const f = PET_FOOD[b.dataset.v], v = petVals(p); if (!f) return; if (v.f >= 95) return toast(tr('{0} ist satt.').replace('{0}', p.n));
+  else if (a === 'pet-eat') { if (p.sl) return toast(tr('{0} schläft gerade.').replace('{0}', p.n)); const f = PET_FOOD[b.dataset.v], v = petVals(p); if (!f) return; if (v.f >= 99.5) return; /* v624: nur wenn Satt ganz voll ist (Inaya) */
     const fav = PET_KINDS[p.k].fav === b.dataset.v, gain = Math.min(f.f, 100 - v.f); petSet(p, {f:f.f, p:fav ? 8 : 2}); const x = petXP(gain / 4 + (fav ? 3 : 0)); petSave();
     petFx('food', `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[b.dataset.v]}</svg>`, 50, 58, 900); setTimeout(() => petTemp('eat', 1300), 450); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500);
     setTimeout(petPaint, 1800); if (x) toast(`+${x} XP`); }
