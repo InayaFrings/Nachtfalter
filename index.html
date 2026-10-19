@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d0dfab88a1d5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9593acab0d79';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2779,6 +2779,17 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 @keyframes pfdrop{to{transform:translateY(220px);opacity:.2}}
 .pbathbar{position:absolute;left:18%;right:18%;top:10px;height:8px;border:2px solid #f4f2ee;background:#0b0a0d;z-index:5;pointer-events:none}.pbathbar i{display:block;height:100%;width:0;background:#f4f2ee;transition:width .15s}
 @keyframes ibat{from{transform:translateX(0)}to{transform:translateX(140vw)}}
+/* Avatar-Schritt am Handy (v608, Inaya): fester Bildschirm, Spiegel oben, nur die Teile darunter scrollen, nichts über den Rahmen hinaus */
+@media (max-width:760px){
+  html:has(.obwear),body:has(.obwear){overflow:hidden;overscroll-behavior:none}
+  .obwear{position:fixed;left:0;right:0;top:var(--obbarh,66px);bottom:0;width:auto;margin:0;padding:0;gap:0;display:flex;flex-direction:column;overflow:hidden;z-index:5;background:var(--bg)}
+  .obwear .wardrobe{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;margin:0}
+  .obwear .wardrobe .mirror-card{position:relative!important;top:auto!important;flex:none;align-self:stretch;width:100%;box-sizing:border-box;display:flex;justify-content:center;align-items:center;margin:0;padding:24px 0 16px;border-left:0;border-right:0}.obwear .wardrobe .mirror-card .note{display:none}
+  body:has(.obwear) #app{min-height:0}
+  .obwear .wardrobe>.card:not(.mirror-card){flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:0;border:0}
+  .obwear .wardrobe .ctabs{top:0!important}
+  .obwear .obfoot{flex:none;margin:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
