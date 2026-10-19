@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8a12e6dfc569';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1341c98d8361';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2609,7 +2609,9 @@ body.psopen{overflow:hidden}
 .pstabs button[aria-selected="true"]{background:#eeedf2;color:#0a0a0b;border-color:#eeedf2}
 .psbody{overflow-y:auto;padding:4px 14px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px;align-content:start;max-height:38vh}
 .psexpl{margin:4px 0 2px;font-size:15px;color:#d8d4dc}.psexpl b{color:#fff}
-.pstudio .pscontrols > .hslbar{margin:0 14px 8px}.pstudio #bprev{display:none} /* v588: Regler unter den Reitern; der Namens-Kasten steht oben schon in der Vorschau */
+.pstudio .pscontrols > .hslbar{margin:0 14px 8px}.pstudio #bprev{display:none}.pstudio .psbody .note{display:none} /* v589: nur der eine Satz oben pro Reiter */
+.pstiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}.pstile{display:grid;justify-items:center;gap:8px;padding:12px 6px 10px;border:1px solid #ffffff26;border-radius:14px;background:#ffffff08;color:#eeedf2;cursor:pointer;--p-fg:#eeedf2;--p-bg:#16151a}
+.pstile .portrait{width:64px!important;max-width:64px;margin:10px 0 12px}.pstudio .media fieldset > legend{display:none}.pstile small{font-size:12.5px}.pstile[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 2px #fff;background:#ffffff14} /* v588: Regler unter den Reitern; der Namens-Kasten steht oben schon in der Vorschau */
 
 /* Begleiter-Seite passt ohne Scrollen auf den Bildschirm (v580) */
 body[data-pg="pet"] .shell{padding-bottom:0!important}body[data-pg="pet"] #app{min-height:0!important}
@@ -9929,7 +9931,8 @@ const PS_TABS = [['box', 'Kasten', 'Die Fläche mit deinem Bild, Namen und Steck
 let PSTAB = 'box';
 function psOpts(k){ if (k === 'box' || k === 'page') return colorRow(k, draft[k]); if (k === 'fg') return fgRow(draft.fg).replace(/<p class="note"[\s\S]*?<\/p>/, '');
   if (k === 'pattern' || k === 'pagePattern') return patTiles(k, draft[k]); if (k === 'banner') return `<div id="media-ed">${mediaEditor(mdraft, me().name, 'banner')}</div>`;
-  const o = OPTS.find(x => x[0] === k); return o ? `<div class="chips">${o[2].map(([v, l]) => `<button type="button" data-act="topt" data-k="${k}" data-v="${v}" aria-pressed="${draft[k] === v}">${esc(l)}</button>`).join('')}</div>` : ''; }
+  const o = OPTS.find(x => x[0] === k), u = me(); /* v589: Rahmen und Bildform als kleine Bilder des eigenen Profilbilds */
+  return o ? `<div class="pstiles">${o[2].map(([v, l]) => `<button type="button" class="pstile" data-act="topt" data-k="${k}" data-v="${v}" aria-pressed="${draft[k] === v}" aria-label="${esc(l)}">${portrait({outfit:u.outfit, pic:mdraft?.pic ?? u.pic}, {...draft, [k]:v}, 'small')}<small>${esc(l)}</small></button>`).join('')}</div>` : ''; }
 function psBody(){ const t = PS_TABS.find(x => x[0] === PSTAB) || PS_TABS[0];
   return `<div class="pstabs" role="tablist">${PS_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ps-tab" data-v="${k}" aria-selected="${k === PSTAB}"><span>${PS_ICO[k]}</span><small>${esc(tr(l))}</small></button>`).join('')}</div>
     <div class="psbody"><p class="psexpl"><b>${esc(tr(t[1]))}:</b> ${esc(tr(t[2]))}</p>${psOpts(PSTAB)}</div>`; }
@@ -9980,7 +9983,7 @@ function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von ob
         <div class="fullfig mv-${poseMove(u.pose)}" id="posefig">${avatar(u.outfit, 'full', u.pose)}</div>
         <div><fieldset class="opt"><legend class="lbl">Pose</legend><div class="chips posetabs">${POSES.map(([k,l]) => `<button type="button" data-act="pose" data-v="${k}" aria-pressed="${(u.pose || 'gerade') === k}">${l}</button>`).join('')}</div></fieldset>
         </div></div>`)}
-      <div class="row pesave"><button class="btn ghost" type="button" data-act="profile" data-id="${u.id}">Abbrechen</button><span class="sp"></span><button class="btn" type="submit" form="designform">Speichern</button></div>
+      ${/* v589: unten keine zweiten Knöpfe, oben stehen schon Abbrechen und Fertig */ ''}
     </div>
     <div class="preview" id="preview">${previewHTML()}</div>
   </div>`;
