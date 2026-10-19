@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='3c5b95e825db';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9a28c4e33620';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10576,7 +10576,7 @@ let VMPF = null;
 function vmPrefetch(){ clearTimeout(VMPF); VMPF = setTimeout(async () => { if (!social) return; for (const m of CH.msgs.filter(x => x.audio?.voice && x.audio.n && !x._pend && !(VOICEURL[x.audio.k] && x.from === social.uid)).slice(-8).reverse()) { try { await songURL(m.from, m.audio, 'pa_' + m.audio.k); } catch {} } }, 300); }
 const msgImgs = (box, keep) => { const st0 = box.scrollTop; box.querySelectorAll('img').forEach(i => { if (!i.complete) i.addEventListener('load', () => { box.scrollTop = keep ? st0 : box.scrollHeight; }, {once:true}); }); }; // beim Löschen nicht nach unten springen (Inaya, 2026-10-12)
 function msgsHTML(){
-  const c = CH.list.find(x => x.id === CH.open), warn = c && e2Chat(c.id, c) ? e2Members(c.id, c).filter(u => u !== social?.uid && e2Warned(u)) : [];
+  const c = CH.list.find(x => x.id === CH.open), warn = []; /* v679: Hinweis „neues Gerät angemeldet“ abgeschaltet (Inaya: irrelevant) */
   if (warn.length) return moreHTML() + msgsHTML0(c) + warn.map(u => `<div class="e2warn">${E2_LOCK}<span>${esc(chatWho(u))} hat ein neues Gerät angemeldet oder sich neu angemeldet. Eure Nachrichten bleiben verschlüsselt. Wenn du sichergehen willst, vergleicht eure Sicherheitsnummer.</span><span class="row"><button type="button" class="btn ghost" data-act="e2-code">Sicherheitsnummer</button><button type="button" class="btn ghost" data-act="e2-warnok" data-id="${esc(u)}">OK</button></span></div>`).join('');
   return moreHTML() + msgsHTML0(c); }
 // Erst die neuesten 60 laden (spart Lesevorgänge), ältere auf Wunsch (Inaya, 2026-10-14)
@@ -12666,8 +12666,8 @@ const NC_START = 2000, NC_DAILY = {c:25, x:20};
 const XPV = {f:25, p:15, l:3, c:5, g:10, j:15, k:30, m:2, b:40}, XPC = {g:15, b:50}, XPCAP = {f:5, p:3, l:10, c:8, g:4, j:3, k:1, m:10, b:3}; /* v677: b = Begleiter-Levelaufstieg (je Begleiter-Level einmal) */
 const NC_GAME = {memory:'mem', ttt:'ttt', hang:'hang', bat:'bat'};
 const LV_MAX = 50; /* höchstes Level (Inaya, 2026-10-16) */
-const lvT = l => 25 * l * (l - 1), lvOf = x => { let l = 1; while (l < LV_MAX && lvT(l + 1) <= x) l++; return l; }, lvC = l => LVC2 ? 100 * (l - 1) + 300 * Math.floor(l / 5) : 30 * (l - 1) + 100 * Math.floor(l / 5); /* v677: mehr Coins beim Levelaufstieg (Inaya): 100 je Level, +300 alle 5 Level. Mit alten Regeln (ohne lvC2) fällt die App auf 30/100 zurück */
-let LVC2 = true;
+const lvT = l => 25 * l * (l - 1), lvOf = x => { let l = 1; while (l < LV_MAX && lvT(l + 1) <= x) l++; return l; }, lvC = l => LVM === 0 ? 100 * (l - 1) + 5 * (l - 1) * (l - 2) : LVM === 1 ? 100 * (l - 1) + 300 * Math.floor(l / 5) : 30 * (l - 1) + 100 * Math.floor(l / 5); /* v679 (Inaya): jedes Level etwas mehr, ohne Sprünge: Level 2 = 100, dann je Level +10 (Level 10 = 180, Level 50 = 580). Lehnen die Regeln das ab, nimmt walTx die Formel von v677 (lvC2), dann die alte */
+let LVM = 0;
 /* Tag in deutscher Zeit (Europe/Berlin, Sommerzeit inklusive), wie today() in den Regeln; Serverzeit über srvNow, nicht die Geräteuhr */
 const NC_TZ = (() => { try { return new Intl.DateTimeFormat('en-US', {timeZone:'Europe/Berlin', hourCycle:'h23', year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric'}); } catch { return null; } })();
 function berlinOff(ms){ if (!NC_TZ) return 3600000; try { const p = Object.fromEntries(NC_TZ.formatToParts(new Date(ms)).map(x => [x.type, x.value])), s = ms - ms % 1000; return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - s; } catch { return 3600000; } }
@@ -12740,7 +12740,7 @@ function walTx(build){ const run = async () => { if (!social || !WAL.d) return {
     let lvch = false;
     try { return await Promise.race([social.db.runTransaction(async t => { const s = await t.get(ref); if (!s.exists) throw {code:'nowal'}; const w = s.data(), b = await build(w, t); if (!b) return {skip:true};
         lvch = b.upd.l != null && b.upd.l !== w.l; t.update(ref, b.upd); if (b.also) b.also(t, w); return {ok:true, w, upd:b.upd}; }), new Promise((_, no) => setTimeout(() => no({code:'timeout'}), 20000))]); }
-    catch (e) { if (e?.code === 'permission-denied' && lvch && LVC2) { LVC2 = false; return run(); } /* v677: Regeln noch ohne neue Level-Coins */ return {err:e?.code || String(e)}; } };
+    catch (e) { if (e?.code === 'permission-denied' && lvch && LVM < 2) { LVM++; return run(); } /* Regeln noch ohne neue Level-Coins */ return {err:e?.code || String(e)}; } };
   return WAL.q = WAL.q.then(run, run); }
 const ncGain = (w, xp, coins) => { const x = (w.x || 0) + xp, l = lvOf(x); return {x, l, c:w.c + coins + lvC(l) - lvC(w.l)}; };
 const xdOf = (w, d) => w.xd && w.xd.d === d ? w.xd : {d, n:{}, r:{}};
