@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='cecabc45d441';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2cae772f8712';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2671,7 +2671,8 @@ html:has(body[data-pg="pet"]){overflow:hidden;height:100%;overscroll-behavior:no
   .shell{max-width:var(--colw);margin-left:auto!important;margin-right:auto!important}
   .shell > .rail{margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;padding-left:max(14px,calc(50vw - 50% + 14px))!important;padding-right:max(14px,calc(50vw - 50% + 14px))!important}
   .mobnav{left:0!important;right:0!important;width:auto!important;transform:none!important;padding-left:max(4px,calc(50vw - 360px))!important;padding-right:max(4px,calc(50vw - 360px))!important}
-  .mobnav .mb span{display:block;font:500 12.5px var(--f-display)}.mobnav .mb{min-height:58px}
+  .mobnav .mb span{display:none!important}.mobnav .mb{min-height:58px} /* v592: nur Symbole (Inaya) */
+  html,body{overflow-x:clip} /* v592: kein seitlicher Bildlauf durch die Leisten über die ganze Breite */
   .petpg .pacts{left:50%!important;right:auto!important;width:var(--colw);transform:translateX(-50%)}
   .petpg .psheet{left:calc(50% - var(--colw) / 2 + 8px)!important;right:auto!important;width:calc(var(--colw) - 16px)}
   body.chatfull .chatmain>.chatpanel{left:50%!important;right:auto!important;width:var(--colw);transform:translateX(-50%);border-left:1px solid var(--line)!important;border-right:1px solid var(--line)!important}
