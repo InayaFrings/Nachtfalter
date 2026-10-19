@@ -422,3 +422,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - „Beste Freunde und Partner ändern“ (seit v665) im selben gefüllten Stil wie „Bearbeiten“ (`.pshbtn.bestbtn`).
 - Seit v666: Profil-Knöpfe in genau der Kastenfarbe (`--p-bg`) statt `--p-panel` (Inaya), Beschriftung mittig.
 - Seit v667: Profil-Knöpfe in der Farbe des Seiten-Hintergrunds (`--p-page`/`--p-pagefg`/`--p-pageln` aus `themeStyle`, `t.page`), nicht des Kastens (Inaya).
+- Seit v668: Profil-Knöpfe auch mit dem Muster des Seiten-Hintergrunds (`--p-pagepat` aus `t.pagePattern`).
