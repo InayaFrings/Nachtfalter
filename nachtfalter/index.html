@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f4d314c9659c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='74cc9b3b5f82';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7236,7 +7236,10 @@ function ago(ts){
 }
 let tT;
 function toastKeep(msg){ const t = document.getElementById('toast'); if (!t) return; clearTimeout(tT); if (msg) { t.textContent = msg; t.hidden = false; } else t.hidden = true; }
+/* v616: Inaya will keine weißen Bestätigungs-Kästen mehr („Gespeichert“, „Willkommen …“). Es erscheinen nur noch Hinweise, wenn etwas nicht geklappt hat oder man noch etwas tun muss. */
+const TOAST_NEED = /nicht|fehl|schief|bitte|zu groß|zu lang|zu kurz|kein|ungültig|falsch|Fehler|Verbindung|mindestens|höchstens|warte|erst |gesperrt|blockiert|voll|abgelehnt|geht nur|gehen nur|leider|klappt|vergeben|existiert|Regeln|erlaub|zu viele|zu klein|nur |^Gib |muss|^Halt|^Schreib etwas|braucht|sobald|schon|Bestätige|bestätige|Löschen geht/i;
 function toast(msg){
+  if (!TOAST_NEED.test(String(msg || ''))) return;
   let t = document.getElementById('toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); } /* falls die Meldungsbox gerade fehlt */
   t.textContent = msg; t.hidden = false;
   clearTimeout(tT); tT = setTimeout(() => t.hidden = true, 2600);
