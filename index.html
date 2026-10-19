@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='02a57127fd09';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6065a354dbe8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10059,8 +10059,12 @@ const PTICO = { // eigene Noctibat-Symbole (Inaya, 2026-10-14): Kapelle, Kirchen
   reposts:'<path d="M20 12a8 8 0 0 1-13.7 5.7"/><path d="M4 12a8 8 0 0 1 13.7-5.7"/><path d="M17.9 2.6v3.9H14M6.1 21.4v-3.9H10"/>',
   tagged:'<path d="M12 2.4l2.1 2.1h4.4a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h4.4z"/><circle cx="12" cy="10.6" r="2.9"/><path d="M6.6 21.4c.7-3 2.8-4.8 5.4-4.8s4.7 1.8 5.4 4.8"/>'}; /* Markiert wie bei Insta (v564) */
 const profUser = id => S.users[id] || (PROF[id] ? remoteUser(id, PROF[id]) : null);
+const PWAIT = {};
 function profileView(id){
-  const u = profUser(id); if (!u) return homeView();
+  const u = profUser(id); if (!u) { /* v664: beim Neuladen ist ein fremdes Profil noch nicht da: warten statt kurz den Salon zu zeigen (Inaya) */
+    if (id && id !== S.me && typeof id === 'string') { if (!PWAIT[id]) { PWAIT[id] = 1; setTimeout(() => { if (V.name === 'profile' && V.arg === id && !profUser(id)) { go('home'); render(); } }, 15000); }
+      if (social && PWAIT[id] === 1) { PWAIT[id] = 2; loadProf(id).then(() => { if (V.name === 'profile' && V.arg === id) softRender(); }).catch(() => {}); } }
+    return id && id !== S.me ? `<section class="card ploadw"><p class="muted">Lädt …</p></section>` : homeView(); }
   if (u.remote && isBlk(id)) { PROF_WALL = ''; return iBlocked(id) ? `<section class="card blkprof"><h2 class="card-h">${esc(u.name)}</h2><p class="muted">@${esc(u.handle || '')}</p><p>Du hast diese Person blockiert. Ihr seht gegenseitig keine Beiträge, Storys oder Nachrichten.</p><button class="btn" data-act="unblock" data-id="${esc(id)}">Entblockieren</button></section>` : `<section class="card blkprof"><h2 class="card-h">Profil nicht verfügbar</h2><p class="muted">Dieses Profil kannst du gerade nicht ansehen.</p></section>`; }
   const own = id === S.me, mine = false; // bearbeitet wird alles unter „Profil bearbeiten“ (designView)
   const others = u.remote ? [] : Object.values(S.users).filter(x => x.id !== id).sort((a,b) => (b.helper ? 1 : 0) - (a.helper ? 1 : 0));
