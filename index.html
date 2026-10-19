@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='eef7638c73bc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6fffe6a980d5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -13866,7 +13866,7 @@ const PET_KINDS = {
 const PET_IDS = ['katze', 'fled', 'hase', 'rabe'];
 /* Seit v646: Inayas zweites Blatt mit vier Figuren (Katze von ihr gelborange gewünscht, ein Ohr und Schwanzspitze pink) als Bilder in pwa/pets/, freigestellt. Box = Lage im 200×200-Feld, Boden bei y≈180 */
 const PET_IMG = Object.fromEntries(['katze', 'fled', 'hase', 'rabe'].map(k => [k, {src:`/pwa/pets/${k}.webp?v=646`, x:10, y:2, w:180, h:178}]));
-PET_IMG.fled.src = '/pwa/pets/fled.webp?v=648'; /* v648: Fledermaus ohne Herzkissen, damit man Halsband und Ketten sieht (Inaya) */
+PET_IMG.fled.src = '/pwa/pets/fled.webp?v=649'; /* v649: Fledermaus ohne Herzkissen, Körper aus Inayas Zeichnung lila eingefärbt */
 /* v648: Bilder einmal laden und dekodiert halten, sonst blitzen sie bei jedem Neuzeichnen kurz leer auf */
 const PET_PRE = Object.values(PET_IMG).map(I => { const i = new Image(); i.decoding = 'async'; i.src = I.src; i.decode?.().catch(() => {}); return i; });
 const PET_DRAW = Object.fromEntries(Object.entries(PET_IMG).map(([k, I]) => [k, (m, nk = '', ht = '') => `<g class="pbody"><image href="${I.src}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>${nk}${I.fg && nk ? `<image href="${I.fg}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>` : ''}${ht}${m === 'love' ? '<g class="plove" fill="#e8436e" stroke="#141016" stroke-width="1.6"><path d="M160 40c-6-6-14 2-8 8l8 8 8-8c6-6-2-14-8-8z"/><path d="M38 58c-4-4-10 1-5 5l5 5 5-5c5-4-1-9-5-5z"/></g>' : ''}</g>`]));
@@ -13877,7 +13877,7 @@ const PET_DECO = {
   bg:{gruft:{n:'Gruft', lv:1}, mondnacht:{n:'Mondnacht', lv:3}, friedhof:{n:'Friedhof', lv:5}, bibliothek:{n:'Alte Bibliothek', lv:7}, kerzen:{n:'Kerzenzimmer', lv:11}},
 };
 /* hs/hr = Größe und Neigung der Kopf-Deko, ns = Größe der Hals-Deko (v647) */
-const PET_ANCH = {katze:{hat:[97, 40], hs:1.15, hr:-4, neck:[100, 97, 24], ns:1}, fled:{hat:[100, 50], hs:1.35, hr:-12, neck:[118, 121, 24], ns:1}, hase:{hat:[98, 27], hs:1.05, hr:4, neck:[98, 100, 22], ns:1}, rabe:{hat:[100, 26], hs:1, hr:-4, neck:[118, 90, 19], ns:.95}};
+const PET_ANCH = {katze:{hat:[97, 40], hs:1.15, hr:-4, neck:[100, 97, 24], ns:1}, fled:{hat:[108, 41], hs:1.08, hr:-12, neck:[113, 96, 19], ns:.9}, hase:{hat:[98, 27], hs:1.05, hr:4, neck:[98, 100, 22], ns:1}, rabe:{hat:[100, 26], hs:1, hr:-4, neck:[118, 90, 19], ns:.95}};
 const PET_HATS = {
   schleife:([x, y]) => `<g transform="translate(${x + 26} ${y + 4}) rotate(14)"><path d="M0 0L-18 -11L-18 11Z M0 0L18 -11L18 11Z" fill="#d6467e" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><circle r="5.5" fill="#f06a9c" stroke="#120e16" stroke-width="2.2"/></g>`,
   krone:([x, y]) => `<g transform="translate(${x} ${y - 4})"><path d="M-20 4L-22 -16L-10 -6L0 -20L10 -6L22 -16L20 4Z" fill="#e8c35a" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><circle cx="0" cy="-4" r="3.2" fill="#b0306a"/><circle cx="-12" cy="-2" r="2.2" fill="#6a8ae0"/><circle cx="12" cy="-2" r="2.2" fill="#6a8ae0"/></g>`,
