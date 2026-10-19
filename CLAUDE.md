@@ -199,7 +199,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 ## Kleinigkeiten (v501)
 
 - Profil-Zimmer: `.proom{isolation:isolate}`, damit „Zimmer betreten“ (z-index 2000) vor den Möbeln, aber unter der Leiste oben liegt.
-- Beitragskopf: `@nutzername · Zeit` immer in einer Zeile (`.ph .meta` flex/nowrap, zu lange Namen mit „…“). Nutzernamen 3–20 Zeichen (`handleProblem`).
+- Beitragskopf (bis v565): `@nutzername · Zeit` immer in einer Zeile (`.ph .meta` flex/nowrap, zu lange Namen mit „…“). Nutzernamen 3–20 Zeichen (`handleProblem`).
 - Teilen-Fenster: Profilbilder ohne Rahmen (`frame:'none'` in `shGrid`), damit Namen lesbar bleiben.
 - Freundschaftsanfrage ablehnen: abgelehnte (`S.ignoredReq`) zeigen auf Profil und in Listen keine Annehmen/Ablehnen-Knöpfe mehr.
 - Geschenk-Arten als schwarz-weiße Linien-Symbole (`GF_WARD`, `GF_ROOM`).
@@ -320,5 +320,6 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v565: Startbildschirm nur beim echten Start (nicht beim Neuladen oder innerhalb derselben Sitzung, `sessionStorage nf-spl` + Navigationsart), Logo darin höher; danach oben noch etwa 1 s das Logo, dann „Öffentlich ▾“. Salon wartet nicht mehr auf den Server, wenn der Gerätestand da ist (`feedWait`: `PUBF.cached` bzw. Freunde mit Beiträgen).
 - Minigames sind seit v565 entfernt (Inaya): kein Eintrag mehr in Leiste und Profil, `V.name === 'games'` führt in den Salon. Der alte Code (`gamesView`, `GM`, `ncGame`) ist nur noch unerreichbar vorhanden. Profil: kein „So sehen andere dein Profil“ mehr, „Bearbeiten“ steht unten neben „Profil teilen“ (`.pshrow`).
 - Videos schneller hochladen (seit v565): ab 4 MB mit mehr als 3 Mbit/s rechnet WebCodecs sie vorher auf 720p mit 1,8 Mbit/s (`vidFast`, `VID_FAST_BR`, `wcShrink` mit `br`), in Beiträgen (`prepVideo`) und Storys (`stVidDone`, im Hintergrund). Geht das schief, wird das Original genommen. Hochgeladen werden 8 Stücke gleichzeitig.
+- Beitragskopf (seit v566, wie bei Insta): nur der Nutzername ohne @ (`ulinkH`, antippen öffnet das Profil), kein Anzeigename mehr. „Bearbeiten“ und „Profil teilen“ im Profil teilen sich die ganze Breite.
 - Plus-Knopf `.mfab` (Aktion `fab-post`) links in der Handy-Kopfzeile, bleibt beim Scrollen stehen wie die Glocke: öffnet von überall den neuen Beitrag im Salon (`homeCompose`, Vollbild `pcFull`). Der gestrichelte Plus-Kasten im Salon ist dafür weg (im Profil bleibt er).
 - Vorauswahl Freunde/Öffentlich = gewählter Salon-Bereich (`S.salonMode` → `postAud`, auch beim Umschalten des Bereichs).
