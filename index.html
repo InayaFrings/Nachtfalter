@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f08a51e0fd85';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='eef7638c73bc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2468,7 +2468,7 @@ body.pcropen{overflow:hidden}
 .pact{display:grid;justify-items:center;gap:5px;padding:8px 2px;background:none;border:0;color:var(--fg);cursor:pointer}
 .pact i{width:52px;height:52px;display:grid;place-items:center;border:1.5px solid var(--line);border-radius:50%;transition:transform .15s,background .2s}.pact svg{width:26px;height:26px}
 .pact.on i{background:var(--fg);color:var(--bg)}.pact:active i{transform:scale(.9)}.pact small{font-size:12.5px}
-.psheet{border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:10px;animation:mhfade .25s ease both}
+.psheet{border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:10px}.psheet.pfresh{animation:mhfade .25s ease both}
 .pfoods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .pfood{position:relative;display:grid;justify-items:center;gap:4px;padding:10px 4px;background:#ffffff08;border:1px solid var(--line-soft);border-radius:12px;color:var(--fg);cursor:pointer}.pfood svg{width:40px;height:40px}.pfood small{font-size:12.5px}
 .pfood i{position:absolute;top:-8px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10.5px;font-style:normal;background:var(--pg);color:#120e16;border-radius:99px;padding:2px 7px;font-weight:700}
@@ -2583,7 +2583,7 @@ body.pcropen{overflow:hidden}
 @media all /*760*/{
   .petpg{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
   .petpg .pacts{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:950;background:var(--bg);border-top:1px solid var(--line-soft);padding:8px 8px 6px;margin:0}
-  .petpg .psheet{position:fixed;left:8px;right:8px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:951;max-height:46vh;overflow:auto;background:var(--paper,#141216);box-shadow:0 -10px 40px #000c}
+  .petpg .psheet{position:fixed;left:8px;right:8px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:951;max-height:46vh;overflow:auto;background:#141216;box-shadow:0 -10px 40px #000c}
   .petpg .pscene{aspect-ratio:auto;height:min(44vh,380px)}.petpg .petfig{height:82%;width:auto;max-width:90%}
   body:has(.petpg) .main > .navback{display:none}
   .petpg .pneeds{gap:6px}.petpg .pneed{padding:6px 2px}
@@ -2806,6 +2806,21 @@ html:has(.ppick),body:has(.ppick){overflow:hidden;overscroll-behavior:none}
 .ppick .ppcard{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;text-align:center;align-items:center;padding:8px 8px 10px;gap:2px;min-height:0;overflow:hidden}
 .ppick .ppcard .ppfig{grid-row:auto;width:100%;height:100%;min-height:0;max-height:24dvh}.ppick .ppcard b{font-size:20px}.ppick .pptyp{font-size:11px}.ppick .ppdesc{font-size:12.5px;line-height:1.3}
 @media (min-width:762px){.ppick .ppcards{grid-template-columns:repeat(4,1fr);grid-auto-rows:auto;align-content:center}.ppick .ppcard .ppfig{height:auto;aspect-ratio:1;max-height:none}}
+
+/* v648: Schlüpfen im Stil der Begleiter (Inaya): keine Strahlen, kein Farbblitz, kein Ring; der Totenkopf reißt an der Naht auf */
+.phrays,.phflash,.phring{display:none!important}
+.phorb{width:min(220px,56vw);height:min(220px,56vw);margin:calc(min(220px,56vw) / -2) 0 0 calc(min(220px,56vw) / -2);overflow:visible}.phorb svg{overflow:visible}
+.phcrack{fill:none;stroke:#141016;stroke-width:2.6;stroke-dasharray:4 5;stroke-dashoffset:0;opacity:0;transition:opacity .4s}
+.phstitch{fill:none;stroke:#141016;stroke-width:1.6;stroke-linecap:round;opacity:1;transition:opacity .25s}
+.phatch.p2 .phcrack{opacity:1;stroke-dasharray:4 5;animation:phrip 1.2s linear both}@keyframes phrip{0%{stroke-dasharray:4 5}100%{stroke-dasharray:14 1}}
+.phatch.p2 .phstitch{animation:phpop 1.3s steps(6) both}@keyframes phpop{0%{opacity:1}100%{opacity:0}}
+.phtop,.phbot{transform-box:fill-box;transform-origin:50% 100%;transition:transform .55s cubic-bezier(.3,.7,.4,1),opacity .55s}
+.phatch.p3 .phorb{transform:scale(1);opacity:1;animation:none;transition:none}
+.phatch.p3 .phtop{transform:translate(-14px,-70px) rotate(-24deg);opacity:0}.phatch.p3 .phbot{transform:translate(10px,60px) rotate(14deg);opacity:0}
+.phatch.p3 .phcrack,.phatch.p3 .phstitch{opacity:0}
+.php{background:none;-webkit-mask:none;mask:none;width:30px;height:30px;left:-15px;top:-15px}.php svg{width:100%;height:100%;display:block;overflow:visible}
+
+.fullhints.solo{justify-content:flex-end}.petbox .pbfig{display:block;width:min(190px,58%);aspect-ratio:1;margin:0 auto}.petbox .pbfig svg{width:100%;height:100%}.petbox .pbname{font:400 20px var(--f-display);text-align:left}.petbox .fullhints{margin-top:6px}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -7657,10 +7672,14 @@ function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
   if (!u?.outfit) return '';
   const edit = pid === S.me && V.name === 'profile' && profEdit;
   return `<div class="card fullav"><h2 class="card-h">${pid === S.me ? 'Dein Avatar' : esc(u.name)}</h2><div class="card-in" style="position:relative">
-    ${pid === S.me && !edit ? `<button type="button" class="fullfig fullgo mv-${poseMove(u.pose)}" data-act="nav" data-v="wardrobe" aria-label="Garderobe betreten">${avatar(u.outfit, 'full', u.pose)}${petBeside(u)}</button><div class="fullhints"><button type="button" class="proom-hint fullhint" data-act="nav" data-v="wardrobe">← Garderobe betreten</button>${petMe() ? `<button type="button" class="proom-hint fullhint fullpet" data-act="nav" data-v="pet">${esc(tr('Begleiter'))} →</button>` : '<span></span>'}</div>` : `<div class="fullfig mv-${poseMove(u.pose)}">${avatar(u.outfit, 'full', u.pose)}${petBeside(u)}</div>`}
+    ${pid === S.me && !edit ? `<button type="button" class="fullfig fullgo mv-${poseMove(u.pose)}" data-act="nav" data-v="wardrobe" aria-label="Garderobe betreten">${avatar(u.outfit, 'full', u.pose)}</button><div class="fullhints solo"><button type="button" class="proom-hint fullhint" data-act="nav" data-v="wardrobe">Garderobe betreten →</button></div>` : `<div class="fullfig mv-${poseMove(u.pose)}">${avatar(u.outfit, 'full', u.pose)}</div>`}
     ${edit ? `<fieldset class="opt"><legend class="lbl">Pose</legend><div class="chips">${POSES.map(([k,l]) => `<button type="button" data-act="pose" data-v="${k}" aria-pressed="${(u.pose || 'gerade') === k}">${l}</button>`).join('')}</div></fieldset>` : ''}
-  </div></div>`;
+  </div></div>${edit ? '' : petBox(u)}`;
 }
+/* v648: Begleiter im eigenen kleinen Kasten unter dem Avatar, Pfeil darunter (Inaya) */
+function petBox(u){ if (!u || u.helper) return ''; const own = u.id === S.me, p = own ? petMe() : (PROF[u.id]?.pet || u.pet); if (!p?.k || !PET_KINDS[p.k]) return '';
+  const svg = petSVG(p.k, own ? petMood(p) : 'happy', p.d || {}), name = `<span class="pbname" data-raw>${esc(p.n)}</span>`;
+  return `<div class="card fullav petbox"><h2 class="card-h">${own ? esc(tr('Dein Begleiter')) : name}</h2><div class="card-in">${own ? `<button type="button" class="pbfig fullgo" data-act="nav" data-v="pet" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</button><div class="fullhints">${name}<button type="button" class="proom-hint fullhint" data-act="nav" data-v="pet">${esc(tr('Begleiter'))} →</button></div>` : `<div class="pbfig">${svg}</div>`}</div></div>`; }
 function salonEnd(){ // Handy und PC: ganz unten im Salon der eigene Avatar mit kleinem Hinweis (Inaya)
   const u = me(); if (!u?.outfit) return '';
   return `<div class="salonend"><div class="sefig">${avatar(u.outfit, 'full', u.pose)}</div><p>Du bist am Ende angelangt.</p></div>`;
@@ -13847,7 +13866,9 @@ const PET_KINDS = {
 const PET_IDS = ['katze', 'fled', 'hase', 'rabe'];
 /* Seit v646: Inayas zweites Blatt mit vier Figuren (Katze von ihr gelborange gewünscht, ein Ohr und Schwanzspitze pink) als Bilder in pwa/pets/, freigestellt. Box = Lage im 200×200-Feld, Boden bei y≈180 */
 const PET_IMG = Object.fromEntries(['katze', 'fled', 'hase', 'rabe'].map(k => [k, {src:`/pwa/pets/${k}.webp?v=646`, x:10, y:2, w:180, h:178}]));
-PET_IMG.fled.fg = '/pwa/pets/fled_herz.webp?v=647'; /* v647: das Herzkissen liegt noch einmal über dem Halsband, damit es dahinter verschwindet (Inaya) */
+PET_IMG.fled.src = '/pwa/pets/fled.webp?v=648'; /* v648: Fledermaus ohne Herzkissen, damit man Halsband und Ketten sieht (Inaya) */
+/* v648: Bilder einmal laden und dekodiert halten, sonst blitzen sie bei jedem Neuzeichnen kurz leer auf */
+const PET_PRE = Object.values(PET_IMG).map(I => { const i = new Image(); i.decoding = 'async'; i.src = I.src; i.decode?.().catch(() => {}); return i; });
 const PET_DRAW = Object.fromEntries(Object.entries(PET_IMG).map(([k, I]) => [k, (m, nk = '', ht = '') => `<g class="pbody"><image href="${I.src}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>${nk}${I.fg && nk ? `<image href="${I.fg}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>` : ''}${ht}${m === 'love' ? '<g class="plove" fill="#e8436e" stroke="#141016" stroke-width="1.6"><path d="M160 40c-6-6-14 2-8 8l8 8 8-8c6-6-2-14-8-8z"/><path d="M38 58c-4-4-10 1-5 5l5 5 5-5c5-4-1-9-5-5z"/></g>' : ''}</g>`]));
 /* Deko: Kopf (hat), Hals (neck), Zuhause (bg). lv = ab welchem Level */
 const PET_DECO = {
@@ -13856,7 +13877,7 @@ const PET_DECO = {
   bg:{gruft:{n:'Gruft', lv:1}, mondnacht:{n:'Mondnacht', lv:3}, friedhof:{n:'Friedhof', lv:5}, bibliothek:{n:'Alte Bibliothek', lv:7}, kerzen:{n:'Kerzenzimmer', lv:11}},
 };
 /* hs/hr = Größe und Neigung der Kopf-Deko, ns = Größe der Hals-Deko (v647) */
-const PET_ANCH = {katze:{hat:[97, 40], hs:1.15, hr:-4, neck:[100, 97, 24], ns:1}, fled:{hat:[92, 50], hs:1.35, hr:-14, neck:[88, 119, 20], ns:1}, hase:{hat:[98, 27], hs:1.05, hr:4, neck:[98, 100, 22], ns:1}, rabe:{hat:[100, 26], hs:1, hr:-4, neck:[110, 102, 20], ns:.95}};
+const PET_ANCH = {katze:{hat:[97, 40], hs:1.15, hr:-4, neck:[100, 97, 24], ns:1}, fled:{hat:[100, 50], hs:1.35, hr:-12, neck:[118, 121, 24], ns:1}, hase:{hat:[98, 27], hs:1.05, hr:4, neck:[98, 100, 22], ns:1}, rabe:{hat:[100, 26], hs:1, hr:-4, neck:[118, 90, 19], ns:.95}};
 const PET_HATS = {
   schleife:([x, y]) => `<g transform="translate(${x + 26} ${y + 4}) rotate(14)"><path d="M0 0L-18 -11L-18 11Z M0 0L18 -11L18 11Z" fill="#d6467e" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><circle r="5.5" fill="#f06a9c" stroke="#120e16" stroke-width="2.2"/></g>`,
   krone:([x, y]) => `<g transform="translate(${x} ${y - 4})"><path d="M-20 4L-22 -16L-10 -6L0 -20L10 -6L22 -16L20 4Z" fill="#e8c35a" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><circle cx="0" cy="-4" r="3.2" fill="#b0306a"/><circle cx="-12" cy="-2" r="2.2" fill="#6a8ae0"/><circle cx="12" cy="-2" r="2.2" fill="#6a8ae0"/></g>`,
@@ -13884,9 +13905,10 @@ const PET_BGS = {
 /* ganzes Haustier: k = Art, m = Stimmung, d = Deko {hat, neck} */
 function petSVG(k, m = 'happy', d = {}, cls = ''){
   const a = PET_ANCH[k] || PET_ANCH.hase, fit = (g, [x, y], sc = 1, r = 0) => g && `<g transform="translate(${x} ${y}) rotate(${r}) scale(${sc}) translate(${-x} ${-y})">${g}</g>`;
-  const hat = d.hat && PET_HATS[d.hat] ? fit(PET_HATS[d.hat](a.hat), a.hat, a.hs, a.hr) : '', neck = d.neck && PET_NECKS[d.neck] ? fit(PET_NECKS[d.neck](a.neck), a.neck, a.ns) : '';
+  const sk = g => g && `<g filter="url(#pdrough)">${g}</g>`; /* v648: Deko krakelig wie Inayas Zeichnungen */
+  const hat = d.hat && PET_HATS[d.hat] ? sk(fit(PET_HATS[d.hat](a.hat), a.hat, a.hs, a.hr)) : '', neck = d.neck && PET_NECKS[d.neck] ? sk(fit(PET_NECKS[d.neck](a.neck), a.neck, a.ns)) : '';
   const body = (PET_DRAW[k] || PET_DRAW.hase)(m, neck, hat); /* Deko bewegt sich mit dem Körper, der Hut der Katze mit dem Kopf */
-  return `<svg class="petsvg pk-${k} pm-${m} ${cls}" viewBox="0 0 200 200" aria-hidden="true">${body}${m === 'sleep' ? '<g class="pzzz" fill="#e8e4f4" font-family="Georgia,serif" font-weight="700"><text x="150" y="60" font-size="18">z</text><text x="162" y="42" font-size="14">z</text><text x="172" y="28" font-size="11">z</text></g>' : ''}</svg>`;
+  return `<svg class="petsvg pk-${k} pm-${m} ${cls}" viewBox="0 0 200 200" aria-hidden="true">${hat || neck ? '<defs><filter id="pdrough" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter></defs>' : ''}${body}${m === 'sleep' ? '<g class="pzzz" fill="#e8e4f4" font-family="Georgia,serif" font-weight="700"><text x="150" y="60" font-size="18">z</text><text x="162" y="42" font-size="14">z</text><text x="172" y="28" font-size="11">z</text></g>' : ''}</svg>`;
 }
 
 /* ---------- Haustiere: Daten, Pflege, Level (seit v566, Inaya 2026-10-18) ----------
@@ -13979,10 +14001,35 @@ function petPickView(){ const sel = PETPICK, fromIntro = me()?.introPet;
 async function petPickGo(){ const k = PETPICK, K = PET_KINDS[k]; if (!K) return;
   if (!(await askYesNo(tr('Du wählst {0}. Danach kannst du nie mehr wechseln.').replace('{0}', tr(K.acc)), tr('Ja, für immer'), tr('Nochmal überlegen')))) return;
   petHatch(k); }
+/* v648: Schlüpfen im Stil der Begleiter (Inaya): Totenkopf als genähtes Stofftier mit krakeligem Umriss, Körnung, Kreuzstich-Naht, einem runden und einem X-Auge; Funken, X, Herzchen wie auf ihrem Blatt */
+const PH_INK = '#141016', PH_PAPER = '#ece8e2';
+const PH_DOODLE = [
+  c => `<svg viewBox="0 0 24 24"><path filter="url(#phrough)" d="M12 1.5C13 9 15 11 22.5 12C15 13 13 15 12 22.5C11 15 9 13 1.5 12C9 11 11 9 12 1.5Z" fill="${PH_PAPER}" stroke="${PH_INK}" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  c => `<svg viewBox="0 0 24 24"><g filter="url(#phrough)" stroke-linecap="round"><path d="M5 5L19 19M19 5L5 19" stroke="${PH_INK}" stroke-width="6.5"/><path d="M5 5L19 19M19 5L5 19" stroke="${PH_PAPER}" stroke-width="3"/></g></svg>`,
+  c => `<svg viewBox="0 0 24 24"><path filter="url(#phrough)" d="M12 20C4 14 2 10 4.5 6.5C7 3.5 10.5 4.5 12 7.5C13.5 4.5 17 3.5 19.5 6.5C22 10 20 14 12 20Z M9 17.8V21.5M15 17.6V20" fill="${c}" stroke="${PH_INK}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  c => `<svg viewBox="0 0 24 24"><g filter="url(#phrough)"><rect x="3" y="5" width="18" height="14" rx="3" fill="${c}" stroke="${PH_INK}" stroke-width="1.8" transform="rotate(-12 12 12)"/><path d="M7 9L10 12M10 9L7 12M14 12L17 15M17 12L14 15" stroke="${PH_INK}" stroke-width="1.5" stroke-linecap="round"/></g></svg>`,
+];
+function phSkull(ck){ const sk = 'M50 9C70 9 87 25 86 46C86 56 82 63 76 68V76C76 80 73 82 70 82H30C27 82 24 80 24 76V68C18 63 14 56 14 46C13 25 30 9 50 9Z', seam = 'M-2 40L14 35L26 41L38 33L50 40L62 32L74 39L86 34L102 38';
+  const body = `<path d="${sk}" fill="${PH_PAPER}"/><path d="${sk}" fill="#000" filter="url(#phgrain)" opacity=".22"/><path d="${sk}" fill="#9a93a6" filter="url(#phsmudge)" opacity=".55"/>
+    <g clip-path="url(#phcsk)" filter="url(#phrough)"><circle cx="24" cy="65" r="6.5" fill="${ck}" opacity=".9"/><circle cx="76" cy="65" r="6.5" fill="${ck}" opacity=".9"/></g>
+    <g filter="url(#phrough)" stroke="${PH_INK}" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="${sk}" stroke-width="3.4"/><path d="${sk}" stroke-width="1.1" transform="translate(1.2 .8)" opacity=".7"/>
+      <circle cx="35" cy="55" r="8" fill="#fff" stroke-width="3.6"/><path d="M59 49L71 61M71 49L59 61" stroke-width="3.8"/>
+      <path d="M50 63L45 70C44.5 72 45.5 73 47 73H53C54.5 73 55.5 72 55 70Z" fill="${PH_INK}" stroke-width="1.5"/>
+      <path d="M32 77H68M40 73V82M50 73V82M60 73V82" stroke-width="2.2"/>
+      <path d="M30 20L33 23M33 20L30 23M66 22L69 25M69 22L66 25" stroke-width="1.6"/></g>`;
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><defs>
+    <filter id="phrough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.6"/></filter>
+    <filter id="phgrain"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.4 .9"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <filter id="phsmudge"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="3" seed="11"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 3 -1.6"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <clipPath id="phctop"><path d="${seam}V-10H-2Z"/></clipPath><clipPath id="phcbot"><path d="${seam}V110H-2Z"/></clipPath></defs>
+    <g class="phtop"><g clip-path="url(#phctop)">${body}</g></g><g class="phbot"><g clip-path="url(#phcbot)">${body}</g></g>
+    <clipPath id="phcsk"><path d="${sk}"/></clipPath><g clip-path="url(#phcsk)"><path class="phcrack" filter="url(#phrough)" d="${seam}"/>
+    <path class="phstitch" filter="url(#phrough)" d="M18 32L22 40M22 32L18 40M30 33L34 41M34 33L30 41M42 31L46 39M46 31L42 39M54 32L58 40M58 32L54 40M66 30L70 38M70 30L66 38M78 32L82 40M82 32L78 40"/></g></svg>`; }
 function petHatch(k){ const K = PET_KINDS[k], parts = Array.from({length:18}, (_, i) => { const a = i / 18 * Math.PI * 2 + Math.random() * .3, d = 130 + Math.random() * 160;
-    return `<i class="php php-${k}" style="--dx:${Math.round(Math.cos(a) * d)}px;--dy:${Math.round(Math.sin(a) * d)}px;--r:${Math.round(Math.random() * 360)}deg;--d:${(Math.random() * .25).toFixed(2)}s"></i>`; }).join('');
+    return `<i class="php" style="--dx:${Math.round(Math.cos(a) * d)}px;--dy:${Math.round(Math.sin(a) * d)}px;--r:${Math.round(Math.random() * 360)}deg;--d:${(Math.random() * .25).toFixed(2)}s">${PH_DOODLE[i % 4](K.ck || K.glow)}</i>`; }).join('');
   document.getElementById('phatch')?.remove(); const el = document.createElement('div'); el.id = 'phatch'; el.className = `phatch pk-${k}`; el.style.setProperty('--pg', K.glow);
-  el.innerHTML = `<div class="phrays"></div><div class="phorb"><svg viewBox="0 0 100 100" aria-hidden="true"><path class="phskull" d="M50 10a36 36 0 0 1 36 36c0 10-4 17-10 22v8c0 4-3 6-6 6H30c-3 0-6-2-6-6v-8c-6-5-10-12-10-22a36 36 0 0 1 36-36z"/><circle cx="25" cy="60" r="6" fill="${K.ck || K.glow}"/><circle cx="75" cy="60" r="6" fill="${K.ck || K.glow}"/><circle cx="35" cy="52" r="10" fill="#0b0a0d"/><circle cx="65" cy="52" r="10" fill="#0b0a0d"/><path d="M50 62l-5 7c-1 2 0 3 2 3h6c2 0 3-1 2-3z" fill="#0b0a0d"/><path class="phteeth" d="M40 74v8M50 74v8M60 74v8"/><path class="phcrack" d="M47 16L45 26L52 32L44 40L41 46M52 32L58 30M44 40L38 38"/></svg></div><div class="phflash"></div><div class="phring"></div><div class="phparts">${parts}</div>
+  el.innerHTML = `<div class="phrays"></div><div class="phorb">${phSkull(K.ck || K.glow)}</div><div class="phflash"></div><div class="phring"></div><div class="phparts">${parts}</div>
     <div class="phpet">${petSVG(k, 'love', {}, 'pidle')}</div>
     <div class="phtext"><small>${esc(tr('Ein {0}-Begleiter erwacht').replace('{0}', tr(K.typ)))}</small><h2>${esc(tr(K.born))}</h2>
       <form class="phname" data-form="pet-name"><label for="ph-n">${esc(tr(K.ask))}</label><input id="ph-n" maxlength="16" value="${esc(tr(K.nick))}" autocomplete="off" required><button class="btn" type="submit">${esc(tr('Los geht’s'))}</button></form></div>`;
@@ -13996,15 +14043,17 @@ function petHatch(k){ const K = PET_KINDS[k], parts = Array.from({length:18}, (_
 let PETSHEET = '', PETDECO = 'hat', PETNAME = false;
 /* v629: Auswahl (Füttern, Deko) geht beim Tippen daneben zu (Inaya). Knöpfe mit eigener Aktion regeln das selbst. */
 document.addEventListener('pointerdown', e => { if (!PETSHEET || V.name !== 'pet' || !document.querySelector('.psheet')) return; if (e.target.closest('.psheet, [data-act]')) return; PETSHEET = ''; render(); }, true);
-function petView(){ PETS.bath = null; const p = petMe(); if (!p) return '<p class="note">' + esc(tr('Du hast noch keinen Begleiter.')) + '</p>';
+/* v648: Auswahl blendet nur beim Öffnen ein, nicht bei jedem Antippen (flackerte) */
+const psFresh = () => { const f = PETS.shown !== PETSHEET; PETS.shown = PETSHEET; return f ? ' pfresh' : ''; };
+function petView(){ PETS.bath = null; if (!PETSHEET) PETS.shown = ''; const p = petMe(); if (!p) return '<p class="note">' + esc(tr('Du hast noch keinen Begleiter.')) + '</p>';
   const K = PET_KINDS[p.k], v = petVals(p), need = petNeedXP(p.lv), bg = PET_BGS[p.d?.bg] ? p.d.bg : 'gruft';
   const bars = PET_NEEDS.map(([k, l]) => `<div class="pneed${v[k] < 25 ? ' low' : ''}" data-n="${k}" style="--pv:${Math.round(v[k])}" title="${esc(tr(l))}: ${Math.round(v[k])} %"><i><svg viewBox="0 0 24 24" aria-hidden="true">${PN_ICO[k]}</svg></i><small>${esc(tr(l))}</small></div>`).join(''); /* v590: wie die Knöpfe unten, Füllstand als Ring */
   const act = (a, l, ico, on) => `<button type="button" class="pact${on ? ' on' : ''}" data-act="pet-${a}" aria-label="${esc(tr(l))}"><i><svg viewBox="0 0 24 24" aria-hidden="true">${PTA_ICO[ico]}</svg></i><small>${esc(tr(l))}</small></button>`;
   let sheet = '';
-  if (PETSHEET === 'feed') sheet = `<div class="psheet"><b>${esc(tr(v.f >= 99.5 ? '{0} ist satt.' : 'Was möchte {0} essen?').replace('{0}', p.n))}</b><div class="pfoods">${Object.entries(PET_FOOD).map(([id, f]) => `<button type="button" class="pfood" data-act="pet-eat" data-v="${id}"${v.f >= 99.5 ? ' disabled' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${PET_FOOD_SVG[id]}</svg><small>${esc(tr(f.n))}</small></button>`).join('')}</div></div>`;
+  if (PETSHEET === 'feed') sheet = `<div class="psheet${psFresh()}"><b>${esc(tr(v.f >= 99.5 ? '{0} ist satt.' : 'Was möchte {0} essen?').replace('{0}', p.n))}</b><div class="pfoods">${Object.entries(PET_FOOD).map(([id, f]) => `<button type="button" class="pfood" data-act="pet-eat" data-v="${id}"${v.f >= 99.5 ? ' disabled' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${PET_FOOD_SVG[id]}</svg><small>${esc(tr(f.n))}</small></button>`).join('')}</div></div>`;
   if (PETDECO === 'bg') PETDECO = 'hat';
   if (PETSHEET === 'deco') { const tabs = [['hat', 'Kopf'], ['neck', 'Hals']]; /* Zuhause = eigenes Zimmer (v572) */
-    sheet = `<div class="psheet"><div class="pdtabs" role="tablist">${tabs.map(([k, l]) => `<button role="tab" data-act="pet-dtab" data-v="${k}" aria-selected="${PETDECO === k}">${esc(tr(l))}</button>`).join('')}</div><div class="pdgrid">${PETDECO !== 'bg' ? `<button type="button" class="pdi${!p.d?.[PETDECO] ? ' on' : ''}" data-act="pet-wear" data-s="${PETDECO}" data-v=""><span class="pdnone">✕</span><small>${esc(tr('Nichts'))}</small></button>` : ''}${Object.entries(PET_DECO[PETDECO]).map(([id, x]) => { const lock = p.lv < x.lv, on = (p.d?.[PETDECO] || (PETDECO === 'bg' ? 'gruft' : '')) === id;
+    sheet = `<div class="psheet${psFresh()}"><div class="pdtabs" role="tablist">${tabs.map(([k, l]) => `<button role="tab" data-act="pet-dtab" data-v="${k}" aria-selected="${PETDECO === k}">${esc(tr(l))}</button>`).join('')}</div><div class="pdgrid">${PETDECO !== 'bg' ? `<button type="button" class="pdi${!p.d?.[PETDECO] ? ' on' : ''}" data-act="pet-wear" data-s="${PETDECO}" data-v=""><span class="pdnone">✕</span><small>${esc(tr('Nichts'))}</small></button>` : ''}${Object.entries(PET_DECO[PETDECO]).map(([id, x]) => { const lock = p.lv < x.lv, on = (p.d?.[PETDECO] || (PETDECO === 'bg' ? 'gruft' : '')) === id;
       const pv = PETDECO === 'bg' ? `<svg class="pdbg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${PET_BGS[id]()}</svg>` : petSVG(p.k, 'happy', {[PETDECO]:id});
       return `<button type="button" class="pdi${on ? ' on' : ''}${lock ? ' lock' : ''}" data-act="pet-wear" data-s="${PETDECO}" data-v="${id}" ${lock ? 'aria-disabled="true"' : ''}>${pv}<small>${esc(tr(x.n))}</small>${lock ? `<i class="pdlock">${esc(tr('ab Level {0}').replace('{0}', x.lv))}</i>` : ''}</button>`; }).join('')}</div></div>`; }
   return `<section class="petpg pk-${p.k}" style="--pg:${K.glow}">
