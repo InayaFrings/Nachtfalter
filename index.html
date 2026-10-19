@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5b00e3304335';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='cecabc45d441';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2535,7 +2535,7 @@ body.pcropen{overflow:hidden}
 .peig .pecol{display:grid;gap:14px;min-width:0;--fg:var(--p-fg);--muted:var(--p-muted);--line:color-mix(in srgb,var(--p-fg) 28%,transparent);--line-soft:color-mix(in srgb,var(--p-fg) 16%,transparent);--bg:var(--p-bg);--paper:var(--p-panel);--ink:var(--p-bg);background:var(--p-pattern),var(--p-bg);color:var(--p-fg);border:1px solid var(--p-line);border-radius:18px;padding:6px 18px 18px;box-shadow:0 10px 40px #0006} /* v574: im Stil des eigenen Profils (Kastenfarbe, Schrift, Muster), lesbar wie das Profil selbst */
 .peig .pecol .lnk{color:var(--p-fg)}.peig .pecol input::placeholder,.peig .pecol textarea::placeholder{color:var(--p-muted);opacity:.8}
 .peig .pehead b,.peig .pesub,.peig .pesec summary{font-family:var(--p-font)}.peig .pehead b{font-size:22px;font-weight:400}.peig .pesub{text-transform:none;letter-spacing:0;font-size:20px;font-weight:400;color:var(--p-fg)}
-.peig .pesec{background:var(--p-panel)}.peig .chips button,.peig .pats .pat{color:var(--p-fg)}
+.peig .pesec{background:var(--p-panel)}.peig .chips button,.peig .pats .pat{color:var(--p-fg)}.peig .chips button[aria-pressed="true"]{background:var(--p-fg)!important;color:var(--p-bg)!important;border-color:var(--p-fg)!important} /* v591: gewählte Pose lesbar */
 .pehead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:6px 0 10px;border-bottom:1px solid var(--line-soft)}
 .pehead b{font:700 18px var(--f-display)}.pehead .lnk{justify-self:start;text-decoration:none;font-size:16px}.pehead .pedone{justify-self:end;font-weight:700}
 .pepic{display:grid;justify-items:center;gap:8px;padding:6px 0 4px}.pepic #picprev .portrait,.pepic #picprev>*{width:96px}
@@ -2656,6 +2656,13 @@ html:has(body[data-pg="pet"]){overflow:hidden;height:100%;overscroll-behavior:no
 .petpg .pneed small{font-size:12.5px!important;color:var(--fg)!important}
 .petpg .pneed.low i{background:conic-gradient(#d0566a calc(var(--pv) * 1%),color-mix(in srgb,#d0566a 22%,transparent) 0)}
 .petpg .pnb{display:none}
+
+/* v591: Zimmer am Handy groß und seitlich verschiebbar (vorher auf Bildschirmbreite gestaucht, Avatar und Möbel winzig) */
+@media (max-width:761px){
+  body[data-pg="room"] .rscroll > .room,body[data-pg="visit"] .rscroll > .room{width:max(175%,660px)!important}
+  body[data-pg="room"] .rscroll + .hslbar,body[data-pg="visit"] .rscroll + .hslbar{margin:8px 14px 6px}
+  body[data-pg="room"] .rstick{padding-bottom:2px}
+}
 /* PC (seit v575, Inaya; v580 wieder ohne Seitenleiste): Leisten oben und unten wie am Handy, im PC-Format über die ganze Fensterbreite,
    Inhalt als Spalte in der Mitte; Profil ab 1200 px dreispaltig (links Avatar, Mitte Profil, rechts Helfer und Gästebuch). */
 .mobnav .pconly{display:none!important}
@@ -7357,7 +7364,7 @@ function fitPrev(){ // Handy: links das ganze Profil in Handybreite, verkleinert
 }
 /* Waagerechte Reiterleisten (Garderobe, Mall, Möbelhaus, Zimmer) mit eigenem Schieberegler darunter, am PC und Handy (Inaya, 2026-10-16).
    Eigener Regler, weil Handys die Scrollleiste ausblenden. Ziehen oder Tippen auf die Leiste schiebt die Reiter. */
-const HSL_SEL = '.ctabs > .tabs, .moebel .card-in > .tabs, .roomtabs, .posetabs, .pstabs, .rposes'; /* v590: auch die Posen im Zimmer */ /* v588: auch die Reiter im Gestaltungs-Fenster */ /* v580: Posen im Profil auch mit Regler */
+const HSL_SEL = '.ctabs > .tabs, .moebel .card-in > .tabs, .roomtabs, .posetabs, .pstabs, .rposes, body[data-pg="room"] .rscroll, body[data-pg="visit"] .rscroll'; /* v591: großes Zimmer am Handy mit Regler zum Verschieben */ /* v590: auch die Posen im Zimmer */ /* v588: auch die Reiter im Gestaltungs-Fenster */ /* v580: Posen im Profil auch mit Regler */
 function hslPaint(el){ const bar = el.nextElementSibling; if (!bar?.classList.contains('hslbar')) return; const over = el.scrollWidth - el.clientWidth; bar.hidden = over < 4; if (over < 4) return;
   const t = bar.firstElementChild; t.style.width = (el.clientWidth / el.scrollWidth * 100).toFixed(2) + '%'; t.style.left = (el.scrollLeft / el.scrollWidth * 100).toFixed(2) + '%'; }
 const HSLPOS = {}; /* Schiebe-Stelle je Leiste: bleibt beim Neuzeichnen (z. B. nach Klick auf „Jacken“) erhalten */
