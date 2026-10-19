@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2534566cfc49';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='70a8470157be';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2767,6 +2767,8 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 /* Konto löschen: Abbrechen und Löschen nebeneinander */
 #delacct .row{flex-wrap:nowrap;gap:10px}#delacct .row .sp{display:none}#delacct .row .btn{flex:1 1 0;min-width:0;padding-inline:10px;justify-content:center;text-align:center}
 @media (max-width:760px){.obwear>.obhead{display:none}}
+.ppcard{animation:none!important}body.obopen .mobnav{display:none!important}
+@media (max-width:760px){.obwelcome{display:none}}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -6556,13 +6558,29 @@ function seiteView(){
 }
 // Nach dem Ankleiden: Konto anlegen und direkt in „Profil gestalten“, genau wie in der App (Schritt 4)
 let obDesign = false;
+/* Schritt 4 zurück zu Schritt 1–3: das noch nicht gespeicherte Konto wird wieder zur Anmeldung */
+function obReopen(){ const u = me(); if (!u?.obOpen) return null;
+  S.pending = {step:'avatar', contact:u.contact, birth:u.birth, pwh:u.pwh, name:u.name, handle:u.handle, outfit:{...u.outfit}, pic:u.pic || null, banner:{...u.banner}};
+  delete S.users[S.me]; S.me = null; S.unlocked = true; obDesign = false; draft = null; mdraft = null; return S.pending; }
+/* Wer die Anmeldung in einer anderen Sitzung nicht fertig gemacht hat, fängt neu an: nichts davon bleibt */
+function obMark(){ try { sessionStorage.setItem('nf-ob', '1'); } catch {} }
+let OB_DROP = false;
+function obBoot(){ if (!obOpen()) return; let same = false; try { same = sessionStorage.getItem('nf-ob') === '1'; } catch {}
+  if (same) return;
+  if (me()?.obOpen) { delete S.users[S.me]; S.me = null; } S.pending = null; S.unlocked = false; OB_DROP = true;
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+  window.NF_AUTH?.ready?.then(async () => { if (!NF_AUTH.email()) return; await NF_AUTH.deleteUser().catch(() => {}); await NF_AUTH.signOut().catch(() => {}); }); }
+/* Registrieren mit einer E-Mail, deren Anmeldung nie fertig wurde: gleiches Passwort, kein Profil und keine Sicherung → neu anfangen */
+async function obReuse(contact, pw){ try { const r = await NF_AUTH.signIn(contact, pw); if (r.error) return false;
+    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]); const uid = await user.id();
+    const [pf, mt] = await Promise.all([db.collection('profiles').doc(uid).get(), db.collection('data/users/' + uid).doc('nf-meta').get()]);
+    if (!pf.exists && !mt.exists) return true; await NF_AUTH.signOut(); } catch {} return false; }
 function finishOb(){
     const p = S.pending, id = 'u' + Date.now().toString(36);
     S.users[id] = {id, name:p.name, handle:p.handle, birth:p.birth || regBirth(), contact:p.contact, email:isMail(p.contact) ? p.contact : '', phone:isMail(p.contact) ? '' : p.contact, pwh:p.pwh, outfit:{...p.outfit}, pic:p.pic, banner:{...p.banner}, room:DEFAULT_ROOM(), deko:['fenster','kerzen'], earned:0,
-      theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), intro:0, mood:'neu hier', headline:'', about:'', music:'', films:'', hobbies:'',
+      theme:BLANK_THEME(), points:50, owned:[...FREE], joined:Date.now(), intro:0, obOpen:1, mood:'neu hier', headline:'', about:'', music:'', films:'', hobbies:'',
       wall:[{author:'andy',text:'Schön, dass du da bist! Wenn du Fragen zur Garderobe hast, schreib mir einfach.',ts:Date.now()-1000},{author:'juliet',text:'Willkommen an alle neuen Noctibat! Die Hausregeln findest du in meinem Steckbrief.',ts:Date.now()}]};
-    delete S.pending; S.me = id; welcomeDMs();
-    claimHandle(p.handle);
+    delete S.pending; S.me = id; obMark();
     if (!save()) return;
     draft = null; mdraft = null; designTab = 'look'; go('design'); obDesign = true; render(); window.scrollTo(0, 0); toast('Willkommen bei Noctibat');
 }
@@ -6719,7 +6737,7 @@ document.addEventListener('click', e => {
   else if (a === 'icol') { colItem = colItem === b.dataset.id ? null : b.dataset.id; S.pending && document.querySelector('.obwear') ? obPatch(true) : render(); }
   else if (a === 'ob-color') { setColor(p.outfit, b.dataset.k, b.dataset.v); save(); obPatch(true); }
   else if (a === 'ob-next') finishOb();
-  else if (a === 'ob-back') { p.step = b.dataset.v; if (p.step === 'konto') authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
+  else if (a === 'ob-back') { const q = p || obReopen(); if (!q) return; q.step = b.dataset.v; const pp = q; if (pp.step === 'konto') authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'reg-open') { S.unlocked = true; authMode = 'reg'; save(); render(); window.scrollTo(0,0); } // offene Anmeldung ohne Einladungslink (Inaya, 2026-10-10)
   else if (a === 'to-landing') { S.unlocked = false; S.pending = null; gateMode = ''; authMode = 'reg'; save(); render(); window.scrollTo(0,0); }
   else if (a === 'color') { setColor(me().outfit, b.dataset.k, b.dataset.v); trial = null; save(); render(); }
@@ -6935,6 +6953,8 @@ const hNew = h => !!(S.hnew || {})[S.me + '>' + h];
 const hLast = h => { const log = ((S.chats || {})[S.me + '>' + h]) || [], m = log[log.length - 1]; return m ? (m.from === S.me ? tr('Du') + ': ' : '') + m.text : h === 'andy' ? 'Fragen zu Garderobe und Profil' : 'Regeln, Profil, wenn dich etwas stört'; };
 ensureHelpers(S);
 welcomeDMs();
+/* Ein neues Konto wird erst gespeichert, wenn alle 4 Schritte fertig sind (Inaya, 2026-10-19): vorher keine Kontosicherung, kein Profil, kein Name in der Datenbank */
+const obOpen = () => !!(S.pending || S.users?.[S.me]?.obOpen);
 function save(){
   S.savedAt = Date.now();
   cloudQueue();
@@ -6960,7 +6980,7 @@ function cloudParts(){ const out = {}; for (const [k, v] of Object.entries(S)) {
     const str = JSON.stringify(val); if (str === undefined) continue; const n = Math.ceil(str.length / CHUNK) || 1; out[k] = Array.from({length:n}, (_, i) => str.slice(i * CHUNK, (i + 1) * CHUNK)); }
   return out; }
 function cloudQueue(){
-  if (!cloud) return;
+  if (!cloud || obOpen()) return;
   clearTimeout(cloudTimer);
   cloudTimer = setTimeout(cloudFlush, 8000);
 }
@@ -7044,7 +7064,7 @@ async function cloudInit(){
       softRender(); if (CBAD.length) { cloudQueue(); toast('Deine Kontosicherung war durcheinander und wurde repariert.'); }
     } else if (S.me || S.pending || meta.exists) { cloud.loaded = true; cloudQueue(); }
     else { cloud.ok = true; }
-    if (me()?.handle) claimHandle(me().handle);
+    if (me()?.handle && !me().obOpen) claimHandle(me().handle);
     acctRemember(); refreshFoot();
     socialStart(); presenceStart(); setTimeout(locRestore, 50);
   } catch {}
@@ -7072,7 +7092,7 @@ document.addEventListener('input', e => {
   }, 450);
 });
 async function claimHandle(h){
-  if (!cloud?.handles) return;
+  if (!cloud?.handles || me()?.obOpen) return;
   let old = null;
   let oldN = null; try { const d = await cloud.handles.doc(cloud.uid).get(); old = d.exists ? d.data().h : null; oldN = d.exists ? d.data().n : null; } catch {}
   // nur schreiben, wenn sich etwas geändert hat: jede Änderung lesen alle, die gerade online sind (nmWatch)
@@ -10072,8 +10092,8 @@ function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von ob
   const sec = (k, t, body) => `<details class="pesec" data-sec="${k}"${PEOPEN[k] ? ' open' : ''}><summary><span>${t}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary><div class="pesecin">${body}</div></details>`;
   return `<div class="design peig">
     <div class="pecol" style="${themeStyle(draft)}">
-      ${obDesign ? `<div class="card obwelcome"><div class="card-in">${obSteps(3)}<p class="note" style="margin:0">Jetzt gestaltest du deine Seite, genau wie später unter „Profil bearbeiten“. Mit „Fertig“ bist du fertig.</p></div></div>` : ''}
-      <header class="pehead"><button type="button" class="lnk" data-act="profile" data-id="${u.id}">Abbrechen</button><b>Profil bearbeiten</b><button class="lnk pedone" type="submit" form="designform">Fertig</button></header>
+      ${obDesign ? `<div class="card obwelcome"><div class="card-in">${obSteps(3)}</div></div>` : ''}
+      <header class="pehead"><button type="button" class="lnk" ${obDesign ? 'data-act="ob-back" data-v="avatar"' : `data-act="profile" data-id="${u.id}"`}>${obDesign ? 'Zurück' : 'Abbrechen'}</button><b>Profil bearbeiten</b><button class="lnk pedone" type="submit" form="designform">Fertig</button></header>
       ${pePicHTML()}
       <form data-form="design" id="designform" class="peform">
         ${f('name', 'Name', u.name, false, 'Dein Name', 40)}
@@ -10170,7 +10190,7 @@ const FR = {mine:[], inc:[], ready:false, results:null, q:'', rq:{}, incTs:{}}; 
 const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
 function socialStart(){
-  if (social || !cloud?.db || !me()) return;
+  if (social || !cloud?.db || !me() || me().obOpen) return;
   social = {db:cloud.db, uid:cloud.uid}; SNAP.t0 = Date.now(); seenWatch(); try { const po = sessionStorage.getItem('nf-open'); if (po) setTimeout(() => pushOpen(po), 300); } catch {} /* geteilter Link von vor dem Anmelden */ setTimeout(navLive, 0); setTimeout(softRender, 0); setTimeout(() => { CH.snap = false; softRender(); snapSave(); }, 3100); setInterval(snapSave, 30000); /* Beiträge bekommen sofort ihre echte Leiste */ e2Init(); ringWatch(); clkSync(); nmWatch(); walStart(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
   setInterval(() => { if (!document.hidden) syncFriends(); }, 600000); // Freundesprofile auffrischen (alle 10 statt 1,5 Minuten; Namen kommen live über handles)
   const db = social.db;
@@ -13729,6 +13749,7 @@ function renderInner(){
   if (birthProblem(S.users[S.me].birth)) { const rb = regBirth(); if (rb) { S.users[S.me].birth = rb; save(); } }
   if (tooYoung()) { applyPage(null); app.innerHTML = youngView(); return; }
   if (birthProblem(S.users[S.me].birth)) { applyPage(null); app.innerHTML = birthView(); return; }
+  if (me()?.obOpen && (V.name !== 'design' || !obDesign)) { V = {name:'design', arg:null}; obDesign = true; } /* Schritt 4 erst mit „Fertig“ verlassen */
   if (introNeed() && !obDesign) { applyPage(null); app.innerHTML = introView(); return; } /* Einführung für neue Leute (v566), erst nach Schritt 4 „Deine Seite“ (Inaya, 2026-10-19) */
   if (!obDesign && petNeedPick()) { applyPage(null); app.innerHTML = petPickView(); return; } /* Begleiter wählen, einmal und für immer */
   if (V.name === 'games') V = {name:'home', arg:null}; /* Minigames seit v565 entfernt (Inaya) */
@@ -13742,7 +13763,7 @@ function renderInner(){
     ${pmenuSheet()}
     <footer class="foot"><span>Noctibat · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
-  document.body.dataset.pg = V.name; /* für Seiten-Layouts am PC (v577) */
+  document.body.dataset.pg = V.name; document.body.classList.toggle('obopen', !!me()?.obOpen); /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
   syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
@@ -14828,9 +14849,8 @@ document.addEventListener('submit', async e => {
     if (contactTaken(contact)) return fail('Dafür gibt es schon ein Konto. Melde dich stattdessen an.');
     if (PUB) {
       if (!isMail(contact)) return fail('Bitte gib deine E-Mail-Adresse ein. Damit kannst du dein Passwort später zurücksetzen.');
-      const r = await NF_AUTH.signUp(contact, pw); if (r.error) return fail(r.error); e2aRemember(pw);
+      let r = await NF_AUTH.signUp(contact, pw); if (r.error && await obReuse(contact, pw)) r = {ok:true}; if (r.error) return fail(r.error); e2aRemember(pw); obMark();
       if (S.itoken) { await NF_AUTH.claimInvite(S.itoken).catch(() => {}); delete S.itoken; } // Einladungslink zählt nur noch als Gruß; Anmelden geht auch ohne
-      try { const ref = sessionStorage.getItem('nf-ref'); if (ref && NF_AUTH.claimRef) { await NF_AUTH.claimRef(ref); sessionStorage.removeItem('nf-ref'); } } catch {} /* zählt für den eigenen Link der einladenden Person */
 
       if (r.needsConfirm) toast('Wir haben dir eine Mail geschickt. Bitte bestätige deine E-Mail-Adresse.');
       else await cloudReinit();
@@ -14890,7 +14910,7 @@ document.addEventListener('submit', async e => {
       if (u) u.pwh = await hashPw(pw);
       else { // Konto da, aber Profil noch nicht fertig: Einrichtung fortsetzen
         S.pending = {outfit:{...DEFAULT_OUTFIT, lipC:LIP_DEF, hacc:{}, jewel:{}}, pic:null, banner:{pattern:'schlicht', mode:'nacht', font:'fell', text:''}, ...(S.pending || {}), step:S.pending?.step || 'name', contact, pwh: await hashPw(pw)};
-        S.unlocked = true; save(); render(); return;
+        S.unlocked = true; obMark(); save(); render(); return;
       }
     } else { u = await findLogin(contact, pw); if (u) e2aRemember(pw); }
     if (sb) { sb.disabled = false; sb.textContent = 'Anmelden'; }
@@ -15082,12 +15102,17 @@ document.addEventListener('submit', async e => {
     for (const k of ['name','headline','mood','about','music','films','hobbies','games2']) u[k] = val('e-' + k) || (k === 'name' ? u.name : '');
     if (document.getElementById('e-l-snap')) { u.links = {}; for (const [k] of PLINKS) { const v = val('e-l-' + k); if (v) u.links[k] = v.slice(0, 200); } }
     u.theme = {...draft}; u.pic = mdraft.pic; u.picKeep = mdraft.pic ? null : (mdraft.picKeep || null); u.cover = null; u.banner = {...mdraft.banner}; // Nutzernamen-Kasten wird wieder gespeichert (Inaya, 2026-10-11)
-    const first = obDesign; obDesign = false;
+    const first = obDesign || !!u.obOpen; obDesign = false;
+    if (u.obOpen) { /* erst jetzt wird das Konto gespeichert */
+      if (await handleTaken(u.handle)) { obDesign = true; toAbout(); const err = document.getElementById('e-handle-err'); if (err) { err.textContent = '@' + u.handle + ' ist bereits vergeben.'; err.hidden = false; err.scrollIntoView({block:'center'}); } return; }
+      try { const ref = sessionStorage.getItem('nf-ref'); if (ref && NF_AUTH?.claimRef) { await NF_AUTH.claimRef(ref); sessionStorage.removeItem('nf-ref'); } } catch {} /* zählt für den eigenen Link der einladenden Person */
+      delete u.obOpen; try { sessionStorage.removeItem('nf-ob'); } catch {} claimHandle(u.handle); welcomeDMs();
+    }
     save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert');
   }
 });
 
-i18nStart(); snapLoad(); navBoot(); render(); if (NAVR.pending) navScroll(NAVR.pending.y);
+i18nStart(); obBoot(); snapLoad(); navBoot(); render(); if (NAVR.pending) navScroll(NAVR.pending.y);
 const cloudReady = cloudInit();
 
 // Eigenes Farbgitter statt des System-Farbwählers (Inaya, 2026-10-10): nur das Gitter, kein Spektrum, keine Regler.
