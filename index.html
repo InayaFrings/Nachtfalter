@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f560b29f4b81';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7267ed588875';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10281,7 +10281,7 @@ const bkHash = str => { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i 
 const iBlocked = id => !!id && (S.blocked || []).some(x => x.id === id);
 const blockedMe = id => !!(id && social && Array.isArray(PROF[id]?.bk) && PROF[id].bk.includes(bkHash(id + '>' + social.uid)));
 const isBlk = id => !!id && id !== social?.uid && (iBlocked(id) || blockedMe(id));
-const chVis = c => !(/^dm_/.test(c.id) && (c.members || []).some(id => isBlk(id))) && !(chHidAt(c.id) && (+c.last || 0) <= chHidAt(c.id));
+const chVis = c => !isPetG(c.id) && !(/^dm_/.test(c.id) && (c.members || []).some(id => isBlk(id))) && !(chHidAt(c.id) && (+c.last || 0) <= chHidAt(c.id));
 const reqOpen = id => !FR.mine.includes(id) && !(S.ignoredReq || []).includes(id) && !isBlk(id);
 function chRefilter(){ if (CH.raw) CH.list = CH.raw.filter(chVis); }
 async function blockUser(id){
@@ -10587,7 +10587,7 @@ const gAdmin = c => !c?.pub || !c.createdBy || c.createdBy === social?.uid;
 let PUBG = [], pubgAt = 0;
 async function loadPubGroups(force){
   if (!social || (!force && Date.now() - pubgAt < 20000)) return; pubgAt = Date.now();
-  try { const snap = await social.db.collection('chats').where('pub', '==', true).limit(60).get(); PUBG = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(c => c.group && (!isPetG(c.id) || c.id === petGid(petMe()?.k))).sort((a, b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); if (V.name === 'chats') softRender(); } catch {}
+  try { const snap = await social.db.collection('chats').where('pub', '==', true).limit(60).get(); PUBG = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(c => c.group && !isPetG(c.id)).sort((a, b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); if (V.name === 'chats') softRender(); } catch {}
 }
 /* Chat-Hintergrund als eigenes Foto (Inaya, 2026-10-11): Bild liegt in chats/<id>/bg/img; Rand und Sprechblasen behalten die gewählte Chatfarbe (Inaya, 2026-10-11) */
 const CHBG = {};
@@ -13969,6 +13969,9 @@ async function petSrvSave(){ const p = petMe(); if (!social || !p) return false;
   try { await social.db.doc('pets/' + social.uid).set({k:p.k, ts:p.ts || Date.now()}); PETS.chk = 'ok'; return true; }
   catch { try { const d = await social.db.doc('pets/' + social.uid).get(); const k = d.exists ? d.data().k : ''; if (PET_KINDS[k] && k !== p.k) { me().pet = petNew(k, p.n); save(); render(); } } catch {} return false; } }
 async function petGroups(){ if (!social || PETS.joined) return; const p = petMe(); PETS.joined = true;
+  /* v632: Begleiter-Gruppen sind raus (Inaya). Nur noch pets/<uid> sichern. */
+  if (p) try { const pr = social.db.doc('pets/' + social.uid); if (!(await pr.get()).exists) await pr.set({k:p.k, ts:Date.now()}); } catch {}
+  return;
   if (amOwner && !PETS.own) { PETS.own = true; /* v631: ein noch fehlendes Gruppen-Dokument lässt sich nicht einzeln abfragen (Regeln lehnen das ab), darum über die Liste öffentlicher Gruppen prüfen */
     let have = null; try { have = new Set((await social.db.collection('chats').where('pub', '==', true).get({source:'server'})).docs.map(d => d.id)); } catch (e) { PETS.err = e?.code || 'x'; }
     if (have) for (const k of PET_IDS) { try { const r = social.db.doc('chats/' + petGid(k)), d = {exists: have.has(petGid(k))};
@@ -14028,7 +14031,7 @@ function petView(){ PETS.bath = null; const p = petMe(); if (!p) return '<p clas
   return `<section class="petpg pk-${p.k}" style="--pg:${K.glow}">
     <div class="pethead">${PETNAME ? `<form class="pnform" data-form="pet-rename"><input id="pn-in" maxlength="16" value="${esc(p.n)}" autocomplete="off" aria-label="${esc(tr('Name'))}"><button class="btn" type="submit">${esc(tr('Speichern'))}</button></form>`
       : `<h1 data-raw>${esc(p.n)}</h1><button type="button" class="pnedit" data-act="pet-name" aria-label="${esc(tr('Namen ändern'))}"><svg viewBox="0 0 24 24" aria-hidden="true">${PTA_ICO.edit}</svg></button>`}
-      ${social ? `<button type="button" class="pgrpi" data-act="pet-group" aria-label="${esc(tr(K.grp))}" title="${esc(tr(K.grp))}"><svg viewBox="0 0 24 24" aria-hidden="true">${CTICO.group}</svg><span>${esc(tr('Gruppe'))}</span></button>` : ''}
+      
       <span class="ptyp">${esc(tr(K.name))} · ${esc(tr('{0}-Typ').replace('{0}', tr(K.typ)))}</span>
       <div class="plv"><b>${esc(tr('Level {0}').replace('{0}', p.lv))}</b><span class="pxp"><i style="width:${p.lv >= PET_LV_MAX ? 100 : Math.round((p.xp || 0) / need * 100)}%"></i></span><small>${p.lv >= PET_LV_MAX ? esc(tr('Höchstes Level')) : `${p.xp || 0} / ${need} XP`}</small></div></div>
     <div class="pneeds">${bars}</div>
@@ -14092,7 +14095,7 @@ function petPlay(){ const p = petMe(); if (!p || PETS.game) return; if (p.sl) re
 function petAct(a, b){ const p = petMe();
   if (a === 'pet-pick') { PETPICK = b.dataset.v; render(); return; }
   if (a === 'pet-pick-go') { petPickGo(); return; }
-  if (a === 'pet-group') { petGroupOpen(); return; }
+  
   if (!p) return;
   if (a === 'pet-name') { PETNAME = true; render(); document.getElementById('pn-in')?.focus(); }
   else if (a === 'pet-feed') { PETSHEET = PETSHEET === 'feed' ? '' : 'feed'; render(); }
