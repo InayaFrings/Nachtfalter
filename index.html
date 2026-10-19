@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9a28c4e33620';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f34f7a7b4db9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -5305,8 +5305,8 @@ function avatarI(o0, view='full', pose='', lite=false){
     inner = `<g${wob}>${back}<g transform="rotate(${HR} ${B.cx} ${cut})"><g transform="${B.head}">${headBack}</g></g>${SIT ? `<g clip-path="url(#${u}up)">${lower}</g>` : lower}</g>`;
     if (SIT) { // Schoß zwischen Hüfte und Unterschenkeln in der Farbe von Hose/Rock, Strumpfhose oder Haut
       const lw = Object.keys(o.legw || {}).find(k => ILEGW[k] && /blick|fein|netz|ringel|zerr|spinne|herz|stern|kreuz|schach|lauf/.test(k));
-      const lc = o.bottom && o.bottom !== 'u_kein' && IBOT[o.bottom] ? (o.bottomC || IBOTC[o.bottom] || '#141218') : lw ? (o.legw[lw] && o.legw[lw] !== 'auto' ? o.legw[lw] : '#141218') : (o.skin || '#f7f6f3');
-      inner += X.P(`M${B.cx - 150} ${hc - 10}Q${B.cx} ${hc - 30} ${B.cx + 150} ${hc - 10}Q${B.cx + 200} ${hc + 120} ${B.cx} ${hc + 150}Q${B.cx - 200} ${hc + 120} ${B.cx - 150} ${hc - 10}Z`, lc); }
+      const lc = o.bottom && o.bottom !== 'u_kein' && IBOT[o.bottom] ? (o.bottomC || IBOTC[o.bottom] || '#141218') : lw ? (o.legw[lw] && o.legw[lw] !== 'auto' ? o.legw[lw] : '#141218') : '#464646'; /* v680: ohne Hose wie die Unterhose, nicht hautfarben (sah als heller Fleck kaputt aus, Inaya) */
+      inner += lc === '#464646' ? X.P(`M${B.cx - 90} ${hc - 40}Q${B.cx} ${hc - 50} ${B.cx + 90} ${hc - 40}L${B.cx + 34} ${hc + 58}Q${B.cx} ${hc + 72} ${B.cx - 34} ${hc + 58}Z`, lc) /* v680: ohne Hose nur der Schritt der Unterhose, zwischen den Beinen bleibt frei (Inaya) */ : X.P(`M${B.cx - 150} ${hc - 10}Q${B.cx} ${hc - 30} ${B.cx + 150} ${hc - 10}Q${B.cx + 200} ${hc + 120} ${B.cx} ${hc + 150}Q${B.cx - 200} ${hc + 120} ${B.cx - 150} ${hc - 10}Z`, lc); }
     if (SIT) [0, 1].forEach(k => { const h = hip(k); defs.push(`<clipPath id="${u}t${k}"><path d="${thighR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -TA : TA} ${h[0]} ${h[1]})"><g clip-path="url(#${u}t${k})">${core}</g></g>`; });
     inner += `<g clip-path="url(#${u}na)">${core}</g>`;
     if (SIT) [1, 0].forEach(k => { const h = hip(k), n = knee(k); defs.push(`<clipPath id="${u}s${k}"><path d="${shinR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -TA : TA} ${h[0]} ${h[1]}) rotate(${k ? SA : -SA} ${n[0]} ${n[1]})"><g clip-path="url(#${u}s${k})">${core}</g></g>`; });
@@ -10327,8 +10327,11 @@ const pqRun = () => { while (PQ.n < 3 && PQ.q.length && !chBusy()) { const [f, r
 const pqGet = f => new Promise(res => { PQ.q.push([f, res]); pqRun(); });
 const chBusy = () => !!(CH.open && CH.mode === 'chat' && CH.mraw == null && V.name === 'chats' && Date.now() - (CH.t0 || 0) < 8000);
 async function loadProf(id){ const ref = social.db.doc('profiles/' + id);
-  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy && Date.now() - (LPT[id] || 0) > LPT_MS) { const pr = LPS[id] = pqGet(() => ref.get()).then(d => { if (d) lptMark(id); return d; }).then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
+  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy && (Date.now() - (LPT[id] || 0) > LPT_MS || (NM[id]?.at || 0) > (LPT[id] || 0))) { /* v680: Avatar seit dem letzten Abruf geändert (handles.at) → sofort neu */ const pr = LPS[id] = pqGet(() => ref.get()).then(d => { if (d) lptMark(id); return d; }).then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
   try { const d = await pqGet(() => ref.get()); if (profPut(id, d)) lptMark(id); } catch {} }
+/* v680 (Inaya): neue Klamotten von anderen sofort sehen. publishProfile schreibt nach dem Speichern handles/<uid>.at (Zeit) und .av (Prüfsumme von Outfit, Pose, Begleiter);
+   nmWatch sieht das live und holt das Profil neu, aber nur, wenn man es schon geladen hatte. */
+function profFresh(id){ if (!social || !PROF[id] || LPS[id]?.busy) return; const pr = LPS[id] = pqGet(() => social.db.doc('profiles/' + id).get()).then(d => { if (d) lptMark(id); if (profPut(id, d)) { if (S.users[id]?.remote) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); }
 function remoteUser(id, p){
   const nm = typeof NM !== 'undefined' ? NM[id] : null; // kleines Namens-Dokument gilt vor dem (evtl. veralteten) Profil
   return {id, remote:true, age:Number.isFinite(+p.age) && +p.age > 0 ? +p.age : null, name:nm?.n || p.name || 'Unbekannt', handle:nm?.h || p.handle || '', outfit:normOutfit({...(p.outfit || {})}), theme:normTheme({...(p.theme || BLANK_THEME())}),
@@ -10470,7 +10473,8 @@ function publishProfile(){ authNameSync();
     if (big() && doc.banner) doc.banner = {...doc.banner, img:null};
     if (big()) doc.pic = null;
     const js = JSON.stringify(doc); if (js === lastPubJs) return; // unverändert: nicht erneut 240 KB hochladen
-    try { await social.db.doc('profiles/' + social.uid).set(JSON.parse(js)); lastPubJs = js; if (NCPOST && doc.lastPost?.id === NCPOST) { const id = NCPOST; NCPOST = null; xpGain('p', id); } } catch {}
+    try { await social.db.doc('profiles/' + social.uid).set(JSON.parse(js)); lastPubJs = js;
+      { const av = bkHash(JSON.stringify([doc.outfit, doc.pose, doc.pet])); if (NM[social.uid] && NM[social.uid].av !== av) { NM[social.uid].av = av; social.db.doc('handles/' + social.uid).set({av, at:typeof srvNow === 'function' ? srvNow() : Date.now()}, {merge:true}).catch(() => {}); } } /* v680: anderen sagen, dass sich der Avatar geändert hat */ if (NCPOST && doc.lastPost?.id === NCPOST) { const id = NCPOST; NCPOST = null; xpGain('p', id); } } catch {}
   }, 1500);
 }
 async function searchPeople(q){
@@ -10506,7 +10510,8 @@ const ownerBadge = u => (u.id === S.me ? amOwner : (u.remote && OWNER === u.id))
 function handleSync(){ const u = me(), n = NM[social?.uid]; if (!u || !n?.h || !n.ht || n.h === u.handle || n.ht <= (u.handleTs || 0)) return false; u.handle = n.h; u.handleTs = n.ht; save(); setTimeout(() => softRender?.(), 0); return true; }
 const NM = {}; let nmT = null;
 function nmWatch(){ social.db.collection('handles').onSnapshot(q => { let ch = false;
-  q.docChanges().forEach(c => { const id = c.doc.id, d = c.doc.data() || {}; if (c.type === 'removed') { delete NM[id]; return; } const o = NM[id]; NM[id] = {h:d.h || '', n:d.n || '', v:d.v || '', vt:+d.vt || 0, ht:+d.ht || 0}; if (id === social.uid) handleSync();
+  q.docChanges().forEach(c => { const id = c.doc.id, d = c.doc.data() || {}; if (c.type === 'removed') { delete NM[id]; return; } const o = NM[id]; NM[id] = {h:d.h || '', n:d.n || '', v:d.v || '', vt:+d.vt || 0, ht:+d.ht || 0, av:d.av || '', at:+d.at || 0};
+    if (id !== social.uid && NM[id].at && (o ? o.av !== NM[id].av : NM[id].at > (LPT[id] || 0))) setTimeout(() => profFresh(id), 400); if (id === social.uid) handleSync();
     if ((!o || o.h !== NM[id].h || o.n !== NM[id].n) && id !== social.uid) { ch = true; if (PROF[id]) { if (NM[id].n) PROF[id].name = NM[id].n; if (NM[id].h) PROF[id].handle = NM[id].h; }
       const u = S.users[id]; if (u?.remote) { if (NM[id].n) u.name = NM[id].n; if (NM[id].h) u.handle = NM[id].h; } } });
   if (ch) { clearTimeout(nmT); nmT = setTimeout(softRender, 300); } }, () => {}); }
