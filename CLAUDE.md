@@ -412,4 +412,5 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 - Streicheln gibt nur XP, solange die Laune (`p`) nicht voll ist. Ein Beitrag in einer Story (`.ststk .stpost`) hat keine Einblend-Animation mehr (vorher erbte er `rise` von `.post`).
 - Füttern: Das Essen fliegt im Bogen in den Mund (`petFeedFly`, Mund-Stelle je Art `PET_MOUTH` im 200er-Feld), danach kurzes Kauen.
+- Wimpern (seit v659): das runde Auge hat offen drei Wimpern oben (`petLash`), geschlossen unten am Lidstrich.
 - Schlafen: Nur das runde Auge geht zu (`petLid`, `PET_EYE` = Lage, Größe, Fellfarbe), das X-Auge bleibt, weil dort kein Auge ist (Inaya).
