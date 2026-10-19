@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b484091b27a6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='95d4b72c189b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2106,7 +2106,7 @@ body.cmvopen{overflow:hidden}
 .cmvpi .pbar{padding-top:10px;border-top:1px solid var(--line-soft,#333)}.post.tp .cmvpi .pbar{border-color:var(--p-line)}
 .cmvnone{margin:20px 0;text-align:center;font-style:normal}
 /* Profil teilen (Inaya, 2026-10-15) */
-.pshbtn{display:inline-flex;align-items:center;gap:8px;justify-self:start;margin-top:4px;padding:9px 16px 9px 12px;border-radius:999px;border:1px solid var(--p-line,var(--line));background:color-mix(in srgb,var(--p-panel,#1c1c20) 80%,transparent);color:var(--p-fg,var(--fg));font:600 14px/1 var(--f-body);cursor:pointer;transition:transform .15s,background .15s}.pshbtn:hover{transform:translateY(-1px);background:var(--p-panel,#1c1c20)}
+.pshbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;justify-self:start;margin-top:4px;padding:8px 18px;border-radius:0;border:1px solid var(--p-line,var(--line));background:transparent;color:var(--p-fg,var(--fg));font:400 16px var(--f-display);letter-spacing:.04em;cursor:pointer}.pshbtn:hover{border-color:var(--p-fg,var(--fg))}.pshbtn svg{display:none} /* v573: schlichte Knöpfe wie der Rest der Seite, ohne Hüpfen und ohne Symbol (Inaya) */
 .phead .pshbtn{display:flex;width:fit-content;margin:26px auto -22px}/* mittig zwischen den Knöpfen darüber und dem Steckbrief (Inaya, 2026-10-16) */
 .pshbtn svg,.pshx svg,.pshcp svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .pshov{position:fixed;inset:0;z-index:4000;display:grid;place-items:center;padding:16px;background:#000b;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:pshin .22s ease-out}
@@ -2548,14 +2548,13 @@ body.pcropen{overflow:hidden}
 .pesec summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;font:600 16px var(--f-display)}.pesec summary::-webkit-details-marker{display:none}
 .pesec summary svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}.pesec[open] summary svg{transform:rotate(90deg)}
 .pesecin{padding:0 16px 16px;display:grid;gap:12px}
-.pesave{margin-top:4px}.pehint{margin:0;color:var(--muted);font-size:14px}
+.pesave{margin-top:4px}body:has(.pehead) .main > .navback{display:none} /* v573: kein Zurück-Knopf über „Profil bearbeiten“, oben steht schon „Abbrechen“ */.pehint{margin:0;color:var(--muted);font-size:14px}
 @media (max-width:760px){
   .design.peig{display:flex;flex-direction:column;height:auto;margin:0;gap:0}.peig .preview{display:none!important}
   .design.peig:has(.pesec[open]) > .preview{display:block!important;order:-1;position:sticky;top:calc(77px + env(safe-area-inset-top,0px));z-index:45;height:36vh;overflow:hidden;margin:0 -12px;border-bottom:2px solid var(--fg);box-shadow:0 10px 24px #0008} /* v571: Live-Vorschau, sobald man etwas gestaltet */
   .design.peig:has(.pesec[open]) .pehead{position:static}
   .design.peig > .pecol{overflow:visible;padding:0 14px 24px;gap:14px!important;border-radius:0;border-left:0;border-right:0;margin:0 -12px}
   .shell:has(.peig){padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
-  body:has(.pehead) .main > .navback{display:none}
   .pehead{position:sticky;top:calc(77px + env(safe-area-inset-top,0px));z-index:50;background:var(--bg);margin:0 -2px;padding:10px 2px}
 }
 
