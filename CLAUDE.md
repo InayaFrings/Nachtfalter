@@ -161,6 +161,11 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Die Chatliste lädt nur Profile der Leute aus privaten Chats, Gruppenmitglieder erst, wenn ihr Bild gebraucht wird.
 - Öffentlicher Salon (`loadPubFeed`): Server höchstens alle 5 Minuten (`localStorage nf-pubft`), beim Start erst der Gerätestand, der Server 4 s später.
 
+## Geteilte Beiträge öffnen (seit v656)
+
+- Ein Beitrag aus einer Story oder einem Chat (`shpvOpen`, Aktionen `st-postopen`, `msh-post`) öffnet im Profil der Person auf dem Reiter Beiträge (`ntOpenPost` wie aus den Mitteilungen), nicht mehr im Extra-Fenster `#shpv` (dort gingen Liken, Kommentieren, Reposten, Teilen und das Nachladen der Fotos nicht). Das Fenster bleibt nur als Notlösung ohne `piKey`.
+- `ntOpenPost` scrollt bis 2,6 s nach dem Öffnen nochmal zum Beitrag, weil ein spätes Neuzeichnen die Stelle zurücksetzte (hört auf, sobald man selbst wischt).
+
 ## Navigation am Handy (seit v483)
 
 - Unten genau fünf, nur Symbole: Salon, Shop, Chat, Suche, Profil (`mobNav`). Shopping-Straße am Handy ohne Scrollen (`swFit`), am PC größer und untereinander. Oben drei: Mitteilungen, Minigames, Einstellungen (`mobTop`; Freundschaftsanfragen zählen bei der Glocke mit).

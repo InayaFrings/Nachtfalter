@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2f180f853472';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ac4f476d69aa';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2958,6 +2958,7 @@ function shpClose(){ document.getElementById('shpick')?.remove(); SHP.sel = new 
 async function shpvOpen(u, id){ const uid = u === social?.uid ? S.me : u, find = () => htPool().find(p => p.author === uid && p.id === id);
   let p = find(); if (!p && uid !== S.me && social) { await loadProf(uid); p = find(); }
   if (!p) return toast('Dieser Beitrag ist nicht mehr verfügbar.');
+  { const k = piKey(p); if (k) { document.getElementById('shpv')?.remove(); ntOpenPost(k, uid); return; } } /* v656 (Inaya): im Profil der Person öffnen, dort gehen Liken, Kommentieren, Reposten, Teilen und das Foto wie überall */
   document.getElementById('shpv')?.remove(); const el = document.createElement('div'); el.id = 'shpv'; el.className = 'shpv';
   el.innerHTML = `<div class="shpvb" data-act="shpv-x"></div><div class="shpvp" role="dialog" aria-label="Beitrag"><header class="pcfh"><button type="button" class="pcfx" data-act="shpv-x" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b>Beitrag</b><span></span></header><div class="shpvc"><div class="feed insta">${postHTML(p)}</div></div></div>`;
   document.body.appendChild(el); }
@@ -7972,7 +7973,8 @@ function ntOpenPost(k, prof, cm, did){ // genau diesen Beitrag zeigen, bei Komme
   render();
   let n = 0; const find = () => { const el = [...document.querySelectorAll(`#app [data-pi="${k}"]`)].map(e => e.closest('article.post')).find(Boolean);
     if (!el) { if (++n < 12) setTimeout(find, 250); else document.querySelector('.ptabs')?.scrollIntoView({block:'start', behavior:'smooth'}); return; }
-    el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash'); if (cm) setTimeout(() => { if (PI[k]) { cmvOpen(k); cmvShow(k, did); } }, 500); };
+    el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.remove('ntflash'); void el.offsetWidth; el.classList.add('ntflash'); { let stop = false; const off = () => { stop = true; }; ['touchstart', 'wheel'].forEach(ev => addEventListener(ev, off, {passive:true, once:true}));
+      [700, 1500, 2600].forEach(t => setTimeout(() => { if (stop || V.name !== 'profile') return; const e2 = [...document.querySelectorAll(`#app [data-pi="${k}"]`)].map(e => e.closest('article.post')).find(Boolean); if (!e2) return; const r = e2.getBoundingClientRect(); if (r.top > innerHeight * .6 || r.bottom < 80) e2.scrollIntoView({block:'center'}); if (t < 2000) e2.classList.add('ntflash'); }, t)); } /* v656: ein spätes Neuzeichnen setzte die Stelle zurück */ if (cm) setTimeout(() => { if (PI[k]) { cmvOpen(k); cmvShow(k, did); } }, 500); };
   setTimeout(find, 150);
 }
 function notifView(){
