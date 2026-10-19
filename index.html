@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='41c09edd0ec7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ace75fea38f2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2832,6 +2832,10 @@ html:has(.ppick),body:has(.ppick){overflow:hidden;overscroll-behavior:none}
 body[data-pg=profile] .aside{gap:16px}body[data-pg=profile] .shell{padding-bottom:calc(79px + env(safe-area-inset-bottom,0px))!important} /* v676: unten nur 16 px Luft bis zur Leiste, wie zwischen den Kästen (Inaya) */body[data-pg=profile] .pcleft,body[data-pg=profile] .pcright{display:grid;gap:16px;align-content:start}body[data-pg=profile] .pcleft>.card,body[data-pg=profile] .pcright>.card{margin:0!important} /* v675: überall 16 px zwischen den Kästen, auch Avatar und Begleiter (Inaya) */
 .phead .pmorebtn{width:48px;height:auto;align-self:stretch;min-height:44px}
 .pchev{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* v677: Kacheln in Garderobe und Zimmer mit gleichem Abstand oben und unten (Inaya) */
+.wardrobe .ltools{margin:0!important}.wardrobe .ltools + .ctabs{padding-top:0}
+.ltools.rtools{margin:-6px 0 0!important}.ltools.rtools + .lbl.mfh{margin-top:0}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -10249,7 +10253,7 @@ function shopView(isShop){
       : !isShop ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">Anziehen</button>`
       : u.points >= i.price ? `<button class="btn" data-act="buy" data-id="${i.id}">Kaufen</button>`
       : `<button class="btn" disabled>Noch ${i.price - u.points} Punkte</button>`;
-    const t = previewOutfit(u.outfit, i), [dot, pan] = isShop ? ['', ''] : itemColUI(i, u.outfit, 'color');
+    const t = previewOutfit(ncBare(), i) /* v677: nur das Teil selbst (Inaya) */, [dot, pan] = isShop ? ['', ''] : itemColUI(i, u.outfit, 'color');
     return `<div class="item ${on?'on':''}">${dot}
       <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i), '', true)}</button>
       ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.name)}</span>` : ''}
@@ -12657,10 +12661,11 @@ function chMenHL(html){ if (!html || !html.includes('@')) return html; let h = h
    Gratis bleiben nur die Basics (Start-Outfit, Start-Zimmer, „Keine …“, Haut und Figur). Alles andere kostet Coins; was jemand vor dem Shop
    trug bzw. im Zimmer stehen hatte, wird einmalig ins Inventar übernommen (op keep) und gilt als gekauft. Jede Person bekommt 2000 Coins Startbonus. */
 const NC_START = 2000, NC_DAILY = {c:25, x:20};
-const XPV = {f:25, p:15, l:3, c:5, g:10, j:15, k:30, m:2}, XPC = {g:15}, XPCAP = {f:5, p:3, l:10, c:8, g:4, j:3, k:1, m:10};
+const XPV = {f:25, p:15, l:3, c:5, g:10, j:15, k:30, m:2, b:40}, XPC = {g:15, b:50}, XPCAP = {f:5, p:3, l:10, c:8, g:4, j:3, k:1, m:10, b:3}; /* v677: b = Begleiter-Levelaufstieg (je Begleiter-Level einmal) */
 const NC_GAME = {memory:'mem', ttt:'ttt', hang:'hang', bat:'bat'};
 const LV_MAX = 50; /* höchstes Level (Inaya, 2026-10-16) */
-const lvT = l => 25 * l * (l - 1), lvOf = x => { let l = 1; while (l < LV_MAX && lvT(l + 1) <= x) l++; return l; }, lvC = l => 30 * (l - 1) + 100 * Math.floor(l / 5);
+const lvT = l => 25 * l * (l - 1), lvOf = x => { let l = 1; while (l < LV_MAX && lvT(l + 1) <= x) l++; return l; }, lvC = l => LVC2 ? 100 * (l - 1) + 300 * Math.floor(l / 5) : 30 * (l - 1) + 100 * Math.floor(l / 5); /* v677: mehr Coins beim Levelaufstieg (Inaya): 100 je Level, +300 alle 5 Level. Mit alten Regeln (ohne lvC2) fällt die App auf 30/100 zurück */
+let LVC2 = true;
 /* Tag in deutscher Zeit (Europe/Berlin, Sommerzeit inklusive), wie today() in den Regeln; Serverzeit über srvNow, nicht die Geräteuhr */
 const NC_TZ = (() => { try { return new Intl.DateTimeFormat('en-US', {timeZone:'Europe/Berlin', hourCycle:'h23', year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric'}); } catch { return null; } })();
 function berlinOff(ms){ if (!NC_TZ) return 3600000; try { const p = Object.fromEntries(NC_TZ.formatToParts(new Date(ms)).map(x => [x.type, x.value])), s = ms - ms % 1000; return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - s; } catch { return 3600000; } }
@@ -12730,20 +12735,21 @@ function ncPaint(){ if (['shopping', 'mall', 'moebel', 'profile', 'wardrobe', 'r
   document.querySelectorAll('[data-ncc]').forEach(el => { el.textContent = WAL.d ? WAL.d.c : '–'; }); }
 /* Eine Änderung am Wallet: build(w, t) liefert {upd, also} oder null; läuft nacheinander, mit Zeitlimit */
 function walTx(build){ const run = async () => { if (!social || !WAL.d) return {err:'nowal'}; const ref = social.db.doc('wallet/' + social.uid);
+    let lvch = false;
     try { return await Promise.race([social.db.runTransaction(async t => { const s = await t.get(ref); if (!s.exists) throw {code:'nowal'}; const w = s.data(), b = await build(w, t); if (!b) return {skip:true};
-        t.update(ref, b.upd); if (b.also) b.also(t, w); return {ok:true, w, upd:b.upd}; }), new Promise((_, no) => setTimeout(() => no({code:'timeout'}), 20000))]); }
-    catch (e) { return {err:e?.code || String(e)}; } };
+        lvch = b.upd.l != null && b.upd.l !== w.l; t.update(ref, b.upd); if (b.also) b.also(t, w); return {ok:true, w, upd:b.upd}; }), new Promise((_, no) => setTimeout(() => no({code:'timeout'}), 20000))]); }
+    catch (e) { if (e?.code === 'permission-denied' && lvch && LVC2) { LVC2 = false; return run(); } /* v677: Regeln noch ohne neue Level-Coins */ return {err:e?.code || String(e)}; } };
   return WAL.q = WAL.q.then(run, run); }
 const ncGain = (w, xp, coins) => { const x = (w.x || 0) + xp, l = lvOf(x); return {x, l, c:w.c + coins + lvC(l) - lvC(w.l)}; };
 const xdOf = (w, d) => w.xd && w.xd.d === d ? w.xd : {d, n:{}, r:{}};
-function xpCan(w, k, ref, rk){ const o = xdOf(w, ncDay()); if ((o.n[k] || 0) >= XPCAP[k]) return false; if (k === 'f') return !w.fx?.[ref]; if (k === 'j' || k === 'k') return !w.gx?.[k + ref]; return !o.r[rk]; }
+function xpCan(w, k, ref, rk){ const o = xdOf(w, ncDay()); if ((o.n[k] || 0) >= XPCAP[k]) return false; if (k === 'f') return !w.fx?.[ref]; if (k === 'j' || k === 'k' || k === 'b') return !w.gx?.[k + ref]; return !o.r[rk]; }
 /* XP (bei Minigames auch Coins) für eine echte Aktivität. ref = Beitrag, Person, Gruppe oder Spiel, d = Kommentar- bzw. Nachrichten-ID */
-async function xpGain(k, ref, d){ if (!social || !WAL.d || !ref || !XPV[k]) return null; ref = String(ref).slice(0, 150); const rk = k === 'f' || k === 'j' || k === 'k' ? '' : k + ':' + (k === 'm' ? d : ref);
+async function xpGain(k, ref, d){ if (!social || !WAL.d || !ref || !XPV[k]) return null; ref = String(ref).slice(0, 150); const rk = k === 'f' || k === 'j' || k === 'k' || k === 'b' ? '' : k + ':' + (k === 'm' ? d : ref);
   if (!xpCan(WAL.d, k, ref, rk)) return {skip:true};
   const r = await walTx(w => { if (!xpCan(w, k, ref, rk)) return null; const day = ncDay(), o = xdOf(w, day);
     const upd = {...ncGain(w, XPV[k], XPC[k] || 0), xd:{d:day, n:{...o.n, [k]:(o.n[k] || 0) + 1}, r:rk ? {...o.r, [rk]:true} : {...o.r}}, op:{t:'xp', k, ref, ...(d ? {d:String(d)} : {})}};
-    if (k === 'f') upd.fx = {...(w.fx || {}), [ref]:true}; if (k === 'j' || k === 'k') upd.gx = {...(w.gx || {}), [k + ref]:true}; return {upd}; });
-  if (r?.ok && k !== 'g') xpFloat(`+${XPV[k]} XP`); return r; }
+    if (k === 'f') upd.fx = {...(w.fx || {}), [ref]:true}; if (k === 'j' || k === 'k' || k === 'b') upd.gx = {...(w.gx || {}), [k + ref]:true}; return {upd}; });
+  if (r?.ok && k !== 'g' && k !== 'b') xpFloat(`+${XPV[k]} XP`); return r; }
 function ncFriendsXp(){ if (!WAL.d || !FR.synced) return; const ids = FR.mine.filter(id => isFriend(id) && !WAL.d.fx?.[id]).slice(0, XPCAP.f); (async () => { for (const id of ids) await xpGain('f', id); })(); }
 /* Minigames: jedes Spiel einmal pro Tag (deutsche Zeit) 15 Coins und 10 XP */
 const ncGameDone = g => !!WAL.d && !!xdOf(WAL.d, ncDay()).r['g:' + g];
@@ -12782,7 +12788,7 @@ function lvUp(a, b, coins){ const items = ncUnlocks(a, b);
     ${items.length ? `<p class="lvu">Neu freigeschaltet</p><div class="lvits">${items.map(id => `<span class="lvit">${ncThumb(id)}</span>`).join('')}</div>` : ''}
     <button type="button" class="btn lvbtn" data-act="lv-x">Weiter</button></div>`;
   el.addEventListener('click', e => { if (e.target === el || e.target.closest('[data-act=lv-x]')) el.remove(); }); document.body.appendChild(el); }
-function ncThumb(id){ const i = ncItem(id); if (!i) return ''; if (i.furn) return `<span class="ncth f">${furnSVG(i.k)}</span>`; const o = previewOutfit(me().outfit, i); return `<span class="ncth">${avatar(o, thumbView(i), '', true)}</span>`; }
+function ncThumb(id){ const i = ncItem(id); if (!i) return ''; if (i.furn) return `<span class="ncth f">${furnSVG(i.k)}</span>`; const o = previewOutfit(ncBare(), i); /* v677: nur das eine Teil auf der nackten Figur wie in der Mall (Inaya) */ return `<span class="ncth">${avatar(o, thumbView(i), '', true)}</span>`; }
 /* Level auf allen Profilen: eigenes aus dem Wallet, fremde einmal gelesen */
 const NCLV = {};
 function ncLevelOf(id){ if (!social || !id) return 0; if (id === S.me || id === social.uid) return WAL.d?.l || 0; const c = NCLV[id];
@@ -13990,7 +13996,9 @@ function petXP(n){ const p = petMe(); if (!p || n <= 0) return 0; const day = nc
 function petLvUp(p){ const news = Object.entries(PET_DECO).flatMap(([s, o]) => Object.entries(o).filter(([, x]) => x.lv === p.lv).map(([, x]) => x.n));
   setTimeout(() => { const el = document.createElement('div'); el.className = 'petlvup'; el.setAttribute('role', 'status');
     el.innerHTML = `<div><small>${esc(tr('Level-Aufstieg'))}</small><b>${esc(p.n)} · ${esc(tr('Level {0}').replace('{0}', p.lv))}</b>${news.length ? `<span>${esc(tr('Neu freigeschaltet'))}: ${news.map(x => esc(tr(x))).join(', ')}</span>` : ''}</div>`;
-    document.body.appendChild(el); requestAnimationFrame(() => el.classList.add('in')); setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 400); }, 3800); }, 300); }
+    document.body.appendChild(el); requestAnimationFrame(() => el.classList.add('in')); setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 400); }, 3800); }, 300);
+  /* v677: Begleiter-Levelaufstieg gibt dir selbst XP und Nocti-Coins (Inaya), je Begleiter-Level einmal */
+  setTimeout(async () => { if (!WAL.d || p.lv < 2) return; const before = {...WAL.d}, r = await xpGain('b', String(p.lv)); if (r?.ok) ncBar(r.w || before, {...(r.w || before), ...r.upd}, XPC.b, XPV.b); }, 4500); }
 
 /* Server: gewählte Art (für die Gruppen-Regeln), Owner legt die drei Gruppen an, man tritt der eigenen bei */
 async function petChk(){ if (!social || PETS.chk || PETS.busy) return; PETS.busy = true; const u = me();
@@ -14184,6 +14192,7 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-rcol') petRoomSet(b.dataset.k, b.dataset.v);
   else if (a === 'pet-eat') { if (p.sl) return toast(tr('{0} schläft gerade.').replace('{0}', p.n)); const f = PET_FOOD[b.dataset.v], v = petVals(p); if (!f) return; if (v.f >= 99.5) return; /* v624: nur wenn Satt ganz voll ist (Inaya) */
     const fav = PET_KINDS[p.k].fav === b.dataset.v, gain = Math.min(f.f, 100 - v.f); petSet(p, {f:f.f, p:fav ? 8 : 2}); const x = petXP(gain / 4 + (fav ? 3 : 0)); petSave();
+    if (petVals(p).f >= 99.5) { const sh = document.querySelector('.psheet'); if (sh) { const h = sh.querySelector(':scope > b'); if (h) h.textContent = tr('{0} ist satt.').replace('{0}', p.n); sh.querySelectorAll('.pfood').forEach(x => x.disabled = true); } } /* v677: sofort grau und „ist satt“, sobald Satt voll ist (Inaya) */
     petFeedFly(p.k, `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[b.dataset.v]}</svg>`); setTimeout(() => petTemp('eat', 1300), 850); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500);
     setTimeout(petPaint, 1800); if (x) toast(`+${x} XP`); }
   else if (a === 'pet-bath') { if (PETS.bath) return petBathEnd(false); if (PETS.game) return; let rr = !!document.querySelector('.psheet'); if (p.sl) { petSet(p); p.sl = 0; petSave(); rr = true; } PETSHEET = ''; if (rr) render(); petBathStart(); }

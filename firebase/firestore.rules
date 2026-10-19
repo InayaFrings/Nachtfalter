@@ -197,7 +197,7 @@ service cloud.firestore {
        wallet/<uid> = {c: Coins, x: XP, l: Level, inv: {<item>: true}, dd: Tag der letzten Tagesbelohnung, wb: Startbonus erhalten, kp: Bestand übernommen,
                        xd: {d: Tag, n: {<art>: Anzahl heute}, r: {<beleg>: true}}, fx: {<freund>: true}, gx: {<j|k><gruppe>: true}, op: {t, …}}
        Jede Änderung beschreibt in op, was passiert ist; die Regeln rechnen nach. Preise stehen in site/prices (schreibt nur Inaya, die App gleicht sie ab).
-       Tag = Kalendertag in deutscher Zeit (Europe/Berlin mit Sommerzeit), Wechsel um 00:00 Uhr. Level L ab 25·L·(L-1) XP, höchstens Level 50. Coins für Level: 30 je Level, +100 alle 5 Level. */
+       Tag = Kalendertag in deutscher Zeit (Europe/Berlin mit Sommerzeit), Wechsel um 00:00 Uhr. Level L ab 25·L·(L-1) XP, höchstens Level 50. Coins für Level: seit v677 100 je Level, +300 alle 5 Level (alte Formel 30/100 bleibt erlaubt). */
     function W() { return resource.data; }
     function N() { return request.resource.data; }
     function berlinSummer() { let t = request.time; let m = t.month(); let w = t.dayOfWeek(); let ls = t.day() - (w % 7);
@@ -206,10 +206,11 @@ service cloud.firestore {
     function lvT(l) { return 25 * l * (l - 1); }
     function lvOk(l, x) { return l is int && l >= 1 && l <= 50 && lvT(l) <= x && (l == 50 || x < lvT(l + 1)); } // höchstens Level 50
     function lvC(l) { return 30 * (l - 1) + 100 * math.floor(l / 5); }
-    function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && N().c == W().c + coins + lvC(N().l) - lvC(W().l); }
-    function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2}[k]; }
-    function xc(k) { return k == 'g' ? 15 : 0; }
-    function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 4, 'j': 3, 'k': 1, 'm': 10}[k]; }
+    function lvC2(l) { return 100 * (l - 1) + 300 * math.floor(l / 5); } // seit v677: 100 je Level, +300 alle 5 Level
+    function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && (N().c == W().c + coins + lvC2(N().l) - lvC2(W().l) || N().c == W().c + coins + lvC(N().l) - lvC(W().l)); }
+    function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2, 'b': 40}[k]; }
+    function xc(k) { return k == 'g' ? 15 : k == 'b' ? 50 : 0; } // b = Begleiter-Levelaufstieg (seit v677)
+    function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 4, 'j': 3, 'k': 1, 'm': 10, 'b': 3}[k]; }
     function xdOld() { return W().xd.d == today() ? W().xd : {'d': today(), 'n': {}, 'r': {}}; }
     function xdOk(k, rk) { let o = xdOld();
       return N().xd.keys().hasOnly(['d', 'n', 'r']) && N().xd.d == today()
@@ -224,14 +225,15 @@ service cloud.firestore {
         : k == 'c' ? ref.split('_')[0] != u && piDoc(ref, op.d).by == u && piDoc(ref, op.d).kind == 'c'
         : k == 'j' ? isGroup(ref) && chatDoc(ref).pub == true && u in chatDoc(ref).members
         : k == 'k' ? isGroup(ref) && chatDoc(ref).pub == true && chatDoc(ref).createdBy == u
+        : k == 'b' ? ref.matches('^([2-9]|[12][0-9]|30)$')
         : k == 'm' ? isGroup(ref) && chatDoc(ref).pub == true && get(/databases/$(database)/documents/chats/$(ref)/m/$(op.d)).data.from == u
         : false; }
     function xpOp(op) { let k = op.k; let ref = op.ref;
-      return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm'] && ref is string && ref.size() > 0 && ref.size() < 160
+      return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm', 'b'] && ref is string && ref.size() > 0 && ref.size() < 160
         && N().diff(W()).affectedKeys().hasOnly(['x', 'l', 'c', 'xd', 'fx', 'gx', 'op']) && N().inv == W().inv && N().dd == W().dd
         && gain(xv(k), xc(k)) && xpProof(op)
         && (k == 'f' ? (!(ref in W().fx) && N().fx.diff(W().fx).affectedKeys().hasOnly([ref]) && N().gx == W().gx && xdOk(k, ''))
-          : (k == 'j' || k == 'k') ? (!((k + ref) in W().gx) && N().gx.diff(W().gx).affectedKeys().hasOnly([k + ref]) && N().fx == W().fx && xdOk(k, ''))
+          : (k == 'j' || k == 'k' || k == 'b') ? (!((k + ref) in W().gx) && N().gx.diff(W().gx).affectedKeys().hasOnly([k + ref]) && N().fx == W().fx && xdOk(k, ''))
           : (N().fx == W().fx && N().gx == W().gx && xdOk(k, k + ':' + (k == 'm' ? op.d : ref)))); }
     // Preise: site/prices = {p: {<item>: Coins}}; was dort fehlt, ist gratis oder nicht käuflich
     function price(i) { return get(/databases/$(database)/documents/site/prices).data.p.get(i, 0); }
