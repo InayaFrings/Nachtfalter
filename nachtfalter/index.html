@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c62e6f65cf3e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b484091b27a6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -197,7 +197,9 @@ button{font:inherit;cursor:pointer;color:inherit}
 .logo small{display:block;font:15px/1.3 var(--f-ital);color:var(--muted);margin-top:8px;letter-spacing:0}
 .rail ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
 .nl{background:none;border:0;border-left:1px solid var(--line-soft);text-align:left;width:100%;padding:7px 12px;font:400 18px var(--f-display);color:var(--muted)}
-.nl:hover{color:var(--fg)}.nl{display:flex;align-items:center;gap:10px}.nl .nli{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.nl>span{min-width:0}
+.nl:hover{color:var(--fg)}
+.railmore{margin-top:14px}.railmore>summary{list-style:none;cursor:pointer}.railmore>summary::-webkit-details-marker{display:none}.railmore[open]>summary{color:var(--fg)}.rmmenu{display:grid;gap:2px;margin-top:4px;padding-left:10px}
+.nl[data-act="fab-post"]{color:var(--muted)}.nl{display:flex;align-items:center;gap:10px}.nl .nli{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.nl>span{min-width:0}
 .nl[aria-current="page"]{color:var(--fg);border-left:2px solid var(--fg);background:linear-gradient(90deg,#ffffff10,transparent)}
 .orn{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:16px;line-height:1}
 .orn::before,.orn::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -2444,7 +2446,7 @@ body.pcropen{overflow:hidden}
 .pnb{width:100%;max-width:90px;height:7px;border-radius:99px;background:#ffffff18;overflow:hidden}.pnb b{display:block;height:100%;background:var(--fg);border-radius:99px;transition:width .6s}
 .pneed small{font-size:12px;color:var(--muted)}.pneed.low{border-color:#d0566a}.pneed.low .pnb b{background:#d0566a}.pneed.low i{animation:plow 1.2s ease-in-out infinite}@keyframes plow{50%{transform:scale(1.15)}}
 .pscene{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden;border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
-.psbg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.psbg{position:absolute;inset:0;width:100%;height:100%;display:block}.pswall{position:absolute;inset:0 0 30% 0;border-bottom:4px solid #2c2c31}.psfloor{position:absolute;inset:70% 0 0 0;box-shadow:inset 0 14px 24px #0009}
 .pscene.night::after{content:"";position:absolute;inset:0;background:#05040acc;pointer-events:none}
 .petfig{position:absolute;left:50%;bottom:2%;width:62%;aspect-ratio:1;transform:translateX(-50%);background:none;border:0;padding:0;cursor:grab;z-index:2;-webkit-tap-highlight-color:transparent}
 .pscene.night .petfig{z-index:3}
@@ -2558,7 +2560,7 @@ body.pcropen{overflow:hidden}
 }
 
 /* Begleiter beim Avatar (v570) */
-.fullfig{position:relative}.pbes{position:absolute;z-index:3;display:block;width:34%;aspect-ratio:1;bottom:-1%;right:-14%;cursor:default}.pbes svg{width:100%;height:100%}
+.fullfig{position:relative}.pbes{position:absolute;z-index:3;display:block;width:34%;aspect-ratio:1;bottom:-1%;right:-8%;cursor:default}.pbes svg{width:100%;height:100%}
 [data-act="nav"].pbes{cursor:pointer}.pbes.lap{width:30%;left:50%;right:auto;bottom:10%;transform:translateX(-50%)}.pbes.lie{right:-6%;bottom:2%}
 /* Pet-Seite für den Daumen (v570): Aktionen unten fest über der Leiste, Auswahl darüber */
 @media (max-width:760px){
@@ -7174,19 +7176,20 @@ function gateView(){
 function rail(){
   const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
   ntWatch();
-  const tabs = [['home','Salon'],['profile','Profil'],['friends','Freunde' + (FR.inc.some(reqOpen) ? '⁠<i class="dot" aria-label="neue Anfrage"></i>' : '')],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['find','Suchen'],['room','Zimmer'],['pet','Begleiter'],['wardrobe','Garderobe'],['shopping','Shopping'],['settings','Einstellungen' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]]; // Reihenfolge und Namen von Inaya (2026-10-12), Mitteilungen über die Glocke
-  const cur = V.name === 'design' ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'visit' ? 'friends' : V.name === 'profile' && V.arg && V.arg !== S.me ? 'friends' : V.name;
+  /* PC-Leiste seit v572 wie die Handy-Version (Inaya), im PC-Format wie Instagram am Computer: Salon, Suchen, Shop, Chats, Mitteilungen, Erstellen, Profil; unten „Mehr“ mit Einstellungen und Abmelden.
+     Freunde, Zimmer, Garderobe und Begleiter erreicht man wie am Handy über das Profil. */
+  const tabs = [['home','Salon'],['find','Suchen'],['shopping','Shop'],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN + FR.inc.filter(reqOpen).length ? '⁠<i class="dot" aria-label="neu"></i>' : '')],['create','Erstellen', 'fab-post'],['profile','Profil' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
+  const cur = ['design', 'room', 'wardrobe', 'pet', 'friends', 'settings', 'archive'].includes(V.name) ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'profile' && V.arg && V.arg !== S.me ? '' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
     ${MH_PAGES[V.name] ? `<button type="button" class="mfab" data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="home" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
       : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}
     ${mobHead()}
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
-    <button class="pcbell${cur === 'notifs' ? ' on' : ''}" data-act="nav" data-v="notifs" aria-label="Mitteilungen${ntN ? ` (${ntN} neu)` : ''}" title="Mitteilungen"><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS.bell}</svg>${ntN ? `<i class="dot" aria-hidden="true"></i>` : ''}</button>
     ${mobTop(nNew, ntN)}
     <nav aria-label="Hauptnavigation"><ul>
-      ${tabs.map(([k,l]) => `<li><button class="nl" data-act="nav" data-v="${k}" ${cur===k?'aria-current="page"':''}>${railIco(k)}<span>${l}</span></button></li>`).join('')}
-      <li><button class="nl" data-act="logout">${railIco('logout')}<span>Abmelden</span></button></li>
-    </ul></nav>
+      ${tabs.map(([k, l, act]) => `<li><button class="nl" data-act="${act || 'nav'}" data-v="${k === 'create' ? 'home' : k}" ${cur === k ? 'aria-current="page"' : ''}>${railIco(k)}<span>${l}</span></button></li>`).join('')}
+    </ul>
+    <details class="railmore"><summary class="nl">${railIco('menu')}<span>Mehr</span></summary><div class="rmmenu"><button class="nl" data-act="nav" data-v="settings">${railIco('settings')}<span>Einstellungen</span></button><button class="nl" data-act="logout">${railIco('logout')}<span>Abmelden</span></button></div></details></nav>
   </header>
   ${mobNav(cur, nNew)}`;
 }
@@ -7261,6 +7264,8 @@ function centerRooms(){ // Handy: breites Zimmer so scrollen, dass der eigene Av
 let mobMore = false, homeCompose = false;
 const isMob = () => window.matchMedia('(max-width:760px)').matches;
 const MOB_ICONS = {
+  create:'<rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M12 8v8M8 12h8"/>',
+  menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
   pet:'<circle cx="6.5" cy="10" r="1.9"/><circle cx="10" cy="6.2" r="1.9"/><circle cx="14" cy="6.2" r="1.9"/><circle cx="17.5" cy="10" r="1.9"/><path d="M12 11.5c-3 0-6 3.6-6 6.2 0 1.6 1.3 2.3 2.8 2.3 1.2 0 2.2-.6 3.2-.6s2 .6 3.2.6c1.5 0 2.8-.7 2.8-2.3 0-2.6-3-6.2-6-6.2z"/>',
   home:'<path d="M6 12V7a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v5"/><rect x="3" y="11" width="3" height="7" rx="1.5"/><rect x="18" y="11" width="3" height="7" rx="1.5"/><path d="M6 15h12M6 18h12M5 18v2.5M19 18v2.5"/>', // Salon: Sessel statt Haus (Inaya, 2026-10-11)
   logout:'<path d="M5 21V3h9v18"/><path d="M5 3l5 2.2v14.6L5 21" fill="currentColor" fill-opacity=".18"/><circle cx="8.6" cy="12.4" r=".6" fill="currentColor"/><path d="M2.5 21h12.5"/><path d="M16 12h6.5M19.5 9l3 3-3 3"/>', // offene Tür mit Pfeil (Inaya, 2026-10-12)
@@ -13646,7 +13651,8 @@ function petView(){ const p = petMe(); if (!p) return '<p class="note">' + esc(t
   const act = (a, l, ico, on) => `<button type="button" class="pact${on ? ' on' : ''}" data-act="pet-${a}" aria-label="${esc(tr(l))}"><i><svg viewBox="0 0 24 24" aria-hidden="true">${PTA_ICO[ico]}</svg></i><small>${esc(tr(l))}</small></button>`;
   let sheet = '';
   if (PETSHEET === 'feed') sheet = `<div class="psheet"><b>${esc(tr('Was möchte {0} essen?').replace('{0}', p.n))}</b><div class="pfoods">${Object.entries(PET_FOOD).map(([id, f]) => `<button type="button" class="pfood${K.fav === id ? ' fav' : ''}" data-act="pet-eat" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${PET_FOOD_SVG[id]}</svg><small>${esc(tr(f.n))}</small>${K.fav === id ? `<i>${esc(tr('Lieblingsessen'))}</i>` : ''}</button>`).join('')}</div></div>`;
-  if (PETSHEET === 'deco') { const tabs = [['hat', 'Kopf'], ['neck', 'Hals'], ['bg', 'Zuhause']];
+  if (PETDECO === 'bg') PETDECO = 'hat';
+  if (PETSHEET === 'deco') { const tabs = [['hat', 'Kopf'], ['neck', 'Hals']]; /* Zuhause = eigenes Zimmer (v572) */
     sheet = `<div class="psheet"><div class="pdtabs" role="tablist">${tabs.map(([k, l]) => `<button role="tab" data-act="pet-dtab" data-v="${k}" aria-selected="${PETDECO === k}">${esc(tr(l))}</button>`).join('')}</div><div class="pdgrid">${PETDECO !== 'bg' ? `<button type="button" class="pdi${!p.d?.[PETDECO] ? ' on' : ''}" data-act="pet-wear" data-s="${PETDECO}" data-v=""><span class="pdnone">✕</span><small>${esc(tr('Nichts'))}</small></button>` : ''}${Object.entries(PET_DECO[PETDECO]).map(([id, x]) => { const lock = p.lv < x.lv, on = (p.d?.[PETDECO] || (PETDECO === 'bg' ? 'gruft' : '')) === id;
       const pv = PETDECO === 'bg' ? `<svg class="pdbg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${PET_BGS[id]()}</svg>` : petSVG(p.k, 'happy', {[PETDECO]:id});
       return `<button type="button" class="pdi${on ? ' on' : ''}${lock ? ' lock' : ''}" data-act="pet-wear" data-s="${PETDECO}" data-v="${id}" ${lock ? 'aria-disabled="true"' : ''}>${pv}<small>${esc(tr(x.n))}</small>${lock ? `<i class="pdlock">${esc(tr('ab Level {0}').replace('{0}', x.lv))}</i>` : ''}</button>`; }).join('')}</div></div>`; }
@@ -13656,7 +13662,7 @@ function petView(){ const p = petMe(); if (!p) return '<p class="note">' + esc(t
       <span class="ptyp">${esc(tr(K.name))} · ${esc(tr('{0}-Typ').replace('{0}', tr(K.typ)))}</span>
       <div class="plv"><b>${esc(tr('Level {0}').replace('{0}', p.lv))}</b><span class="pxp"><i style="width:${p.lv >= PET_LV_MAX ? 100 : Math.round((p.xp || 0) / need * 100)}%"></i></span><small>${p.lv >= PET_LV_MAX ? esc(tr('Höchstes Level')) : `${p.xp || 0} / ${need} XP`}</small></div></div>
     <div class="pneeds">${bars}</div>
-    <div class="pscene${p.sl ? ' night' : ''}" id="pscene"><svg class="psbg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${PET_BGS[bg]()}</svg>
+    <div class="pscene${p.sl ? ' night' : ''}" id="pscene">${petRoomBG()}
       <button type="button" class="petfig" id="petfig" aria-label="${esc(tr('{0} streicheln').replace('{0}', p.n))}">${petSVG(p.k, petMood(p), p.d || {}, 'pidle')}</button><div class="pfx" id="pfx" aria-hidden="true"></div>
       <span class="phint">${esc(tr(p.sl ? '{0} schläft …' : 'Streichel {0} mit dem Finger').replace('{0}', p.n))}</span></div>
     <div class="pacts">${act('feed', 'Füttern', 'feed', PETSHEET === 'feed')}${act('play', 'Spielen', 'play')}${act('bath', 'Baden', 'bath')}${p.sl ? act('sleep', 'Aufwecken', 'wake', true) : act('sleep', 'Schlafen', 'sleep')}${act('deco', 'Deko', 'deco', PETSHEET === 'deco')}</div>
@@ -13715,6 +13721,8 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-show') { if (p.lv < 3) { b.checked = false; return toast(tr('Ab Level 3 kannst du deinen Begleiter im Profil zeigen.')); } p.show = !!b.checked; save(); publishProfile(); toast(p.show ? tr('{0} ist jetzt auf deinem Profil.').replace('{0}', p.n) : tr('{0} ist nicht mehr auf deinem Profil.').replace('{0}', p.n)); } }
 document.addEventListener('submit', e => { const f = e.target; if (f.dataset?.form !== 'pet-rename') return; e.preventDefault(); e.stopImmediatePropagation(); const p = petMe(); if (!p) return;
   const n = (document.getElementById('pn-in')?.value || '').trim().slice(0, 16); if (n) p.n = n; PETNAME = false; petSave(true); render(); }, true);
+/* Raum des Begleiters = eigenes Zimmer (seit v572, Inaya): dieselbe Tapete und derselbe Boden */
+function petRoomBG(){ const r = me()?.room || {}; return `<div class="psbg" aria-hidden="true"><div class="pswall" style="background:${wallCSS(r.wall, r.wallC)}"></div><div class="psfloor" style="background:${floorBG(r.floor, r.floorC)}"></div></div>`; }
 /* Profil: Karte mit dem Begleiter (eigener immer, fremde ab Level 3 und wenn gezeigt) */
 function petCardHTML(pid){ const own = pid === S.me, p = own ? petMe() : (PROF[pid]?.pet || S.users[pid]?.pet); if (!p?.k || !PET_KINDS[p.k]) return ''; if (!own && !(p.lv >= 3)) return '';
   const K = PET_KINDS[p.k], bg = PET_BGS[p.d?.bg] ? p.d.bg : 'gruft';
