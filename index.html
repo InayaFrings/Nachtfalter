@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a2aa758761e7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='554467e96dcc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14010,6 +14010,8 @@ function petHatch(k){ const K = PET_KINDS[k], parts = Array.from({length:18}, (_
 
 /* ---------- Pet-Seite (wie bei Pou) ---------- */
 let PETSHEET = '', PETDECO = 'hat', PETNAME = false;
+/* v629: Auswahl (Füttern, Deko) geht beim Tippen daneben zu (Inaya). Knöpfe mit eigener Aktion regeln das selbst. */
+document.addEventListener('pointerdown', e => { if (!PETSHEET || V.name !== 'pet' || !document.querySelector('.psheet')) return; if (e.target.closest('.psheet, [data-act]')) return; PETSHEET = ''; render(); }, true);
 function petView(){ PETS.bath = null; const p = petMe(); if (!p) return '<p class="note">' + esc(tr('Du hast noch keinen Begleiter.')) + '</p>';
   const K = PET_KINDS[p.k], v = petVals(p), need = petNeedXP(p.lv), bg = PET_BGS[p.d?.bg] ? p.d.bg : 'gruft';
   const bars = PET_NEEDS.map(([k, l]) => `<div class="pneed${v[k] < 25 ? ' low' : ''}" data-n="${k}" style="--pv:${Math.round(v[k])}" title="${esc(tr(l))}: ${Math.round(v[k])} %"><i><svg viewBox="0 0 24 24" aria-hidden="true">${PN_ICO[k]}</svg></i><small>${esc(tr(l))}</small></div>`).join(''); /* v590: wie die Knöpfe unten, Füllstand als Ring */
