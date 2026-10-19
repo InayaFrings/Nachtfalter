@@ -427,3 +427,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v670 (Inaya): Profil-Knöpfe, runde Profil-Links (`.plink.pic`) und Steckbrief (`.psteck`) mit derselben fast deckenden Füllung wie die Felder in „Profil bearbeiten“ (`color-mix(--p-field 93 %, transparent)`), das Muster schimmert leicht durch.
 - Seit v671: „Zimmer betreten“, „Garderobe betreten“ und „Begleiter →“ (`.proom-hint`, `.fullhint`) eckig im selben Stil wie die anderen Profil-Knöpfe.
 - Seit v672 (Inaya): Diese Profil-Knöpfe, Links und Steckbrief nehmen genau die Kastenfarbe (`color-mix(--p-bg 90 %, transparent)`), nicht `--p-field` (das war bei hellen Kästen viel heller).
+- Seit v673 (Inaya): leicht abweichend vom Kasten, aber nicht grell: `--p-soft` (hell: `shade(box, 1.14)`, dunkel: `shade(box, .72)`) mit 92 % Deckkraft.
