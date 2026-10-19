@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='554467e96dcc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='134828db7357';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -13970,15 +13970,15 @@ async function petSrvSave(){ const p = petMe(); if (!social || !p) return false;
   catch { try { const d = await social.db.doc('pets/' + social.uid).get(); const k = d.exists ? d.data().k : ''; if (PET_KINDS[k] && k !== p.k) { me().pet = petNew(k, p.n); save(); render(); } } catch {} return false; } }
 async function petGroups(){ if (!social || PETS.joined) return; const p = petMe(); PETS.joined = true;
   if (amOwner && !PETS.own) { PETS.own = true; for (const k of PET_IDS) { try { const r = social.db.doc('chats/' + petGid(k)), d = await r.get();
-    if (!d.exists) await r.set({group:true, pub:true, pet:k, name:PET_KINDS[k].grp, members:[], createdBy:social.uid, ts:Date.now(), theme:{box:'#1b1820', pattern:BLANK_THEME().pattern, font:BLANK_THEME().font, bg:null}, pic:null}); } catch (e) { console.warn('petgroup', k, e?.code); } } }
+    if (!d.exists) await r.set({group:true, pub:true, pet:k, name:PET_KINDS[k].grp, members:[], createdBy:social.uid, ts:Date.now(), theme:{box:'#1b1820', pattern:BLANK_THEME().pattern, font:BLANK_THEME().font, bg:null}, pic:null}); } catch (e) { console.warn('petgroup', k, e?.code); PETS.err = e?.code || 'x'; } } }
   if (!p) return; const gid = petGid(p.k);
   try { const pr = social.db.doc('pets/' + social.uid); if (!(await pr.get()).exists) await pr.set({k:p.k, ts:Date.now()}); } catch (e) { console.warn('petdoc', e?.code); } /* fehlte, wenn der Begleiter mit alten Regeln gewählt wurde */
   try { const d = await social.db.doc('chats/' + gid).get(); if (!d.exists || (d.data().members || []).includes(social.uid)) return;
     await social.db.doc('chats/' + gid).update({members:firebase.firestore.FieldValue.arrayUnion(social.uid)});
-    sendMsg(gid, `${me().name} ist der Gruppe beigetreten.`)?.catch?.(() => {}); } catch (e) { console.warn('petjoin', e?.code); PETS.joined = false; } }
+    sendMsg(gid, `${me().name} ist der Gruppe beigetreten.`)?.catch?.(() => {}); } catch (e) { console.warn('petjoin', e?.code); PETS.err = e?.code || 'x'; PETS.joined = false; } }
 async function petGroupOpen(){ const p = petMe(); if (!p || !social) return; const gid = petGid(p.k);
-  if (!CH.list.some(c => c.id === gid)) { PETS.joined = false; await petGroups(); for (let i = 0; i < 16 && !CH.list.some(c => c.id === gid); i++) await new Promise(r => setTimeout(r, 250)); }
-  if (!CH.list.some(c => c.id === gid)) return toast('Die Gruppe öffnet, sobald Inaya sie freigeschaltet hat.');
+  if (!CH.list.some(c => c.id === gid)) { PETS.joined = false; PETS.own = false; PETS.err = ''; await petGroups(); for (let i = 0; i < 16 && !CH.list.some(c => c.id === gid); i++) await new Promise(r => setTimeout(r, 250)); }
+  if (!CH.list.some(c => c.id === gid)) return toast(amOwner && PETS.err ? 'Die Gruppe ließ sich nicht anlegen. Bitte die neuen Regeln in Firebase einspielen (Firestore → Regeln).' : 'Die Gruppe öffnet, sobald Inaya sie freigeschaltet hat.'); /* v630: Owner sieht, woran es hängt */
   chatTab = 'pub'; openChat(gid); }
 function petNeedPick(){ petRestore(); const u = me(); if (!u || u.helper || u.pet?.k) return false; if (u.introPet) { if (social) petChk(); return true; } /* direkt nach der Einführung, ohne Umweg übers Profil */ if (cloud && !cloud.loaded) return false;
   if (social) { petChk(); return PETS.chk === 'none' || PETS.chk === 'err'; } return !PUB; }
