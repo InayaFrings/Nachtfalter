@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2ef1ee403080';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1cfa8b563d8d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2458,7 +2458,7 @@ body.pcropen{overflow:hidden}
 .pfx{position:absolute;inset:0;pointer-events:none;z-index:4}
 .pfxi{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;display:block}
 .pfxi.heart{animation:pfh 1.4s ease-out both}.pfxi.heart svg,.pfxi.food svg{width:100%;height:100%}@keyframes pfh{0%{opacity:0;transform:scale(.4)}20%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-70px) scale(.8)}}
-.pfxi.food{width:44px;height:44px;margin:-22px 0 0 -22px;animation:pff .9s ease-in both}@keyframes pff{0%{transform:translateY(120px) scale(1.3);opacity:1}80%{opacity:1}100%{transform:translateY(-10px) scale(.4);opacity:0}}
+.pfxi.food{width:44px;height:44px;margin:-22px 0 0 -22px;animation:pff .9s ease-in both}.pfxi.food.fly{animation:none;opacity:0}@keyframes pff{0%{transform:translateY(120px) scale(1.3);opacity:1}80%{opacity:1}100%{transform:translateY(-10px) scale(.4);opacity:0}}
 .pfxi.bub{border-radius:50%;border:2px solid #ffffffcc;background:radial-gradient(circle at 30% 30%,#fff9,#bfe4ff33);animation:pfb 1.3s ease-out both}@keyframes pfb{0%{transform:scale(.2);opacity:0}30%{opacity:1}100%{transform:translateY(-60px) scale(1.2);opacity:0}}
 .pfxi.spark{color:#ffe28a;font-size:26px;text-align:center;line-height:30px;animation:pfh .7s ease-out both}
 .phint{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:12.5px;color:#ffffffb0;z-index:5;pointer-events:none;text-shadow:0 1px 4px #000}
@@ -13881,7 +13881,10 @@ const PET_IMG = Object.fromEntries(['katze', 'fled', 'hase', 'rabe'].map(k => [k
 PET_IMG.fled.src = '/pwa/pets/fled.webp?v=650'; PET_IMG.katze.src = '/pwa/pets/katze.webp?v=650'; /* v650: Fledermaus und Katze nach Inayas neuen Zeichnungen (Fledermaus hell-/dunkellila, Katze orange/pink) */
 /* v648: Bilder einmal laden und dekodiert halten, sonst blitzen sie bei jedem Neuzeichnen kurz leer auf */
 const PET_PRE = Object.values(PET_IMG).map(I => { const i = new Image(); i.decoding = 'async'; i.src = I.src; i.decode?.().catch(() => {}); return i; });
-const PET_DRAW = Object.fromEntries(Object.entries(PET_IMG).map(([k, I]) => [k, (m, nk = '', ht = '') => `<g class="pbody"><image href="${I.src}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>${nk}${I.fg && nk ? `<image href="${I.fg}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>` : ''}${ht}${m === 'love' ? '<g class="plove" fill="#e8436e" stroke="#141016" stroke-width="1.6"><path d="M160 40c-6-6-14 2-8 8l8 8 8-8c6-6-2-14-8-8z"/><path d="M38 58c-4-4-10 1-5 5l5 5 5-5c5-4-1-9-5-5z"/></g>' : ''}</g>`]));
+/* v657: Schlafen = das runde Auge geht zu (Fell-Fleck + Lidstrich), das X-Auge bleibt (Inaya). [x, y, r, Fellfarbe] im 200er-Feld */
+const PET_EYE = {katze:[97.5, 93.7, 6.9, '#d9945a'], fled:[89.4, 68.5, 8.4, '#cdbadf'], hase:[87.1, 74.2, 6.6, '#d7cbcc'], rabe:[96, 61.3, 8.4, '#2b2a2e']};
+const petLid = k => { const e = PET_EYE[k]; if (!e) return ''; const [x, y, r, c] = e, w = r * .95; return `<g class="plid"><circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/><path d="M${x - w} ${y - 1}Q${x} ${y + r * .8} ${x + w} ${y - 1}M${x - w * .55} ${y + r * .35}l-2 3M${x} ${y + r * .45}v3.4M${x + w * .55} ${y + r * .35}l2 3" fill="none" stroke="${k === 'rabe' ? '#e8e4f4' : '#141016'}" stroke-width="2" stroke-linecap="round"/></g>`; };
+const PET_DRAW = Object.fromEntries(Object.entries(PET_IMG).map(([k, I]) => [k, (m, nk = '', ht = '') => `<g class="pbody"><image href="${I.src}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>${m === 'sleep' ? petLid(k) : ''}${nk}${I.fg && nk ? `<image href="${I.fg}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>` : ''}${ht}${m === 'love' ? '<g class="plove" fill="#e8436e" stroke="#141016" stroke-width="1.6"><path d="M160 40c-6-6-14 2-8 8l8 8 8-8c6-6-2-14-8-8z"/><path d="M38 58c-4-4-10 1-5 5l5 5 5-5c5-4-1-9-5-5z"/></g>' : ''}</g>`]));
 /* Deko: Kopf (hat), Hals (neck), Zuhause (bg). lv = ab welchem Level */
 const PET_DECO = {
   hat:{schleife:{n:'Schleife', lv:1}, krone:{n:'Mini-Krone', lv:4}, hexenhut:{n:'Hexenhut', lv:6}, kuerbis:{n:'Kürbismütze', lv:8}, zylinder:{n:'Zylinder', lv:10}, heiligenschein:{n:'Heiligenschein', lv:14}},
@@ -14090,6 +14093,16 @@ function petPaint(){ const p = petMe(); if (V.name !== 'pet' || !p) return; cons
   const lv = document.querySelector('.plv'), need = petNeedXP(p.lv); if (lv) { lv.querySelector('b').textContent = tr('Level {0}').replace('{0}', p.lv); lv.querySelector('.pxp i').style.width = (p.lv >= PET_LV_MAX ? 100 : Math.round((p.xp || 0) / need * 100)) + '%'; lv.querySelector('small').textContent = p.lv >= PET_LV_MAX ? tr('Höchstes Level') : `${p.xp || 0} / ${need} XP`; } }
 setInterval(() => { if (V.name === 'pet' && !PETS.game) petPaint(); }, 30000);
 function petTemp(m, ms){ clearTimeout(PETS.tempT); PETS.temp = m; petPaint(); PETS.tempT = setTimeout(() => { PETS.temp = ''; petPaint(); }, ms); }
+/* v657: Essen fliegt in einem Bogen in den Mund des Begleiters (Mund-Stelle im 200er-Feld), dann kurzes Kauen */
+const PET_MOUTH = {katze:[121, 96], fled:[112, 85], hase:[109, 83], rabe:[68, 76]};
+function petFeedFly(k, html){ const sc = document.getElementById('pscene'), sv = document.querySelector('#petfig svg'), fx = document.getElementById('pfx'); if (!sc || !sv || !fx) return;
+  const R = sc.getBoundingClientRect(), S = sv.getBoundingClientRect(), z = Math.min(S.width, S.height) / 200, [mx, my] = PET_MOUTH[k] || [100, 90];
+  const tx = S.left + (S.width - 200 * z) / 2 + mx * z - R.left, ty = S.top + (S.height - 200 * z) / 2 + my * z - R.top, sx = R.width * .82, sy = R.height * .92;
+  const e = document.createElement('i'); e.className = 'pfxi food fly'; e.innerHTML = html; e.style.left = '0'; e.style.top = '0'; fx.appendChild(e);
+  const pt = (t, s, o = 1) => { const x = sx + (tx - sx) * t, y = sy + (ty - sy) * t - Math.sin(t * Math.PI) * R.height * .28; return {transform:`translate(${x}px, ${y}px) rotate(${t * 300}deg) scale(${s})`, opacity:o}; };
+  if (!e.animate) { setTimeout(() => e.remove(), 900); return; }
+  e.animate([pt(0, 1.2), pt(.25, 1.1), pt(.5, .95), pt(.75, .75), pt(.92, .5), pt(1, .15, 0)], {duration:800, easing:'cubic-bezier(.3,.1,.5,1)', fill:'forwards'}).onfinish = () => e.remove();
+  setTimeout(() => { const f = document.querySelector('#petfig .pbody'); f?.animate?.([{transform:'scale(1,1)'}, {transform:'scale(1.04,.96)'}, {transform:'scale(1,1)'}, {transform:'scale(1.04,.96)'}, {transform:'scale(1,1)'}], {duration:600}); }, 780); }
 function petFx(cls, html, x, y, ms = 1400){ const fx = document.getElementById('pfx'); if (!fx) return; const e = document.createElement('i'); e.className = 'pfxi ' + cls; e.innerHTML = html || ''; e.style.left = x + '%'; e.style.top = y + '%'; fx.appendChild(e); setTimeout(() => e.remove(), ms); }
 const PFX_HEART = '<svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.9c0 5.4-7.5 10-7.5 10z" fill="#f06a9c"/></svg>';
 /* Baden (Inaya, 2026-10-19): geht immer. Antippen startet das Bad, Wischen über das Tier schäumt es ein, danach wird abgespült */
@@ -14146,7 +14159,7 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-rcol') petRoomSet(b.dataset.k, b.dataset.v);
   else if (a === 'pet-eat') { if (p.sl) return toast(tr('{0} schläft gerade.').replace('{0}', p.n)); const f = PET_FOOD[b.dataset.v], v = petVals(p); if (!f) return; if (v.f >= 99.5) return; /* v624: nur wenn Satt ganz voll ist (Inaya) */
     const fav = PET_KINDS[p.k].fav === b.dataset.v, gain = Math.min(f.f, 100 - v.f); petSet(p, {f:f.f, p:fav ? 8 : 2}); const x = petXP(gain / 4 + (fav ? 3 : 0)); petSave();
-    petFx('food', `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[b.dataset.v]}</svg>`, 50, 58, 900); setTimeout(() => petTemp('eat', 1300), 450); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500);
+    petFeedFly(p.k, `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[b.dataset.v]}</svg>`); setTimeout(() => petTemp('eat', 1300), 850); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500);
     setTimeout(petPaint, 1800); if (x) toast(`+${x} XP`); }
   else if (a === 'pet-bath') { if (PETS.bath) return petBathEnd(false); if (PETS.game) return; let rr = !!document.querySelector('.psheet'); if (p.sl) { petSet(p); p.sl = 0; petSave(); rr = true; } PETSHEET = ''; if (rr) render(); petBathStart(); }
   else if (a === 'pet-sleep') { petSet(p); if (p.sl) { p.sl = 0; } else { p.sl = Date.now(); PETSHEET = ''; } petSave(); render(); }
