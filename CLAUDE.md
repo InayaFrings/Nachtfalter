@@ -429,3 +429,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v672 (Inaya): Diese Profil-Knöpfe, Links und Steckbrief nehmen genau die Kastenfarbe (`color-mix(--p-bg 90 %, transparent)`), nicht `--p-field` (das war bei hellen Kästen viel heller).
 - Seit v673 (Inaya): leicht abweichend vom Kasten, aber nicht grell: `--p-soft` (hell: `shade(box, 1.14)`, dunkel: `shade(box, .72)`) mit 92 % Deckkraft.
 - Seit v674: Steckbrief (`.psteck`) mit demselben Rahmen wie die Profil-Knöpfe (`--p-line`).
+- Seit v675: Im Profil überall 16 px zwischen den Kästen (Profil, Avatar, Begleiter, Gästebuch): `.aside` gap 16, `.pcleft`/`.pcright` als Grid mit gap 16, Karten ohne eigenen Rand-Abstand.
