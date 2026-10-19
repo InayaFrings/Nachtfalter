@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0e07ff24463c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='55dd955b4a48';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2564,7 +2564,7 @@ body.pcropen{overflow:hidden}
 .pesec summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;font:600 16px var(--f-display)}.pesec summary::-webkit-details-marker{display:none}
 .pesec summary svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}.pesec[open] summary svg{transform:rotate(90deg)}
 .pesecin{padding:0 16px 16px;display:grid;gap:12px}
-.pesave{margin-top:4px}body.pulling::before{content:"";position:fixed;left:0;right:0;top:var(--pullt,0px);height:var(--pullh,0px);background:#0a0a0b;z-index:850;pointer-events:none} /* v596: schwarze Lücke unter der festen Kopfzeile beim Runterziehen */.pesec{scroll-margin-top:calc(130px + env(safe-area-inset-top,0px))}.posetabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;gap:6px;padding-bottom:2px}.posetabs::-webkit-scrollbar{display:none}.posetabs button{flex:none}.posecard{display:grid;gap:10px}.posecard>div{min-width:0}body:has(.mhtitle) .nchead .nct{display:none}body:has(.pehead) .main > .navback{display:none} /* v573: kein Zurück-Knopf über „Profil bearbeiten“, oben steht schon „Abbrechen“ */.pehint{margin:0;color:var(--muted);font-size:14px}
+.pesave{margin-top:4px}body.pulling::before{content:"";position:fixed;left:0;right:0;top:var(--pullt,0px);height:var(--pullh,0px);background:inherit;background-attachment:fixed;z-index:850;pointer-events:none} /* v596: schwarze Lücke unter der festen Kopfzeile beim Runterziehen */.pesec{scroll-margin-top:calc(130px + env(safe-area-inset-top,0px))}.posetabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;gap:6px;padding-bottom:2px}.posetabs::-webkit-scrollbar{display:none}.posetabs button{flex:none}.posecard{display:grid;gap:10px}.posecard>div{min-width:0}body:has(.mhtitle) .nchead .nct{display:none}body:has(.pehead) .main > .navback{display:none} /* v573: kein Zurück-Knopf über „Profil bearbeiten“, oben steht schon „Abbrechen“ */.pehint{margin:0;color:var(--muted);font-size:14px}
 @media all /*760*/{
   .design.peig{display:flex;flex-direction:column;height:auto;margin:0;gap:0}.peig .preview{display:none!important}
   .design.peig:has(.pesec[data-sec="look"][open], .pesec[data-sec="banner"][open]) > .preview{display:block!important;order:-1;position:sticky;top:calc(61px + env(safe-area-inset-top,0px));z-index:45;height:36vh;overflow:hidden;margin:0 -12px;border-bottom:2px solid var(--fg);box-shadow:0 10px 24px #0008} /* v571: Live-Vorschau, sobald man etwas gestaltet */
@@ -2791,6 +2791,8 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
   .obwear .obfoot{flex:none;margin:0;padding-bottom:env(safe-area-inset-bottom,0px)}
 }
 #app:not(:has(.obbar)) .gate{min-height:100vh;min-height:100dvh;padding-block:20px 14vh} /* Startseite optisch mittig, etwas höher (Inaya, 2026-10-19) */
+#pullbat.dark,#pullbat.dark.go{color:#111}
+#batfly.dark{color:#111}#batfly.dark span,#batfly.dark svg{color:#111;fill:#111}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -11844,7 +11846,7 @@ async function rulesCheck(){ try { await social.db.collection(`rings/${social.ui
 /* ---- Neu geladen: Fledermäuse fliegen über die Seite (Inaya, 2026-10-14) ----
    Nach jedem Neuladen (Browser-Knopf, Runterziehen am Handy). In der App vom Home-Bildschirm gibt es kein eingebautes Runterziehen, dafür ein eigenes. */
 function batFly(){ if (matchMedia('(prefers-reduced-motion: reduce)').matches || document.getElementById('batfly')) return;
-  const el = document.createElement('div'); el.id = 'batfly'; el.setAttribute('aria-hidden', 'true'); const n = innerWidth < 600 ? 6 : 9;
+  const el = document.createElement('div'); el.id = 'batfly'; el.setAttribute('aria-hidden', 'true'); const n = innerWidth < 600 ? 6 : 9; { const m = getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g) || [0, 0, 0]; if ((.2126 * m[0] + .7152 * m[1] + .0722 * m[2]) > 150) el.classList.add('dark'); }
   el.innerHTML = Array.from({length:n}, (_, i) => { const x = 4 + (i + Math.random() * .8) * (88 / n), d = (i * .1 + Math.random() * .3).toFixed(2), sz = (22 + Math.random() * 26).toFixed(0), du = (1.6 + Math.random() * .9).toFixed(2), dx = (-50 + Math.random() * 100).toFixed(0);
     return `<span style="left:${x}vw;--d:${d}s;--du:${du}s;--dx:${dx}px;width:${sz}px">${BAT}</span>`; }).join(''); // von unten nach oben (Inaya, 2026-10-14)
   document.body.appendChild(el); setTimeout(() => el.remove(), 4200); }
@@ -11859,7 +11861,7 @@ try { if (performance.getEntriesByType('navigation')[0]?.type === 'reload' || se
     document.querySelectorAll('.shell > .main, .shell > .aside').forEach(el => { el.style.transition = tr; el.style.transform = px ? `translateY(${px}px)` : ''; }); };
   const place = (px, q) => { if (!ind) return; ind.style.top = (railB() + Math.max(4, px / 2 - 14)) + 'px'; ind.style.transform = `translateX(-50%) rotate(${q * 360}deg)`; ind.style.opacity = px < 34 ? '0' : String(Math.min(1, (px - 34) / 14)); }; /* v597: erst sichtbar, wenn die Lücke groß genug ist */
   addEventListener('touchmove', e => { if (y0 == null) return; dy = e.touches[0].clientY - y0; if (scrollY > 0 || dy < 0) { dy = 0; ind?.remove(); ind = null; shift(0); return; }
-    if (!ind && dy > 12) { ind = document.createElement('div'); ind.id = 'pullbat'; ind.innerHTML = BAT; document.body.appendChild(ind); }
+    if (!ind && dy > 12) { ind = document.createElement('div'); ind.id = 'pullbat'; ind.innerHTML = BAT; const m = getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g) || [0, 0, 0]; if ((.2126 * m[0] + .7152 * m[1] + .0722 * m[2]) > 150) ind.classList.add('dark'); document.body.appendChild(ind); } /* v613: Lücke in Farbe und Muster der Seite, auf hellem Hintergrund schwarze Fledermaus (Inaya) */
     if (ind) { const q = Math.min(1, dy / 110), off = Math.min(dy, 160) * .5; shift(off); place(off, q); ind.classList.toggle('go', dy > 110); } }, {passive:true});
   addEventListener('touchend', () => { if (y0 == null) return; const go = dy > 110; y0 = null; if (ind) { if (go) { ind.classList.add('spin'); shift(56, true); place(56, 1); try { sessionStorage.setItem('nf-pull', '1'); } catch {} setTimeout(() => location.reload(), 350); } else { ind.remove(); ind = null; shift(0, true); setTimeout(() => document.body.classList.remove('pulling'), 260); } } }, {passive:true});
 })();
