@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1e733858a87b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ee8e392f12d5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7437,7 +7437,7 @@ function rail(){
   const tabs = [['home','Salon'],['find','Suchen'],['shopping','Shop'],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN + FR.inc.filter(reqOpen).length ? '⁠<i class="dot" aria-label="neu"></i>' : '')],['create','Erstellen', 'fab-post'],['profile','Profil' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
   const cur = ['design', 'room', 'wardrobe', 'pet', 'friends', 'settings', 'archive'].includes(V.name) ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'profile' && V.arg && V.arg !== S.me ? '' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}${obDesign ? ' obrail' : ''}">${obDesign ? obSteps(3) : ''}
-    ${!mhRoot() ? `<button type="button" class="mfab mback2" ${chSubPg() ? chSubBack() : `data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}"`} aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
+    ${!mhRoot() ? `<button type="button" class="mfab mback2" ${V.name === 'design' && !obDesign ? 'data-act="pe-save"' : chSubPg() ? chSubBack() : `data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}"`} aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
       : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}
     ${mobHead()}
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
@@ -7475,7 +7475,7 @@ SPL.iv = setInterval(() => { if (!(splReady() || Date.now() - SPL.t0 > 4000)) re
   setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me && S.unlocked) softRender(); } }, 1000); /* oben noch kurz das Logo, dann Öffentlich/Freunde */ }, 100);
 /* Kopfzeile (seit v577, Inaya): Auf jeder Seite, von der man zurück kann, steht oben links der Pfeil wie bei den Mitteilungen (kein Zurück-Knopf mehr auf der Seite).
    Unterseiten haben oben ihren Titel (MH_PAGES), fremde Profile und alle anderen das Logo. Die fünf Hauptseiten unten haben links das Plus. */
-const MH_PAGES = {notifs:'Mitteilungen', settings:'Einstellungen', browse:'Stöbern', pet:'Begleiter', wardrobe:'Garderobe', room:'Zimmer', friends:'Freunde', mall:'Mall', moebel:'Möbelhaus', archive:'Archiv', visit:'Zimmer'};
+const MH_PAGES = {design:'Profil bearbeiten', notifs:'Mitteilungen', settings:'Einstellungen', browse:'Stöbern', pet:'Begleiter', wardrobe:'Garderobe', room:'Zimmer', friends:'Freunde', mall:'Mall', moebel:'Möbelhaus', archive:'Archiv', visit:'Zimmer'};
 const MH_KEEP = {notifs:1, settings:1}; /* aus der Kopfzeile geöffnet: Verlauf bleibt */
 const MH_UP = {mall:'shopping', moebel:'shopping', browse:'find', pet:'profile', wardrobe:'profile', room:'profile', friends:'profile', settings:'profile', archive:'profile', design:'profile', notifs:'home'}; /* wohin der Pfeil führt, wenn es keinen Verlauf gibt (z. B. nach dem Neuladen) */
 const chSubPg = () => V.name === 'chats' && ['new', 'group', 'gadd'].includes(CH.mode); /* v633: Chat-Unterseiten: Pfeil oben statt Plus, ohne Glocke (Inaya) */
@@ -10137,7 +10137,7 @@ function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von ob
   return `<div class="design peig">
     <div class="pecol" style="${themeStyle(draft)}">
       ${obDesign ? `<div class="card obwelcome"><div class="card-in">${obSteps(3)}</div></div>` : ''}
-      <header class="pehead"><button type="button" class="lnk" ${obDesign ? 'data-act="ob-back" data-v="avatar"' : `data-act="profile" data-id="${u.id}"`}>${obDesign ? 'Zurück' : 'Abbrechen'}</button><b>Profil bearbeiten</b><button class="lnk pedone" type="submit" form="designform">Fertig</button></header>
+      ${obDesign ? `<header class="pehead"><button type="button" class="lnk" ${obDesign ? 'data-act="ob-back" data-v="avatar"' : `data-act="profile" data-id="${u.id}"`}>${obDesign ? 'Zurück' : 'Abbrechen'}</button><b>Profil bearbeiten</b><button class="lnk pedone" type="submit" form="designform">Fertig</button></header>` : ''}
       ${pePicHTML()}
       <form data-form="design" id="designform" class="peform">
         ${f('name', 'Name', u.name, false, 'Dein Name', 40)}
@@ -14332,6 +14332,7 @@ document.addEventListener('click', async e => {
   if (a === 'fp-newgroup') { fpNew = false; go('chats'); CH.gdraft = {name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); return; }
   if (a === 'wcol') { wColOpen = !wColOpen; render(); return; }
   if (a === 'mob-more') { mobMore = !mobMore; render(); return; }
+  if (a === 'pe-save') { const f = document.getElementById('designform'); if (f) f.requestSubmit(); else go('profile', S.me); return; } /* v637: Pfeil oben speichert „Profil bearbeiten“ (Inaya) */
   if (a === 'chat-back') { typingNow(false); CH.open = null; CH.mode = null; chatAttach = false; render(); return; }
   if (a === 'voice-rec') { if (!e.detail) voiceStart(true, b.closest('form')); return; } // Tastatur: gleich fixiert aufnehmen; mit Finger/Maus: gedrückt halten
   if (a === 'voice-x') { voiceStop(false); return; }
@@ -15189,7 +15190,7 @@ document.addEventListener('submit', async e => {
       try { const ref = sessionStorage.getItem('nf-ref'); if (ref && NF_AUTH?.claimRef) { await NF_AUTH.claimRef(ref); sessionStorage.removeItem('nf-ref'); } } catch {} /* zählt für den eigenen Link der einladenden Person */
       delete u.obOpen; try { sessionStorage.removeItem('nf-ob'); } catch {} claimHandle(u.handle); welcomeDMs();
     }
-    save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert');
+    save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert'); /* Bestätigungen zeigt toast seit v617 nicht mehr */
   }
 });
 
