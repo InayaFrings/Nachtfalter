@@ -365,3 +365,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v583: Aufgeklappte Bereiche in „Profil bearbeiten“ (z. B. Pose) scrollen sich selbst ins Bild (`scrollIntoView` im `toggle`-Listener, `.pesec{scroll-margin-top}` unter Kopfzeile und Bearbeiten-Kopf).
 - Seit v584: In „Beste Freunde und Partner“ filtert ein Suchfeld die Freundesliste beim Tippen (`.bfq`, Zeilen mit `data-q`, ohne neu zu zeichnen).
 - Seit v585: Beste Freunde und Partner stehen wieder an der alten Stelle im Profil (`profFriends`, Partner zuerst), nicht neben dem Profilbild (`bfSide` gibt nichts mehr zurück). Zeichen schlicht in Schriftfarbe ohne Kreis und ohne Rot (`.bfmark`: Herz = Partner, Stern = bester Freund).
+- Seit v586: Am PC sind Chatliste (`.chatside .chtop`) und Chat-Kasten (`.chatpanel`) gleich hoch (`--chh`), die Helfer stehen unter der Liste.
