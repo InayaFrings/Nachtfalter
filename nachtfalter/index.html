@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='3dd548adb909';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f08a51e0fd85';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2575,10 +2575,10 @@ body.pcropen{overflow:hidden}
 }
 
 /* Begleiter beim Avatar (v570) */
-.fullfig{position:relative}.pbes{position:absolute;z-index:3;display:block;width:34%;aspect-ratio:1;bottom:-1%;right:-8%;cursor:default}.pbes svg{width:100%;height:100%}
+.fullfig{position:relative}.pbes{position:absolute;z-index:3;display:block;width:62%;aspect-ratio:1;bottom:-3%;right:-34%;cursor:default}.pbes svg{width:100%;height:100%}
 [data-act="nav"].pbes{cursor:pointer;transition:filter .2s}[data-act="nav"].pbes:hover{filter:drop-shadow(0 0 10px color-mix(in srgb,currentColor 45%,transparent))}
 .fullgo:hover{filter:none!important}.fullgo:not(:has(.pbes:hover)):hover > svg{filter:drop-shadow(0 0 12px color-mix(in srgb,currentColor 35%,transparent))} /* v576: nur leuchten, worauf die Maus zeigt: Avatar = Garderobe, Begleiter = Begleiter-Seite */
-.fullhints{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}.fullhints .fullhint{margin-top:0!important;justify-self:auto}.pbes.lap{width:30%;left:50%;right:auto;bottom:10%;transform:translateX(-50%)}.pbes.lie{right:-6%;bottom:2%}
+.fullhints{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}.fullhints .fullhint{margin-top:0!important;justify-self:auto}.pbes.lap{width:50%;left:50%;right:auto;bottom:10%;transform:translateX(-50%)}.pbes.lie{right:-6%;bottom:2%}
 /* Pet-Seite für den Daumen (v570): Aktionen unten fest über der Leiste, Auswahl darüber */
 @media all /*760*/{
   .petpg{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
@@ -2798,6 +2798,14 @@ body.pulling::before{display:none} /* v615: keine eigene Fläche mehr in der Lü
 .pfood:disabled{opacity:.35;filter:grayscale(1);pointer-events:none} /* v624: satt = Essen grau */
 .fullgo:active{transform:none!important}.fullgo > svg,.fullgo .pbes > svg{transition:transform .15s}.fullgo:active:not(:has(.pbes:active)) > svg{transform:scale(.97)}.fullgo .pbes:active > svg{transform:scale(.88)} /* v627: nur das Angetippte wird kurz kleiner, Avatar oder Begleiter (Inaya) */
 .gform .gprev{top:var(--railb,64px)!important;box-shadow:0 -14px 0 var(--paper,#111)} /* v635: beim Scrollen schaut über der Vorschau nichts mehr durch */
+/* v647: Begleiter-Auswahl passt auf einen Bildschirm, kein Scrollen (Inaya): 2 × 2 Karten, Bild oben */
+html:has(.ppick),body:has(.ppick){overflow:hidden;overscroll-behavior:none}
+.ppick{height:100dvh;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;padding:calc(8px + env(safe-area-inset-top,0px)) 14px calc(84px + env(safe-area-inset-bottom,0px))}
+.ppick h1{font-size:clamp(24px,6.4vw,34px);margin:6px 0 4px}.ppick .ppsub{font-size:14px;margin:0 auto 10px}
+.ppick .ppcards{flex:1;min-height:0;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:10px}
+.ppick .ppcard{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;text-align:center;align-items:center;padding:8px 8px 10px;gap:2px;min-height:0;overflow:hidden}
+.ppick .ppcard .ppfig{grid-row:auto;width:100%;height:100%;min-height:0;max-height:24dvh}.ppick .ppcard b{font-size:20px}.ppick .pptyp{font-size:11px}.ppick .ppdesc{font-size:12.5px;line-height:1.3}
+@media (min-width:762px){.ppick .ppcards{grid-template-columns:repeat(4,1fr);grid-auto-rows:auto;align-content:center}.ppick .ppcard .ppfig{height:auto;aspect-ratio:1;max-height:none}}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -7642,7 +7650,7 @@ function friendPanel(nNew){
 }
 /* Begleiter im Profil (seit v570, Inaya): klein neben dem Avatar, bei der Pose „Sitzen“ (Schneidersitz) auf dem Schoß */
 function petBeside(u){ if (!u || u.helper) return ''; const own = u.id === S.me, p = own ? petMe() : (PROF[u.id]?.pet || u.pet); if (!p?.k || !PET_KINDS[p.k]) return ''; /* seit v579 immer im Profil (Inaya), kein Schalter mehr */
-  const pos = u.pose === 'sitzen' ? 'lap' : u.pose === 'liegen' ? 'lie' : 'side', svg = petSVG(p.k, own ? petMood(p) : 'happy', p.d || {}, 'pidle');
+  const pos = u.pose === 'sitzen' ? 'lap' : u.pose === 'liegen' ? 'lie' : 'side', svg = petSVG(p.k, own ? petMood(p) : 'happy', p.d || {}); /* v647: im Profil ohne Wippen (Inaya) */
   return own ? `<span class="pbes ${pos}" role="button" tabindex="0" data-act="nav" data-v="pet" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</span>` : `<span class="pbes ${pos}" role="img" aria-label="${esc(p.n)}">${svg}</span>`; }
 function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
   const pid = V.name === 'profile' ? (V.arg || S.me) : S.me, u = S.users[pid];
@@ -11875,7 +11883,7 @@ function batFly(){ if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
 try { if (performance.getEntriesByType('navigation')[0]?.type === 'reload' || sessionStorage.getItem('nf-pull')) { sessionStorage.removeItem('nf-pull'); setTimeout(batFly, 600); } } catch {}
 // Runterziehen zum Neuladen, nur in der installierten App (Browser haben es selbst)
 (() => { const sa = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; if (!sa) return; document.documentElement.classList.add('standalone'); /* v595: in der App kein Nachfedern der ganzen Seite (Spalt in Profilfarbe), nur das eigene Runterziehen */
-  let y0 = null, dy = 0, ind = null; const blocked = t => !!t.closest?.('.storyov,.callov,.ringov,.shpk,.chatpanel,#cmv,.mview,.sgp,.stmpanel,dialog,[role=dialog],input,textarea,.tkpage,.petpg,.pstudio') || document.body.dataset.pg === 'pet' || document.body.classList.contains('chatfull') || document.body.classList.contains('stopen');
+  let y0 = null, dy = 0, ind = null; const blocked = t => !!t.closest?.('.storyov,.callov,.ringov,.shpk,.chatpanel,#cmv,.mview,.sgp,.stmpanel,dialog,[role=dialog],input,textarea,.tkpage,.petpg,.pstudio,.ppick') || document.body.dataset.pg === 'pet' || document.body.classList.contains('chatfull') || document.body.classList.contains('stopen');
   addEventListener('touchstart', e => { if (scrollY > 0 || e.touches.length > 1 || blocked(e.target)) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, {passive:true});
   /* seit v596 wie bei Instagram: die Kopfzeile bleibt stehen, nur der Inhalt darunter gleitet nach unten; in der schwarzen Lücke dreht sich die Fledermaus */
   const railB = () => document.querySelector('.shell > .rail')?.getBoundingClientRect().bottom || 0;
@@ -13839,14 +13847,16 @@ const PET_KINDS = {
 const PET_IDS = ['katze', 'fled', 'hase', 'rabe'];
 /* Seit v646: Inayas zweites Blatt mit vier Figuren (Katze von ihr gelborange gewünscht, ein Ohr und Schwanzspitze pink) als Bilder in pwa/pets/, freigestellt. Box = Lage im 200×200-Feld, Boden bei y≈180 */
 const PET_IMG = Object.fromEntries(['katze', 'fled', 'hase', 'rabe'].map(k => [k, {src:`/pwa/pets/${k}.webp?v=646`, x:10, y:2, w:180, h:178}]));
-const PET_DRAW = Object.fromEntries(Object.entries(PET_IMG).map(([k, I]) => [k, (m, nk = '', ht = '') => `<g class="pbody"><image href="${I.src}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>${nk}${ht}${m === 'love' ? '<g class="plove" fill="#e8436e" stroke="#141016" stroke-width="1.6"><path d="M160 40c-6-6-14 2-8 8l8 8 8-8c6-6-2-14-8-8z"/><path d="M38 58c-4-4-10 1-5 5l5 5 5-5c5-4-1-9-5-5z"/></g>' : ''}</g>`]));
+PET_IMG.fled.fg = '/pwa/pets/fled_herz.webp?v=647'; /* v647: das Herzkissen liegt noch einmal über dem Halsband, damit es dahinter verschwindet (Inaya) */
+const PET_DRAW = Object.fromEntries(Object.entries(PET_IMG).map(([k, I]) => [k, (m, nk = '', ht = '') => `<g class="pbody"><image href="${I.src}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>${nk}${I.fg && nk ? `<image href="${I.fg}" x="${I.x}" y="${I.y}" width="${I.w}" height="${I.h}" preserveAspectRatio="xMidYMid meet"/>` : ''}${ht}${m === 'love' ? '<g class="plove" fill="#e8436e" stroke="#141016" stroke-width="1.6"><path d="M160 40c-6-6-14 2-8 8l8 8 8-8c6-6-2-14-8-8z"/><path d="M38 58c-4-4-10 1-5 5l5 5 5-5c5-4-1-9-5-5z"/></g>' : ''}</g>`]));
 /* Deko: Kopf (hat), Hals (neck), Zuhause (bg). lv = ab welchem Level */
 const PET_DECO = {
   hat:{schleife:{n:'Schleife', lv:1}, krone:{n:'Mini-Krone', lv:4}, hexenhut:{n:'Hexenhut', lv:6}, kuerbis:{n:'Kürbismütze', lv:8}, zylinder:{n:'Zylinder', lv:10}, heiligenschein:{n:'Heiligenschein', lv:14}},
   neck:{halsband:{n:'Halsband mit Mond', lv:2}, kette:{n:'Kreuzkette', lv:5}, schal:{n:'Schal', lv:7}, kragen:{n:'Spitzenkragen', lv:9}, rosen:{n:'Rosenkranz aus Blüten', lv:12}},
   bg:{gruft:{n:'Gruft', lv:1}, mondnacht:{n:'Mondnacht', lv:3}, friedhof:{n:'Friedhof', lv:5}, bibliothek:{n:'Alte Bibliothek', lv:7}, kerzen:{n:'Kerzenzimmer', lv:11}},
 };
-const PET_ANCH = {katze:{hat:[97, 40], neck:[100, 97, 24]}, fled:{hat:[86, 47], neck:[90, 121, 20]}, hase:{hat:[98, 26], neck:[98, 100, 22]}, rabe:{hat:[100, 26], neck:[110, 102, 20]}};
+/* hs/hr = Größe und Neigung der Kopf-Deko, ns = Größe der Hals-Deko (v647) */
+const PET_ANCH = {katze:{hat:[97, 40], hs:1.15, hr:-4, neck:[100, 97, 24], ns:1}, fled:{hat:[92, 50], hs:1.35, hr:-14, neck:[88, 119, 20], ns:1}, hase:{hat:[98, 27], hs:1.05, hr:4, neck:[98, 100, 22], ns:1}, rabe:{hat:[100, 26], hs:1, hr:-4, neck:[110, 102, 20], ns:.95}};
 const PET_HATS = {
   schleife:([x, y]) => `<g transform="translate(${x + 26} ${y + 4}) rotate(14)"><path d="M0 0L-18 -11L-18 11Z M0 0L18 -11L18 11Z" fill="#d6467e" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><circle r="5.5" fill="#f06a9c" stroke="#120e16" stroke-width="2.2"/></g>`,
   krone:([x, y]) => `<g transform="translate(${x} ${y - 4})"><path d="M-20 4L-22 -16L-10 -6L0 -20L10 -6L22 -16L20 4Z" fill="#e8c35a" stroke="#120e16" stroke-width="2.4" stroke-linejoin="round"/><circle cx="0" cy="-4" r="3.2" fill="#b0306a"/><circle cx="-12" cy="-2" r="2.2" fill="#6a8ae0"/><circle cx="12" cy="-2" r="2.2" fill="#6a8ae0"/></g>`,
@@ -13873,7 +13883,8 @@ const PET_BGS = {
 };
 /* ganzes Haustier: k = Art, m = Stimmung, d = Deko {hat, neck} */
 function petSVG(k, m = 'happy', d = {}, cls = ''){
-  const a = PET_ANCH[k] || PET_ANCH.hase, hat = d.hat && PET_HATS[d.hat] ? PET_HATS[d.hat](a.hat) : '', neck = d.neck && PET_NECKS[d.neck] ? PET_NECKS[d.neck](a.neck) : '';
+  const a = PET_ANCH[k] || PET_ANCH.hase, fit = (g, [x, y], sc = 1, r = 0) => g && `<g transform="translate(${x} ${y}) rotate(${r}) scale(${sc}) translate(${-x} ${-y})">${g}</g>`;
+  const hat = d.hat && PET_HATS[d.hat] ? fit(PET_HATS[d.hat](a.hat), a.hat, a.hs, a.hr) : '', neck = d.neck && PET_NECKS[d.neck] ? fit(PET_NECKS[d.neck](a.neck), a.neck, a.ns) : '';
   const body = (PET_DRAW[k] || PET_DRAW.hase)(m, neck, hat); /* Deko bewegt sich mit dem Körper, der Hut der Katze mit dem Kopf */
   return `<svg class="petsvg pk-${k} pm-${m} ${cls}" viewBox="0 0 200 200" aria-hidden="true">${body}${m === 'sleep' ? '<g class="pzzz" fill="#e8e4f4" font-family="Georgia,serif" font-weight="700"><text x="150" y="60" font-size="18">z</text><text x="162" y="42" font-size="14">z</text><text x="172" y="28" font-size="11">z</text></g>' : ''}</svg>`;
 }
@@ -14081,7 +14092,7 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-show') { if (p.lv < 3) { b.checked = false; return toast(tr('Ab Level 3 kannst du deinen Begleiter im Profil zeigen.')); } p.show = !!b.checked; save(); publishProfile(); toast(p.show ? tr('{0} ist jetzt auf deinem Profil.').replace('{0}', p.n) : tr('{0} ist nicht mehr auf deinem Profil.').replace('{0}', p.n)); } }
 document.addEventListener('submit', e => { const f = e.target; if (f.dataset?.form !== 'pet-rename') return; e.preventDefault(); e.stopImmediatePropagation(); const p = petMe(); if (!p) return;
   const n = (document.getElementById('pn-in')?.value || '').trim().slice(0, 16); if (n) p.n = n; PETNAME = false; petSave(true); render(); }, true);
-document.addEventListener('touchmove', e => { if (document.body.dataset.pg === 'pet' && !e.target.closest?.('.psheet')) e.preventDefault(); }, {passive:false}); /* v581: Seite wackelt nicht beim Wischen */
+document.addEventListener('touchmove', e => { if ((document.body.dataset.pg === 'pet' && !e.target.closest?.('.psheet')) || (document.querySelector('.ppick') && !document.getElementById('phatch'))) e.preventDefault(); }, {passive:false}); /* v647: Begleiter-Auswahl lässt sich auch nicht scrollen (Inaya) */ /* v581: Seite wackelt nicht beim Wischen */
 /* Raum des Begleiters = eigenes Zimmer (seit v572, Inaya): dieselbe Tapete und derselbe Boden */
 function petRoomBG(){ const r = me()?.room || {}; return `<div class="psbg" aria-hidden="true"><div class="pswall" style="background:${wallCSS(r.wall, r.wallC)}"></div><div class="psfloor" style="background:${floorBG(r.floor, r.floorC)}"></div></div>`; }
 /* Profil: Karte mit dem Begleiter (eigener immer, fremde ab Level 3 und wenn gezeigt) */
