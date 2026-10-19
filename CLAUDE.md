@@ -415,3 +415,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Wimpern (seit v659): das runde Auge hat offen drei Wimpern oben (`petLash`), geschlossen unten am Lidstrich.
 - Chat gestalten (seit v660): Farbe mit eigenem Kreis wie bei Klamotten und Profil (`.gpick`, setzt `CH.gdraft.theme.box`).
 - Schlafen: Nur das runde Auge geht zu (`petLid`, `PET_EYE` = Lage, Größe, Fellfarbe), das X-Auge bleibt, weil dort kein Auge ist (Inaya).
+- Chat gestalten (seit v661): Pfeil zurück geht sofort in den Chat (Design wird lokal übernommen), gespeichert wird im Hintergrund, Meldung nur bei Fehler. Vorher wartete der Pfeil auf den Server und hing am Handy.
