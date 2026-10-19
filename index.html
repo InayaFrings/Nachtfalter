@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='63b27b701cae';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='68c6815e20ef';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2559,7 +2559,7 @@ body.pcropen{overflow:hidden}
 .pesec summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;font:600 16px var(--f-display)}.pesec summary::-webkit-details-marker{display:none}
 .pesec summary svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}.pesec[open] summary svg{transform:rotate(90deg)}
 .pesecin{padding:0 16px 16px;display:grid;gap:12px}
-.pesave{margin-top:4px}body:has(.pehead) .main > .navback{display:none} /* v573: kein Zurück-Knopf über „Profil bearbeiten“, oben steht schon „Abbrechen“ */.pehint{margin:0;color:var(--muted);font-size:14px}
+.pesave{margin-top:4px}body:has(.mhtitle) .nchead .nct{display:none}body:has(.pehead) .main > .navback{display:none} /* v573: kein Zurück-Knopf über „Profil bearbeiten“, oben steht schon „Abbrechen“ */.pehint{margin:0;color:var(--muted);font-size:14px}
 @media all /*760*/{
   .design.peig{display:flex;flex-direction:column;height:auto;margin:0;gap:0}.peig .preview{display:none!important}
   .design.peig:has(.pesec[open]) > .preview{display:block!important;order:-1;position:sticky;top:calc(61px + env(safe-area-inset-top,0px));z-index:45;height:36vh;overflow:hidden;margin:0 -12px;border-bottom:2px solid var(--fg);box-shadow:0 10px 24px #0008} /* v571: Live-Vorschau, sobald man etwas gestaltet */
@@ -2584,18 +2584,6 @@ body.pcropen{overflow:hidden}
   .petpg .pneeds{gap:6px}.petpg .pneed{padding:6px 2px}
   .pethead h1{font-size:26px}
 }
-/* PC (seit v575, Inaya): genau wie am Handy, nur als breitere Spalte in der Mitte */
-@media (min-width:762px){
-  body{--colw:min(720px,100vw)}
-  .shell{max-width:var(--colw);margin-left:auto!important;margin-right:auto!important}
-  .mobnav{left:50%!important;right:auto!important;width:var(--colw);transform:translateX(-50%);border-left:1px solid var(--line);border-right:1px solid var(--line)}
-  .petpg .pacts{left:50%!important;right:auto!important;width:var(--colw);transform:translateX(-50%)}
-  .petpg .psheet{left:calc(50% - var(--colw) / 2 + 8px)!important;right:auto!important;width:calc(var(--colw) - 16px)}
-  .toast,.snack{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-  body.chatfull .chatmain>.chatpanel{left:50%!important;right:auto!important;width:var(--colw);transform:translateX(-50%);border-left:1px solid var(--line)!important;border-right:1px solid var(--line)!important}
-  .pcfull,.shpv .shpvp{left:50%!important;right:auto!important;width:var(--colw)!important;transform:translateX(-50%)}
-}
-
 /* Gestaltungs-Fenster (v576) */
 .psgo{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;width:100%;padding:16px;border:2px solid var(--p-fg,var(--fg));border-radius:16px;background:var(--p-panel,#1c1c20);color:var(--p-fg,var(--fg));text-align:left;cursor:pointer}
 .psgo .psgoi{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:var(--p-fg,#eee);color:var(--p-bg,#111)}.psgo .psgoi svg{width:28px;height:28px}
@@ -2603,7 +2591,6 @@ body.pcropen{overflow:hidden}
 body.psopen{overflow:hidden}
 .pstudio{position:fixed;inset:0;z-index:2500;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:#0a0a0b;color:#eeedf2;opacity:0;transition:opacity .2s;--fg:#eeedf2;--muted:#9a96a0;--line:#ffffff30;--line-soft:#ffffff1c;--bg:#0a0a0b;--paper:#16151a;--ink:#0a0a0b}
 .pstudio.in{opacity:1}
-@media (min-width:762px){.pstudio{left:50%;right:auto;width:var(--colw,720px);transform:translateX(-50%)}}
 .pshd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;border-bottom:1px solid #ffffff22}.pshd b{font:700 19px var(--f-display)}
 .psprev{position:relative;overflow:hidden;min-height:0;padding:12px 10px 0}
 .psprev .preview{height:100%;overflow:hidden;pointer-events:none;border-radius:12px}
@@ -2621,6 +2608,42 @@ body.psopen{overflow:hidden}
 .pstabs button[aria-selected="true"]{background:#eeedf2;color:#0a0a0b;border-color:#eeedf2}
 .psbody{overflow-y:auto;padding:4px 14px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px;align-content:start;max-height:38vh}
 .psexpl{margin:4px 0 2px;font-size:15px;color:#d8d4dc}.psexpl b{color:#fff}
+/* PC (seit v575, Inaya): wie am Handy, im PC-Format (v577): die Leiste von unten steht links als Seitenleiste (mit Logo, Erstellen, Mitteilungen, Einstellungen),
+   oben bleibt eine schlanke Zeile mit Zurück-Pfeil und Titel. Inhalt als Spalte in der Mitte; Profil ab 1200 px dreispaltig (links Helfer + Avatar, rechts Gästebuch). */
+.mobnav .pconly{display:none}
+@media (min-width:762px){
+  body{--colw:min(720px,100vw);--sbw:78px;padding-left:var(--sbw)}
+  .shell{max-width:var(--colw);margin-left:auto!important;margin-right:auto!important}
+  .mobnav{position:fixed;left:0!important;right:auto!important;top:0;bottom:0;width:var(--sbw);transform:none!important;display:flex!important;flex-direction:column;align-items:stretch;gap:4px;padding:16px 10px;border-top:0;border-right:1px solid var(--line);background:var(--bg);z-index:1000}
+  .mobnav .pconly{display:flex}.mobnav .mnsep{height:1px;background:var(--line-soft);margin:8px 6px}
+  .mobnav .mnlogo{justify-content:center;padding:4px 0 14px}.mobnav .mnlogo .logo-mark{width:54px}
+  .mobnav .mb{position:relative;display:flex;align-items:center;justify-content:center;gap:14px;min-height:50px;padding:10px;border-radius:12px;color:var(--muted)}
+  .mobnav .mb span{display:none}.mobnav .mb:hover{background:#ffffff0d;color:var(--fg)}.mobnav .mb.on{color:var(--fg);background:#ffffff12}.mobnav .mb.on::before{display:none}
+  .mobnav .mb svg{width:26px;height:26px}.mobnav .mb .dot{position:absolute;top:10px;left:34px}
+  .rail .mfab[data-act="fab-post"],.rail .mtop{display:none!important}
+  .petpg .pacts{left:calc(50% + var(--sbw) / 2)!important;right:auto!important;width:var(--colw);transform:translateX(-50%)}
+  .petpg .psheet{left:calc(50% + var(--sbw) / 2 - var(--colw) / 2 + 8px)!important;right:auto!important;width:calc(var(--colw) - 16px)}
+  .petpg{padding-bottom:110px}.petpg .pacts{bottom:0}.petpg .psheet{bottom:96px}
+  .toast,.snack{bottom:24px;left:calc(50% + var(--sbw) / 2)}
+  body.chatfull .chatmain>.chatpanel{left:calc(50% + var(--sbw) / 2)!important;right:auto!important;width:var(--colw);transform:translateX(-50%);border-left:1px solid var(--line)!important;border-right:1px solid var(--line)!important}
+  .pcfull,.shpv .shpvp{left:calc(50% + var(--sbw) / 2)!important;right:auto!important;width:var(--colw)!important;transform:translateX(-50%)}
+  .pstudio{left:calc(50% + var(--sbw) / 2);right:auto;width:var(--colw);transform:translateX(-50%)}
+  .shell{padding-bottom:24px!important}
+}
+@media (min-width:1100px){
+  body{--sbw:236px}
+  .mobnav{padding:22px 14px}.mobnav .mnlogo{justify-content:flex-start;padding:4px 10px 18px}.mobnav .mnlogo .logo-mark{width:120px}
+  .mobnav .mb{justify-content:flex-start;padding:10px 14px}.mobnav .mb span{display:inline;font:500 17px var(--f-display);color:inherit}.mobnav .mb .dot{left:32px}
+}
+@media (min-width:1200px){
+  body[data-pg="profile"] .shell{max-width:1320px;display:grid;grid-template-columns:300px minmax(0,1fr) 360px;column-gap:22px;align-items:start}
+  body[data-pg="profile"] .shell > .rail{grid-column:1/-1;grid-row:1}
+  body[data-pg="profile"] .shell > .main{grid-column:2;grid-row:2;min-width:0}
+  body[data-pg="profile"] .shell > .aside{display:contents}
+  body[data-pg="profile"] .pcleft{grid-column:1;grid-row:2;display:grid;gap:16px;position:sticky;top:76px;align-self:start}
+  body[data-pg="profile"] .pcleft .fullhints{flex-wrap:wrap;justify-content:center}body[data-pg="profile"] .pcleft .fullhint{font-size:13px!important;padding:7px 12px!important}
+  body[data-pg="profile"] .gbcard{grid-column:3;grid-row:2;position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto}
+}
 /* Startbildschirm wie bei Insta (seit v563): Logo in der Mitte, nur solange die Seite lädt */
 #splash{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;background:var(--bg,#0a0a0b);transition:opacity .35s ease,visibility .35s}
 #splash .logo-img{width:min(210px,56vw);margin-bottom:12vh;animation:splin .6s ease both}
@@ -7234,7 +7257,7 @@ function rail(){
   const tabs = [['home','Salon'],['find','Suchen'],['shopping','Shop'],['chats','Chats' + (nNew ? `⁠<i class="dot" aria-label="${nNew} neu"></i>` : '')],['notifs','Mitteilungen' + (ntN + FR.inc.filter(reqOpen).length ? '⁠<i class="dot" aria-label="neu"></i>' : '')],['create','Erstellen', 'fab-post'],['profile','Profil' + (V.name !== 'settings' && newMembers() ? '⁠<i class="dot" aria-label="neue Mitglieder"></i>' : '')]];
   const cur = ['design', 'room', 'wardrobe', 'pet', 'friends', 'settings', 'archive'].includes(V.name) ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'profile' && V.arg && V.arg !== S.me ? '' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}">
-    ${MH_PAGES[V.name] ? `<button type="button" class="mfab" data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="home" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
+    ${!mhRoot() ? `<button type="button" class="mfab mback2" data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
       : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}
     ${mobHead()}
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
@@ -7270,7 +7293,12 @@ const splReady = () => { const app = document.getElementById('app'); if (!app?.c
 SPL.iv = setInterval(() => { if (!(splReady() || Date.now() - SPL.t0 > 4000)) return; clearInterval(SPL.iv);
   const el = document.getElementById('splash'); if (el) { el.classList.add('out'); setTimeout(() => el.remove(), 400); }
   setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me && S.unlocked) softRender(); } }, 1000); /* oben noch kurz das Logo, dann Öffentlich/Freunde */ }, 100);
-const MH_PAGES = {notifs:'Mitteilungen', settings:'Einstellungen'}; /* Seiten mit Pfeil zurück und Titel in der Handy-Kopfzeile */
+/* Kopfzeile (seit v577, Inaya): Auf jeder Seite, von der man zurück kann, steht oben links der Pfeil wie bei den Mitteilungen (kein Zurück-Knopf mehr auf der Seite).
+   Unterseiten haben oben ihren Titel (MH_PAGES), fremde Profile und alle anderen das Logo. Die fünf Hauptseiten unten haben links das Plus. */
+const MH_PAGES = {notifs:'Mitteilungen', settings:'Einstellungen', browse:'Stöbern', pet:'Begleiter', wardrobe:'Garderobe', room:'Zimmer', friends:'Freunde', mall:'Mall', moebel:'Möbelhaus', archive:'Archiv', visit:'Zimmer'};
+const MH_KEEP = {notifs:1, settings:1}; /* aus der Kopfzeile geöffnet: Verlauf bleibt */
+const MH_UP = {mall:'shopping', moebel:'shopping', browse:'find', pet:'profile', wardrobe:'profile', room:'profile', friends:'profile', settings:'profile', archive:'profile', design:'profile', notifs:'home'}; /* wohin der Pfeil führt, wenn es keinen Verlauf gibt (z. B. nach dem Neuladen) */
+const mhRoot = () => ['home', 'shopping', 'chats', 'find'].includes(V.name) || (V.name === 'profile' && (!V.arg || V.arg === S.me));
 setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me) softRender(); } }, 9000);
 function mobHead(){
   if (MH_PAGES[V.name]) return `<div class="mhead"><b class="mhtitle">${MH_PAGES[V.name]}</b></div>`;
@@ -7338,7 +7366,8 @@ let roomMode = ''; // '' = nur ansehen, 'edit' = einrichten, 'chat' = Raumchat
 function mobNav(cur, nNew){
   const it = (k, l, act='nav') => `<button aria-label="${l}" class="mb ${(k === 'more' ? mobMore : cur === k && !mobMore) ? 'on' : ''}" data-act="${k === 'more' ? 'mob-more' : act}" data-v="${k}" ${k === 'more' ? `aria-expanded="${mobMore}"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS[RAIL_ICO[k] || k]}</svg><span>${l}</span>${k === 'chats' && nNew ? '<i class="dot" aria-label="neu"></i>' : ''}</button>`;
   // „Mehr“ ersetzt durch Minigames (Inaya): alles andere ist oben (Freunde, Chats, Zahnrad für Einstellungen) oder in dieser Leiste
-  return `<nav class="mobnav" aria-label="Hauptnavigation am Handy">${it('home','Salon')}${it('shopping','Shop')}${it('chats','Chat')}${it('find','Suche')}${it('profile','Profil')}</nav>
+  const ntN = V.name === 'notifs' ? 0 : ntNew() + FR.inc.filter(reqOpen).length;
+  return `<nav class="mobnav" aria-label="Hauptnavigation"><span class="mnlogo pconly">${logoSVG()}</span>${it('home','Salon')}${it('shopping','Shop')}${it('chats','Chat')}${it('find','Suche')}${it('profile','Profil')}<span class="mnsep pconly"></span>${it('create','Erstellen','fab-post').replace('class="mb ', 'class="mb pconly ').replace('data-v="create"', 'data-v="home"')}${it('notifs','Mitteilungen').replace('class="mb ', 'class="mb pconly ').replace('</button>', ntN ? '<i class="dot" aria-label="neu"></i></button>' : '</button>')}${it('settings','Einstellungen').replace('class="mb ', 'class="mb pconly ').replace('</button>', V.name !== 'settings' && newMembers() ? '<i class="dot" aria-label="neu"></i></button>' : '</button>')}</nav>
   ${friendPanel(nNew)}`;
 }
 /* Handy: Freunde-Knopf links wie bei Momio – Freunde, Chats und Suche, von überall zu den Profilen */
@@ -7451,10 +7480,10 @@ function asideHTML(){
   const mob = isMob(), pid = V.name === 'profile' ? (V.arg || S.me) : S.me;
   return `<aside class="aside">
     ${mob || V.name === 'profile' && (V.arg || S.me) === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
-    ${mob && V.name !== 'settings' ? '' : `<div class="card"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
+    ${V.name === 'profile' ? '<div class="pcleft">' : ''}${mob && V.name !== 'settings' && !(V.name === 'profile' && matchMedia('(min-width:1200px)').matches) ? '' : `<div class="card helpcard"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
       ${others.map(f => `<li>${cameo(f)}<span>${ulink(f.id)}<small>${etx(f.mood) || '&nbsp;'}</small></span></li>`).join('')}
     </ul></div></div>`}
-    ${mob && pid === S.me && V.name !== 'profile' ? '' : fullCard()}
+    ${mob && pid === S.me && V.name !== 'profile' ? '' : fullCard()}${V.name === 'profile' ? '</div>' : ''}
 
     ${V.name === 'profile' && PROF_WALL ? `<div class="card gbcard"><h2 class="card-h">Gästebuch</h2><div class="card-in">${PROF_WALL}</div></div>` : ''}
   </aside>`;
@@ -12565,7 +12594,7 @@ const SW_MOEB = `<svg class="swsvg" viewBox="0 0 320 250" aria-hidden="true"><pa
   <rect x="92" y="96" width="136" height="26" rx="4" fill="#0a0a0b" stroke="#ece9e3" stroke-width="2"/><rect x="96" y="100" width="128" height="18" rx="3" fill="none" stroke="#ece9e3" stroke-width=".8" opacity=".5"/><text x="160" y="115" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="700" letter-spacing="2" fill="#f4f2f0">MÖBELHAUS</text>
   <path d="M126 236V146Q126 134 138 134H182Q194 134 194 146V236Z" fill="#ece9e3" stroke="#0a0a0b" stroke-width="3"/><g class="sdoor"><path class="sdl" d="M129 236V146Q129 137 140 137H160V236Z" fill="#232326" stroke="#0a0a0b" stroke-width="2"/><path class="sdr" d="M191 236V146Q191 137 180 137H160V236Z" fill="#232326" stroke="#0a0a0b" stroke-width="2"/><circle cx="153" cy="186" r="3" fill="#c9c6c0"/><circle cx="167" cy="186" r="3" fill="#c9c6c0"/></g>
   <path d="M112 132V152M208 132V152" stroke="#3a3a3d" stroke-width="3"/><circle cx="112" cy="156" r="9" fill="#ffffff" opacity=".12"/><circle cx="208" cy="156" r="9" fill="#ffffff" opacity=".12"/><circle cx="112" cy="156" r="6" fill="#f4f2f0" stroke="#0a0a0b"/><circle cx="208" cy="156" r="6" fill="#f4f2f0" stroke="#0a0a0b"/></svg>`;
-function ncHead(title, back){ return `${back && !NAVH.length ? `<button type="button" class="lnk ncback" data-act="nav" data-v="shopping">← Shopping-Straße</button>` : ''}<div class="nchead"><h1 class="nct">${title}</h1><span class="sp"></span>${WAL.d ? `<span class="ncpill" title="Deine Nocti-Coins">${NC_ICO}<b data-ncc>${WAL.d.c}</b></span>` : ''}${back ? ncBagHTML() : ''}</div>`; }
+function ncHead(title, back){ return `<div class="nchead"><h1 class="nct">${title}</h1><span class="sp"></span>${WAL.d ? `<span class="ncpill" title="Deine Nocti-Coins">${NC_ICO}<b data-ncc>${WAL.d.c}</b></span>` : ''}${back ? ncBagHTML() : ''}</div>`; }
 const ncWait = () => `<div class="card"><div class="card-in"><p class="note">${!social ? 'Shopping geht, sobald du mit Noctibat verbunden bist.' : WAL.err === 'permission-denied' || WAL.old || (WAL.d && NCPRICE && !Object.keys(NCPRICE).length) ? (amOwner ? '⚠ Der Shop braucht die neuen Firestore-Regeln. Kopiere firebase/firestore.rules in die Firebase-Konsole (Firestore → Regeln) und veröffentliche sie, dann öffne Noctibat einmal als Owner (die Preise werden dabei eingetragen).' : 'Der Shop öffnet in Kürze.') : 'Lädt …'}</p></div></div>`;
 function shoppingView(){
   return `<section class="ncpage">${ncHead('Shopping', false)}
@@ -13530,11 +13559,12 @@ function renderInner(){
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
   app.innerHTML = `<div class="shell">${rail()}
-    <main class="main${wide ? ' wide' : ''}">${V.name === 'home' ? '' : navBackHTML()}${body()}${V.name === 'home' ? salonEnd() : ''}</main>
+    <main class="main${wide ? ' wide' : ''}">${body()}${V.name === 'home' ? salonEnd() : ''}</main>
     ${wide ? '' : asideHTML()}
     ${pmenuSheet()}
     <footer class="foot"><span>Noctibat · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
+  document.body.dataset.pg = V.name; /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
   syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
@@ -14083,7 +14113,7 @@ document.addEventListener('click', async e => {
   if (/^pet-/.test(a)) { petAct(a, b); return; }
   if (/^intro-/.test(a)) { introAct(a); return; }
   if (a === 'nav-back') { navBack(); return; }
-  if (a === 'nav') { const root = !!b.closest('.rail, .mtop, .mobnav') && !(isMob() && MH_PAGES[b.dataset.v]); if (root) /* Mitteilungen/Einstellungen am Handy: Verlauf bleibt, damit der Pfeil zurückführt */ { NAVH.length = 0; navSkip = true; } // Hauptleiste: Verlauf beginnt neu, kein Pfeil
+  if (a === 'nav') { const root = !!b.closest('.rail, .mtop, .mobnav') && !(isMob() && MH_KEEP[b.dataset.v]); if (root) /* Mitteilungen/Einstellungen am Handy: Verlauf bleibt, damit der Pfeil zurückführt */ { NAVH.length = 0; navSkip = true; } // Hauptleiste: Verlauf beginnt neu, kein Pfeil
     try { go(b.dataset.v, b.dataset.v === 'profile' ? S.me : null); if (b.dataset.mode) { roomMode = b.dataset.mode; render(); } } finally { navSkip = false; } }
   else if (a === 'profile') { if (CMV || document.getElementById('cmv')) cmvClose(true); go('profile', social && id === social.uid ? S.me : id); } // auch aus dem Kommentarfenster heraus (Inaya, 2026-10-12)
   else if (a === 'wall-del') { const w = me().wall, i = +b.dataset.i; if (w[i]) { w.splice(i, 1); save(); render(); toast('Eintrag gelöscht'); } }
