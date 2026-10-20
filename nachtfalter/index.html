@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a2756841d266';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a8e46b6e6e28';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14594,7 +14594,7 @@ document.addEventListener('click', async e => {
       b.outerHTML = `<div class="pgcell on"><video id="${vid}" class="stvid" controls autoplay playsinline loop${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${mu || x.clip.nos ? ' muted' : ''}${x.clip.nos ? ' data-nos="1"' : ''} poster="${esc(x.clip.poster || '')}" src="${esc(src.url)}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}</div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
       .catch(() => { b.disabled = false; if (pl) pl.textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
-  else if (a === 'compose-open') { composeOpen = true; render(); document.getElementById('ptext')?.focus(); }
+  else if (a === 'compose-open') { composeOpen = true; render(); }
   else if (a === 'compose-close') { pcrClear(); composeOpen = false; postCrop = null; PVIDEO = null; PAUDIO = null; PLINK = false; PTAGS = []; PTAGP = false; render(); }
   else if (a === 'ptag-open') { PTAGP = !PTAGP; paintCompose(); }
   else if (a === 'ptag-close') { PTAGP = false; paintCompose(); }
@@ -14976,8 +14976,8 @@ document.addEventListener('click', async e => {
   else if (a === 'ftap') { if (!isMob()) return; const r = me().room, k = b.dataset.k;
     if (r.items.some(i => i.k === k)) { r.items = r.items.filter(i => i.k !== k); roomSel = null; } else { const f = FURN[k]; r.items.push({k, x:44, y:f.wall ? 10 : 46}); roomSel = r.items.length - 1; }
     save(); render(); }
-  else if (a === 'fab-post') { if (social || PUB && S.me) postAud = S.salonMode === 'pub' ? 'pub' : 'fr'; homeCompose = true; if (V.name !== 'home') go('home'); render(); document.getElementById('ptext')?.focus(); }
-  else if (a === 'hcompose') { homeCompose = !homeCompose; render(); if (homeCompose) document.getElementById('ptext')?.focus(); }
+  else if (a === 'fab-post') { if (social || PUB && S.me) postAud = S.salonMode === 'pub' ? 'pub' : 'fr'; homeCompose = true; if (V.name !== 'home') go('home'); render(); }
+  else if (a === 'hcompose') { homeCompose = !homeCompose; render(); }
   else if (a === 'place') { const f = FURN[b.dataset.k]; me().room.items.push({k:b.dataset.k, x:44, y:f.wall ? 10 : 46}); roomSel = me().room.items.length - 1; save(); render(); document.getElementById('room')?.scrollIntoView({block:'center'}); }
   else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); r.items.forEach(o => { if (o.on === b.dataset.k) delete o.on; }); roomSel = null; save(); render(); }
   else if (a === 'unplace-sel') { const r = me().room, gone = r.items[roomSel]; r.items.splice(roomSel, 1); if (gone) r.items.forEach(o => { if (o.on === gone.k) delete o.on; }); roomSel = null; save(); render(); }
