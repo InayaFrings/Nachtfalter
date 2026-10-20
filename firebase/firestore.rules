@@ -259,6 +259,8 @@ service cloud.firestore {
         // Einladen: je 10 neue Konten über den eigenen Link 3000 Coins (rf = schon abgeholte Belohnungen)
         (N().op.t == 'ref' && N().rf == W().get('rf', 0) + 1 && exists(/databases/$(database)/documents/refc/$(uid))
           && get(/databases/$(database)/documents/refc/$(uid)).data.u.size() >= N().rf * 10 && N().c == W().c + 3000 && N().diff(W()).affectedKeys().hasOnly(['c', 'rf', 'op']))
+        // v698: einmal je Wallet die Level-Coins nachzahlen, die vor der Tabelle (lvC4) fehlten: Unterschied zur alten Formel lvC für das jetzige Level
+        || (N().op.t == 'lvfix' && W().get('lf', false) == false && N().lf == true && N().c == W().c + lvC4(W().l) - lvC(W().l) && N().diff(W()).affectedKeys().hasOnly(['c', 'lf', 'op']))
         // Startbonus für alle, die ihr Wallet schon vorher hatten: einmal 2000 Coins
         ||         (N().op.t == 'bonus' && W().get('wb', false) == false && N().wb == true && N().c == W().c + 2000 && N().diff(W()).affectedKeys().hasOnly(['c', 'wb', 'op']))
         // Einmalig: was man trägt bzw. im Zimmer hat, gehört einem (laut eigenem Profil)
