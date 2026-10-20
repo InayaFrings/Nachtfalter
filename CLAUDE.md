@@ -446,3 +446,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v690 (Inaya): Geschenk-Karte im Chat (`giftInner`) über `tr()`, weil Blasen nicht nachübersetzt werden. Chatliste: gespeicherte Vorschau-Texte („Du: “, „♪ Sprachnachricht“, „🎁 Geschenk“ …) zeigt `chatPrevText` über `prevTr`/`PREV_EN` auf Englisch.
 - Seit v691 (Inaya): Neuer Beitrag (`fab-post`, `hcompose`, `compose-open`) setzt den Fokus nicht mehr ins Textfeld, die Tastatur kommt erst beim Antippen.
 - Seit v692 (Inaya): Passt der Inhalt der Suche ganz über die untere Leiste, lässt sie sich nicht scrollen (`fitChk` setzt `html.fitpg`: overflow hidden + `touchmove` gesperrt, außer in Freunde-Panel/Dialogen). Geprüft nach jedem Zeichnen, beim Drehen und alle 0,7 s auf der Suche.
+- Seit v693 (Inaya): Einstellungen → Verschlüsselung zeigt den Kasten „Auf allen Geräten lesen“ nur noch, solange er nicht aktiv ist (`E2A.kp`), also wenn es etwas einzurichten gibt.
