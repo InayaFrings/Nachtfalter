@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2fb1dfa60585';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ed044e88c8ed';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7139,7 +7139,7 @@ async function cloudInit(){
       let st = null, why = ''; for (let i = 0; i < 3 && !st; i++) { try { st = await cloudRead(col, meta.data(), fbOk ? S : null); } catch (e) { why = e?.keys ? e.keys.join(', ') : e?.code || e?.message || ''; await new Promise(r => setTimeout(r, 1500)); } }
       if (!st && fbOk) { st = S; CLAST = null; CBAD = ['alles']; } // Sicherung nicht lesbar, aber dieses Gerät hat den Stand: damit weitermachen und die Sicherung neu schreiben
       if (!st) { toast(`Dein Konto ließ sich gerade nicht laden${why ? ' (' + why + ')' : ''}. Bitte lade die Seite neu.`); return; } // nichts speichern: sonst ginge der echte Stand verloren
-      st.notifSeen = Math.max(+st.notifSeen || 0, +S.notifSeen || 0) || st.notifSeen; st.seen = seenMax(st.seen, S.seen); st.stSeen = seenMax(st.stSeen, S.stSeen); // Gelesenes vom Gerät nicht zurückdrehen
+      st.notifSeen = Math.max(+st.notifSeen || 0, +S.notifSeen || 0) || st.notifSeen; st.seen = seenMax(st.seen, S.seen); st.stSeen = seenMax(st.stSeen, S.stSeen); if (!localEmpty && st.hnew) for (const k of Object.keys(st.hnew)) if (!(S.hnew || {})[k]) delete st.hnew[k]; // Gelesenes vom Gerät nicht zurückdrehen
       S = ensureHelpers(st); cloud.ok = true; cloud.loaded = true;
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
       softRender(); if (CBAD.length) { cloudQueue(); toast('Deine Kontosicherung war durcheinander und wurde repariert.'); }
@@ -10339,7 +10339,7 @@ function socialStart(){
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incReady = true; FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (CH.open && CH.unsub) markSeen(); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
     Promise.all([...new Set(CH.list.filter(c => !c.group).flatMap(c => c.members))].filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender); /* v655: Gruppenmitglieder erst, wenn ihr Bild gebraucht wird */
   }, () => {});
   { const fd = db.doc('friends/' + social.uid), frPut = d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; };
@@ -10619,7 +10619,7 @@ function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
   return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 60).onSnapshot({includeMetadataChanges:true}, snap => {
     CH.mraw = snap.docs.filter(d => !isDel(d.id) && !(chHidAt(id) && (+d.data().ts || 0) <= chHidAt(id))).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); drawMsgs(first && keep); e2Prev(id); rdMark();
     if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
-function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (c?.last && ((S.seen || {})[c.id] || 0) < c.last) { S.seen = {...(S.seen || {}), [c.id]:c.last}; save(); seenPush(0, {[c.id]:c.last}); } }
+function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (!c) return; let t = +c.last || 0; for (const m of (CH.mraw || [])) if (!m.pend && +m.d?.ts > t) t = +m.d.ts; /* v697: auch die neueste Nachricht zählt, die Chatliste kommt oft erst nach den Nachrichten */ if (t && ((S.seen || {})[c.id] || 0) < t) { S.seen = {...(S.seen || {}), [c.id]:t}; save(); seenPush(0, {[c.id]:t}); } }
 function drawMsgs(keep){
   const box = document.getElementById('msgs'); if (!box) return; const st0 = box.scrollTop;
   box.innerHTML = msgsHTML(); box.scrollTop = keep ? st0 : box.scrollHeight; msgImgs(box, keep); voicePend(); vmPrefetch();
