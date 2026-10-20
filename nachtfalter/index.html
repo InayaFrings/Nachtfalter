@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='adecea622222';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2fb1dfa60585';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2601,7 +2601,7 @@ body.pcropen{overflow:hidden}
 body.psopen{overflow:hidden}
 .pstudio{position:fixed;inset:0;z-index:2500;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:#0a0a0b;color:#eeedf2;opacity:0;transition:opacity .2s;--fg:#eeedf2;--muted:#9a96a0;--line:#ffffff30;--line-soft:#ffffff1c;--bg:#0a0a0b;--paper:#16151a;--ink:#0a0a0b}
 .pstudio.in{opacity:1}
-.pshd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;border-bottom:1px solid #ffffff22}.pshd b{font:700 19px var(--f-display)}
+.psback{width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:inherit;padding:0;cursor:pointer}.psback svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.pshd{display:grid;grid-template-columns:44px 1fr 44px;text-align:center;align-items:center;justify-content:space-between;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;border-bottom:1px solid #ffffff22}.pshd b{font:700 19px var(--f-display)}
 .psprev{position:relative;overflow:hidden;min-height:0;padding:12px 10px 0}
 .psprev .preview{height:100%;overflow:hidden;pointer-events:none;border-radius:12px}
 .psprev .preview > section{width:390px;transform-origin:0 0}
@@ -3603,7 +3603,7 @@ const POSES = [ // Ganzkörper-Posen: Körper, Kopf, Arme (Drehung an der Schult
   ['laessig','Lässig', 'rotate(3 100 392)', 'rotate(-7 100 114)', [12, 0], ['', '']],
   ['schuechtern','Schüchtern', 'translate(0 3)', 'rotate(8 100 114) translate(0 3)', [-5, -5], ['', '']],
   ['sitzen','Sitzen', '', 'rotate(-4 100 114)', [8, 8], ['', '']], // Beine werden unten in avatar() geknickt
-  ['liegen','Liegen', 'matrix(0 -1 1 0 -104 446)', 'rotate(-8 100 114)', [-3, 150], ['', '']], // in Originalgröße auf dem Rücken, Kopf links, ein Knie angewinkelt (ragt seitlich aus dem Kasten)
+  ['liegen','Liegen', 'matrix(0 -1 1 0 -104 446)', 'rotate(-8 100 114)', [-3, 4], ['', '']], // in Originalgröße auf dem Rücken, Kopf links, ein Knie angewinkelt (ragt seitlich aus dem Kasten)
 ];
 // Posen im Zimmer (Inaya): Winken, Drehen, Springen, Schüchtern, Sitzen, Liegen
 const ROOM_POSES = ['gerade', 'drehen', 'springen', 'schuechtern', 'sitzen', 'liegen'];
@@ -5285,9 +5285,9 @@ function avatarI(o0, view='full', pose='', lite=false){
   // Posen wie früher: Arme und Kopf werden aus der fertigen Figur ausgeschnitten und gedreht (Schulter bzw. Hals als Gelenk)
   const PZ = typeof POSES !== 'undefined' ? POSES.find(x => x[0] === pose) : null;
   const AR = PZ ? PZ[4] : [0, 0], HR = PZ && PZ[3] ? parseFloat(PZ[3].replace('rotate(', '')) || 0 : 0;
-  const SIT = pose === 'sitzen';
+  const SIT = pose === 'sitzen', LIE = pose === 'liegen'; /* v696: beim Liegen ist ein Knie angewinkelt, der Arm liegt unten (Inaya) */
   let inner;
-  if (!AR[0] && !AR[1] && !HR && !SIT) inner = `<g${wob}>${back}<g transform="${B.head}">${headBack}</g></g>${img}<g${wob}>${body}${held[0]}${held[1]}<g transform="${B.head}">${headFront}</g></g>`;
+  if (!AR[0] && !AR[1] && !HR && !SIT && !LIE) inner = `<g${wob}>${back}<g transform="${B.head}">${headBack}</g></g>${img}<g${wob}>${body}${held[0]}${held[1]}<g transform="${B.head}">${headFront}</g></g>`;
   else {
     const cut = B.ny - 12, pr = iarm(B, B.pit), sh = iarm(B, B.sy + 25), W = B.W, AB = 930;
     const armR = k => { let d = k ? `M${W + 500} ${cut}L${f1(pr[3])} ${cut}` : `M-500 ${cut}L${f1(pr[2])} ${cut}`; for (let y = B.pit; y <= AB; y += 10) { const a = iarm(B, y); d += `L${f1(k ? a[3] - 1 : a[2] + 1)} ${y}`; } return d + `L${k ? W + 500 : -500} ${AB}Z`; };
@@ -5295,21 +5295,27 @@ function avatarI(o0, view='full', pose='', lite=false){
     const piv = [[f1((sh[1] + sh[2]) / 2), B.sy + 25], [f1((sh[3] + sh[4]) / 2), B.sy + 25]];
     // Schneidersitz: Oberschenkel klappen an der Hüfte nach außen, Unterschenkel kreuzen sich vorn
     const hc = B.cy - 30, far = k => (k ? W + 500 : -500);
-    const thighR = k => { let d = `M${B.cx} ${hc}L${B.cx} ${B.ky}L${far(k)} ${B.ky}L${far(k)} ${AB}`; for (let y = AB; y >= hc; y -= 10) { const a = iarm(B, y); d += `L${f1(k ? a[3] - 1 : a[2] + 1)} ${y}`; } return d + 'Z'; };
-    const shinR = k => `M${B.cx} ${B.ky}L${B.cx} 2400L${far(k)} 2400L${far(k)} ${B.ky}Z`;
+    const thighR = (k, t = hc) => { let d = `M${B.cx} ${t}L${B.cx} ${B.ky}L${far(k)} ${B.ky}L${far(k)} ${AB}`; for (let y = AB; y >= t; y -= 10) { const a = iarm(B, y); d += `L${f1(k ? a[3] - 1 : a[2] + 1)} ${y}`; } return d + 'Z'; };
+    const shinR = (k, t = B.ky) => `M${B.cx} ${t}L${B.cx} 2400L${far(k)} 2400L${far(k)} ${t}Z`;
     const hip = k => { const e = ilegE(B, k, hc); return [f1((e[0] + e[1]) / 2), hc]; }, knee = k => { const e = ilegE(B, k, B.ky); return [f1((e[0] + e[1]) / 2), B.ky]; };
     const TA = 72, SA = 150;
     const core = `${img}<g${wob}>${body}${AR[0] ? '' : held[0]}${AR[1] ? '' : held[1]}<g transform="${B.head}">${headFront}</g></g>`;
     const armCore = `${img}<g${wob}>${body.slice(lower.length).replace(belts, '')}</g>`; // ohne Rock und Hose, die bleiben unten
-    defs.push(`<clipPath id="${u}na"><path clip-rule="evenodd" d="M-600 -700H${W + 600}V2400H-600Z${AR[0] ? armR(0) : ''}${AR[1] ? armR(1) : ''}${HR ? headR : ''}${SIT ? thighR(0) + thighR(1) + shinR(0) + shinR(1) : ''}"/></clipPath>`);
+    defs.push(`<clipPath id="${u}na"><path clip-rule="evenodd" d="M-600 -700H${W + 600}V2400H-600Z${AR[0] ? armR(0) : ''}${AR[1] ? armR(1) : ''}${HR ? headR : ''}${SIT ? thighR(0) + thighR(1) + shinR(0) + shinR(1) : LIE ? thighR(1) + shinR(1) : ''}"/></clipPath>`);
+    if (LIE) defs.push(`<clipPath id="${u}lo"><path clip-rule="evenodd" d="M-600 -700H${W + 600}V2400H-600Z${thighR(1)}${shinR(1)}"/></clipPath>`);
     if (SIT) defs.push(`<clipPath id="${u}up"><path d="M-600 -700H${W + 600}V${hc}H-600Z"/></clipPath>`);
-    inner = `<g${wob}>${back}<g transform="rotate(${HR} ${B.cx} ${cut})"><g transform="${B.head}">${headBack}</g></g>${SIT ? `<g clip-path="url(#${u}up)">${lower}</g>` : lower}</g>`;
+    inner = `<g${wob}>${back}<g transform="rotate(${HR} ${B.cx} ${cut})"><g transform="${B.head}">${headBack}</g></g>${SIT ? `<g clip-path="url(#${u}up)">${lower}</g>` : LIE ? `<g clip-path="url(#${u}lo)">${lower}</g>` : lower}</g>`;
+    let LAPGAP = '';
     if (SIT) { // Schoß zwischen Hüfte und Unterschenkeln in der Farbe von Hose/Rock, Strumpfhose oder Haut
       const lw = Object.keys(o.legw || {}).find(k => ILEGW[k] && /blick|fein|netz|ringel|zerr|spinne|herz|stern|kreuz|schach|lauf/.test(k));
       const lc = o.bottom && o.bottom !== 'u_kein' && IBOT[o.bottom] ? (o.bottomC || IBOTC[o.bottom] || '#141218') : lw ? (o.legw[lw] && o.legw[lw] !== 'auto' ? o.legw[lw] : '#141218') : '#464646'; /* v680: ohne Hose wie die Unterhose, nicht hautfarben (sah als heller Fleck kaputt aus, Inaya) */
-      inner += lc === '#464646' ? X.P(`M${B.cx - 90} ${hc - 40}Q${B.cx} ${hc - 50} ${B.cx + 90} ${hc - 40}L${B.cx + 34} ${hc + 58}Q${B.cx} ${hc + 72} ${B.cx - 34} ${hc + 58}Z`, lc) /* v680: ohne Hose nur der Schritt der Unterhose, zwischen den Beinen bleibt frei (Inaya) */ : X.P(`M${B.cx - 150} ${hc - 10}Q${B.cx} ${hc - 30} ${B.cx + 150} ${hc - 10}Q${B.cx + 200} ${hc + 120} ${B.cx} ${hc + 150}Q${B.cx - 200} ${hc + 120} ${B.cx - 150} ${hc - 10}Z`, lc); }
+      if (lc === '#464646') LAPGAP = o.skin && o.skin !== '#f7f6f3' ? o.skin : '#eae6e3'; inner += lc === '#464646' ? `<path d="M${B.cx - 170} ${hc - 10}Q${B.cx} ${hc - 30} ${B.cx + 170} ${hc - 10}L${B.cx + 200} ${hc + 170}Q${B.cx} ${hc + 190} ${B.cx - 200} ${hc + 170}Z" fill="${LAPGAP}"/>` /* v696: Schoß in Hautfarbe unter den Beinen, keine Lücke mehr (Inaya) */ /* v680: ohne Hose nur der Schritt der Unterhose, zwischen den Beinen bleibt frei (Inaya) */ : X.P(`M${B.cx - 150} ${hc - 10}Q${B.cx} ${hc - 30} ${B.cx + 150} ${hc - 10}Q${B.cx + 200} ${hc + 120} ${B.cx} ${hc + 150}Q${B.cx - 200} ${hc + 120} ${B.cx - 150} ${hc - 10}Z`, lc); }
     if (SIT) [0, 1].forEach(k => { const h = hip(k); defs.push(`<clipPath id="${u}t${k}"><path d="${thighR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -TA : TA} ${h[0]} ${h[1]})"><g clip-path="url(#${u}t${k})">${core}</g></g>`; });
+    const LT = -32, LS = 64; /* Liegen: Oberschenkel nach oben, Unterschenkel zurück zum Boden */
+    if (LIE) { const h = hip(1); defs.push(`<clipPath id="${u}t1"><path d="${thighR(1, hc - 40)}"/></clipPath>`); inner += `<g transform="rotate(${LT} ${h[0]} ${h[1]})"><g clip-path="url(#${u}t1)">${lower}${core}</g></g>`; }
     inner += `<g clip-path="url(#${u}na)">${core}</g>`;
+    if (SIT && LAPGAP) inner += `<path d="M${B.cx - 60} ${hc - 44}Q${B.cx} ${hc - 48} ${B.cx + 56} ${hc - 44}L${B.cx + 18} ${hc + 36}Q${B.cx} ${hc + 44} ${B.cx - 18} ${hc + 36}Z" fill="#2e2d31"/>`; /* Schritt der Unterhose verbindet die Beine */
+    if (LIE) { const h = hip(1), n = knee(1); defs.push(`<clipPath id="${u}s1"><path d="${shinR(1, B.ky - 40)}"/></clipPath>`); inner += `<g transform="rotate(${LT} ${h[0]} ${h[1]}) rotate(${LS} ${n[0]} ${n[1]})"><g clip-path="url(#${u}s1)">${lower}${core}</g></g>`; }
     if (SIT) [1, 0].forEach(k => { const h = hip(k), n = knee(k); defs.push(`<clipPath id="${u}s${k}"><path d="${shinR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -TA : TA} ${h[0]} ${h[1]}) rotate(${k ? SA : -SA} ${n[0]} ${n[1]})"><g clip-path="url(#${u}s${k})">${core}</g></g>`; });
     if (HR) { defs.push(`<clipPath id="${u}hd"><path d="${headR}"/></clipPath>`); inner += `<g transform="rotate(${HR} ${B.cx} ${cut})"><g clip-path="url(#${u}hd)">${core}</g></g>`; }
     [0, 1].forEach(k => { if (!AR[k]) return; defs.push(`<clipPath id="${u}a${k}"><path d="${armR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -AR[k] : AR[k]} ${piv[k][0]} ${piv[k][1]})"><g clip-path="url(#${u}a${k})">${armCore}</g><g${wob}>${held[k]}</g></g>`; });
@@ -6820,7 +6826,7 @@ document.addEventListener('click', e => {
   else if (a === 'bcol') { const t = mediaTarget(); t.banner[b.dataset.k] = b.dataset.v; if (S.pending) save(); document.getElementById('bcols').outerHTML = bannerColors(t.banner); refreshMedia(); }
   else if (a === 'pic-avatar') { const t = mediaTarget(); t.pic = null; if (S.pending) save(); refreshMedia(); }
   else if (a === 'ps-open') { psOpen(); }
-  else if (a === 'ps-close') { psClose(); }
+  else if (a === 'ps-close') { psClose(); const u = me(); if (draft && u && !obDesign && !u.obOpen) { u.theme = {...draft}; if (mdraft?.banner) u.banner = {...mdraft.banner}; save(); } } /* v696: Pfeil zurück speichert das Aussehen gleich (Inaya) */
   else if (a === 'ps-tab') { PSTAB = b.dataset.v; psPaint(); }
   else if (a === 'pic-swap') { const m = mdraft; if (!m) return; if (m.pic) { m.picKeep = m.pic; m.pic = null; } else if (m.picKeep) { m.pic = m.picKeep; m.picKeep = null; } const el = document.querySelector('.pepic'); if (el) el.outerHTML = pePicHTML(); const pv = document.getElementById('preview'); if (pv) pv.innerHTML = previewHTML(); if (isMob()) fitPrev(); }
   else if (a === 'songfile-del') { const f = me().songFile; if (f && social) for (let i = 0; i < f.n; i++) social.db.doc(`profiles/${social.uid}/song/c${i}`).delete().catch(() => {}); delete me().songFile; save(); b.closest('.row').innerHTML = '<label class="btn ghost filebtn">Song hochladen<input type="file" accept="audio/*,.mp3,.m4a" id="e-songfile"></label><span class="note" id="e-songname"></span>'; toast('Song entfernt'); }
@@ -10214,7 +10220,7 @@ function psBody(){ const t = PS_TABS.find(x => x[0] === PSTAB) || PS_TABS[0];
 function psPrevBG(){ return `background-color:${draft.page || '#0a0a0b'};background-image:${patternURL(draft.pagePattern, isLight(draft.page || '#0a0a0b') ? 'tag' : 'nacht', .12)}`; }
 function psOpen(){ if (!draft) return; document.getElementById('pstudio')?.remove(); const pg = document.getElementById('preview'); if (pg) pg.id = 'preview-page';
   const el = document.createElement('div'); el.id = 'pstudio'; el.className = 'pstudio'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', tr('Aussehen gestalten'));
-  el.innerHTML = `<header class="pshd"><b>${esc(tr('Aussehen gestalten'))}</b><button type="button" class="btn" data-act="ps-close">${esc(tr('Fertig'))}</button></header><div class="psprev" data-hl="${PSTAB}" style="${psPrevBG()}"><div class="preview" id="preview">${previewHTML()}</div></div><div class="pscontrols">${psBody()}</div>`;
+  el.innerHTML = `<header class="pshd"><button type="button" class="psback" data-act="ps-close" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><b>${esc(tr('Aussehen gestalten'))}</b><span></span></header><div class="psprev" data-hl="${PSTAB}" style="${psPrevBG()}"><div class="preview" id="preview">${previewHTML()}</div></div><div class="pscontrols">${psBody()}</div>`;
   document.body.appendChild(el); document.body.classList.add('psopen'); requestAnimationFrame(() => { fitPrev(); el.classList.add('in'); try { hslFit(); } catch {} }); }
 function psPaint(){ const el = document.getElementById('pstudio'); if (!el) return; const c = el.querySelector('.pscontrols'), y = c.querySelector('.psbody')?.scrollTop || 0, x = c.querySelector('.pstabs')?.scrollLeft || 0; c.innerHTML = psBody(); c.querySelector('.pstabs').scrollLeft = x; el.querySelector('.psprev').dataset.hl = PSTAB; try { hslFit(); } catch {} const t = c.querySelector('.pstabs'), on = t?.querySelector('[aria-selected="true"]'); if (t && on && (on.offsetLeft < t.scrollLeft || on.offsetLeft + on.offsetWidth > t.scrollLeft + t.clientWidth)) t.scrollLeft = on.offsetLeft - 10; t?.dispatchEvent(new Event('scroll')); }
 function psClose(){ const el = document.getElementById('pstudio'); if (!el) return; el.remove(); document.body.classList.remove('psopen'); const pg = document.getElementById('preview-page'); if (pg) { pg.id = 'preview'; pg.innerHTML = previewHTML(); } }
