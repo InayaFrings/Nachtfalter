@@ -147,7 +147,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 
 ## Mindestalter (seit v477, ab v534 wieder 16)
 
-- Registrieren ab 16 Jahren (`MIN_AGE`; v477–v533 kurz 12, seit v534 wegen der Horror-Teile wieder 16). Geprüft in `birthProblem` (Registrierung und Abfrage `birthView` für Konten ohne Geburtsdatum). Bestehende Konten unter 16 (`tooYoung`) sehen nur `youngView`: Konto bleibt gespeichert, Zugang ab dem 16. Geburtstag, das Datum lässt sich dort nicht neu eingeben. Die Owner-Kennung (`amOwner`) ist ausgenommen. Seit v683 steht das Geburtsdatum als `bd` im Profil (Alter antippen zeigt es, Geburtstags-Mitteilung an Freunde).
+- Registrieren ab 16 Jahren (`MIN_AGE`; v477–v533 kurz 12, seit v534 wegen der Horror-Teile wieder 16). Geprüft in `birthProblem` (Registrierung und Abfrage `birthView` für Konten ohne Geburtsdatum). Bestehende Konten unter 16 (`tooYoung`) sehen nur `youngView`: Konto bleibt gespeichert, Zugang ab dem 16. Geburtstag, das Datum lässt sich dort nicht neu eingeben. Die Owner-Kennung (`amOwner`) ist ausgenommen. Seit v683 steht das Geburtsdatum als `bd` im Profil, seit v686 nur noch für die Geburtstags-Mitteilung an Freunde (im Profil wird es nicht mehr angezeigt).
 
 ## Salon ohne Springen (seit v481)
 
@@ -439,3 +439,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v682 (Inaya): Geschenk-Fenster mit „Zurück“ nur noch mittig mit dem Pfeil der Kopfzeile (`.gfback`), dann ohne X; das X steht nur noch auf Schritten ohne Zurück (Auswahl Garderobe/Zimmer, Shop-Geschenk).
 - Seit v683 (Inaya): Alter im Profil antippen zeigt das Geburtsdatum (`ageHTML`, `AGEO`, Profilfeld `bd`). Freunde-Zahl auf fremden (auch privaten) Profilen öffnet deren Freundesliste im Freunde-Panel (`fpUid`, `FRL`/`loadFriendsOf`); private Profile zeigen Beiträge (`np`) und Freunde (`pstatsHTML`). Geburtstage von Freunden als Mitteilung (Art `b`, Knopf „Gratulieren“ öffnet den Chat). Suche findet Name und Nutzername aller Konten über `NM` (handles), privat oder öffentlich. Profilseiten ohne Mindesthöhe (`body[data-pg=profile] #app{min-height:0}`), leere `.aside` ausgeblendet.
 - Seit v684 (Inaya): Beitrag in einer Story antippen zeigt erst „Beitrag ansehen ›“ mittig auf dem Beitrag (seit v685, vorher darüber) (`stAskPost`, `.stpvask`, Story pausiert), erst das öffnet ihn (`st-postgo`); Tippen daneben schließt die Blase (Klick wird abgefangen).
+- Seit v686 (Inaya): Alter antippen zeigt kein Geburtsdatum mehr (`ageHTML` nur noch Alter); `bd` bleibt für die Geburtstags-Mitteilungen.
