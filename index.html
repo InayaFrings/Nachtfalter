@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9f449b5cb65f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d0e07e3f0aef';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -268,7 +268,7 @@ label.f{display:grid;gap:4px}
 .salonseg{margin:0 0 14px}
 .ucount{font:400 18px/1.4 var(--f-display);margin:0 0 6px}.ucount b{font-size:26px}
 .feed.insta{display:grid;gap:22px}
-.feed.insta .post{content-visibility:auto;contain-intrinsic-size:auto 640px}
+/* v688: kein content-visibility mehr bei Beiträgen: nach jedem Neuzeichnen standen sie ein Bild lang 640 px hoch, der Salon ruckelte (Inaya) */
 .feed.insta .post,.feed.insta .post:first-child{background:var(--paper);border:1px solid var(--line-soft);border-radius:8px;padding:0 0 16px;gap:12px;overflow:hidden;min-width:0}
 .feed.insta .post>*{margin-inline:18px;min-width:0}
 .feed.insta .post>.ph{padding-top:14px}
@@ -698,7 +698,7 @@ body.custom-page footer.foot{background:var(--paper);padding:10px;border:1px sol
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--ink);font:400 17px var(--f-display);padding:9px 18px;z-index:1300;max-width:calc(100% - 32px);box-shadow:0 6px 30px #000a}
 footer.foot{grid-column:1/-1;font:14px var(--f-ital);color:var(--dim);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-top:10px}
 footer.foot .lnk{color:var(--muted)}
-@media (prefers-reduced-motion:no-preference){.post,.tile{animation:rise .35s ease-out both}}
+@media (prefers-reduced-motion:no-preference){.tile{animation:rise .35s ease-out both}}
 @keyframes rise{from{transform:translateY(4px)}to{transform:none}}
 
 /* Freunde, Chats, Zimmer, Einstellungen */
@@ -2832,6 +2832,7 @@ html:has(.ppick),body:has(.ppick){overflow:hidden;overscroll-behavior:none}
 .phead .pbtns .btn,.phead .pactw .row>.btn{padding:12px 6px;font-size:16px;display:inline-flex;align-items:center;justify-content:center!important;text-align:center;gap:6px}
 .pshbtn.bestbtn{display:flex;width:100%;margin:10px 0 0;padding:12px 10px;border-radius:0;background:color-mix(in srgb,var(--p-soft,#0c0b0e) 92%,transparent);color:var(--p-fg,var(--fg));border:1px solid var(--p-line,var(--line));font:400 16px var(--f-display);letter-spacing:.04em;white-space:normal;line-height:1.25} /* v665: wie „Bearbeiten“ */
 .phead .plink.pic,.psteck{background:color-mix(in srgb,var(--p-soft,#0c0b0e) 92%,transparent)!important}.psteck{border:1px solid var(--p-line,var(--line))!important} /* v670: leicht durchscheinend wie die Felder in „Profil bearbeiten“ (Inaya) */
+.psteck>h3.lbl{font:700 18px var(--f-display)!important;letter-spacing:.02em;color:var(--p-fg,var(--fg))!important;opacity:1;margin:0 0 12px!important}.psteck .steck2{row-gap:26px!important} /* v688: Steckbrief-Überschrift dicker, eine Zeile frei zwischen „Über mich“ und den Interessen (Inaya) */
 .proom .proom-hint,.proom-hint.fullhint,body .proom-hint.fullhint{border-radius:0!important;background:color-mix(in srgb,var(--p-soft,#0c0b0e) 92%,transparent)!important;color:var(--p-fg,var(--fg))!important;border:1px solid var(--p-line,var(--line))!important;font:400 15px var(--f-display)!important;letter-spacing:.04em!important;box-shadow:none!important} /* v671: eckig wie die anderen Profil-Knöpfe (Inaya) */
 body[data-pg=profile] #app{min-height:0}body[data-pg=profile] .aside:not(:has(.card)){display:none} /* v683: auch kurze (private) Profile enden 16 px über der Leiste (Inaya) */body[data-pg=profile] .aside{gap:16px}body[data-pg=profile] .shell{padding-bottom:calc(79px + env(safe-area-inset-bottom,0px))!important} /* v676: unten nur 16 px Luft bis zur Leiste, wie zwischen den Kästen (Inaya) */body[data-pg=profile] .pcleft,body[data-pg=profile] .pcright{display:grid;gap:16px;align-content:start}body[data-pg=profile] .pcleft>.card,body[data-pg=profile] .pcright>.card{margin:0!important} /* v675: überall 16 px zwischen den Kästen, auch Avatar und Begleiter (Inaya) */
 .phead .pmorebtn{width:48px;height:auto;align-self:stretch;min-height:44px}
