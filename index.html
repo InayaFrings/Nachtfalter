@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='76e03ba6e629';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='29771c3acb49';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2928,8 +2928,10 @@ document.addEventListener('pointerup', e => { if (!SHD) return; const {sh, y, h}
 async function shpThumb(art){ const im = art?.querySelector('.pgal img, img[data-pimg], .pmedia img, img.pimg, img'); if (!im || !im.naturalWidth) return '';
   try { const c = document.createElement('canvas'), w = 320, h = Math.round(w * Math.min(1.5, im.naturalHeight / im.naturalWidth)); c.width = w; c.height = h; const x = c.getContext('2d'), r = Math.max(w / im.naturalWidth, h / im.naturalHeight);
     x.drawImage(im, (w - im.naturalWidth * r) / 2, (h - im.naturalHeight * r) / 2, im.naturalWidth * r, im.naturalHeight * r); return c.toDataURL('image/jpeg', .7); } catch { return ''; } }
+/* v701 (Inaya): jeden Beitrag teilen können, auch Reposts und öffentliche Beiträge von Leuten, die keine Freunde sind (PROF), Owner- und Helfer-Beiträge */
+function postFind(aid, pid){ const m = x => x && x.author === aid && x.id === pid; let p = S.posts.find(m) || Object.values(S.users).flatMap(u => u.posts || []).find(m); if (p) return p; try { p = ownerPubPosts().find(m); } catch {} if (p) return p; if (PROF[aid]) p = remoteUser(aid, PROF[aid]).posts.find(m); return p || htPool().find(m) || null; }
 async function shpOpen(b){
-  const author = b.dataset.a, id = b.dataset.id, p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...htPool()].find(x => x.author === author && x.id === id); if (!p || !social) return;
+  const author = b.dataset.a, id = b.dataset.id, p = postFind(author, id); if (!p || !social) { if (social) toast('Diesen Beitrag finde ich gerade nicht.'); return; }
   const art = b.closest('article.post') || b.closest('.cmvbox'), a = p.author === S.me ? social.uid : p.author; SHP.anchor = art;
   SHP.sel = new Set(); SHP.post = {a, id:p.id, th:await shpThumb(art), t:String(p.text || '').slice(0, 140), n:profUser(p.author)?.name || ''};
   SHP.theme = (p.author === S.me ? me() : S.users[p.author] || profUser(p.author))?.theme || null; // Teilen-Fenster im Design des Beitrags (Inaya, 2026-10-13)
@@ -11727,8 +11729,8 @@ const tkAge = (v, now = srvNow()) => now - (+v?.t || 0), tkOk = (v, now) => { co
 const tkFresh = (t, now = srvNow()) => Object.entries(t?.p || {}).filter(([, v]) => v && tkOk(v, now)).map(([u]) => u);
 const TK = {cid:null, list:[], unsub:null};
 const CI = { // Symbole für Anrufe
-  ph:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5C3.5 6.7 7.3 4.5 12 4.5s8.5 2.2 8.5 5l-3 1.6-2-2.3H8.5l-2 2.3z"/><path d="M7.2 11.5L5.5 20h13l-1.7-8.5"/><circle cx="12" cy="15.6" r="2.6"/><path d="M12 12.4v.6M14.8 14.2l-.5.4M9.2 14.2l.5.4"/></svg>', // Wählscheibentelefon
-  vid:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="6.5" r="3"/><circle cx="14" cy="6.5" r="3"/><rect x="3.5" y="10.5" width="13" height="9" rx="1"/><path d="M16.5 13.5l4.5-2.2v7.4l-4.5-2.2"/><circle cx="7.5" cy="6.5" r=".6"/><circle cx="14" cy="6.5" r=".6"/></svg>', // Filmkamera mit Spulen
+  ph:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16.4v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.6 2 2 0 0 1 3.1 1.4h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7.1 9.3a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" transform="translate(1 1) scale(.92)"/></svg>', // Hörer wie am Handy (Inaya, v701)
+  vid:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5z"/></svg>', // Videokamera wie am Handy (Inaya, v701)
   mic:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
   micx:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16"/></svg>',
   camx:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3zM3 3l18 18"/></svg>',
@@ -11739,7 +11741,7 @@ const CI = { // Symbole für Anrufe
   min:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v0"/><path d="M8 19h8"/></svg>',
   chat:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.7 7.1L4 20l1-4A8 8 0 1 1 20 12z"/></svg>',
   plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
-  pen:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3C13 4 8.3 8.8 6.8 16.5L5 21"/><path d="M20.5 3c-1 6.3-5.1 10.8-11.7 12.7"/><path d="M9.3 10.8l4.2.5M8 13.6l3.6.2"/></svg>', // Schreibfeder
+  pen:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/><path d="M14.5 5.5l3 3"/></svg>', // Stift wie am Handy (Inaya, v701)
   talk:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h10a2 2 0 0 1 2 2V11a2 2 0 0 1-2 2H9l-4 3.5V13H4a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z"/><path d="M18.5 8H20a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3.5L15 17h-3a2 2 0 0 1-2-2"/><path d="M6 7.2v2.4M9 6v4.8M12 7.2v2.4"/></svg>' };
 let RTC_TURN = null; // optionaler TURN-Server aus site/rtc (nur wenn Inaya einen einträgt)
 // TURN-Adressen aufräumen (Inaya, 2026-10-14): Safari lehnt eine falsch geschriebene Adresse ab (Fehler 12) und dann klappt gar kein Anruf.
