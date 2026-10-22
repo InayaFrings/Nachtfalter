@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2b8eb3caa8b6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a45753d31394';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -695,7 +695,8 @@ body.custom-page footer.foot{background:var(--paper);padding:10px;border:1px sol
 .snack.in{transform:translate(-50%,0);opacity:1}.snack span{flex:1}.snack button{background:none;border:0;color:#fff;font:700 15.5px var(--f-display);padding:4px 2px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .rpbtn.on svg .rpchk{stroke-width:2.2}
 .snico{display:grid;place-items:center;flex:none;width:26px;height:26px}.snico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--ink);font:400 17px var(--f-display);padding:9px 18px;z-index:1300;max-width:calc(100% - 32px);box-shadow:0 6px 30px #000a}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:1300;box-sizing:border-box;min-width:min(340px,calc(100% - 24px));max-width:calc(100% - 24px);background:#262429;color:#f4f2ee;border:1px solid #ffffff1c;border-radius:12px;padding:14px 16px;font:500 15.5px var(--f-display);box-shadow:0 8px 30px #000b;animation:toastin .22s ease} /* v711 (Inaya): Hinweise unten sehen aus wie „Gerepostet“ (.snack) */
+@keyframes toastin{from{transform:translate(-50%,16px);opacity:0}to{transform:translateX(-50%);opacity:1}}
 footer.foot{grid-column:1/-1;font:14px var(--f-ital);color:var(--dim);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-top:10px}
 footer.foot .lnk{color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){.tile{animation:rise .35s ease-out both}}
@@ -14406,7 +14407,7 @@ function petPlay(){ const p = petMe(); if (!p || PETS.game) return; if (p.sl) re
   m.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); g.n++; hud.querySelector('b').textContent = g.n; petFx('spark', '✦', parseFloat(m.style.left) + 4, parseFloat(m.style.top) + 4, 700); mv(); petTemp('love', 500); });
   g.mv = setInterval(mv, 950); g.tm = setInterval(() => { g.left--; hud.querySelector('small').textContent = g.left + ' s'; if (g.left > 0) return;
     clearInterval(g.mv); clearInterval(g.tm); m.remove(); hud.remove(); PETS.game = null; petSet(p, {p:Math.min(40, g.n * 4), e:-Math.min(10, g.n)}); const x = petXP(Math.min(14, g.n + 2)); petSave(); petPaint();
-    toast(g.n ? tr('{0} Nachtfalter gefangen! Laune +{1}').replace('{0}', g.n).replace('{1}', Math.min(40, g.n * 4)) + (x ? ` · +${x} XP` : '') : tr('Kein Nachtfalter gefangen. Nochmal?')); }, 1000); }
+    /* v711 (Inaya): kein Hinweis nach dem Spielen */ }, 1000); }
 function petAct(a, b){ const p = petMe();
   if (a === 'pet-pick') { PETPICK = b.dataset.v; render(); return; }
   if (a === 'pet-pick-go') { petPickGo(); return; }
