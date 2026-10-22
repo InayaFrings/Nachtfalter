@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7519d2513a72';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='605b237e0578';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -1957,6 +1957,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .mshh .cameo svg,.mshh .cameo img{width:100%;height:100%;object-fit:cover}
 .mshh b{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mshpo img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.stpvw{display:block;position:relative}.stpvw video{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;pointer-events:none}.stpvph{display:block;width:100%;aspect-ratio:4/5;background:#0006}
 .mshtx{padding:8px 10px 10px;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .mshtx b{font-weight:600}
 .shpk{position:fixed;inset:0;z-index:3150}
@@ -2934,7 +2935,7 @@ function postFind(aid, pid){ const m = x => x && x.author === aid && x.id === pi
 async function shpOpen(b){
   const author = b.dataset.a, id = b.dataset.id, p = postFind(author, id); if (!p || !social) { if (social) toast('Diesen Beitrag finde ich gerade nicht.'); return; }
   const art = b.closest('article.post') || b.closest('.cmvbox'), a = p.author === S.me ? social.uid : p.author; SHP.anchor = art;
-  SHP.sel = new Set(); SHP.post = {a, id:p.id, th:await shpThumb(art), t:String(p.text || '').slice(0, 140), n:profUser(p.author)?.name || ''};
+  SHP.sel = new Set(); SHP.post = {a, id:p.id, th:await shpThumb(art) || p.clip?.poster || (p.gal || []).find(g => g.clip?.poster)?.clip.poster || '', t:String(p.text || '').slice(0, 140), n:profUser(p.author)?.name || ''};
   SHP.theme = (p.author === S.me ? me() : S.users[p.author] || profUser(p.author))?.theme || null; // Teilen-Fenster im Design des Beitrags (Inaya, 2026-10-13)
   shpPaint(); }
 // Gruppen in Chats teilen (Inaya, 2026-10-14): Einladungskarte im Chat, antippen fragt „Beitreten?“ und öffnet danach die Gruppe.
@@ -8237,6 +8238,15 @@ const STIC = {poll:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V1
 function stVotes(ow, sid){ const k = ow + '_' + sid;
   if (!SQ[k]) { const w = SQ[k] = {list:[]}; if (social) try { w.unsub = social.db.collection('chats/sq_' + k + '/m').onSnapshot(q => { w.list = q.docs.map(d => ({id:d.id, ...d.data()})); stIPaint(); }, () => {}); } catch {} }
   return SQ[k]; }
+/* v703 (Inaya): Beiträge mit Video in der Story zeigen das Video (stumm, in Schleife), nicht nur den Text. Gilt auch für schon gepostete Storys. */
+const STPV = {};
+function stPvKey(x){ if (!x?.a || !x.id) return null; const pp = postFind(x.a === social?.uid ? S.me : x.a, x.id); if (!pp) return null;
+  let f = pp.clip, base = 'pv_' + pp.id; if (!f?.n) { const i = (pp.gal || []).findIndex(g => g.t === 'v' && g.clip?.n); if (i < 0) return null; f = pp.gal[i].clip; base += '_' + i; }
+  const u = postOwner(pp) || x.a, k = u + ':' + base + ':' + f.v; STPV[k] = {u, f, base}; return k; }
+function stPvLoad(){ document.querySelectorAll('.stpvw[data-vk]:not([data-l])').forEach(w => { w.dataset.l = 1; const o = STPV[w.dataset.vk]; if (!o || !social) return;
+  songURL(o.u, o.f, o.base).then(src => { if (!w.isConnected) return; const v = document.createElement('video'); v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.setAttribute('muted', '');
+    if (o.f.poster) v.poster = o.f.poster; v.src = src.url; w.querySelector('img,.stpvph')?.replaceWith(v); v.play()?.catch?.(() => {}); }).catch(() => {}); }); }
+{ let q = 0; new MutationObserver(() => { if (!q) q = requestAnimationFrame(() => { q = 0; if (document.querySelector('.stpvw[data-vk]:not([data-l])')) stPvLoad(); }); }).observe(document.documentElement, {childList:true, subtree:true}); }
 const stIW = (ctx, i) => ctx ? stVotes(ctx.ow, ctx.sid).list.filter(v => v.i === i) : [];
 const stMyId = () => social?.uid || S.me;
 function stIInner(x, i, ctx){
@@ -8249,7 +8259,8 @@ function stIInner(x, i, ctx){
   if (x.k === 'ask') return `<div class="stcard"><b class="stcq">${esc(x.q || 'Stell mir eine Frage')}</b>${ctx && !ctx.own ? `<span class="staskr"><input class="staski" data-i="${i}" maxlength="200" placeholder="Antworten …" aria-label="Antwort" autocomplete="off"><button type="button" class="staskb" data-act="st-askgo" data-i="${i}" aria-label="Antwort senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button></span>` : `<span class="staskph">${ctx?.own ? 'Antworten kommen in deine Chats' : 'Antworten …'}</span>`}</div>`;
   if (x.k === 'dbd') return `<div class="stcard"><small class="stdbdh">${STPI.dbd}Du bist dran</small><b class="stcq">${esc(x.q || 'Mach mit!')}</b>${ctx && !ctx.own ? `<button type="button" class="stdbdb" data-act="st-dbd" data-i="${i}">Mitmachen</button>` : ''}</div>`;
   if (x.k === 'post') { const ou = x.a === social?.uid ? me() : profUser(x.a), nm = ou?.name || x.n || 'Jemand', pt = ou?.theme?.box ? postTheme(ou.theme) : '', th = /^data:image\/(jpeg|png|webp);base64,/.test(x.th || '') ? x.th : '';
-    const inner = `<span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${th ? `<img src="${esc(th)}" alt="" draggable="false">` : ''}${x.t ? `<span class="mshtx">${etx(x.t)}</span>` : ''}`, cls = `stpost mshpo post${pt ? ' tp' : ''}`, sty = pt ? ` style="${pt}"` : '';
+    const vk = stPvKey(x), vf = vk && STPV[vk], vpo = vf && /^data:image\/(jpeg|png|webp);base64,/.test(vf.f.poster || '') ? vf.f.poster : th; /* v703: Video des Beitrags läuft in der Story mit */
+    const inner = `<span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${vf ? `<span class="stpvw" data-vk="${esc(vk)}">${vpo ? `<img src="${esc(vpo)}" alt="" draggable="false">` : '<i class="stpvph"></i>'}</span>` : th ? `<img src="${esc(th)}" alt="" draggable="false">` : ''}${x.t ? `<span class="mshtx">${etx(x.t)}</span>` : ''}`, cls = `stpost mshpo post${pt ? ' tp' : ''}`, sty = pt ? ` style="${pt}"` : '';
     return ctx ? `<button type="button" class="${cls}"${sty} data-act="st-postopen" data-u="${esc(x.a || '')}" data-id="${esc(x.id || '')}" aria-label="Beitrag von ${esc(nm)} ansehen">${inner}</button>` : `<div class="${cls}"${sty}>${inner}</div>`; }
   if (x.k === 'av' && x.p != null) return stAvHTML(stUser(x.u) || me(), +x.p);
   if (x.k === 'av') { const u = stUser(x.u) || me(); return `<span class="stav">${u ? headPic(u, '', true) : ''}</span>`; }
@@ -9865,6 +9876,30 @@ async function uploadPostVideo(v, pid, onStep, base, enc){
   const ver = Date.now(), n = await putChunks(`profiles/${social.uid}/${base || 'pv_' + pid}`, b64, VID_CHUNK, ver, onStep);
   return {n, v:ver, type:v.type, poster:v.poster, ...(mk || {})};
 }
+/* v703 (Inaya): Videos in Beiträgen sofort ansehen. Beiträge mit Video, die gleich ins Bild kommen, laden ihr Video schon vorher im Hintergrund (vidPre, höchstens 2 gleichzeitig);
+   Antippen spielt dann ohne Warten (vidOpen, play() direkt im Antippen, damit auch das iPhone mit Ton startet). */
+function vidOpen(b, p, x, i, src){
+  if (!b.isConnected) return; const mu = p.mu && stMuPv(p.mu) ? p.mu : null, c = x ? x.clip : p.clip, id = (x ? 'vg' : 'vc') + Math.random().toString(36).slice(2, 8);
+  b.outerHTML = x ? `<div class="pgcell on"><video id="${id}" class="stvid" controls autoplay playsinline loop${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${mu || c.nos ? ' muted' : ''}${c.nos ? ' data-nos="1"' : ''} poster="${esc(c.poster || '')}" src="${esc(src.url)}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}</div>`
+    : `<div class="vframe vclip on"><video id="${id}" controls autoplay playsinline${c.nos ? ' muted data-nos="1"' : ''}${mu ? ' muted data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(c.poster || '')}" src="${esc(src.url)}"></video></div>`;
+  const v = document.getElementById(id); if (mu) vidMuWire(v, mu); try { const pr = v?.play(); pr?.catch?.(() => {}); } catch {}
+}
+const VPRE = {q:[], n:0, seen:new Set(), io:null};
+function vidPreRun(){
+  while (VPRE.n < 2 && VPRE.q.length) { const [u, f, base] = VPRE.q.shift(); if (SONGS[u + ':' + base + ':' + f.v]) continue; VPRE.n++;
+    songURL(u, f, base).catch(() => {}).finally(() => { VPRE.n--; vidPreRun(); }); }
+}
+function vidPre(b){
+  if (!social || !b?.dataset?.id) return; const u = b.dataset.u, id = b.dataset.id, gi = b.dataset.act === 'gclip';
+  const p = [...S.posts, ...Object.values(S.users).flatMap(x => x.posts || []), ...ownerPubPosts()].find(x => x.id === id && (postOwner(x) || (gi ? x.author : '')) === u);
+  const f = gi ? p?.gal?.[+b.dataset.i]?.clip : p?.clip; if (!f?.n) return;
+  const base = gi ? 'pv_' + p.id + '_' + b.dataset.i : 'pv_' + p.id, k = u + ':' + base + ':' + f.v;
+  if (SONGS[k] || VPRE.seen.has(k)) return; VPRE.seen.add(k); VPRE.q.push([u, f, base]); vidPreRun();
+}
+{ let q = 0; const look = () => { q = 0; if (!('IntersectionObserver' in window)) return;
+    VPRE.io = VPRE.io || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { VPRE.io.unobserve(e.target); vidPre(e.target); } }), {rootMargin:'900px 0px'});
+    document.querySelectorAll('[data-act=clipplay]:not([data-vpo]),[data-act=gclip]:not([data-vpo])').forEach(b => { b.dataset.vpo = 1; VPRE.io.observe(b); }); };
+  new MutationObserver(() => { if (!q) q = requestAnimationFrame(look); }).observe(document.documentElement, {childList:true, subtree:true}); }
 function clipHTML(p){
   const o = postOwner(p) || '';
   return `<button type="button" class="vframe vclip" data-act="clipplay" data-u="${esc(o)}" data-id="${esc(p.id)}" aria-label="Video abspielen"><img src="${esc(p.clip.poster || '')}" alt=""><span class="play" aria-hidden="true">▶</span>${p.clip.nos ? NOS_BADGE : ''}</button>`;
@@ -13512,14 +13547,20 @@ function audioHTML(p){
   return `<div class="apost"><button type="button" class="aplay" data-act="aplay" data-u="${esc(o)}" data-id="${esc(p.id)}" aria-label="Lied abspielen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button><div class="ainfo"><b>♪ ${esc(p.audio.name || 'Lied')}</b><span class="muted">Zum Abspielen antippen</span></div></div>`;
 }
 async function songURL(uid, f, base='song'){
-  const key = uid + ':' + base + ':' + f.v; if (SONGS[key]) return SONGS[key];
-  const docs = await Promise.all(Array.from({length:f.n}, (_, i) => social.db.doc(`profiles/${uid}/${base}/c${i}`).get()));
-  if (docs.some(d => !d.exists || d.data().v !== f.v)) throw new Error('unvollständig');
-  let b64 = docs.map(d => d.data().d).join(''), arr = b64d(b64);
-  if (f.mk && f.miv) { arr = await e2MediaOpen(arr, f); b64 = b64e(arr); } // verschlüsselte Medien aus privaten Chats
-  const type = f.type || 'audio/mpeg';
-  return SONGS[key] = {url:URL.createObjectURL(new Blob([arr], {type})), data:`data:${type};base64,${b64}`}; // data: als Ersatz, falls blob: blockiert ist
+  const key = uid + ':' + base + ':' + f.v; if (SONGS[key]) return SONGS[key]; if (SONGP[key]) return SONGP[key];
+  return SONGP[key] = (async () => { try {
+    /* v703: erst der Zwischenspeicher im Browser (nach dem Neuladen sofort da), sonst der Server */
+    const rd = o => Promise.all(Array.from({length:f.n}, (_, i) => social.db.doc(`profiles/${uid}/${base}/c${i}`).get(o)));
+    const bad = ds => !ds || ds.some(d => !d.exists || d.data().v !== f.v);
+    let docs = await rd({source:'cache'}).catch(() => null); if (bad(docs)) docs = await rd();
+    if (bad(docs)) throw new Error('unvollständig');
+    let b64 = docs.map(d => d.data().d).join(''), arr = b64d(b64);
+    if (f.mk && f.miv) { arr = await e2MediaOpen(arr, f); b64 = b64e(arr); } // verschlüsselte Medien aus privaten Chats
+    const type = f.type || 'audio/mpeg';
+    return SONGS[key] = {url:URL.createObjectURL(new Blob([arr], {type})), data:`data:${type};base64,${b64}`}; // data: als Ersatz, falls blob: blockiert ist
+  } finally { delete SONGP[key]; } })();
 }
+const SONGP = {}; /* v703: laufende Abrufe, damit Vorladen und Antippen nicht doppelt laden */
 // Profilsong läuft unsichtbar im Hintergrund (YouTube-Player-Schnittstelle oder eigene Datei).
 // Bedient wird er nur über den Knopf „♪ Musik an / aus“ im Profil.
 let YTP = null, ytApi = null, songAudio = null, songErr = '', songPlaying = false;
@@ -14675,9 +14716,10 @@ document.addEventListener('click', async e => {
   else if (a === 'pg-nav') { const tr = b.closest('.pgal')?.querySelector('.pgtrack'); tr?.scrollBy({left:+b.dataset.v * tr.clientWidth, behavior:'smooth'}); }
   else if (a === 'gclip') {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === b.dataset.id && (postOwner(x) || x.author) === b.dataset.u), i = +b.dataset.i, x = p?.gal?.[i];
-    if (!x?.clip || !social) return; b.disabled = true; const pl = b.querySelector('.play'); if (pl) pl.textContent = '…';
-    songURL(b.dataset.u, x.clip, 'pv_' + p.id + '_' + i).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vg' + Math.random().toString(36).slice(2, 8);
-      b.outerHTML = `<div class="pgcell on"><video id="${vid}" class="stvid" controls autoplay playsinline loop${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${mu || x.clip.nos ? ' muted' : ''}${x.clip.nos ? ' data-nos="1"' : ''} poster="${esc(x.clip.poster || '')}" src="${esc(src.url)}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}</div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
+    if (!x?.clip || !social) return;
+    const hit = SONGS[b.dataset.u + ':pv_' + p.id + '_' + i + ':' + x.clip.v]; if (hit) { vidOpen(b, p, x, i, hit); return; } /* v703: vorgeladen, spielt sofort */
+    b.disabled = true; const pl = b.querySelector('.play'); if (pl) pl.textContent = '…';
+    songURL(b.dataset.u, x.clip, 'pv_' + p.id + '_' + i).then(src => vidOpen(b, p, x, i, src))
       .catch(() => { b.disabled = false; if (pl) pl.textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'compose-open') { composeOpen = true; render(); }
@@ -15012,8 +15054,9 @@ document.addEventListener('click', async e => {
   else if (a === 'clipplay') {
     const p = [...S.posts, ...Object.values(S.users).flatMap(u => u.posts || []), ...ownerPubPosts()].find(x => x.id === b.dataset.id && (postOwner(x) || '') === b.dataset.u);
     if (!p?.clip || !social) return;
+    const hit = SONGS[b.dataset.u + ':pv_' + p.id + ':' + p.clip.v]; if (hit) { vidOpen(b, p, null, -1, hit); return; } /* v703: vorgeladen, spielt sofort */
     b.disabled = true; b.querySelector('.play').textContent = '…';
-    songURL(b.dataset.u, p.clip, 'pv_' + p.id).then(src => { const mu = p.mu && stMuPv(p.mu) ? p.mu : null, vid = 'vc' + Math.random().toString(36).slice(2, 8); b.outerHTML = `<div class="vframe vclip on"><video id="${vid}" controls autoplay playsinline${p.clip.nos ? ' muted data-nos="1"' : ''}${mu ? ' muted data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(p.clip.poster || '')}" src="${esc(src.url)}"></video></div>`; if (mu) vidMuWire(document.getElementById(vid), mu); })
+    songURL(b.dataset.u, p.clip, 'pv_' + p.id).then(src => vidOpen(b, p, null, -1, src))
       .catch(() => { b.disabled = false; b.querySelector('.play').textContent = '▶'; toast('Das Video ließ sich gerade nicht laden.'); });
   }
   else if (a === 'ext-giphy') { e.preventDefault(); e.stopPropagation(); extAllow('giphy'); render(); if (document.getElementById('sgp')) { sgPaint(); if (SG.mode === 'g' && SG.gsub === 'srch') sgSearch(); } const pq = document.getElementById('st-pq'); if (pq) stPqGifs(pq.value.trim().toLowerCase(), true); return; }
