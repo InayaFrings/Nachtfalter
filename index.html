@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='605b237e0578';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0648ce282688';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8059,6 +8059,12 @@ function loadPimgs(){
   });
 }
 const PIMG_UP = new Set();
+/* v704: Beitragsbild als eigenes Dokument sichern, je Gerät und Konto nur einmal (localStorage nf-pimgok:<uid>), damit es nicht bei jedem Start neu geschrieben wird */
+const pimgOkKey = () => 'nf-pimgok:' + (social?.uid || '');
+let PIMG_OK = null;
+function pimgEnsure(id, img, ts){ if (!social || !img) return; if (!PIMG_OK) { try { PIMG_OK = new Set(JSON.parse(localStorage.getItem(pimgOkKey()) || '[]')); } catch { PIMG_OK = new Set(); } }
+  if (PIMG_OK.has(id) || PIMG_UP.has(id)) return; PIMG_UP.add(id);
+  social.db.doc('chats/pimg_' + social.uid + '/m/' + id).set({img, by:social.uid, ts:ts || Date.now()}).then(() => { PIMG_OK.add(id); try { localStorage.setItem(pimgOkKey(), JSON.stringify([...PIMG_OK].slice(-400))); } catch {} }).catch(() => PIMG_UP.delete(id)); }
 // Neuigkeiten von Andy und Juliet mit Bild der neuen Sachen (Garderobe bzw. Schlafzimmer)
 // Feste Vorführ-Figuren für Helfer-Posts: Jungs sehen die Teile am Jungen, Mädchen am Mädchen (Inaya, 2026-10-10)
 const NEWS_MODEL = {...DEFAULT_OUTFIT, body:'w', back:'lang', front:'p_gerade', hairC:'#1c1b20', eyeform:'e_katze', face:'liner', top:'band', jacket:'j_kein', bottom:'jeans', shoes:'springer', hacc:{}, acc:{}, jewel:{}, legw:{}};
@@ -9444,7 +9450,7 @@ function sharePost(pid, aid){
   if (myRepost(pid, aid) && !(src && src.share)) { unsharePost(pid, aid); return; } /* zurücknehmen geht immer, auch wenn das Original fehlt */
   if (!src) { toast('Diesen Beitrag finde ich gerade nicht.'); return; }
   const a = profUser(src.author) || {};
-  const sh = src.share || {a:src.author, name:a.name || '', type:src.type, text:src.text || '', img:src.img && src.img.length < 40000 ? src.img : '', bigk:!src.img && src.bigimg ? postOwner(src) + '/' + src.id : !src.img && src.gal?.[0]?.k ? postOwner(src) + '/' + src.gal[0].k : '', url:src.url || '', ...(src.lp ? {lp:src.lp} : {}), pid:src.id, ts:src.ts};
+  const sh = src.share || {a:src.author, name:a.name || '', type:src.type, text:src.text || '', img:src.img && src.img.length < 40000 ? src.img : '', bigk:(src.img || src.bigimg) && postOwner(src) && !String(postOwner(src)).startsWith('helper-') ? postOwner(src) + '/' + src.id : !src.img && src.gal?.[0]?.k ? postOwner(src) + '/' + src.gal[0].k : '', url:src.url || '', ...(src.lp ? {lp:src.lp} : {}), pid:src.id, ts:src.ts};
   if (myRepost(sh.pid, sh.a)) { unsharePost(sh.pid, sh.a); return; } /* nochmal tippen = Repost zurücknehmen */
   const p = {id:'p' + Date.now().toString(36), author:S.me, type:'teilen', text:'', ts:Date.now(), reactions:{}, comments:[], share:sh};
   if (amOwner && social) p.pub = 1;
@@ -10546,11 +10552,13 @@ function publishProfile(){ authNameSync();
   clearTimeout(pubTimer);
   pubTimer = setTimeout(async () => {
     const u = me(); if (!u || u.remote) return;
-    const posts = S.posts.filter(p => p.author === S.me && !p.arch).sort(pinSort).slice(0, 15)
+    const posts = S.posts.filter(p => p.author === S.me && !p.arch).sort(pinSort).slice(0, 40) /* v704: bis 40 statt 15 Beiträge, damit ältere bei anderen nicht verschwinden; wird unten gekürzt, wenn das Profil zu groß ist */
       .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], sg:sgClean(p.sg), sgi:p.sgi ? 1 : 0, gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k, ...(x.tg ? {tg:x.tg} : {}), ...(x.sk ? {sk:x.sk} : {})} : x) : null, gar:p.gar || ''}));
-    let budget = 120000; // kleine Bilder direkt im Profil, große als eigenes Dokument
-    for (const x of posts) { if (x.full && x.full.length < 40000 && budget > x.full.length) { x.img = x.full; x.bigimg = 0; budget -= x.full.length; }
-      else if (x.full && !PIMG_UP.has(x.id)) { PIMG_UP.add(x.id); social.db.doc('chats/pimg_' + social.uid + '/m/' + x.id).set({img:x.full, by:social.uid, ts:x.ts}).catch(() => PIMG_UP.delete(x.id)); }
+    let budget = 120000; /* kleine Bilder zusätzlich direkt im Profil (schneller), JEDES Bild aber auch als eigenes Dokument */
+    /* v704 (Inaya): Fotos dürfen nie aus Beiträgen verschwinden. Vorher stand ein kleines Bild NUR im Profil (bigimg 0); wurde das Profil zu groß (Looks, Zimmer, Storys),
+       nahm big() die Bilder wieder heraus und bei allen anderen war das Foto weg. Jetzt hat jedes Bild sein Dokument chats/pimg_<uid>/m/<id> (einmal je Gerät hochgeladen, pimgOk) und bigimg bleibt 1. */
+    for (const x of posts) { if (x.full) { x.bigimg = 1; if (x.full.length < 40000 && budget > x.full.length) { x.img = x.full; budget -= x.full.length; } pimgEnsure(x.id, x.full, x.ts); }
+      if (x.share && x.share.img && !x.share.bigk && x.share.pid && x.share.a) { const o = x.share.a === S.me ? social.uid : x.share.a; if (!S.users[x.share.a]?.helper) x.share = {...x.share, bigk:o + '/' + x.share.pid}; } /* Repost: Bild notfalls aus dem Dokument der Originalperson */
       delete x.full; }
     handleSync(); /* neuerer Name von einem anderen Gerät zuerst übernehmen */
     const doc = {pet:petPubOf(u.pet), handle:u.handle || '', name:u.name, outfit:u.outfit, looks:(u.looks || []).slice(-30), rb:(u.roomsBook || []).slice(-12), theme:u.theme, banner:u.banner?.img && u.banner.img.length > 60000 ? {...u.banner, img:null} : u.banner,
@@ -10564,8 +10572,9 @@ function publishProfile(){ authNameSync();
     { const lp = S.posts.filter(p => p.author === S.me && !p.arch && p.type !== 'teilen').sort((a, b) => b.ts - a.ts)[0]; doc.lastPost = lp ? {id:lp.id, ts:lp.ts} : null; }
     doc.rk = [...new Set((u.room?.items || []).map(x => x.k).filter(k => typeof k === 'string'))].slice(0, 150).map(k => 'm:' + k); /* Möbel im Zimmer: Nachweis für die Übernahme ins Inventar */ /* neuester Beitrag: Nachweis für Beitrags-XP in den Regeln */
     const big = () => JSON.stringify(doc).length > 240000; // Dokumente dürfen höchstens 256 KB haben
-    if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null}));
     if (big()) doc.hl = doc.hl.map(h => ({...h, c:''}));
+    if (big()) doc.posts = posts.map(p => ({...p, img:'', share:p.share ? {...p.share, img:''} : null})); /* Bilder bleiben über bigimg/bigk sichtbar (eigenes Dokument) */
+    while (big() && doc.posts.length > 15) doc.posts = doc.posts.slice(0, Math.max(15, doc.posts.length - 5)); /* v704: erst dann ältere Beiträge weglassen, nie unter 15 */
     if (big()) doc.cover = null;
     if (big() && doc.banner) doc.banner = {...doc.banner, img:null};
     if (big()) doc.pic = null;
