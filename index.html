@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='01aaa527f428';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='34ba0f2dd6aa';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -9928,11 +9928,11 @@ async function uploadPostVideo(v, pid, onStep, base, enc){
 const VST = {};
 const vidKey = (p, x, i) => { const c = x ? x.clip : p.clip; return (postOwner(p) || p.author) + ':' + (x ? 'pv_' + p.id + '_' + i : 'pv_' + p.id) + ':' + c.v; };
 function vidOpen(b, p, x, i, src, snd){
-  if (!b.isConnected) return; const mu = p.mu && stMuPv(p.mu) ? p.mu : null, c = x ? x.clip : p.clip, id = (x ? 'vg' : 'vc') + Math.random().toString(36).slice(2, 8), vk = vidKey(p, x, i), st = VST[vk] = VST[vk] || {t:0, snd:false};
+  if (!b.isConnected) return; const bk = mvKey(b), mu = p.mu && stMuPv(p.mu) ? p.mu : null, c = x ? x.clip : p.clip, id = (x ? 'vg' : 'vc') + Math.random().toString(36).slice(2, 8), vk = vidKey(p, x, i), st = VST[vk] = VST[vk] || {t:0, snd:false};
   if (snd && !c.nos && !mu) { for (const k in VST) VST[k].snd = false; st.snd = true; document.querySelectorAll('video[data-vk]').forEach(v => { v.muted = true; const bb = v.parentElement?.querySelector('.vsnd'); if (bb) bb.innerHTML = VOL_OFF; }); }
   const on = st.snd && !c.nos && !mu, sb = c.nos || mu ? `<button type="button" class="pvol vsnd" data-act="vnos" aria-label="Kein Ton">${VOL_OFF}</button>` : `<button type="button" class="pvol vsnd" data-act="vsnd" aria-label="${on ? 'Ton aus' : 'Ton an'}">${on ? VOL_ON : VOL_OFF}</button>`;
-  b.outerHTML = x ? `<div class="pgcell on" data-act="vsnd" data-vk="${esc(vk)}"><video id="${id}" class="stvid" autoplay playsinline loop muted data-vk="${esc(vk)}"${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${c.nos ? ' data-nos="1"' : ''} poster="${esc(c.poster || '')}" src="${esc(src.url)}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}${c.nos ? NOS_BADGE : ''}${vtagHTML(x.tg)}${sb}</div>`
-    : `<div class="vframe vclip on" data-act="vsnd" data-vk="${esc(vk)}"><video id="${id}" autoplay playsinline loop muted data-vk="${esc(vk)}"${c.nos ? ' data-nos="1"' : ''}${mu ? ' data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(c.poster || '')}" src="${esc(src.url)}"></video>${sb}${c.nos ? NOS_BADGE : ''}</div>`;
+  b.outerHTML = x ? `<div class="pgcell on" data-act="vsnd" data-vk="${esc(vk)}" data-bk="${esc(bk)}"><video id="${id}" class="stvid" autoplay playsinline loop muted data-vk="${esc(vk)}"${x.l ? ` data-s="${+x.s || 0}" data-l="${+x.l}"` : ''}${c.nos ? ' data-nos="1"' : ''} poster="${esc(c.poster || '')}" src="${esc(src.url)}" style="${galPos(x, pcrR(p.gar))}"></video>${skHTML(x.sk)}${c.nos ? NOS_BADGE : ''}${vtagHTML(x.tg)}${sb}</div>`
+    : `<div class="vframe vclip on" data-act="vsnd" data-vk="${esc(vk)}" data-bk="${esc(bk)}"><video id="${id}" autoplay playsinline loop muted data-vk="${esc(vk)}"${c.nos ? ' data-nos="1"' : ''}${mu ? ' data-mu="' + esc(stMuPv(mu)) + '"' : ''} poster="${esc(c.poster || '')}" src="${esc(src.url)}"></video>${sb}${c.nos ? NOS_BADGE : ''}</div>`;
   const v = document.getElementById(id); if (!v) return; if (mu) vidMuWire(v, mu);
   if (st.t > 0) { const go = () => { try { v.currentTime = st.t; } catch {} }; if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, {once:true}); }
   v.addEventListener('timeupdate', () => { st.t = v.currentTime; });
@@ -10448,6 +10448,7 @@ const PROF = {};
 const FR = {mine:[], inc:[], ready:false, results:null, q:'', rq:{}, incTs:{}}; // rq: wann ich wem eine Anfrage geschickt habe, incTs: wann mir jemand eine geschickt hat (Inaya, 2026-10-13)
 const CH = {list:[], open:null, msgs:[], unsub:null, mode:null, gdraft:null};
 let social = null, pubTimer = null, OWNER = null, amOwner = false;
+{ let w = null; try { w = localStorage.getItem('nf-owner'); } catch {} if (w) { OWNER = w; OWNK = true; } } /* v719: Owner vom letzten Start, damit der Salon nicht bis zu 6 s wartet */
 function socialStart(){
   if (social || !cloud?.db || !me() || me().obOpen) return;
   social = {db:cloud.db, uid:cloud.uid}; SNAP.t0 = Date.now(); seenWatch(); try { const po = sessionStorage.getItem('nf-open'); if (po) setTimeout(() => pushOpen(po), 300); } catch {} /* geteilter Link von vor dem Anmelden */ setTimeout(navLive, 0); setTimeout(softRender, 0); setTimeout(() => { CH.snap = false; softRender(); snapSave(); }, 3100); setInterval(snapSave, 30000); /* Beiträge bekommen sofort ihre echte Leiste */ e2Init(); ringWatch(); clkSync(); nmWatch(); walStart(); setTimeout(pushRefresh, 8000); setTimeout(pushAsk, 4000); // eingehende Anrufe // Geräteschlüssel für verschlüsselte Chats anlegen bzw. laden
@@ -10463,7 +10464,7 @@ function socialStart(){
     fd.get().then(d => { const was = FR.ready ? JSON.stringify(FR.mine) : null; frPut(d); if (was !== JSON.stringify(FR.mine)) syncFriends(); }).catch(() => {}); }
   db.doc('site/owner').get({source:'cache'}).then(d => { if (!OWNK && d.exists) { OWNER = d.data().uid; OWNK = true; softRender(); } }).catch(() => {}); /* erst vom Gerät */
   db.doc('site/owner').get().then(async d => {
-    OWNER = d.exists ? d.data().uid : null; OWNK = true;
+    OWNER = d.exists ? d.data().uid : null; OWNK = true; try { if (OWNER) localStorage.setItem('nf-owner', OWNER); } catch {}
     if (amOwner && OWNER !== social.uid) { try { await db.doc('site/owner').set({uid:social.uid}); OWNER = social.uid; } catch {} } if (amOwner && !MEMBERS) loadMembers();
     softRender();
   }).catch(() => {});
@@ -14107,6 +14108,17 @@ function scrollXs(root){
   });
   return out;
 }
+/* v719 (Inaya): Beim Neuzeichnen flackerten Fotos, GIFs und Videos (schwarz, Bild, schwarz …), weil jedes render() sie neu anlegte.
+   mediaTake merkt vor dem Neuzeichnen fertig geladene Bilder und laufende Videos, mediaPut setzt genau diese Knoten wieder an die neue Stelle. */
+const mvKey = b => (b.dataset.u || '') + '|' + (b.dataset.id || '') + '|' + (b.dataset.act === 'gclip' ? b.dataset.i : '');
+function mediaTake(root){ const im = new Map(), vd = new Map();
+  root.querySelectorAll('.main img').forEach(o => { if (!o.complete || !o.naturalWidth) return; const k = o.dataset.pimg ? 'p:' + o.dataset.pimg : o.getAttribute('src'); if (!k) return; (im.get(k) || im.set(k, []).get(k)).push(o); });
+  root.querySelectorAll('.main [data-bk]').forEach(w => { const v = w.querySelector('video'); if (v) { w._play = !v.paused; vd.set(w.dataset.bk, w); } });
+  return {im, vd}; }
+function mediaPut(root, m){ if (!m || (!m.im.size && !m.vd.size)) return;
+  if (m.vd.size) root.querySelectorAll('.main [data-act=clipplay],.main [data-act=gclip]').forEach(b => { const w = m.vd.get(mvKey(b)); if (!w) return; m.vd.delete(mvKey(b)); b.replaceWith(w); const v = w.querySelector('video'); if (v) { VAUTO.io?.observe(v); if (w._play) { const go = () => { if (v.isConnected && v.paused) v.play().catch(() => {}); }; go(); setTimeout(go, 0); setTimeout(go, 120); } } }); /* Chrome hält ein umgehängtes Video kurz an */
+  if (m.im.size) root.querySelectorAll('.main img').forEach(n => { const k = n.dataset.pimg ? 'p:' + n.dataset.pimg : n.getAttribute('src'), l = k && m.im.get(k); if (!l?.length) return; const o = l.shift();
+    const src = o.getAttribute('src'); [...o.attributes].forEach(a => o.removeAttribute(a.name)); [...n.attributes].forEach(a => o.setAttribute(a.name, a.value)); if (!n.getAttribute('src') && src) o.setAttribute('src', src); n.replaceWith(o); }); }
 function render(){ const ancV = V.name + '|' + V.arg; renderInner(); ncNewPop(); if (ancV === ANC.v) ancFix(); else ANC.id = null; ANC.v = ancV; if (VREC || document.getElementById('vrbar')) voicePaint(); if (VSEND.length) voicePend(); }
 function renderInner(){
   if (softT) { clearTimeout(softT); softT = null; }
@@ -14131,12 +14143,14 @@ function renderInner(){
   const body = {pet:petView, home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, archive:archiveView, visit:visitView, shopping:shoppingView, mall:mallView, moebel:moebelView}[V.name] || homeView;
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
+  const mkeep = mediaTake(app);
   app.innerHTML = `<div class="shell">${rail()}
     <main class="main${wide ? ' wide' : ''}">${body()}${V.name === 'home' ? salonEnd() : ''}</main>
     ${wide ? '' : asideHTML()}
     ${pmenuSheet()}
     <footer class="foot"><span>Noctibat · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
+  mediaPut(app, mkeep); /* v719: geladene Bilder und laufende Videos bleiben beim Neuzeichnen stehen */
   setTimeout(fitChk, 0); setTimeout(fitChk, 600); document.body.dataset.pg = V.name; document.body.classList.toggle('obopen', !!me()?.obOpen); document.body.classList.toggle('chlist', V.name === 'chats' && !CH.open && innerWidth < 762); /* v699: Chatliste endet wie Suche und Profil 16 px über der Leiste */ /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
