@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='34ba0f2dd6aa';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8ecf9fdcb2e8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7079,10 +7079,21 @@ function cloudQueue(){
 }
 function cloudFlush(){ clearTimeout(cloudTimer); cloudTimer = null; cloudBusy = cloudBusy.then(cloudWrite, cloudWrite); }
 document.addEventListener('visibilitychange', () => { if (document.hidden && cloudTimer) cloudFlush(); });
+/* v720 (Inaya: „Wieso gehen Beiträge einfach verloren?“): Mit zwei Geräten (oder einer lange offenen App) schrieb das Gerät mit dem älteren Stand
+   beim nächsten Speichern seine Beitragsliste in die Kontosicherung und überschrieb damit neue Beiträge vom anderen Gerät.
+   Jetzt werden vor dem Schreiben eigene Beiträge aus der Sicherung, die hier fehlen, übernommen (gelöschte stehen in S.delP und bleiben weg). */
+async function cloudPostsMerge(last){ if (!Array.isArray(S.posts)) return false; const pk = Object.keys(last || {}).filter(k => /^posts\.\d+$/.test(k)); if (!pk.length) return false;
+  const mine = (cloudParts().posts || []).map(hstr); if (pk.length === mine.length && mine.every((x, i) => last['posts.' + i] === x)) return false;
+  try { const l = await Promise.all(pk.map((_, i) => cloud.col.doc('nf2-posts-' + i).get())); if (l.some(d => !d.exists)) return false;
+    const cp = JSON.parse(l.map(d => d.data().s || '').join('')); if (!Array.isArray(cp)) return false;
+    const have = new Set(S.posts.map(p => p.id)), dp = S.delP || {}, add = cp.filter(p => p && p.id && p.author === S.me && !p.remote && !have.has(p.id) && !dp[p.id]);
+    if (!add.length) return false; S.posts.push(...add); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} setTimeout(() => { try { publishProfile(); } catch {} }, 0); return true; } catch { return false; } }
 async function cloudWrite(){
   if (!cloud || !cloud.loaded) return; // erst nach erfolgreichem Laden (vorher konnte ein leerer Start den echten Stand überschreiben)
   let last = CLAST || {}; // mit dem Stand in der Cloud vergleichen, nicht mit dem eigenen letzten: ein anderes Gerät kann dazwischen gespeichert haben
-  if (CLAST) { try { const cm = await cloud.col.doc('nf-meta').get(); last = cm.exists && cm.data().v === 2 ? cm.data().h || {} : {}; } catch { last = {}; } }
+  let cur = {}; try { const cm = await cloud.col.doc('nf-meta').get(); cur = cm.exists && cm.data().v === 2 ? cm.data().h || {} : {}; } catch {}
+  if (CLAST) last = cur; /* ohne CLAST wird alles neu geschrieben, die Beiträge werden trotzdem vorher abgeglichen */
+  if (await cloudPostsMerge(cur)) softRender();
   const parts = cloudParts(), ks = {}, h = {}, jobs = [];
   for (const [k, l] of Object.entries(parts)) { ks[k] = l.length; l.forEach((c, i) => { const id = k + '.' + i, x = hstr(c); h[id] = x; if (last[id] !== x) jobs.push(cloud.col.doc('nf2-' + ckId(k) + '-' + i).set({s:c})); }); }
   try {
@@ -7151,7 +7162,7 @@ async function cloudInit(){
       let st = null, why = ''; for (let i = 0; i < 3 && !st; i++) { try { st = await cloudRead(col, meta.data(), fbOk ? S : null); } catch (e) { why = e?.keys ? e.keys.join(', ') : e?.code || e?.message || ''; await new Promise(r => setTimeout(r, 1500)); } }
       if (!st && fbOk) { st = S; CLAST = null; CBAD = ['alles']; } // Sicherung nicht lesbar, aber dieses Gerät hat den Stand: damit weitermachen und die Sicherung neu schreiben
       if (!st) { toast(`Dein Konto ließ sich gerade nicht laden${why ? ' (' + why + ')' : ''}. Bitte lade die Seite neu.`); return; } // nichts speichern: sonst ginge der echte Stand verloren
-      st.notifSeen = Math.max(+st.notifSeen || 0, +S.notifSeen || 0) || st.notifSeen; st.seen = seenMax(st.seen, S.seen); st.stSeen = seenMax(st.stSeen, S.stSeen); st.delP = seenMax(st.delP, S.delP); if (Array.isArray(st.posts)) st.posts = st.posts.filter(p => !(st.delP[p.id] && !p.remote && (p.author === st.me || p.author === S.me))); if (!localEmpty && st.hnew) for (const k of Object.keys(st.hnew)) if (!(S.hnew || {})[k]) delete st.hnew[k]; // Gelesenes vom Gerät nicht zurückdrehen
+      st.notifSeen = Math.max(+st.notifSeen || 0, +S.notifSeen || 0) || st.notifSeen; st.seen = seenMax(st.seen, S.seen); st.stSeen = seenMax(st.stSeen, S.stSeen); st.delP = seenMax(st.delP, S.delP); if (Array.isArray(st.posts)) st.posts = st.posts.filter(p => !(st.delP[p.id] && !p.remote && (p.author === st.me || p.author === S.me))); if (Array.isArray(st.posts) && !localEmpty && st.me === S.me && Array.isArray(S.posts)) { const have = new Set(st.posts.map(p => p.id)); for (const p of S.posts) if (p?.id && p.author === S.me && !p.remote && !have.has(p.id) && !st.delP[p.id]) { st.posts.push(p); setTimeout(cloudQueue, 0); } } /* v720: eigene Beiträge, die nur auf diesem Gerät sind, nicht verwerfen */ if (!localEmpty && st.hnew) for (const k of Object.keys(st.hnew)) if (!(S.hnew || {})[k]) delete st.hnew[k]; // Gelesenes vom Gerät nicht zurückdrehen
       S = ensureHelpers(st); cloud.ok = true; cloud.loaded = true;
       try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
       softRender(); if (CBAD.length) { cloudQueue(); toast('Deine Kontosicherung war durcheinander und wurde repariert.'); }
@@ -9540,7 +9551,7 @@ let UPL = null;
 function upPaint(){ upMini(); const c = document.getElementById('upcard'); if (!c || !UPL) return; c.querySelector('.upbar i').style.width = Math.round(UPL.prog * 100) + '%'; c.querySelector('.uppct').textContent = UPL.err ? '' : Math.round(UPL.prog * 100) + ' %'; }
 function upCardHTML(){ if (!UPL) return ''; const j = UPL.job, th = me()?.theme ? postTheme(normTheme({...me().theme})) : '';
   return `<div class="post${th ? ' tp' : ''} upcard${UPL.err ? ' uperr' : ''}" id="upcard" style="${th}"><div class="upin">${j.thumb ? `<img class="upth" src="${esc(j.thumb)}" alt="">` : `<span class="upth upmu" aria-hidden="true">♪</span>`}
-    <div class="uptx"><b>${esc(tr(UPL.err ? 'Hochladen hat nicht geklappt' : 'Beitrag wird hochgeladen …'))}</b>${UPL.err ? `<small>${esc(tr(UPL.err))}</small>` : '<small class="uppct">0 %</small>'}<span class="upbar"><i style="width:${Math.round(UPL.prog * 100)}%"></i></span></div>
+    <div class="uptx"><b>${esc(tr(UPL.err ? 'Hochladen hat nicht geklappt' : 'Beitrag wird hochgeladen …'))}</b>${UPL.err ? `<small>${esc(tr(UPL.err))}</small>` : `<small class="uppct">${Math.round(UPL.prog * 100)} %</small>`}<span class="upbar"><i style="width:${Math.round(UPL.prog * 100)}%"></i></span></div>
     ${UPL.err ? `<div class="upbtns"><button type="button" class="lnk" data-act="up-retry">${esc(tr('Nochmal'))}</button><button type="button" class="lnk" data-act="up-x">${esc(tr('Verwerfen'))}</button></div>` : ''}</div></div>`; }
 /* v707 (Inaya): Hochladen läuft weiter nach Neuladen bzw. Schließen der Seite. Der Auftrag (Dateien als Blob, Beitrag, schon Fertiges) liegt in IndexedDB (nf-upl),
    beim nächsten Öffnen geht es automatisch dort weiter (upResume). Auf anderen Seiten zeigt eine kleine Leiste über der unteren Leiste den Fortschritt (upMini). */
