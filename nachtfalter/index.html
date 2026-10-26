@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f79f62191075';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='08a345991f83';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7002,8 +7002,7 @@ function mediaEditor(st, name, only){
       <div id="bprev">${bannerHTML(b, name, S.pending?.handle || me()?.handle || '')}</div>
       ${all ? `<p class="note" style="margin:0">Im Kasten steht dein Nutzername. Muster, Farben, Schrift oder ein eigenes Bild wählst du hier.</p>` : ''}
       ${ps ? `${all ? '<span class="lbl">Muster</span>' : ''}<div class="pats">${PATTERN_OPTS.map(([v,l]) => `<button type="button" class="pat" data-act="bopt" data-k="pattern" data-v="${v}" aria-pressed="${b.pattern===v}"><i style="background-image:${patternURL(v,'nacht',.32)}"></i><span>${l}</span></button>`).join('')}</div>` : ''}
-      ${pc ? `<span class="lbl">Licht</span>${chips('mode', [['nacht','Nacht'],['tag','Tag']])}
-      ${bannerColors(b)}` : ''}
+      ${pc ? `${bannerColors(b)}` : ''}
       ${pf ? `<span class="lbl">Schrift</span><div class="chips">${FONT_OPTS.map(([v,l]) => `<button type="button" data-act="bopt" data-k="font" data-v="${v}" aria-pressed="${b.font===v}" style="font-family:${FONTS[v]}">${l}</button>`).join('')}</div>
       <div class="row"><label class="btn ghost filebtn">Eigenes Bild hochladen<input type="file" accept="image/*" id="banner-file"></label>
         ${b.img ? `<button type="button" class="btn ghost" data-act="banner-noimg">Bild entfernen</button>` : ''}</div>` : ''}
