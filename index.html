@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f0928bd1d4f0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='739a35ca0306';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3862,7 +3862,7 @@ function isleeve(B, k, len, out=6, flare=0){ const y1 = len === 'short' ? B.sy +
 function iarmClip(B){ let l = `M-80 ${B.pit}`, r = `M${B.W + 80} ${B.pit}`; for (let y = B.pit; y <= 920; y += 10) { const a = iarm(B, y); l += `L${f1(a[2] + 1)} ${y}`; r += `L${f1(a[3] - 1)} ${y}`; } return l + 'L-80 920Z' + r + `L${B.W + 80} 920Z`; }
 // ---- Kopf: alles in Koordinaten der Mädchen-Figur (Augen 118|183 und 226|180, Mund 178|243, Ohren 58–90 und 262–292) ----
 // Standard-Oberkopf mit freier Stirn (Haaransatz)
-const ICAP = 'M52 186Q30 -26 172 -30Q314 -26 292 186L284 184Q284 128 258 104Q220 82 180 60L172 69L164 60Q124 82 86 104Q60 128 60 184Z'; /* v742: Haaransatz mit Mittelscheitel wie auf Inayas Bild (schräg von der Mitte zu den Schläfen) */
+const ICAP = 'M52 186Q30 -26 172 -30Q314 -26 292 186L292 232L272 236Q270 150 240 104Q206 82 176 78L172 84L168 78Q138 82 104 104Q74 150 72 236L52 232Z'; /* v744: Haaransatz wie der Mittelscheitel-Pony, tief und fast gerade wie auf Inayas Bild (v742 war zu hoch) (schräg von der Mitte zu den Schläfen) */
 const ISIDE = (y1, jag=1) => { // Seitensträhnen vor den Ohren bis y1 (linke Seite, wird gespiegelt)
   const n = Math.max(2, Math.round((y1 - 200) / 70)); let d = 'M48 70L48 170L'; const pts = [];
   for (let k = 0; k <= n; k++) { const y = 200 + (y1 - 200) * k / n; pts.push(`${f1(44 - k * 2)} ${f1(y)}`); }
@@ -3935,8 +3935,8 @@ function iHair(o, X){ // gibt {back, front} zurück
     if (h.afro) { const [cx, cy, rx, ry] = h.afro, n = 30; let d = ''; for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2, a2 = (i - .5) / n * Math.PI * 2; d += (i ? `Q${f1(cx + rx * 1.08 * Math.cos(a2))} ${f1(cy + ry * 1.08 * Math.sin(a2))} ` : 'M') + `${f1(cx + rx * Math.cos(a))} ${f1(cy + ry * Math.sin(a))}`; }
       back += P(d + 'Z', hf); let c = ''; for (let i = 0; i < 60; i++) { const a = i * 2.39996, r = Math.sqrt((i + .5) / 60) * .9; c += `M${f1(cx + rx * r * Math.cos(a) - 7)} ${f1(cy + ry * r * Math.sin(a))}q7 -9 14 0`; } back += X.LN(c, dk, 2, .55);
     }
-    if (h.cap) front += (h.b ? `<path d="${ICAP}" fill="${hf}"/>` + X.LN('M292 186' + ICAP.slice(ICAP.indexOf('L284')).replace(/Z$/, 'L52 186'), IOL, 2.6) : P(ICAP, hf)) + // bei langen Haaren keine zweite Kontur am Oberkopf
-      X.LN('M96 30Q86 70 88 102M248 30Q258 70 256 102M140 -10Q130 30 132 76M206 -10Q216 30 212 76', dk, 1.8, .5);
+    if (h.cap) front += (h.b ? `<path d="${ICAP}" fill="${hf}"/>` + X.LN('M292 232' + ICAP.slice(ICAP.indexOf('L272')).replace(/Z$/, ''), IOL, 2.6) : P(ICAP, hf)) + // bei langen Haaren keine zweite Kontur am Oberkopf
+      X.LN('M96 30Q84 80 86 120M248 30Q260 80 258 120M140 -10Q130 40 134 80M206 -10Q216 40 210 80', dk, 1.8, .5);
     if (h.side && (IPONY[o.front] || ISPECP[o.front])) front += iboF(`<path d="M44 96L84 96L76 150L66 188L44 188Z" fill="${hf}"/>`); // Schläfe zwischen Pony und Strähne schließen
     if (h.side) { const s = h.flat ? `M48 70L48 170L46 ${h.side}L100 ${h.side}L102 236Q100 150 82 88L70 66Z` : ISIDE(h.side), sk = s.replace('M48 70L', 'M').replace(/L70 66Z$/, ''); front += iboF(`<path d="${s}" fill="${hf}"/>` + X.LN(sk, IOL, 2.6) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
     if (h.fx) front += h.fx(X, hf, dk, HC, FC);
@@ -4898,7 +4898,7 @@ Object.assign(IHAIR, {
   hc_m19:{b:hcSB(250), side:250, flat:1, cap:1, ln:''},
   hc_m20:{b:hcSB(340, 4), cap:1, ln:'M60 160Q52 260 60 330M284 160Q292 260 284 330', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[52, 160, 48, 340, 26, -6]])},
   hc_m21:{b:hcJB(360, 12, 4, 4, 20), cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[54, 160, 26, 350, 24, -12], [70, 176, 66, 300, 14, -4]])},
-  hc_m22:{b:hcJB(460, 6, 5, 5, 0, 1), cap:1, ln:'M50 220Q36 360 44 450M294 220Q308 360 300 450', fx:(X, hf, dk) => X.P('M140 30L130 -60L156 -20L172 -90L188 -20L214 -60L204 30Z', hf) + hcFaceS(X, hf, dk, [[52, 160, 40, 460, 26, -10], [70, 176, 80, 400, 14, -2]])},
+  hc_m22:{b:hcJB(460, 6, 5, 5, 0, 1), cap:1, ln:'M50 220Q36 360 44 450M294 220Q308 360 300 450', bx:(X, hf) => X.P('M140 30L130 -60L156 -20L172 -90L188 -20L214 -60L204 30Z', hf), fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[52, 160, 40, 460, 26, -10], [70, 176, 80, 400, 14, -2]])},
   hc_m23:{b:hcJB(330, 4, 4, 4), cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[56, 160, 50, 320, 20, -6]])},
   hc_m24:{b:hcSB(270), cap:1, ln:'', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[54, 150, 40, 260, 22, -10]])},
   hc_m25:{b:hcSB(330, 4), cap:1, ln:'M60 160Q52 260 60 320M284 160Q292 260 284 320', fx:(X, hf, dk) => iboF(X.P(hcStrand(54, 160, 56, 400, 26, -6), hf) + hcWrap(56, 300, 22) + hcWrap(58, 350, 18))},
