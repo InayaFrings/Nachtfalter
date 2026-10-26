@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='a9580d8aa2af';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f0928bd1d4f0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4848,8 +4848,8 @@ IHAIR.spikes = {b:HC_SPK, cap:1, ln:'', bx:(X, hf, dk) => { let t = ''; for (let
 Object.assign(HPONY, {hc_w01:'p_hcw01', hc_w02:'p_gerade', hc_w03:'p_zerzaust', hc_w04:'p_hcw04', hc_w05:'p_seitlich', hc_w06:'p_zerzaust', hc_w07:'p_hcw07', hc_w08:'p_hcw08', hc_w09:'p_hcw09', hc_w10:'p_mitte',
   hc_m01:'p_hcm01', hc_m02:'p_hcm02', hc_m03:'p_hcm03', hc_m04:'p_hcm04', hc_m05:'p_hcm05', hc_m06:'p_hcm06', hc_m07:'p_hcm07', hc_m08:'p_kein', hc_m09:'p_kein', spikes:'p_kein'});
 /* v730: Baukasten für die übrigen Haarschnitte (Längen, Kanten, Pony-Formen) */
-const hcJB = (y1, w=0, n=4, b=4, fl=0) => { const L = [[40, 60]], H = y1 - 60; for (let i = 1; i <= n; i++) { const y = 60 + H * i / n, x = 36 - w * i / n; L.push([x - (fl && i === n ? fl : 0), y]); if (i < n) L.push([x + 14, y - H / n * .35]); }
-  for (let j = 1; j <= b; j++) L.push([36 - w + (126 - 36 + w) * j / b, j % 2 ? y1 - 36 : y1 - 4]); return hcISB(L); };
+const hcJB = (y1, w=0, n=4, b=4, fl=0, hi=0) => { const L = [[40, 60]], H = y1 - 60; for (let i = 1; i <= n; i++) { const y = 60 + H * i / n, x = 36 - w * i / n; L.push([x - (fl && i === n ? fl : 0), y]); if (i < n) L.push([x + 14, y - H / n * .35]); }
+  for (let j = 1; j <= b; j++) L.push([36 - w + (126 - 36 + w) * j / b, j % 2 ? y1 - 36 : y1 - 4]); return (hi ? ISCENE_B : hcISB)(L); }; /* hi: hohe Haube wie in v730 (Inaya wollte sie bei hc_m22 zurück) */
 const hcSB = (y1, w=0) => `M${44 - w * .3} 170Q26 -32 172 -36Q318 -32 ${300 + w * .3} 170L${306 + w} ${y1}Q172 ${y1 + 12} ${38 - w} ${y1}Z`; /* glatt, gerade Kante */
 const hcCurlB = (y1, wd=30, bump=14) => hnScallop(hnSil(y1, wd), bump);
 const hcCrown = (h, n=9, y0=196, base=146) => { const P = [[60, y0]]; for (let i = 0; i <= n * 2; i++) { const a = Math.PI * (1.08 + i / (n * 2) * .84), tip = i % 2, r = tip ? base + h * (1 - .35 * Math.abs(i - n) / n) : base - 4; P.push([172 + Math.cos(a) * r, 120 + Math.sin(a) * r * 1.02]); } P.push([284, y0]); return hcPL(P); };
@@ -4898,7 +4898,7 @@ Object.assign(IHAIR, {
   hc_m19:{b:hcSB(250), side:250, flat:1, cap:1, ln:''},
   hc_m20:{b:hcSB(340, 4), cap:1, ln:'M60 160Q52 260 60 330M284 160Q292 260 284 330', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[52, 160, 48, 340, 26, -6]])},
   hc_m21:{b:hcJB(360, 12, 4, 4, 20), cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[54, 160, 26, 350, 24, -12], [70, 176, 66, 300, 14, -4]])},
-  hc_m22:{b:hcJB(460, 6, 5, 5), cap:1, ln:'M50 220Q36 360 44 450M294 220Q308 360 300 450', fx:(X, hf, dk) => X.P('M140 30L130 -60L156 -20L172 -90L188 -20L214 -60L204 30Z', hf) + hcFaceS(X, hf, dk, [[52, 160, 40, 460, 26, -10], [70, 176, 80, 400, 14, -2]])},
+  hc_m22:{b:hcJB(460, 6, 5, 5, 0, 1), cap:1, ln:'M50 220Q36 360 44 450M294 220Q308 360 300 450', fx:(X, hf, dk) => X.P('M140 30L130 -60L156 -20L172 -90L188 -20L214 -60L204 30Z', hf) + hcFaceS(X, hf, dk, [[52, 160, 40, 460, 26, -10], [70, 176, 80, 400, 14, -2]])},
   hc_m23:{b:hcJB(330, 4, 4, 4), cap:1, ln:'M70 -20Q50 50 52 150M274 -20Q294 50 292 150', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[56, 160, 50, 320, 20, -6]])},
   hc_m24:{b:hcSB(270), cap:1, ln:'', fx:(X, hf, dk) => hcFaceS(X, hf, dk, [[54, 150, 40, 260, 22, -10]])},
   hc_m25:{b:hcSB(330, 4), cap:1, ln:'M60 160Q52 260 60 320M284 160Q292 260 284 320', fx:(X, hf, dk) => iboF(X.P(hcStrand(54, 160, 56, 400, 26, -6), hf) + hcWrap(56, 300, 22) + hcWrap(58, 350, 18))},
