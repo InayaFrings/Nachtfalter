@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d179b2b4c91c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='184fb5456ced';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3799,6 +3799,7 @@ function ilegPoly(B, i, y0, y1, out=3, flare=0){
 }
 // Arm-Fläche (k 0 = links im Bild, 1 = rechts) von y0 bis y1
 function iarmPoly(B, k, y0, y1, out=5, flare=0){
+  if (self.INOSL) return 'M0 0Z'; /* v733: Unterlage für Posen ohne Ärmel */
   const A = [], C = [];
   for (let y = y0; ; y = Math.min(y + 12, y1)) { const r = iarm(B, y), t = (y - y0) / Math.max(1, y1 - y0), w = out + flare * t;
     A.push(f1(k ? r[4] + w : r[1] - w) + ' ' + f1(y)); C.push(f1(k ? r[3] - w * .5 : r[2] + w * .5) + ' ' + f1(y)); if (y >= y1) break; }
@@ -5671,7 +5672,7 @@ function avatarI(o0, view='full', pose='', lite=false){
     const shinR = (k, t = B.ky) => `M${B.cx} ${t}L${B.cx} 2400L${far(k)} 2400L${far(k)} ${t}Z`;
     const hip = k => { const e = ilegE(B, k, hc); return [f1((e[0] + e[1]) / 2), hc]; }, knee = k => { const e = ilegE(B, k, B.ky); return [f1((e[0] + e[1]) / 2), B.ky]; };
     const TA = 72, SA = 150;
-    const core = `${img}<g${wob}>${body}${AR[0] ? '' : held[0]}${AR[1] ? '' : held[1]}<g transform="${B.head}">${headFront}</g></g>`;
+    const core = `${img}<g${wob}>${body}${AR[0] ? '' : held[0]}${AR[1] ? '' : held[1]}</g>`; /* v733: Gesicht und Haare vorn kommen erst ganz oben dazu, sonst schnitten die Arm-/Kopf-Masken Zöpfe und lange Haare ab (Inaya) */
     const armCore = `${img}<g${wob}>${body.slice(lower.length).replace(belts, '')}</g>`; // ohne Rock und Hose, die bleiben unten
     defs.push(`<clipPath id="${u}na"><path clip-rule="evenodd" d="M-600 -700H${W + 600}V2400H-600Z${AR[0] ? armR(0) : ''}${AR[1] ? armR(1) : ''}${HR ? headR : ''}${SIT ? thighR(0) + thighR(1) + shinR(0) + shinR(1) : LIE ? thighR(1) + shinR(1) : ''}"/></clipPath>`);
     const coreL = AR[0] || AR[1] ? (defs.push(`<clipPath id="${u}nar"><path clip-rule="evenodd" d="M-600 -700H${W + 600}V2400H-600Z${AR[0] ? armR(0) : ''}${AR[1] ? armR(1) : ''}"/></clipPath>`), `<g clip-path="url(#${u}nar)">${core}</g>`) : core; /* v715: Beine ohne die Hände darauf (die Arme werden extra gedreht) */
@@ -5686,12 +5687,17 @@ function avatarI(o0, view='full', pose='', lite=false){
     if (SIT) [0, 1].forEach(k => { const h = hip(k); defs.push(`<clipPath id="${u}t${k}"><path d="${thighR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -TA : TA} ${h[0]} ${h[1]})"><g clip-path="url(#${u}t${k})">${coreL}</g></g>`; });
     const LT = -32, LS = 64; /* Liegen: Oberschenkel nach oben, Unterschenkel zurück zum Boden */
     if (LIE) { const h = hip(1); defs.push(`<clipPath id="${u}t1"><path d="${thighR(1, hc - 40)}"/></clipPath>`); inner += `<g transform="rotate(${LT} ${h[0]} ${h[1]})"><g clip-path="url(#${u}t1)">${lower}${coreL}</g></g>`; }
+    if (AR[0] || AR[1]) { /* v733: Oberteil, Kleid und Jacke ohne Ärmel liegen unter den gedrehten Armen, sonst blieb dort ein Loch (Inaya) */
+      self.INOSL = true; let under = ''; try { if (ITOP[o.top]) under += ITOP[o.top](B.long && !MCROP.has(o.top) ? XL : X, topC, motif); if (IJACK[o.jacket]) under += IJACK[o.jacket](XL, o.jacketC || IJACKC[o.jacket] || '#141218'); } catch {} self.INOSL = false;
+      if (under) { defs.push(`<clipPath id="${u}au"><path d="${AR[0] ? armR(0) : ''}${AR[1] ? armR(1) : ''}"/></clipPath>`); under = `<g clip-path="url(#${u}au)"><g${wob}>${under}</g></g>`; inner += SIT ? `<g clip-path="url(#${u}up)">${under}</g>` : LIE ? `<g clip-path="url(#${u}lo)">${under}</g>` : under; }
+    }
     inner += `<g clip-path="url(#${u}na)">${core}</g>`;
     if (SIT && LAPGAP) inner += `<path d="M${B.cx - 60} ${hc - 44}Q${B.cx} ${hc - 48} ${B.cx + 56} ${hc - 44}L${B.cx + 18} ${hc + 36}Q${B.cx} ${hc + 44} ${B.cx - 18} ${hc + 36}Z" fill="#2e2d31"/>`; /* Schritt der Unterhose verbindet die Beine */
     if (LIE) { const h = hip(1), n = knee(1); defs.push(`<clipPath id="${u}s1"><path d="${shinR(1, B.ky - 40)}"/></clipPath>`); inner += `<g transform="rotate(${LT} ${h[0]} ${h[1]}) rotate(${LS} ${n[0]} ${n[1]})"><g clip-path="url(#${u}s1)">${lower}${coreL}</g></g>`; }
     if (SIT) [1, 0].forEach(k => { const h = hip(k), n = knee(k); defs.push(`<clipPath id="${u}s${k}"><path d="${shinR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -TA : TA} ${h[0]} ${h[1]}) rotate(${k ? SA : -SA} ${n[0]} ${n[1]})"><g clip-path="url(#${u}s${k})">${coreL}</g></g>`; });
     if (HR) { defs.push(`<clipPath id="${u}hd"><path d="${headR}"/></clipPath>`); inner += `<g transform="rotate(${HR} ${B.cx} ${cut})"><g clip-path="url(#${u}hd)">${core}</g></g>`; }
     [0, 1].forEach(k => { if (!AR[k]) return; defs.push(`<clipPath id="${u}a${k}"><path d="${armR(k)}"/></clipPath>`); inner += `<g transform="rotate(${k ? -AR[k] : AR[k]} ${piv[k][0]} ${piv[k][1]})"><g clip-path="url(#${u}a${k})">${armCore}</g><g${wob}>${held[k]}</g></g>`; });
+    inner += `<g transform="rotate(${HR} ${B.cx} ${cut})"><g${wob}><g transform="${B.head}">${headFront}</g></g></g>`;
     if (SIT) inner = `<g transform="translate(0 ${f1(B.fy - hc - 240)})">${inner}</g>`;
   }
   return `<svg viewBox="${vb}" role="img" aria-label="Avatar"${pose === 'liegen' ? ' style="overflow:visible"' : ''}><defs>
@@ -16038,7 +16044,7 @@ const cloudReady = cloudInit();
   const COLS = [];
   for (let i = 0; i < 12; i++) { const v = Math.round(255 * (1 - i / 11)).toString(16).padStart(2, '0'); COLS.push('#' + v + v + v); }
   const HUES = [200, 220, 250, 275, 300, 330, 0, 15, 30, 45, 60, 100], LS = [[90, 88], [82, 80], [72, 72], [62, 66], [52, 62], [44, 58], [36, 56], [28, 58], [20, 60]];
-  for (const [l, sat] of LS) for (const h of HUES) COLS.push(hex(h, sat, l));
+  COLS.push('#f3e6c4','#ead39a','#e2c27a','#d8b26a','#c9a35e','#bf9a6a','#b98b4f','#a8854f','#d6a36b','#c98a55','#b5763f','#a35f2e','#8c6a45','#7d5a3a','#6e4b2f','#5e3f28','#7a4a2a','#6b3a22','#55301e','#4a2c1d','#3d2418','#33201a','#2a1c16','#1f1612'); /* v733: natürliche Blond- und Brauntöne (Inaya) */ for (const [l, sat] of LS) for (const h of HUES) COLS.push(hex(h, sat, l));
   const st = document.createElement('style');
   st.textContent = `input.cpick[data-ctype]{padding:3px;background-clip:content-box;color:transparent;font-size:0;-webkit-appearance:none;appearance:none}
 .cgrid-bg{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s ease-out;-webkit-tap-highlight-color:transparent}
