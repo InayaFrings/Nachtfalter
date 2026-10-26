@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5a5ec524ad4d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='192e79f112bb';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -6755,7 +6755,7 @@ function curColor(cat, o){ // aktuelle Farbe für den kleinen Punkt am Knopf
 function colorPanel(cat, o, act){
   if (cat === 'body') return `<fieldset class="opt"><legend class="lbl">Körper</legend><div class="chips">${[['w','Mädchen'],['m','Junge']].map(([v,l]) =>
       `<button type="button" data-act="${act}" data-k="body" data-v="${v}" aria-pressed="${(o.body === 'm' ? 'm' : 'w') === v}">${l}</button>`).join('')}</div><p class="note" style="margin:6px 0 0">Danach richtet sich die Figur.</p></fieldset>`
-    + withPick(swatches('skin','Hautfarbe',SKINS,o.skin || SKINS[0][0],act), 'skin', o.skin, act) + swatches('eyes','Augen',EYES,o.eyes || 'hohl',act);
+    + withPick(swatches('skin','Hautfarbe',SKINS,o.skin || SKINS[0][0],act), 'skin', o.skin, act) + withPick(swatches('eyes','Augen',EYES,o.eyes || 'hohl',act), 'eyes', o.eyes, act); /* v735: eigene Augenfarbe wie bei der Haut (Inaya) */
   if (MULTI.includes(cat)) {
     const on = Object.keys(asObj(o[cat])).filter(k => cat !== 'jewel' || inSub(item(k) || {cat})), pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC;
     return on.length ? on.map(k => withPick(swatches(cat + '.' + k, 'Farbe: ' + (item(k)?.name || k), pal, o[cat][k], act), cat + '.' + k, o[cat][k], act) + sideChips(item(k), o, act)).join('') : cat === 'jewel' ? '<p class="note" style="margin:0">Zieh hier ein Teil an, dann erscheint oben die Farbauswahl dafür. Tipp Schmuck an, du kannst mehrere Teile gleichzeitig tragen. Jedes bekommt seine eigene Farbe.</p>' : cat === 'acc' ? '<p class="note" style="margin:0">Tipp Accessoires an, du kannst so viele tragen, wie du willst. Jedes bekommt seine eigene Farbe.</p>' : cat === 'legw' ? '<p class="note" style="margin:0">Tipp Strumpfhosen, Socken oder Stulpen an, du kannst sie auch kombinieren. Jedes Teil bekommt seine eigene Farbe.</p>' : '<p class="note" style="margin:0">Tipp Haarschmuck, Mützen oder Hüte an, du kannst mehrere gleichzeitig tragen. Jedes bekommt seine eigene Farbe.</p>';
@@ -16044,7 +16044,7 @@ const cloudReady = cloudInit();
   const COLS = [];
   for (let i = 0; i < 12; i++) { const v = Math.round(255 * (1 - i / 11)).toString(16).padStart(2, '0'); COLS.push('#' + v + v + v); }
   const HUES = [200, 220, 250, 275, 300, 330, 0, 15, 30, 45, 60, 100], LS = [[84, 85], [50, 80], [26, 60]]; /* v734: nur Pastell, knallig, dunkel (Inaya) */
-  COLS.push('#f3e6c4','#ead39a','#e2c27a','#d8b26a','#c9a35e','#bf9a6a','#b98b4f','#a8854f','#d6a36b','#c98a55','#b5763f','#a35f2e','#8c6a45','#7d5a3a','#6e4b2f','#5e3f28','#7a4a2a','#6b3a22','#55301e','#4a2c1d','#3d2418','#33201a','#2a1c16','#1f1612'); /* v733: natürliche Blond- und Brauntöne (Inaya) */ for (const [l, sat] of LS) for (const h of HUES) COLS.push(hex(h, sat, l));
+  const NATN = new Set(['#f3e6c4','#ead39a','#e2c27a','#d8b26a','#c9a35e','#bf9a6a','#b98b4f','#a8854f','#d6a36b','#c98a55','#b5763f','#a35f2e','#8c6a45','#7d5a3a','#6e4b2f','#5e3f28','#7a4a2a','#6b3a22','#55301e','#4a2c1d','#3d2418','#33201a','#2a1c16','#1f1612']), NATP = ['#efe4cf','#e3d2b3','#d2bb94','#bfa57c','#a07a55','#86603f','#6e4a2e','#573823','#40291b','#2b1d15','#1c1612','#0f0d0c']; COLS.push(...NATN, ...NATP); /* v733: natürliche Blond- und Brauntöne (Inaya); v735: in Garderobe/Mall zwei Reihen (NATN), sonst (Profil, Chat …) eine Reihe Beige/Braun/Schwarz (NATP) */ for (const [l, sat] of LS) for (const h of HUES) COLS.push(hex(h, sat, l));
   const st = document.createElement('style');
   st.textContent = `input.cpick[data-ctype]{padding:3px;background-clip:content-box;color:transparent;font-size:0;-webkit-appearance:none;appearance:none}
 .cgrid-bg{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s ease-out;-webkit-tap-highlight-color:transparent}
@@ -16056,6 +16056,7 @@ const cloudReady = cloudInit();
 .cgrid-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-family:var(--f-display);color:var(--fg);font-size:17px}
 .cgrid-x{background:none;border:1px solid var(--line);color:var(--fg);border-radius:999px;min-width:44px;height:36px;padding:0 14px;font:inherit;font-size:14px;cursor:pointer}
 .cgrid-g{display:grid;grid-template-columns:repeat(12,1fr);border-radius:8px;overflow:hidden;touch-action:manipulation;contain:layout paint}
+.cgrid-bg:not(.nat) [data-r=n],.cgrid-bg.nat [data-r=p]{display:none}
 .cgrid-g button{aspect-ratio:1;border:0;padding:0;margin:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cgrid-bg{background:transparent!important;pointer-events:auto}
 .cgrid-t{display:flex;gap:6px;flex-wrap:wrap;min-width:0}.cgrid-t button,.cgrid-s button{background:none;border:1px solid var(--line);color:var(--fg);border-radius:999px;height:32px;padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
@@ -16063,8 +16064,8 @@ const cloudReady = cloudInit();
 .cgrid-s{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.cgrid-s[hidden]{display:none}
 .cgrid{max-height:62vh;overflow:auto}
 .icolp{display:none!important}
-.swatches:has(> .cpick):not(:has(> .cpick[data-k=skin])) > .sw:not(.orig):not(.hohl):not(.swo){display:none}
-.swatches:has(> .cpick):not(:has(> .cpick[data-k=skin])){align-items:center;gap:10px}
+.swatches:has(> .cpick):not(:has(> .cpick:is([data-k=skin],[data-k=eyes]))) > .sw:not(.orig):not(.hohl):not(.swo){display:none}
+.swatches:has(> .cpick):not(:has(> .cpick:is([data-k=skin],[data-k=eyes]))){align-items:center;gap:10px}
 .swatches:has(> .cpick + .cplab) > .cpick{display:none}
 .cplab .cpdot{width:26px;height:26px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--paper-2,#000),0 0 0 3.5px currentColor;margin-right:4px}
 .cplab{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 18px 0 12px;border:1.5px solid currentColor;border-radius:999px;background:none;color:inherit;font:inherit;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -16089,7 +16090,7 @@ const cloudReady = cloudInit();
     try { i18nNode?.(bg); } catch {} };
   const build = () => {
     bg = document.createElement('div'); bg.className = 'cgrid-bg'; bg.hidden = true;
-    bg.innerHTML = `<div class="cgrid" role="dialog" aria-modal="true" aria-label="Farbe wählen"><div class="cgrid-h"><div class="cgrid-t"></div><button type="button" class="cgrid-x">Fertig</button></div><div class="cgrid-s" hidden></div><div class="cgrid-g">${COLS.map(c => `<button type="button" data-gc="${c}" style="background:${c}" aria-label="Farbe ${c}" aria-pressed="false"></button>`).join('')}</div></div>`;
+    bg.innerHTML = `<div class="cgrid" role="dialog" aria-modal="true" aria-label="Farbe wählen"><div class="cgrid-h"><div class="cgrid-t"></div><button type="button" class="cgrid-x">Fertig</button></div><div class="cgrid-s" hidden></div><div class="cgrid-g">${COLS.map(c => `<button type="button" data-gc="${c}"${NATN.has(c) ? ' data-r="n"' : NATP.includes(c) ? ' data-r="p"' : ''} style="background:${c}" aria-label="Farbe ${c}" aria-pressed="false"></button>`).join('')}</div></div>`;
     document.body.appendChild(bg);
     bg.addEventListener('click', e => {
       const f = fields[cur], b = e.target.closest('[data-gc]');
@@ -16102,7 +16103,7 @@ const cloudReady = cloudInit();
   const close = () => { if (!bg || bg.hidden) return; bg.classList.remove('on'); fields = []; document.documentElement.classList.remove('cgopen'); setTimeout(() => { if (!bg.classList.contains('on')) bg.hidden = true; }, 170); try { window.cgOnClose?.(); } catch {} window.cgOnClose = null; };
   const open = (inps, i0 = 0) => {
     if (!bg) build(); fields = inps.map(x => ({k:fkey(x), l:labOf(x), sp:specOf(x)})); cur = Math.max(0, Math.min(i0, fields.length - 1)); if (!fields.length) return;
-    paint(); bg.hidden = false; document.documentElement.classList.add('cgopen'); requestAnimationFrame(() => bg.classList.add('on'));
+    bg.classList.toggle('nat', !!inps[0]?.closest('.icolp, .wardrobe, .obwear') || /^(wardrobe|mall)$/.test(document.body.dataset.pg || '')); paint(); bg.hidden = false; document.documentElement.classList.add('cgopen'); requestAnimationFrame(() => bg.classList.add('on'));
   };
   /* Farbpunkt am Teil (Garderobe, Mall, Möbelhaus): die Felder aus dem unsichtbaren Farbkasten direkt im Gitter öffnen */
   window.cgOpenPanel = () => { const ins = [...document.querySelectorAll('.icolp input[data-ctype=color]')]; if (!ins.length) return; open(ins); window.cgOnClose = () => { if (colItem) { colItem = null; S.pending && document.querySelector('.obwear') ? obPatch(true) : render(); } }; };
@@ -16111,7 +16112,7 @@ const cloudReady = cloudInit();
   // Die Knöpfe zeigen ihre Farbe selbst (kein System-Farbfeld mehr)
   /* v728: deutlicher Knopf „Farbe wählen“ neben dem Farbpunkt (Inaya: zu unauffällig) */
   const PAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.3-1.2-1.6-1.2-2.8 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4C21 6.5 17 3 12 3Z"/><circle cx="7.5" cy="11" r="1.3" fill="currentColor"/><circle cx="10" cy="7" r="1.3" fill="currentColor"/><circle cx="14.5" cy="7" r="1.3" fill="currentColor"/></svg>';
-  const labOk = x => { const p = x.parentElement; return p && p.classList.contains('swatches') && !p.querySelector(':scope > .cpick[data-k=skin]'); };
+  const labOk = x => { const p = x.parentElement; return p && p.classList.contains('swatches') && !p.querySelector(':scope > .cpick:is([data-k=skin],[data-k=eyes])'); };
   const paintAll = () => document.querySelectorAll('input[data-ctype=color]').forEach(x => { if (x.style.backgroundColor !== x.value) x.style.backgroundColor = x.value;
     if (labOk(x) && !(x.nextElementSibling && x.nextElementSibling.classList.contains('cplab'))) { const b = document.createElement('button'); b.type = 'button'; b.className = 'cplab'; b.innerHTML = '<span class="cpdot"></span>' + PAL + '<span>' + (typeof tr === 'function' ? tr('Farbe wählen') : 'Farbe wählen') + '</span>'; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); x.click(); }); x.after(b); }
     const d = labOk(x) && x.nextElementSibling?.querySelector('.cpdot'); if (d && d.style.backgroundColor !== x.value) d.style.backgroundColor = x.value; });
