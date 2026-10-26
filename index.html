@@ -3874,7 +3874,7 @@ function isleeve(B, k, len, out=6, flare=0){ const y1 = len === 'short' ? B.sy +
 function iarmClip(B){ let l = `M-80 ${B.pit}`, r = `M${B.W + 80} ${B.pit}`; for (let y = B.pit; y <= 920; y += 10) { const a = iarm(B, y); l += `L${f1(a[2] + 1)} ${y}`; r += `L${f1(a[3] - 1)} ${y}`; } return l + 'L-80 920Z' + r + `L${B.W + 80} 920Z`; }
 // ---- Kopf: alles in Koordinaten der Mädchen-Figur (Augen 118|183 und 226|180, Mund 178|243, Ohren 58–90 und 262–292) ----
 // Standard-Oberkopf mit freier Stirn (Haaransatz)
-const ICAP = 'M52 186Q30 -26 172 -30Q314 -26 292 186L284 184Q284 120 262 90Q224 60 172 62Q120 60 82 90Q60 120 60 184Z';
+const ICAP = 'M52 186Q30 -26 172 -30Q314 -26 292 186L284 184Q284 128 258 104Q220 82 180 60L172 69L164 60Q124 82 86 104Q60 128 60 184Z'; /* v742: Haaransatz mit Mittelscheitel wie auf Inayas Bild (schräg von der Mitte zu den Schläfen) */
 const ISIDE = (y1, jag=1) => { // Seitensträhnen vor den Ohren bis y1 (linke Seite, wird gespiegelt)
   const n = Math.max(2, Math.round((y1 - 200) / 70)); let d = 'M48 70L48 170L'; const pts = [];
   for (let k = 0; k <= n; k++) { const y = 200 + (y1 - 200) * k / n; pts.push(`${f1(44 - k * 2)} ${f1(y)}`); }
@@ -3948,7 +3948,7 @@ function iHair(o, X){ // gibt {back, front} zurück
       back += P(d + 'Z', hf); let c = ''; for (let i = 0; i < 60; i++) { const a = i * 2.39996, r = Math.sqrt((i + .5) / 60) * .9; c += `M${f1(cx + rx * r * Math.cos(a) - 7)} ${f1(cy + ry * r * Math.sin(a))}q7 -9 14 0`; } back += X.LN(c, dk, 2, .55);
     }
     if (h.cap) front += (h.b ? `<path d="${ICAP}" fill="${hf}"/>` + X.LN('M292 186' + ICAP.slice(ICAP.indexOf('L284')).replace(/Z$/, 'L52 186'), IOL, 2.6) : P(ICAP, hf)) + // bei langen Haaren keine zweite Kontur am Oberkopf
-      X.LN('M96 30Q80 90 82 150M248 30Q264 90 262 150M140 -10Q126 30 124 66M206 -10Q220 30 222 66', dk, 1.8, .5);
+      X.LN('M96 30Q86 70 88 102M248 30Q258 70 256 102M140 -10Q130 30 132 76M206 -10Q216 30 212 76', dk, 1.8, .5);
     if (h.side && (IPONY[o.front] || ISPECP[o.front])) front += iboF(`<path d="M44 96L84 96L76 150L66 188L44 188Z" fill="${hf}"/>`); // Schläfe zwischen Pony und Strähne schließen
     if (h.side) { const s = h.flat ? `M48 70L48 170L46 ${h.side}L100 ${h.side}L102 236Q100 150 82 88L70 66Z` : ISIDE(h.side), sk = s.replace('M48 70L', 'M').replace(/L70 66Z$/, ''); front += iboF(`<path d="${s}" fill="${hf}"/>` + X.LN(sk, IOL, 2.6) + X.LN(`M60 200Q54 ${(200 + h.side) / 2} 58 ${h.side - 20}`, dk, 1.6, .45)); sideD = s; }
     if (h.fx) front += h.fx(X, hf, dk, HC, FC);
@@ -4123,6 +4123,54 @@ const IMAKE = {
   corpse:(c, X) => `<path d="${IFACE(X)}" fill="#ffffff" opacity=".6"/>` + IEYESM(() => `<path d="M-36 -2Q-30 -40 -4 -42Q30 -40 40 -14Q36 20 10 40Q-8 30 -36 -2Z" fill="${c}" opacity=".9"/>`),  /* Mund: seit v726 in avatarI in der Form des gewählten Munds */
   tranen:(c, X) => IEYESM(() => `<path d="M-4 24Q-10 38 -4 44Q2 38 -4 24Z M2 52Q-3 64 2 70Q7 64 2 52Z" fill="${c}"/>`),
   glitzer:(c, X) => ICHEEK.map(([x, y]) => [[-14, -4], [-4, 2], [6, -2], [14, 4], [-8, 10], [8, 10]].map(([a, b]) => `<path d="M${x + a} ${y + b - 3.5}L${x + a + 1.3} ${y + b}L${x + a} ${y + b + 3.5}L${x + a - 1.3} ${y + b}Z" fill="${c === '#141218' ? '#c9c4d8' : c}" stroke="${IOL}" stroke-width=".6"/>`).join('')).join(''),
+};
+/* v742: neue Make-ups (Inaya): je Look u = unter den Augen (Flächen), o = über den Augen (Linien, Motive), m = Mund (Weg des gewählten Munds), d = Startfarbe.
+   Flächen am Auge sind Sicheln über bzw. unter dem Lid, damit sie auch Inayas gemalte Augen (e_rund) nicht zudecken. */
+const MKBL = (X, d, c, op) => `<path d="${d}" fill="${c}" opacity="${op}" filter="url(#${X.u}bl)"/>`;
+const MKLID = 'M-32 2Q-10 -46 36 -14Q4 -28 -32 2Z', MKCREASE = 'M-34 2Q-12 -58 42 -18Q6 -40 -34 2Z', MKLOW = 'M-26 10Q2 30 34 2Q4 20 -26 10Z';
+const MKWING = (L, H) => `M-30 -1Q-6 -29 28 -15L${L} ${-H}L32 -6Q-6 -21 -30 1Z`;
+const MKLASH = 'M14 -16L17 -24M21 -14L25 -22M26 -12L32 -18M30 -9L37 -13';
+const MKCHEEK = (X, c, op, rx=22, ry=11) => ICHEEK.map(([x, y]) => MKBL(X, `M${x - rx} ${y}A${rx} ${ry} 0 1 0 ${x + rx} ${y}A${rx} ${ry} 0 1 0 ${x - rx} ${y}Z`, c, op)).join('');
+const MKSPARK = (x, y, r, c) => `<path d="M${x} ${y - r}Q${x + r * .18} ${y - r * .18} ${x + r} ${y}Q${x + r * .18} ${y + r * .18} ${x} ${y + r}Q${x - r * .18} ${y + r * .18} ${x - r} ${y}Q${x - r * .18} ${y - r * .18} ${x} ${y - r}Z" fill="${c}"/>`;
+const MKMOUTH = (lp, c, op, sx=1, sy=1, extra='') => `<path d="${lp}" transform="translate(178 247) scale(${sx} ${sy}) translate(-178 -247)" fill="${c}" opacity="${op}"/>` + extra;
+const MKFACE = (X, c, op) => `<path d="${IFACE(X)}" fill="${c}" opacity="${op}"/>`;
+const IMAKE2 = {
+  mk_natur:{d:'#9a7464',
+    u:(c, X) => IEYESM(() => MKBL(X, MKLID, c, .38)) + MKCHEEK(X, '#e39a92', .3),
+    o:(c, X) => IEYESM(() => X.LN('M-24 -4Q-4 -24 30 -10', shade(c, .5), 2.2) + X.LN(MKLASH, shade(c, .45), 1.5, .85)),
+    m:(c, X, lp) => MKMOUTH(lp, '#c98a86', .45)},
+  liner:{d:'#141218',
+    o:(c, X) => IEYESM(() => X.P(MKWING(50, 27), c, 'stroke-width="0"') + X.LN('M14 13Q28 9 33 -1', c, 1.8, .85) + X.LN(MKLASH, c, 1.8))},
+  smokey:{d:'#1c181e',
+    u:(c, X) => IEYESM(() => MKBL(X, MKCREASE, c, .38) + MKBL(X, MKLID, c, .62) + MKBL(X, MKLOW, c, .5)),
+    o:(c, X) => IEYESM(() => X.P(MKWING(42, 18), c, 'stroke-width="0"') + X.LN('M-22 13Q4 24 32 4', c, 2.6, .8) + X.LN(MKLASH, c, 1.8))},
+  mk_tradgoth:{d:'#0f0d10',
+    u:(c, X) => MKFACE(X, '#ffffff', .45) + IEYESM(() => `<path d="M-33 2Q-30 -42 2 -50Q34 -52 58 -38L36 -12Q-6 -24 -33 2Z" fill="${c}" opacity=".88"/>` + MKBL(X, 'M-36 4Q-30 -52 6 -56Q40 -56 60 -42Q30 -40 -36 4Z', c, .35))
+      + [[96, 226, 32], [262, 216, -32]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="30" ry="7" transform="rotate(${r} ${x} ${y})" fill="${shade(c, 2.4)}" opacity=".45" filter="url(#${X.u}bl)"/>`).join(''),
+    o:(c, X) => IEYESM(() => X.P('M-30 -1Q-6 -29 28 -15L62 -34L34 -4Q-6 -21 -30 1Z', c, 'stroke-width="0"') + X.LN('M-24 10Q8 20 36 4L58 -2', c, 3) + X.LN(MKLASH, c, 2)),
+    m:(c, X, lp) => MKMOUTH(lp, c, .92, 1.25, 1.35)},
+  mk_tradgoth2:{d:'#0f0d10',
+    u:(c, X) => MKFACE(X, '#ffffff', .45) + IEYESM(() => MKBL(X, MKCREASE, '#4a2058', .55) + `<path d="${MKLID}" fill="${c}" opacity=".8"/>`),
+    o:(c, X) => IEYESM(() => X.P(MKWING(50, 30), c, 'stroke-width="0"') + X.LN('M48 -28Q58 -34 58 -42Q56 -48 50 -46Q46 -42 51 -39', c, 2.4) + X.LN('M-22 11Q8 22 34 8Q48 2 52 10Q52 17 46 16', c, 2.4) + X.LN(MKLASH, c, 2)),
+    m:(c, X, lp) => MKMOUTH(lp, '#3a1440', .9, 1.2, 1.3)},
+  corpse:{d:'#0b0a0c',
+    u:(c, X) => MKFACE(X, '#ffffff', .82) + IEYESM(() => `<path d="M-36 6L-32 -22L-25 -15L-16 -50L-6 -22L6 -58L14 -24L28 -48L32 -18L46 -30L42 2L50 32L32 18L24 46L12 22L2 54L-8 22L-18 40L-22 18Z M-30 0Q-6 -27 30 -9Q6 18 -30 0Z" fill="${c}" fill-rule="evenodd" opacity=".95"/>`),
+    o:(c, X) => '',
+    m:(c, X, lp) => MKMOUTH(lp, c, .95, 1.5, 1.7, `<path d="M163 250L156 280L170 254Z M193 250L200 280L186 254Z M174 258L178 288L182 258Z" fill="${c}"/>`) + `<path d="M172 214Q178 220 184 214Q182 222 178 224Q174 222 172 214Z" fill="${c}" opacity=".9"/>`},
+  mk_metal2:{d:'#0b0a0c',
+    u:(c, X) => MKFACE(X, '#ffffff', .82) + IEYESM(() => `<path d="M-38 4Q-40 -40 -8 -50Q30 -56 44 -26Q54 0 40 24L34 60L24 30Q8 44 -10 34L-16 62L-22 30Q-40 22 -38 4Z M-30 0Q-6 -27 30 -9Q6 18 -30 0Z" fill="${c}" fill-rule="evenodd" opacity=".95"/>`),
+    o:(c, X) => '',
+    m:(c, X, lp) => MKMOUTH(lp, c, .95, 1.35, 1.5, `<path d="M168 252Q164 268 172 284L176 256Z M188 252Q192 268 184 284L180 256Z" fill="${c}"/>`)},
+  mk_candy:{d:'#f07ab0',
+    u:(c, X) => IEYESM(() => MKBL(X, MKCREASE, '#c9a2f0', .5) + MKBL(X, MKLID, c, .6)) + MKCHEEK(X, c, .45, 24, 12),
+    o:(c, X) => IEYESM(() => X.P(MKWING(44, 22), shade(c, .7), 'stroke-width="0"') + X.LN('M-12 14L-14 20M-2 17L-3 24M8 17L9 24M18 14L21 20', shade(c, .6), 1.6) + MKSPARK(38, -34, 6, '#fff') + MKSPARK(46, -20, 3.5, '#fff'))
+      + ICHEEK.map(([x, y], i) => `<path d="${heartPath(x + (i ? 14 : -14), y - 8, 2.4)}" fill="${c}" ${IO} stroke-width="1"/>` + MKSPARK(x + (i ? -6 : 6), y + 2, 3, '#fff')).join(''),
+    m:(c, X, lp) => MKMOUTH(lp, c, .75) + `<ellipse cx="174" cy="244" rx="3" ry="1.4" fill="#fff" opacity=".8"/>`},
+  mk_candy2:{d:'#8ab8f0',
+    u:(c, X) => IEYESM(() => MKBL(X, MKCREASE, '#f4b4d4', .45) + MKBL(X, MKLID, c, .62)) + MKCHEEK(X, '#f39ac0', .42, 24, 12),
+    o:(c, X) => IEYESM(() => X.LN('M-26 -2Q-4 -26 30 -11L40 -16', shade(c, .55), 2.4) + X.LN(MKLASH, shade(c, .45), 1.6))
+      + ICHEEK.map(([x, y], i) => `<path d="${pentPath(x + (i ? 12 : -12), y - 10, 6)}" fill="#f8d860" ${IO} stroke-width="1"/>` + MKSPARK(x + (i ? -4 : 4), y + 4, 3, '#fff') + MKSPARK(x + (i ? 20 : -20), y + 6, 2.2, '#fff')).join(''),
+    m:(c, X, lp) => MKMOUTH(lp, '#f39ac0', .7) + `<ellipse cx="174" cy="244" rx="3" ry="1.4" fill="#fff" opacity=".8"/>`},
 };
 // Lippen nur mit Lippenfarbe (sonst bleibt Inayas kleiner Mund)
 const ILIPS = {
@@ -5610,11 +5658,15 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (o.acc?.z_glitzer) { const c = ihex(o.acc.z_glitzer) || '#b070e0'; face += IGLITZ(X).split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)); } /* Glitzer-Make-up, ohne eigene Farbe lila */
   // Flächiges Make-up liegt unter den Augen, Linien und Motive darüber (sonst verdeckt die gezeichnete Lidlinie den Liner)
   IMKF = IMKFS[o.eyeform] || null; /* v726: Make-up an die Augenform anpassen */
+  const MK2 = IMAKE2[o.face], mc2 = MK2 && (o.makeC || MK2.d); /* v742: neue Make-ups */
+  if (MK2?.u) { const uu = MK2.u(mc2, X); if (drawn) face += uu; else { defs.push(`<mask id="${u}mke" maskUnits="userSpaceOnUse" x="-200" y="-200" width="800" height="800"><rect x="-200" y="-200" width="800" height="800" fill="#fff"/>${IEYES(() => '<path d="M-33 3Q-8 -30 33 -11Q8 20 -33 3Z" fill="#000"/>')}</mask>`); face += `<g mask="url(#${u}mke)">${uu}</g>`; } } /* Inayas gemalte Augen bleiben frei */
   const mc = o.makeC || ({lidschatten:'#6a3a8a', neon:'#7ad04a', glitzerlid:'#e8e6ee'})[o.face] || '#141218', under = ['smokey', 'panda', 'corpse', 'lidschatten', 'regenbogen', 'blass', 'kontur', 'rouge', 'zombiepop'].includes(o.face);
-  if (IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYESM(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
+  if (!MK2 && IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYESM(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
   if (o.eyeform === 'e_leer') face += IEYE_LEER(X, o.eyes); else if (drawn) face += ieyeDraw(o.eyeform, X, o.eyes);
-  if (IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
-  if (o.face === 'corpse' && o.lips !== 'l_schnitt') face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + `<path d="${ILIPS[o.lips] || ILIPS.l_schmoll}" transform="translate(178 247) scale(1.7 2.1) translate(-178 -247)" fill="${mc}" opacity=".85"/></g>`; /* v726: Corpse-Paint-Mund folgt dem gewählten Mund */
+  if (MK2?.o) face += MK2.o(mc2, X);
+  if (MK2?.m && o.lips !== 'l_schnitt') face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + MK2.m(mc2, X, ILIPS[o.lips] || ILIPS.l_schmoll) + '</g>';
+  if (!MK2 && IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
+  if (!MK2 && o.face === 'corpse' && o.lips !== 'l_schnitt') face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + `<path d="${ILIPS[o.lips] || ILIPS.l_schmoll}" transform="translate(178 247) scale(1.7 2.1) translate(-178 -247)" fill="${mc}" opacity=".85"/></g>`; /* v726: Corpse-Paint-Mund folgt dem gewählten Mund */
   if (o.lipC && ILIPS[o.lips]) face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + X.P(ILIPS[o.lips], o.lipC, 'stroke-width="1.4"') + '</g>';
   if (o.face === 'zombiepop') face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + IZOMBIE_LIPS(X, o.lips) + '</g>' + IZOMBIE_EYE();
   if (o.lips === 'l_schnitt') face += (B === IB.m ? '<g transform="translate(-3 8)">' : '<g>') + ibc(ICUT(X), o.lipC) + '</g>';
