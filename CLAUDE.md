@@ -145,7 +145,7 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Glocke (`S.notifSeen`) und Chats (`S.seen`) zusätzlich in `data/users/<uid>/nf-seen` = `{n, c:{<cid>:ts}}`: nur vorwärts (`seenPush` mit merge, `seenApply` nimmt immer das Spätere), live über `seenWatch`. Beim Laden der Kontosicherung wird der Gerätestand nicht zurückgedreht (`seenMax`). Grund: ein länger offenes Gerät schrieb mit der Kontosicherung seinen älteren Gelesen-Stand zurück.
 - Profil-Link SoundCloud (`PLINKS`, `plinkURL`): Name oder soundcloud.com-Link.
 
-## Mindestalter (seit v477, ab v534 wieder 16)
+## Mindestalter (seit v477, ab v534 wieder 16, ab v751 wieder 12)
 
 - Registrieren ab 16 Jahren (`MIN_AGE`; v477–v533 kurz 12, seit v534 wegen der Horror-Teile wieder 16). Geprüft in `birthProblem` (Registrierung und Abfrage `birthView` für Konten ohne Geburtsdatum). Bestehende Konten unter 16 (`tooYoung`) sehen nur `youngView`: Konto bleibt gespeichert, Zugang ab dem 16. Geburtstag, das Datum lässt sich dort nicht neu eingeben. Die Owner-Kennung (`amOwner`) ist ausgenommen. Seit v683 steht das Geburtsdatum als `bd` im Profil, seit v686 nur noch für die Geburtstags-Mitteilung an Freunde (im Profil wird es nicht mehr angezeigt).
 
@@ -499,3 +499,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v748 (Inaya): Im Reiter Namens-Farbe gibt es kein „Licht: Nacht/Tag“ mehr, nur noch die Farbwahl (`bannerColors`). Gespeichertes `banner.mode` bleibt unverändert.
 - Seit v749 (Inaya: Beiträge „verschwinden am nächsten Tag“): Der Salon öffnet immer auf „Öffentlich“, Beiträge nur für Freunde standen dort nicht. `pubPosts` zeigt jetzt alle eigenen Beiträge und öffentliche Beiträge von Freunden; `loadPubFeed` fragt zusätzlich nach `ppTs` (letzter öffentlicher Beitrag, ohne Storys, 40 Profile) und `pubTs` (20). Zurück (`navBack`) stellt die Scrollstelle bis 2,5 s nach (bis man selbst wischt), `history.scrollRestoration = 'manual'`; im Archiv kein eigener Zurück-Knopf mehr. Einstellungen → Archiv hat „Zuletzt gelöscht (30 Tage)“. Doppeltippen zum Liken über `pointerup` (iPhone meldet auf Bildern/Text oft kein click), auch auf dem Text (`.thought`), der zweite Tipp löst nichts anderes aus (`DBLM.eat`).
 - Seit v750 (Inaya): Sticker im Chat gehen beim Antippen sofort raus (`sgSend`, Formular `cmsg`, Art `stk`). GIFs im Chat und Sticker/GIFs unter Beiträgen und im Gästebuch kommen weiter erst als Vorschau über die Schreibleiste (`GST`).
+- Seit v751 (Inaya): Noctibat ist ab 12 (`MIN_AGE = 12`). Konten zwischen 12 und 16, die bisher `youngView` sahen, kommen wieder rein. Die Horror-Teile sind seit v536 entschärft und nur im Oktober im Shop (Halloween).

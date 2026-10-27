@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='05fadda90200';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='cfb6f69fc9ae';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14554,7 +14554,7 @@ document.addEventListener('click', async e => {
   else if (a === 'set-open') { setOpen = setOpen === b.dataset.k ? null : b.dataset.k; render(); document.querySelector('.setrow.open input')?.focus(); }
 });
 
-const MIN_AGE = 16; // Mindestalter (Inaya, 2026-10-18: wieder 16 wegen der Horror-Sachen; 2026-10-16 kurz 12)
+const MIN_AGE = 12; /* Mindestalter (Inaya, 2026-10-27: ab 12; 2026-10-18 bis v750 ab 16 wegen der Horror-Sachen) */
 function ageOf(iso){ if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null; const [y, m, d] = iso.split('-').map(Number), t = new Date(); let a = t.getFullYear() - y; if (t.getMonth() + 1 < m || (t.getMonth() + 1 === m && t.getDate() < d)) a--; return a; }
 function birthProblem(iso){ if (iso === 'ungueltig') return 'Diesen Tag gibt es in dem Monat nicht. Bitte prüf dein Geburtsdatum.'; const a = ageOf(iso); if (a === null) return 'Bitte gib dein Geburtsdatum an.'; if (a > 110 || a < 0) return 'Bitte prüf dein Geburtsdatum.'; if (a < MIN_AGE) return 'Noctibat ist erst ab ' + MIN_AGE + ' Jahren. Komm gern wieder, wenn du ' + MIN_AGE + ' bist.'; return ''; }
 const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
@@ -14575,7 +14575,7 @@ document.addEventListener('change', e => {
 // Beim Registrieren schon angegeben: nicht noch einmal fragen (Inaya, 2026-10-12)
 const NF_AUTH_MAIL = () => { try { return window.firebase?.auth?.().currentUser?.email || ''; } catch { return ''; } };
 function regBirth(){ const p = S.pending?.birth; if (p && !birthProblem(p)) return p; try { const r = JSON.parse(localStorage.getItem('nf-regbirth') || 'null'); const u = S.users[S.me] || {}, c = String(u.email || u.contact || NF_AUTH_MAIL() || '').toLowerCase(); if (r && Date.now() - r.ts < 7 * 864e5 && !birthProblem(r.birth) && (!c || c === r.c)) return r.birth; } catch {} return ''; }
-/* Konto mit gültigem Geburtsdatum, aber jünger als MIN_AGE (seit v534 wieder ab 16): pausiert bis zum Geburtstag, Datum lässt sich nicht neu eingeben */
+/* Konto mit gültigem Geburtsdatum, aber jünger als MIN_AGE (seit v751 ab 12): pausiert bis zum Geburtstag, Datum lässt sich nicht neu eingeben */
 const tooYoung = () => { const b = S.users[S.me]?.birth, a = ageOf(b); return a !== null && a >= 0 && a < MIN_AGE && !amOwner; };
 function youngView(){ const [y, m, d] = S.users[S.me].birth.split('-').map(Number), at = new Date(y + MIN_AGE, m - 1, d);
   return `<div class="gate"><div class="card gate-card">${logoSVG('big')}<p class="note">Noctibat ist jetzt erst ab ${MIN_AGE} Jahren. Dein Konto bleibt gespeichert. Ab dem ${at.toLocaleDateString(LOC(), {day:'numeric', month:'long', year:'numeric'})} kannst du wieder rein.</p>
