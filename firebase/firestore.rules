@@ -99,9 +99,9 @@ service cloud.firestore {
       allow read: if invited() && mayRead(cid);
       allow create: if invited() && (cid.matches('wall_.+')
         ? (request.resource.data.from == request.auth.uid && friendsWith(cid.split('_')[1]))
-        // v754: Begleiter von Freunden besuchen, einmal am Tag: chats/pv_<besitzer>/m/<besucher>_<tag> = {by, a, d, ts}
+        // v754: Begleiter von Freunden besuchen: chats/pv_<besitzer>/m/<besucher>_<tag>_<pet|feed> = {by, a, d, ts} (v769: Streicheln und Leckerli je einmal am Tag, alte Form <besucher>_<tag> bleibt erlaubt)
         : cid.matches('pv_.+') ? (request.resource.data.by == request.auth.uid && cid.split('_')[1] != request.auth.uid && friendsWith(cid.split('_')[1])
-          && mid == request.auth.uid + '_' + dayS() && request.resource.data.d == today() && request.resource.data.a in ['pet', 'feed']
+          && (mid == request.auth.uid + '_' + dayS() || mid == request.auth.uid + '_' + dayS() + '_' + request.resource.data.a) && request.resource.data.d == today() && request.resource.data.a in ['pet', 'feed']
           && request.resource.data.keys().hasOnly(['by', 'a', 'd', 'ts']))
         : (isDm(cid) || isGroup(cid)) ? (mayWrite(cid) && request.resource.data.from == request.auth.uid) : true);
       // Verschlüsselte Nachrichten: der Absender darf ändern, andere Mitglieder nur den übertragenen Verlauf (Feld x) ergänzen
@@ -237,10 +237,13 @@ service cloud.firestore {
         : k == 'j' ? isGroup(ref) && chatDoc(ref).pub == true && u in chatDoc(ref).members
         : k == 'k' ? isGroup(ref) && chatDoc(ref).pub == true && chatDoc(ref).createdBy == u
         : k == 'b' ? ref.matches('^([2-9]|[12][0-9]|30)$')
-        : k == 'v' ? ref != u && exists(/databases/$(database)/documents/chats/$('pv_' + ref)/m/$(u + '_' + dayS()))
-        : k == 'w' ? ref != u && exists(/databases/$(database)/documents/chats/$('pv_' + u)/m/$(ref + '_' + dayS()))
+        : k == 'v' ? ref != u && pvVisit(ref, u, op.get('d', ''))
+        : k == 'w' ? ref != u && pvVisit(u, ref, op.get('d', ''))
         : k == 'm' ? isGroup(ref) && chatDoc(ref).pub == true && get(/databases/$(database)/documents/chats/$(ref)/m/$(op.d)).data.from == u
         : false; }
+    // v769: Tag aus xd.d (xdOk prüft, dass es heute ist), today() ein weiteres Mal zu rechnen sprengte die Grenze von 1000 Ausdrücken
+    function pvDoc(o, v, x) { return exists(/databases/$(database)/documents/chats/$('pv_' + o)/m/$(v + '_' + string(int(N().xd.d)) + x)); }
+    function pvVisit(o, v, x) { return x in ['', '_pet', '_feed'] && pvDoc(o, v, x); } // x = Endung der Besuchs-ID (op.d), ein einziges exists
     function xpOp(op) { let k = op.k; let ref = op.ref;
       return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm', 'b', 'v', 'w'] && ref is string && ref.size() > 0 && ref.size() < 160
         && N().diff(W()).affectedKeys().hasOnly(['x', 'l', 'c', 'xd', 'fx', 'gx', 'op']) && N().inv == W().inv && N().dd == W().dd
