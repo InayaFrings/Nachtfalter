@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ea9f39c10ca0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='bc031bf3219f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3388,7 +3388,6 @@ ITEMS.push(
   {id:'p_nase',cat:'jewel',sub:'pierc',name:'Nostril',c:'#d8d8de'},
   {id:'p_septum',cat:'jewel',sub:'pierc',name:'Septum',c:'#d8d8de'},
   {id:'p_bridge',cat:'jewel',sub:'pierc',name:'Bridge',c:'#d8d8de'},
-  {id:'p_braue',cat:'jewel',sub:'pierc',name:'Eyebrow',c:'#d8d8de'},
   {id:'p_labret',cat:'jewel',sub:'pierc',name:'Labret',c:'#d8d8de'},
   {id:'p_monroe',cat:'jewel',sub:'pierc',name:'Monroe',c:'#d8d8de'},
   {id:'p_medusa',cat:'jewel',sub:'pierc',name:'Medusa',c:'#d8d8de'},
@@ -3436,7 +3435,7 @@ const DEFAULT_OUTFIT = {body:'w',back:'scenek',front:'p_seitlich',hacc:{},jewel:
 const LIP_DEF = '#8a3a4a'; // Lippen ohne Farbe wären unsichtbar: dezentes Altrosa (Inaya, 2026-10-12)
 function previewOutfit(o, i){
   if (i.none) { const t = {...o}; wearItem(t, i); return t; }
-  if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_nabel' ? {top:'netz', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
+  if (MULTI.includes(i.cat)) return {...o, ...(i.cat === 'legw' ? {bottom:'shorts'} : i.id === 'p_nabel' ? {top:'t_kein', jacket:'j_kein'} : {}), [i.cat]:{[i.id]:(o[i.cat] || {})[i.id] || HACC_C[i.id] || '#141218'}};
   const t = {...o, hacc:{...(o.hacc || {})}, jewel:{...(o.jewel || {})}, legw:{...(o.legw || {})}}; if (!isOn(o, i)) wearItem(t, i); return t;
 }
 const thumbView = i => i.cat === 'top' && isDress(i) ? 'dress' : i.cat === 'legw' ? 'legs' : i.cat === 'beard' ? 'face' : i.id === 'schleier' ? 'bust' : i.cat === 'eyeform' ? 'face' : i.cat === 'lips' ? 'mouth' : i.cat === 'jewel' ? (i.id === 'p_nabel' ? 'navel' : i.sub === 'ohr' || ['ohrringe','p_helix','p_industrial','p_tragus','p_daith','p_conch','p_tunnel'].includes(i.id) ? 'ear' : i.sub === 'pierc' ? (['p_bridge','p_braue','p_augenbraue','p_dermal'].includes(i.id) ? 'face' : 'mouth') : i.sub === 'stulpe' ? 'arms' /* v718: beide Unterarme mit Händen (Inaya) */ : i.sub === 'arm' || i.sub === 'ring' ? 'hand' : i.sub === 'guertel' ? (/^ko_/.test(i.id) ? 'top' : 'belt') : 'neck') : i.cat === 'jacket' ? (i.id === 'mantel' ? 'full' : 'top') : i.cat === 'acc' ? (i.id === 'kette' ? 'bottom' : i.thumb || 'full') : i.cat === 'back' ? 'bust' : i.cat === 'front' || i.cat === 'hacc' ? 'hair' : i.cat;
@@ -3627,7 +3626,7 @@ ITEMS.push(
   {id:'md_blau',cat:'top',name:'Scene-Minikleid Leo Blau',st:'Scene',g:'w'},
   {id:'md_rosen',cat:'top',name:'Scene-Minikleid Rosen',st:'Scene',g:'w'},
   {id:'md_doppel',cat:'top',name:'Scene-Minikleid mit Doppelrüschen',st:'Scene',g:'w'},
-  {id:'p_augenbraue',cat:'jewel',sub:'pierc',name:'Eyebrow (Stab)',c:'#d8d8de'},
+  {id:'p_augenbraue',cat:'jewel',sub:'pierc',name:'Eyebrow',c:'#d8d8de'}, /* v767: einzige Augenbrauen-Version (zwei Kugeln), die Ring-Version p_braue wird zu dieser */
   {id:'p_kinn',cat:'jewel',sub:'pierc',name:'Vertical Labret',c:'#d8d8de'},
   {id:'tutu',cat:'bottom',name:'Tütü',st:'Scene',g:'w'},
   {id:'tutu_pink',cat:'bottom',name:'Tütü mit pinkem Unterrock',st:'Scene',g:'w'},
@@ -3702,7 +3701,7 @@ function normOutfit(o){
   if (!o.body || o.body === 'a') o.body = 'w'; // „Androgyn“ gibt es nicht mehr (Inaya)
   if (o.face === 'lippen') { o.face = 'liner'; if (!o.lipC) o.lipC = '#3a0a18'; }
   if (!o.jewel || Array.isArray(o.jewel)) o.jewel = {};
-  delete o.jewel.p_snakering; delete o.jewel.p_nasenring; delete o.jewel.p_nase2; for (const k of PIERC_GONE_K) delete o.jewel[k]; // aus dem Sortiment genommen (Inaya, 2026-10-10; seit v764 Zungen- und Ohr-Piercings, Ohrringe bleiben)
+  delete o.jewel.p_snakering; delete o.jewel.p_nasenring; delete o.jewel.p_nase2; for (const k of PIERC_GONE_K) delete o.jewel[k]; if (o.jewel.p_braue) { if (!o.jewel.p_augenbraue) o.jewel.p_augenbraue = o.jewel.p_braue; delete o.jewel.p_braue; } // aus dem Sortiment genommen (Inaya, 2026-10-10; seit v764 Zungen- und Ohr-Piercings, Ohrringe bleiben)
   if (['kopfhoerer','zylinder','hut','halo'].includes(o.acc)) { o.hacc[o.acc] = o.accC || HACC_C[o.acc]; o.acc = 'none'; delete o.accC; }
   if (o.acc === 'halsband') { o.jewel.halsband = o.accC || HACC_C.halsband; o.acc = 'none'; delete o.accC; }
   if (!o.acc || typeof o.acc === 'string') { const a = {}; if (o.acc && o.acc !== 'none') a[o.acc] = o.accC || 'auto'; o.acc = a; delete o.accC; } // Accessoires sind jetzt mehrfach tragbar
@@ -4009,14 +4008,14 @@ const IPIERC = {
   piercing:c => IPC(168, 250, c) + IPC(188, 250, c),
   // Snake Bites als Ringe: hängen unter der Unterlippe und laufen oben in die Lippe hinein
   p_snakering:c => IHOOP(168, 247.5, c, 5.2) + IHOOP(188, 247.5, c, 5.2),
-  p_nase:c => IPC(183, 225, c, 2.8), p_nasenring:c => IHOOP(182, 229, c, 4.2),
+  p_nase:c => IPC(183, 225.4, c, 2.2), p_nasenring:c => IHOOP(182, 229, c, 4.2),
   // Septum: Hufeisen unter der Nasenspitze, Kugeln an beiden Enden
   p_septum:c => { const d = 'M172.4 227.6A4.4 4.4 0 1 0 179.6 227.6'; return `<path d="${d}" fill="none" stroke="${IOL}" stroke-width="2.6" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.3" stroke-linecap="round"/>` + IPC(174, 233.4, c, .9) + IPC(176, 234.2, c, 1.2) + IPC(178, 233.4, c, .9); }, /* v755: Ring mit Perlen wie auf Inayas Blatt */
   p_bridge:c => IBAR(163, 187, 189, 186, c, 3.4),
   p_braue:c => IHOOP(246, 141, c, 4.8) + IHOOP(235, 137, c, 4.4),
   p_labret:c => IPC(178, 256, c, 3.4), p_monroe:c => IPC(166, 235, c, 3),
   p_medusa:c => IPC(178, 236, c, 3), p_spider:c => IPC(186, 251, c, 2.8) + IPC(194, 251, c, 2.8), p_angel:c => IPC(169, 236, c, 3) + IPC(187, 236, c, 3),
-  p_dahlia:c => IPC(163, 244, c, 3) + IPC(193, 244, c, 3), p_dermal:c => IPC(250, 200, c, 3.8) + IPC(243, 210, c, 3),
+  p_dahlia:c => IPC(163, 244, c, 3) + IPC(193, 244, c, 3), p_dermal:c => IPC(250, 200, c, 3.2) + IPC(243, 210, c, 3.2),
   p_helix:c => IHOOP(70, 181, c, 5.4) + IHOOP(286, 165, c, 5.4), p_industrial:c => IBAR(274, 158, 291, 178, c, 3.4, true),
   p_tragus:c => IPC(93, 197, c, 3.2), p_daith:c => IHOOP(86, 195, c, 4.6), p_conch:c => IPC(76, 202, c, 3.4),
   p_tunnel:c => IEAR.map(([x, y]) => `<circle cx="${x}" cy="${y - 3}" r="7.5" fill="${c}" stroke="${IOL}" stroke-width="1.8"/><circle cx="${x}" cy="${y - 3}" r="4" fill="#d8cfcf" stroke="${IOL}" stroke-width="1"/>`).join(''),
@@ -4376,15 +4375,15 @@ const IBITE = (x, y, c, r=2.5) => { const d = `M${f1(x - r)} ${y}A${r} ${r} 0 0 
 /* v764 (Inaya): Mund-Piercings sitzen an der Lippe des getragenen Munds (FMA), kleine Metallkugeln und Ringe. Stäbe sieht man nur an den Enden. Wangen folgen den Mundwinkeln. Kein Zungenpiercing mehr. */
 const FMHW = a => (a.R[0] - a.L[0]) / 2;
 const IPIERC_M = {
-  piercing:(c, a) => IPC(a.c - a.sx, a.sy + 1.6, c, 1.15) + IPC(a.c + a.sx, a.sy + 1.6, c, 1.15), /* v765 (Inaya): Snakebites als Kugeln unter der Unterlippe */
-  p_spider:(c, a) => IPC(a.c + a.sx - 1.45, a.sy + 1.6, c, 1.05) + IPC(a.c + a.sx + 1.45, a.sy + 1.6, c, 1.05),
-  p_angel:(c, a) => { const d = Math.min(FMHW(a) * .44, 14); return IPC(a.c - d, a.ua - 1.45, c, 1.05) + IPC(a.c + d, a.ua - 1.45, c, 1.05); }, /* symmetrisch auf der Oberlippenkante, wo sie zum Mundwinkel abfällt */
-  p_dahlia:(c, a) => IPC(a.L[0] - 1.9, a.L[1], c, 1.1) + IPC(a.R[0] + 1.9, a.R[1], c, 1.1),
-  p_monroe:(c, a) => IPC(a.c - Math.min(FMHW(a) * .55, 9), a.us - 1.6 + Math.max(0, FMHW(a) * .55 - 9) * .1, c, 1.1),
-  p_medusa:(c, a) => IPC(a.c, a.u - 1.7, c, 1.1),
-  p_labret:(c, a) => a.nolab ? '' : IPC(a.c, a.lo + 1.9, c, 1.2),
-  p_kinn:(c, a) => a.nolab ? '' : IPC(a.c, a.li + .5, c, .9) + IPC(a.c, a.lo + 1.9, c, 1.2), /* Stab steckt in der Lippe: nur oben und unten die Kugel */
-  p_wange:(c, a) => { const d = Math.max(FMHW(a) + 7, 25), y = (a.L[1] + a.R[1]) / 2 - 7; return IPC(a.c - d, y, c, 1.35) + IPC(a.c + d, y - .5, c, 1.35); },
+  piercing:(c, a) => IPC(a.c - a.sx, a.sy + 1.6, c, 1.36) + IPC(a.c + a.sx, a.sy + 1.6, c, 1.36), /* v765 (Inaya): Snakebites als Kugeln unter der Unterlippe */
+  p_spider:(c, a) => IPC(a.c + a.sx - 1.45, a.sy + 1.6, c, 1.24) + IPC(a.c + a.sx + 1.45, a.sy + 1.6, c, 1.24),
+  p_angel:(c, a) => { const d = Math.min(FMHW(a) * .44, 14); return IPC(a.c - d, a.ua - 1.45, c, 1.24) + IPC(a.c + d, a.ua - 1.45, c, 1.24); }, /* symmetrisch auf der Oberlippenkante, wo sie zum Mundwinkel abfällt */
+  p_dahlia:(c, a) => IPC(a.L[0] - 1.9, a.L[1], c, 1.3) + IPC(a.R[0] + 1.9, a.R[1], c, 1.3),
+  p_monroe:(c, a) => IPC(a.c - Math.min(FMHW(a) * .55, 9), a.us - 1.6 + Math.max(0, FMHW(a) * .55 - 9) * .1, c, 1.3),
+  p_medusa:(c, a) => IPC(a.c, a.u - 1.7, c, 1.3),
+  p_labret:(c, a) => a.nolab ? '' : IPC(a.c, a.lo + 1.9, c, 1.42),
+  p_kinn:(c, a) => a.nolab ? '' : IPC(a.c, a.li + .5, c, 1.3) + IPC(a.c, a.lo + 1.9, c, 1.3), /* Stab steckt in der Lippe: nur oben und unten die Kugel */
+  p_wange:(c, a) => { const d = Math.max(FMHW(a) + 7, 25), y = (a.L[1] + a.R[1]) / 2 - 7; return IPC(a.c - d, y, c, 1.59) + IPC(a.c + d, y - .5, c, 1.59); },
 };
 // ---- Kleidung auf den Körper (Koordinaten der jeweiligen Figur, B = IB.w oder IB.m) ----
 const ICON = c => isLight(c) ? '#141218' : '#ecebe7';
@@ -4685,7 +4684,7 @@ Object.assign(IBELT, {
 });
 Object.assign(IPIERC, {
   p_nase2:c => IPC(168, 226, c, 2.8) + IPC(183, 225, c, 2.8),
-  p_augenbraue:c => IBAR(232, 126, 245, 147, c),
+  p_augenbraue:c => IPC(243, 127.5, c, 2.9) + IPC(243, 146.5, c, 2.9), /* v767: eine Kugel über, eine unter der Braue, genau untereinander, kein Stab */
   p_kinn:c => `<path d="M178 249V258.5" stroke="${IOL}" stroke-width="3.6" stroke-linecap="round"/><path d="M178 249V258.5" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>` + IPC(178, 249, c, 2.6) + IPC(178, 259.5, c, 2.8) /* oberer Stecker mitten auf der Unterlippe (Inaya) */,
 });
 // Accessoires in der Hand
@@ -5876,7 +5875,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel', 'p_braue', 'p_augenbraue', 'p_bridge', 'p_dermal'];
   let ears = ''; // Ohrschmuck liegt über den Haaren, sonst verschwindet er unter fast jeder Frisur
   // Jungs-Gesicht: Nase etwas weiter links, Mund, Kinn und Brauen tiefer als beim Mädchen (Inaya, 2026-10-10)
-  const PM = B === IB.m ? {p_nase:[-8, 0], p_nasenring:[-8, 0], p_septum:[-4, -1], p_labret:[-2, 12], p_braue:[0, 10], p_wange:[0, 7]} : {};
+  const PM = B === IB.m ? {p_nase:[-8, 0], p_nasenring:[-8, 0], p_septum:[-4, -1], p_labret:[-2, 12], p_braue:[0, 10], p_augenbraue:[0, 9], p_wange:[0, 7]} : {};
   const PMOUTH = B === IB.m ? [-3, 8] : null, PMK = ['piercing', 'p_snakering', 'p_monroe', 'p_medusa', 'p_spider', 'p_angel', 'p_dahlia', 'p_kinn'];
   const pmv = k => PM[k] || (PMOUTH && PMK.includes(k) ? PMOUTH : null), pmt = (k, svg) => { const v = pmv(k); return v ? `<g transform="translate(${v[0]} ${v[1]})">${svg}</g>` : svg; };
   for (const k in J) { if (IPIERC_M[k]) { const P = IMPOS[B === IB.m ? 'm' : 'w'], M = IMOUTH[o.lips] || IMOUTH.l_neutral; if (FMA[o.lips]) { const bx = B === IB.m ? FIMG_MM : [0, 0]; face += `<g transform="translate(${f1(FMC[0] + bx[0])} ${f1(FMC[1] + bx[1])})">${IPIERC_M[k](J[k], FMA[o.lips])}</g>`; } else face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * (M.k || 1) * 100) / 100})">${IPIERC_M[k](J[k], M.a)}</g>`; } else if (IPIERC[k]) { if (IEARP.includes(k)) ears += pmt(k, IPIERC[k](J[k])); else face += pmt(k, IPIERC[k](J[k])); } if (IEARR[k]) ears += IEARR[k](J[k]); }
@@ -13660,7 +13659,7 @@ function ncNewPop(){ const w = V.name === 'wardrobe' || V.name === 'shop' ? 'w' 
 const ncPaid = i => !!(i && (i.nc || i.lv));
 const ncPrem = ncPaid;
 /* Besitz: Basics immer; vor der Übernahme (oder solange die neuen Regeln fehlen) gilt alles Bisherige wie früher */
-const ncOwns = id => { const i = ncItem(id); if (!ncPaid(i)) return true; const w = WAL.d; if (w?.inv?.[id]) return true; if (i.cat === 'face' && w?.inv && Object.keys(MK_OLD).some(k => MK_OLD[k] === id && w.inv[k])) return true; { const G = i.cat === 'eyeform' ? EYE_GONE : i.cat === 'lips' ? {...LIP_GONE, ...LIP_GONE2} : null; if (G && w?.inv && Object.keys(G).some(k => G[k] === id && w.inv[k])) return true; } /* v755: altes Auge/alter Mund gekauft = ähnliches neues besitzen */ /* v742: altes Make-up gekauft = neues besitzen */ if (i.cat === 'back' && w?.inv && Object.keys(HAIR_GONE).some(k => HAIR_GONE[k] === id && w.inv[k])) return true; /* v745: gelöschte Frisur gekauft = ähnliche besitzen */ if (i.cat === 'front' && w?.inv && Object.keys(HPONY).some(h => HPONY[h] === id && w.inv[h])) return true; /* v740: wer die Frisur hat, hat auch ihren Pony */ if (i.lv) return !!w && w.l >= i.lv; if (!w || !w.kp) return !i.ex; return false; };
+const ncOwns = id => { const i = ncItem(id); if (!ncPaid(i)) return true; const w = WAL.d; if (w?.inv?.[id]) return true; if (i.cat === 'face' && w?.inv && Object.keys(MK_OLD).some(k => MK_OLD[k] === id && w.inv[k])) return true; { const G = i.cat === 'eyeform' ? EYE_GONE : i.cat === 'lips' ? {...LIP_GONE, ...LIP_GONE2} : null; if (G && w?.inv && Object.keys(G).some(k => G[k] === id && w.inv[k])) return true; } if (id === 'p_augenbraue' && w?.inv?.p_braue) return true; /* v767: Ring-Augenbraue gekauft = Kugel-Version besitzen */ /* v755: altes Auge/alter Mund gekauft = ähnliches neues besitzen */ /* v742: altes Make-up gekauft = neues besitzen */ if (i.cat === 'back' && w?.inv && Object.keys(HAIR_GONE).some(k => HAIR_GONE[k] === id && w.inv[k])) return true; /* v745: gelöschte Frisur gekauft = ähnliche besitzen */ if (i.cat === 'front' && w?.inv && Object.keys(HPONY).some(h => HPONY[h] === id && w.inv[h])) return true; /* v740: wer die Frisur hat, hat auch ihren Pony */ if (i.lv) return !!w && w.l >= i.lv; if (!w || !w.kp) return !i.ex; return false; };
 const ncName = id => { const i = ncItem(id); return i ? String(i.name).replace(/­/g, '') : id; };
 const NC_ICO = `<svg class="ncico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#77746f"/><circle cx="12" cy="12" r="9.3" fill="#ecebe7" stroke="#4a4845" stroke-width=".8"/><circle cx="12" cy="12" r="7.6" fill="none" stroke="#9a9792" stroke-width=".5"/><circle cx="9" cy="8.4" r="2.4" fill="#ffffff" opacity=".7"/><g transform="translate(12 12.6) scale(.42)"><path d="${NC_BATP}" fill="#111112"/></g></svg>`; /* Nocti-Coin silbern im Schwarz-Weiß der Seite (Inaya, 2026-10-16) */
 const NC_GIFT = '<svg class="ncgi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4z"/><path d="M3 7h18v3H3zM12 7v13"/><path d="M12 7c-2-4-6-4-6-1.5S10 7 12 7zM12 7c2-4 6-4 6-1.5S14 7 12 7z"/></svg>';
