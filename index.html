@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='21932ba72000';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='4ec22777addc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -5535,9 +5535,9 @@ const ICUT = X => X.LN('M167 243Q150 238 134 222M189 243Q206 236 222 216', '#1f1
   + X.LN('M146 226L154 240M154 226L146 240M136 218L142 230M142 218L136 230M202 224L210 238M210 224L202 238M214 214L220 226M220 214L214 226', '#1f1b1f', 1.8);
 ITEMS.push(
   {id:'h_messer', cat:'acc', name:'Messer', st:'Horror', nc:80}, {id:'h_saege', cat:'acc', name:'Kettensäge', st:'Horror', nc:140}, {id:'h_axt', cat:'acc', name:'Axt', st:'Horror', nc:110},
-  {id:'m_blechbaer', cat:'face', name:'Maske: kaputter Blechbär', st:'Horror', nc:90}, {id:'m_blechhase', cat:'face', name:'Maske: kaputter Blechhase', st:'Horror', nc:90},
-  {id:'m_blechrabe', cat:'face', name:'Maske: kaputter Blechrabe', st:'Horror', nc:90}, {id:'m_clown', cat:'face', name:'Maske: stummer Clown', st:'Horror', nc:90},
-  {id:'l_schnitt', cat:'lips', name:'Grinsen (creepy)', nc:40}, {id:'zombiepop', cat:'face', name:'Zombie-Pop-Art', st:'Horror', nc:70},
+  {id:'m_blechbaer', cat:'face', name:'Maske: kaputter Blechbär', st:'Horror', nc:90, gone:1}, {id:'m_blechhase', cat:'face', name:'Maske: kaputter Blechhase', st:'Horror', nc:90, gone:1},
+  {id:'m_blechrabe', cat:'face', name:'Maske: kaputter Blechrabe', st:'Horror', nc:90, gone:1}, {id:'m_clown', cat:'face', name:'Maske: stummer Clown', st:'Horror', nc:90, gone:1},
+  {id:'l_schnitt', cat:'lips', name:'Grinsen (creepy)', nc:40}, {id:'zombiepop', cat:'face', name:'Zombie-Pop-Art', st:'Horror', nc:70, gone:1}, /* v760 (Inaya): Masken, Clown und Zombie-Pop-Art nicht mehr im Shop, wer sie trägt, behält sie */
 );
 /* Zombie-Pop-Art-Make-up (Inaya, 2026-10-17): grüne Haut, Gehirn auf der Stirn, pinkes genähtes Herz ums rechte Auge, aufgerissene Wange mit Zähnen, schwarze Lippen, Nähte */
 const ZPINK = '#e0408a', ZPINK2 = '#a01a5a';
@@ -13615,7 +13615,7 @@ function evTabPick(has){ const sub = () => mallCat === 'bottom' || mallCat === '
     if (k === 'jewel') { mallCat = 'jewel'; jewelSub = JEWEL_SUB.find(([c]) => has('jewel', null, null, c))[0]; return; } mallCat = k; return; } }
 /* abgelaufene Event-Teile: kein Preis mehr (nicht kaufbar), raus aus der Tasche */
 function evSweep(){ if (NCPRICE) for (const id of Object.keys(NCPRICE)) if (evOut(ncItem(id))) delete NCPRICE[id]; for (const id of [...NCCART.keys()]) if (evOut(ncItem(id))) NCCART.delete(id); }
-const NC_PRICES = Object.fromEntries([...ITEMS.filter(i => i.nc && !evOut(i)).map(i => [i.id, i.nc]), ...FURN_IDS.filter(k => FURN[k].nc && !evOut(FURN[k])).map(k => ['m:' + k, FURN[k].nc])]); /* Möbel als m:<id>, weil es Kleidung und Möbel mit gleicher ID gibt (teddy, kreuz …) */
+const NC_PRICES = Object.fromEntries([...ITEMS.filter(i => i.nc && !i.gone && !evOut(i)).map(i => [i.id, i.nc]), ...FURN_IDS.filter(k => FURN[k].nc && !evOut(FURN[k])).map(k => ['m:' + k, FURN[k].nc])]); /* Möbel als m:<id>, weil es Kleidung und Möbel mit gleicher ID gibt (teddy, kreuz …) */
 const ncItem = id => { id = String(id || ''); if (id.startsWith('m:')) { const k = id.slice(2); return FURN[k] ? {...FURN[k], id, k, furn:1} : null; } return item(id) || null; };
 const ncF = k => 'm:' + k;
 /* v714 (Inaya): Neu Gekauftes (auch angenommene Geschenke) in Garderobe und Zimmer markieren. u.invSeen = Teile, die schon gesehen sind; neu = im Wallet, aber nicht darin.
