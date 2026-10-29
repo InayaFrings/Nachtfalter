@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e226657b86f5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b7f04310e365';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4376,7 +4376,7 @@ const IBITE = (x, y, c, r=2.5) => { const d = `M${f1(x - r)} ${y}A${r} ${r} 0 0 
 /* v764 (Inaya): Mund-Piercings sitzen an der Lippe des getragenen Munds (FMA), kleine Metallkugeln und Ringe. Stäbe sieht man nur an den Enden. Wangen folgen den Mundwinkeln. Kein Zungenpiercing mehr. */
 const FMHW = a => (a.R[0] - a.L[0]) / 2;
 const IPIERC_M = {
-  piercing:(c, a) => IHOOP(a.c - a.sx, a.sy - .2, c, 1.7) + IHOOP(a.c + a.sx, a.sy - .2, c, 1.7),
+  piercing:(c, a) => IPC(a.c - a.sx, a.sy + 1.6, c, 1.15) + IPC(a.c + a.sx, a.sy + 1.6, c, 1.15), /* v765 (Inaya): Snakebites als Kugeln unter der Unterlippe */
   p_spider:(c, a) => IPC(a.c + a.sx - 1.45, a.sy + 1.6, c, 1.05) + IPC(a.c + a.sx + 1.45, a.sy + 1.6, c, 1.05),
   p_angel:(c, a) => { const d = Math.min(FMHW(a) * .44, 14); return IPC(a.c - d, a.ua - 1.45, c, 1.05) + IPC(a.c + d, a.ua - 1.45, c, 1.05); }, /* symmetrisch auf der Oberlippenkante, wo sie zum Mundwinkel abfällt */
   p_dahlia:(c, a) => IPC(a.L[0] - 1.9, a.L[1], c, 1.1) + IPC(a.R[0] + 1.9, a.R[1], c, 1.1),
