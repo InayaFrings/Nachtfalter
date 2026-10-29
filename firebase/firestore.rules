@@ -99,13 +99,18 @@ service cloud.firestore {
       allow read: if invited() && mayRead(cid);
       allow create: if invited() && (cid.matches('wall_.+')
         ? (request.resource.data.from == request.auth.uid && friendsWith(cid.split('_')[1]))
+        // v754: Begleiter von Freunden besuchen, einmal am Tag: chats/pv_<besitzer>/m/<besucher>_<tag> = {by, a, d, ts}
+        : cid.matches('pv_.+') ? (request.resource.data.by == request.auth.uid && cid.split('_')[1] != request.auth.uid && friendsWith(cid.split('_')[1])
+          && mid == request.auth.uid + '_' + dayS() && request.resource.data.d == today() && request.resource.data.a in ['pet', 'feed']
+          && request.resource.data.keys().hasOnly(['by', 'a', 'd', 'ts']))
         : (isDm(cid) || isGroup(cid)) ? (mayWrite(cid) && request.resource.data.from == request.auth.uid) : true);
       // Verschlüsselte Nachrichten: der Absender darf ändern, andere Mitglieder nur den übertragenen Verlauf (Feld x) ergänzen
-      allow update: if invited() && !cid.matches('wall_.+') && ((isDm(cid) || isGroup(cid))
+      allow update: if invited() && !cid.matches('wall_.+') && !cid.matches('pv_.+') && ((isDm(cid) || isGroup(cid))
         ? (mayWrite(cid) && (resource.data.from == request.auth.uid || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['x'])))
         : true);
       allow delete: if invited() && (cid.matches('wall_.+')
         ? (request.auth.uid == cid.split('_')[1] || resource.data.from == request.auth.uid)
+        : cid.matches('pv_.+') ? request.auth.uid == cid.split('_')[1]
         : (isDm(cid) || isGroup(cid)) ? mayWrite(cid) : true);
     }
 
@@ -210,14 +215,18 @@ service cloud.firestore {
     function lvC4(l) { return [0, 0, 155, 355, 560, 790, 1025, 1280, 1575, 1875, 2180, 2510, 2845, 3225, 3610, 4020, 4435, 4870, 5345, 5825, 6310, 6820, 7335, 7895, 8460, 9050, 9645, 10260, 10915, 11575, 12240, 12930, 13625, 14365, 15110, 15880, 16655, 17450, 18285, 19125, 19970, 20840, 21715, 22635, 23560, 24510, 25465, 26440, 27455, 28475, 29500][l]; } // seit v681: Tabelle, je Level 155 bis 1025 Coins, unterschiedlich große Schritte
     function lvC3(l) { return 100 * (l - 1) + 5 * (l - 1) * (l - 2); } // seit v679: Level 2 = 100, jedes weitere Level 10 mehr (Level 50 = 580)
     function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && (N().c == W().c + coins + lvC4(N().l) - lvC4(W().l) || N().c == W().c + coins + lvC3(N().l) - lvC3(W().l) || N().c == W().c + coins + lvC2(N().l) - lvC2(W().l) || N().c == W().c + coins + lvC(N().l) - lvC(W().l)); }
-    function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2, 'b': 40}[k]; }
+    function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2, 'b': 40, 'v': 10, 'w': 5}[k]; }
     function xc(k) { return k == 'g' ? 15 : k == 'b' ? 50 : 0; } // b = Begleiter-Levelaufstieg (seit v677)
-    function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 4, 'j': 3, 'k': 1, 'm': 10, 'b': 3}[k]; }
+    function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 4, 'j': 3, 'k': 1, 'm': 10, 'b': 3, 'v': 3, 'w': 5}[k]; } // v754: v = Begleiter von Freunden besucht, w = eigener Begleiter wurde besucht
     function xdOld() { return W().xd.d == today() ? W().xd : {'d': today(), 'n': {}, 'r': {}}; }
     function xdOk(k, rk) { let o = xdOld();
       return N().xd.keys().hasOnly(['d', 'n', 'r']) && N().xd.d == today()
         && o.n.get(k, 0) < xcap(k) && N().xd.n.get(k, 0) == o.n.get(k, 0) + 1 && N().xd.n.diff(o.n).affectedKeys().hasOnly([k])
         && (rk == '' ? N().xd.r == o.r : (!(rk in o.r) && N().xd.r.diff(o.r).affectedKeys().hasOnly([rk]) && N().xd.r[rk] == true)); }
+    // v754: tägliche Aufgaben, je Tag höchstens drei, jede einmal: td = {d: Tag, t: {<aufgabe>: true}}
+    function tdOk(i) { let o = W().get('td', {'d': 0, 't': {}}); let p = o.d == today() ? o.t : {};
+      return i is string && i.matches('^[a-z]{2}$') && N().td.keys().hasOnly(['d', 't']) && N().td.d == today() && !(i in p) && p.size() < 3
+        && N().td.t.diff(p).affectedKeys().hasOnly([i]) && N().td.t.size() == p.size() + 1 && N().td.t[i] == true; }
     function piDoc(ref, d) { return get(/databases/$(database)/documents/chats/$('pi_' + ref)/m/$(d)).data; }
     function xpProof(op) { let k = op.k; let ref = op.ref; let u = request.auth.uid;
       return k == 'g' ? ref in ['mem', 'ttt', 'hang', 'bat']
@@ -228,10 +237,12 @@ service cloud.firestore {
         : k == 'j' ? isGroup(ref) && chatDoc(ref).pub == true && u in chatDoc(ref).members
         : k == 'k' ? isGroup(ref) && chatDoc(ref).pub == true && chatDoc(ref).createdBy == u
         : k == 'b' ? ref.matches('^([2-9]|[12][0-9]|30)$')
+        : k == 'v' ? ref != u && exists(/databases/$(database)/documents/chats/$('pv_' + ref)/m/$(u + '_' + dayS()))
+        : k == 'w' ? ref != u && exists(/databases/$(database)/documents/chats/$('pv_' + u)/m/$(ref + '_' + dayS()))
         : k == 'm' ? isGroup(ref) && chatDoc(ref).pub == true && get(/databases/$(database)/documents/chats/$(ref)/m/$(op.d)).data.from == u
         : false; }
     function xpOp(op) { let k = op.k; let ref = op.ref;
-      return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm', 'b'] && ref is string && ref.size() > 0 && ref.size() < 160
+      return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm', 'b', 'v', 'w'] && ref is string && ref.size() > 0 && ref.size() < 160
         && N().diff(W()).affectedKeys().hasOnly(['x', 'l', 'c', 'xd', 'fx', 'gx', 'op']) && N().inv == W().inv && N().dd == W().dd
         && gain(xv(k), xc(k)) && xpProof(op)
         && (k == 'f' ? (!(ref in W().fx) && N().fx.diff(W().fx).affectedKeys().hasOnly([ref]) && N().gx == W().gx && xdOk(k, ''))
@@ -270,6 +281,8 @@ service cloud.firestore {
         // Tagesbelohnung: einmal je Tag 25 Coins und 20 XP
         || (N().op.t == 'daily' && W().dd < today() && N().dd == today() && gain(20, 25)
           && N().diff(W()).affectedKeys().hasOnly(['c', 'x', 'l', 'dd', 'op']))
+        // v754: tägliche Aufgabe abholen, 30 Coins und 10 XP
+        || (N().op.t == 'task' && tdOk(N().op.i) && gain(10, 30) && N().diff(W()).affectedKeys().hasOnly(['c', 'x', 'l', 'td', 'op']))
         // XP (bei Minigames auch Coins) für eine echte Aktivität
         || (N().op.t == 'xp' && xpOp(N().op))
         // Kaufen: ein oder mehrere Teile (Einkaufstasche), Preise aus site/prices
@@ -309,5 +322,12 @@ service cloud.firestore {
           && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.t == 'take'
           && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.g == g));
     }
+
+    function dayS() { return string(int(today())); } // Tageszahl als Text (string(today()) passt nicht)
+    // v754: Meldungen für Profile, Nachrichten und Kommentare, sieht nur Inaya
+    match /reports/{id} {
+      allow create: if signedIn() && N().by == request.auth.uid && N().t in ['u', 'm', 'c'] && N().keys().hasOnly(['by', 't', 'u', 'k', 'q', 'r', 'x', 'ts'])
+        && N().q is string && N().q.size() <= 300 && N().x is string && N().x.size() <= 200 && N().k is string && N().k.size() <= 200;
+      allow read, delete: if isOwner(); }
   }
 }
