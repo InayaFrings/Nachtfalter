@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8735160654cd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='cd2ca99a6417';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4276,7 +4276,11 @@ const FIMG = {e:[60, 132, 236, 148], k:[52, 52, 244, 226], m:[121.1, 214.1, 111.
 const FIMG_MM = [-3.6, 6.8];
 /* Jungs: jedes Auge einzeln von der Augenöffnung des Mädchens auf seine (IRISP: schmaler und flacher), links und rechts getrennt */
 const FIMG_ME = [['M-200 -200H173V600H-200Z', 'translate(113.75 181.5) scale(.9035 .825) translate(-114.5 -187.75)'], ['M173 -200H600V600H173Z', 'translate(230.5 176.75) scale(.879 .753) translate(-232 -178.25)']];
-const fimgM = (id, r, u) => FIMG_ME.map(([c, t], i) => `<clipPath id="${u}fe${i}"><path d="${c}"/></clipPath><g clip-path="url(#${u}fe${i})"><g transform="${t}">${fimg(id, r)}</g></g>`).join('');
+const fimgM = (id, r, u, inner) => FIMG_ME.map(([c, t], i) => `<clipPath id="${u}fe${i}"><path d="${c}"/></clipPath><g clip-path="url(#${u}fe${i})"><g transform="${t}">${inner ? inner(u + i) : fimg(id, r)}</g></g>`).join('');
+/* Make-up symmetrisch (Inaya): das rechte Auge (vom Betrachter) aus dem Blatt, gespiegelt und auf die Augenöffnung des linken gestreckt */
+const FMK_MIR = 'translate(114.5 187.75) scale(-.983 .863) translate(-232 -178.25)';
+const fmkSym = (id, u, noC) => `<clipPath id="${u}mr"><path d="M190 -200H600V600H190Z"/></clipPath><clipPath id="${u}mc"><path d="M156 -200H190V600H156Z"/></clipPath><clipPath id="${u}ml"><path d="M-200 -200H156V600H-200Z"/></clipPath>`
+  + `<g clip-path="url(#${u}mr)">${fimg(id, FIMG.k)}</g>${noC ? '' : `<g clip-path="url(#${u}mc)">${fimg(id, FIMG.k)}</g>`}<g clip-path="url(#${u}ml)"><g transform="${FMK_MIR}"><g clip-path="url(#${u}mr)">${fimg(id, FIMG.k)}</g></g></g>`; /* Mitte (z. B. Herz zwischen den Augen) bleibt wie im Blatt */
 const fimg = (id, r, ex = '') => `<image href="${FIMGU(id)}" x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" preserveAspectRatio="none"${ex}/>`;
 /* Anker für Piercings je Mund (Pixel der Mädchen-Figur ab Mundmitte), wie IMOUTH[..].a */
 const FMA = {l_voll:{w:11, ul:-4.5, ll:6}, l_leicht:{w:11, ul:-3.5, ll:3.8}, l_zunge:{w:11, ul:-4, ll:5, t:[0, 12]}, l_fang:{w:14, ul:-3, ll:3}, l_grins:{w:30, ul:-6, ll:6.8}, l_joker:{w:36, ul:-8, ll:9.7},
@@ -5841,7 +5845,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (!MK2 && !MKI && IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYESM(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
   if (drawn) face += B === IB.m ? fimgM(o.eyeform, FIMG.e, X.u + 'e') : fimg(o.eyeform, FIMG.e);
   if (MK2?.o) face += MK2.o(mc2, X);
-  if (MKI) face += B === IB.m ? fimgM(o.face, FIMG.k, X.u + 'k') : fimg(o.face, FIMG.k); /* nur die Augenpartie, Lippen bleiben (Inaya) */
+  if (MKI) face += B === IB.m ? fimgM(o.face, FIMG.k, X.u + 'k', v => fmkSym(o.face, X.u + 'ks' + v, 1)) + `<clipPath id="${X.u}kmc"><path d="M156 -200H190V600H156Z"/></clipPath><g transform="translate(-1.1 -3.9)"><g clip-path="url(#${X.u}kmc)">${fimg(o.face, FIMG.k)}</g></g>` : fmkSym(o.face, X.u + 'ks'); /* nur die Augenpartie, Lippen bleiben, beide Seiten gleich (Inaya) */
   { const mkl = o.face === 'zombiepop' ? '#121014' : MKI ? '' : MK2?.l || ''; face += imouthDraw(o, X, mkl); if (MK2?.mx) { const P = IMPOS[B === IB.m ? 'm' : 'w']; face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * ((IMOUTH[o.lips] || {}).k || 1) * 100) / 100})">${MK2.mx(mc2, X, imouthA(o))}</g>`; } } /* v755: Mund nach Inayas Blatt, Make-up gibt nur die Lippenfarbe */
   if (!MK2 && !MKI && IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
   if (o.face === 'zombiepop') face += IZOMBIE_EYE();
