@@ -323,28 +323,7 @@ service cloud.firestore {
           && getAfter(/databases/$(database)/documents/wallet/$(request.auth.uid)).data.op.g == g));
     }
 
-    // v754: Zimmer der Woche. roomweek/<woche>/h/<besitzer>_<uid> = {by, o, ts} (ein Herz je Person, Zimmer und Woche), roomweek/<woche>/r/<besitzer> = {n}
-    function wkNow() { return string(int(math.floor((today() + 3) / 7))); }
-    function dayS() { return string(int(today())); }
-    match /roomweek/{w}/h/{hid} { allow read: if signedIn();
-      allow create: if signedIn() && w == wkNow() && N().by == request.auth.uid && N().o is string && N().o != request.auth.uid && hid == N().o + '_' + request.auth.uid
-        && N().keys().hasOnly(['by', 'o', 'ts'])
-        && getAfter(/databases/$(database)/documents/roomweek/$(w)/r/$(N().o)).data.n == (exists(/databases/$(database)/documents/roomweek/$(w)/r/$(N().o)) ? get(/databases/$(database)/documents/roomweek/$(w)/r/$(N().o)).data.n + 1 : 1); }
-    match /roomweek/{w}/r/{o} { allow read: if signedIn();
-      allow create, update: if signedIn() && w == wkNow() && o != request.auth.uid && N().keys().hasOnly(['n']) && N().n == (resource == null ? 1 : W().n + 1)
-        && !exists(/databases/$(database)/documents/roomweek/$(w)/h/$(o + '_' + request.auth.uid)) && existsAfter(/databases/$(database)/documents/roomweek/$(w)/h/$(o + '_' + request.auth.uid)); }
-    // v754: Outfit der Woche. contest/<woche>/e/<uid> = {o, pose, ts, n}, contest/<woche>/v/<uid> = {to, ts} (eine Stimme je Person und Woche)
-    match /contest/{w}/e/{uid} { allow read: if signedIn();
-      allow create: if me(uid) && w == wkNow() && N().keys().hasOnly(['o', 'pose', 'ts', 'n']) && N().n == 0 && N().o is map;
-      allow update: if signedIn() && w == wkNow() && (
-        (me(uid) && N().diff(W()).affectedKeys().hasOnly(['o', 'pose', 'ts']) && N().o is map)
-        || (uid != request.auth.uid && N().diff(W()).affectedKeys().hasOnly(['n']) && N().n == W().n + 1
-          && !exists(/databases/$(database)/documents/contest/$(w)/v/$(request.auth.uid))
-          && getAfter(/databases/$(database)/documents/contest/$(w)/v/$(request.auth.uid)).data.to == uid));
-      allow delete: if me(uid); }
-    match /contest/{w}/v/{uid} { allow read: if signedIn();
-      allow create: if me(uid) && w == wkNow() && N().keys().hasOnly(['to', 'ts']) && N().to is string && N().to != uid
-        && exists(/databases/$(database)/documents/contest/$(w)/e/$(N().to)); }
+    function dayS() { return string(int(today())); } // Tageszahl als Text (string(today()) passt nicht)
     // v754: Meldungen für Profile, Nachrichten und Kommentare, sieht nur Inaya
     match /reports/{id} {
       allow create: if signedIn() && N().by == request.auth.uid && N().t in ['u', 'm', 'c'] && N().keys().hasOnly(['by', 't', 'u', 'k', 'q', 'r', 'x', 'ts'])
