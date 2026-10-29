@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='bc031bf3219f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b7b20068ac72';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3469,7 +3469,9 @@ const asObj = v => v && typeof v === 'object' ? v : typeof v === 'string' && v !
 const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', face:'natur', back:'h_kein'};
 // „Komplett ausziehen“: Kleidung, Schuhe, Accessoires, Kopfbedeckung, Strümpfe und Schmuck aus; Körper, Haare und Gesicht bleiben
 function undressAll(o){ Object.assign(o, {back:'h_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
-function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && NONE_ITEM[k] && NONE_ITEM[k] !== i.id ? NONE_ITEM[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
+/* v768 (Inaya): Getragenes nochmal antippen = ausziehen; Augen und Mund gehen dann auf Normal zurück */
+const WEAR_OFF = {...NONE_ITEM, eyeform:'e_rund', lips:'l_neutral'};
+function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && WEAR_OFF[k] && WEAR_OFF[k] !== i.id ? WEAR_OFF[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
 // Farben gelten nur für das Teil, das man gerade umgefärbt hat: jedes Kleidungsstück merkt sich seine eigene Farbe, alle anderen bleiben im Originaldesign (Inaya, 2026-10-10)
 const ICF = {top:['topC', 'motifC'], bottom:['bottomC'], shoes:['shoesC'], jacket:['jacketC'], face:['makeC']};
 function icolSwap(o, k, nv){
@@ -4008,14 +4010,14 @@ const IPIERC = {
   piercing:c => IPC(168, 250, c) + IPC(188, 250, c),
   // Snake Bites als Ringe: hängen unter der Unterlippe und laufen oben in die Lippe hinein
   p_snakering:c => IHOOP(168, 247.5, c, 5.2) + IHOOP(188, 247.5, c, 5.2),
-  p_nase:c => IPC(183, 225.4, c, 2.2), p_nasenring:c => IHOOP(182, 229, c, 4.2),
+  p_nase:c => IPC(183, 225.4, c, PR), p_nasenring:c => IHOOP(182, 229, c, 4.2),
   // Septum: Hufeisen unter der Nasenspitze, Kugeln an beiden Enden
   p_septum:c => { const d = 'M172.4 227.6A4.4 4.4 0 1 0 179.6 227.6'; return `<path d="${d}" fill="none" stroke="${IOL}" stroke-width="2.6" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.3" stroke-linecap="round"/>` + IPC(174, 233.4, c, .9) + IPC(176, 234.2, c, 1.2) + IPC(178, 233.4, c, .9); }, /* v755: Ring mit Perlen wie auf Inayas Blatt */
-  p_bridge:c => IBAR(163, 187, 189, 186, c, 3.4),
+  p_bridge:c => IBAR(163, 187, 189, 186, c, PR),
   p_braue:c => IHOOP(246, 141, c, 4.8) + IHOOP(235, 137, c, 4.4),
   p_labret:c => IPC(178, 256, c, 3.4), p_monroe:c => IPC(166, 235, c, 3),
   p_medusa:c => IPC(178, 236, c, 3), p_spider:c => IPC(186, 251, c, 2.8) + IPC(194, 251, c, 2.8), p_angel:c => IPC(169, 236, c, 3) + IPC(187, 236, c, 3),
-  p_dahlia:c => IPC(163, 244, c, 3) + IPC(193, 244, c, 3), p_dermal:c => IPC(250, 200, c, 3.2) + IPC(243, 210, c, 3.2),
+  p_dahlia:c => IPC(163, 244, c, 3) + IPC(193, 244, c, 3), p_dermal:c => IPC(250, 200, c, PR) + IPC(243.5, 209.5, c, PR),
   p_helix:c => IHOOP(70, 181, c, 5.4) + IHOOP(286, 165, c, 5.4), p_industrial:c => IBAR(274, 158, 291, 178, c, 3.4, true),
   p_tragus:c => IPC(93, 197, c, 3.2), p_daith:c => IHOOP(86, 195, c, 4.6), p_conch:c => IPC(76, 202, c, 3.4),
   p_tunnel:c => IEAR.map(([x, y]) => `<circle cx="${x}" cy="${y - 3}" r="7.5" fill="${c}" stroke="${IOL}" stroke-width="1.8"/><circle cx="${x}" cy="${y - 3}" r="4" fill="#d8cfcf" stroke="${IOL}" stroke-width="1"/>`).join(''),
@@ -4374,16 +4376,17 @@ const imouthA = o => (IMOUTH[o.lips] || IMOUTH.l_neutral).a;
 const IBITE = (x, y, c, r=2.5) => { const d = `M${f1(x - r)} ${y}A${r} ${r} 0 0 0 ${f1(x + r)} ${y}`; return `<path d="${d}" fill="none" stroke="${IOL}" stroke-width="2.1" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.1" stroke-linecap="round"/>` + IPC(f1(x - r), y, c, 1.05) + IPC(f1(x + r), y, c, 1.05); };
 /* v764 (Inaya): Mund-Piercings sitzen an der Lippe des getragenen Munds (FMA), kleine Metallkugeln und Ringe. Stäbe sieht man nur an den Enden. Wangen folgen den Mundwinkeln. Kein Zungenpiercing mehr. */
 const FMHW = a => (a.R[0] - a.L[0]) / 2;
+const PR = 2.2; /* v768 (Inaya): alle Piercing-Kugeln so groß wie die Nostril-Kugel */
 const IPIERC_M = {
-  piercing:(c, a) => IPC(a.c - a.sx, a.sy + 1.6, c, 1.36) + IPC(a.c + a.sx, a.sy + 1.6, c, 1.36), /* v765 (Inaya): Snakebites als Kugeln unter der Unterlippe */
-  p_spider:(c, a) => IPC(a.c + a.sx - 1.45, a.sy + 1.6, c, 1.24) + IPC(a.c + a.sx + 1.45, a.sy + 1.6, c, 1.24),
-  p_angel:(c, a) => { const d = Math.min(FMHW(a) * .44, 14); return IPC(a.c - d, a.ua - 1.45, c, 1.24) + IPC(a.c + d, a.ua - 1.45, c, 1.24); }, /* symmetrisch auf der Oberlippenkante, wo sie zum Mundwinkel abfällt */
-  p_dahlia:(c, a) => IPC(a.L[0] - 1.9, a.L[1], c, 1.3) + IPC(a.R[0] + 1.9, a.R[1], c, 1.3),
-  p_monroe:(c, a) => IPC(a.c - Math.min(FMHW(a) * .55, 9), a.us - 1.6 + Math.max(0, FMHW(a) * .55 - 9) * .1, c, 1.3),
-  p_medusa:(c, a) => IPC(a.c, a.u - 1.7, c, 1.3),
-  p_labret:(c, a) => a.nolab ? '' : IPC(a.c, a.lo + 1.9, c, 1.42),
-  p_kinn:(c, a) => a.nolab ? '' : IPC(a.c, a.li + .5, c, 1.3) + IPC(a.c, a.lo + 1.9, c, 1.3), /* Stab steckt in der Lippe: nur oben und unten die Kugel */
-  p_wange:(c, a) => { const d = Math.max(FMHW(a) + 7, 25), y = (a.L[1] + a.R[1]) / 2 - 7; return IPC(a.c - d, y, c, 1.59) + IPC(a.c + d, y - .5, c, 1.59); },
+  piercing:(c, a) => IPC(a.c - a.sx, a.sy + 2.2, c, PR) + IPC(a.c + a.sx, a.sy + 2.2, c, PR), /* v765 (Inaya): Snakebites als Kugeln unter der Unterlippe */
+  p_spider:(c, a) => IPC(a.c + a.sx - 2.4, a.sy + 2.2, c, PR) + IPC(a.c + a.sx + 2.4, a.sy + 2.2, c, PR),
+  p_angel:(c, a) => { const d = Math.min(FMHW(a) * .44, 14); return IPC(a.c - d, a.ua - 2, c, PR) + IPC(a.c + d, a.ua - 2, c, PR); }, /* symmetrisch auf der Oberlippenkante, wo sie zum Mundwinkel abfällt */
+  p_dahlia:(c, a) => IPC(a.L[0] - 2.6, a.L[1], c, PR) + IPC(a.R[0] + 2.6, a.R[1], c, PR),
+  p_monroe:(c, a) => IPC(a.c - Math.min(FMHW(a) * .55, 9), a.us - 2.3 + Math.max(0, FMHW(a) * .55 - 9) * .1, c, PR),
+  p_medusa:(c, a) => IPC(a.c, a.u - 2.4, c, PR),
+  p_labret:(c, a) => a.nolab ? '' : IPC(a.c, a.lo + 2.5, c, PR),
+  p_kinn:(c, a) => a.nolab ? '' : IPC(a.c, a.li + .6, c, PR) + IPC(a.c, a.lo + 2.5, c, PR), /* Stab steckt in der Lippe: nur oben und unten die Kugel */
+  p_wange:(c, a) => { const d = Math.max(FMHW(a) + 7, 25), y = (a.L[1] + a.R[1]) / 2 - 7; return IPC(a.c - d, y, c, PR) + IPC(a.c + d, y - .5, c, PR); },
 };
 // ---- Kleidung auf den Körper (Koordinaten der jeweiligen Figur, B = IB.w oder IB.m) ----
 const ICON = c => isLight(c) ? '#141218' : '#ecebe7';
@@ -4684,7 +4687,7 @@ Object.assign(IBELT, {
 });
 Object.assign(IPIERC, {
   p_nase2:c => IPC(168, 226, c, 2.8) + IPC(183, 225, c, 2.8),
-  p_augenbraue:c => IPC(243, 127.5, c, 2.9) + IPC(243, 146.5, c, 2.9), /* v767: eine Kugel über, eine unter der Braue, genau untereinander, kein Stab */
+  p_augenbraue:c => IPC(243, 128, c, PR) + IPC(243, 146, c, PR), /* v767: eine Kugel über, eine unter der Braue, genau untereinander, kein Stab */
   p_kinn:c => `<path d="M178 249V258.5" stroke="${IOL}" stroke-width="3.6" stroke-linecap="round"/><path d="M178 249V258.5" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>` + IPC(178, 249, c, 2.6) + IPC(178, 259.5, c, 2.8) /* oberer Stecker mitten auf der Unterlippe (Inaya) */,
 });
 // Accessoires in der Hand
@@ -5887,7 +5890,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   let back = Object.keys(o.acc || {}).filter(k => IACC_BACK[k]).map(k => IACC_BACK[k](X, AC(k))).join('') + (IJACK_BACK[o.jacket] ? IJACK_BACK[o.jacket](X) : '');
   let body = '';
   for (const k of ['z_haut', 'z_blau']) if (o.acc?.[k]) body += IACC_BODY[k](X, o.acc[k], 'rest'); /* auf der Haut, unter der Kleidung */
-  if (J.p_nabel) body += IRING(B.nav[0], B.nav[1] + 12, J.p_nabel, 6) + IPC(B.nav[0], B.nav[1] - 2, J.p_nabel, 3);
+  if (J.p_nabel) body += IRING(B.nav[0], B.nav[1] + 12, J.p_nabel, 6) + IPC(B.nav[0], B.nav[1] - 2, J.p_nabel, PR);
   let stulp = '';
   // Reihenfolge von unten nach oben: Strumpfhose, Overknees, Socken, Schuhe, Stulpen (Inaya, 2026-10-12)
   const lwRank = k => /stulpen|^l_fell_/.test(k) ? 4 : /^l_(knie|socken|ruesche)$/.test(k) ? 2 : /overknee|ringelknie|^l_ok_/.test(k) ? 1 : k === 'l_strapse' ? .5 : 0;
@@ -7203,7 +7206,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
     const t = previewOutfit(o, i), [dot, pan] = itemColUI(i, o, 'ob-color');
     return `<div class="item ${on ? 'on' : ''}">${dot}
       <button type="button" class="thumb" data-act="ob-item" data-id="${i.id}" aria-label="${esc(i.name)} anziehen">${avatar(t, thumbView(i), '', true)}</button>
-      ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.none || NONE_ITEM[i.cat] === i.id ? tr(i.name) : i.name)}</span>` : ''}
+      ${i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.none || NONE_ITEM[i.cat] === i.id ? tr(i.name) : i.name)}</span>` : ''}
       ${on && !off ? '<button class="btn ghost" disabled>Angezogen</button>' : `<button type="button" class="btn ghost" data-act="ob-item" data-id="${i.id}">${off ? (MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen') : 'Anziehen'}</button>`}</div>${pan}`;
   }).join('');
   return `${obBar(2)}<div class="obwear">
@@ -11111,7 +11114,7 @@ function shopView(isShop){
   const has = i => ncOwns(i.id); /* alles Bisherige gratis; Shop-Teile erst nach Kauf, Geschenk oder Level */
   const cats = isShop ? CATS.filter(([k]) => k !== 'body') : [...BODY_CAT, ...CATS];
   if (!cats.some(([k]) => k === shopCat)) shopCat = 'back';
-  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && !i.gone && (isShop ? !has(i) : has(i)) && fitsW(i, u.outfit)).sort(noneFirst);
+  const list = ITEMS.filter(i => i.cat === shopCat && inSub(i) && !i.gone && (isShop ? !has(i) : has(i) && !i.none && WEAR_OFF[i.cat] !== i.id) && fitsW(i, u.outfit)).sort(noneFirst); /* v768 (Inaya): in der eigenen Garderobe keine „Keine …“/„Normal“-Karten, man zieht einfach aus */
   const items = list.map(i => {
     const on = isOn(u.outfit, i);
     const btn = on ? (MULTI.includes(i.cat) || (NONE_ITEM[i.cat] && NONE_ITEM[i.cat] !== i.id) ? `<button class="btn ghost" data-act="wear" data-id="${i.id}">${MULTI.includes(i.cat) ? 'Abnehmen' : 'Ausziehen'}</button>` : `<button class="btn ghost" disabled>Angezogen</button>`)
@@ -11121,7 +11124,7 @@ function shopView(isShop){
     const tb = ncThumbBase(ncBare(), u.outfit), t = previewOutfit(MULTI.includes(i.cat) && isOn(u.outfit, i) ? {...tb, [i.cat]:{[i.id]:asObj(u.outfit[i.cat])[i.id]}} : tb, i) /* v677: nur das Teil selbst; v717: in den eigenen Farben (Inaya) */, [dot, pan] = isShop ? ['', ''] : itemColUI(i, u.outfit, 'color');
     return `<div class="item ${on?'on':''}">${dot}${!isShop && NCNEW.has(i.id) ? NEWB : ''}
       <button class="thumb" data-act="try" data-id="${i.id}" aria-label="${esc(i.name)} anprobieren">${avatar(t, thumbView(i), '', true)}</button>
-      ${i.cat === 'jewel' || i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.none || NONE_ITEM[i.cat] === i.id ? tr(i.name) : i.name)}</span>` : ''}
+      ${i.none || NONE_ITEM[i.cat] === i.id ? `<span class="iname">${esc(i.none || NONE_ITEM[i.cat] === i.id ? tr(i.name) : i.name)}</span>` : ''}
       ${btn}</div>${pan}`;
   }).join('');
   const empty = shopCat === 'body' ? '' : !isShop ? `<p class="note">Hier hast du noch nichts. <button class="lnk" data-act="nav" data-v="mall">Zur Mall</button></p>` : isShop ? `<p class="note">In dieser Abteilung hast du schon alles. Schau in deine <button class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button> oder in eine andere Abteilung.</p>` : '';
