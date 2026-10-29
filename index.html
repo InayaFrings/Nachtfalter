@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2b4caa0d1388';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8735160654cd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3250,16 +3250,11 @@ const ITEMS = [
   {id:'l_fang',cat:'lips',name:'Kleine Reißzähne',nc:35},
   {id:'l_grins',cat:'lips',name:'Großes Lächeln',nc:30},
   {id:'l_joker',cat:'lips',name:'Joker Smile',nc:45},
-  {id:'l_monster',cat:'lips',name:'Monsterzähne',nc:50},
-  {id:'l_venom',cat:'lips',name:'Venom Style',nc:55},
   {id:'l_naht',cat:'lips',name:'Zugenäht',nc:40},
   {id:'l_schwarz',cat:'lips',name:'Schwarze Lippen',nc:25},
   {id:'l_beissen',cat:'lips',name:'Lippenbeißen',nc:35},
   {id:'l_kuss',cat:'lips',name:'Kussmund',nc:25},
-  {id:'l_auf',cat:'lips',name:'Offener Mund',nc:40},
   {id:'l_frech',cat:'lips',name:'Frech',nc:40},
-  {id:'l_lolli',cat:'lips',name:'Lolli',nc:40},
-  {id:'l_schrei',cat:'lips',name:'Schrei',nc:50},
   {id:'b_kein',cat:'beard',name:'Kein Bart'},
   {id:'b_stoppeln',cat:'beard',name:'Dreitagebart',g:'m'},
   {id:'b_schnurr',cat:'beard',name:'Schnurrbart',g:'m'},
@@ -3722,7 +3717,7 @@ function normOutfit(o){
   if (!o.legw || Array.isArray(o.legw)) o.legw = ['rock','tuell','shorts'].includes(o.bottom) ? {l_netz:'#0b080d'} : {};
   if (o.top === 'gir') o.top = 'hoodie'; if (o.hacc?.girkapuze) delete o.hacc.girkapuze; // GIR wieder entfernt (Inaya)
   if (/^druck_/.test(o.top || '')) o.top = 'skelett'; // Motiv-Shirts entfernt, nur Skelett bleibt (Inaya)
-  if (EYE_GONE[o.eyeform]) o.eyeform = EYE_GONE[o.eyeform]; if (o.eyeform !== 'e_alien' && !IEYE2[o.eyeform]) o.eyeform = 'e_rund'; if (!o.beard) o.beard = 'b_kein'; if (LIP_GONE[o.lips]) o.lips = o.lipC ? LIP_GONE[o.lips] : 'l_neutral'; if (!IMOUTH[o.lips]) o.lips = 'l_neutral';
+  if (EYE_GONE[o.eyeform]) o.eyeform = EYE_GONE[o.eyeform]; if (o.eyeform !== 'e_alien' && !IEYE2[o.eyeform]) o.eyeform = 'e_rund'; if (!o.beard) o.beard = 'b_kein'; if (LIP_GONE2[o.lips]) o.lips = LIP_GONE2[o.lips]; if (LIP_GONE[o.lips]) o.lips = o.lipC ? LIP_GONE[o.lips] : 'l_neutral'; if (!IMOUTH[o.lips]) o.lips = 'l_neutral';
   return o;
 }
 const SHORT_BACK = ['hx_cyberk','hx_woll_k','hx_racoonk','hx_maehnek','hx_nietenk','dutt','kurz','mod','iro','spikes','bob','scenek','gothzopf','dreadk','afrok','cornk','afrol'];
@@ -3790,8 +3785,8 @@ IB.m.torso = [[470,95,307],[480,97,306],[500,102,300],[520,108,295],[540,112,291
 for (const k in IB) { const D = IFIG_DATA[IB[k].k]; IB[k].W = D.W; IB[k].H = D.H; IB[k].arm = D.arm; IB[k].legs = D.legs; }
 const IBODY = o => (o?.body === 'm' ? IB.m : IB.w);
 const IVIEWS = {
-  w:{dress:'-73 262 490 580', full:'-243 -115 830 1660', head:'-10 -50 365 365', hair:'-60 -140 465 465', bust:'-53 -64 450 578', face:'70 92 210 210', mouth:'136 196 82 94', ear:'22 148 136 136', neck:'108 248 134 166', navel:'118 523 110 110', pet:'235 1160 400 400', hand:'-34 736 170 170', arms:'-46 585 440 380', belt:'78 515 194 194', top:'-22 276 392 448', bottom:'-42 560 434 644', legs:'-90 720 530 795', shoes:'30 1236 290 254'},
-  m:{dress:'-45 252 490 580', full:'-218 -115 830 1660', head:'37 -44 321 321', hair:'-8 -128 410 410', bust:'-25 -64 450 578', face:'108 81 185 185', mouth:'166 172 72 83', ear:'52 118 128 128', neck:'134 230 132 165', navel:'145 511 110 110', pet:'260 1180 400 400', hand:'-34 742 170 170', arms:'-48 585 490 420', belt:'103 501 194 194', top:'2 266 396 453', bottom:'-20 548 440 653', legs:'-60 760 520 780', shoes:'50 1258 300 263'},
+  w:{dress:'-73 262 490 580', full:'-243 -115 830 1660', head:'-10 -50 365 365', hair:'-60 -140 465 465', bust:'-53 -64 450 578', face:'70 92 210 210', mouth:'128 192 98 106', ear:'22 148 136 136', neck:'108 248 134 166', navel:'118 523 110 110', pet:'235 1160 400 400', hand:'-34 736 170 170', arms:'-46 585 440 380', belt:'78 515 194 194', top:'-22 276 392 448', bottom:'-42 560 434 644', legs:'-90 720 530 795', shoes:'30 1236 290 254'},
+  m:{dress:'-45 252 490 580', full:'-218 -115 830 1660', head:'37 -44 321 321', hair:'-8 -128 410 410', bust:'-25 -64 450 578', face:'108 81 185 185', mouth:'159 168 86 95', ear:'52 118 128 128', neck:'134 230 132 165', navel:'145 511 110 110', pet:'260 1180 400 400', hand:'-34 742 170 170', arms:'-48 585 490 420', belt:'103 501 194 194', top:'2 266 396 453', bottom:'-20 548 440 653', legs:'-60 760 520 780', shoes:'50 1258 300 263'},
 };
 const IOL = '#1f1b1f';
 const IO = `stroke="${IOL}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
@@ -4269,6 +4264,25 @@ const EYE_GONE = {e_leer:'e_schleier', e_mandel:'e_rund', e_kuller:'e_rund', e_m
    Eigene Koordinaten: Mundlinie auf y 0, Mitte x 0, Maß wie Inayas Mädchen-Mund (Mund 16 breit). IMPOS = Lage je Figur.
    a = Anker für Piercings: w Mundwinkel, ul Oberkante Oberlippe, ll Unterkante Unterlippe, t Stelle auf der Zunge (wenn sie zu sehen ist). */
 const IMPOS = {w:{x:178, y:242.6, k:1, cov:[9.6, 3.2]}, m:{x:174.4, y:249.4, k:1.22, cov:[17.2, 3.4]}};
+/* v756 (Inaya): Augen, Münder und Make-up genau aus ihren drei Blättern ausgeschnitten (pwa/face/<id>.webp, freigestellt, auf das Mädchen-Gesicht ausgerichtet).
+   Lage in Kopf-Koordinaten der Mädchen-Figur: Augen FIMG.e, Make-up FIMG.k, Lippen des Make-ups FIMG.l, Münder FIMG.m (Mundmitte FMC).
+   Make-up nur an den Augen, nie an den Lippen. Jungs: Augen und Make-up je Auge auf seine Augen (FIMG_ME), Münder auf seinen Mund (FIMG_MM). Normal (e_rund, l_neutral) bleibt Inayas Figur selbst.
+   Brauen kommen nie aus den Blättern (die Figur hat ihre eigenen). Lolli, Venom, Offener Mund, Monsterzähne und Schrei sind raus (LIP_GONE2). */
+const FACE_V = 756, FIMGU = id => `/pwa/face/${id}.webp?v=${FACE_V}`;
+const FACE_IMG = new Set(['e_knopf', 'e_x', 'e_alien', 'e_blut', 'e_hetero', 'e_glitzer', 'e_herz', 'e_katze', 'e_spirale', 'e_traene', 'e_skull', 'e_flamme', 'e_stern', 'e_wolke', 'e_daemon', 'e_glas', 'e_sw', 'e_neon', 'e_schleier',
+  'l_voll', 'l_leicht', 'l_zunge', 'l_fang', 'l_grins', 'l_joker', 'l_naht', 'l_schwarz', 'l_beissen', 'l_kuss', 'l_frech', 'l_schnitt',
+  'mk_tradgoth', 'smokey', 'mk_cute', 'mk_gyaru', 'mk_verlaufen', 'mk_natur', 'mk_cover', 'mk_pastell', 'mk_darkglam', 'mk_minimal', 'mk_candy2', 'mk_candy', 'mk_grunge', 'mk_glam', 'mk_editorial', 'mk_fantasy', 'mk_doll', 'mk_vampir', 'mk_highlight', 'mk_mixed']);
+const FIMG = {e:[60, 132, 236, 148], k:[52, 52, 244, 226], m:[121.1, 214.1, 111.37, 88.72]}, FMC = [177.5, 239.3];
+const FIMG_MM = [-3.6, 6.8];
+/* Jungs: jedes Auge einzeln von der Augenöffnung des Mädchens auf seine (IRISP: schmaler und flacher), links und rechts getrennt */
+const FIMG_ME = [['M-200 -200H173V600H-200Z', 'translate(113.75 181.5) scale(.9035 .825) translate(-114.5 -187.75)'], ['M173 -200H600V600H173Z', 'translate(230.5 176.75) scale(.879 .753) translate(-232 -178.25)']];
+const fimgM = (id, r, u) => FIMG_ME.map(([c, t], i) => `<clipPath id="${u}fe${i}"><path d="${c}"/></clipPath><g clip-path="url(#${u}fe${i})"><g transform="${t}">${fimg(id, r)}</g></g>`).join('');
+const fimg = (id, r, ex = '') => `<image href="${FIMGU(id)}" x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" preserveAspectRatio="none"${ex}/>`;
+/* Anker für Piercings je Mund (Pixel der Mädchen-Figur ab Mundmitte), wie IMOUTH[..].a */
+const FMA = {l_voll:{w:11, ul:-4.5, ll:6}, l_leicht:{w:11, ul:-3.5, ll:3.8}, l_zunge:{w:11, ul:-4, ll:5, t:[0, 12]}, l_fang:{w:14, ul:-3, ll:3}, l_grins:{w:30, ul:-6, ll:6.8}, l_joker:{w:36, ul:-8, ll:9.7},
+  l_naht:{w:18, ul:-3, ll:3.8}, l_schwarz:{w:13, ul:-5, ll:6}, l_beissen:{w:12, ul:-3.5, ll:4}, l_kuss:{w:8, ul:-5, ll:7}, l_frech:{w:26, ul:-8, ll:6, t:[0, 14]},
+  l_schnitt:{w:30, ul:-3, ll:2}};
+const LIP_GONE2 = {l_venom:'l_joker', l_monster:'l_joker', l_auf:'l_frech', l_schrei:'l_frech', l_lolli:'l_kuss'}; /* v756: entfernte Münder -> ähnlichster übriger */
 const MLIPC = '#d6949a', MIN = '#3a1118', MTH = '#f5f2ec', MTHL = '#8c8183', MTO = '#dc7684';
 const MLIP = (w, up, lo, c, o={}) => { const y = o.y || 0, g = o.gap || 0, dk = shade(c, .6), f = n => f1(n);
   const U = `M${-w} ${y}Q${f(-w * .55)} ${f(y - up)} ${f(-w * .2)} ${f(y - up)}Q${f(-w * .07)} ${f(y - up)} 0 ${f(y - up * .7)}Q${f(w * .07)} ${f(y - up)} ${f(w * .2)} ${f(y - up)}Q${f(w * .55)} ${f(y - up)} ${w} ${y}Q0 ${f(y + 1)} ${-w} ${y}Z`;
@@ -4321,6 +4335,9 @@ const LIP_GONE = {l_schmoll:'l_voll', l_laecheln:'l_grins', l_offen:'l_grins', l
 /* Mund zeichnen: Inayas kleiner Mund wird mit Haut abgedeckt (außer beim normalen Mund), Lippenfarbe = eigene Farbe, sonst Make-up, sonst natürlich */
 function imouthDraw(o, X, mkl){
   const M = IMOUTH[o.lips] || IMOUTH.l_neutral, P = IMPOS[X.B === IB.m ? 'm' : 'w'], own = o.lipC || mkl, c = own || MLIPC, u = X.u;
+  if (FACE_IMG.has(o.lips)) { const sk = ISKIN(o, X.B), boy = X.B === IB.m; /* v756: Mund als Bild aus Inayas Blatt */
+    return `<ellipse cx="${P.x}" cy="${P.y + .4}" rx="${P.cov[0] + 2}" ry="${P.cov[1] + 1.6}" fill="${sk}" filter="url(#${u}ibl)"/><ellipse cx="${P.x}" cy="${P.y + .4}" rx="${P.cov[0]}" ry="${P.cov[1]}" fill="${sk}"/>`
+      + (boy ? `<g transform="translate(${FIMG_MM[0]} ${FIMG_MM[1]})">${fimg(o.lips, FIMG.m)}</g>` : fimg(o.lips, FIMG.m)); }
   const cov = o.lips === 'l_neutral' ? '' : `<ellipse cx="${P.x}" cy="${P.y + .4}" rx="${P.cov[0] + 2}" ry="${P.cov[1] + 1.6}" fill="${ISKIN(o, X.B)}" filter="url(#${u}ibl)"/><ellipse cx="${P.x}" cy="${P.y + .4}" rx="${P.cov[0]}" ry="${P.cov[1]}" fill="${ISKIN(o, X.B)}"/>`;
   return cov + `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * (M.k || 1) * 100) / 100})">${M.d(c, X, own)}</g>`; }
 /* Stelle im Kopf für Piercings am Mund: Anker des getragenen Munds */
@@ -5812,20 +5829,21 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (hk.length) { hk.forEach((k, i) => defs.push(`<clipPath id="${u}hc${i}"><path d="${HATCLIP[k]}"/></clipPath>`)); const wrap = h => hk.reduce((acc, k, i) => `<g clip-path="url(#${u}hc${i})">${acc}</g>`, h); hair.back = wrap(hair.back); hair.front = wrap(hair.front); }
   let headBack = hair.back + Object.keys(o.hacc || {}).filter(k => IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k], X)).join('');
   let face = '';
-  const drawn = o.eyeform === 'e_alien'; /* v755: nur Alien-Augen decken Inayas Augen ab, alle anderen ersetzen nur die Iris (ieyeDraw2) */
+  const drawn = FACE_IMG.has(o.eyeform); /* v756: Augen als Bild aus Inayas Blatt decken ihre gemalten Augen ab, Normal bleibt ihre Figur */
   if (drawn) face += IEYE_COVER(X, ISKIN(o, B)); else if (o.eyeform === 'e_rund') face += IEYE_TINT(o.eyes, X);
   if (o.acc?.z_haut) face += IZFACE(X); if (o.acc?.z_blau) { const c = ihex(o.acc.z_blau); face += c ? IBRFACE(X).split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)) : IBRFACE(X); }
   if (o.acc?.z_glitzer) { const c = ihex(o.acc.z_glitzer) || '#b070e0'; face += IGLITZ(X).split('#3e4e96').join(c).split('#4a1e62').join(shade(c, .6)).split('#2a1240').join(shade(c, .4)); } /* Glitzer-Make-up, ohne eigene Farbe lila */
   // Flächiges Make-up liegt unter den Augen, Linien und Motive darüber (sonst verdeckt die gezeichnete Lidlinie den Liner)
   IMKF = IMKFS[o.eyeform] || null; /* v726: Make-up an die Augenform anpassen */
-  const MK2 = IMAKE2[o.face], mc2 = MK2 && (o.makeC || MK2.d); /* v742: neue Make-ups */
+  const MKI = FACE_IMG.has(o.face), MK2 = MKI ? null : IMAKE2[o.face], mc2 = MK2 && (o.makeC || MK2.d); /* v742: neue Make-ups; v756: Make-up als Bild aus Inayas Blatt (MKI) */
   if (MK2?.u) { const uu = MK2.u(mc2, X); if (drawn) face += uu; else { defs.push(`<mask id="${u}mke" maskUnits="userSpaceOnUse" x="-200" y="-200" width="800" height="800"><rect x="-200" y="-200" width="800" height="800" fill="#fff"/>${IEYES(() => '<path d="M-33 3Q-8 -30 33 -11Q8 20 -33 3Z" fill="#000"/>')}</mask>`); face += `<g mask="url(#${u}mke)">${uu}</g>`; } } /* Inayas gemalte Augen bleiben frei */
   const mc = o.makeC || ({lidschatten:'#6a3a8a', neon:'#7ad04a', glitzerlid:'#e8e6ee'})[o.face] || '#141218', under = ['smokey', 'panda', 'corpse', 'lidschatten', 'regenbogen', 'blass', 'kontur', 'rouge', 'zombiepop'].includes(o.face);
-  if (!MK2 && IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYESM(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
-  if (drawn) face += IEYE_ALIEN(X, o.eyes && o.eyes !== 'hohl' ? o.eyes : ''); else if (IEYE2[o.eyeform]) face += ieyeDraw2(o.eyeform, X, o.eyes);
+  if (!MK2 && !MKI && IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYESM(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
+  if (drawn) face += B === IB.m ? fimgM(o.eyeform, FIMG.e, X.u + 'e') : fimg(o.eyeform, FIMG.e);
   if (MK2?.o) face += MK2.o(mc2, X);
-  { const mkl = o.face === 'zombiepop' ? '#121014' : MK2?.l || ''; face += imouthDraw(o, X, mkl); if (MK2?.mx) { const P = IMPOS[B === IB.m ? 'm' : 'w']; face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * ((IMOUTH[o.lips] || {}).k || 1) * 100) / 100})">${MK2.mx(mc2, X, imouthA(o))}</g>`; } } /* v755: Mund nach Inayas Blatt, Make-up gibt nur die Lippenfarbe */
-  if (!MK2 && IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
+  if (MKI) face += B === IB.m ? fimgM(o.face, FIMG.k, X.u + 'k') : fimg(o.face, FIMG.k); /* nur die Augenpartie, Lippen bleiben (Inaya) */
+  { const mkl = o.face === 'zombiepop' ? '#121014' : MKI ? '' : MK2?.l || ''; face += imouthDraw(o, X, mkl); if (MK2?.mx) { const P = IMPOS[B === IB.m ? 'm' : 'w']; face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * ((IMOUTH[o.lips] || {}).k || 1) * 100) / 100})">${MK2.mx(mc2, X, imouthA(o))}</g>`; } } /* v755: Mund nach Inayas Blatt, Make-up gibt nur die Lippenfarbe */
+  if (!MK2 && !MKI && IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
   if (o.face === 'zombiepop') face += IZOMBIE_EYE();
   if (B === IB.m && IBEARD[o.beard]) face += IBEARD[o.beard](o.beardC || o.hairC || '#1c1b20', X);
   const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel', 'p_braue', 'p_augenbraue', 'p_bridge', 'p_dermal'];
@@ -5834,7 +5852,7 @@ function avatarI(o0, view='full', pose='', lite=false){
   const PM = B === IB.m ? {p_nase:[-8, 0], p_nasenring:[-8, 0], p_septum:[-4, -1], p_labret:[-2, 12], p_braue:[0, 10], p_wange:[0, 7]} : {};
   const PMOUTH = B === IB.m ? [-3, 8] : null, PMK = ['piercing', 'p_snakering', 'p_monroe', 'p_medusa', 'p_spider', 'p_angel', 'p_dahlia', 'p_zunge', 'p_kinn'];
   const pmv = k => PM[k] || (PMOUTH && PMK.includes(k) ? PMOUTH : null), pmt = (k, svg) => { const v = pmv(k); return v ? `<g transform="translate(${v[0]} ${v[1]})">${svg}</g>` : svg; };
-  for (const k in J) { if (IPIERC_M[k]) { const P = IMPOS[B === IB.m ? 'm' : 'w'], M = IMOUTH[o.lips] || IMOUTH.l_neutral; face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * (M.k || 1) * 100) / 100})">${IPIERC_M[k](J[k], M.a)}</g>`; } else if (IPIERC[k]) { if (IEARP.includes(k)) ears += pmt(k, IPIERC[k](J[k])); else face += pmt(k, IPIERC[k](J[k])); } if (IEARR[k]) ears += IEARR[k](J[k]); }
+  for (const k in J) { if (IPIERC_M[k]) { const P = IMPOS[B === IB.m ? 'm' : 'w'], M = IMOUTH[o.lips] || IMOUTH.l_neutral; if (FMA[o.lips]) { const bx = B === IB.m ? FIMG_MM : [0, 0]; face += `<g transform="translate(${f1(FMC[0] + bx[0])} ${f1(FMC[1] + bx[1])})">${IPIERC_M[k](J[k], FMA[o.lips])}</g>`; } else face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * (M.k || 1) * 100) / 100})">${IPIERC_M[k](J[k], M.a)}</g>`; } else if (IPIERC[k]) { if (IEARP.includes(k)) ears += pmt(k, IPIERC[k](J[k])); else face += pmt(k, IPIERC[k](J[k])); } if (IEARR[k]) ears += IEARR[k](J[k]); }
   if (o.acc?.w_kopf) face += ibc(IKOPFW(X), o.acc.w_kopf);
   if (IMASK[o.face]) face += IMASK[o.face](o.makeC, X); /* Masken über Augen, Mund und Piercings, unter dem Pony */
   let headFront = face + hair.front + ears + Object.keys(o.hacc || {}).filter(k => IHACC[k] && !IHACC_BACK.includes(k)).map(k => IHACC[k](o.hacc[k] && o.hacc[k] !== 'auto' ? o.hacc[k] : (HACC_C[k] && HACC_C[k] !== 'auto' ? HACC_C[k] : '#141218'), X)).join('');
@@ -7013,7 +7031,7 @@ let colItem = null; // Farbauswahl direkt am Teil: welches Teil gerade aufgeklap
 const LT_SAVE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-3.8-5.5 3.8z"/><path d="M12 7.5v6M9 10.5h6"/></svg>';
 const LT_UNDRESS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L4.5 6.8l1.8 3.8 2-1V20h7.4V9.6l2 1 1.8-3.8L15 4q-.8 2-3 2T9 4z"/><path d="M3.5 3.5l17 17"/></svg>';
 function itemColorPanel(i, o, act){
-  const cat = i.cat;
+  const cat = i.cat; if (FACE_IMG.has(i.id)) return ''; /* v756: Augen, Münder, Make-up aus Inayas Blättern haben feste Farben */
   if (MULTI.includes(cat)) { const pal = cat === 'jewel' ? JEWELC : cat === 'legw' || cat === 'acc' ? CLOTHC.slice(1) : HAIRC, k = cat + '.' + i.id, cur = asObj(o[cat])[i.id];
     return withPick(swatches(k, 'Farbe: ' + i.name, pal, cur, act), k, cur, act); }
   const c = COLOR_KEYS[cat]; if (!c) return '';
@@ -13615,7 +13633,7 @@ function ncNewPop(){ const w = V.name === 'wardrobe' || V.name === 'shop' ? 'w' 
 const ncPaid = i => !!(i && (i.nc || i.lv));
 const ncPrem = ncPaid;
 /* Besitz: Basics immer; vor der Übernahme (oder solange die neuen Regeln fehlen) gilt alles Bisherige wie früher */
-const ncOwns = id => { const i = ncItem(id); if (!ncPaid(i)) return true; const w = WAL.d; if (w?.inv?.[id]) return true; if (i.cat === 'face' && w?.inv && Object.keys(MK_OLD).some(k => MK_OLD[k] === id && w.inv[k])) return true; { const G = i.cat === 'eyeform' ? EYE_GONE : i.cat === 'lips' ? LIP_GONE : null; if (G && w?.inv && Object.keys(G).some(k => G[k] === id && w.inv[k])) return true; } /* v755: altes Auge/alter Mund gekauft = ähnliches neues besitzen */ /* v742: altes Make-up gekauft = neues besitzen */ if (i.cat === 'back' && w?.inv && Object.keys(HAIR_GONE).some(k => HAIR_GONE[k] === id && w.inv[k])) return true; /* v745: gelöschte Frisur gekauft = ähnliche besitzen */ if (i.cat === 'front' && w?.inv && Object.keys(HPONY).some(h => HPONY[h] === id && w.inv[h])) return true; /* v740: wer die Frisur hat, hat auch ihren Pony */ if (i.lv) return !!w && w.l >= i.lv; if (!w || !w.kp) return !i.ex; return false; };
+const ncOwns = id => { const i = ncItem(id); if (!ncPaid(i)) return true; const w = WAL.d; if (w?.inv?.[id]) return true; if (i.cat === 'face' && w?.inv && Object.keys(MK_OLD).some(k => MK_OLD[k] === id && w.inv[k])) return true; { const G = i.cat === 'eyeform' ? EYE_GONE : i.cat === 'lips' ? {...LIP_GONE, ...LIP_GONE2} : null; if (G && w?.inv && Object.keys(G).some(k => G[k] === id && w.inv[k])) return true; } /* v755: altes Auge/alter Mund gekauft = ähnliches neues besitzen */ /* v742: altes Make-up gekauft = neues besitzen */ if (i.cat === 'back' && w?.inv && Object.keys(HAIR_GONE).some(k => HAIR_GONE[k] === id && w.inv[k])) return true; /* v745: gelöschte Frisur gekauft = ähnliche besitzen */ if (i.cat === 'front' && w?.inv && Object.keys(HPONY).some(h => HPONY[h] === id && w.inv[h])) return true; /* v740: wer die Frisur hat, hat auch ihren Pony */ if (i.lv) return !!w && w.l >= i.lv; if (!w || !w.kp) return !i.ex; return false; };
 const ncName = id => { const i = ncItem(id); return i ? String(i.name).replace(/­/g, '') : id; };
 const NC_ICO = `<svg class="ncico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#77746f"/><circle cx="12" cy="12" r="9.3" fill="#ecebe7" stroke="#4a4845" stroke-width=".8"/><circle cx="12" cy="12" r="7.6" fill="none" stroke="#9a9792" stroke-width=".5"/><circle cx="9" cy="8.4" r="2.4" fill="#ffffff" opacity=".7"/><g transform="translate(12 12.6) scale(.42)"><path d="${NC_BATP}" fill="#111112"/></g></svg>`; /* Nocti-Coin silbern im Schwarz-Weiß der Seite (Inaya, 2026-10-16) */
 const NC_GIFT = '<svg class="ncgi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v10H4z"/><path d="M3 7h18v3H3zM12 7v13"/><path d="M12 7c-2-4-6-4-6-1.5S10 7 12 7zM12 7c2-4 6-4 6-1.5S14 7 12 7z"/></svg>';
