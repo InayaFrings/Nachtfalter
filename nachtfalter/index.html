@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1cba03acd6d6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2251a0237d05';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -1901,7 +1901,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .cform>button>svg,.cform .emobtn svg,.cform .sgbtn svg,.cform .micbtn svg{width:22px!important;height:22px!important}.cform .emobtn .rsk,.cform .emobtn svg{width:22px!important;height:22px!important}
 .tkfgo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tkfgo .btn{justify-content:center}.tkfgo .btn:first-child,.tkfgo .btn:nth-child(2):last-child{grid-column:1/-1}
 .shpkp.tkform{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)}.tkform h3{text-align:left}.tkform .note{color:var(--p-muted);margin:0}
-.chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
+.chatpanel .ch-head .chtitle{flex:1;min-width:0}.chatpanel .ch-head .ch-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.chatpanel .ch-head .chtitle small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpanel .ch-head .chtitle small.chst{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;overflow:hidden;font-size:12px;line-height:1.25}.chatpanel .ch-head .chst.typ{opacity:1}.chatpanel .ch-head .chbtns{flex:none;flex-wrap:nowrap}
 @media all /*760*/{.tkchat{display:none}.tknew{padding:8px 12px}.tkgrid{grid-template-columns:1fr}}
 
 .mread{display:flex;align-items:center;gap:6px;margin:3px 4px 0;font:12px Inter,sans-serif;color:var(--p-muted,#9a99a3)}.mreadav{display:flex;align-items:center}.mreadav .cameo{width:18px;height:18px;border-radius:50%;overflow:hidden;border:1.5px solid var(--p-bg,#0e0e10);margin-left:-5px;background:var(--p-panel,#1c1c1f);display:block}.mreadav .cameo:first-child{margin-left:0}.mreadav .cameo svg,.mreadav .cameo img{width:100%;height:100%;display:block;object-fit:cover}.mreadav b{margin-left:4px;font-weight:600;font-size:11px}
@@ -11405,18 +11405,50 @@ const chatWho = id => id === social?.uid ? tr('Du') : nmOf(id) || tr('Jemand'); 
 const markOf = id => !id ? '' : id === social?.uid ? hmark(me()) : hmark(S.users[id] || (PROF[id] ? profUser(id) : {id, remote:true}));
 const whoH = id => esc(chatWho(id)) + markOf(id);
 const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last > ((S.seen || {})[c.id] || 0);
-// „… schreibt“: jede Person setzt chats/<id>/t/<uid> beim Tippen (Inaya, 2026-10-11)
-let typLast = 0;
-function typingNow(on){
-  if (!social || !CH.open || CH.mode !== 'chat') return; const ref = social.db.doc('chats/' + CH.open + '/t/' + social.uid);
-  if (on) { if (Date.now() - typLast < 6000) return; typLast = Date.now(); ref.set({ts:Date.now()}).catch(() => {}); }
-  else if (typLast) { typLast = 0; ref.delete().catch(() => {}); }
+// „… schreibt“ / „… nimmt Audio auf“: jede Person setzt chats/<id>/t/<uid> = {ts, k} (k: t = schreibt, a = nimmt Audio auf), alle 4 s erneuert, gilt 8 s (Inaya, 2026-10-11, Audio seit v773)
+let typLast = 0, typK = '', typCid = '';
+function typingSet(k){
+  if (!social) return;
+  if (!k) { if (typCid) social.db.doc('chats/' + typCid + '/t/' + social.uid).delete().catch(() => {}); typLast = 0; typK = ''; typCid = ''; return; }
+  if (!CH.open || CH.mode !== 'chat' || /^wall_/.test(CH.open)) return;
+  if (k === 't' && typK === 'a' && typCid === CH.open) return; /* während der Aufnahme bleibt es bei „nimmt Audio auf“ */
+  if (typCid === CH.open && typK === k && Date.now() - typLast < 4000) return;
+  if (typCid && typCid !== CH.open) typingSet('');
+  typLast = Date.now(); typK = k; typCid = CH.open;
+  social.db.doc('chats/' + CH.open + '/t/' + social.uid).set({ts:srvNow(), k}).catch(() => {});
+}
+function typingNow(on){ if (on) typingSet('t'); else if (typK !== 'a') typingSet(''); }
+/* Kopf im Chat wie bei WhatsApp (v773): Privatchat „online“ / „zuletzt online …“ / „offline“, Gruppe „N online“, darüber „… schreibt …“ bzw. „… nimmt Audio auf …“ */
+const LSEEN = {}; let ONLINE_OK = false;
+const lastSeenOf = id => Math.max(LSEEN[id] || 0, +PROF[id]?.seen || 0);
+function lastSeenTxt(ts){
+  const d = new Date(ts), n = new Date(srvNow()), day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(), diff = Math.round((day(n) - day(d)) / 864e5), en = LANG === 'en';
+  const hm = d.toLocaleTimeString(LOC(), {hour:'2-digit', minute:'2-digit'});
+  if (diff <= 0) return en ? 'last seen today at ' + hm : 'zuletzt online heute um ' + hm;
+  if (diff === 1) return en ? 'last seen yesterday at ' + hm : 'zuletzt online gestern um ' + hm;
+  const dt = d.toLocaleDateString(LOC(), d.getFullYear() === n.getFullYear() ? {day:'numeric', month:'numeric'} : {day:'numeric', month:'numeric', year:'numeric'});
+  return en ? `last seen ${dt} at ${hm}` : `zuletzt online am ${dt}${/\.$/.test(dt) ? '' : '.'} um ${hm}`;
+}
+function lsFetch(id){ if (!social || !id) return; social.db.doc('presence/lastseen/p/' + id).get().then(d => { const t = +d.data()?.t || 0; if (t > (LSEEN[id] || 0)) { LSEEN[id] = t; paintTyping(); } }).catch(() => {}); }
+let LSW = 0; function lsWrite(force){ if (!social || !me() || obOpen()) return; if (!force && Date.now() - LSW < 30000) return; LSW = Date.now(); social.db.doc('presence/lastseen/p/' + social.uid).set({by:social.uid, t:srvNow()}).catch(() => {}); }
+document.addEventListener('visibilitychange', () => { if (document.hidden) { lsWrite(); typingSet(''); } });
+addEventListener('pagehide', () => { lsWrite(true); typingSet(''); });
+function chStatus(c){
+  const en = LANG === 'en', ty = Object.entries(CH.typing || {}).filter(([u, d]) => u !== social?.uid && srvNow() - (d.ts || 0) < 8000);
+  if (ty.length) { const au = ty.every(([, d]) => d.k === 'a');
+    if (!c.group) return [au ? (en ? 'recording audio …' : 'nimmt Audio auf …') : (en ? 'typing …' : 'schreibt …'), 1];
+    const nm = ty.map(([u]) => chatWho(u));
+    if (nm.length === 1) return [nm[0] + (au ? (en ? ' is recording audio …' : ' nimmt Audio auf …') : (en ? ' is typing …' : ' schreibt …')), 1];
+    return [nm.join(', ') + (au ? (en ? ' are recording audio …' : ' nehmen Audio auf …') : (en ? ' are typing …' : ' schreiben …')), 1]; }
+  if (c.group) { if (!ONLINE_OK) return ['', 0]; const ms = c.members || []; const n = ms.filter(u => u === social?.uid || ONLINE.has(u)).length; return [n + ' online', 0]; }
+  const o = (c.members || []).find(m => m !== social?.uid); if (!o) return ['', 0];
+  if (ONLINE.has(o)) return ['online', 0];
+  if (!ONLINE_OK) return ['', 0];
+  const ls = lastSeenOf(o); return [ls ? lastSeenTxt(ls) : 'offline', 0];
 }
 function paintTyping(){
-  const el = document.getElementById('chtyping'), sub = el?.previousElementSibling; if (!el) return;
-  const who = Object.entries(CH.typing || {}).filter(([u, ts]) => u !== social?.uid && Date.now() - ts < 6000).map(([u]) => chatWho(u));
-  el.textContent = who.length ? (who.length > 1 ? who.join(', ') + ' schreiben …' : (CH.list.find(c => c.id === CH.open)?.group ? who[0] + ' schreibt …' : 'schreibt …')) : '';
-  el.hidden = !who.length; if (sub) sub.hidden = !!who.length;
+  const el = document.getElementById('chst'); if (!el) return; const c = CH.list.find(x => x.id === CH.open); if (!c) return;
+  const [t, typ] = chStatus(c); if (el.textContent !== t) el.textContent = t; el.classList.toggle('typ', !!typ); el.hidden = !t;
 }
 setInterval(paintTyping, 1000);
 // Mehrzeilige Schreibfelder wie bei WhatsApp: wachsen bis etwa 5 Zeilen, danach scrollt man im Feld (Inaya, 2026-10-13)
@@ -11435,7 +11467,8 @@ function rmLeft(){ const i = document.getElementById('rm-in'), l = document.getE
 function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
-  CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { CH.typing[d.id] = d.data().ts || 0; }); paintTyping(); }, () => {});
+  CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { const x = d.data(); CH.typing[d.id] = {ts:+x.ts || 0, k:x.k || 't'}; }); paintTyping(); }, () => {});
+  if (/^dm_/.test(id)) lsFetch(id.slice(3).split('_').find(u => u !== social.uid));
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.t0 = Date.now(); CH.lim = 60; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
   chSub(id); rdWatch(id); tkWatch(id);
   go('chats');
@@ -11525,7 +11558,7 @@ function chatsView(){
   if (CH.mode === 'chat' && CH.open) {
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel cpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
-      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>${chAvHTML(c, 'chavh')}<div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}${markOf(o)}</button>`; })()}${c.group ? `<small class="muted">${c.members.map(whoH).join(', ')}</small>` : ''}<small class="typing" id="chtyping" hidden></small></div>
+      <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>${chAvHTML(c, 'chavh')}<div class="chtitle">${c.group ? `<b class="ch-name">${esc(chatName(c))}</b>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="profile" data-id="${esc(o || '')}" aria-label="Profil von ${esc(chatName(c))} ansehen">${esc(chatName(c))}${markOf(o)}</button>`; })()}<small class="muted chst${chStatus(c)[1] ? ' typ' : ''}" id="chst" data-raw${chStatus(c)[0] ? '' : ' hidden'}>${esc(chStatus(c)[0])}</small></div>
         ${c.group ? `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${tkBtnHTML(c)}<button class="btn ghost iconb grpsh" data-act="grp-share" aria-label="Gruppe teilen" title="Gruppe in einen Chat teilen">${SEND_ICO}</button><button class="btn ghost iconb" data-act="chat-add" aria-label="Mitglieder" title="Mitglieder hinzufügen oder entfernen">${CROSS_ICO}</button>${gAdmin(c) ? `<button class="btn ghost iconb" data-act="chat-edit" aria-label="Gruppe bearbeiten" title="Bearbeiten">${CI.pen}</button>` : ''}</span>` : `<span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}<button class="btn ghost iconb" data-act="chat-edit" aria-label="Chat gestalten" title="Bearbeiten">${CI.pen}</button></span>`}</header>
       <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
@@ -11641,10 +11674,10 @@ async function voiceStart(locked, form){
   v.lv = []; v.lac = lac; try { if (lac) { const an = lac.createAnalyser(); an.fftSize = 512; lac.createMediaStreamSource(stream).connect(an); const buf = new Float32Array(an.fftSize);
     v.lvt = setInterval(() => { an.getFloatTimeDomainData(buf); let q = 0; for (const x of buf) q += x * x; v.lv.push(Math.sqrt(q / buf.length)); }, 100); } } catch {}
   if (/mp4/.test(v.type)) rec.start(); else rec.start(500); v.fast = 1; voicePaint(); // iPhone: mp4 in Stücken wird oft kaputt
-  v.timer = setInterval(() => { const s = (Date.now() - v.t0) / 1000, el = document.getElementById('vrtime'); if (el) el.textContent = stTime(s); if (s >= VMAX) voiceStop(true); }, 250);
+  if (!pc && tgt === CH.open) typingSet('a'); v.timer = setInterval(() => { if (!pc && v.cid === CH.open) typingSet('a'); const s = (Date.now() - v.t0) / 1000, el = document.getElementById('vrtime'); if (el) el.textContent = stTime(s); if (s >= VMAX) voiceStop(true); }, 250);
 }
 function voiceStop(send){
-  const v = VREC; if (!v) return; VREC = null; clearInterval(v.timer); clearInterval(v.lvt); try { v.lac?.close(); } catch {} const dur = Math.round((Date.now() - v.t0) / 1000);
+  const v = VREC; if (!v) return; VREC = null; if (!v.pc && typK === 'a') typingSet(''); clearInterval(v.timer); clearInterval(v.lvt); try { v.lac?.close(); } catch {} const dur = Math.round((Date.now() - v.t0) / 1000);
   v.rec.onstop = async () => { v.stream.getTracks().forEach(t => t.stop()); voicePaint(); if (!send) return;
     if (dur < 1 || !v.parts.length) return toast('Die Aufnahme war zu kurz.');
     const blob = new Blob(v.parts, {type:v.type}); if (blob.size > SONG_MAX) return toast('Die Sprachnachricht ist zu lang.');
@@ -14094,15 +14127,16 @@ async function presenceStart(){
   try {
     lobby = await claude.use('room'); if (!lobby || !social) return;
     lobby.presence({u:social.uid});
-    lobby.onPeers(ch => { ONLINE = new Set(ch.peers.map(p => p.by || p.presence?.u).filter(Boolean)); paintOnline(); }, () => {});
-    setInterval(() => { if (social && me() && !document.hidden) social.db.doc('profiles/' + social.uid).update({seen:Date.now()}).catch(() => {}); }, 900000);
+    lobby.onPeers(ch => { const nw = new Set(ch.peers.map(p => p.by || p.presence?.u).filter(Boolean)), t = srvNow(); if (ONLINE_OK) ONLINE.forEach(u => { if (!nw.has(u)) LSEEN[u] = t; }); ONLINE = nw; ONLINE_OK = true; paintOnline(); paintTyping(); }, () => {});
+    lsWrite(true);
+    setInterval(() => { if (social && me() && !document.hidden) { social.db.doc('profiles/' + social.uid).update({seen:Date.now()}).catch(() => {}); lsWrite(true); } }, 900000);
   } catch {}
 }
 function onlineState(u){
   if (u.helper || u.id === S.me) return [true, u.helper ? 'Immer für dich da' : 'Online'];
   if (!u.remote) return [false, 'Offline'];
   if (ONLINE.has(u.id)) return [true, 'Online'];
-  const seen = PROF[u.id]?.seen; return [false, seen ? 'Offline · zuletzt da ' + ago(seen) : 'Offline'];
+  const seen = lastSeenOf(u.id); return [false, seen ? 'Offline · zuletzt da ' + ago(seen) : 'Offline'];
 }
 const onlineHTML = u => { const [on, t] = onlineState(u); return `<span class="onl ${on ? 'on' : ''}" data-onl="${esc(u.id)}"><i aria-hidden="true"></i>${esc(t)}</span>`; };
 function paintOnline(){ document.querySelectorAll('[data-onl]').forEach(el => { const id = el.dataset.onl, u = S.users[id] || (PROF[id] ? profUser(id) : null); if (u) el.outerHTML = onlineHTML(u); }); }
