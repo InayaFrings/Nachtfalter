@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='dc2adee8eba1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d451eb3c858d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8635,7 +8635,7 @@ const PCURL = {}; /* offener Link je Beitrag (bleibt beim Neuzeichnen) */
 const CVREG = {};
 const cvClipHTML = (id, from, clip) => { if (!clip?.n || !from) return ''; CVREG[id] = {from, clip}; return `<button type="button" class="vframe vclip mvclip cvclip" data-act="cvplay" data-id="${esc(id)}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(clip.poster || '') ? clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span>${clip.nos ? NOS_BADGE : ''}</button>`; };
 async function cmVideoSend(file, to){ if (!file || !social) return;
-  const nos = !(await askYesNo('Mit Ton senden? Wenn im Video fremde Musik läuft, schick es lieber ohne Ton.', 'Mit Ton', 'Ohne Ton'));
+  const nos = false; /* v785: keine Frage mehr, Videos gehen mit Ton raus (Inaya) */
   const k = 'c' + Date.now().toString(36); toast('Video wird vorbereitet …');
   let v; try { v = await prepVideo(file); } catch (err) { if (err.message === 'abbr') return; return toast(err.message === 'lang' ? `Das Video ist zu lang. Höchstens ${VID_SEC} Sekunden gehen.` : err.message === 'gross' ? 'Das Video ist zu groß. Kürz es bitte etwas.' : 'Dieses Video ließ sich nicht lesen. Versuch ein MP4 oder MOV.'); }
   toast('Video wird gesendet …');
@@ -15953,12 +15953,11 @@ document.addEventListener('change', async e => {
   if (id === 'cm-aud' && (chPubNow() || !MUSIK)) { e.target.value = ''; toast('MP3s gehen nur in privaten Chats und privaten Gruppen.'); return; }
   const f = e.target.files[0], cid = CH.open; if (!f) return;
   chatAttach = false; render();
-  if (id !== 'cm-img' && !(await askYesNo(id === 'cm-aud' ? 'Hast du diesen Song selbst gemacht oder darfst du ihn teilen? Songs von anderen Künstlern bitte nicht als MP3 schicken.' : 'Hast du dieses Video selbst gemacht oder darfst du es teilen, auch die Musik darin?', 'Ja, darf ich', 'Abbrechen'))) return; // Rechte bestätigen auch im Chat (Inaya, 2026-10-11)
   if (id === 'cm-img') {
     try { let d = await resizeImage(f, 1080, .78); if (d.length > 650000) d = await resizeImage(f, 800, .7); if (d.length > 900000) return toast('Das Foto ist zu groß.'); toast('Foto wird gesendet …'); await sendMsg(cid, '', {img:d, ...chReExtra()}); CH.re = null; chRePaint(); }
     catch { toast('Das Foto ließ sich nicht öffnen.'); }
   } else if (id === 'cm-vid') { // Videos im Chat, einzeln und in Gruppen (Inaya, 2026-10-11)
-    const nos = !(await askYesNo('Mit Ton senden? Wenn im Video fremde Musik läuft, schick es lieber ohne Ton.', 'Mit Ton', 'Ohne Ton'));
+    const nos = false; /* v785: keine Frage mehr, Videos gehen mit Ton raus (Inaya) */
     const k = 'c' + Date.now().toString(36); toast('Video wird vorbereitet …');
     let v; try { v = await prepVideo(f); } catch (err) { if (err.message === 'abbr') return; return toast(err.message === 'lang' ? `Das Video ist zu lang. Höchstens ${VID_SEC} Sekunden gehen.` : err.message === 'gross' ? 'Das Video ist zu groß. Kürz es bitte etwas.' : 'Dieses Video ließ sich nicht lesen. Versuch ein MP4 oder MOV.'); }
     toast('Video wird gesendet …');
@@ -16732,8 +16731,7 @@ document.addEventListener('submit', async e => {
     const gal = PCR?.items.length ? PCR : null, galV = !!gal?.items.some(x => x.t === 'v');
     if (gal && gal.items.some(x => x.t === 'v' && !x.poster)) { toast('Ein Video wird noch vorbereitet.'); return; }
     if (PAUDIO && aud() === 'pub') { toast('MP3s gehen nur in Beiträgen für Freunde. Für öffentliche Beiträge nimm die Musiksuche.'); return; }
-    if ((PAUDIO || PVIDEO || galV) && !PRIGHTS) { /* v598: klare Frage statt eines leicht übersehbaren Häkchens (Inaya: „man kann keine Videos posten“) */
-      if (!(await askYesNo(tr(PAUDIO ? 'Hast du diesen Song selbst gemacht oder darfst du ihn teilen?' : 'Hast du dieses Video selbst gemacht oder darfst du es teilen (auch die Musik darin)?'), tr('Ja, darf ich'), tr('Abbrechen')))) return; PRIGHTS = true; }
+    /* v785 (Inaya): keine Frage mehr „Darf ich dieses Video teilen?“, das ist jedem selbst überlassen */
     if (gal && gal.items.length === 1 && gal.items[0].t === 'i' && !gal.items[0].sk?.length) { try { postCrop = await galBake(gal.items[0], pcrR(gal.ar)); } catch { toast('Das Foto ließ sich nicht vorbereiten.'); return; } } // ein Foto: wie bisher
     const multi = gal && !(gal.items.length === 1 && gal.items[0].t === 'i' && !gal.items[0].sk?.length);
     const type = PAUDIO || PMU ? 'musik' : multi ? (gal.items.some(x => x.t === 'i') ? 'foto' : 'clip') : PVIDEO ? 'clip' : postCrop ? 'foto' : url ? 'video' : 'gedanke';
