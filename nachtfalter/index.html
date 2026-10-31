@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='418614dbd416';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b79ef21bcf44';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7005,7 +7005,7 @@ function furnFam(k){ if (FFAM[k]) return FFAM[k]; const svg = String(FURN[k]?.sv
   const H = {}; for (const [, h] of all) H[h] = H[h] || hex2hsl(h);
   if (FURN[k].r === 'poster') { const bg = all.find(([a]) => a === 'fill')?.[1]; if (!bg) return FFAM[k] = {fam:new Set()}; // Poster: nur der Hintergrund bekommt die Farbe
     return FFAM[k] = {b:H[bg], H, fam:new Set([bg]), lo:0, hi:0, poster:bg}; }
-  const chrom = Object.keys(H).filter(h => H[h][1] >= .15 && H[h][2] > .08 && H[h][2] < .92), multi = new Set(chrom.map(h => Math.round(H[h][0] / 40))).size >= 3;
+  const chrom = Object.keys(H).filter(h => H[h][1] >= .15 && H[h][2] > .08 && H[h][2] < .92), multi = !FURN[k].iso && new Set(chrom.map(h => Math.round(H[h][0] / 40))).size >= 3;
   // Hauptfarbe: bei Möbeln die erste Füllfarbe (Korpus), bei bunten Sachen (Plüschtier-Berg) die mittlere der bunten Farben
   const solid = [...svg.matchAll(/<\w+\b([^>]*)>/g)].map(m => m[1]).filter(a => !/(?:^|\s)(?:fill-)?opacity="(?:0?\.[0-4]\d*|0)"/.test(a)).map(a => (a.match(/fill="(#[0-9a-f]{3}(?:[0-9a-f]{3})?)"/i) || [])[1]).filter(Boolean).map(nHex); // durchsichtige Teile (Lichtschein) zählen nicht
   let base = FMAIN[k] && H[FMAIN[k]] ? FMAIN[k] : multi ? chrom.sort((x, y) => H[x][2] - H[y][2])[Math.floor(chrom.length / 2)] : solid.find(h => H[h]?.[2] > .06) || all.find(([a, h]) => a !== 'stroke' && H[h][2] > .06)?.[1];
@@ -7013,6 +7013,7 @@ function furnFam(k){ if (FFAM[k]) return FFAM[k]; const svg = String(FURN[k]?.sv
   if (!base) return FFAM[k] = {fam:new Set()};
   const b = H[base], neutral = b[1] < .15;
   const fam = new Set(Object.keys(H).filter(h => { const [hh, ss, ll] = H[h]; if (ll < .055 || h === '#ffffff' || FKEEP[k]?.includes(h)) return false; // Umrisse bleiben schwarz, Flammen und Lichtpunkte weiß
+    if (neutral && FURN[k].iso) return ss < .2 && Math.abs(ll - b[2]) < .3; /* v793: schräge Möbel haben hellere/dunklere Seiten derselben Farbe */
     if (neutral) return ss < .2 && ll >= b[2] - .12 && ll <= b[2] + .32 && !(b[2] < .4 && ll > .78); // dunkles Holz/Stoff: helle Spitze, Kerzen bleiben
     if (ss < .12 || Math.abs(ll - b[2]) > .38) return false; if (multi) return true; const dh = Math.abs(hh - b[0]); return Math.min(dh, 360 - dh) < 40; })); // Gold, Weiß, Schwarz bleiben
   if (!fam.size) fam.add(base); // nichts passte (sehr dunkle Muster, Neon): wenigstens die Hauptfarbe tauschen
@@ -7084,6 +7085,7 @@ function rPick(room, d, cx, cy, off = {X:0, Y:0}){ const R = room.getBoundingCli
 function rOff(room, d, x, y, cx, cy){ const R = room.getBoundingClientRect(), q = rScr(d, +x || 0, +y || 0); return {X:(cx - R.left) / R.width - q.X, Y:(cy - R.top) / R.width - q.Y}; }
 const rOri = it => it.o === 'L' || it.o === 'R' ? it.o : (+it.x || 0) + FURN[it.k].w * itS(it) / 2 < 50 ? 'L' : 'R';
 function rTf(it){ const f = FURN[it.k]; if (!f) return ''; if (f.wall) return `skewY(${(+it.x || 0) + f.w * itS(it) / 2 < 50 ? -26.565 : 26.565}deg)${it.f && f.r !== 'poster' ? ' scaleX(-1)' : ''}`;
+  if (f.iso) return ((+it.x || 0) + f.w * itS(it) / 2 < 50) !== !!it.f ? 'scaleX(-1)' : ''; /* v793: an der linken Wand gespiegelt, „Drehen“ stellt es zur anderen Wand */
   if (rBoxy(it.k)) return `skewY(${rOri(it) === 'L' ? -26.565 : 26.565}deg)`; return it.f && f.r !== 'poster' ? 'scaleX(-1)' : ''; }
 let R3N = 0;
 /* Vorschaubilder im Shop, Zimmer-Menü, Geschenken: kastenartige Möbel schräg mit Tiefe wie im Zimmer (v791) */
@@ -7168,7 +7170,7 @@ function roomView(){
     </div></div>
     ${roomMode === 'chat' ? roomChatExtra() : ''}`;
   const si = roomSel !== 'av' && roomSel != null ? r.items[roomSel] : null;
-  const selRow = `<div class="rselbar">${selName ? `<span class="lbl rselname">Ausgewählt: ${selName}</span>${si ? `<div class="rselbtns">${rRot(si) ? `<button type="button" class="ltool ltsm" data-act="rrot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>` : ''}${FURN[si.k]?.r !== 'poster' ? `<button type="button" class="ltool ltsm" data-act="flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M9 7.5L4 12l5 4.5z"/><path d="M15 7.5l5 4.5-5 4.5z"/></svg><span>Spiegeln</span></button>` : ''}<button type="button" class="ltool ltsm" data-act="unplace-sel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg><span>Wegräumen</span></button></div>` : ''}
+  const selRow = `<div class="rselbar">${selName ? `<span class="lbl rselname">Ausgewählt: ${selName}</span>${si ? `<div class="rselbtns">${rRot(si) ? `<button type="button" class="ltool ltsm" data-act="rrot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>` : ''}${FURN[si.k]?.iso ? `<button type="button" class="ltool ltsm" data-act="flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>` : FURN[si.k]?.r !== 'poster' ? `<button type="button" class="ltool ltsm" data-act="flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M9 7.5L4 12l5 4.5z"/><path d="M15 7.5l5 4.5-5 4.5z"/></svg><span>Spiegeln</span></button>` : ''}<button type="button" class="ltool ltsm" data-act="unplace-sel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg><span>Wegräumen</span></button></div>` : ''}
       ${si && furnScal(si.k) ? `<label class="rsize"><span class="lbl">Größe</span><input type="range" id="r-size" min=".4" max="3" step=".05" value="${itS(si)}" aria-label="Größe"><small>Oder am Griff unten rechts ziehen</small></label>` : ''}
 
       ${si ? `<div class="rselcol"><span class="lbl">Farbe</span><div class="swatches"><button type="button" class="sw orig" data-act="rcol" data-k="item" data-v="" aria-pressed="${!si.c}" title="Original" aria-label="Originalfarbe"></button>${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="rcol" data-k="item" data-v="${c}" aria-pressed="${si.c === c}" title="${l}" aria-label="Farbe: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick rpick" data-k="item" value="${okHex(si.c) ? si.c : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></div>` : ''}`
@@ -13936,6 +13938,202 @@ const wallThumb = k => SURF[k] ? `${surfImg(k, .5)},linear-gradient(${SURF[k].ba
 const floorThumb = k => SURF[k] ? `${surfImg(k, .5)},${SURF[k].base}` : floorBG(k);
 const surfPrev = (k, kind) => `<div class="sprev${kind === 'floor' ? ' sprevf' : ''}" aria-hidden="true" style="background:${kind === 'floor' ? wallCSS('schlicht') : wallThumb(k)}"><i style="background:${kind === 'floor' ? floorThumb(k) : floorBG('dielen')}"></i></div>`;
 FURN_IDS.push(...Object.keys(FURN).filter(k => !FURN_IDS.includes(k))); /* Wände und Böden auch in der Liste */
+/* Momio-artige Möbel: schräg von oben (2:1), aus Kästen und Flächen gebaut. Einheiten: Zimmerseite = 100.
+   x läuft an der rechten Wand entlang (Bildschirm rechts-unten), y von der rechten Wand weg (links-unten), z nach oben.
+   Gezeichnet mit dem Rücken an der rechten Wand (y = 0); gespiegelt steht es an der linken Wand. */
+const IV = (x, y, z) => [x - y, (x + y) / 2 - z];
+const ISH = (c, f) => shade(c, f);
+function isoMake(draw){
+  const E = [];
+  const pt = p => IV(...p);
+  const S = {
+    poly(pts, fill, o = {}){ E.push({k:'p', pts:pts.map(pt), fill, o}); },
+    /* Kasten: sichtbar sind Oberseite, Vorderseite (+y, heller) und rechte Seite (+x, dunkler) */
+    box(x, y, z, w, d, h, c, o = {}){ const t = o.t || ISH(c, 1.22), l = o.l || c, r = o.r || ISH(c, .7);
+      if (!o.nof) S.poly([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]], l, o);
+      if (!o.nor) S.poly([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], r, o);
+      if (!o.not) S.poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], t, o); },
+    /* Fläche auf der Vorderseite (y fest) bzw. rechten Seite (x fest) */
+    fy(y, x0, z0, x1, z1, c, o = {}){ S.poly([[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], c, o); },
+    fx(x, y0, z0, y1, z1, c, o = {}){ S.poly([[x, y0, z0], [x, y1, z0], [x, y1, z1], [x, y0, z1]], c, o); },
+    ftop(z, x0, y0, x1, y1, c, o = {}){ S.poly([[x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z]], c, o); },
+    line(a, b, c, w = .6){ E.push({k:'l', a:pt(a), b:pt(b), c, w}); },
+    dot(p, r, c){ const q = pt(p); E.push({k:'c', q, r, c}); },
+    ell(p, rx, ry, c, o = {}){ const q = pt(p); E.push({k:'e', q, rx, ry, c, o}); },
+  };
+  draw(S);
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; const grow = (x, y, m = 0) => { x0 = Math.min(x0, x - m); y0 = Math.min(y0, y - m); x1 = Math.max(x1, x + m); y1 = Math.max(y1, y + m); };
+  E.forEach(e => e.k === 'p' ? e.pts.forEach(([x, y]) => grow(x, y, .5)) : e.k === 'l' ? (grow(...e.a, 1), grow(...e.b, 1)) : grow(e.q[0], e.q[1], (e.r || Math.max(e.rx, e.ry)) + .5));
+  const f = n => Math.round(n * 10) / 10, P = ([x, y]) => `${f(x - x0)} ${f(y - y0)}`;
+  const svg = E.map(e => e.k === 'p' ? `<path d="M${e.pts.map(P).join('L')}Z" fill="${e.fill}"${e.o.op ? ` opacity="${e.o.op}"` : ''} stroke="${e.o.s || ISH(e.fill.startsWith('#') ? e.fill : '#333333', .5)}" stroke-width="${e.o.sw ?? .5}" stroke-linejoin="round"/>`
+    : e.k === 'l' ? `<path d="M${P(e.a)}L${P(e.b)}" stroke="${e.c}" stroke-width="${e.w}" stroke-linecap="round" fill="none"/>`
+    : e.k === 'c' ? `<circle cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" r="${e.r}" fill="${e.c}"/>`
+    : `<ellipse cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" rx="${e.rx}" ry="${e.ry}" fill="${e.c}"${e.o.op ? ` opacity="${e.o.op}"` : ''}/>`).join('');
+  const area = {}; E.forEach(e => { if (e.k !== 'p' || e.o.op) return; let a = 0; e.pts.forEach(([x, y], i) => { const [u, v] = e.pts[(i + 1) % e.pts.length]; a += x * v - u * y; }); area[e.fill] = (area[e.fill] || 0) + Math.abs(a) / 2; });
+  return {svg, vb:[f(x1 - x0), f(y1 - y0)], area};
+}
+const WOOD = '#3a2a24', DWOOD = '#2a1f1d', K2 = '#141416';
+const ISO_FURN = {
+  /* Himmelbett: Kopfteil an der Wand, Pfosten, Himmel mit Schleiern */
+  bett: S => { const W = 34, L = 54, lin = '#e8e6ec', fr = '#ecebef';
+    S.box(0, 0, 0, W, 3, 30, fr);                     /* Kopfteil */
+    S.box(0, 0, 0, 3, 3, 58, fr); S.box(W - 3, 0, 0, 3, 3, 58, fr);
+    S.box(1, 3, 3, W - 2, L - 4, 7, fr);               /* Rahmen */
+    S.box(2, 3, 10, W - 4, L - 6, 5, lin);             /* Matratze */
+    S.box(5, 5, 15, 11, 8, 3.5, '#f6f5f8'); S.box(18, 5, 15, 11, 8, 3.5, '#f6f5f8'); /* Kissen */
+    S.box(1.5, 18, 10, W - 3, L - 21, 6.2, '#cfcdd6');  /* Decke */
+    S.box(0, L - 3, 0, 3, 3, 58, fr); S.box(W - 3, L - 3, 0, 3, 3, 58, fr);
+    S.box(0, L - 3, 0, W, 3, 14, fr);                  /* Fußteil */
+    S.box(0, 0, 58, W, 3, 2.5, fr); S.box(0, 3, 58, 3, L - 6, 2.5, fr); S.box(W - 3, 3, 58, 3, L - 6, 2.5, fr); S.box(0, L - 3, 58, W, 3, 2.5, fr); /* Himmel als Rahmen */
+    S.fy(L, 3, 22, W - 3, 58, '#ffffff', {op:.35, sw:0}); S.fx(W, 3, 22, L - 3, 58, '#ffffff', {op:.3, sw:0}); },
+  /* Samtsofa: Rückenlehne, Armlehnen, Kissen */
+  /* Kleiderschrank: zwei Türen, Krone */
+  kleiderschrank: S => isoCab(S, {W:30, D:15, H:52, c:'#2b2329', crown:'bogen', leg:2}),
+  /* Bücherregal: offen nach vorn, bunte Buchrücken */
+  regal: S => { const W = 28, D = 10, H = 50, c = '#2a2428', bk = ['#5a1a24', '#d8d4cc', '#3a3a44', '#6a5a3a', '#1f2f4f', '#8a8a92', '#2f4a33'];
+    S.fy(1, 0, 0, W, H, ISH(c, .62));                   /* Rückwand */
+    S.box(0, 0, 0, 2, D, H, c);                        /* Seite links */
+    for (let s = 0; s < 4; s++) { const z = 2 + s * 12; S.box(2, 1, z - 2, W - 4, D - 1, 2, c);
+      let x = 3, i = s * 3; while (x < W - 4) { const bw = 1.6 + ((i * 7) % 3) * .5, bh = 7 + ((i * 5) % 4); if (x + bw > W - 3) break; if ((i * 11) % 9 !== 4) S.box(x, 2.5, z, bw, D - 4, bh, bk[i % bk.length], {s:'#0d0d0f'}); x += bw + .2; i++; } }
+    S.box(2, 1, H - 2, W - 4, D - 1, 2, c);
+    S.box(W - 2, 0, 0, 2, D, H, c); },
+  /* Couchtisch */
+  couchtisch: S => { const W = 30, D = 18, c = '#1c1a1e';
+    [[1, D - 3], [W - 3, D - 3], [W - 3, 1], [1, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, 9, c));
+    S.box(3, 3, 3, W - 6, D - 6, 1, ISH(c, 1.2));
+    S.box(0, 0, 9, W, D, 2, c);
+    S.box(12, 6, 11, 6, 4, 1.2, '#d8d4cc'); S.box(20, 9, 11, 2, 2, 4, '#ecebe7'); S.ell([21, 10, 16.5], .7, 1.2, '#f8d880'); },
+  /* Nachttisch mit Kerze */
+  nachttisch: S => { const W = 12, D = 12, H = 15, c = '#e4e3e8';
+    S.box(0, 0, 0, W, D, H, c); S.fy(D, 1.2, 8, W - 1.2, 13.5, ISH(c, .92)); S.dot([W / 2, D, 10.8], .7, '#8a8a92');
+    S.box(4, 4, H, 2.6, 2.6, 5, '#f4efe4'); S.ell([5.3, 5.3, H + 6.2], .7, 1.4, '#f8d880'); },
+};
+/* ---------- weitere Bausteine ---------- */
+/* Grundriss-Prisma: Vieleck in x/y (gegen den Uhrzeigersinn), von z bis z+h */
+function isoPrZ(S, pts, z, h, c, o = {}){ const n = pts.length; let ar = 0; for (let i = 0; i < n; i++) { const [a, b] = pts[i], [c2, d] = pts[(i + 1) % n]; ar += a * d - c2 * b; } const cw = ar < 0;
+  const sides = []; for (let i = 0; i < n; i++) { const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % n]; let nx = y2 - y1, ny = -(x2 - x1); if (cw) { nx = -nx; ny = -ny; } const L = Math.hypot(nx, ny) || 1; nx /= L; ny /= L; if (nx + ny > .02) sides.push({x1, y1, x2, y2, nx, ny, d:(x1 + x2 + y1 + y2) / 2}); }
+  sides.sort((a, b) => a.d - b.d).forEach(s => { const lt = .72 + .28 * (s.ny - s.nx + 1) / 2 * 1.4; S.poly([[s.x1, s.y1, z], [s.x2, s.y2, z], [s.x2, s.y2, z + h], [s.x1, s.y1, z + h]], ISH(c, Math.min(1.05, lt)), o); });
+  if (!o.not) S.poly(pts.map(([x, y]) => [x, y, z + h]), o.t || ISH(c, 1.22), o); }
+/* Profil-Prisma: Vieleck in x/z (Ansicht von vorn), Tiefe von y0 (hinten) bis y1 (vorn) */
+function isoPrY(S, pts, y0, y1, c, o = {}){ const n = pts.length; let ar = 0; for (let i = 0; i < n; i++) { const [a, b] = pts[i], [c2, d] = pts[(i + 1) % n]; ar += a * d - c2 * b; } const ccw = ar > 0;
+  const sides = []; for (let i = 0; i < n; i++) { const [x1, z1] = pts[i], [x2, z2] = pts[(i + 1) % n]; let nx = z2 - z1, nz = -(x2 - x1); if (ccw) { nx = -nx; nz = -nz; } nx = -nx; nz = -nz; const L = Math.hypot(nx, nz) || 1; nx /= L; nz /= L; if (nx > .02 || nz > .02) sides.push({x1, z1, x2, z2, nx, nz}); }
+  sides.forEach(s => S.poly([[s.x1, y0, s.z1], [s.x2, y0, s.z2], [s.x2, y1, s.z2], [s.x1, y1, s.z1]], s.nz > s.nx ? ISH(c, 1.2) : ISH(c, .7), o));
+  S.poly(pts.map(([x, z]) => [x, y1, z]), o.f || c, o); }
+/* Profil-Prisma quer: Vieleck in y/z (Ansicht von der Seite), Breite von x0 bis x1 (rechte Seite sichtbar) */
+function isoPrX(S, pts, x0, x1, c, o = {}){ const n = pts.length; let ar = 0; for (let i = 0; i < n; i++) { const [a, b] = pts[i], [c2, d] = pts[(i + 1) % n]; ar += a * d - c2 * b; } const ccw = ar > 0;
+  const sides = []; for (let i = 0; i < n; i++) { const [y1, z1] = pts[i], [y2, z2] = pts[(i + 1) % n]; let ny = z2 - z1, nz = -(y2 - y1); if (!ccw) { ny = -ny; nz = -nz; } const L = Math.hypot(ny, nz) || 1; ny /= L; nz /= L; if (ny > .02 || nz > .02) sides.push({y1, z1, y2, z2, ny, nz}); }
+  sides.forEach(q => S.poly([[x0, q.y1, q.z1], [x0, q.y2, q.z2], [x1, q.y2, q.z2], [x1, q.y1, q.z1]], ISH(c, .95 + .27 * q.nz), {...o, s:o.s || ISH(c, .55)}));
+  S.poly(pts.map(([y, z]) => [x1, y, z]), o.r || ISH(c, .7), o); }
+/* runder Bogen als Punkte (für Lehnen, Kopfteile) */
+const isoArc = (cx, cz, r, a0, a1, n = 8) => Array.from({length:n + 1}, (_, i) => { const a = a0 + (a1 - a0) * i / n; return [cx + r * Math.cos(a), cz + r * Math.sin(a)]; });
+/* Oberseite mit Karo/Streifen */
+function isoTopPat(S, z, x0, y0, x1, y1, c1, c2, n = 6, kind = 'karo'){ const dx = (x1 - x0) / n, dy = (y1 - y0) / n;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const on = kind === 'karo' ? (i + j) % 2 : kind === 'streif' ? j % 2 : (i % 2); S.ftop(z, x0 + i * dx, y0 + j * dy, x0 + (i + 1) * dx, y0 + (j + 1) * dy, on ? c2 : c1, {sw:.15, s:on ? c2 : c1}); } }
+/* Bett-Grundform: Kopfteil an der Wand (y = 0) */
+function isoBed(S, o){ const W = o.W || 34, L = o.L || 54, fr = o.fr || WOOD, z0 = o.leg ?? 3;
+  const hh = o.hh || 26; if (o.head !== false) (o.headFn || (() => isoPrY(S, o.arch === 'spitz' ? [[0, 0], [W, 0], [W, hh - 6], [W / 2, hh + 6], [0, hh - 6]] : [[0, 0], [W, 0], [W, hh - 8], ...isoArc(W / 2, hh - 8, W / 2, 0, Math.PI, 10).slice(1).map(([x, z]) => [x, hh - 8 + (z - hh + 8) * .45])], 0, 3, fr)))();
+  if (o.frame !== false) S.box(1, 3, z0, W - 2, L - 4, 6, fr);
+  if (o.leg !== 0) [[1, L - 3], [W - 3, L - 3], [W - 3, 3]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, z0, ISH(fr, .8)));
+  const mz = z0 + (o.frame === false ? 0 : 6);
+  S.box(2, 3, mz, W - 4, L - 6, 5, o.mat || '#e8e6ec');
+  (o.pil || ['#f2f1f4']).forEach((pc, i, a) => { const pw = (W - 8) / a.length - 1; S.box(4 + i * (pw + 1), 5, mz + 5, pw, 8, 3.5, pc); });
+  const bz = mz + 5.3; if (o.blanketFn) o.blanketFn(bz); else S.box(1.5, 17, mz, W - 3, L - 20, 5.8, o.bl || '#cfcdd6');
+  if (o.foot !== false) S.box(0, L - 3, 0, W, 3, o.fh || 12, fr); return mz; }
+function isoBlanket(S, W, L, z, c1, c2, kind, n = 6){ const y0 = 17, y1 = L - 3; S.box(1.5, y0, z - 5.3, W - 3, y1 - y0, 5.3, c1, {not:1}); isoTopPat(S, z, 1.5, y0, W - 1.5, y1, c1, c2, n, kind); }
+/* Sofa-Grundform */
+function isoSofa(S, o){ const W = o.W || 52, D = o.D || 22, v = o.c || '#6a1426', bh = o.bh || 26, ah = o.ah ?? 16, sh = o.sh || 10, aw = o.aw ?? 6, P = Math.PI;
+  [[1, D - 2], [W - 3, D - 2], [W - 3, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, 2, o.leg || DWOOD));
+  /* Rückenlehne mit geschwungener Oberkante */
+  if (o.back !== false) { const top = o.camel ? [[W, bh - 6], ...isoArc(W / 2, bh - 10, 0, 0, 0, 0).slice(1), [W * .78, bh - 3], [W / 2, bh + 1], [W * .22, bh - 3], [0, bh - 6]] : [[W, bh - 3], ...isoArc(W - 3, bh - 3, 3, 0, P / 2, 3).slice(1), ...isoArc(3, bh - 3, 3, P / 2, P, 3)]; isoPrY(S, [[0, 2], [W, 2], ...top], 0, 7, v); }
+  const arm = x => isoPrX(S, [[7, 2], [D, 2], [D, ah - 3], ...isoArc(D - 3, ah - 3, 3, 0, P, 5).slice(1), [7, ah]], x, x + aw, v);
+  if (aw) arm(0);
+  S.box(aw, 7, 2, W - 2 * aw, D - 7, sh, v);
+  const nc = o.nc || 2, cw = (W - 2 * aw - 2) / nc; for (let i = 0; i < nc; i++) { const x = aw + 1 + i * cw + .25; isoPrX(S, [[8, 2 + sh], [D - 1, 2 + sh], [D - 1, 3.5 + sh], ...isoArc(D - 2.5, 3.5 + sh, 1.5, 0, P / 2, 2).slice(1), [9.5, 5.5 + sh], ...isoArc(9.5, 3.5 + sh, 2, P / 2, P, 2).slice(1)], x, x + cw - .5, o.cc || ISH(v, 1.08)); }
+  if (o.tuft) for (let i = 0; i < Math.round(W / 9); i++) S.dot([5 + i * 9, 7, bh - 8], .55, ISH(v, .5));
+  if (o.pil) o.pil.forEach((pc, i) => isoPrY(S, [[aw + 2 + i * 9, 2 + sh + 3], [aw + 9 + i * 9, 2 + sh + 3], [aw + 9.5 + i * 9, 2 + sh + 9], [aw + 1.5 + i * 9, 2 + sh + 9.5]], 7.5, 10, pc));
+  if (aw) arm(W - aw); }
+/* Sessel */
+function isoChair(S, o){ isoSofa(S, {W:o.W || 20, D:o.D || 20, nc:1, ...o}); }
+/* Schrank-Grundform: Türen auf der Vorderseite */
+function isoCab(S, o){ const W = o.W || 30, D = o.D || 15, H = o.H || 54, c = o.c || '#2b2329';
+  if (o.leg) [[.5, D - 2.5], [W - 2.5, D - 2.5], [W - 2.5, .5]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, o.leg, ISH(c, .8))); S.box(0, 0, o.leg || 0, W, D, H - (o.leg || 0), c);
+  if (o.crown !== false) { S.box(-1, -1, H, W + 2, D + 2, 2.5, ISH(c, 1.1)); if (o.crown === 'bogen') isoPrY(S, [[2, H + 2.5], [W - 2, H + 2.5], ...isoArc(W / 2, H + 2.5, W / 2 - 2, 0, Math.PI, 10).slice(1).map(([x, z]) => [x, H + 2.5 + (z - H - 2.5) * .35])], 0, 2, ISH(c, 1.1)); }
+  (o.doors || [[1.5, 2 + (o.leg || 0), W / 2 - .7, H - 2], [W / 2 + .7, 2 + (o.leg || 0), W - 1.5, H - 2]]).forEach(([a, b, c2, d]) => S.fy(D, a, b, c2, d, o.dc || ISH(c, 1.12), {op:o.dop}));
+  (o.knobs || [[W / 2 - 2, H / 2], [W / 2 + 2, H / 2]]).forEach(([x, z]) => S.dot([x, D, z], .9, o.kc || '#c9a24a')); }
+/* offenes Regal */
+function isoShelf(S, o){ const W = o.W || 28, D = o.D || 10, H = o.H || 50, c = o.c || '#2a2428', n = o.n || 4, bk = o.bk || ['#5a1a24', '#d8d4cc', '#3a3a44', '#6a5a3a', '#1f2f4f', '#8a8a92', '#2f4a33'];
+  S.box(0, 0, 0, 2, D, H, c); S.fy(1, 2, 0, W - 2, H, ISH(c, .62));
+  const gap = (H - 2) / n; for (let s = 0; s < n; s++) { const z = 2 + s * gap; S.box(2, 1, z - 2, W - 4, D - 1, 2, c); if (o.fill) o.fill(s, z, gap); else { let x = 3, i = s * 3; while (x < W - 4) { const bw = 1.6 + ((i * 7) % 3) * .5, bh = Math.min(gap - 3, 7 + ((i * 5) % 4)); if (x + bw > W - 3) break; if ((i * 11) % 9 !== 4) S.box(x, 2.5, z, bw, D - 4, bh, bk[i % bk.length], {s:'#0d0d0f'}); x += bw + .2; i++; } } }
+  S.box(2, 1, H - 2, W - 4, D - 1, 2, c); S.box(W - 2, 0, 0, 2, D, H, c); }
+/* Tisch */
+function isoTable(S, o){ const W = o.W || 30, D = o.D || 18, H = o.H || 10, c = o.c || '#1c1a1e', t = o.t || 2;
+  [[1, D - 3], [W - 3, D - 3], [W - 3, 1], [1, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, H - t, o.lc || c));
+  S.box(0, 0, H - t, W, D, t, c); return H; }
+Object.assign(ISO_FURN, {
+  sofa: S => isoSofa(S, {c:'#6a1426', camel:1, tuft:1, bh:26, ah:15}),
+  himmelbett: S => { const W = 36, L = 56, fr = '#2a2228';
+    isoBed(S, {W, L, fr, hh:34, mat:'#e8e6ec', bl:'#5a0f22', pil:['#ecebe7', '#ecebe7'], fh:14, foot:false});
+    S.box(0, 0, 0, 3, 3, 60, fr); S.box(W - 3, 0, 0, 3, 3, 60, fr);
+    S.box(0, L - 3, 0, 3, 3, 60, fr); S.box(W - 3, L - 3, 0, 3, 3, 60, fr); S.box(0, L - 3, 0, W, 3, 14, fr);
+    S.box(0, 0, 60, W, 3, 2.5, fr); S.box(0, 3, 60, 3, L - 6, 2.5, fr); S.box(W - 3, 3, 60, 3, L - 6, 2.5, fr); S.box(0, L - 3, 60, W, 3, 2.5, fr);
+    S.fy(L, 3, 24, 10, 60, '#14141a', {op:.55, sw:0}); S.fy(L, W - 10, 24, W - 3, 60, '#14141a', {op:.55, sw:0}); S.fx(W, 3, 24, 12, 60, '#14141a', {op:.5, sw:0}); S.fx(W, L - 12, 24, L - 3, 60, '#14141a', {op:.5, sw:0}); },
+  b_sarg: S => { const c = '#2a1f24', W = 30, L = 56; isoPrZ(S, [[6, 0], [W - 6, 0], [W, 14], [W - 4, L], [4, L], [0, 14]], 0, 12, c, {t:'#5a0f22'});
+    S.box(9, 4, 12, 12, 7, 3, '#e6e4ea'); isoPrZ(S, [[3, 18], [W - 3, 18], [W - 6, L - 3], [6, L - 3]], 12, 3, '#3a0a18'); },
+  b_emo: S => { const W = 34, L = 54; isoBed(S, {W, L, arch:'spitz', fr:'#1c1c20', pil:['#e05aa0'], blanketFn:z => isoBlanket(S, W, L, z, '#141416', '#e05aa0', 'karo', 6)}); },
+  b_matratze: S => { const W = 34, L = 52; isoBed(S, {W, L, head:false, frame:false, leg:0, foot:false, mat:'#c9c4b8', pil:['#e6e4ea'], bl:'#4a4a54'}); S.ftop(5.01, 6, 30, 12, 36, '#8a1020', {sw:.3}); S.ftop(5.01, 20, 40, 26, 45, '#3a5a8a', {sw:.3}); },
+  b_scene: S => { const W = 34, L = 54; isoBed(S, {W, L, fr:'#ecebe7', pil:['#7ad04a', '#e05aa0'], blanketFn:z => isoBlanket(S, W, L, z, '#141416', '#ecebe7', 'streif', 8)}); S.box(22, 5, 18, 6, 4, 7, '#5ad0e0'); S.dot([25, 9, 23], 1, '#141416'); },
+  b_eisen: S => { const W = 34, L = 54, ir = '#1a1a1e'; isoBed(S, {W, L, fr:ir, mat:'#e6e4ea', bl:'#3a2a5a', pil:['#ecebe7', '#ecebe7'], headFn:() => { for (let i = 0; i <= 6; i++) S.box(i * (W - 2) / 6, 0, 0, 1.6, 1.6, 30, ir); S.box(0, 0, 28, W, 1.6, 2, ir); S.box(0, 0, 14, W, 1.6, 1.4, ir); }, fh:16});  },
+  b_metal: S => { const W = 34, L = 54; isoBed(S, {W, L, fr:'#141416', pil:['#2a2a30'], blanketFn:z => { S.box(1.5, 17, z - 5.3, W - 3, L - 20, 5.3, '#141416'); for (let i = 0; i < 5; i++) S.poly([[4 + i * 6, L - 3, z - 5.3], [7 + i * 6, L - 3, z - 5.3], [5.5 + i * 6, L - 3, z + .5]], i % 2 ? '#e8902a' : '#c0182a', {sw:0}); }}); },
+  rz_bett_zebra: S => { const W = 34, L = 54; isoBed(S, {W, L, fr:'#ecebe7', pil:['#e05aa0', '#5ad0e0'], blanketFn:z => isoBlanket(S, W, L, z, '#ecebe7', '#b070e0', 'streif', 8)}); },
+  rz_bett_rosa: S => { const W = 34, L = 54; isoBed(S, {W, L, hh:30, fr:'#f0a0c8', mat:'#fbe4ef', pil:['#ffffff', '#ffffff'], bl:'#f2a6c4'}); S.dot([11, 9, 22], 1.2, '#141416'); },
+  nc_mondbett: S => { const W = 38, L = 56; isoPrY(S, [...isoArc(W / 2, 24, 22, -Math.PI * .1, Math.PI * 1.1, 14), ...isoArc(W / 2 + 8, 30, 17, Math.PI * 1.05, -Math.PI * .05, 12)], 0, 3, '#d9c78f'); isoBed(S, {W, L, fr:'#1d2b4a', bl:'#2f3f6a', pil:['#d9c78f', '#d9c78f'], head:false, foot:false}); for (let i = 0; i < 4; i++) S.dot([6 + i * 8, 30 + (i % 2) * 8, 17.4], .7, '#f8e070'); },
+  hw_bett: S => { const W = 32, L = 54, ir = '#8a8a92'; isoBed(S, {W, L, fr:ir, leg:8, mat:'#c9c4b8', bl:'#9ab0a8', pil:['#e6e4ea'], hh:30, fh:20}); S.box(4, 30, 15, W - 8, 1.4, 1, '#3a2a24'); S.box(4, 44, 15, W - 8, 1.4, 1, '#3a2a24'); },
+  so_chester: S => isoSofa(S, {c:'#5a3a26', bh:22, ah:21, aw:7, nc:3, tuft:1}),
+  so_sarg: S => { isoSofa(S, {c:'#3a0a18', aw:0, nc:2, bh:12}); isoPrY(S, [[0, 0], [52, 0], [56, 14], [52, 30], [0, 30], [-4, 14]], 0, 6, '#2a1f24'); },
+  so_fleder: S => { isoSofa(S, {c:'#2a1f2a', aw:5, nc:2, bh:14}); isoPrY(S, [[0, 14], [10, 24], [18, 22], [26, 32], [34, 22], [42, 24], [52, 14]], 0, 6, '#2a1f2a'); },
+  so_herz: S => { isoSofa(S, {c:'#c86a8a', aw:5, nc:2, bh:12}); isoPrY(S, [[2, 14], [2, 26], [10, 33], [19, 30], [26, 22], [33, 30], [42, 33], [50, 26], [50, 14]], 0, 6, '#c86a8a'); },
+  so_modern: S => { const c = '#4a4a50'; S.box(0, 0, 2, 60, 7, 18, c); S.box(0, 7, 2, 7, 30, 18, c); S.box(7, 7, 2, 53, 16, 9, c); S.box(7, 23, 2, 16, 14, 9, c); S.box(8, 8, 11, 25, 14, 3, ISH(c, 1.1)); S.box(34, 8, 11, 25, 14, 3, ISH(c, 1.1)); S.box(8, 23, 11, 14, 13, 3, ISH(c, 1.1)); },
+  so_futon: S => { const c = '#3a3a44'; S.box(0, 0, 0, 50, 22, 4, '#6a5a3a'); S.box(1, 1, 4, 48, 20, 5, c); S.box(1, 0, 9, 48, 5, 12, c); S.box(6, 5, 9, 9, 3, 8, '#9a1f2a'); S.box(35, 5, 9, 9, 3, 8, '#e8d040'); },
+  so_recamiere: S => { const c = '#3d1f5c'; S.box(0, 0, 3, 52, 18, 8, c); S.box(0, 0, 11, 10, 18, 16, c); S.box(0, 0, 11, 30, 4, 10, c); S.box(10, 4, 11, 40, 13, 3, ISH(c, 1.1)); [[1, 15], [49, 15], [49, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, 3, '#d4af37')); },
+  so_kirchenbank: S => { const c = '#4a2e1e'; S.box(0, 0, 0, 3, 16, 26, c); S.box(3, 0, 12, 46, 4, 18, c); S.box(3, 4, 10, 46, 12, 2, c); S.box(3, 6, 0, 46, 2, 10, ISH(c, .8)); S.box(49, 0, 0, 3, 16, 26, c); },
+  so_kissen: S => { ['#5a1a24', '#3a2a5a', '#1f3d2e', '#5a1a24'].forEach((c, i) => S.box(2 + (i % 2) * 22, 2 + Math.floor(i / 2) * 22, 0, 20, 20, 6, c)); S.box(4, 0, 6, 16, 5, 10, '#8a6a2a'); },
+  so_scene: S => { isoSofa(S, {c:'#141416', cc:'#ecebe7', aw:6, nc:2, pil:['#e05aa0', '#7ad04a', '#5ad0e0']}); },
+  so_schaukel: S => { const c = '#4a2e1e'; S.poly([[0, 18, 0], [0, -2, 2], [0, -2, 3], [0, 18, 1]], c); S.box(1, 0, 8, 16, 16, 2, c); S.box(1, 0, 10, 16, 2, 22, c); S.box(1, 2, 10, 2, 2, 14, c); S.box(15, 2, 10, 2, 2, 14, c); S.poly([[17, 18, 0], [17, -2, 2], [17, -2, 3], [17, 18, 1]], c); [[1, 14], [15, 14], [15, 1]].forEach(([x, y]) => S.box(x, y, 1, 2, 2, 7, c)); },
+  so_clubsessel: S => isoChair(S, {c:'#5a1a24', bh:20, ah:15, aw:5, W:24}),
+  sessel: S => { isoChair(S, {c:'#3a2a5a', bh:30, ah:14, aw:4, W:22}); },
+  thron: S => { const c = '#2a1f2a', v = '#5a0f22'; S.box(0, 0, 0, 22, 4, 44, c); S.poly([[0, 0, 44], [11, 0, 54], [22, 0, 44], [22, 4, 44], [11, 4, 54], [0, 4, 44]].slice(3).concat([]), c); isoPrY(S, [[0, 44], [22, 44], [11, 54]], 0, 4, c); S.box(0, 4, 0, 4, 16, 18, c); S.box(4, 4, 0, 14, 16, 10, c); S.box(5, 5, 10, 12, 14, 2.5, v); S.fy(4, 3, 14, 19, 40, v); S.box(18, 4, 0, 4, 16, 18, c); },
+  nc_knochenthron: S => { const c = '#e6e1d0'; S.box(0, 0, 0, 24, 4, 44, c); for (let i = 0; i < 5; i++) S.dot([3 + i * 4.5, 4, 48], 2, c); S.box(0, 4, 0, 4, 16, 18, c); S.box(4, 4, 0, 16, 16, 10, '#c9c4b0'); S.box(5, 5, 10, 14, 14, 2, '#3a0a18'); S.dot([12, 4, 36], 3.2, '#ecebe7'); S.dot([10.8, 4, 36.5], .9, '#141416'); S.dot([13.2, 4, 36.5], .9, '#141416'); S.box(20, 4, 0, 4, 16, 18, c); },
+  sitzsack: S => { S.ell([10, 10, 6], 13, 8.5, '#1c1c20'); S.ell([10, 10, 9], 11, 6.5, '#34343a'); S.ell([8, 8, 11], 5, 2.5, '#44444c', {op:.7}); for (let i = 0; i < 6; i++) S.dot([3 + i * 3, 16, 5], .6, '#a8a8b0'); },
+  rz_sitzsack: S => { S.ell([10, 10, 6], 13, 8.5, '#d02040'); S.ell([10, 10, 9], 11, 6.5, '#e83a58'); for (let i = 0; i < 7; i++) S.dot([2 + (i * 5) % 18, 6 + (i * 7) % 12, 8], .5, '#f8e070'); S.ell([10, 10, 15.5], 5, 1.8, '#3a9a4a'); },
+  rz_gaming: S => { const c = '#f2a6c4'; S.box(9, 9, 0, 2, 2, 8, '#2a2a30'); S.box(2, 2, 8, 16, 16, 3, c); S.box(3, 2, 11, 14, 3, 26, c); S.box(6, 2, 32, 8, 3.5, 5, '#ecebe7'); S.box(2, 5, 11, 2, 12, 6, '#2a2a30'); S.box(16, 5, 11, 2, 12, 6, '#2a2a30'); },
+  hw_sofa: S => { isoSofa(S, {c:'#4a4a3a', nc:2}); S.ftop(12.1 + 3.5, 14, 12, 20, 16, '#c9c4b0', {sw:.3}); S.line([30, 22, 4], [34, 22, 11], '#141416', .8); },
+  /* Schränke */
+  sarg: S => { isoPrY(S, [[3, 0], [15, 0], [18, 34], [12, 50], [6, 50], [0, 34]], 0, 12, '#2a2428'); [12, 24, 36].forEach(z => S.box(2.5, 2, z, 13, 9, 1.2, '#3a3438')); S.box(5, 3, 13.2, 3, 3, 5, '#d8d4cc'); S.dot([10, 6, 38.5], 1.5, '#ecebe7'); },
+  s_vitrine: S => { isoCab(S, {W:24, D:12, H:54, c:'#2a2428', dc:'#9ab0c0', dop:.35, doors:[[1.5, 3, 22.5, 50]], knobs:[[21, 27]]}); [16, 30].forEach(z => S.box(1.5, 2, z, 21, 10, 1, '#3a3438')); S.dot([6, 8, 19], 2, '#ecebe7'); S.dot([14, 8, 33], 1.6, '#c0182a'); },
+  s_apotheke: S => { isoCab(S, {W:32, D:12, H:48, c:'#4a2e1e', doors:[], knobs:[]}); for (let r = 0; r < 4; r++) for (let q = 0; q < 4; q++) { S.fy(12, 1.5 + q * 7.4, 3 + r * 11, 7.4 + q * 7.4, 12.5 + r * 11, ISH('#4a2e1e', 1.15)); S.dot([4.5 + q * 7.4, 12, 8 + r * 11], .7, '#c9a24a'); } },
+  s_gotisch: S => { isoCab(S, {W:30, D:14, H:52, c:'#1d1a20', crown:false, doors:[[2, 3, 14.3, 44], [15.7, 3, 28, 44]]}); isoPrY(S, [[-1, 52], [31, 52], [15, 63]], -1, 15, '#1d1a20'); [[8, 44], [22, 44]].forEach(([x, z]) => S.poly([[x - 6, 14, z], [x + 6, 14, z], [x, 14, z + 6]], '#2a2530')); },
+  rz_figuren: S => { isoCab(S, {W:24, D:12, H:54, c:'#ecebe7', dc:'#c0e0f0', dop:.35, doors:[[1.5, 3, 22.5, 50]], knobs:[]}); [['#e05aa0', 18], ['#5ad0e0', 32], ['#e8d040', 46]].forEach(([c, z]) => { S.box(1.5, 2, z - 2, 21, 10, 1, '#d8d4cc'); S.box(6, 6, z - 1, 3, 3, 5, c); S.box(14, 6, z - 1, 3, 3, 4, ISH(c, .8)); }); },
+  rz_manga: S => isoShelf(S, {W:26, H:50, c:'#ecebe7', bk:['#e05aa0', '#5ad0e0', '#e8d040', '#7ad04a', '#b070e0', '#f0a0c8']}),
+  hw_koepfe: S => isoShelf(S, {W:28, H:48, n:3, c:'#3a2a24', fill:(s, z, g) => { for (let i = 0; i < 3; i++) { S.box(4 + i * 8, 3, z, 5, 5, 8, '#9ab0a0', {op:.75}); S.box(4 + i * 8, 3, z + 8, 5, 5, 1.5, '#5a4a3a'); } }}),
+  hw_spind: S => isoCab(S, {W:20, D:14, H:54, c:'#6a7a7a', crown:false, doors:[[1.5, 2, 18.5, 52]], knobs:[[16, 27]], kc:'#2a2a2a'}),
+  hw_medschrank: S => { isoCab(S, {W:26, D:12, H:54, c:'#d8d8d0', dc:'#a0b8c0', dop:.45, kc:'#5a5a5a'}); S.line([5, 12, 40], [10, 12, 30], '#141416', .5); },
+  kommode: S => { const c = '#e4e3e8'; isoCab(S, {W:28, D:14, H:22, c, crown:false, leg:3, doors:[[1.5, 5, 26.5, 10.5], [1.5, 11.5, 26.5, 17], [1.5, 18, 26.5, 21]], knobs:[[14, 8], [14, 14], [14, 19.5]], kc:'#8a8a92'}); S.ftop(22.01, 4, 3, 24, 11, '#ffffff', {op:.9}); S.box(18, 4, 22, 3, 3, 6, '#f4efe4'); S.ell([19.5, 5.5, 29.2], .7, 1.4, '#f8d880'); },
+  schminktisch: S => { const c = '#1c1a1e'; isoTable(S, {W:28, D:12, H:20, c}); S.fy(12, 2, 12, 26, 18, ISH(c, 1.15)); S.dot([14, 12, 15], .7, '#c9a24a'); S.box(10, 0, 20, 8, 2, 2, c); S.ell([14, 1, 31], 6, 8, ISH(c, .9)); S.ell([14, 1.5, 31], 5, 7, '#c8d0dc'); for (let i = 0; i < 8; i++) S.dot([14 + 6.5 * Math.cos(i / 8 * 6.28), 1, 31 + 8.5 * Math.sin(i / 8 * 6.28)], .7, '#f8f0c0'); },
+  pc: S => { const c = '#2a2428'; isoTable(S, {W:32, D:16, H:20, c}); S.box(10, 2, 20, 12, 10, 10, '#d8d4c4'); S.fy(12, 11.5, 22, 20.5, 29, '#1a3a2a'); S.box(9, 12, 20, 14, 3, .8, '#c9c4b0'); },
+  rz_pc: S => { const c = '#ecebe7'; isoTable(S, {W:34, D:16, H:20, c}); S.box(13, 3, 20, 2, 2, 3, '#2a2a30'); S.box(6, 2, 23, 20, 2, 12, '#2a2a30'); S.fy(4, 7, 24, 25, 34, '#b070e0'); S.box(9, 9, 20, 14, 4, .8, '#e05aa0'); S.box(26, 2, 0, 6, 12, 18, '#2a2a30'); S.fy(14, 27, 3, 31, 17, '#5ad0e0', {op:.8}); },
+  fernseher: S => { const c = '#2a2a30'; S.box(2, 2, 0, 20, 12, 8, '#3a2a24'); S.box(3, 2, 8, 18, 14, 14, c); S.fy(16, 5, 10, 17, 20, '#3a4a5a'); S.dot([19, 16, 17], .8, '#8a8a92'); S.dot([19, 16, 13], .8, '#8a8a92'); },
+  standuhr: S => { const c = '#3a2a24'; S.box(0, 0, 0, 10, 8, 50, c); S.box(-1, -1, 50, 12, 10, 3, ISH(c, 1.1)); S.ell([5, 8, 42], 3.6, 3.6, '#ecebe7'); S.line([5, 8, 42], [5, 8, 44.5], '#141416', .5); S.line([5, 8, 42], [6.6, 8, 42], '#141416', .5); S.fy(8, 2.5, 8, 7.5, 34, '#1a1418'); S.line([5, 8, 33], [5, 8, 18], '#c9a24a', .6); S.dot([5, 8, 17], 1.4, '#c9a24a'); },
+  amp: S => { const c = '#1c1c20'; S.box(0, 0, 0, 16, 9, 16, c); S.fy(9, 1.5, 1.5, 14.5, 11, '#3a3a40'); S.ell([8, 9, 6], 4.2, 4.2, '#141416'); S.ell([8, 9, 6], 1.6, 1.6, '#3a3a40'); S.fy(9, 1.5, 12, 14.5, 14.8, '#d4af37'); for (let i = 0; i < 5; i++) S.dot([3 + i * 2.5, 9, 13.4], .55, '#141416'); },
+  platten: S => { const c = '#3a2a24'; isoTable(S, {W:18, D:14, H:14, c}); S.box(2, 2, 14, 14, 10, 2, '#1c1c20'); S.ell([9, 7, 16.2], 5, 2.6, '#0d0d0f'); S.ell([9, 7, 16.3], 1.4, .8, '#c0182a'); for (let i = 0; i < 4; i++) S.box(1 + i * 1.5, 3, 0, 1, 10, 10, ['#5a1a24', '#d8d4cc', '#1f2f4f', '#e8d040'][i]); },
+  nc_kamin: S => { const c = '#3a3a40'; S.box(0, 0, 0, 34, 10, 40, c); S.box(-2, -1, 40, 38, 13, 3, ISH(c, 1.1)); isoPrY(S, [[7, 0], [27, 0], [27, 20], [17, 28], [7, 20]], 9, 10.05, '#0d0d0f'); S.ell([17, 10, 6], 5, 3, '#e8902a', {op:.95}); S.ell([17, 10, 8], 3, 4, '#f8d040'); S.box(28, 2, 43, 2, 2, 6, '#ecebe7'); S.ell([29, 3, 50.5], .7, 1.4, '#f8d880'); },
+  nc_orgel: S => { const c = '#3a2a24'; S.box(0, 0, 0, 50, 12, 24, c); S.box(4, 12, 14, 42, 6, 2, c); S.ftop(16.01, 6, 13, 44, 17, '#ecebe7', {sw:.2}); for (let i = 0; i < 12; i++) S.box(3 + i * 4, 1, 24, 2.6, 2.6, 16 + (i < 6 ? i : 11 - i) * 4, '#c9a24a'); },
+  nc_aquarium: S => { S.box(0, 0, 0, 34, 14, 12, '#1c1c20'); S.box(0, 0, 12, 34, 14, 22, '#3a6a9a', {op:.55}); S.box(0, 0, 34, 34, 14, 1.5, '#1c1c20'); [[10, 24], [22, 19], [16, 29]].forEach(([x, z]) => { S.ell([x, 14, z], 2.4, 1.6, '#e0b0f0'); S.line([x - 1, 14, z - 1], [x - 1, 14, z - 5], '#e0b0f0', .4); S.line([x + 1, 14, z - 1], [x + 1, 14, z - 5], '#e0b0f0', .4); }); },
+  hw_instrtisch: S => { const c = '#9a9aa0'; isoTable(S, {W:28, D:14, H:22, c, t:1.5}); S.box(2, 2, 8, 24, 10, 1, ISH(c, .9)); S.box(6, 4, 22, 8, 1.2, .6, '#c8ccd0'); S.box(16, 7, 22, 6, 1, .6, '#c8ccd0'); },
+});
+
+/* v793: Möbel schräg von oben wie bei Momio, neu gebaut (Inaya). Ersetzen Zeichnung, Maß und Breite der Möbel; Hauptfarbe für das Umfärben = Füllfarbe mit der größten Fläche */
+for (const k in ISO_FURN) { if (!FURN[k]) continue; try { const r = isoMake(ISO_FURN[k]), cnt = r.area;
+  Object.assign(FURN[k], {svg:r.svg, vb:r.vb, w:Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[k] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('iso', k, e); } }
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
 const surfAvail = kind => [...(kind === 'wall' ? WALLS : FLOORS).map(([k]) => k), ...FURN_IDS.filter(k => FURN[k].surf === kind && !!WAL.d?.inv?.[ncF(k)]).map(k => FURN[k].key)]; /* gratis + gekauft */
 function surfGrid(kind){ const r = me().room, cur = kind === 'wall' ? r.wall : r.floor, ck = kind === 'wall' ? 'wallC' : 'floorC', act = kind === 'wall' ? 'wall' : 'floor';
