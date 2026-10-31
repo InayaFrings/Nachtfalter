@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b3b7437f80c2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9b71e01b64a5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14380,6 +14380,125 @@ Object.assign(SKF, {
     S.box(4, 4.5, 12.6, 15, 7, 2.6, '#ecebe6');
     [17, 40].forEach(y => { S.ftop(12.65, 1.4, y, W - 1.4, y + 3, '#5a4434', {sw:.5}); S.fy(y + 3, W - 1.6, 8.4, W - .6, 12.6, '#5a4434', {sw:.4}); S.box(W / 2 - 1.5, y + .4, 12.7, 3, 2.2, .5, '#c9c6cf', {sw:.4}); S.line([W - 1, y + 3.2, 8], [W + .6, y + 3.4, 3], '#5a4434', 1); });
     wheel(1, L - 2); wheel(W - 1, L - 2); tube(L - 1.2, 18); },
+});
+/* v797: Sofas, Sessel, Throne im Sticker-Stil */
+const skLegs = (S, W, D, h, c) => [[1, D - 2.4], [W - 3, D - 2.4], [W - 3, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, h, c, {sw:.6}));
+/* Knopfheftung auf der Rückenlehne (Vorderseite bei y = 7) */
+const skTuft = (S, x0, x1, z0, z1, c, nx = 6, nz = 2) => { for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) S.dot([x0 + (i + (j % 2) * .5 + .25) * (x1 - x0) / nx, 7.05, z0 + (j + .5) * (z1 - z0) / nz], .55, ISH(c, .45)); };
+/* Knochen (liegend entlang x oder stehend) */
+function skBone(S, a, b, c = '#e6dfcf', r = 1.3){ S.line(a, b, ISH(c, .5), r * 2 + .9); S.line(a, b, c, r * 2); [a, b].forEach(p => [-1, 1].forEach(k => S.ell(skH(p, k * r * .8), r * 1.05, r * 1.05, c))); }
+
+Object.assign(SKF, {
+  /* Ohrensessel: hohe Lehne mit Ohren */
+  sessel: S => { const W = 24, D = 22, c = '#4b1a2a', P = Math.PI; skLegs(S, W, D, 2.5, SK.wood);
+    isoPrY(S, [[0, 2], [W, 2], [W, 30], ...isoArc(W - 5, 30, 5, 0, P / 2, 4).slice(1), [W / 2 + 3, 36], [W / 2, 37], [W / 2 - 3, 36], ...isoArc(5, 30, 5, P / 2, P, 4).slice(0, -1), [0, 30]], 0, 6, c);
+    skTuft(S, 4, W - 4, 16, 31, c, 4, 2);
+    const arm = x => { isoPrX(S, [[6, 2], [D, 2], [D, 15], ...isoArc(D - 2.5, 15, 2.5, 0, P, 5).slice(1), [12, 15], [8, 26], [6, 29]], x, x + 5, c); };
+    arm(0); S.box(5, 6, 2.5, W - 10, D - 6, 8.5, c); isoPrX(S, [[7, 11], [D - .5, 11], [D - .5, 13], ...isoArc(D - 2, 13, 1.5, 0, P / 2, 2).slice(1), [8, 14.2]], 5.3, W - 5.3, ISH(c, 1.1)); arm(W - 5); },
+  /* Samt-Clubsessel: rund und tief */
+  so_clubsessel: S => { const W = 24, D = 22, c = '#5a1626', P = Math.PI; skLegs(S, W, D, 2, SK.wood);
+    isoPrY(S, [[0, 2], [W, 2], [W, 18], ...isoArc(W / 2, 18, W / 2, 0, P, 12).slice(1, -1).map(([x, z]) => [x, 18 + (z - 18) * .4]), [0, 18]], 0, 7, c);
+    const arm = x => isoPrX(S, [[5, 2], [D, 2], [D, 12], ...isoArc(D - 4, 12, 4, 0, P, 8).slice(1), [5, 16]], x, x + 6, c);
+    arm(0); S.box(6, 7, 2, W - 12, D - 7, 8, c); isoPrX(S, [[8, 10], [D - .5, 10], [D - .5, 12], ...isoArc(D - 2.5, 12, 2, 0, P / 2, 2).slice(1), [9, 13.5]], 6.3, W - 6.3, ISH(c, 1.1));
+    for (let i = 0; i < 5; i++) S.dot([2 + i * 4.5, D + .1, 7.5], .5, SK.silver); arm(W - 6); },
+  /* Chesterfield: gerollte Lehnen, viele Knöpfe */
+  so_chester: S => { const W = 54, D = 22, c = '#4a1a1e', P = Math.PI; skLegs(S, W, D, 2.5, SK.wood);
+    isoPrY(S, [[0, 2], [W, 2], [W, 20], ...isoArc(W - 2, 20, 2, 0, P / 2, 3).slice(1), ...isoArc(2, 20, 2, P / 2, P, 3)], 0, 7, c); skTuft(S, 6, W - 6, 11, 21, c, 9, 3);
+    const arm = x => isoPrX(S, [[7, 2.5], [D, 2.5], [D, 13], ...isoArc(D - 3.5, 15, 3.5, -P * .3, P * 1.1, 8), [7, 18]], x, x + 6.5, c);
+    arm(0); S.box(6.5, 7, 2.5, W - 13, D - 7, 8, c); [0, 1, 2].forEach(i => isoPrX(S, [[8, 10.5], [D - .5, 10.5], [D - .5, 12.3], ...isoArc(D - 2.3, 12.3, 1.8, 0, P / 2, 2).slice(1), [9, 13.6]], 6.8 + i * 13.5, 6.8 + (i + 1) * 13.5 - .5, ISH(c, 1.1)));
+    for (let i = 0; i < 10; i++) S.dot([7 + i * 4.4, D + .05, 3.6], .45, '#c9a24a'); arm(W - 6.5); },
+  /* Gotischer Thron */
+  thron: S => { const W = 24, D = 20, c = SK.wood, P = Math.PI;
+    isoPrY(S, [[1, 2], [W - 1, 2], [W - 1, 38], [W - 3, 44], [W - 4.5, 40], [W - 7, 50], [W / 2, 60], [7, 50], [4.5, 40], [3, 44], [1, 38]], 0, 4, c);
+    FP(S, 4.02, skArch(5, 12, W - 5, 46, 1), SK.dred, {sw:.6}); FP(S, 4.04, skArch(8, 30, W - 8, 42, 1), SK.red, {sw:.5});
+    S.dot([W / 2, 4.1, 52], 1.2, SK.red); [[1.5, 40], [W - 1.5, 40]].forEach(([x, z]) => { S.line([x, 3, z], [x, 3, z + 7], c, 1.2); S.ell([x, 3, z + 8], 1.3, 1.3, SK.wood2); });
+    S.box(0, 3, 0, W, D - 3, 9, c); S.box(1.5, 4, 9, W - 3, D - 6, 2.5, SK.red);
+    const arm = x => { S.box(x, 4, 9, 3, D - 5, 2, c); S.box(x, D - 3, 0, 3, 3, 15, c); S.ell([x + 1.5, D - 1.5, 16.4], 1.9, 1.7, SK.wood2); };
+    arm(0); arm(W - 3); FP(S, D, [[5, 2], [W - 5, 2], [W - 5, 7], [W / 2, 8.5], [5, 7]], SK.wood2, {sw:.6}); S.dot([W / 2, D + .1, 5], 1, SK.red); },
+  /* Knochenthron */
+  nc_knochenthron: S => { const W = 26, D = 20, b = '#e6dfcf', P = Math.PI;
+    for (let i = 0; i < 6; i++) { const x = 3 + i * 4; skBone(S, [x, 2, 8], [x, 2, 34 + (i === 2 || i === 3 ? 8 : i === 1 || i === 4 ? 4 : 0)], b, 1.2); }
+    skBone(S, [1, 3, 20], [W - 1, 3, 20], b, 1.1); skBone(S, [2, 3, 32], [W - 2, 3, 32], b, 1.1);
+    skSkull(S, W / 2, 4, 40, 4.2); skSkull(S, 2.5, 4, 34, 2.2); skSkull(S, W - 2.5, 4, 34, 2.2);
+    S.box(0, 3, 0, W, D - 3, 8, '#cfc6b2'); for (let i = 0; i < 6; i++) S.ell([3 + i * 4, D + .05, 4], 1.6, 2.6, '#bfb6a0', {});
+    S.box(1.5, 4, 8, W - 3, D - 6, 2.4, SK.red); skBone(S, [1.5, 5, 14], [1.5, D - 2, 14], b, 1.1); skBone(S, [W - 1.5, 5, 14], [W - 1.5, D - 2, 14], b, 1.1);
+    skBone(S, [1.5, D - 1.5, 1], [1.5, D - 1.5, 13], b, 1); skBone(S, [W - 1.5, D - 1.5, 1], [W - 1.5, D - 1.5, 13], b, 1); skSkull(S, W - 1.5, D - 1, 13.5, 1.8); skSkull(S, 1.5, D - 1, 13.5, 1.8); },
+  /* Sarg-Sofa: Rückenlehne als liegender Sarg */
+  so_sarg: S => { const W = 52, D = 21, c = SK.wood, P = Math.PI; skLegs(S, W, D, 2.5, SK.inner);
+    const back = [[0, 6], [W * .3, 2], [W * .7, 2], [W, 8], [W * .7, 28], [W * .3, 28]].map(([x, z]) => [x, z + 1]);
+    isoPrY(S, [[2, 2.5], [W - 2, 2.5], [W - 1, 16], [W * .72, 29], [W * .28, 29], [1, 16]], 0, 6, c); FP(S, 6.02, [[5, 9], [W - 5, 9], [W - 4, 16], [W * .7, 26], [W * .3, 26], [4, 16]], SK.red, {sw:.6});
+    for (let i = 0; i < 6; i++) for (let j = 0; j < 2; j++) S.dot([10 + i * 6.5 + j * 3, 6.1, 15 + j * 5], .5, SK.dred);
+    S.box(2, 6, 2.5, W - 4, D - 6, 8, c); [0, 1].forEach(i => isoPrX(S, [[7, 10.5], [D - .5, 10.5], [D - .5, 12.5], ...isoArc(D - 2.5, 12.5, 2, 0, P / 2, 2).slice(1), [8, 14]], 3 + i * 23, 3 + (i + 1) * 23 - .6, SK.red));
+    S.box(W / 2 - .7, D, 4, 1.4, .4, 5, SK.silver, {sw:.4}); S.box(W / 2 - 2, D, 6.6, 4, .4, 1.1, SK.silver, {sw:.4}); },
+  /* Fledermaus-Sofa: Lehne als Flügel */
+  so_fleder: S => { const W = 56, D = 21, c = '#25212c', P = Math.PI; skLegs(S, W, D, 2.5, SK.inner);
+    const wing = [[0, 14], [3, 22], [8, 19], [11, 27], [16, 23], [20, 31], [W / 2 - 3, 25], [W / 2 - 2, 30], [W / 2, 27], [W / 2 + 2, 30], [W / 2 + 3, 25], [W - 20, 31], [W - 16, 23], [W - 11, 27], [W - 8, 19], [W - 3, 22], [W, 14], [W, 2], [0, 2]];
+    isoPrY(S, wing, 0, 6, c); [[8, 20], [16, 24], [W - 16, 24], [W - 8, 20]].forEach(([x, z]) => S.line([x, 6.05, 8], [x, 6.05, z], ISH(c, 1.8), .5));
+    [-1, 1].forEach(k => S.ell(skH([W / 2, 6.1, 26], k * .9), .5, .6, '#c23a5a'));
+    const arm = x => isoPrX(S, [[6, 2], [D, 2], [D, 11], ...isoArc(D - 3, 11, 3, 0, P, 5).slice(1), [6, 14]], x, x + 5, c);
+    arm(0); S.box(5, 6, 2.5, W - 10, D - 6, 8, c); [0, 1].forEach(i => isoPrX(S, [[7, 10.5], [D - .5, 10.5], [D - .5, 12.5], ...isoArc(D - 2.5, 12.5, 2, 0, P / 2, 2).slice(1), [8, 14]], 5.3 + i * 23, 5.3 + (i + 1) * 23 - .6, '#4a2a5a')); arm(W - 5); },
+  /* Herz-Sofa */
+  so_herz: S => { const W = 50, D = 21, c = '#9c1c3a', P = Math.PI; skLegs(S, W, D, 2.5, SK.wood);
+    const heart = [[W / 2, 6], ...isoArc(W * .27, 22, W * .25, -P * .25, P, 14).map(([x, z]) => [x, z]), [1, 12], [0, 2], [W, 2], [W - 1, 12], ...isoArc(W * .73, 22, W * .25, 0, P * 1.25, 14)].map(([x, z]) => [x, Math.max(2, z)]);
+    isoPrY(S, [[0, 2], [W, 2], [W, 18], ...isoArc(W * .73, 20, W * .27, 0, P, 12).slice(1, -1), [W / 2, 22], ...isoArc(W * .27, 20, W * .27, 0, P, 12).slice(1, -1), [0, 18]], 0, 6, c);
+    skTuft(S, 6, W - 6, 13, 26, c, 7, 2);
+    const arm = x => isoPrX(S, [[6, 2], [D, 2], [D, 11], ...isoArc(D - 3, 11, 3, 0, P, 5).slice(1), [6, 14]], x, x + 5, c);
+    arm(0); S.box(5, 6, 2.5, W - 10, D - 6, 8, c); [0, 1].forEach(i => isoPrX(S, [[7, 10.5], [D - .5, 10.5], [D - .5, 12.5], ...isoArc(D - 2.5, 12.5, 2, 0, P / 2, 2).slice(1), [8, 14]], 5.3 + i * 20, 5.3 + (i + 1) * 20 - .6, ISH(c, 1.12)));
+    const hx = 14, hy = 12, hz = 14.5; S.poly([skH([hx, hy, hz], 0), skH([hx, hy, hz + 4], 3.6), skH([hx, hy, hz + 6], 2), skH([hx, hy, hz + 4.6], 0), skH([hx, hy, hz + 6], -2), skH([hx, hy, hz + 4], -3.6)], '#f3d1dc', {sw:.6}); arm(W - 5); },
+  /* Modernes Ecksofa (grau) */
+  so_modern: S => { const W = 58, D = 21, c = '#55525c', P = Math.PI; [[1, 1], [W - 3, 1], [W - 3, 36], [W - 17, 36]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, 2, '#1a181d'));
+    S.box(0, 0, 2, W, 6, 18, c); S.box(0, 0, 2, 4, D, 13, c); S.box(4, 6, 2, W - 22, D - 6, 7, c); S.box(W - 18, 6, 2, 18, 32, 7, c);
+    [[4.3, 22], [22.6, 18], ].forEach(([x, w]) => S.box(x, 6.3, 9, w - .6, D - 6.6, 2.4, ISH(c, 1.1))); S.box(W - 17.7, 6.3, 9, 17.4, 31.4, 2.4, ISH(c, 1.1));
+    S.box(6, 6, 11.4, 8, 3, 7, '#c2185b', {sw:.6}); S.box(16, 6, 11.4, 8, 3, 7, '#e8e4ec', {sw:.6}); S.box(W - 14, 6, 11.4, 8, 3, 7, '#1e1c22', {sw:.6});
+    S.poly([[W - 16, 26, 11.45], [W - 2, 26, 11.45], [W - 2, 37, 11.45], [W - 16, 37, 11.45]], '#2a2730', {sw:.5}); for (let i = 0; i < 6; i++) S.line([W - 15.5 + i * 2.6, 37, 11.45], [W - 15.3 + i * 2.6, 38.4, 9], '#2a2730', .4); },
+  /* Kirchenbank */
+  so_kirchenbank: S => { const W = 56, D = 16, c = '#3b2d27', P = Math.PI;
+    isoPrY(S, [[2, 9], [W - 2, 9], [W - 2, 24], [2, 24]], 0, 2.4, c); for (let i = 0; i < 6; i++) FP(S, 2.42, skArch(5 + i * 8.2, 12, 10.4 + i * 8.2, 22, 1), ISH(c, .7), {sw:.5});
+    S.box(2, 2.4, 8, W - 4, D - 3, 2, ISH(c, 1.1)); S.box(2, D - 3, 0, W - 4, 2, 8, ISH(c, .9), {sw:.6});
+    const end = x => { isoPrX(S, [[0, 0], [D, 0], [D, 14], [D - 2, 16], [8, 16], [4, 26], [2, 30], [0, 28]], x, x + 2.4, c); SP(S, x + 2.41, [[3, 3], [D - 3, 3], [D - 3, 12], [D / 2 + 1, 14.5], [3, 12]], ISH(c, .55), {sw:.5}); S.ell([x + 1.2, 1, 31], 1.4, 1.4, ISH(c, 1.2)); };
+    end(0); S.box(6, 7, 10, 6, 4, 1.3, '#1a1520', {sw:.5}); S.box(6.4, 7.3, 11.3, 5.2, 3.4, .5, '#e8e2d6', {sw:.3}); skCandle(S, 40, 9, 10, 3); end(W - 2.4); },
+  /* Sitzkissen-Ecke */
+  so_kissen: S => { const P = Math.PI, cs = [['#3d1f5c', '#5a3a7a'], ['#4f111c', '#7c1b2c'], ['#25212a', '#4a4352'], ['#3d1f5c', '#5a3a7a']];
+    const cush = (x, y, w, d, h, [a, b]) => { S.box(x, y, 0, w, d, h, a); S.ftop(h + .02, x + 1, y + 1, x + w - 1, y + d - 1, b, {sw:.4}); S.dot([x + w / 2, y + d / 2, h + .05], .7, SK.silver); [[x, y + d], [x + w, y + d], [x + w, y]].forEach(p => S.dot([p[0], p[1], h * .6], .6, '#c9a24a')); };
+    cush(0, 0, 16, 16, 4, cs[0]); cush(17, 0, 16, 16, 4, cs[1]); cush(0, 17, 16, 16, 4, cs[2]);
+    isoPrX(S, isoArc(3, 3, 3, 0, P * 2, 14).map(([y, z]) => [y + 2, z]), 2, 28, '#7c1b2c'); [2, 28].forEach(x => S.dot([x, 5, 3], .7, '#c9a24a'));
+    isoPrY(S, isoArc(3, 3, 3, 0, P * 2, 14).map(([x, z]) => [x + 1, z + 4]), 4, 28, '#5a3a7a');
+    cush(18, 18, 14, 14, 6, cs[3]); skPlush(S, 25, 25, 6, '#25212a', {ears:'katze', s:1.1, nose:'#c23a5a'}); },
+  /* Scene-Sofa im Zebra-Look */
+  so_scene: S => { const W = 50, D = 21, c = '#1c1a20', P = Math.PI; isoSofa(S, {W, D, c, bh:24, ah:14, aw:5, leg:'#ff4f9a', nc:2, cc:'#f1eee8'});
+    [0, 1].forEach(i => { const x0 = 6 + i * 19.5; skZebra(S, 15.6, x0, 8.5, x0 + 18, D - 1.2); });
+    S.box(8, 7.5, 15.6, 9, 3, 7.5, '#ff4f9a', {sw:.6}); S.box(31, 7.5, 15.6, 9, 3, 7.5, '#4ee08a', {sw:.6}); skStar(S, 12.5, 10.6, 19.4, 0, '#fff'); [12.5, 35.5].forEach((x, i) => { const p = [x, 10.6, 19.4]; S.poly([skH(p, 0), skH([x, 10.6, 21.4], 1.8), skH([x, 10.6, 22.4], 1), skH([x, 10.6, 21.6], 0), skH([x, 10.6, 22.4], -1), skH([x, 10.6, 21.4], -1.8)], '#f1eee8', {sw:.4}); }); },
+  /* Schaukelstuhl */
+  so_schaukel: S => { const W = 20, D = 22, c = '#3b2d27', P = Math.PI;
+    const rock = x => isoPrX(S, [...isoArc(D / 2, 18, 18, -P * .72, -P * .28, 12), ...isoArc(D / 2, 18, 16.6, -P * .28, -P * .72, 12)].map(([y, z]) => [y, z - 0]), x, x + 1.6, c);
+    rock(0);
+    S.line([1, 4, 4], [1, 4, 34], c, 1.6); S.line([W - 1, 4, 4], [W - 1, 4, 34], c, 1.6); S.line([1, 4, 34], [W - 1, 4, 34], c, 1.8); S.line([1, 4, 28], [W - 1, 4, 28], c, 1.2);
+    for (let i = 1; i < 5; i++) S.line([1 + i * (W - 2) / 5, 4, 12], [1 + i * (W - 2) / 5, 4, 28], c, .9);
+    [[1, D - 3], [W - 1, D - 3]].forEach(([x, y]) => S.line([x, y, 2.5], [x, y, 12], c, 1.4));
+    S.box(0, 4, 10, W, D - 6, 2, c); S.box(1.5, 5, 12, W - 3, D - 8, 1.8, SK.red); S.ell(skH([W / 2, 5, 22], 0), 6, 4.5, SK.red); S.ell(skH([W / 2, 5.1, 22], 0), 4.4, 3.2, '#9a2a3a');
+    [0, W - 1.6].forEach(x => { S.line([x + .8, 5, 18], [x + .8, D - 2, 18], c, 1.4); S.line([x + .8, D - 2, 12], [x + .8, D - 2, 18], c, 1.1); });
+    S.box(W / 2 + 2, D - 9, 13.8, 6, 6, 1.4, '#2a2730', {sw:.5}); rock(W - 1.6); },
+  /* Nieten-Sitzsack */
+  sitzsack: S => { const c = '#1e1c22'; S.ell([10, 10, 5], 13, 7.5, ISH(c, .8)); S.ell([10, 10, 8], 12, 7.5, c); S.ell([9, 9, 13], 8, 5.5, ISH(c, 1.3)); S.ell([7, 7, 16], 3.5, 1.8, ISH(c, 1.6), {op:.6});
+    for (let i = 0; i < 7; i++) S.dot(skH([10, 10, 4.5 + (i % 2) * 1.2], -5.4 + i * 1.8), .6, SK.silver);
+    for (let i = 0; i < 4; i++) S.dot(skH([10, 10, 10.5], -6 + i * 4), .55, SK.silver); },
+  /* Erdbeer-Sitzsack */
+  rz_sitzsack: S => { const c = '#e0384f'; S.ell([10, 10, 5], 12, 7.5, ISH(c, .8)); S.ell([10, 10, 8], 11.5, 7.8, c); S.ell([9, 9, 13], 7.5, 5, ISH(c, 1.15));
+    for (let i = 0; i < 14; i++) { const zz = 5 + (i % 4) * 2.3, r = 4.6 - (i % 4) * .7; S.ell(skH([10, 10, zz], (((i * 7) % 11) / 5 - 1) * r), .35, .6, '#f6e3a0'); }
+    [[-2.6, 0], [-1, .8], [1, .8], [2.6, 0]].forEach(([d, h]) => S.poly([skH([9, 9, 16.5], 0), skH([9, 9, 18 + h], d), skH([9, 9, 17 + h * .5], d * .4)], '#4caf50', {sw:.5})); S.ell([9, 9, 17.3], 1.4, .8, '#3b8f3f'); },
+  /* Rosa Gaming-Stuhl */
+  rz_gaming: S => { const pk = '#f08cb8', P = Math.PI;
+    for (let i = 0; i < 5; i++) { const a = i / 5 * P * 2; S.line([10, 10, 2.5], [10 + 8 * Math.cos(a), 10 + 8 * Math.sin(a), 1.2], '#2a2730', 1.3); S.ell([10 + 8 * Math.cos(a), 10 + 8 * Math.sin(a), .8], .9, .8, '#1a181d'); }
+    S.line([10, 10, 2.5], [10, 10, 9], '#8a8892', 1.4);
+    isoPrY(S, [[2, 10], [18, 10], [18.5, 36], [16, 40], [14, 37], [6, 37], [4, 40], [1.5, 36]], 3, 7, pk); FP(S, 7.02, [[6, 14], [14, 14], [14.5, 33], [5.5, 33]], '#f3efe7', {sw:.5}); S.ell(skH([10, 7.1, 26], 0), 2.2, 2, pk); [-1, 1].forEach(k => S.ell(skH([10, 7.15, 26.2], k * .8), .3, .35, '#3a2a32'));
+    S.box(2, 7, 9, 16, 12, 3.6, pk); S.ftop(12.65, 6, 7.5, 14, 18.5, '#f3efe7', {sw:.5});
+    [0, 16.5].forEach(x => { S.box(x, 8, 12.6, 3.5, 2, 6, '#2a2730'); S.box(x, 8, 18.6, 3.5, 10, 1.4, '#2a2730'); }); },
+  /* Zerfetztes Sofa: verblasst, Risse, Füllung quillt heraus, Sprungfeder */
+  hw_sofa: S => { const W = 50, D = 21, c = '#5d5a50'; isoSofa(S, {W, D, c, bh:25, ah:15, aw:5.5, leg:SK.inner, nc:2});
+    S.poly([[12, 7.05, 14], [17, 7.05, 19], [21, 7.05, 15], [18, 7.05, 12], [15, 7.05, 13]], '#2a2622', {sw:.6}); S.ell(skH([16.5, 7.2, 15.6], 0), 2, 1.5, '#e9e4d8');
+    S.poly([[30, 10, 15.6], [37, 13, 15.6], [33, 17, 15.6], [28, 15, 15.6]], '#2a2622', {sw:.6}); S.ell([32.5, 13.5, 16.2], 2.2, 1.4, '#e9e4d8'); S.ell([30.8, 14.5, 16.4], 1.3, 1, '#f3efe7');
+    const sp = []; for (let i = 0; i <= 8; i++) sp.push([33 + (i % 2 ? 1 : -1), 13.5, 15.6 + i * .7]); for (let i = 0; i < sp.length - 1; i++) S.line(sp[i], sp[i + 1], '#bfbcc6', .5);
+    S.poly([[W, 12, 9], [W, 16, 12], [W, 19, 8], [W, 15, 5]], '#2a2622', {sw:.5}); S.line([3, D - .5, 6], [6, D - .5, 3], '#2a2622', .5); S.line([8, D - .5, 8], [10, D - .5, 5.6], '#2a2622', .5); },
 });
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
