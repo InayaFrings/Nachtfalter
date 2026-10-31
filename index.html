@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b79ef21bcf44';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='547e06ba5885';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14132,7 +14132,8 @@ Object.assign(ISO_FURN, {
 });
 
 /* v793: Möbel schräg von oben wie bei Momio, neu gebaut (Inaya). Ersetzen Zeichnung, Maß und Breite der Möbel; Hauptfarbe für das Umfärben = Füllfarbe mit der größten Fläche */
-for (const k in ISO_FURN) { if (!FURN[k]) continue; try { const r = isoMake(ISO_FURN[k]), cnt = r.area;
+const ISO_ON = false; /* v794 (Inaya: „Mir gefällt das Design nicht“): schräge Möbel aus, wieder ihre Zeichnungen von vorn */
+if (ISO_ON) for (const k in ISO_FURN) { if (!FURN[k]) continue; try { const r = isoMake(ISO_FURN[k]), cnt = r.area;
   Object.assign(FURN[k], {svg:r.svg, vb:r.vb, w:Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[k] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('iso', k, e); } }
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
 const surfAvail = kind => [...(kind === 'wall' ? WALLS : FLOORS).map(([k]) => k), ...FURN_IDS.filter(k => FURN[k].surf === kind && !!WAL.d?.inv?.[ncF(k)]).map(k => FURN[k].key)]; /* gratis + gekauft */
