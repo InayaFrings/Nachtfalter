@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='887dbe40feb2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b3b7437f80c2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14163,6 +14163,33 @@ function skBooks(S, x0, x1, y, z, hmax, seed = 1){ const bk = [SK.red, SK.bone, 
     if (i % 7 === 4 && x + 4 < x1) { S.box(x, y - 2.6, z, 4, 2.6, 1.3, bk[(i + 2) % bk.length], {sw:.45}); S.box(x + .3, y - 2.4, z + 1.3, 3.4, 2.2, 1.1, bk[(i + 4) % bk.length], {sw:.45}); x += 4.4; i++; continue; }
     S.box(x, y - 2.8, z, bw, 2.8, bh, bk[i % bk.length], {sw:.45}); S.line([x + .2, y, z + bh * .78], [x + bw - .2, y, z + bh * .78], ISH(bk[i % bk.length], 1.6), .35); x += bw + .15; i++; } }
 
+function skCanopy(S, o = {}){ const W = 36, L = 56, fr = o.fr || SK.wood, ph = 62, CR = o.cr || SK.red, CD = o.cd || SK.dred, BL = o.bl || '#25212a', FR2 = o.fr2 || SK.wood2;
+    const post = (x, y) => { S.box(x, y, 0, 2.4, 2.4, ph, fr); S.box(x - .4, y - .4, 9, 3.2, 3.2, 2, FR2, {sw:.5}); S.ell([x + 1.2, y + 1.2, ph + 1.8], 1.7, 1.7, FR2); S.line([x + 1.2, y + 1.2, ph + 3.2], [x + 1.2, y + 1.2, ph + 6.5], SK.silver, .8); };
+    post(0, 0); post(W - 2.4, 0);
+    /* Rückwand-Vorhang */
+    FP(S, 2.5, [[2.4, 14], [W - 2.4, 14], [W - 2.4, ph - 2], [2.4, ph - 2]], CD);
+    for (let i = 1; i < 6; i++) S.line([2.4 + i * (W - 4.8) / 6, 2.5, 15], [2.4 + i * (W - 4.8) / 6, 2.5, ph - 3], ISH(CD, .7), .5);
+    isoPrY(S, [[1, 9], [W - 1, 9], [W - 1, 26], [W * .7, 30], [W / 2, 33.5], [W * .3, 30], [1, 26]], 2.4, 4.6, fr);
+    FP(S, 4.6, [[W / 2 - 4, 13], [W / 2 + 4, 13], [W / 2 + 4, 23], [W / 2, 28], [W / 2 - 4, 23]], FR2);
+    S.box(1, 4, 5, W - 2, L - 7, 5, fr);
+    S.box(2, 4.5, 10, W - 4, L - 8.5, 4.5, SK.bone);
+    S.box(4, 6, 14.5, 12.5, 8, 3.6, '#f3efe7'); S.box(19.5, 6, 14.5, 12.5, 8, 3.6, '#f3efe7'); S.box(12, 9, 16, 12, 5, 3, CR);
+    S.box(1.4, 17, 10, W - 2.8, L - 21, 5.6, BL); S.ftop(15.6, 1.4, 17, W - 1.4, 21, CR, {sw:.6});
+    for (let j = 25; j < L - 6; j += 6) for (let i = 6; i < W - 3; i += 8) S.dot([i, j, 15.6], .55, '#4a4452');
+    S.box(W - 1.6, 21, 3, .3, L - 26, 7, BL, {sw:.5});
+    post(0, L - 2.4); S.box(0, L - 2.4, 0, W, 2.4, 13, fr); FP(S, L, [[3, 3], [W - 3, 3], [W - 3, 11], [3, 11]], FR2, {sw:.6}); post(W - 2.4, L - 2.4);
+    /* Himmel oben und Vorhänge an den vorderen Pfosten */
+    /* Himmel: Rahmen mit Volant, kein geschlossenes Dach */
+    S.box(0, 0, ph - 3, W, 2.4, 3, fr); S.box(0, 0, ph - 3, 2.4, L, 3, fr);
+    [[2.4, L - 1], [W - 9, L - 1]].forEach(([x, y]) => FP(S, y + .2, [[x, ph - 3], [x + 6.6, ph - 3], [x + 5.4, 40], [x + 6.2, 24], [x + 4, 20], [x + 1.2, 23], [x + .4, 40]], CR));
+    SP(S, W + .2, [[L - 9, ph - 3], [L - 2.4, ph - 3], [L - 3.4, 40], [L - 2.6, 24], [L - 5, 20], [L - 8, 23], [L - 8.6, 40]], ISH(CR, .78));
+    SP(S, W + .2, [[2.4, ph - 3], [10, ph - 3], [9, 40], [10, 24], [7.5, 20], [4.5, 23], [3.4, 40]], ISH(CR, .78));
+    S.box(W - 2.4, 0, ph - 3, 2.4, L, 3, fr); S.box(0, L - 2.4, ph - 3, W, 2.4, 3, fr);
+    const scal = (n, f) => { const a = []; for (let i = 0; i <= n; i++) { a.push(f(i / n, 0)); if (i < n) a.push(f((i + .5) / n, 1)); } return a; };
+    FP(S, L + .3, [[0, ph - 3], [W, ph - 3], ...scal(7, (t, k) => [W - t * W, ph - 6.5 - k * 1.8])], CR);
+    SP(S, W + .3, [[0, ph - 3], [L, ph - 3], ...scal(10, (t, k) => [L - t * L, ph - 6.5 - k * 1.8])], ISH(CR, .78));
+    [[5.7, L + .3, 23.5], [W - 5.6, L + .3, 23.5]].forEach(p => S.dot(p, .9, SK.silver)); }
+
 const SKF = {
   /* Sarg-Bücherregal */
   sarg: S => { const W = 26, D = 9, w = SK.wood, top = 58, sh = 40;
@@ -14177,34 +14204,7 @@ const SKF = {
     /* silbernes Kreuz oben */
     S.box(cx - .8, D, top - 9.5, 1.6, .6, 7, SK.silver, {sw:.5}); S.box(cx - 2.6, D, top - 5.3, 5.2, .6, 1.5, SK.silver, {sw:.5}); },
 
-  /* Himmelbett */
-  himmel: S => { const W = 36, L = 56, fr = SK.wood, ph = 62;
-    const post = (x, y) => { S.box(x, y, 0, 2.4, 2.4, ph, fr); S.box(x - .4, y - .4, 9, 3.2, 3.2, 2, SK.wood2, {sw:.5}); S.ell([x + 1.2, y + 1.2, ph + 1.8], 1.7, 1.7, SK.wood2); S.line([x + 1.2, y + 1.2, ph + 3.2], [x + 1.2, y + 1.2, ph + 6.5], SK.silver, .8); };
-    post(0, 0); post(W - 2.4, 0);
-    /* Rückwand-Vorhang */
-    FP(S, 2.5, [[2.4, 14], [W - 2.4, 14], [W - 2.4, ph - 2], [2.4, ph - 2]], SK.dred);
-    for (let i = 1; i < 6; i++) S.line([2.4 + i * (W - 4.8) / 6, 2.5, 15], [2.4 + i * (W - 4.8) / 6, 2.5, ph - 3], ISH(SK.dred, .7), .5);
-    isoPrY(S, [[1, 9], [W - 1, 9], [W - 1, 26], [W * .7, 30], [W / 2, 33.5], [W * .3, 30], [1, 26]], 2.4, 4.6, fr);
-    FP(S, 4.6, [[W / 2 - 4, 13], [W / 2 + 4, 13], [W / 2 + 4, 23], [W / 2, 28], [W / 2 - 4, 23]], SK.wood2);
-    S.box(1, 4, 5, W - 2, L - 7, 5, fr);
-    S.box(2, 4.5, 10, W - 4, L - 8.5, 4.5, SK.bone);
-    S.box(4, 6, 14.5, 12.5, 8, 3.6, '#f3efe7'); S.box(19.5, 6, 14.5, 12.5, 8, 3.6, '#f3efe7'); S.box(12, 9, 16, 12, 5, 3, SK.red);
-    S.box(1.4, 17, 10, W - 2.8, L - 21, 5.6, '#25212a'); S.ftop(15.6, 1.4, 17, W - 1.4, 21, SK.red, {sw:.6});
-    for (let j = 25; j < L - 6; j += 6) for (let i = 6; i < W - 3; i += 8) S.dot([i, j, 15.6], .55, '#4a4452');
-    S.box(W - 1.6, 21, 3, .3, L - 26, 7, '#25212a', {sw:.5});
-    post(0, L - 2.4); S.box(0, L - 2.4, 0, W, 2.4, 13, fr); FP(S, L, [[3, 3], [W - 3, 3], [W - 3, 11], [3, 11]], SK.wood2, {sw:.6}); post(W - 2.4, L - 2.4);
-    /* Himmel oben und Vorhänge an den vorderen Pfosten */
-    /* Himmel: Rahmen mit Volant, kein geschlossenes Dach */
-    S.box(0, 0, ph - 3, W, 2.4, 3, fr); S.box(0, 0, ph - 3, 2.4, L, 3, fr);
-    [[2.4, L - 1], [W - 9, L - 1]].forEach(([x, y]) => FP(S, y + .2, [[x, ph - 3], [x + 6.6, ph - 3], [x + 5.4, 40], [x + 6.2, 24], [x + 4, 20], [x + 1.2, 23], [x + .4, 40]], SK.red));
-    SP(S, W + .2, [[L - 9, ph - 3], [L - 2.4, ph - 3], [L - 3.4, 40], [L - 2.6, 24], [L - 5, 20], [L - 8, 23], [L - 8.6, 40]], ISH(SK.red, .78));
-    SP(S, W + .2, [[2.4, ph - 3], [10, ph - 3], [9, 40], [10, 24], [7.5, 20], [4.5, 23], [3.4, 40]], ISH(SK.red, .78));
-    S.box(W - 2.4, 0, ph - 3, 2.4, L, 3, fr); S.box(0, L - 2.4, ph - 3, W, 2.4, 3, fr);
-    const scal = (n, f) => { const a = []; for (let i = 0; i <= n; i++) { a.push(f(i / n, 0)); if (i < n) a.push(f((i + .5) / n, 1)); } return a; };
-    FP(S, L + .3, [[0, ph - 3], [W, ph - 3], ...scal(7, (t, k) => [W - t * W, ph - 6.5 - k * 1.8])], SK.red);
-    SP(S, W + .3, [[0, ph - 3], [L, ph - 3], ...scal(10, (t, k) => [L - t * L, ph - 6.5 - k * 1.8])], ISH(SK.red, .78));
-    [[5.7, L + .3, 23.5], [W - 5.6, L + .3, 23.5]].forEach(p => S.dot(p, .9, SK.silver)); },
-
+  himmel: S => skCanopy(S),
   /* Kleiderschrank mit Spitzbögen */
   schrank: S => { const W = 30, D = 14, H = 58, c = SK.wood;
     [[1, D - 3], [W - 3, D - 3], [W - 3, 1]].forEach(([x, y]) => { S.box(x, y, 0, 2, 2, 3, SK.inner); });
@@ -14268,6 +14268,119 @@ const SKF = {
     for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; S.dot([c + (R - 3) * Math.cos(a), c + (R - 3) * Math.sin(a), .6], .55, SK.bone); }
     S.poly([[c, c - 7, .6], [c + 7, c, .6], [c, c + 7, .6], [c - 7, c, .6]], SK.bone, {sw:.5}); S.poly([[c, c - 4, .65], [c + 4, c, .65], [c, c + 4, .65], [c - 4, c, .65]], SK.red, {sw:.5}); },
 };
+/* v796: Betten im Sticker-Stil. skBed = Grundform (Kopfteil an der Wand bei y = 0) */
+function skBed(S, o = {}){ const W = o.W || 34, L = o.L || 54, fr = o.fr || SK.wood, lg = o.leg ?? 3, P = Math.PI;
+  if (o.headFn) o.headFn(W, fr); else isoPrY(S, o.head || [[0, 0], [W, 0], [W, 22], ...isoArc(W / 2, 22, W / 2, 0, P, 12).slice(1, -1).map(([x, z]) => [x, 22 + (z - 22) * .42]), [0, 22]], 0, 3, fr);
+  if (o.headDeco) o.headDeco(W);
+  if (lg) [[1, L - 3], [W - 3, L - 3], [W - 3, 4]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, lg, ISH(fr, .8)));
+  if (o.frame !== false) S.box(.8, 3, lg, W - 1.6, L - 5, 5, o.frc || fr);
+  const mz = lg + (o.frame === false ? 0 : 5); S.box(1.6, 3.4, mz, W - 3.2, L - 6.5, 4.5, o.mat || SK.bone);
+  const pil = o.pil || ['#f3efe7', '#f3efe7']; pil.forEach((pc, i) => { const pw = (W - 6) / pil.length - 1, x = 3 + i * (pw + 1); S.box(x, 5, mz + 4.5, pw, 8, 3.4, pc); if (o.pilDeco) o.pilDeco(i, x, pw, mz + 4.5); });
+  const bz = mz + 4.9, y0 = o.by0 || 16, y1 = L - 3.6, bl = o.bl || '#25212a';
+  S.box(1.1, y0, mz - .6, W - 2.2, y1 - y0, bz - mz + .6, bl, {not:1});
+  if (o.top) o.top(bz, 1.1, y0, W - 1.1, y1); else S.ftop(bz, 1.1, y0, W - 1.1, y1, bl);
+  if (o.bt !== false) S.ftop(bz + .05, 1.1, y0, W - 1.1, y0 + 3.2, o.bt || SK.bone, {sw:.6});
+  if (o.deco) o.deco(bz, mz);
+  if (o.foot !== false) { if (o.footFn) o.footFn(W, L, fr); else isoPrY(S, o.footP || [[0, 0], [W, 0], [W, 12], ...isoArc(W / 2, 12, W / 2, 0, P, 12).slice(1, -1).map(([x, z]) => [x, 12 + (z - 12) * .22]), [0, 12]], L - 2.6, L, fr); }
+  if (o.after) o.after(bz); return bz; }
+/* Karo / Streifen auf der Decke */
+const skKaro = (c1, c2, n = 6) => (z, x0, y0, x1, y1) => isoTopPat(S0, z, x0, y0, x1, y1, c1, c2, n, 'karo');
+let S0; /* wird beim Zeichnen gesetzt */
+function skStripes(S, z, x0, y0, x1, y1, cols){ const n = cols.length, d = (y1 - y0) / n; cols.forEach((c, i) => S.ftop(z, x0, y0 + i * d, x1, y0 + (i + 1) * d, c, {sw:.3, s:ISH(c, .7)})); }
+function skZebra(S, z, x0, y0, x1, y1, bg = '#f1eee8', st = '#1a181d'){ S.ftop(z, x0, y0, x1, y1, bg);
+  for (let y = y0 + 2; y < y1 - 1; y += 4.2) { const w = 1.1 + (Math.round(y) % 3) * .35; S.poly([[x0, y, z + .02], [x0 + (x1 - x0) * .3, y + .9, z + .02], [x0 + (x1 - x0) * .55, y - .4, z + .02], [x0 + (x1 - x0) * .78, y + .7, z + .02], [x1, y + .2, z + .02], [x1, y + .2 + w, z + .02], [x0 + (x1 - x0) * .78, y + .7 + w * .6, z + .02], [x0 + (x1 - x0) * .55, y - .4 + w * 1.2, z + .02], [x0 + (x1 - x0) * .3, y + .9 + w * .5, z + .02], [x0, y + w, z + .02]], st, {sw:.2, s:st}); } }
+function skStar(S, x, y, z, r, c){ const pts = []; for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, rr = i % 2 ? r * .38 : r; pts.push([x + rr * Math.cos(a), y + rr * Math.sin(a), z]); } S.poly(pts, c, {sw:.3}); }
+function skFlame(S, x, y, z, w, h, c1 = '#e0581c', c2 = '#f3c25c'){ const f = (s, c) => S.poly([[x - w * s, y, z], [x - w * .55 * s, y - h * .45 * s, z], [x - w * .2 * s, y - h * .3 * s, z], [x, y - h * s, z], [x + w * .25 * s, y - h * .4 * s, z], [x + w * .55 * s, y - h * .55 * s, z], [x + w * s, y, z]], c, {sw:.4}); f(1, c1); f(.55, c2); }
+/* kleines Plüschtier (sitzt, schaut zum Betrachter) */
+function skPlush(S, x, y, z, c, o = {}){ const s = o.s || 1, ears = o.ears || 'baer';
+  S.ell([x, y, z + 2.2 * s], 2.2 * s, 2 * s, c); S.ell([x, y, z + 5 * s], 2.4 * s, 2.2 * s, c);
+  if (ears === 'baer') [-1, 1].forEach(k => S.ell(skH([x, y, z + 6.9 * s], k * 1.25 * s), .9 * s, .9 * s, c));
+  if (ears === 'hase') [-1, 1].forEach(k => S.ell(skH([x, y, z + 8.2 * s], k * .7 * s), .7 * s, 2 * s, c));
+  if (ears === 'katze') [-1, 1].forEach(k => { const p = skH([x, y, z + 6.6 * s], k * 1.3 * s); S.poly([skH(p, -.8 * s), skH([p[0], p[1], p[2] + 2 * s], k * .2 * s), skH(p, .8 * s)], c, {sw:.4}); });
+  [-1, 1].forEach(k => S.ell(skH([x, y, z + 5.2 * s], k * .8 * s), .32 * s, .4 * s, '#141216')); S.ell([x, y, z + 4.4 * s], .5 * s, .35 * s, o.nose || '#141216');
+  if (o.belly) S.ell([x, y, z + 2 * s], 1.2 * s, 1.1 * s, o.belly); }
+/* Sarg-Umriss (Ansicht von vorn, x/z) */
+const skCoffin = (cx, z0, w, h) => [[cx - w * .3, z0], [cx + w * .3, z0], [cx + w * .5, z0 + h * .7], [cx + w * .32, z0 + h], [cx - w * .32, z0 + h], [cx - w * .5, z0 + h * .7]];
+
+Object.assign(SKF, {
+  /* Himmelbett (schlicht): graue Schleier */
+  bett: S => skCanopy(S, {cr:'#b9b5c2', cd:'#8d8996', bl:'#3a3640'}),
+
+  /* Sargbett: Sargdeckel als Kopfteil, Bett in Sargform mit Satin */
+  b_sarg: S => { const W = 34, L = 56, fr = SK.wood;
+    isoPrY(S, skCoffin(W / 2, 0, W, 40), 0, 3, fr); FP(S, 3.01, skCoffin(W / 2, 3, W - 6, 34), SK.wood2, {sw:.6});
+    S.box(W / 2 - .9, 3.1, 15, 1.8, .5, 16, SK.silver, {sw:.5}); S.box(W / 2 - 4.5, 3.1, 25, 9, .5, 1.8, SK.silver, {sw:.5});
+    const top = [[W * .2, 3], [W * .8, 3], [W, L * .32], [W * .86, L], [W * .14, L], [0, L * .32]];
+    isoPrZ(S, top, 0, 11, fr, {t:SK.wood2});
+    const ins = [[W * .24, 5], [W * .76, 5], [W - 2.4, L * .33], [W * .82, L - 2.4], [W * .18, L - 2.4], [2.4, L * .33]];
+    S.poly(ins.map(([x, y]) => [x, y, 11.02]), SK.red, {sw:.6});
+    for (let y = 12; y < L - 6; y += 6) for (let x = 7; x < W - 5; x += 6) S.dot([x + (y % 12 ? 3 : 0), y, 11.05], .5, SK.dred);
+    S.box(W * .3, 6, 11, W * .4, 7, 3.2, '#f3efe7');
+    S.poly([[W * .16, 22, 11.4], [W * .84, 22, 11.4], [W * .85, L - 3, 11.4], [W * .15, L - 3, 11.4]], '#25212a', {sw:.6}); S.poly([[W * .16, 22, 11.45], [W * .84, 22, 11.45], [W * .84, 25, 11.45], [W * .16, 25, 11.45]], SK.bone, {sw:.5});
+    [[W * .5, L - .2, 5.5]].forEach(p => { S.dot(p, 1.1, SK.silver); }); [[W * .2, L * .66], [W * .8, L * .66]].forEach(([x, y]) => S.dot([x, y, 6], .7, SK.silver)); },
+
+  /* Emo-Bett: Spitzen am Kopfteil, Karodecke Schwarz/Weiß, pinkes Herzkissen */
+  b_emo: S => { S0 = S; const W = 34;
+    skBed(S, {fr:'#1c1a20', head:[[0, 0], [W, 0], [W, 20], [W - 3, 26], [W - 6, 21], [W - 10, 29], [W - 13.5, 22], [W / 2, 32], [13.5, 22], [10, 29], [6, 21], [3, 26], [0, 20]],
+      pil:['#f3efe7', '#25212a'], bl:'#e9e6ee', top:skKaro('#e9e6ee', '#1e1c22', 6), bt:'#1e1c22',
+      footP:[[0, 0], [W, 0], [W, 11], [W - 4, 14], [W / 2, 12], [4, 14], [0, 11]],
+      deco:bz => { const x = 18, y = 15, z = bz; S.poly([skH([x, y, z], 0), skH([x, y, z + 4.3], 4), skH([x, y, z + 6.6], 2.2), skH([x, y, z + 5], 0), skH([x, y, z + 6.6], -2.2), skH([x, y, z + 4.3], -4)], '#d81b6a', {sw:.6}); } }); },
+
+  /* Scene-Bett: Regenbogen-Streifen, Plüschtiere */
+  b_scene: S => { const W = 34;
+    skBed(S, {fr:'#1c1a20', pil:['#f3efe7', '#ff5fb0'], bl:'#25212a', bt:'#f3efe7',
+      top:(z, x0, y0, x1, y1) => skStripes(S, z, x0, y0, x1, y1, ['#ff4f9a', '#ffb02e', '#f6e94a', '#4ee08a', '#3ec6f0', '#9b6cf2', '#ff4f9a', '#ffb02e', '#f6e94a', '#4ee08a', '#3ec6f0', '#9b6cf2']),
+      after:bz => { skPlush(S, 10, 17, bz, '#6ee6a0', {ears:'baer', belly:'#c9f7dc', s:1.5}); skPlush(S, 24, 18, bz, '#ff7cc2', {ears:'hase', belly:'#ffd6ec', s:1.35}); skPlush(S, 17, 34, bz, '#7fd0ff', {ears:'katze', s:1.2}); } }); },
+
+  /* Schmiedeeisernes Bett */
+  b_eisen: S => { const W = 34, L = 54, ir = '#1d1b20', P = Math.PI;
+    const bars = (y, h) => { S.line([.8, y, 0], [.8, y, h + 2], ir, 1.1); S.line([W - .8, y, 0], [W - .8, y, h + 2], ir, 1.1);
+      for (let i = 1; i < 6; i++) S.line([i * W / 6, y, 4], [i * W / 6, y, h - 1], ir, .7);
+      const arc = isoArc(W / 2, h - 4, W / 2 - .8, 0, P, 14).map(([x, z]) => [x, y, h - 4 + (z - h + 4) * .55]); for (let i = 0; i < arc.length - 1; i++) S.line(arc[i], arc[i + 1], ir, .9);
+      S.line([.8, y, 4], [W - .8, y, 4], ir, .9); [.8, W - .8].forEach(x => S.dot([x, y, h + 2.6], 1.1, '#3a3640'));
+      [W / 2 - 4, W / 2 + 4].forEach((x, k) => { const c = isoArc(x, h - 2, 2, k ? P : 0, k ? P * 2.4 : -P * 1.4, 8).map(([a, z]) => [a, y, z]); for (let i = 0; i < c.length - 1; i++) S.line(c[i], c[i + 1], ir, .6); }); };
+    skBed(S, {fr:ir, frc:'#2a2830', headFn:() => bars(1.2, 30), foot:false, leg:6, pil:['#f3efe7', '#f3efe7'], bl:'#6c6874', bt:'#f3efe7',
+      deco:bz => { for (let x = 2; x < W - 1; x += 1.6) S.dot([x, 19.2, bz + .1], .4, '#f3efe7'); for (let y = 20; y < L - 4; y += 1.6) S.dot([W - 1, y, bz - .3], .35, '#f3efe7'); },
+      after:() => bars(L - 1.5, 17) }); },
+
+  /* Metal-Bett mit Flammen */
+  b_metal: S => { const W = 34, L = 54;
+    skBed(S, {fr:'#151317', head:[[0, 0], [W, 0], [W, 24], [W - 2, 28], [W - 5, 24], [W - 8.5, 30], [W - 11, 25], [W / 2, 33], [11, 25], [8.5, 30], [5, 24], [2, 28], [0, 24]], pil:['#2a2730', '#2a2730'], bl:'#141216', bt:'#2a2730',
+      pilDeco:(i, x, pw, z) => skSkull(S, x + pw / 2, 13, z + .3, 1.5),
+      deco:bz => { for (let i = 0; i < 6; i++) skFlame(S, 4 + i * 5.2, L - 3.8, bz + .03, 2.6, 9 + (i % 2) * 5); },
+      footP:[[0, 0], [W, 0], [W, 12], [W - 2.5, 15], [W - 5, 12], [W / 2 + 3, 16], [W / 2, 13], [W / 2 - 3, 16], [5, 12], [2.5, 15], [0, 12]] }); },
+
+  /* Bett mit Regenbogen-Zebradecke */
+  rz_bett_zebra: S => { const W = 34;
+    skBed(S, {fr:'#1c1a20', pil:['#ff6fb5', '#f3efe7'], bt:'#1c1a20', top:(z, x0, y0, x1, y1) => { skZebra(S, z, x0, y0, x1, y1); skStripes(S, z + .04, x0, y1 - 3.6, x1, y1, ['#ff4f9a', '#ffb02e', '#f6e94a', '#4ee08a', '#3ec6f0', '#9b6cf2']); }, bl:'#f1eee8'}); },
+
+  /* Rosa Bett mit Katzenkissen */
+  rz_bett_rosa: S => { const W = 34, pk = '#eaa5c2';
+    skBed(S, {fr:pk, mat:'#fff3f8', pil:['#fbd3e4', '#fbd3e4'], bl:'#f2b8cf', bt:'#fff3f8',
+      pilDeco:(i, x, pw, z) => { [x + 1.6, x + pw - 1.6].forEach(ex => S.poly([[ex - 1.3, 13, z + 3.2], [ex, 13, z + 5.4], [ex + 1.3, 13, z + 3.2]], '#fbd3e4', {sw:.5})); [-1, 1].forEach(k => S.ell(skH([x + pw / 2, 13, z + 1.9], k * 1.4), .4, .5, '#3a2a32')); S.ell([x + pw / 2, 13, z + 1.2], .4, .3, '#e0608f'); },
+      top:(z, x0, y0, x1, y1) => { S.ftop(z, x0, y0, x1, y1, '#f2b8cf'); for (let y = y0 + 6; y < y1 - 1; y += 5) for (let x = x0 + 3; x < x1 - 2; x += 6) S.dot([x + (y % 10 > 5 ? 3 : 0), y, z + .02], .7, '#fff3f8'); },
+      headDeco:W => { S.ell([W / 2, 3.1, 14], 3.4, 3, '#fff3f8'); [-1, 1].forEach(k => S.ell([W / 2 + k * 1.3, 3.15, 14.5], .4, .5, '#3a2a32')); } }); },
+
+  /* Mondsichel-Bett */
+  nc_mondbett: S => { const W = 36, L = 54, nv = '#1e2240', P = Math.PI;
+    const moon = [...Array.from({length:19}, (_, i) => { const a = P / 2 + i / 18 * P; return [W / 2 + 3 + 24 * Math.cos(a), 24 + 24 * Math.sin(a)]; }), ...Array.from({length:19}, (_, i) => { const a = P * 1.5 - i / 18 * P; return [W / 2 + 3 + 10 * Math.cos(a), 24 + 23 * Math.sin(a)]; })].map(([x, z]) => [x, Math.max(0, z)]);
+    skBed(S, {W, fr:nv, headFn:() => { isoPrY(S, moon, 0, 3, '#d9d4e6'); [[W / 2 + 8, 40], [W / 2 + 14, 32], [W / 2 + 7, 26]].forEach(([x, z]) => skStar(S, x, 3.1, z, 1.6, '#f3d77a')); }, pil:['#e6e2f0', '#e6e2f0'], bl:nv, bt:'#d9d4e6',
+      top:(z, x0, y0, x1, y1) => { S.ftop(z, x0, y0, x1, y1, nv); [[6, 24], [20, 22], [28, 31], [10, 36], [22, 42], [14, 47], [30, 46]].forEach(([x, y], i) => skStar(S, x, y, z + .03, 1.2 + (i % 3) * .4, i % 2 ? '#f3d77a' : '#d9d4e6')); S.ell([18, 32, z + .05], 1.6, 1.1, '#f3d77a'); },
+      footP:[[0, 0], [W, 0], [W, 10], [W / 2, 13], [0, 10]] }); },
+
+  /* Altes Krankenhausbett: Rohrgestell, Gurte, aufgerissene Matratze mit Sprungfeder */
+  hw_bett: S => { const W = 30, L = 54, t = '#a9a8b0', P = Math.PI;
+    const tube = (y, h) => { S.line([.8, y, 2], [.8, y, h], t, 1.2); S.line([W - .8, y, 2], [W - .8, y, h], t, 1.2); const a = isoArc(W / 2, h - 3, W / 2 - .8, 0, P, 12).map(([x, z]) => [x, y, h - 3 + (z - h + 3) * .3]); for (let i = 0; i < a.length - 1; i++) S.line(a[i], a[i + 1], t, 1.2); for (let i = 1; i < 5; i++) S.line([i * W / 5, y, 9], [i * W / 5, y, h - 1], t, .6); S.line([.8, y, 9], [W - .8, y, 9], t, .9); };
+    const wheel = (x, y) => { S.ell([x, y, 1.2], 1.2, 1.2, '#2a2830'); S.dot([x, y, 1.2], .4, t); };
+    tube(1, 26); wheel(1, 2); wheel(W - 1, 2);
+    S.box(.8, 2, 7, W - 1.6, L - 4, 1.4, '#8a8992');
+    S.box(1.6, 2.5, 8.4, W - 3.2, L - 5, 4.2, '#d9d6cf');
+    S.poly([[8, 26, 12.62], [14, 23, 12.62], [20, 27, 12.62], [17, 33, 12.62], [10, 32, 12.62]], '#5a5048', {sw:.6}); S.poly([[9.5, 27, 12.64], [14, 25, 12.64], [18, 28, 12.64], [16, 31.5, 12.64], [11, 31, 12.64]], '#c2b49a', {sw:.4});
+    const sp = []; for (let i = 0; i <= 10; i++) sp.push([14 + (i % 2 ? 1.3 : -1.3), 29, 12.6 + i * .7]); for (let i = 0; i < sp.length - 1; i++) S.line(sp[i], sp[i + 1], '#bfbcc6', .55);
+    S.box(4, 4.5, 12.6, 15, 7, 2.6, '#ecebe6');
+    [17, 40].forEach(y => { S.ftop(12.65, 1.4, y, W - 1.4, y + 3, '#5a4434', {sw:.5}); S.fy(y + 3, W - 1.6, 8.4, W - .6, 12.6, '#5a4434', {sw:.4}); S.box(W / 2 - 1.5, y + .4, 12.7, 3, 2.2, .5, '#c9c6cf', {sw:.4}); S.line([W - 1, y + 3.2, 8], [W + .6, y + 3.4, 3], '#5a4434', 1); });
+    wheel(1, L - 2); wheel(W - 1, L - 2); tube(L - 1.2, 18); },
+});
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
 for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3}), cnt = r.area;
