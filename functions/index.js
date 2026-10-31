@@ -4,7 +4,10 @@
    - Anrufe: rings/<uid>/r/<id> neu → „Anna ruft an“
    - Nachrichten: chats/<cid>/m/<id> neu → an alle anderen Mitglieder, außer wer gerade online ist. Verschlüsselte Chats: nur „Neue Nachricht“, nie Inhalt.
    - Gästebuch: chats/wall_<uid>/m/<id> neu → an die Person, der das Gästebuch gehört
-   - Freundschaftsanfragen: friends/<uid> geändert → an neu hinzugefügte Personen */
+   - Freundschaftsanfragen: friends/<uid> geändert → an neu hinzugefügte Personen
+   - Begleiter (v783): höchstens einmal am Tag um 18 Uhr „Mimi hat Hunger“, wenn ein Bedürfnis unter die Grenze gefallen ist.
+     Die App schreibt in nf-push das Feld pet = {n, k, at:{f|c|e|p: Zeitpunkt}}; petIndex hält petq/<uid> = {due} aktuell (nur der Server liest und schreibt dort),
+     pushPet fragt nur fällige petq ab, damit nicht alle Konten gelesen werden. */
 const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -32,10 +35,12 @@ async function onlineOf(uids){
 const TXT = {
   de: {calls: w => `${w} ruft an`, video: 'Videoanruf', call: 'Anruf', inGrp: n => ` in „${n}“`, tapAnswer: ' · tippen zum Annehmen', group: 'Gruppe', gb: w => `${w} hat dir ins Gästebuch geschrieben`,
     newMsg: 'Neue Nachricht', voice: '🎤 Sprachnachricht', music: '🎵 Musik', photo: '📷 Foto', clip: '🎬 Video', sticker: 'Sticker', gif: 'GIF', post: '🖼 Beitrag', story: '📖 Story',
-    accepted: w => `${w} hat deine Freundschaftsanfrage angenommen`, request: w => `${w} möchte mit dir befreundet sein`, someone: 'Jemand'},
+    accepted: w => `${w} hat deine Freundschaftsanfrage angenommen`, request: w => `${w} möchte mit dir befreundet sein`, someone: 'Jemand',
+    pet: {f: n => [`${n} hat Hunger`, `Gib ${n} etwas zu essen!`], c: n => [`${n} ist ganz schmutzig`, `Bade ${n}!`], p: n => [`${n} ist traurig`, `Spiel mit ${n}!`], e: n => [`${n} ist müde`, `Bring ${n} ins Bett!`]}, petName: 'Dein Begleiter'},
   en: {calls: w => `${w} is calling`, video: 'Video call', call: 'Call', inGrp: n => ` in “${n}”`, tapAnswer: ' · tap to answer', group: 'Group', gb: w => `${w} wrote in your guestbook`,
     newMsg: 'New message', voice: '🎤 Voice message', music: '🎵 Music', photo: '📷 Photo', clip: '🎬 Video', sticker: 'Sticker', gif: 'GIF', post: '🖼 Post', story: '📖 Story',
-    accepted: w => `${w} accepted your friend request`, request: w => `${w} wants to be friends with you`, someone: 'Someone'}};
+    accepted: w => `${w} accepted your friend request`, request: w => `${w} wants to be friends with you`, someone: 'Someone',
+    pet: {f: n => [`${n} is hungry`, `Give ${n} something to eat!`], c: n => [`${n} is really dirty`, `Give ${n} a bath!`], p: n => [`${n} is sad`, `Play with ${n}!`], e: n => [`${n} is tired`, `Put ${n} to bed!`]}, petName: 'Your companion'}};
 async function sendTo(uid, pref, msg){
   const ref = db.doc(`data/users/${uid}/nf-push`), d = await ref.get(); if (!d.exists) return;
   const x = d.data() || {}, prefs = x.prefs || {}; if (prefs[pref] === false) return;
@@ -82,5 +87,29 @@ exports.pushFriend = fn.firestore.document('friends/{uid}').onWrite(async (ch, c
   for (const u of added.slice(0, 10)) {
     const theirs = await db.doc('friends/' + u).get(); const mutual = theirs.exists && (theirs.data().list || []).includes(ctx.params.uid);
     await sendTo(u, 'friends', T => ({tag: 'fr-' + ctx.params.uid, title: mutual ? T.accepted(who) : T.request(who), body: '', link: SITE + '?p=' + encodeURIComponent(ctx.params.uid)})).catch(() => {});
+  }
+});
+
+/* ---- Begleiter (v783, Inaya 2026-10-31: „außerhalb der App benachrichtigt“, „so einmal am Tag“) ---- */
+const PET_ORDER = ['f', 'c', 'p', 'e']; // wichtigstes zuerst: Hunger, Schmutz, Laune, Müdigkeit
+const berlinDay = (t = Date.now()) => new Intl.DateTimeFormat('en-CA', {timeZone: 'Europe/Berlin'}).format(new Date(t)); // 2026-10-31
+exports.petIndex = fn.firestore.document('data/users/{uid}/nf-push').onWrite(async (ch, ctx) => {
+  const ref = db.doc('petq/' + ctx.params.uid), x = ch.after.exists ? ch.after.data() || {} : {};
+  const toks = Object.values(x.tokens || {}).filter(v => v && v.t).length, at = (x.pet && x.pet.at) || {};
+  const due = Math.min(...PET_ORDER.map(k => +at[k] || Infinity));
+  if (!toks || !x.pet || (x.prefs || {}).pet === false || !isFinite(due)) return ref.delete().catch(() => {});
+  return ref.set({due});
+});
+exports.pushPet = functions.region(REGION).runWith({maxInstances: 1, memory: '256MB', timeoutSeconds: 300}).pubsub.schedule('0 18 * * *').timeZone('Europe/Berlin').onRun(async () => {
+  const now = Date.now(), day = berlinDay(now), q = await db.collection('petq').where('due', '<=', now).limit(1000).get(); if (q.empty) return;
+  const uids = q.docs.map(d => d.id), on = await onlineOf(uids);
+  for (const uid of uids) {
+    if (on.has(uid)) continue; // App ist offen: steht schon in der Glocke
+    try { const ref = db.doc(`data/users/${uid}/nf-push`), d = await ref.get(); if (!d.exists) continue;
+      const x = d.data() || {}, pet = x.pet || {}, at = pet.at || {}; if (pet.day === day) continue; // höchstens einmal am Tag
+      const k = PET_ORDER.find(k => +at[k] > 0 && +at[k] <= now); if (!k) continue;
+      await sendTo(uid, 'pet', T => { const [title, body] = T.pet[k](String(pet.n || '').trim() || T.petName); return {tag: 'pet', title, body, link: SITE + '?g=pet'}; });
+      await ref.set({pet: {day}}, {merge: true});
+    } catch (e) { console.error('pushPet', uid, e.message); }
   }
 });
