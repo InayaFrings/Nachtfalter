@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='82753d617f08';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0d303ae06447';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3002,7 +3002,11 @@ form:is([data-form=pcomment],[data-form=rwall]) .cinw .pcthumb{align-self:center
 .cinfo .ncl{margin:6px 6px -4px}
 .cinfo .ncbox{padding:2px 0}
 .cinfo .ncbox .ncrow+.ncrow{border-top:1px solid var(--line-soft)}
-.cinfo.ncsearch .ncoft{display:none}
+.cinfo.ncsearch .ncoft,.gnew.ncsearch .ncoft,.gnew.ncsearch #gnchipbox{display:none}
+.gnew .gnlist[hidden],.gnew .ncl[hidden],.cinfo .gnchipbox[hidden]{display:none}
+.cinfo .gnchipbox{padding:12px 10px 8px}
+.cinfo .gnchipbox .gnchips{padding:4px 2px 0}
+.cinfo .gnfix{flex-wrap:wrap;overflow:visible}
 .cinfo .cimemb[hidden],.cinfo .ncbox[hidden],.cinfo .ncl[hidden]{display:none}
 .mtcreate{height:36px;padding:0 16px;border-radius:18px;background:var(--fg);color:var(--ink);border:0;font:600 15px/1 var(--f-display);white-space:nowrap}
 .cinfo.gnew{gap:12px}
@@ -8351,7 +8355,8 @@ function mobTop(nNew, ntN){ // Handy: Freunde und Chats oben rechts wie bei Momi
   /* seit v559 wie bei Insta: nur noch die Glocke, schlicht wie das Plus links; Minigames und Einstellungen stehen im eigenen Profil neben „Profil bearbeiten“ */
   if (V.name === 'chats' && !chSubPg()) { if (!social) return '<div class="mtop"><span class="mti round" aria-hidden="true" style="visibility:hidden"></span></div>'; const [act, v, l] = ['chat-new', '', 'Neuer Chat']; /* v779: Plus oben rechts; v780: öffnet immer „Neuer Chat“ (Inaya) */
     return `<div class="mtop"><button type="button" class="mti round mtplus" data-act="${act}"${v ? ` data-v="${v}"` : ''} aria-label="${l}" title="${l}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>`; }
-  if (V.name === 'chats' && CH.mode === 'group' && CH.gdraft && !CH.gdraft.id) return '<div class="mtop"><button type="button" class="mtcreate" data-act="g-create">Erstellen</button></div>'; /* v780 */
+  if (V.name === 'chats' && CH.mode === 'group' && CH.gdraft && !CH.gdraft.id) return CH.gdraft.pub || CH.gdraft.step === 2 ? '<div class="mtop"><button type="button" class="mtcreate" data-act="g-create">Erstellen</button></div>' : '<div class="mtop"><button type="button" class="mtcreate" data-act="gn-next">Weiter</button></div>'; /* v780/v781 */
+  if (V.name === 'chats' && CH.mode === 'gadd' && !CH.list.find(x => x.id === CH.open)?.pub) return '<div class="mtop"><button type="button" class="mtcreate" data-act="ga-go">Hinzufügen</button></div>';
   if (MH_PAGES[V.name] || chSubPg()) return '<div class="mtop"><span class="mti round" aria-hidden="true" style="visibility:hidden"></span></div>';
   if (V.name === 'profile' && (!V.arg || V.arg === S.me)) return `<div class="mtop">${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', newMembers()).replace('class="mti"', 'class="mti round"')}</div>`; /* eigenes Profil: Zahnrad statt Glocke (Inaya) */
   return `<div class="mtop">${b('nav', 'notifs', MOB_ICONS.bell, 'Mitteilungen', ntN + reqs).replace('class="mti"', `class="mti round${V.name === 'notifs' ? ' on' : ''}"`)}</div>`;
@@ -8374,13 +8379,13 @@ const MH_PAGES = {design:'Profil bearbeiten', notifs:'Mitteilungen', settings:'E
 const MH_KEEP = {notifs:1, settings:1}; /* aus der Kopfzeile geöffnet: Verlauf bleibt */
 const MH_UP = {chats:'home', mall:'shopping', moebel:'shopping', browse:'find', pet:'profile', wardrobe:'profile', room:'profile', friends:'profile', settings:'profile', archive:'profile', liked:'settings', design:'profile', notifs:'home'}; /* wohin der Pfeil führt, wenn es keinen Verlauf gibt (z. B. nach dem Neuladen) */
 const chSubPg = () => V.name === 'chats' && ['new', 'group', 'gadd', 'info', 'media'].includes(CH.mode); /* v633: Chat-Unterseiten: Pfeil oben statt Plus, ohne Glocke (Inaya) */
-const chSubBack = () => CH.mode === 'info' && CH.open ? 'data-act="ci-back"' : (CH.mode === 'media' || CH.mode === 'gadd') && CH.open ? 'data-act="chat-info"' /* v776: Info-Seite wie bei WhatsApp */ : CH.mode === 'group' && CH.gdraft?.id ? 'data-act="g-save"' /* v638: Pfeil speichert */ : CH.mode === 'group' ? 'data-act="chat-new"' /* v780: zurück zu „Neuer Chat“ */ : 'data-act="chat-back"';
+const chSubBack = () => CH.mode === 'info' && CH.open ? 'data-act="ci-back"' : (CH.mode === 'media' || CH.mode === 'gadd') && CH.open ? 'data-act="chat-info"' /* v776: Info-Seite wie bei WhatsApp */ : CH.mode === 'group' && CH.gdraft?.id ? 'data-act="g-save"' /* v638: Pfeil speichert */ : CH.mode === 'group' ? (CH.gdraft && !CH.gdraft.pub && CH.gdraft.step === 2 ? 'data-act="gn-back"' : 'data-act="chat-new"') /* v780: zurück zu „Neuer Chat“, v781: Schritt 2 → Auswahl */ : 'data-act="chat-back"';
 const mhRoot = () => !chSubPg() && ['home', 'shopping', 'find'].includes(V.name) /* v779: Chats mit Pfeil zurück (Inaya) */ || (V.name === 'profile' && (!V.arg || V.arg === S.me));
 setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me) softRender(); } }, 9000);
 function mobHead(){
   if (MH_PAGES[V.name]) return `<div class="mhead"><b class="mhtitle">${MH_PAGES[V.name]}</b></div>`;
   if (V.name === 'chats' && !chSubPg()) return `<div class="mhead"><b class="mhtitle">Chats</b></div>`; /* v779: oben „Chats“ statt Logo (Inaya) */
-  if (chSubPg()) { const g = CH.gdraft || {}; const ci = CH.list.find(x => x.id === CH.open); const t = CH.mode === 'info' ? (ci?.group ? 'Gruppeninfo' : 'Kontaktinfo') : CH.mode === 'media' ? 'Medien und Links' : CH.mode === 'new' ? 'Neuer Chat' : CH.mode === 'gadd' ? 'Mitglieder' : g.dm || g.id ? 'Chat gestalten' : g.pub ? 'Öffentliche Gruppe' : 'Neue Gruppe'; return `<div class="mhead"><b class="mhtitle">${t}</b></div>`; } /* v640: Titel der Chat-Unterseite oben statt Logo (Inaya) */
+  if (chSubPg()) { const g = CH.gdraft || {}; const ci = CH.list.find(x => x.id === CH.open); const t = CH.mode === 'info' ? (ci?.group ? 'Gruppeninfo' : 'Kontaktinfo') : CH.mode === 'media' ? 'Medien und Links' : CH.mode === 'new' ? 'Neuer Chat' : CH.mode === 'gadd' ? 'Mitglieder hinzufügen' : g.dm || g.id ? 'Chat gestalten' : g.pub ? 'Öffentliche Gruppe' : g.step === 2 ? 'Neue Gruppe' : 'Mitglieder hinzufügen'; return `<div class="mhead"><b class="mhtitle">${t}</b></div>`; } /* v640: Titel der Chat-Unterseite oben statt Logo (Inaya) */
   const can = social || PUB && S.me;
   if (!MH.boot && S.me) { MH.boot = true; if (S.salonMode !== 'pub') { S.salonMode = 'pub'; postAud = null; } } /* beim Öffnen immer „Öffentlich“ (Inaya), Freunde nur bis zum nächsten Öffnen */
   if (MH.logo || !can || V.name !== 'home') return `<div class="mhead">${logoSVG('mhlogo')}</div>`; /* v575: Öffentlich/Freunde nur im Salon, sonst das Logo */
@@ -11729,16 +11734,32 @@ document.addEventListener('input', e => { if (!e.target.classList?.contains('ncq
   w.querySelectorAll('.ncbox:not(.ncoft)').forEach(b => { b.hidden = ![...b.querySelectorAll('.ncrow')].some(r => !r.hidden); const h = b.previousElementSibling; if (h?.classList.contains('ncl')) h.hidden = b.hidden; });
   const no = w.querySelector('.ncnone'); if (no) no.hidden = !q || n > 0; });
 const gnName = id => S.users[id]?.name || PROF[id]?.name || chatWho(id) || '';
-const gnChips = g => g.members.map(id => `<button type="button" class="gnchip" data-act="gn-rm" data-id="${esc(id)}" aria-label="${esc(gnName(id))} abwählen"><span class="cameo">${gmPic(id)}<i class="gnx" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></i></span><small data-raw>${esc(gnName(id))}</small></button>`).join('');
-function gnPaint(){ const g = CH.gdraft, el = document.getElementById('gnchips'), c = document.getElementById('gncnt'); if (!g || !el) return; el.innerHTML = gnChips(g); el.hidden = !g.members.length; if (c) c.textContent = (LANG === 'en' ? 'Members: ' : 'Mitglieder: ') + g.members.length; }
-document.addEventListener('change', e => { if (!e.target.classList?.contains('g-mem') || !document.getElementById('gnchips')) return; grabGroupDraft(); gnPaint(); });
+const gnChips = ids => ids.map(id => `<button type="button" class="gnchip" data-act="gn-rm" data-id="${esc(id)}" aria-label="${esc(gnName(id))} abwählen"><span class="cameo">${gmPic(id)}<i class="gnx" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></i></span><small data-raw>${esc(gnName(id))}</small></button>`).join('');
+/* v781 (Inaya, WhatsApp „Mitglieder hinzufügen“): Auswahl mit Suche, ausgewählte oben als Kreise mit ×, „Häufig kontaktiert“, dann A–Z mit Kreis-Haken.
+   Gleiche Person kann zweimal stehen (häufig + A–Z): beide Haken laufen gleich (gnSync). cls = g-mem (neue Gruppe) oder ga-mem (Mitglieder hinzufügen). */
+const gnSel = f => [...new Set([...(f?.querySelectorAll('.g-mem:checked, .ga-mem:checked') || [])].map(x => x.value))];
+function gnPickHTML(friends, cls, sel){
+  const fr = [...friends].sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'de', {sensitivity:'base'}));
+  const often = CH.list.filter(c => !c.group).sort((a, b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)).map(c => c.members.find(m => m !== social?.uid)).map(id => fr.find(f => f.id === id)).filter(Boolean).slice(0, 4);
+  let abc = '', last = '';
+  for (const f of fr) { const L = (String(f.name || '?').trim()[0] || '#').toUpperCase(), k = /[A-ZÄÖÜ]/.test(L) ? L.replace('Ä', 'A').replace('Ö', 'O').replace('Ü', 'U') : '#'; if (k !== last) { if (last) abc += '</section>'; abc += `<h3 class="cih ncl">${k}</h3><section class="cibox gnlist">`; last = k; } abc += frPickHTML(f, cls, sel.includes(f.id)); }
+  if (last) abc += '</section>';
+  return `<label class="ncq">${NC_SVG.q}<input type="search" class="gmqi" placeholder="Name oder @Nutzername" aria-label="Freunde suchen" autocomplete="off"></label>
+    <section class="cibox gnchipbox" id="gnchipbox"${sel.length ? '' : ' hidden'}><div class="gnchips" id="gnchips">${gnChips(sel)}</div></section>
+    ${often.length ? `<h3 class="cih ncl ncoft">Häufig kontaktiert</h3><section class="cibox gnlist ncoft">${often.map(f => frPickHTML(f, cls, sel.includes(f.id))).join('')}</section>` : ''}${abc}`;
+}
+function gnPaint(){ const f = document.querySelector('form[data-form="group"], form[data-form="gadd"]'); if (!f) return; const ids = gnSel(f), el = document.getElementById('gnchips'), box = document.getElementById('gnchipbox'), c = document.getElementById('gncnt');
+  if (el) el.innerHTML = gnChips(ids); if (box) box.hidden = !ids.length; if (c) c.textContent = ids.length + ' / ' + (f.querySelectorAll('.g-mem, .ga-mem').length ? new Set([...f.querySelectorAll('.g-mem, .ga-mem')].map(x => x.value)).size : 0); }
+document.addEventListener('change', e => { const t = e.target; if (!t.classList?.contains('g-mem') && !t.classList?.contains('ga-mem')) return; const f = t.closest('form'); if (!f || !document.getElementById('gnchips')) return;
+  f.querySelectorAll('.g-mem, .ga-mem').forEach(x => { if (x.value === t.value) x.checked = t.checked; }); if (CH.gdraft && !CH.gdraft.id && t.classList.contains('g-mem')) grabGroupDraft(); gnPaint(); });
+document.addEventListener('input', e => { if (!e.target.classList?.contains('gmqi')) return; const f = e.target.closest('form'); if (f) f.classList.toggle('ncsearch', !!e.target.value.trim()); setTimeout(() => f?.querySelectorAll('.gnlist').forEach(b => { if (b.classList.contains('ncoft')) return; b.hidden = ![...b.querySelectorAll('label.allg')].some(l => !l.hidden); const h = b.previousElementSibling; if (h?.classList.contains('ncl')) h.hidden = b.hidden; }), 0); });
 function gNewHTML(g, friends){
-  const pic = safePic(g.pic);
+  const pic = safePic(g.pic), step = g.pub ? 2 : (g.step || 1);
+  if (step === 1) return `<form data-form="group" class="gform cinfo gnew">${friends.length ? gnPickHTML(friends, 'g-mem', g.members) : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}<button type="submit" hidden></button></form>`;
   return `<form data-form="group" class="gform cinfo gnew">
     <section class="cibox gnhead"><label class="gncam" aria-label="Gruppenbild wählen"><input type="file" id="g-pic" accept="image/*" hidden>${pic ? `<img src="${esc(pic)}" alt="">` : CI_ICO.cam}</label><input id="g-name" type="text" maxlength="40" value="${esc(g.name)}" placeholder="${g.pub ? 'Name der Gruppe' : 'Gruppenname (freiwillig)'}" aria-label="Name der Gruppe" autocomplete="off"${g.pub ? ' required' : ''}></section>
     ${g.pub ? '<p class="note gnnote">Öffentliche Gruppe: Jeder kann sie finden und beitreten. Name, Bild und Farbe ändern und Leute entfernen kannst nur du als Admin.</p>'
-      : `<h3 class="cih" id="gncnt">Mitglieder: ${g.members.length}</h3><div class="gnchips" id="gnchips"${g.members.length ? '' : ' hidden'}>${gnChips(g)}</div>
-      ${friends.length ? `<label class="ncq">${NC_SVG.q}<input type="search" class="gmqi" placeholder="Name oder @Nutzername" aria-label="Freunde suchen" autocomplete="off"></label><section class="cibox gnlist">${[...friends].sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'de', {sensitivity:'base'})).map(f => frPickHTML(f, 'g-mem', g.members.includes(f.id))).join('')}</section>` : '<p class="note">Füg zuerst unter „Freunde finden“ Freunde hinzu.</p>'}`}
+      : `<h3 class="cih">${LANG === 'en' ? 'Members: ' : 'Mitglieder: '}${g.members.length}</h3><section class="cibox gnchipbox"><div class="gnchips gnfix">${g.members.map(id => `<span class="gnchip"><span class="cameo">${gmPic(id)}</span><small data-raw>${esc(gnName(id))}</small></span>`).join('')}</div></section>`}
     <button type="submit" hidden></button>
   </form>`;
 }
@@ -11819,16 +11840,12 @@ function chatsView(){
   let right = ''; /* v622: kein Hinweis mehr (Inaya) */
   if (CH.mode === 'new') right = ncHubHTML(friends); /* v780: Neuer Chat wie bei WhatsApp (Inaya) */
   if (CH.mode === 'group') right = groupForm(friends);
-  if (CH.mode === 'gadd') { // Jedes Mitglied darf nach dem Erstellen noch Freunde dazuholen (Inaya, 2026-10-10)
+  if (CH.mode === 'gadd') { /* v781: wie bei WhatsApp „Mitglieder hinzufügen“ (Inaya) */
     const c = CH.list.find(x => x.id === CH.open), cand = c && !c.pub ? friends.filter(f => !c.members.includes(f.id)) : [];
-    const mems = c ? c.members.filter(m => m !== social.uid) : []; // Mitglieder wieder entfernen (Inaya, 2026-10-10)
-    right = `<form data-form="gadd" class="gform"><h3 class="ch-h">Wer ist in „${esc(c ? chatName(c) : '')}“?</h3>${c ? `<p class="note gmcnt">${c.members.length === 1 ? (LANG === 'en' ? '1 member' : '1 Mitglied') : c.members.length + (LANG === 'en' ? ' members' : ' Mitglieder')}${(() => { const n = c.members.filter(m => m === social.uid || ONLINE.has(m)).length; return n ? ' · ' + n + ' online' : ''; })()}</p>` : ''}
-      <div class="gmems">${c?.pub && c.createdBy ? `<p class="note">Admin: ${c.createdBy === social.uid ? 'du' : whoH(c.createdBy)}</p>` : ''}${mems.length ? mems.map(id => `<div class="gmem"><span class="gmwho"><button type="button" class="cameo gmav" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(chatWho(id))}">${gmPic(id)}</button><span>${esc(chatWho(id))}${PROF[id]?.handle ? ` <small class="muted">@${esc(PROF[id].handle)}</small>` : ''}${c?.pub && id === c.createdBy ? ' <small class="muted">(Admin)</small>' : ''}</span></span>${!gAdmin(c) ? '' : gRmAsk === id ? `<span class="row" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="btn ghost" type="button" data-act="grm" data-id="${esc(id)}">Entfernen</button>`}</div>`).join('') : '<p class="note">Außer dir ist gerade niemand in der Gruppe.</p>'}</div>
-      ${c?.pub ? '<p class="note">In öffentliche Gruppen kann man niemanden hinzufügen. Jeder tritt selbst bei.</p>' : `<h3 class="ch-h" style="margin-top:14px">Freunde hinzufügen</h3>
-      ${cand.length > 1 ? '<label class="musearch gmq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" class="gmqi" placeholder="Freunde suchen …" aria-label="Freunde suchen" autocomplete="off"></label>' : ''}${cand.length ? cand.map(f => `${frPickHTML(f, 'ga-mem', false)}`).join('') : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}`}
-      ${c ? `<button type="button" class="btn ghost grpsh2" data-act="grp-share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3L10.2 13.8"/><path d="M21 3l-6.8 18-4-7.2L3 9.8z"/></svg> Gruppe in einen Chat teilen</button>` : ''}
-      <div class="row">${c && !gAdmin(c) ? '<button class="btn ghost" type="button" data-act="chat-leave">Gruppe verlassen</button>' : ''}<span class="sp"></span>${cand.length ? '<button class="btn" type="submit">Hinzufügen</button>' : ''}</div></form>`;
+    right = c?.pub ? `<div class="cinfo"><p class="note">In öffentliche Gruppen kann man niemanden hinzufügen. Jeder tritt selbst bei.</p></div>`
+      : `<form data-form="gadd" class="gform cinfo gnew">${cand.length ? gnPickHTML(cand, 'ga-mem', []) : '<p class="note">Alle deine Freunde sind schon in der Gruppe.</p>'}<button type="submit" hidden></button></form>`;
   }
+
   if (CH.mode === 'helper' && S.users[CH.helper]) {
     const h = S.users[CH.helper];
     right = `<section class="chatpanel hpanel">
@@ -15203,7 +15220,7 @@ document.addEventListener('focusout', () => setTimeout(gateBack, 250)); window.v
 function grabGroupDraft(){
   const g = CH.gdraft; if (!g) return;
   const n = document.getElementById('g-name'); if (n) g.name = n.value;
-  const boxes = [...document.querySelectorAll('.g-mem')]; if (boxes.length) { const shown = new Set(boxes.map(x => x.value)); g.members = [...g.members.filter(m => !shown.has(m)), ...boxes.filter(x => x.checked).map(x => x.value)]; } // Mitglieder, die nicht in meiner Freundesliste stehen, bleiben drin
+  const boxes = [...document.querySelectorAll('.g-mem')]; if (boxes.length) { const shown = new Set(boxes.map(x => x.value)); g.members = [...new Set([...g.members.filter(m => !shown.has(m)), ...boxes.filter(x => x.checked).map(x => x.value)])]; } // Mitglieder, die nicht in meiner Freundesliste stehen, bleiben drin
 }
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-act]'); if (!b) return;
@@ -15215,7 +15232,10 @@ document.addEventListener('click', async e => {
   else if (a === 'fr-again') { if (isBlk(id)) return; if (Date.now() - (FR.rq[id] || 0) < 60000) return toast('Die Anfrage wurde gerade erst gesendet.'); await setMine(FR.mine, id); render(); toast('Anfrage erneut gesendet'); }
   else if (a === 'chat-open') openChat(id);
   else if (a === 'chat-new') { CH.mode = 'new'; render(); scrollTo(0, 0); }
-  else if (a === 'gn-rm') { const x = [...document.querySelectorAll('.g-mem')].find(i => i.value === b.dataset.id); if (x) x.checked = false; if (CH.gdraft) CH.gdraft.members = CH.gdraft.members.filter(m => m !== b.dataset.id); gnPaint(); }
+  else if (a === 'gn-rm') { document.querySelectorAll('.g-mem, .ga-mem').forEach(i => { if (i.value === b.dataset.id) i.checked = false; }); if (CH.gdraft && !CH.gdraft.id) CH.gdraft.members = CH.gdraft.members.filter(m => m !== b.dataset.id); gnPaint(); }
+  else if (a === 'gn-next') { grabGroupDraft(); if (!CH.gdraft.members.length) return toast('Such mindestens eine Person aus.'); CH.gdraft.step = 2; render(); scrollTo(0, 0); }
+  else if (a === 'gn-back') { grabGroupDraft(); CH.gdraft.step = 1; render(); scrollTo(0, 0); }
+  else if (a === 'ga-go') { document.querySelector('form[data-form="gadd"]')?.requestSubmit(); }
   else if (a === 'g-create') { grabGroupDraft(); document.querySelector('form[data-form="group"]')?.requestSubmit(); }
   else if (a === 'chat-group') { CH.gdraft = {pub:b.dataset.v === 'pub', name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); scrollTo(0, 0); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
@@ -16811,12 +16831,12 @@ document.addEventListener('submit', async e => {
     const old = c[k]; c[k] = v; CI_ED = null; render();
     social.db.doc('chats/' + cid).update({[k]:v}).catch(() => { c[k] = old; render(); toast('Das hat nicht geklappt. Versuch es nochmal.'); });
   } else if (t === 'gadd') {
-    const ids = [...document.querySelectorAll('.ga-mem')].filter(x => x.checked).map(x => x.value), cid = CH.open;
+    const ids = [...new Set([...document.querySelectorAll('.ga-mem')].filter(x => x.checked).map(x => x.value))], cid = CH.open;
     if (CH.list.find(x => x.id === cid)?.pub) return;
     if (!ids.length) return toast('Such mindestens eine Person aus.');
     try { const nm = [...new Set([...(CH.list.find(x => x.id === cid)?.members || [social.uid]), ...ids])]; await social.db.doc('chats/' + cid).update({members:nm}); const lc = CH.list.find(x => x.id === cid); if (lc) lc.members = nm; // gleich verschlüsselt an die Neuen
       await sendMsg(cid, `${me().name} hat ${ids.map(id => S.users[id]?.name || PROF[id]?.name || 'jemanden').join(', ')} hinzugefügt.`);
-      CH.mode = 'chat'; render(); toast('Hinzugefügt'); }
+      CH.mode = 'info'; render(); }
     catch { toast('Das hat nicht geklappt. Versuch es nochmal.'); }
   } else if (t === 'group') {
     grabGroupDraft(); const g = CH.gdraft;
