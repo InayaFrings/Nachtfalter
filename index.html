@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='233a6286995d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ab54704b2eb1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -583,17 +583,20 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 
 /* Zimmer */
 .room{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;border:1px solid var(--line);background:#141416;user-select:none;-webkit-user-select:none}
-/* v790: Zimmer als Ecke (Inaya): Wand links, Wand rechts, Boden dazwischen. Ecke bei x 50 %, Boden-Kante von 42 % (Ecke) bis 68 % (Rand); Muster laufen schräg mit (skewY 18°, Boden scaleY(.325) rotate(45deg)) */
-.room .wall,.room .floor{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.room .wall.wl{clip-path:polygon(0 0,50% 0,50% 42%,0 68%)}.room .wall.wr{clip-path:polygon(50% 0,100% 0,100% 68%,50% 42%)}
-.room .floor{clip-path:polygon(0 68%,50% 42%,100% 68%,100% 100%,0 100%)}
-.room .wall>i,.room .floor>i{position:absolute;display:block}
-.room .wall.wl>i{left:0;width:50%;top:-40%;height:140%;transform-origin:100% 59%;transform:skewY(-18deg)}
-.room .wall.wr>i{left:50%;width:50%;top:-40%;height:140%;transform-origin:0 59%;transform:skewY(18deg)}
-.room .wall.wl::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0000003d,#00000014)}.room .wall.wr::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#ffffff08,#0000001a)}
-.room .floor>i{left:50%;top:42%;width:300%;aspect-ratio:1;transform:translate(-50%,-50%) scaleY(.325) rotate(45deg)}
-.room .floor::after{content:"";position:absolute;inset:0;background:linear-gradient(#0000006b,#0000 28%,#0000 80%,#00000033)}
-.room .redge{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.room .redge path{fill:none;stroke:#2c2c31;stroke-width:3;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+/* v791: Zimmer wie bei Momio (Inaya): schwebender Kasten von schräg oben, Wand links, Wand rechts, Rauten-Boden (2:1). Maße in Raumbreiten: Wandhöhe .3, Höhe .82 (RI) */
+.room.iso{aspect-ratio:100/82;border:0;background:none;overflow:visible}
+.room.iso .wall,.room.iso .floor{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.room.iso .wall.wl{clip-path:polygon(0 30.49%,50% 0,50% 36.59%,0 67.07%)}.room.iso .wall.wr{clip-path:polygon(50% 0,100% 30.49%,100% 67.07%,50% 36.59%)}
+.room.iso .floor{clip-path:polygon(50% 36.59%,100% 67.07%,50% 97.56%,0 67.07%)}
+.room.iso .wall>i,.room.iso .floor>i{position:absolute;display:block}
+.room.iso .wall.wl>i{left:0;width:50%;top:0;height:100%;transform-origin:100% 0;transform:skewY(-26.565deg)}
+.room.iso .wall.wr>i{left:50%;width:50%;top:0;height:100%;transform-origin:0 0;transform:skewY(26.565deg)}
+.room.iso .wall.wl::after{content:"";position:absolute;inset:0;background:#00000033}.room.iso .wall.wr::after{content:"";position:absolute;inset:0;background:#00000012}
+.room.iso .floor>i{left:50%;top:67.07%;width:70.71%;aspect-ratio:1;transform:translate(-50%,-50%) scaleY(.5) rotate(45deg)}
+.room.iso .floor::after{content:"";position:absolute;inset:0;background:linear-gradient(#00000066,#0000 30%,#0000 75%,#0000002a)}
+.room.iso .redge{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.room.iso .redge .cap{fill:#d9d8de}.room.iso .redge .capd{fill:#a9a8b0}.room.iso .redge .slab{fill:#1b1b1f}.room.iso .redge .slab2{fill:#26262b}.room.iso .redge path.ln{fill:none;stroke:#00000059;stroke-width:1;vector-effect:non-scaling-stroke}
+.f3w{display:block;width:100%;aspect-ratio:1;max-height:100%;transform:translateX(-7%) translateY(8%) skewY(26.565deg) scale(.74);transform-origin:50% 60%}.f3w>svg{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;overflow:visible;display:block}.room.iso .ritem.r3{transform-origin:50% 100%}.room.iso .ritem.rw{transform-origin:50% 50%}.room.iso .ritem svg{overflow:visible}
 .ritem{position:absolute}
 .ritem svg{width:100%;height:auto;display:block;overflow:visible}
 .ritem.av{width:14%}
@@ -619,7 +622,7 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 .steps li.done{color:var(--muted)}
 .steps li.cur{color:var(--fg);border-bottom:1px solid var(--fg)}
 .gate-card.lookbar{gap:8px;margin:0 0 12px;flex-wrap:wrap;align-items:center}
-.lbrow{align-items:center}.refcard{margin-top:16px}.refbox{display:grid;gap:12px}.refsub{margin:0;font-size:14px;line-height:1.5;opacity:.9}.refbats{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;padding:6px 0;max-width:440px}.refb{width:100%;height:auto;fill:currentColor;opacity:.16;transition:opacity .3s,transform .3s}.refb.on{opacity:1;transform:translateY(-2px)}.refc{display:inline-flex;align-items:center;gap:3px;font-weight:700;vertical-align:-3px}.refc .ncico{width:16px;height:16px}.refn{margin:0;font-size:13px;opacity:.85}.refgo{display:inline-flex;align-items:center;justify-content:center;gap:6px}.refgo .ncico{width:18px;height:18px}.reflinkin{width:100%;min-width:0;font-size:13px}.refbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rselname{display:block;margin:8px 0 6px}.rselbtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin:0 0 10px}.rselbtns .ltool.ltsm{margin:0;justify-content:center;width:100%}.sprev{position:relative;display:block;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:4px}.sprev i{position:absolute;left:0;right:0;bottom:0;height:24%;border-top:2px solid #2c2c31;box-shadow:inset 0 6px 10px #0009}.sprevf i{height:68%}.rtools{margin:0}.rselbar:empty{display:none} /* Abstand Zimmer – Kacheln wie in der Garderobe */.rbooks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.rbitem{display:block;padding:4px;border:1px solid var(--line);border-radius:10px;background:none;cursor:pointer;color:inherit}.rbitem.on{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor}.rbmini{pointer-events:none}.rbmini .ritem.av{display:none}.rbmini .room{border-radius:6px}@media (max-width:520px){.rbooks{grid-template-columns:minmax(0,1fr)}}
+.lbrow{align-items:center}.refcard{margin-top:16px}.refbox{display:grid;gap:12px}.refsub{margin:0;font-size:14px;line-height:1.5;opacity:.9}.refbats{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;padding:6px 0;max-width:440px}.refb{width:100%;height:auto;fill:currentColor;opacity:.16;transition:opacity .3s,transform .3s}.refb.on{opacity:1;transform:translateY(-2px)}.refc{display:inline-flex;align-items:center;gap:3px;font-weight:700;vertical-align:-3px}.refc .ncico{width:16px;height:16px}.refn{margin:0;font-size:13px;opacity:.85}.refgo{display:inline-flex;align-items:center;justify-content:center;gap:6px}.refgo .ncico{width:18px;height:18px}.reflinkin{width:100%;min-width:0;font-size:13px}.refbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rselname{display:block;margin:8px 0 6px}.rselbtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin:0 0 10px}.rselbtns .ltool.ltsm{margin:0;justify-content:center;width:100%;padding-inline:8px;gap:6px;white-space:nowrap}.sprev{position:relative;display:block;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:4px}.sprev i{position:absolute;left:0;right:0;bottom:0;height:24%;border-top:2px solid #2c2c31;box-shadow:inset 0 6px 10px #0009}.sprevf i{height:68%}.rtools{margin:0}.rselbar:empty{display:none} /* Abstand Zimmer – Kacheln wie in der Garderobe */.rbooks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.rbitem{display:block;padding:4px;border:1px solid var(--line);border-radius:10px;background:none;cursor:pointer;color:inherit}.rbitem.on{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor}.rbmini{pointer-events:none}.rbmini .ritem.av{display:none}.rbmini .room{border-radius:6px}@media (max-width:520px){.rbooks{grid-template-columns:minmax(0,1fr)}}
 .ltools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 14px}.ltool{display:grid;justify-items:center;align-content:center;gap:6px;min-height:76px;padding:12px 6px 10px;border:1px solid var(--p-line,var(--line));border-radius:14px;background:color-mix(in srgb,currentColor 5%,transparent);color:inherit;font:600 13px/1.2 var(--f-body);text-align:center;cursor:pointer;transition:background .15s,transform .15s,border-color .15s}.ltool:hover,.ltool:focus-visible{background:color-mix(in srgb,currentColor 11%,transparent);border-color:currentColor}.ltool:active{transform:scale(.97)}.ltool svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.ltool span{overflow-wrap:anywhere}.ltool.ltsm{grid-auto-flow:column;min-height:0;margin-left:auto;padding:8px 14px;border-radius:999px;gap:8px}.ltool.ltsm svg{width:20px;height:20px}.mirror-card .ltools{grid-template-columns:minmax(0,1fr);justify-self:center;width:min(100%,220px);margin:8px auto 0}.mirror-card .ltool{min-height:0;grid-auto-flow:column;gap:8px;padding:9px 12px}.mirror-card .ltool svg{width:20px;height:20px}.lbbtn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:400 14px var(--f-display);letter-spacing:.03em;cursor:pointer;min-height:0}.lbbtn:hover{background:rgba(255,255,255,.06)}.lbbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}.lbrow{margin:8px 0}.sidemini{display:flex;gap:4px;padding:0 6px 6px;flex-wrap:wrap}.sidemini button{flex:1;min-height:30px;padding:3px 6px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:400 13px var(--f-display);cursor:pointer}.sidemini button[aria-pressed="true"]{background:var(--fg);color:var(--ink);border-color:var(--fg)}.lbcard{max-width:640px;max-height:86vh;overflow:auto;text-align:left}.lbhead{display:flex;align-items:center;justify-content:space-between;gap:10px}.lbhead .ch-h{margin:0}.lbcard .album{margin:0;padding:0;border:0}.album{margin-top:22px;padding-top:16px;border-top:1px solid var(--line-soft);display:grid;gap:12px}.albumh{margin:0}.albumh small{margin-left:8px;opacity:.7;letter-spacing:0;text-transform:none}.looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}.look{aspect-ratio:1/2;border:2px solid var(--line);border-radius:10px;padding:6px 4px 0;cursor:pointer;overflow:hidden;display:block}.look.on{border-color:var(--fg)}.look svg{width:100%;height:100%;display:block}.lookctl{display:grid;gap:10px}.lookctl .row{gap:8px;flex-wrap:wrap}
 .obwear{width:min(1100px,100%);margin:0 auto;padding:32px 16px 48px;display:grid;gap:18px}.obwear .obhead{display:grid;gap:14px;justify-items:center;text-align:center;padding:24px 20px}.obwear .obhead .note{margin:0;max-width:560px}.obwear .obfoot{padding:14px 18px}.obwear .obfoot .row{margin:0}
 .creator-card{width:min(980px,100%);text-align:left;justify-items:stretch}
@@ -7042,7 +7045,7 @@ function rHost(items, it){ // größtes Möbel, auf dessen Fläche die Unterkant
     if (px > b.x + b.w * .04 && px < b.x + b.w * .96 && py > b.y + b.h * .05 && py < b.y + b.h * .9 && (!best || b.w > rRect(best).w)) best = o; }
   return best; }
 function rZ(items, it, d = 0){ const f = FURN[it.k]; if (f.rug) return 2; if (f.wall) return 1; const h = it.on && d < 4 ? items.find(o => o.k === it.on && o !== it) : null;
-  return h ? rZ(items, h, d + 1) + 1 + d : 10 + Math.round(+it.y + itemH(it.k) * itS(it)); }
+  return h ? rZ(items, h, d + 1) + 1 + d : rScr(rDim(it), it.x, it.y).z; }
 const ROOM_COLS = [['#141416','Schwarz'],['#3a3a40','Grau'],['#8a8a92','Silber'],['#e9e7e2','Weiß'],['#4a0f1c','Bordeaux'],['#8a1020','Rot'],['#c86a8a','Rosa'],['#3d1f5c','Violett'],['#9a6fd0','Lila'],['#1d2b4a','Nachtblau'],['#5f8fc0','Blau'],['#1f3d2e','Tannengrün'],['#5fae6b','Grün'],['#8a6a2a','Bronze'],['#d4af37','Gold'],['#4a2e1e','Holz']];
 function roomColorRow(label, k, cur){ // k: 'item' (ausgewähltes Möbel), 'wallC' oder 'floorC'
   return `<fieldset class="opt"><legend class="lbl">${esc(label)}</legend><div class="swatches">
@@ -7055,27 +7058,56 @@ function setRoomColor(k, v){
   if (k === 'item') { const it = r.items[roomSel]; if (!it) return; if (v) it.c = v; else delete it.c; }
   else if (v) r[k] = v; else delete r[k];
 }
-/* v790: Wanddeko liegt schräg auf ihrer Wand (Mitte links/rechts der Ecke), Möbel auf dem Boden lassen sich drehen (it.ry, -50 bis 50 Grad) */
-const rRot = it => { const f = FURN[it.k]; return !!f && !f.wall && !f.rug; };
-function rTf(it){ const f = FURN[it.k]; if (!f) return ''; const t = [];
-  if (f.wall) { const cx = (+it.x || 0) + f.w * itS(it) / 2; t.push(`skewY(${cx < 50 ? -18 : 18}deg)`); }
-  else if (rRot(it) && +it.ry) t.push(`perspective(${Math.round(f.w * itS(it) * 15)}px) rotateY(${Math.max(-50, Math.min(50, +it.ry))}deg)`);
-  if (it.f && f.r !== 'poster') t.push('scaleX(-1)'); return t.join(' '); }
+/* v791: Zimmer wie bei Momio. Gespeichert wird weiter im alten flachen Rahmen (x/y in %, 16:10), gezeichnet wird schräg von oben (isometrisch):
+   Boden: Fußpunkt (Mitte unten) auf die Raute, alte Rückwand-Linie (y 68 %) = die beiden hinteren Wandkanten, unten = die vorderen Kanten.
+   Wand: Mittelpunkt auf die linke oder rechte Wand (x < 50 links). Kastenartige Möbel (rBoxy) stehen schräg zur Wand (it.o L/R, „Drehen“) und bekommen Tiefe. */
+const RI = {wh:.3, H:.82, sc:.8, k:.5};
+const rC01 = v => Math.max(0, Math.min(1, v));
+function rIsoF(lx, fy){ const t = rC01((fy - 68) / 32), x = Math.max(0, Math.min(100, lx)); let a, b; if (x < 50) { const q = x / 50; a = t * q; b = 1 - q * (1 - t); } else { const s2 = (x - 50) / 50; a = s2 * (1 - t) + t; b = (1 - s2) * t; } return {X:.5 + (a - b) * .5, Y:RI.wh + (a + b) * .25}; }
+const rWallBase = x => RI.wh + Math.abs(x - 50) / 50 * .25;
+function rIsoW(lx, cy){ const x = Math.max(0, Math.min(100, lx)); return {X:x / 100, Y:rWallBase(x) - (1 - Math.max(0, Math.min(68, cy)) / 68) * RI.wh * .92}; }
+function rInvF(X, Y){ const d = (X - .5) * 2, sm = (Y - RI.wh) * 4, a = rC01((sm + d) / 2), b = rC01((sm - d) / 2); if (b >= a) { const q = 1 - (b - a); return {lx:50 * q, fy:68 + 32 * (q > .001 ? a / q : 0)}; } const s2 = a - b; return {lx:50 + 50 * s2, fy:68 + 32 * (s2 < .999 ? b / (1 - s2) : 0)}; }
+function rInvW(X, Y){ const x = Math.max(0, Math.min(100, X * 100)); return {lx:x, cy:Math.max(0, Math.min(68, 68 * (1 - (rWallBase(x) - Y) / (RI.wh * .92))))}; }
+const rBoxy = k => { const f = FURN[k]; return !!f && !f.wall && !f.rug && (['bett', 'sofa', 'schrank'].includes(f.r) || /tisch|kommode|regal|kamin|truhe|vitrine|sarg|kiste|spind|amp|altar|klavier|orgel|standuhr|bank|thron|sessel/i.test(k + ' ' + f.name)) && !/lampe|leuchter|kerze/i.test(k + ' ' + f.name); };
+const rRot = it => rBoxy(it.k);
+/* Maße eines Stücks im flachen Rahmen: w in % der Breite, h in % der Höhe (16:10); Avatar 14 % breit, 1:2 */
+function rDim(it, vis){ if (it === 'av') { const w = vis ? 13 : 14; return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, wall:!!f.wall, rug:!!f.rug}; }
+function rScr(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc;
+  if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS / 2) / RI.H * 100, w:wS * 100, z:1, X:P.X, Y:P.Y}; }
+  const P = rIsoF(x + d.w / 2, y + d.h); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS) / RI.H * 100, w:wS * 100, z:d.rug ? 2 : 10 + Math.round((P.Y - RI.wh) * 200), X:P.X, Y:P.Y}; }
+const rStyle = (d, x, y) => { const q = rScr(d, +x || 0, +y || 0); return `left:${q.l.toFixed(2)}%;top:${q.t.toFixed(2)}%;width:${q.w.toFixed(2)}%`; };
+function rPut(el, d, x, y, z){ if (!el) return; const q = rScr(d, +x || 0, +y || 0); el.style.left = q.l.toFixed(2) + '%'; el.style.top = q.t.toFixed(2) + '%'; el.style.width = q.w.toFixed(2) + '%'; if (z) el.style.zIndex = q.z; }
+/* Zeiger → Stelle im flachen Rahmen (off = Abstand Zeiger zum Ankerpunkt, in Raumbreiten) */
+function rPick(room, d, cx, cy, off = {X:0, Y:0}){ const R = room.getBoundingClientRect(), X = (cx - R.left) / R.width - off.X, Y = (cy - R.top) / R.width - off.Y;
+  if (d.wall) { const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; } const v = rInvF(X, Y); return {x:v.lx - d.w / 2, y:v.fy - d.h}; }
+function rOff(room, d, x, y, cx, cy){ const R = room.getBoundingClientRect(), q = rScr(d, +x || 0, +y || 0); return {X:(cx - R.left) / R.width - q.X, Y:(cy - R.top) / R.width - q.Y}; }
+const rOri = it => it.o === 'L' || it.o === 'R' ? it.o : (+it.x || 0) + FURN[it.k].w * itS(it) / 2 < 50 ? 'L' : 'R';
+function rTf(it){ const f = FURN[it.k]; if (!f) return ''; if (f.wall) return `skewY(${(+it.x || 0) + f.w * itS(it) / 2 < 50 ? -26.565 : 26.565}deg)${it.f && f.r !== 'poster' ? ' scaleX(-1)' : ''}`;
+  if (rBoxy(it.k)) return `skewY(${rOri(it) === 'L' ? -26.565 : 26.565}deg)`; return it.f && f.r !== 'poster' ? 'scaleX(-1)' : ''; }
+let R3N = 0;
+/* Vorschaubilder im Shop, Zimmer-Menü, Geschenken: kastenartige Möbel schräg mit Tiefe wie im Zimmer (v791) */
+const furnPic = (k, c) => FURN[k] && rBoxy(k) ? `<span class="f3w">${furn3D({k, c, o:'R', x:60, y:50})}</span>` : furnSVG(k, c);
+/* Kastenartige Möbel mit Tiefe: dieselbe Zeichnung mehrmals dunkler nach hinten versetzt, vorn das Original (Spiegeln innen, damit die Tiefe zur Wand zeigt) */
+function furn3D(it){ const f = FURN[it.k], [vw, vh] = f.vb, id = 'r3' + (++R3N), o = rOri(it), dp = Math.min(vw * .28, vh * .5), n = Math.max(5, Math.min(16, Math.round(dp / 1.4))), sx = o === 'L' ? -1 : 1;
+  const body = okHex(it.c) ? furnRecolor(it.k, it.c) : f.svg, fl = it.f ? ` transform="translate(${vw} 0) scale(-1 1)"` : '', F = furnFam(it.k), sd = F.b ? hsl2hex([F.b[0], F.b[1] * .8, Math.max(.06, F.b[2] * .5)]) : '#1a1a1e', sd2 = okHex(it.c) ? shade(it.c, .5) : sd;
+  let cp = ''; for (let i = n; i >= 1; i--) cp += `<use href="#${id}" x="${f1(sx * dp * i / n)}" y="${f1(-dp * i / n)}"/>`;
+  /* Seiten: eine dunkle Fläche in der Farbe des Möbels, oben etwas heller (Licht von oben) */
+  return `<svg viewBox="0 0 ${vw} ${vh}" overflow="visible" aria-hidden="true"><defs><filter id="${id}d" x="-60%" y="-60%" width="220%" height="220%" color-interpolation-filters="sRGB"><feFlood flood-color="${sd2}"/><feComposite in2="SourceAlpha" operator="in"/></filter><g id="${id}"${fl}>${body}</g></defs><g filter="url(#${id}d)">${cp}</g><use href="#${id}"/></svg>`; }
 function roomHTML(u, edit, live=edit){
   const r = u.room, sel = edit && roomSel;
   if (r.items.some(it => !FURN[it.k])) { r.items = r.items.filter(it => FURN[it.k]); roomSel = null; } // entfernte Möbel/Poster verschwinden aus dem Zimmer
   const items = r.items.map((it, i) => {
     const f = FURN[it.k]; if (!f) return '';
     const sc = itS(it), hs = sel != null && sel !== 'av' ? r.items[sel] : null, z = hs === it ? 900 : hs && it.on === hs.k ? 901 : rZ(r.items, it); // ausgewähltes Stück nach vorn, was darauf steht, bleibt davor
-    return `<div class="ritem ${sel === i ? 'sel' : ''}" ${edit ? `data-drag="${i}"` : ''} style="left:${+it.x || 0}%;top:${+it.y || 0}%;width:${f.w * sc}%;z-index:${z};${rTf(it) ? 'transform:' + rTf(it) + ';' : ''}">${furnSVG(it.k, it.c)}${edit && sel === i && furnScal(it.k) ? `<i class="rszh" data-rsz="${i}" title="Ziehen: größer oder kleiner" aria-hidden="true"></i>` : ''}</div>`;
+    return `<div class="ritem${sel === i ? ' sel' : ''}${f.wall ? ' rw' : rBoxy(it.k) ? ' r3' : ''}" ${edit ? `data-drag="${i}"` : ''} style="${rStyle(rDim(it), it.x, it.y)};z-index:${z};${rTf(it) ? 'transform:' + rTf(it) + ';' : ''}">${rBoxy(it.k) ? furn3D(it) : furnSVG(it.k, it.c)}${edit && sel === i && furnScal(it.k) ? `<i class="rszh" data-rsz="${i}" title="Ziehen: größer oder kleiner" aria-hidden="true"></i>` : ''}</div>`;
   }).join('');
-  const z = 10 + Math.round(r.av.y + 45);
-  return `<div class="rscroll"><div class="room ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}" ${live && !edit ? 'data-live="1"' : ''}>
+  const z = rScr(rDim('av'), r.av.x, r.av.y).z;
+  return `<div class="rscroll"><div class="room iso ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}" ${live && !edit ? 'data-live="1"' : ''}>
     <div class="wall wl"><i style="background:${wallCSS(r.wall, r.wallC)}"></i></div><div class="wall wr"><i style="background:${wallCSS(r.wall, r.wallC)}"></i></div>
-    <div class="floor"><i style="background:${floorBG(r.floor, r.floorC).replace(/\/(\d+(?:\.\d+)?)% auto/g, (m, n) => '/' + f1(n / 3) + '% auto')}"></i></div>
-    <svg class="redge" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 68L50 42L100 68M50 0V42"/></svg>
+    <div class="floor"><i style="background:${floorBG(r.floor, r.floorC)}"></i></div>
+    <svg class="redge" viewBox="0 0 100 82" preserveAspectRatio="none" aria-hidden="true"><path class="slab" d="M0 55L50 80L50 82.4L0 57.4Z"/><path class="slab2" d="M50 80L100 55L100 57.4L50 82.4Z"/><path class="capd" d="M0 25L0 55L-.9 55.45L-.9 24.55Z"/><path class="capd" d="M100 25L100 55L100.9 55.45L100.9 24.55Z"/><path class="cap" d="M-.9 24.55L50 -1L100.9 24.55L100 25L50 0L0 25Z"/><path class="ln" d="M50 0V30M0 55L50 30L100 55"/></svg>
     ${items}
-    <div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} ${live && !edit ? 'data-rav="1"' : ''} style="left:${r.av.x}%;top:${r.av.y}%;z-index:${z}">${avatar(u.outfit,'full')}</div>
+    <div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} ${live && !edit ? 'data-rav="1"' : ''} style="${rStyle(rDim('av'), r.av.x, r.av.y)};z-index:${z}">${avatar(u.outfit,'full')}</div>
     ${live ? '<div class="visitors" id="roomvis"></div><div class="says" id="roomsay" aria-hidden="true"></div>' : ''}
   </div></div>`;
 }
@@ -7117,7 +7149,7 @@ function roomView(){
       : `<button class="btn" disabled>Noch ${f.price - u.points} Punkte</button>`;
     const fc = here ? r.items.find(x => x.k === k).c : null, open = here && colItem === 'f:' + k;
     const dot = here ? `<span class="cdot" role="button" tabindex="0" data-act="fcol" data-k="f:${k}" style="background:${esc(fc || '#5a5a60')}" title="Farbe ändern" aria-label="Farbe von ${esc(f.name.replace(/\u00ad/g, ''))} ändern" aria-expanded="${open}"></span>` : '';
-    return `<div class="item ${here ? 'on' : ''}">${dot}${NCNEW.has(ncF(k)) ? NEWB : ''}<div class="thumb fthumb" data-act="ftap" data-k="${k}" title="${esc(f.name.replace(/\u00ad/g, ''))}">${furnSVG(k, fc)}</div>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
+    return `<div class="item ${here ? 'on' : ''}">${dot}${NCNEW.has(ncF(k)) ? NEWB : ''}<div class="thumb fthumb" data-act="ftap" data-k="${k}" title="${esc(f.name.replace(/\u00ad/g, ''))}">${furnPic(k, fc)}</div>${btn}</div>${open ? `<div class="cpanel">${roomColorRow('Farbe', 'f:' + k, fc)}</div>` : ''}`;
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k]?.name || '' : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
@@ -7135,9 +7167,9 @@ function roomView(){
     </div></div>
     ${roomMode === 'chat' ? roomChatExtra() : ''}`;
   const si = roomSel !== 'av' && roomSel != null ? r.items[roomSel] : null;
-  const selRow = `<div class="rselbar">${selName ? `<span class="lbl rselname">Ausgewählt: ${selName}</span>${si ? `<div class="rselbtns">${FURN[si.k]?.r !== 'poster' ? `<button type="button" class="ltool ltsm" data-act="flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M9 7.5L4 12l5 4.5z"/><path d="M15 7.5l5 4.5-5 4.5z"/></svg><span>Spiegeln</span></button>` : ''}<button type="button" class="ltool ltsm" data-act="unplace-sel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg><span>Wegräumen</span></button></div>` : ''}
+  const selRow = `<div class="rselbar">${selName ? `<span class="lbl rselname">Ausgewählt: ${selName}</span>${si ? `<div class="rselbtns">${rRot(si) ? `<button type="button" class="ltool ltsm" data-act="rrot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>` : ''}${FURN[si.k]?.r !== 'poster' ? `<button type="button" class="ltool ltsm" data-act="flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M9 7.5L4 12l5 4.5z"/><path d="M15 7.5l5 4.5-5 4.5z"/></svg><span>Spiegeln</span></button>` : ''}<button type="button" class="ltool ltsm" data-act="unplace-sel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg><span>Wegräumen</span></button></div>` : ''}
       ${si && furnScal(si.k) ? `<label class="rsize"><span class="lbl">Größe</span><input type="range" id="r-size" min=".4" max="3" step=".05" value="${itS(si)}" aria-label="Größe"><small>Oder am Griff unten rechts ziehen</small></label>` : ''}
-      ${si && rRot(si) ? `<label class="rsize"><span class="lbl">Drehen</span><input type="range" id="r-rot" min="-50" max="50" step="1" value="${+si.ry || 0}" aria-label="Drehen"></label>` : ''}
+
       ${si ? `<div class="rselcol"><span class="lbl">Farbe</span><div class="swatches"><button type="button" class="sw orig" data-act="rcol" data-k="item" data-v="" aria-pressed="${!si.c}" title="Original" aria-label="Originalfarbe"></button>${ROOM_COLS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="rcol" data-k="item" data-v="${c}" aria-pressed="${si.c === c}" title="${l}" aria-label="Farbe: ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick rpick" data-k="item" value="${okHex(si.c) ? si.c : '#888888'}" title="Eigene Farbe mischen" aria-label="Eigene Farbe mischen"></div></div>` : ''}`
     : ''}</div>`;
   const furnTabs = `<div class="chips roomtabs" role="tablist" aria-label="Kategorie">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}${ncNewFurnTab(k) ? NEWDOT : ''}</button>`).join('')}</div>`, grid = furnTab === 'wand' || furnTab === 'boden' ? surfGrid(furnTab === 'wand' ? 'wall' : 'floor') : `${shop ? `<div class="shopgrid">${shop}</div>` : ''}<p class="note"><button class="lnk" data-act="nav" data-v="moebel">Mehr im Möbelhaus</button></p>`; // eigener Reiter für Tapete und Boden (Inaya, 2026-10-15)
@@ -7161,28 +7193,26 @@ document.addEventListener('pointerdown', e => { const h = e.target.closest?.('#r
   h.setPointerCapture?.(e.pointerId); e.preventDefault(); e.stopImmediatePropagation(); }, true);
 const rszApply = (it, f, s, cx, by) => { it.s = Math.round(Math.max(.4, Math.min(3, s)) * 100) / 100; it.x = Math.round((cx - f.w * it.s / 2) * 10) / 10; it.y = Math.round((by - itemH(it.k) * it.s) * 10) / 10; };
 document.addEventListener('pointermove', e => { if (!rsz) return; const d = rsz, w0 = d.f.w * d.s0, dw = (e.clientX - d.sx) / d.room.width * 100 * 2;
-  rszApply(d.it, d.f, (w0 + dw) / d.f.w, d.cx, d.by); Object.assign(d.el.style, {width:d.f.w * d.it.s + '%', left:d.it.x + '%', top:d.it.y + '%'}); const r = document.getElementById('r-size'); if (r) r.value = d.it.s; });
+  rszApply(d.it, d.f, (w0 + dw / RI.sc) / d.f.w, d.cx, d.by); rPut(d.el, rDim(d.it), d.it.x, d.it.y); d.el.style.transform = rTf(d.it); const r = document.getElementById('r-size'); if (r) r.value = d.it.s; });
 document.addEventListener('pointerup', () => { if (!rsz) return; rsz = null; save(); render(); });
 document.addEventListener('input', e => { if (e.target.id !== 'r-size') return; const it = me().room.items[roomSel]; if (!it) return; const f = FURN[it.k], s0 = itS(it), cx = +it.x + f.w * s0 / 2, by = +it.y + itemH(it.k) * s0;
-  rszApply(it, f, +e.target.value, cx, by); const el = document.querySelector(`#room [data-drag="${roomSel}"]`); if (el) Object.assign(el.style, {width:f.w * it.s + '%', left:it.x + '%', top:it.y + '%'}); clearTimeout(rsz?.t); setTimeout(save, 300); });
-document.addEventListener('input', e => { if (e.target.id !== 'r-rot') return; const it = me().room.items[roomSel]; if (!it || !rRot(it)) return; const v = Math.round(+e.target.value); if (Math.abs(v) < 3) delete it.ry; else it.ry = v; /* v789: Möbel drehen */
-  const el = document.querySelector(`#room [data-drag="${roomSel}"]`); if (el) el.style.transform = rTf(it); clearTimeout(rRotT); rRotT = setTimeout(save, 300); });
-let rRotT = 0;
+  rszApply(it, f, +e.target.value, cx, by); const el = document.querySelector(`#room [data-drag="${roomSel}"]`); if (el) { rPut(el, rDim(it), it.x, it.y); el.style.transform = rTf(it); } clearTimeout(rsz?.t); setTimeout(save, 300); });
 document.addEventListener('pointerdown', e => {
   const el = e.target.closest('#room [data-drag]'); if (!el) return;
   const room = document.getElementById('room').getBoundingClientRect();
   const key = el.dataset.drag, ref = key === 'av' ? me().room.av : me().room.items[+key];
   const kids = key === 'av' ? [] : me().room.items.map((o, i) => ({o, i})).filter(({o}) => o.on === ref.k && o !== ref).map(({o, i}) => ({o, ox:+o.x, oy:+o.y, el:document.querySelector(`#room [data-drag="${i}"]`)}));
-  dragging = {el, ref, room, sx:e.clientX, sy:e.clientY, ox:ref.x, oy:ref.y, moved:false, key, kids};
+  const roomEl = document.getElementById('room'), dd = key === 'av' ? rDim('av') : rDim(ref);
+  dragging = {el, ref, room, roomEl, dd, off:rOff(roomEl, dd, ref.x, ref.y, e.clientX, e.clientY), sx:e.clientX, sy:e.clientY, ox:ref.x, oy:ref.y, moved:false, key, kids};
   el.setPointerCapture(e.pointerId); e.preventDefault();
 });
 document.addEventListener('pointermove', e => {
   if (!dragging) return;
   const d = dragging, dx = (e.clientX - d.sx) / d.room.width * 100, dy = (e.clientY - d.sy) / d.room.height * 100;
   if (Math.abs(dx) + Math.abs(dy) > .5) d.moved = true;
-  d.ref.x = Math.max(-5, Math.min(95, d.ox + dx)); d.ref.y = Math.max(-5, Math.min(90, d.oy + dy));
-  d.el.style.left = d.ref.x + '%'; d.el.style.top = d.ref.y + '%'; if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
-  for (const c of d.kids || []) { c.o.x = c.ox + (d.ref.x - d.ox); c.o.y = c.oy + (d.ref.y - d.oy); if (c.el) { c.el.style.left = c.o.x + '%'; c.el.style.top = c.o.y + '%'; } }
+  const p = rPick(d.roomEl, d.dd, e.clientX, e.clientY, d.off); d.ref.x = p.x; d.ref.y = p.y; /* v791: Zeiger schräg auf Boden bzw. Wand umgerechnet */
+  rPut(d.el, d.dd, d.ref.x, d.ref.y); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
+  for (const c of d.kids || []) { c.o.x = c.ox + (d.ref.x - d.ox); c.o.y = c.oy + (d.ref.y - d.oy); rPut(c.el, rDim(c.o), c.o.x, c.o.y); }
 });
 document.addEventListener('pointerup', () => {
   if (!dragging) return;
@@ -8956,7 +8986,7 @@ function showHTML(hs, mid=''){
     const h0 = [...hs.wear.join('')].reduce((a, ch) => a + ch.charCodeAt(0), 0); /* bunte Haare, je Bild eine andere Farbe, fest pro Post; Pony immer gleiche Farbe wie hinten (Inaya) */
     grid = list.map(({i, o}, k) => `<div class="ncell" title="${esc(i.name)}">${avatar((t => { delete t.frontC; return t; })(previewOutfit({...o, hairC:NEWS_HAIR[(h0 + k) % NEWS_HAIR.length]}, i)), i.cat === 'front' || i.cat === 'back' ? 'bust' : i.cat === 'acc' ? 'bottom' : thumbView(i), '', true)}</div>`).join(''); b = b || ['Zur Garderobe', 'nav', 'wardrobe'];
   }
-  if (hs.furn) { grid = hs.furn.filter(k => FURN[k]).map(k => `<div class="ncell fcell" title="${esc(FURN[k].name)}">${furnSVG(k)}</div>`).join(''); b = b || ['Zu meinem Zimmer', 'nav', 'room']; }
+  if (hs.furn) { grid = hs.furn.filter(k => FURN[k]).map(k => `<div class="ncell fcell" title="${esc(FURN[k].name)}">${furnPic(k)}</div>`).join(''); b = b || ['Zu meinem Zimmer', 'nav', 'room']; }
   if (hs.theme) grid = hs.theme.map(([box, pat]) => `<div class="ncell themed tcell" style="${themeStyle({...BLANK_THEME(), box, pattern:pat})}"><span>${esc((PATTERN_OPTS.find(x => x[0] === pat) || [0, pat])[1])}</span></div>`).join('');
   if (hs.chat) grid = [['<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>','Fotos'],['<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>','MP3s'],['<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>','Links'],['<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>','Farben']].map(([d, l]) => `<div class="ncell icell"><svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg><span>${l}</span></div>`).join('');
   if (hs.links) grid = PLINKS.map(([k, l]) => `<div class="ncell icell"><svg viewBox="0 0 24 24" aria-hidden="true">${PLICON[k] || ''}</svg><span>${l}</span></div>`).join('');
@@ -14016,7 +14046,7 @@ function ncNewFurnTab(t){ for (const id of NCNEW) { if (!id.startsWith('m:')) co
 function ncNewPop(){ const w = V.name === 'wardrobe' || V.name === 'shop' ? 'w' : V.name === 'room' ? 'r' : ''; if (!w || !NCNEW.size || document.getElementById('ncnewpop')) return; const u = me(), pop = new Set(u.invPop || []);
   const ids = [...NCNEW].filter(id => !pop.has(id) && (w === 'r') === id.startsWith('m:') && (w === 'r' ? FURN[id.slice(2)] : ITEMS.find(i => i.id === id))); if (!ids.length) return;
   u.invPop = [...pop, ...ids]; save();
-  const th = id => { if (w === 'r') { const k = id.slice(2), f = FURN[k]; return `<span class="ncnpt">${f.surf ? surfPrev(f.key, f.surf) : furnSVG(k)}</span>`; } const i = ITEMS.find(x => x.id === id); return `<span class="ncnpt">${avatar(previewOutfit(ncBare(), i), thumbView(i), '', true)}</span>`; };
+  const th = id => { if (w === 'r') { const k = id.slice(2), f = FURN[k]; return `<span class="ncnpt">${f.surf ? surfPrev(f.key, f.surf) : furnPic(k)}</span>`; } const i = ITEMS.find(x => x.id === id); return `<span class="ncnpt">${avatar(previewOutfit(ncBare(), i), thumbView(i), '', true)}</span>`; };
   document.body.insertAdjacentHTML('beforeend', `<div class="ncnp" id="ncnewpop" role="dialog" aria-modal="true" aria-label="Deine neuen Sachen"><div class="ncnpc"><span class="ncnpb">${NC_BAG}</span><h2>Deine neuen Sachen</h2><div class="ncnpg">${ids.slice(0, 9).map(th).join('')}</div>${ids.length > 9 ? `<p class="note">${tr('und {0} weitere').replace('{0}', ids.length - 9)}</p>` : ''}<button type="button" class="btn" data-act="ncnp-x">Ansehen</button></div></div>`);
   i18nNode(document.getElementById('ncnewpop')); }
 const ncPaid = i => !!(i && (i.nc || i.lv));
@@ -14134,7 +14164,7 @@ function lvUp(a, b, coins){ const items = ncUnlocks(a, b);
     ${items.length ? `<p class="lvu">Neu freigeschaltet</p><div class="lvits">${items.map(id => `<span class="lvit">${ncThumb(id)}</span>`).join('')}</div>` : ''}
     <button type="button" class="btn lvbtn" data-act="lv-x">Weiter</button></div>`;
   el.addEventListener('click', e => { if (e.target === el || e.target.closest('[data-act=lv-x]')) el.remove(); }); document.body.appendChild(el); }
-function ncThumb(id){ const i = ncItem(id); if (!i) return ''; if (i.furn) return `<span class="ncth f">${furnSVG(i.k)}</span>`; const o = previewOutfit(ncBare(), i); /* v677: nur das eine Teil auf der nackten Figur wie in der Mall (Inaya) */ return `<span class="ncth">${avatar(o, thumbView(i), '', true)}</span>`; }
+function ncThumb(id){ const i = ncItem(id); if (!i) return ''; if (i.furn) return `<span class="ncth f">${furnPic(i.k)}</span>`; const o = previewOutfit(ncBare(), i); /* v677: nur das eine Teil auf der nackten Figur wie in der Mall (Inaya) */ return `<span class="ncth">${avatar(o, thumbView(i), '', true)}</span>`; }
 /* Level auf allen Profilen: eigenes aus dem Wallet, fremde einmal gelesen */
 const NCLV = {};
 function ncLevelOf(id){ if (!social || !id) return 0; if (id === S.me || id === social.uid) return WAL.d?.l || 0; const c = NCLV[id];
@@ -14316,8 +14346,8 @@ let MSELC = null, MSELPOS = null, MSTASH = {}, MPREV = {wall:null, floor:null}; 
 function ncPlace(k){ const u = me(), f = FURN[k]; ROOM_UNDO = null; /* Neues aus dem Möbelhaus gehört zum Stand vor dem Bearbeiten */ if (f?.surf && ncOwns(ncF(k))) { u.room[f.surf] = f.key; save(); publishProfile(); toast(`${ncName(ncF(k))} ist jetzt in deinem Zimmer.`); go('room'); render(); return; } if (!f || !ncOwns(ncF(k)) || u.room.items.some(x => x.k === k)) return; if (!u.deko.includes(k)) u.deko.push(k); u.room.items.push({k, x:MSELPOS?.x ?? 44, y:MSELPOS?.y ?? (f.wall ? 10 : 46), ...(MSELC ? {c:MSELC} : {})}); MSELPOS = null; save(); publishProfile(); toast(`${ncName(ncF(k))} steht jetzt in deinem Zimmer.`); go('room'); roomMode = 'edit'; render(); }
 /* Möbelhaus: das ausgewählte Möbel in der Zimmer-Vorschau verschieben (nur Vorschau, Stelle wird beim Aufstellen übernommen) */
 document.addEventListener('pointerdown', e => { const card = e.target.closest?.('.ncroom.ncdrag'); if (!card || !MSEL) return; const items = card.querySelectorAll('.room .ritem:not(.av)'), el = items[items.length - 1]; if (!el || !el.contains(e.target)) return;
-  const room = card.querySelector('.room'), R = room.getBoundingClientRect(), E = el.getBoundingClientRect(), ox = e.clientX - E.left, oy = e.clientY - E.top; e.preventDefault(); el.classList.add('ncmoving'); try { el.setPointerCapture(e.pointerId); } catch {}
-  const mv = ev => { const x = Math.max(0, Math.min(96, (ev.clientX - ox - R.left) / R.width * 100)), y = Math.max(0, Math.min(94, (ev.clientY - oy - R.top) / R.height * 100)); el.style.left = x + '%'; el.style.top = y + '%'; MSELPOS = {x:Math.round(x * 10) / 10, y:Math.round(y * 10) / 10}; };
+  const room = card.querySelector('.room'), f = FURN[MSEL], pl0 = me().room.items.find(x => x.k === MSEL), it0 = {...(pl0 || {}), k:MSEL, x:MSELPOS?.x ?? pl0?.x ?? (f.wall ? 40 : 42), y:MSELPOS?.y ?? pl0?.y ?? (f.wall ? 12 : 48)}, d = rDim(it0), off = rOff(room, d, it0.x, it0.y, e.clientX, e.clientY); e.preventDefault(); el.classList.add('ncmoving'); try { el.setPointerCapture(e.pointerId); } catch {}
+  const mv = ev => { const p = rPick(room, d, ev.clientX, ev.clientY, off), x = Math.round(p.x * 10) / 10, y = Math.round(p.y * 10) / 10; MSELPOS = {x, y}; rPut(el, d, x, y); el.style.transform = rTf({...it0, x, y}); }; /* v791: schräg wie im Zimmer */
   const up = () => { el.classList.remove('ncmoving'); el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
   el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); });
 /* Look anziehen: Teile, die einem nicht gehören, bleiben weg */
@@ -14512,7 +14542,7 @@ function visitorsData(owner){
   }).filter(Boolean);
 }
 function visitorsHTML(owner){
-  return visitorsData(owner).map(w => `<div class="ritem av vis mv-${poseMove(w.pose)}" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="left:${w.x}%;top:${w.y}%;z-index:${10 + Math.round(w.y + 45)}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`).join('');
+  return visitorsData(owner).map(w => `<div class="ritem av vis mv-${poseMove(w.pose)}" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="${rStyle(rDim('av', 1), w.x, w.y)};z-index:${rScr(rDim('av', 1), w.x, w.y).z}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`).join('');
 }
 // Nur ändern, was sich bewegt hat: so laufen die Avatare sichtbar an ihren neuen Platz
 function paintVisitors(v, owner){
@@ -14521,8 +14551,8 @@ function paintVisitors(v, owner){
   const want = visitorsData(owner).filter(w => open || (!own && w.id === social?.uid)), have = new Map([...v.children].map(el => [el.dataset.uid, el]));
   want.forEach(w => {
     let el = have.get(w.id);
-    if (!el || el.dataset.sig !== w.pose) { const t = document.createElement('div'); t.innerHTML = `<div class="ritem av vis mv-${poseMove(w.pose)}" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="left:${(el ? el.style.left : w.x + '%')};top:${(el ? el.style.top : w.y + '%')}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`; const n = t.firstElementChild; if (el) el.replaceWith(n); else v.appendChild(n); el = n; void el.offsetWidth; }
-    el.style.left = w.x + '%'; el.style.top = w.y + '%'; el.style.zIndex = 10 + Math.round(w.y + 45); have.delete(w.id);
+    if (!el || el.dataset.sig !== w.pose) { const t = document.createElement('div'); t.innerHTML = `<div class="ritem av vis mv-${poseMove(w.pose)}" data-uid="${esc(w.id)}" data-sig="${esc(w.pose)}" style="${el ? `left:${el.style.left};top:${el.style.top};width:${el.style.width}` : rStyle(rDim('av', 1), w.x, w.y)}">${avatar(w.o, 'full', w.pose)}<span class="vname">${esc(w.name)}</span></div>`; const n = t.firstElementChild; if (el) el.replaceWith(n); else v.appendChild(n); el = n; void el.offsetWidth; }
+    rPut(el, rDim('av', 1), w.x, w.y, 1); have.delete(w.id);
   });
   have.forEach(el => el.remove());
   // Gastgeber: Platz und Pose aus dem Zimmer (live, wenn er da ist)
@@ -14530,7 +14560,7 @@ function paintVisitors(v, owner){
   if (host) {
     host.classList.toggle('away', !own && !open);
     const p = owner === social?.uid ? RM.me : RM.peers.includes(owner) ? RM.pres[owner] : null;
-    if (p && typeof p.x === 'number') { host.style.left = p.x + '%'; host.style.top = p.y + '%'; host.style.zIndex = 10 + Math.round(p.y + 45); }
+    if (p && typeof p.x === 'number') rPut(host, rDim('av'), p.x, p.y, 1);
     const pose = p?.pose || '', o = owner === social?.uid ? me().outfit : (S.users[owner] || PROF[owner])?.outfit;
     if (o && (host.dataset.sig || '') !== pose) { host.dataset.sig = pose; host.innerHTML = avatar(o, 'full', pose); setMv(host, pose); }
   }
@@ -14546,10 +14576,9 @@ document.addEventListener('click', e => {
   const room = e.target.closest('.room[data-live]'); if (!room || e.target.closest('button, a, .vname')) return;
   const own = V.name === 'room'; if (!own && !RM.g) return;
   const rc = room.getBoundingClientRect(), ref = room.querySelector(own ? '[data-rav]' : `.ritem.vis[data-uid="${CSS.escape(social?.uid || '')}"]`) || room.querySelector('[data-rav]');
-  const ar = ref.getBoundingClientRect(), w = ar.width / rc.width * 100, h = ar.height / rc.height * 100;
-  const x = Math.max(-2, Math.min(92, (e.clientX - rc.left) / rc.width * 100 - w / 2)), y = Math.max(20, Math.min(78, (e.clientY - rc.top) / rc.height * 100 - h));
+  const pk = rPick(room, rDim('av', ref !== room.querySelector('[data-rav]')), e.clientX, e.clientY), x = pk.x, y = pk.y; void rc; /* v791: Tippen auf den schrägen Boden */
   RM.me.x = Math.round(x * 10) / 10; RM.me.y = Math.round(y * 10) / 10;
-  if (own) { me().room.av = {x:RM.me.x, y:RM.me.y}; const host = room.querySelector('[data-rav]'); host.style.left = RM.me.x + '%'; host.style.top = RM.me.y + '%'; host.style.zIndex = 10 + Math.round(RM.me.y + 45); clearTimeout(roomMove.t); roomMove.t = setTimeout(save, 900); }
+  if (own) { me().room.av = {x:RM.me.x, y:RM.me.y}; const host = room.querySelector('[data-rav]'); rPut(host, rDim('av'), RM.me.x, RM.me.y, 1); clearTimeout(roomMove.t); roomMove.t = setTimeout(save, 900); }
   roomMove(); sayBubbles();
 });
 function roomCountText(){
@@ -16615,6 +16644,7 @@ document.addEventListener('click', async e => {
   else if (a === 'place') { const f = FURN[b.dataset.k]; me().room.items.push({k:b.dataset.k, x:44, y:f.wall ? 10 : 46}); roomSel = me().room.items.length - 1; save(); render(); document.getElementById('room')?.scrollIntoView({block:'center'}); }
   else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); r.items.forEach(o => { if (o.on === b.dataset.k) delete o.on; }); roomSel = null; save(); render(); }
   else if (a === 'unplace-sel') { const r = me().room, gone = r.items[roomSel]; r.items.splice(roomSel, 1); if (gone) r.items.forEach(o => { if (o.on === gone.k) delete o.on; }); roomSel = null; save(); render(); }
+  else if (a === 'rrot') { const it = me().room.items[roomSel]; if (it && rRot(it)) { it.o = rOri(it) === 'L' ? 'R' : 'L'; delete it.ry; save(); render(); } } /* v791: zur anderen Wand drehen */
   else if (a === 'flip') { const it = me().room.items[roomSel]; if (it && FURN[it.k]?.r !== 'poster') { it.f = !it.f; save(); render(); } }
   else if (a === 'ftab') { furnTab = b.dataset.v; render(); }
   else if (a === 'room-close') closeRoomChat();
