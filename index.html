@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2251a0237d05';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='00ffb0784f1c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2869,6 +2869,41 @@ html.fitpg,html.fitpg body{overflow:hidden;overscroll-behavior:none}body[data-pg
 /* v677: Kacheln in Garderobe und Zimmer mit gleichem Abstand oben und unten (Inaya) */
 .wardrobe .ltools{margin:0!important}.wardrobe .ltools + .ctabs{padding-top:0}
 .ltools.rtools{margin:-6px 0 0!important}.ltools.rtools + .lbl.mfh{margin-top:0}
+/* v774 (Inaya): Chat wie bei WhatsApp, im Noctibat-Stil. Kopf: Pfeil, Bild, Name + Status, schlichte Symbole ohne Kästen. Schreibleiste: ein großes rundes Feld (Totenkopf links, Text, Sticker, Plus), daneben der runde Knopf Mikrofon/Senden. */
+.chatpanel .ch-head{gap:4px;align-items:center}
+.chatpanel .ch-head .btn.iconb{border:0!important;background:transparent!important;width:42px;height:42px;min-width:0;min-height:0;padding:0;display:grid;place-items:center;box-shadow:none!important}
+.chatpanel .ch-head .btn.iconb svg{width:24px;height:24px}
+.chatpanel .ch-head .chbtns{gap:0!important}
+.chatpanel .ch-head .callb[data-k=video]{order:-1}
+.chatpanel .ch-head .chback{width:34px!important;margin-left:-6px}
+.chatpanel .ch-head .chavh{width:40px;height:40px;margin-right:6px}
+.chatpanel .ch-head .ch-name{font-size:17px;line-height:1.2}
+.chatpanel #msgs{overscroll-behavior:contain}
+.chatpanel form[data-form=cmsg]{display:grid!important;grid-template-columns:44px minmax(0,1fr) 40px 44px 56px;align-items:end;gap:0!important;padding:0;border:0;background:transparent}
+.chatpanel form[data-form=cmsg]::before{content:'';grid-column:1/5;grid-row:1;align-self:stretch;min-height:50px;border:1px solid var(--p-line,var(--line,#ffffff40));border-radius:25px;background:color-mix(in srgb,var(--p-panel,#18181b) 94%,transparent);pointer-events:none}
+.chatpanel form[data-form=cmsg]>.emobtn{grid-column:1;grid-row:1}
+.chatpanel form[data-form=cmsg]>.cinw{grid-column:2;grid-row:1;align-self:stretch;align-items:flex-end}
+.chatpanel form[data-form=cmsg]>.sgbtn{grid-column:3;grid-row:1}
+.chatpanel form[data-form=cmsg]>.attbtn{grid-column:4;grid-row:1}
+.chatpanel form[data-form=cmsg]>.csend,.chatpanel form[data-form=cmsg]>.micbtn{grid-column:5;grid-row:1;justify-self:end}
+.chatpanel form[data-form=cmsg]>.vrhold{grid-column:1/5;grid-row:1;align-self:center;height:50px;padding:0 18px}
+.chatpanel form[data-form=cmsg]>:is(.emobtn,.sgbtn,.attbtn){width:auto!important;height:50px!important;min-height:0;border:0!important;border-radius:0!important;background:transparent!important;padding:0;display:grid;place-items:center;align-self:end;color:var(--p-fg,var(--fg));opacity:.8}
+.chatpanel form[data-form=cmsg]>.emobtn{padding-left:4px}
+.chatpanel form[data-form=cmsg]>:is(.emobtn,.sgbtn,.attbtn) svg{width:24px!important;height:24px!important}
+.chatpanel form[data-form=cmsg]>:is(.csend,.micbtn){width:50px!important;height:50px!important;border-radius:50%;align-self:end}
+.chatpanel form[data-form=cmsg]:not(.vhold)>.micbtn,.chatpanel form[data-form=cmsg]>.csend{background:var(--fg,#eeedf2);border-color:var(--fg,#eeedf2);color:var(--bg,#0a0a0b)}
+.chatpanel form[data-form=cmsg]>:is(.csend,.micbtn) svg{width:24px!important;height:24px!important}
+.chatpanel #cm-in{font-size:17px;line-height:1.35;min-height:50px;padding:13px 4px;background:transparent!important;border:0!important;outline:none!important;box-shadow:none!important;color:var(--p-fg,var(--fg))}
+.chatpanel #cm-in::placeholder{color:var(--p-muted,#9a9aa2)}
+.chatpanel .mday{display:flex;justify-content:center;margin:10px 0 4px;pointer-events:none}
+.chatpanel .mday span{font-size:12px;letter-spacing:.02em;padding:4px 12px;border:1px solid var(--p-line,var(--line));background:color-mix(in srgb,var(--p-panel,#18181b) 92%,transparent);color:var(--p-fg,var(--fg));border-radius:12px}
+.chatpanel .bubble{border-radius:12px;padding:7px 11px 5px}
+.chatpanel .bubble.me{border-top-right-radius:3px}
+.chatpanel .bubble.them{border-top-left-radius:3px}
+.chatpanel .ch-head .grpsh{display:none!important}
+.chatpanel .bubble .meta{display:flex;justify-content:flex-end;align-items:center;gap:6px;font-size:11px;margin-top:2px}
+.chatpanel .bubble.media{border-radius:12px;overflow:hidden}
+.chatpanel .bubble.shcard{border-radius:0}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -11498,8 +11533,10 @@ let MSGH = {cid:null, h:''};
 function drawMsgs(bottom){
   const box = document.getElementById('msgs'); if (!box) return; const h = msgsHTML();
   if (h === MSGH.h && MSGH.cid === CH.open && box.dataset.h === '1' && bottom !== 'end') return; /* nichts geändert: nicht neu zeichnen (z. B. nur Server-Bestätigung) */
-  const a = bottom === 'end' ? null : msgAnc(box); box.innerHTML = h; box.dataset.h = '1'; MSGH = {cid:CH.open, h}; msgRest(box, a); msgImgs(box); voicePend(); vmPrefetch();
+  const a = bottom === 'end' ? null : msgAnc(box); box.innerHTML = h; box.dataset.h = '1'; MSGH = {cid:CH.open, h}; msgRest(box, a); msgImgs(box); voicePend(); vmPrefetch(); msgsStick();
 }
+/* v774: wie bei WhatsApp bleibt der Chat unten, wenn die Tastatur aufgeht oder das Schreibfeld wächst */
+function msgsStick(){ const m = document.getElementById('msgs'); if (!m || !window.ResizeObserver || m.dataset.ro) return; m.dataset.ro = '1'; const at = () => m.scrollHeight - m.scrollTop - m.clientHeight < 40; let b = at(); m.addEventListener('scroll', () => { b = at(); }, {passive:true}); new ResizeObserver(() => { if (b && m.isConnected) m.scrollTop = m.scrollHeight; }).observe(m); }
 // Sprachnachrichten im Chat schon vorab laden, damit sie beim Antippen sofort spielen (Inaya, 2026-10-12)
 let VMPF = null;
 function vmPrefetch(){ clearTimeout(VMPF); VMPF = setTimeout(async () => { if (!social) return; for (const m of CH.msgs.filter(x => x.audio?.voice && x.audio.n && !x._pend && !(VOICEURL[x.audio.k] && x.from === social.uid)).slice(-8).reverse()) { try { await songURL(m.from, m.audio, 'pa_' + m.audio.k); } catch {} } }, 300); }
@@ -11510,9 +11547,16 @@ function msgsHTML(){
   return moreHTML() + msgsHTML0(c); }
 // Erst die neuesten 60 laden (spart Lesevorgänge), ältere auf Wunsch (Inaya, 2026-10-14)
 const moreHTML = () => CH.mraw && CH.mraw.length >= (CH.lim || 60) ? '<button type="button" class="btn ghost chmore" data-act="ch-more">Ältere Nachrichten laden</button>' : '';
+/* v774: Uhrzeit an der Nachricht wie bei WhatsApp („14:32“), der Tag steht als Trenner darüber */
+const msgClock = ts => { const t = +ts; if (!t) return ''; return new Date(t).toLocaleTimeString(LOC(), {hour:'2-digit', minute:'2-digit'}); };
+function msgDay(ts){ const t = +ts; if (!t) return ''; const d = new Date(t), n = new Date(), day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(), diff = Math.round((day(n) - day(d)) / 864e5), en = LANG === 'en';
+  if (diff <= 0) return en ? 'Today' : 'Heute'; if (diff === 1) return en ? 'Yesterday' : 'Gestern';
+  if (diff < 7) return d.toLocaleDateString(LOC(), {weekday:'long'});
+  return d.toLocaleDateString(LOC(), d.getFullYear() === n.getFullYear() ? {day:'numeric', month:'long'} : {day:'numeric', month:'long', year:'numeric'}); }
 function msgsHTML0(c){
   const vis = CH.msgs.filter(m => !isBlk(m.from)), lastMine = [...vis].reverse().find(m => m.from === social?.uid && !m._lock && !m._pend);
-  return CH.msgs.length ? vis.map(m => msgWrapHTML(m, c?.group, m === lastMine ? readHTML(m, c) : '')).join('')
+  let dl = ''; /* v774: Tages-Trenner wie bei WhatsApp (Heute, Gestern, Datum) */
+  return CH.msgs.length ? vis.map(m => { const d = msgDay(m.ts), sep = d && d !== dl ? `<div class="mday"><span>${esc(d)}</span></div>` : ''; if (d) dl = d; return sep + msgWrapHTML(m, c?.group, m === lastMine ? readHTML(m, c) : ''); }).join('')
     : CH.mraw == null ? '<p class="muted mload" style="margin:auto" aria-busy="true">Lädt …</p>' : '<p class="muted" style="margin:auto">Noch keine Nachrichten. Schreib die erste.</p>';
 }
 async function openDM(id){
@@ -11900,8 +11944,8 @@ async function e2pvLoad(){ if (E2PV.busy || !social) return; const cache = e2pvC
           t = (x.from === social.uid ? tr('Du') + ': ' : '') + t.slice(0, 60); cache[c.id] = {t, at:c.last}; E2E.prev[c.id] = t; ch = true; break; } } catch {} } }
   finally { E2PV.busy = false; }
   if (ch) { try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} softRender(); } }
-function e2LockHTML(m){ if (m._lock === 'wait') return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2wait" aria-busy="true"><i></i><i></i><small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; const t0 = m._lock === 'wait' ? 'Wird entschlüsselt …' : m._lock === 'nokey' ? 'Auf diesem Gerät nicht lesbar' : m._lock === 'off' ? 'Verschlüsselung hier nicht verfügbar' : 'Ließ sich nicht entschlüsseln', t = tr(t0);
-  return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? `<small class="e2hint">${tr('Öffne Noctibat kurz auf einem anderen Gerät, auf dem du angemeldet bist. Dann erscheint die Nachricht hier.')}</small>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span></small></div>`; }
+function e2LockHTML(m){ if (m._lock === 'wait') return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2wait" aria-busy="true"><i></i><i></i><small class="meta"><span class="mt">${msgClock(m.ts)}</span></small></div>`; const t0 = m._lock === 'wait' ? 'Wird entschlüsselt …' : m._lock === 'nokey' ? 'Auf diesem Gerät nicht lesbar' : m._lock === 'off' ? 'Verschlüsselung hier nicht verfügbar' : 'Ließ sich nicht entschlüsseln', t = tr(t0);
+  return `<div class="bubble ${m.from === social?.uid ? 'me' : 'them'} e2lock"><span class="e2li" aria-hidden="true">${E2_LOCK}</span>${esc(t)}${m._lock === 'nokey' ? `<small class="e2hint">${tr('Öffne Noctibat kurz auf einem anderen Gerät, auf dem du angemeldet bist. Dann erscheint die Nachricht hier.')}</small>` : ''}<small class="meta"><span class="mt">${msgClock(m.ts)}</span></small></div>`; }
 const E2_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
 // Neues Gerät bei einer Person: Hinweis im Chat, damit man die Sicherheitsnummer vergleichen kann (wie bei Signal)
 function e2KeyCheck(uid, l){ if (!E2E.uid || uid === E2E.uid) return; const K = 'nf-e2kc:' + E2E.uid, h = l.filter(x => !x.revoked && x.dev !== E2A_DEV).map(x => x.dev + ':' + x.pub).sort().join('|'); let m = {};
@@ -14111,7 +14155,7 @@ function bubbleHTML(m, group){
     return `<div class="cmrow"><button type="button" class="mav mavp" data-act="profile" data-id="${esc(m.from)}" aria-label="Profil von ${esc(chatWho(m.from))}">${u?.outfit || u?.pic ? headPic(u) : ''}</button>${bubbleHTML({...m, _r:1}, group)}</div>`;
   }
   /* eigenes Profilbild an eigenen Nachrichten gibt es nicht mehr (Inaya, 2026-10-16) */
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk || m.gift ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${whoH(m.from)}</button>` : ''}${quoteHTML(m.re)}${m.gift ? giftMsgHTML(m) : ''}${msgMedia(m)}${m.text && m.kind !== 'ginv' ? chMenHL(etx(sysTr(m.text))) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${ago(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.story?.sh || m.stk || m.gift ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="profile" data-id="${esc(m.from)}">${whoH(m.from)}</button>` : ''}${quoteHTML(m.re)}${m.gift ? giftMsgHTML(m) : ''}${msgMedia(m)}${m.text && m.kind !== 'ginv' ? chMenHL(etx(sysTr(m.text))) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${msgClock(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
 // Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
 const isDel = id => !!(S.nfDel && S.nfDel[id]);
@@ -14882,8 +14926,11 @@ async function refClaim(btn){ if (btn) btn.disabled = true; const r = await walT
 /* ---------- Aktionen für Freunde, Chats, Zimmer ---------- */
 // Handy: beim Tippen die untere Leiste ausblenden (Inaya, 2026-10-10)
 const isTyping = el => el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && !['checkbox','radio','file','range','color','button','submit'].includes(el.type)));
-const vvFit = () => { const v = window.visualViewport, r = document.documentElement.style; r.setProperty('--vvh', (v ? v.height : innerHeight) + 'px'); r.setProperty('--vvt', (v ? v.offsetTop : 0) + 'px'); };
+let VVL = '';
+const vvFit = () => { const v = window.visualViewport, h = Math.round(v ? v.height : innerHeight), t = Math.round(v ? Math.max(0, v.offsetTop) : 0), k = h + ':' + t; if (k === VVL) return; VVL = k; const r = document.documentElement.style; r.setProperty('--vvh', h + 'px'); r.setProperty('--vvt', t + 'px'); }; /* v774: nur bei echter Änderung, sonst ruckelt der Chat beim Tippen */
 if (window.visualViewport) { visualViewport.addEventListener('resize', vvFit); visualViewport.addEventListener('scroll', vvFit); }
+/* v774: Mit offener Tastatur im Chat verschiebt Wischen außerhalb der Nachrichten nicht mehr die ganze Seite (iPhone: der Chat wackelte hin und her) */
+document.addEventListener('touchmove', e => { if (!document.body.classList.contains('chatkb')) return; if (e.target.closest?.('#msgs, textarea, .cmsug, .emopop, .attsheet, [class^=sg], .rxpop, #rxpop')) return; if (e.cancelable) e.preventDefault(); }, {passive:false});
 const chatKb = el => isMob() && ['cm-in','hc-in'].includes(el?.id) && !!el.closest('.chatmain');
 // Raumchat und Kommentare: Eingabefeld sitzt direkt über der Tastatur (Inaya, 2026-10-11)
 const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"],[data-form="wall"],[data-form="rwall"]';
