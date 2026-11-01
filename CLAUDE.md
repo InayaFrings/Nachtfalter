@@ -570,3 +570,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v821 (Inaya): Im Zimmer stehen Stift (Einrichten), Sprechblase (Raumchat) und bei offenem Raumchat Teilen oben rechts in der Leiste (`mobTop`, `.mtop.mtrow`), nicht mehr über dem Zimmer; der Zimmer-Kopf `.rhead` entfällt.
 - Seit v822: Zimmer-Karte (`.card.rcard`) bleibt randlos über die ganze Breite und mittig, auch ohne den weggefallenen Kopf (vorher hing das an `.card:has(> .rhead)`).
 - Seit v823 (Inaya: „mittig wie bei Chats“): Der Titel in der Leiste oben (`.rail > .mhead`) steht absolut mittig, unabhängig davon, wie viele Knöpfe rechts stehen (z. B. Stift und Sprechblase im Zimmer).
+- Seit v824 (Inaya): Außer im Salon lässt sich keine Seite mehr ins Leere scrollen: `#app` ohne Mindesthöhe (vorher 100vh + 160 px gegen die springende Safari-Leiste) und `.shell` endet 79 px + Safe Area unter dem Inhalt, also 16 px über der unteren Leiste (vorher im Zimmer 170 px).
