@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='87ec6fff2193';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ff182a2e1cd2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -15426,9 +15426,197 @@ Object.assign(SKF, {
     S.ell([c, c, z + .03], 6, 3, '#c8202e', {nol:1, op:.12}); }});
     skSkull(S, c, c, .7, 2); for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 2 / 5; skCandleR(S, c + (R - 1.6) * Math.cos(a), c + (R - 1.6) * Math.sin(a), .7, 2.6 + (i % 2) * 1.6, .9, i % 2 ? '#2a2630' : SK.bone); } },
 });
+/* v807: Wand-Sachen im Sticker-Stil (flach von vorn: x rechts, z hoch, y = Abstand zur Wand) */
+const skEllP = (cx, cz, rx, rz, n = 24) => Array.from({length:n}, (_, i) => { const a = i / n * Math.PI * 2; return [cx + rx * Math.cos(a), cz + rz * Math.sin(a)]; });
+/* Strich-Schrift für Neon, Farbe, Sehtafel: je Buchstabe Linienzüge im Feld 1 × 1.4 */
+const SKO = Array.from({length:17}, (_, i) => { const a = i / 16 * Math.PI * 2; return [.5 + .5 * Math.cos(a), .7 + .7 * Math.sin(a)]; });
+const SKFONT = {A:[[[0, 0], [.5, 1.4], [1, 0]], [[.2, .55], [.8, .55]]], C:[[[1, 1.15], [.75, 1.4], [.25, 1.4], [0, 1.1], [0, .3], [.25, 0], [.75, 0], [1, .25]]], D:[[[0, 0], [0, 1.4], [.55, 1.4], [1, 1.05], [1, .35], [.55, 0], [0, 0]]],
+  E:[[[1, 1.4], [0, 1.4], [0, 0], [1, 0]], [[0, .7], [.75, .7]]], F:[[[1, 1.4], [0, 1.4], [0, 0]], [[0, .7], [.75, .7]]], H:[[[0, 0], [0, 1.4]], [[1, 0], [1, 1.4]], [[0, .7], [1, .7]]], I:[[[.5, 0], [.5, 1.4]]], L:[[[0, 1.4], [0, 0], [1, 0]]],
+  M:[[[0, 0], [0, 1.4], [.5, .6], [1, 1.4], [1, 0]]], N:[[[0, 0], [0, 1.4], [1, 0], [1, 1.4]]], O:[SKO], P:[[[0, 0], [0, 1.4], [.75, 1.4], [1, 1.2], [1, .9], [.75, .7], [0, .7]]], R:[[[0, 0], [0, 1.4], [.75, 1.4], [1, 1.2], [1, .9], [.75, .7], [0, .7]], [[.45, .7], [1, 0]]],
+  T:[[[0, 1.4], [1, 1.4]], [[.5, 1.4], [.5, 0]]], W:[[[0, 1.4], [.25, 0], [.5, .9], [.75, 0], [1, 1.4]]], Y:[[[0, 1.4], [.5, .7], [1, 1.4]], [[.5, .7], [.5, 0]]], Z:[[[0, 1.4], [1, 1.4], [0, 0], [1, 0]]], '!':[[[.5, 1.4], [.5, .45]], [[.5, .12], [.5, 0]]]};
+function skText(S, y, txt, x0, z0, h, c, w, o = {}){ const lw = h / 1.4 * (o.wide || .78), gap = h * (o.gap ?? .26); let x = x0;
+  [...txt].forEach((ch, i) => { if (ch === ' ') { x += lw * .7; return; } const G = SKFONT[ch] || [], j = o.jit ? (((i * 37) % 7) - 3) * .04 * h : 0;
+    G.forEach(L => { for (let k = 0; k < L.length - 1; k++) { const a = [x + L[k][0] * lw, y, z0 + L[k][1] * h / 1.4 + j], b = [x + L[k + 1][0] * lw, y, z0 + L[k + 1][1] * h / 1.4 + j];
+      if (o.glow) S.line(a, b, c, w * 3.6, {op:.22, nol:1}); S.line(a, b, c, w, {nol:o.nol}); if (o.core) S.line(a, b, o.core, w * .38, {nol:1}); } });
+    if (o.drip && i % 2 === 0) S.line([x + lw * .3, y, z0 + .1], [x + lw * .3, y, z0 - h * (.35 + (i % 3) * .2)], c, w * .55); x += lw + gap; }); return x - gap - x0; }
+/* Neon-Linienzug mit Schein (offen oder geschlossen) */
+function skNeon(S, y, pts, c, w = .9, closed = true){ const n = pts.length, seg = closed ? n : n - 1; for (let i = 0; i < seg; i++) S.line([pts[i][0], y, pts[i][1]], [pts[(i + 1) % n][0], y, pts[(i + 1) % n][1]], c, w * 4, {op:.18, nol:1});
+  for (let i = 0; i < seg; i++) S.line([pts[i][0], y, pts[i][1]], [pts[(i + 1) % n][0], y, pts[(i + 1) % n][1]], c, w); for (let i = 0; i < seg; i++) S.line([pts[i][0], y + .01, pts[i][1]], [pts[(i + 1) % n][0], y + .01, pts[(i + 1) % n][1]], '#ffffff', w * .35, {nol:1, op:.85}); }
+/* durchhängende Schnur zwischen a und b (x/z), gibt Punkte zurück */
+const skSwag = (a, b, sag, n = 16) => Array.from({length:n + 1}, (_, i) => { const t = i / n; return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t - sag * 4 * t * (1 - t)]; });
+const skWire = (S, y, P, c = '#26222a', w = .45) => { for (let i = 0; i < P.length - 1; i++) S.line([P[i][0], y, P[i][1]], [P[i + 1][0], y, P[i + 1][1]], c, w); };
+const skNail = (S, x, z) => { S.dot([x, .3, z], .55, '#8a8692'); S.dot([x - .15, .35, z + .15], .2, '#d8d6e0'); };
+/* Glühbirne an der Schnur: on = leuchtet, off = aus, bad = kaputt */
+function skBulb(S, y, x, z, c, st = 'on', k = 1){ S.box(x - .4 * k, y, z - .6 * k, .8 * k, .6, .7 * k, '#3a3640', {sw:.25}); const p = [x, y + .3, z - 1.6 * k];
+  if (st === 'on') skGlow(S, p, 2.4 * k, c, .2); if (st === 'bad') { S.poly([[x - .6 * k, y + .3, z - .8 * k], [x + .6 * k, y + .3, z - .8 * k], [x + .3 * k, y + .3, z - 1.6 * k], [x + .1 * k, y + .3, z - 1.1 * k], [x - .2 * k, y + .3, z - 1.7 * k]], '#c9c6cf', {sw:.25, op:.8}); return; }
+  S.ell(p, .75 * k, 1.05 * k, st === 'on' ? c : '#5a5662', {sw:.3}); S.ell([x - .2 * k, y + .32, z - 1.3 * k], .2 * k, .35 * k, '#ffffff', {nol:1, op:st === 'on' ? .8 : .4}); }
+/* Kreuze: Umriss aus den alten Pfaden (M/H/V/L/Z) */
+function skPathPts(d){ const out = []; let cur = [], x = 0, y = 0; const t = d.match(/[MLHVZ]|-?\d*\.?\d+/g) || []; let i = 0, cmd = '';
+  while (i < t.length) { if (/[MLHVZ]/.test(t[i])) { cmd = t[i++]; if (cmd === 'Z') { if (cur.length) out.push(cur); cur = []; continue; } }
+    if (cmd === 'M' || cmd === 'L') { x = +t[i++]; y = +t[i++]; if (cmd === 'M' && cur.length) { out.push(cur); cur = []; } cur.push([x, y]); if (cmd === 'M') cmd = 'L'; } else if (cmd === 'H') { x = +t[i++]; cur.push([x, y]); } else if (cmd === 'V') { y = +t[i++]; cur.push([x, y]); } else i++; }
+  if (cur.length) out.push(cur); return out; }
+const SK_ANKH = [[-5, 46], [-22, 46], [-22, 36], [-6, 36], [-12, 30], [-15, 20], [-12, 9], [0, 2], [12, 9], [15, 20], [12, 30], [6, 36], [22, 36], [22, 46], [5, 46], [5, 100], [-5, 100]];
+function skCross(S, cx, top, s, kind, c, o = {}){ const T = ([u, v]) => [cx + u * s, top - v * s], d = .9 + s * 1.2, lt = isLight(c) ? ISH(c, .8) : ISH(c, 1.6);
+  skNail(S, cx, top + 5 * s + .8); S.line([cx, .3, top + 5 * s + .5], [cx, .3, top + 1], '#8a8692', .25, {nol:1});
+  if (o.ring) { const R = skEllP(cx, top - 34 * s, 17 * s, 17 * s, 24); for (let i = 0; i < 24; i++) S.line([R[i][0], d * .5, R[i][1]], [R[(i + 1) % 24][0], d * .5, R[(i + 1) % 24][1]], c, 6 * s); }
+  const P = kind === 'ankh' ? [SK_ANKH] : skPathPts(HWX[kind] || HWX.latein); P.forEach(p => isoPrY(S, p.map(T), 0, d, c));
+  if (kind === 'ankh') FP(S, d + .01, skEllP(cx, top - 20 * s, 5.5 * s, 8 * s, 14), '#26222a', {sw:.2});
+  if (kind === 'knospe') [[0, 2], [-5, 7], [5, 7], [-26, 34], [-21, 29], [-21, 39], [26, 34], [21, 29], [21, 39], [0, 98], [-5, 93], [5, 93]].forEach(q => isoPrY(S, skEllP(...T(q), 4.4 * s, 4.4 * s, 10), 0, d, c));
+  if (o.wood) [[-2, 8, -2, 96], [2, 44, 2, 90], [-18, 33, 18, 33]].forEach(([a, b, c2, e]) => S.line([...T([a, b])].reduce((r, v, k) => k ? [r[0], d + .02, v] : [v], []), [...T([c2, e])].reduce((r, v, k) => k ? [r[0], d + .02, v] : [v], []), ISH(c, .7), .3, {nol:1}));
+  else if (!o.fil && !o.gem && kind !== 'ankh') S.line([cx - 2.4 * s, d + .02, top - 6 * s], [cx - 2.4 * s, d + .02, top - 26 * s], lt, Math.max(.3, 1.4 * s), {nol:1, op:.6});
+  if (o.fil) { [[0, 10, 0, 24], [0, 46, 0, 86], [-8, 34, -24, 34], [8, 34, 24, 34]].forEach(([a, b, c2, e]) => S.line([T([a, b])[0], d + .02, T([a, b])[1]], [T([c2, e])[0], d + .02, T([c2, e])[1]], o.fil, 1.4 * s, {nol:1}));
+    [[0, 0], [-28, 34], [28, 34], [0, 98]].forEach(q => FP(S, d + .03, skEllP(...T(q), 2.6 * s, 2.6 * s, 10), o.fil, {sw:.2})); }
+  if (o.gem) { FP(S, d + .04, skEllP(...T([0, 34]), 6 * s, 6 * s, 14), o.gem, {sw:.3}); S.dot([T([-1.8, 32])[0], d + .06, T([-1.8, 32])[1]], 1.6 * s, '#ffffff'); }
+  if (o.heart) FP(S, d + .04, SK_HEART.map(([u, v]) => T([u * 3.4, 34 - v * 3.4])), o.heart, {sw:.3}); }
+/* Kreuz-Wand aus der alten Liste [x, y, Größe, Form, Farbe, opt], k = Maßstab */
+const skCrossWall = (S, L, H, k = .45) => L.forEach(([x, y, sc, kind, c, o]) => skCross(S, x * k, (H - y) * k, sc * k, kind, c, o || {}));
+/* Wehende Flagge: Rechteck mit Wellen, fn(u, v) liefert die Farbe einer Zelle */
+function skFlag(S, W, H, fn, nu = 8, nv = 5){ const wave = (u, v) => Math.sin(u * Math.PI * 1.6) * 1.2 * u, Q = (u, v) => [u * W, .4 + u * .6, H * (1 - v) + wave(u, v)];
+  for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) { const u0 = i / nu, u1 = (i + 1) / nu, v0 = j / nv, v1 = (j + 1) / nv, sh = Math.cos(((u0 + u1) / 2) * Math.PI * 1.6) * .12;
+    S.poly([Q(u0, v0), Q(u1, v0), Q(u1, v1), Q(u0, v1)], ISH(fn(i, j), 1 + sh), {sw:.15, s:ISH(fn(i, j), .8 + sh)}); } return Q; }
+
+Object.assign(SKF, {
+  /* Ornamentspiegel */
+  spiegel: S => { const cx = 11, cz = 15, f = '#4a4652';
+    isoPrY(S, [[cx - 2.6, cz + 13.4], [cx, cz + 17], [cx + 2.6, cz + 13.4]], 0, 1.4, f); FP(S, 1.42, skEllP(cx, cz + 14.6, 1, 1, 10), SK.red, {sw:.2});
+    isoPrY(S, skEllP(cx, cz, 10, 14, 32), 0, 1.6, f); FP(S, 1.62, skEllP(cx, cz, 8.6, 12.6, 30), '#8a8692', {sw:.4}); FP(S, 1.64, skEllP(cx, cz, 7.6, 11.6, 30), '#2e3040', {sw:.4});
+    FP(S, 1.66, skEllP(cx - 1.6, cz + 2, 5, 8, 20), '#454a60', {sw:0, op:.6}); S.line([cx - 5, 1.7, cz + 2], [cx - 2, 1.7, cz + 8], '#ffffff', .8, {nol:1, op:.45}); S.line([cx - 5, 1.7, cz - 2], [cx - 3.6, 1.7, cz + .4], '#ffffff', .5, {nol:1, op:.4});
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; S.dot([cx + 9.3 * Math.cos(a), 1.65, cz + 13.3 * Math.sin(a)], .35, '#c9c6cf'); } },
+  /* Spinnennetz in der Ecke mit Spinne */
+  spinnennetz: S => { const W = 27, c = [0, W], sp = '#d8d6e2', R = [6, 11, 16, 21, 26];
+    const ang = Array.from({length:7}, (_, i) => -Math.PI / 2 * i / 6), pt = (r, a) => [c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)];
+    ang.forEach(a => { const e = pt(27, a); S.line([c[0], .2, c[1]], [e[0], .2, e[1]], '#141016', .75, {nol:1, op:.45}); S.line([c[0], .25, c[1]], [e[0], .25, e[1]], sp, .32, {nol:1}); });
+    R.forEach((r, k) => { for (let i = 0; i < ang.length - 1; i++) { const a = pt(r, ang[i]), b = pt(r, ang[i + 1]), m = pt(r * .9, (ang[i] + ang[i + 1]) / 2); [[a, m], [m, b]].forEach(([p, q]) => { S.line([p[0], .2, p[1]], [q[0], .2, q[1]], '#141016', .7, {nol:1, op:.4}); S.line([p[0], .25, p[1]], [q[0], .25, q[1]], sp, .28, {nol:1}); }); } });
+    const s = [15, 1, 8]; S.line([15, .4, 14], [s[0], .4, s[2] + 1.5], sp, .25, {nol:1}); [-1, 1].forEach(k => [[1.4, .8], [1.8, 0], [1.6, -.8], [1.1, -1.5]].forEach(([dx, dz]) => S.line([s[0] + k * .5, .5, s[2]], [s[0] + k * dx * 1.2, .5, s[2] + dz * 1.4], '#1c1a20', .35)));
+    S.ell([s[0], .6, s[2] - .4], 1.1, 1.3, '#1c1a20', {sw:.3}); S.ell([s[0], .62, s[2] + .9], .75, .7, '#26222a', {sw:.25}); S.dot([s[0] - .3, .7, s[2] + 1], .18, '#c02a3a'); S.dot([s[0] + .3, .7, s[2] + 1], .18, '#c02a3a'); },
+  /* Ahnenporträt */
+  portraet: S => { const W = 18, H = 22, f = '#3b2d27';
+    S.line([W / 2, .2, H + 5], [2, .2, H - .5], '#8a8692', .3); S.line([W / 2, .2, H + 5], [W - 2, .2, H - .5], '#8a8692', .3); skNail(S, W / 2, H + 5);
+    isoPrY(S, [[0, 0], [W, 0], [W, H], [0, H]], 0, 1.6, f); FP(S, 1.62, [[1.6, 1.6], [W - 1.6, 1.6], [W - 1.6, H - 1.6], [1.6, H - 1.6]], '#b8902a', {sw:.4}); FP(S, 1.64, [[2.4, 2.4], [W - 2.4, 2.4], [W - 2.4, H - 2.4], [2.4, H - 2.4]], '#cfc4ae', {sw:.3});
+    FP(S, 1.65, skEllP(W / 2, H / 2, 6, 8, 20), '#e2d8c4', {sw:0, op:.7});
+    FP(S, 1.66, [[4, 2.4], [W - 4, 2.4], [W - 4.6, 6], [W / 2 + 2, 8.4], [W / 2 - 2, 8.4], [4.6, 6]], '#26202a', {sw:.2}); FP(S, 1.67, skEllP(W / 2, 12.4, 3.2, 3.9, 16), '#26202a', {sw:.2}); FP(S, 1.67, [[W / 2 - 1.2, 8], [W / 2 + 1.2, 8], [W / 2 + 1, 9.4], [W / 2 - 1, 9.4]], '#26202a', {sw:.2});
+    [[1, 1], [W - 1, 1], [1, H - 1], [W - 1, H - 1]].forEach(([x, z]) => S.dot([x, 1.65, z], .45, '#d9b04a')); },
+  /* Lichterkette lila/rosa */
+  lichterkette: S => { const W = 54, a = [1, 9], b = [W - 1, 9], P = [...skSwag(a, [W / 2, 9], 5, 10), ...skSwag([W / 2, 9], b, 5, 10).slice(1)]; skNail(S, a[0], a[1] + .6); skNail(S, b[0], b[1] + .6); skNail(S, W / 2, 9.6);
+    skWire(S, .4, P); P.forEach(([x, z], i) => { if (i % 2 === 1) skBulb(S, .4, x, z, i % 4 === 1 ? '#b58ae8' : '#f08ab0', 'on', 1.7); }); },
+  /* Kronleuchter */
+  kronleuchter: S => { const cx = 18, g = '#2a2630', br = '#8a6a2a';
+    S.line([cx, .4, 27], [cx, .4, 20], '#4a4652', .6); for (let z = 21; z < 27; z += 1.6) S.ell([cx, .5, z], .5, .7, '#5a5662', {sw:.2});
+    S.ell([cx, 2, 18.5], 2.4, 1.6, g, {sw:.4}); S.ell([cx, 2, 15.5], 1.6, 2.2, g, {sw:.4}); S.ell([cx, 2, 12.4], 3.6, 1.6, g, {sw:.4});
+    const arms = [-14, -7, 0, 7, 14]; arms.forEach(dx => { const e = [cx + dx, 2, 13.6 + Math.abs(dx) * .06]; S.line([cx, 2, 12.4], [cx + dx * .5, 2, 10.2], g, .7); S.line([cx + dx * .5, 2, 10.2], [e[0], 2, e[2] - 2], g, .7); S.line([e[0], 2, e[2] - 2], e, g, .7);
+      S.ell(e, 1.5, .6, br, {sw:.3}); skCandleR(S, e[0], 2, e[2] + .2, 2.6, .6); [-1, 1].forEach(k => S.ell([e[0] + k * 1, 2.3, e[2] - 1.4], .3, .6, '#e8eef8', {sw:.15, op:.85})); });
+    for (let i = 0; i < 5; i++) S.ell([cx - 4 + i * 2, 2.4, 10.4 - (i % 2) * .8], .35, .7, '#e8eef8', {sw:.15, op:.85}); S.ell([cx, 2.4, 9.4], .45, .9, '#e8eef8', {sw:.2}); },
+  /* Verziertes Kreuz */
+  kreuz: S => skCross(S, 6.5, 22, .2, 'latein', '#2a2a30', {gem:'#8a1020', fil:'#d4af37'}),
+  /* Samtvorhang */
+  vorhang: S => { const W = 27, H = 45, v = '#6a1426';
+    const drape = (x0, x1, k) => { const P = [[x0, H - 1], [x1, H - 1]]; for (let z = H - 1; z >= 0; z -= 3) { const t = 1 - z / H, pinch = z > 14 && z < 20 ? .55 : 1; P.push([k > 0 ? x0 + (x1 - x0) * (z < 17 ? 1 : pinch)  : x1 - (x1 - x0) * (z < 17 ? 1 : pinch), z]); } P.push([k > 0 ? x0 : x1, 0]);
+      const Q = k > 0 ? P : P; FP(S, 1, Q, v, {sw:.5}); for (let i = 1; i < 4; i++) { const xx = x0 + (x1 - x0) * i / 4; S.line([xx, 1.02, H - 1.5], [k > 0 ? x0 + (xx - x0) * .5 : x1 - (x1 - xx) * .5, 1.02, 17], ISH(v, i % 2 ? .6 : 1.4), .45, {nol:1}); S.line([k > 0 ? x0 + (xx - x0) * .5 : x1 - (x1 - xx) * .5, 1.02, 17], [xx, 1.02, 1], ISH(v, i % 2 ? .6 : 1.4), .45, {nol:1}); }
+      S.ell([k > 0 ? x0 + (x1 - x0) * .55 : x1 - (x1 - x0) * .55, 1.1, 17], 1.4, .8, '#c9a24a', {sw:.3}); };
+    drape(1, 11, 1); drape(W - 11, W - 1, -1); S.box(-1, 0, H - 1, W + 2, 1.4, 1.2, '#2a2228'); [-1.4, W + 1.4].forEach(x => S.ell([x, 1.4, H - .4], 1.1, 1.1, '#c9a24a', {sw:.3})); },
+  /* Neonschild RAWR */
+  neon_rawr: S => { const W = 36, H = 14; isoPrY(S, [[0, 0], [W, 0], [W, H], [0, H]], 0, 1.2, '#141216'); [[1.4, 1.4], [W - 1.4, 1.4], [1.4, H - 1.4], [W - 1.4, H - 1.4]].forEach(([x, z]) => S.dot([x, 1.22, z], .35, '#5a5662'));
+    skText(S, 1.6, 'RAWR', 5, 3.6, 7, '#ff4fb0', .9, {glow:1, core:'#ffd8ec', wide:.82, gap:.4}); },
+  neon_herz: S => { const P = SK_HEART.map(([u, v]) => [9 + u * 8.4, 8 - v * 8.4]); skNeon(S, .8, P, '#ff6aa8', .9); S.dot([9, .4, 15.4], .4, '#5a5662'); S.line([9, .4, 15.4], [9, .4, 13], '#5a5662', .2, {nol:1}); },
+  neon_stern: S => { const P = []; for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i / 10 * Math.PI * 2, r = i % 2 ? 3.4 : 8.4; P.push([9 + r * Math.cos(a), 9 + r * Math.sin(a)]); } skNeon(S, .8, P, '#6ad0ff', .9); },
+  l_neonmond: S => { skNeon(S, .8, skMoon(9, 10, 8.4), '#c08aff', .9); const P = []; for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, r = i % 2 ? .9 : 2.2; P.push([16 + r * Math.cos(a), 15 + r * Math.sin(a)]); } skNeon(S, .8, P, '#c08aff', .6); },
+  nc_neonbat: S => { const W = 45; skNeon(S, .8, SK_BAT.map(([u, v]) => [W / 2 + u * 4.6, 18 - v * 4.6]), '#ff6aa8', .9); skText(S, .8, 'NOCTI', W / 2 - 13.6, 1.4, 6, '#6af0ff', .8, {glow:1, core:'#e8ffff', wide:.8, gap:.55}); },
+  /* Graffiti ANARCHY */
+  graffiti: S => { const A = [5, 9]; [[A[0], A[1]]].forEach(() => { const R = skEllP(A[0], A[1], 4.8, 4.8, 20); for (let i = 0; i < 20; i++) S.line([R[i][0], .2, R[i][1]], [R[(i + 1) % 20][0], .2, R[(i + 1) % 20][1]], '#d0202e', .9); });
+    skText(S, .25, 'A', A[0] - 3, A[1] - 3.6, 7.6, '#d0202e', 1, {wide:.8}); S.line([A[0] - 4, .26, A[1] - .4], [A[0] + 4, .26, A[1] - .4], '#d0202e', .9);
+    skText(S, .2, 'ANARCHY', 11.4, 4, 9, '#6ad04a', 1.4, {drip:1, jit:1, gap:.18});
+    for (let i = 0; i < 14; i++) S.dot([12 + (i * 23) % 32, .2, 2 + (i * 7) % 3 + (i % 2) * 12], .25 + (i % 3) * .1, i % 2 ? '#6ad04a' : '#d0202e'); },
+  /* Wandteppich Mondphasen */
+  wandteppich: S => { const W = 32, H = 36, cl = '#1d1f3a';
+    S.box(-1.4, 0, H - .6, W + 2.8, 1.2, 1.2, '#3b2d27'); S.line([W / 2, .4, H + 3], [2, .4, H + .5], '#8a8692', .3); S.line([W / 2, .4, H + 3], [W - 2, .4, H + .5], '#8a8692', .3); skNail(S, W / 2, H + 3);
+    const P = [[0, H - .6], [W, H - .6]]; for (let i = 0; i <= 8; i++) P.push([W - i * W / 8, i % 2 ? 4 : 5.2]); FP(S, 1.1, P, cl, {sw:.5});
+    for (let x = 1; x < W; x += 1.6) S.line([x, 1.12, 4.6], [x, 1.12, 1.8], '#b8902a', .3, {nol:1});
+    FP(S, 1.13, [[1.6, H - 2.2], [W - 1.6, H - 2.2], [W - 1.6, H - 2.8], [1.6, H - 2.8]], '#b8902a', {sw:0});
+    const z = H - 9, ph = [[3.6, 'L'], [9.6, 'l'], [16, 'F'], [22.4, 'r'], [28.4, 'R']];
+    ph.forEach(([x, k]) => { if (k === 'F') skMoonF(S, 1.15, x, z, 2.6, 1); else if (k === 'l' || k === 'r') { FP(S, 1.15, skEllP(x, z, 2.2, 2.2, 16), '#efe6c4', {sw:.3}); FP(S, 1.16, skEllP(x + (k === 'l' ? -1 : 1) * 1.2, z, 1.9, 2.2, 16), cl, {sw:0}); } else { const M = skMoon(x, z, 2.2); FP(S, 1.15, k === 'L' ? M : M.map(([a, b]) => [2 * x - a, b]), '#efe6c4', {sw:.3}); } });
+    FP(S, 1.15, [[W / 2, 20], [W / 2 + 7, 9], [W / 2 - 7, 9]], '#3d1f5c', {sw:.3, s:'#b8902a'}); FP(S, 1.16, skEllP(W / 2, 13, 2.4, 1.4, 14), '#efe6c4', {sw:.25}); FP(S, 1.17, skEllP(W / 2, 13, .9, .9, 10), '#141216', {sw:0});
+    [[4, 18], [27, 18], [7, 10], [25, 11], [12, 22], [21, 23]].forEach(([x, zz], i) => skStarF(S, 1.16, x, zz, .7 + (i % 2) * .3)); },
+  /* Totenkopf-Flagge und Karoflagge */
+  piratenflagge: S => { const W = 34, H = 22, Q = skFlag(S, W, H, () => '#16141a'); skNail(S, 0, H + 1); skNail(S, W, H + 2.2);
+    const c = Q(.48, .42); skSkull(S, c[0], c[1] + .3, c[2] - 2.8, 3.4); const b = (u0, v0, u1, v1) => { const p = Q(u0, v0), q = Q(u1, v1); S.line([p[0], p[1] + .4, p[2]], [q[0], q[1] + .4, q[2]], SK.bone, 1.1); [p, q].forEach(r => [-1, 1].forEach(k => S.ell([r[0] + k * .5, r[1] + .45, r[2] + k * .4], .65, .65, SK.bone, {sw:.25}))); };
+    b(.3, .82, .66, .64); b(.66, .82, .3, .64); },
+  schachflagge: S => { const W = 34, H = 22; skFlag(S, W, H, (i, j) => (i + j) % 2 ? '#141216' : '#ecebe7', 10, 6); skNail(S, 0, H + 1); skNail(S, W, H + 2.2); },
+  /* Lichterkette warm, Wimpelkette */
+  rz_lichter: S => { const W = 50, P = skSwag([1, 9], [W - 1, 9], 6, 22); skNail(S, 1, 9.6); skNail(S, W - 1, 9.6); skWire(S, .4, P, '#3a3640', .35); P.forEach(([x, z], i) => { if (i % 2 === 1) skBulb(S, .5, x, z, '#f8d880', 'on', 1.25); }); },
+  rz_wimpel: S => { const W = 50, P = skSwag([1, 13], [W - 1, 13], 4, 12), cols = ['#ff8ad0', '#7fd0ff', '#b6ff4a', '#c89aff', '#f2c14a', '#ff6a6a']; skNail(S, 1, 13.6); skNail(S, W - 1, 13.6); skWire(S, .4, P, '#e8e2d6', .35);
+    for (let i = 0; i < P.length - 1; i++) { const a = P[i], b = P[i + 1], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 5.6]; FP(S, .5, [[a[0] + .3, a[1]], [b[0] - .3, b[1]], m], cols[i % cols.length], {sw:.4}); S.dot([m[0], .52, (a[1] + b[1]) / 2 - 1.6], .35, '#ffffff'); } },
+  /* Schminkspiegel mit Lämpchen */
+  rz_schminklicht: S => { const W = 22, H = 22; isoPrY(S, [[0, 0], [W, 0], [W, H], [0, H]], 0, 1.6, '#e88ab4'); FP(S, 1.62, [[3, 3], [W - 3, 3], [W - 3, H - 3], [3, H - 3]], '#b8c8d8', {sw:.4}); FP(S, 1.63, [[3.4, 9], [8, 18.6], [12, 18.6], [5, 3.4], [3.4, 3.4]], '#dfe9f2', {sw:0, op:.5});
+    const B = []; for (let i = 0; i < 4; i++) B.push([1.5, 3 + i * 5.3], [W - 1.5, 3 + i * 5.3]); for (let i = 1; i < 4; i++) B.push([i * W / 4, H - 1.5]); B.forEach(([x, z]) => { skGlow(S, [x, 1.9, z], 1.7, '#f8e4a0', .22); S.ell([x, 1.9, z], .85, .85, '#fbefc0', {sw:.25}); S.dot([x - .25, 1.95, z + .25], .25, '#ffffff'); }); },
+  /* Wand-Kerzenleuchter */
+  l_wandkerze: S => { const g = '#2a2630', br = '#c9a24a', cx = 8;
+    FP(S, .5, [[cx - 2.6, 14], [cx, 18], [cx + 2.6, 14], [cx + 2, 8], [cx, 6], [cx - 2, 8]], g, {sw:.4}); FP(S, .52, skEllP(cx, 12, 1, 1.4, 12), SK.red, {sw:.2});
+    S.line([cx, 1, 9], [cx, 4, 6.8], g, .9); S.line([cx, 4, 6.8], [cx, 5, 8.4], g, .9); S.ell([cx, 5, 8.6], 2, .7, br, {sw:.3}); skCandleR(S, cx, 5, 8.8, 4, .8); },
+  /* Hängelaterne mit Fledermäusen */
+  l_haenge: S => { const cx = 8, g = '#1c1a20', T = 30;
+    S.line([cx, .4, T + 2], [cx, .4, T - 6], '#4a4652', .5); for (let z = T - 5; z < T + 2; z += 1.4) S.ell([cx, .5, z], .4, .6, '#5a5662', {sw:.2});
+    FP(S, 1, [[cx - 4.6, T - 9], [cx + 4.6, T - 9], [cx + 1, T - 6], [cx - 1, T - 6]], g, {sw:.4}); FP(S, 1, skEllP(cx, T - 5.6, 1.2, 1.2, 10), g, {sw:.3});
+    FP(S, 1, [[cx - 4, 8], [cx + 4, 8], [cx + 4.4, T - 9], [cx - 4.4, T - 9]], g, {sw:.4}); FP(S, 1.02, [[cx - 3, 9], [cx + 3, 9], [cx + 3.2, T - 10], [cx - 3.2, T - 10]], '#f3c25c', {sw:.3, op:.75});
+    skGlow(S, [cx, 1.1, 14], 6, '#f3c25c', .22); skCandleR(S, cx, 1.2, 9, 3, .7); [[cx - 1.4, 17, .7], [cx + 1.4, 18.6, .55], [cx, 15.2, .45]].forEach(([x, z, s]) => skBatF(S, 1.05, x, z, s));
+    S.line([cx, 1.06, 9], [cx, 1.06, T - 10], g, .4); FP(S, 1, [[cx - 4, 8], [cx + 4, 8], [cx + 1.4, 5.6], [cx - 1.4, 5.6]], g, {sw:.4}); FP(S, 1, skEllP(cx, 5, .8, 1.2, 10), g, {sw:.3}); },
+  /* Zauberspiegel mit Geist */
+  nc_zauberspiegel: S => { const cx = 14, cz = 20, gd = '#b8902a';
+    isoPrY(S, skEllP(cx, cz, 12.6, 18.4, 36), 0, 1.8, gd); for (let i = 0; i < 18; i++) { const a = i / 18 * Math.PI * 2; FP(S, 1.82, skEllP(cx + 11.6 * Math.cos(a), cz + 17.4 * Math.sin(a), 1.1, 1.1, 8), '#e2c26a', {sw:.2}); }
+    isoPrY(S, [[cx - 3.6, cz + 17], [cx, cz + 22], [cx + 3.6, cz + 17]], 0, 1.6, gd); FP(S, 1.62, skEllP(cx, cz + 18.6, 1.2, 1.2, 10), '#8a3ac8', {sw:.2});
+    FP(S, 1.84, skEllP(cx, cz, 10, 15.6, 32), '#1a1030', {sw:.4}); FP(S, 1.85, skEllP(cx, cz - 1, 7, 11, 24), '#3a1a6a', {sw:0, op:.7}); skGlow(S, [cx, 1.9, cz], 7, '#b88aff', .18);
+    const G = [[cx - 4.4, cz - 9], [cx - 4.4, cz + 2], ...isoArc(cx, cz + 2, 4.4, Math.PI, 0, 10).slice(1), [cx + 4.4, cz - 9], [cx + 3, cz - 7.6], [cx + 1.5, cz - 9], [cx, cz - 7.6], [cx - 1.5, cz - 9], [cx - 3, cz - 7.6]];
+    FP(S, 1.9, G, '#eef0f8', {sw:.4, op:.92}); [-1, 1].forEach(k => FP(S, 1.92, skEllP(cx + k * 1.6, cz + 2.4, .8, 1.2, 10), '#1a1030', {sw:0})); FP(S, 1.92, skEllP(cx, cz - .4, .7, 1, 10), '#1a1030', {sw:0});
+    S.line([cx - 7, 1.95, cz + 6], [cx - 4, 1.95, cz + 11], '#ffffff', .8, {nol:1, op:.4}); },
+  /* Flackernde Glühbirne */
+  hw_birne: S => { const cx = 6.5, T = 40; S.line([cx, .4, T], [cx, .4, 14], '#26222a', .5); S.box(cx - 1, .4, 11.6, 2, 1, 2.6, '#3a3640', {sw:.4});
+    skGlow(S, [cx, .9, 8.4], 5, '#f8e090', .26); S.ell([cx, .9, 8.6], 2.6, 3.1, '#fbe9a8', {sw:.4}); S.line([cx - 1, 1, 8.6], [cx - .4, 1, 9.6], '#c88a2a', .3, {nol:1}); S.line([cx - .4, 1, 9.6], [cx + .4, 1, 8.6], '#c88a2a', .3, {nol:1}); S.line([cx + .4, 1, 8.6], [cx + 1, 1, 9.6], '#c88a2a', .3, {nol:1}); S.ell([cx - 1, 1.02, 9.8], .5, .8, '#ffffff', {nol:1, op:.7}); },
+  /* Blutschrift HILF MIR mit Händen */
+  hw_schrift: S => { const r = '#9a1018'; skText(S, .2, 'HILF', 2, 12, 8, r, 1.3, {drip:1, jit:1, gap:.2}); skText(S, .2, 'MIR', 18, 4, 7, r, 1.2, {drip:1, jit:1, gap:.22}); skText(S, .2, '!', 34, 4, 7, r, 1.2, {drip:1});
+    const hand = (x, z, s) => { FP(S, .21, skEllP(x, z, 1.8 * s, 2 * s, 14), r, {sw:.2}); [[-1.6, 1.6, .5], [-.6, 2.6, .45], [.4, 2.8, .45], [1.4, 2.4, .42], [2.2, .6, .5]].forEach(([dx, dz, rr]) => S.line([x + dx * s * .6, .21, z + 1.2 * s], [x + dx * s, .21, z + dz * s + 1.2 * s], r, rr * 2 * s)); S.line([x, .21, z - 1.6 * s], [x - .2, .21, z - 4.6 * s], r, .5); };
+    hand(37, 17, 1.1); hand(4, 4, .9); },
+  /* Kaputte Lichterkette, verknotet */
+  hw_darmkette: S => { const W = 90, A = [[2, 30], [30, 33], [62, 29], [88, 32]], st = ['on', 'off', 'on', 'bad', 'on', 'on', 'off', 'on'];
+    A.forEach(([x, z]) => skNail(S, x, z + .6)); let k = 0;
+    [[A[0], A[1], 9], [A[1], A[2], 12], [A[2], A[3], 8], [[6, 30], [58, 20], 4], [[34, 22], [86, 30], 5]].forEach(([a, b, sag], j) => { const P = skSwag(a, b, sag, 14); skWire(S, .4 + j * .05, P); P.forEach(([x, z], i) => { if (i % 3 === 2) skBulb(S, .5 + j * .05, x, z, '#f8e090', st[k++ % st.length], 1.8); }); });
+    [[33, 19.6], [56, 21.4]].forEach(([x, z]) => { S.ell([x, .9, z], 1.6, 1.2, '#26222a', {sw:.3}); S.line([x - 1, .95, z + .4], [x + 1, .95, z - .4], '#4a4652', .3, {nol:1}); });
+    S.line([88, .5, 32], [86, .5, 18], '#26222a', .45); S.line([86, .5, 18], [87.5, .5, 14], '#26222a', .45); [[87.5, 13.4], [86.4, 12.6], [88.6, 12.8]].forEach(([x, z], i) => { S.line([87.5, .6, 14], [x + (i - 1) * 1.2, .6, z - 1], '#f8e090', .3, {nol:1}); }); },
+  /* Kaputte Lichterkette, loses Ende mit Funken */
+  hw_organkette: S => { const W = 54, st = ['on', 'on', 'off', 'on', 'bad', 'on']; skNail(S, 1, 26); skNail(S, 30, 26.6); let k = 0;
+    const P = skSwag([1, 25.4], [30, 26], 7, 14); skWire(S, .4, P); P.forEach(([x, z], i) => { if (i % 3 === 1) skBulb(S, .5, x, z, '#f8e090', st[k++ % st.length], 1.5); });
+    const L = [[30, 26], [38, 22], [44, 14], [46, 8], [45, 4]]; skWire(S, .4, L); [[38, 22], [44, 14]].forEach(([x, z]) => skBulb(S, .5, x, z, '#f8e090', 'off', 1.5));
+    [[45, 4]].forEach(([x, z]) => { S.dot([x, .6, z], .5, '#c9a24a'); [[-2, -1.6], [1.8, -1.4], [-.6, -2.6], [1.2, 1.2], [-1.6, 1]].forEach(([dx, dz]) => S.line([x, .7, z], [x + dx, .7, z + dz], '#ffe680', .3, {nol:1})); skGlow(S, [x, .7, z], 2.4, '#ffe680', .25); }); },
+  /* Kaputte Deckenlampe */
+  hw_deckenlampe: S => { const cx = 13, T = 50; S.line([cx, .4, T], [cx, .4, 30], '#26222a', .5); S.box(cx - 1, .4, 28, 2, 1, 2.4, '#3a3640', {sw:.4});
+    const sh = [[cx - 1.4, 28.6], [cx + 1.6, 28], [cx + 9, 19], [cx + 8, 17.6], [cx - 7.6, 22.4], [cx - 7.4, 24]]; FP(S, 1, sh, '#5a5662', {sw:.5}); FP(S, 1.02, [[cx - 7.6, 22.4], [cx + 8, 17.6], [cx + 6, 17], [cx - 5, 20.6]], '#2a2630', {sw:.3}); S.line([cx - 6, 1.05, 23.4], [cx + 7, 1.05, 19.4], '#8a8692', .3, {nol:1});
+    S.poly([[cx - 1, 1.2, 20.6], [cx + 1.6, 1.2, 19.8], [cx + 1.4, 1.2, 17.6], [cx + .6, 1.2, 18.6], [cx - .2, 1.2, 17.2], [cx - .8, 1.2, 18.4]], '#d8d6de', {sw:.25, op:.8}); skGlow(S, [cx, 1.3, 18.4], 3, '#ffe680', .22);
+    const W = [[cx + 2, 20], [cx + 3, 14], [cx + 1.6, 8], [cx + 3, 4]]; skWire(S, 1.2, W, '#26222a', .4); const e = W[W.length - 1]; [[-2, -1.6], [1.8, -1.2], [-.6, -2.6], [1.6, 1.2], [-1.6, .8]].forEach(([dx, dz]) => S.line([e[0], 1.3, e[1]], [e[0] + dx, 1.3, e[1] + dz], '#ffe680', .3, {nol:1})); skGlow(S, [e[0], 1.3, e[1]], 2.6, '#ffe680', .28); },
+  /* Kreuz-Wände */
+  hw_kreuze: S => skCrossWall(S, [[75, 14, .62, 'latein', '#26242a', {ring:1}], [36, 22, .42, 'lilie', '#c9a040'], [114, 20, .46, 'orthodox', '#c9c9cf'], [14, 10, .26, 'latein', '#7a5432', {wood:1}], [138, 9, .24, 'knospe', '#ecebe7'], [20, 62, .34, 'knospe', '#4a4a52'], [130, 62, .32, 'latein', '#ecebe7'], [53, 70, .3, 'latein', '#26242a', {gem:'#9a1020'}], [98, 72, .3, 'lilie', '#c9c9cf'], [57, 8, .17, 'latein', '#c9a040'], [94, 6, .18, 'orthodox', '#26242a'], [143, 44, .15, 'latein', '#c9a040'], [6, 42, .16, 'latein', '#c9c9cf']], 110),
+  hw_kreuze_schwarz: S => skCrossWall(S, [[75, 12, .66, 'gotik', '#1c1a20', {gem:'#5a1a7a'}], [32, 20, .44, 'doppel', '#2a282e'], [118, 22, .42, 'ankh', '#1c1a20'], [10, 10, .24, 'tau', '#3a3840'], [142, 10, .22, 'latein', '#2a282e'], [18, 64, .3, 'knospe', '#2a282e'], [132, 66, .3, 'gotik', '#2a282e'], [52, 70, .28, 'latein', '#1c1a20', {ring:1}], [100, 72, .28, 'orthodox', '#2a282e'], [58, 6, .15, 'ankh', '#2a282e'], [92, 4, .16, 'latein', '#3a3840']], 110),
+  hw_kreuze_gold: S => { skGlow(S, [34, .1, 27], 30, '#ffd25a', .08); skCrossWall(S, [[75, 12, .66, 'gotik', '#c9a040', {fil:'#fff0b0'}], [32, 22, .42, 'lilie', '#d4af37'], [118, 20, .44, 'doppel', '#b8902a'], [12, 10, .24, 'knospe', '#d4af37'], [140, 9, .24, 'latein', '#c9a040', {gem:'#1a5ac8'}], [20, 62, .32, 'latein', '#b8902a', {gem:'#9a1020'}], [130, 62, .32, 'knospe', '#c9a040'], [52, 70, .28, 'lilie', '#d4af37'], [98, 72, .28, 'latein', '#c9a040', {ring:1}], [57, 7, .16, 'latein', '#d4af37'], [94, 5, .17, 'tau', '#b8902a']], 110); },
+  hw_kreuze_reihe: S => { S.box(0, 0, 25, 67, 1.2, 1.1, '#5a4a3a'); skCrossWall(S, [['latein', '#26242a'], ['lilie', '#c9c9cf'], ['knospe', '#ecebe7'], ['gotik', '#26242a', {gem:'#9a1020'}], ['knospe', '#ecebe7'], ['lilie', '#c9c9cf'], ['latein', '#26242a']].map(([k, f, o], i) => [12 + i * 21, 14 + (i === 3 ? 0 : Math.abs(i - 3) * 2), i === 3 ? .44 : .36 - Math.abs(i - 3) * .03, k, f, o]), 60); },
+  hw_kreuz_gross: S => { skGlow(S, [13.5, .1, 32], 12, '#ffd25a', .1); skCross(S, 13.5, 46, .41, 'gotik', '#26242a', {fil:'#c9a040', gem:'#9a1020'}); },
+  hw_kreuz_rosenkranz: S => { const cx = 11, top = 44; skCross(S, cx, top, .27, 'latein', '#5a3a22', {wood:1});
+    for (let k = 0; k <= 40; k++) { const t = k / 40 * Math.PI * 2, x = cx + Math.sin(t) * 7.2, z = top + 1 - (1 - Math.cos(t)) * 9.9; if (k % 2 === 0) S.ell([x, 2.4, z], k % 10 === 0 ? .75 : .5, k % 10 === 0 ? .75 : .5, '#3a3442', {sw:.2}); }
+    S.line([cx, 1.6, top - 19], [cx, 1.6, top - 27], '#8a8692', .3, {nol:1}); [top - 21, top - 23, top - 25].forEach(z => S.ell([cx, 1.62, z], .6, .6, '#1c1a20', {sw:.2})); skCross(S, cx, top - 27.4, .11, 'latein', '#c9c9cf'); },
+  hw_kreuze_holz: S => skCrossWall(S, [[60, 12, .62, 'latein', '#ecebe4', {wood:1}], [24, 22, .44, 'latein', '#e2ddd2', {wood:1}], [96, 20, .46, 'tau', '#ecebe4', {wood:1}], [8, 8, .22, 'latein', '#d8d2c4', {wood:1}], [112, 8, .22, 'latein', '#ecebe4', {wood:1}], [36, 66, .28, 'latein', '#d8d2c4', {wood:1, heart:'#9a1020'}], [84, 68, .28, 'latein', '#e2ddd2', {wood:1}]], 100),
+  /* Röntgen-Leuchtkasten */
+  hw_roentgen: S => { const W = 34, H = 26, m = '#c4c3cb';
+    isoPrY(S, [[0, 0], [W, 0], [W, H], [0, H]], 0, 2.2, m); const pane = (x0, on) => { FP(S, 2.22, [[x0, 2], [x0 + 14.4, 2], [x0 + 14.4, H - 2], [x0, H - 2]], on ? '#cfe6f2' : '#7a8a96', {sw:.4}); if (on) skGlow(S, [x0 + 7.2, 2.3, H / 2], 8, '#cfe6f2', .15); FP(S, 2.24, [[x0 + 1, 3], [x0 + 13.4, 3], [x0 + 13.4, H - 3], [x0 + 1, H - 3]], '#1c2430', {sw:0, op:.85}); };
+    pane(2, 1); pane(W - 16.4, 0);
+    const sx = 9.2, sz = 15.6; FP(S, 2.26, skEllP(sx, sz, 4.6, 5.2, 20), '#e8f2f8', {sw:0, op:.9}); FP(S, 2.27, [[sx - 2.6, sz - 4], [sx + 2.6, sz - 4], [sx + 2, sz - 7.2], [sx - 2, sz - 7.2]], '#e8f2f8', {sw:0, op:.85});
+    [-1, 1].forEach(k => FP(S, 2.28, skEllP(sx + k * 1.8, sz, 1.4, 1.6, 12), '#1c2430', {sw:0})); FP(S, 2.28, [[sx - .5, sz - 2.6], [sx + .5, sz - 2.6], [sx, sz - 1.4]], '#1c2430', {sw:0}); for (let i = -2; i <= 2; i++) S.line([sx + i * .8, 2.29, sz - 5.2], [sx + i * .8, 2.29, sz - 6.8], '#1c2430', .25, {nol:1});
+    const rx = W - 9.2; S.line([rx, 2.26, H - 4], [rx, 2.26, 4], '#c8d8e2', .6, {nol:1, op:.7}); for (let i = 0; i < 6; i++) { const z = H - 6 - i * 2.6; [-1, 1].forEach(k => S.line([rx, 2.27, z], [rx + k * (4.6 - Math.abs(i - 2) * .5), 2.27, z - 1.2], '#c8d8e2', .5, {nol:1, op:.7})); }
+    S.line([W - 3, 2, 1], [W + 2, .4, -3], '#26222a', .45); [[1.2, 1.2], [W - 1.2, 1.2], [1.2, H - 1.2], [W - 1.2, H - 1.2]].forEach(([x, z]) => S.dot([x, 2.24, z], .35, '#8a8692')); },
+  /* Zerrissene Sehtafel */
+  hw_sehtafel: S => { const W = 18, H = 31, pp = '#f2efe6';
+    FP(S, .5, [[0, 0], [W - 5, 0], [W - 3, 2], [W - 4, 4], [W - 1, 5], [W, 7], [W, H], [0, H]], pp, {sw:.5}); FP(S, .52, [[W - 5, 0], [W - 3, 2], [W - 4, 4], [W - 1, 5], [W - 2.6, 3], [W - 4.2, 2.4]], '#d8d2c4', {sw:.2});
+    [[2.6, 'E', 6, 1.2], [10.2, 'FP', 3.4, .75], [15.4, 'TOZ', 2.6, .6], [19.8, 'LPED', 2, .5], [23.6, 'PECFD', 1.6, .42]].forEach(([d, t, h, w]) => { const tw = t.length * h / 1.4 * .78 + (t.length - 1) * h * .26; skText(S, .54, t, (W - tw) / 2, H - d - h, h, '#141216', w, {nol:1}); });
+    S.line([2, .54, 4.6], [W - 6, .54, 4.6], '#9a1018', .3, {nol:1}); [[2, H - .6], [W - 2, H - .6]].forEach(([x, z]) => FP(S, .56, [[x - 1.6, z - .8], [x + 1.6, z - .4], [x + 1.4, z + .8], [x - 1.8, z + .4]], '#d9d2bf', {sw:.2, op:.9})); },
+});
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
-const SKF_W = {girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17, tier_katze_schwarz:9, tier_katze_weiss:9, tier_katze_grau:9, tier_katze_schlafend:9, tier_mops:9, tier_hund_schwarz:9, tier_dackel:11, tier_fledermaus:9, tier_ratte:9, tier_hase:9, tier_schlange:9, tier_spinne:9.5, tier_korb:11, kraehe:6.5, nc_eule:9, hw_leichensack:26}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
+const SKF_W = {spiegel:9, spinnennetz:11, portraet:8, lichterkette:28, kronleuchter:14, kreuz:5, vorhang:15, neon_rawr:14, neon_herz:8, neon_stern:7, l_neonmond:9, nc_neonbat:18, graffiti:20, wandteppich:13, piratenflagge:14, schachflagge:14, rz_lichter:20, rz_wimpel:20, rz_schminklicht:10, l_wandkerze:6, l_haenge:7, nc_zauberspiegel:12, hw_birne:6, hw_schrift:16, hw_darmkette:52, hw_organkette:30, hw_deckenlampe:12, hw_kreuze:30, hw_kreuze_schwarz:30, hw_kreuze_gold:30, hw_kreuze_reihe:30, hw_kreuz_gross:12, hw_kreuz_rosenkranz:10, hw_kreuze_holz:24, hw_roentgen:15, hw_sehtafel:8, girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17, tier_katze_schwarz:9, tier_katze_weiss:9, tier_katze_grau:9, tier_katze_schlafend:9, tier_mops:9, tier_hund_schwarz:9, tier_dackel:11, tier_fledermaus:9, tier_ratte:9, tier_hase:9, tier_schlange:9, tier_spinne:9.5, tier_korb:11, kraehe:6.5, nc_eule:9, hw_leichensack:26}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
 for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3, flat:!!FURN[id].wall}), cnt = r.area; /* v803: Wand-Sachen flach, die Schräge kommt im Zimmer */
   Object.assign(FURN[id], {svg:r.svg, vb:r.vb, w:SKF_W[id] ?? Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[id] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('skf', k, e); } }
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
