@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='53dca8407677';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='87ec6fff2193';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -15294,9 +15294,141 @@ Object.assign(SKF, {
     const h = [13, 17, 1.8]; S.ell(h, 2.2, 2.1, '#2a1f1d', {sw:.4}); S.ell(skH(h, .3), 1.9, 1.85, skin, {sw:.35}); S.ell(skH([h[0], h[1], h[2] + .2], -.3), .35, .4, ink, {nol:1}); S.line(skH([h[0], h[1], h[2] + .5], .7), skH([h[0], h[1], h[2] - .3], 1.1), '#6e6975', .25);
   },
 });
+/* v806: Tiere und letzte Einzelstücke im Sticker-Stil */
+const skBP = (x, y, z, s) => (dx, dz) => skH([x, y, z + dz * s], dx * s * .5);
+/* Auge mit Iris, Pupille (Schlitz bei Katzen) und Glanz */
+function skEye(S, p, s, iris, o = {}){ const ink = '#1a1418'; if (o.shut) { S.line(skH([p[0], p[1], p[2]], -.7 * s), skH([p[0], p[1], p[2] - .3 * s], 0), ink, .4); S.line(skH([p[0], p[1], p[2] - .3 * s], 0), skH([p[0], p[1], p[2]], .7 * s), ink, .4); return; }
+  S.ell(p, .82 * s, .78 * s, iris || ink, {sw:.3}); if (iris) S.ell(p, (o.slit ? .2 : .42) * s, .62 * s, ink, {nol:1});
+  S.ell(skH([p[0], p[1], p[2] + .3 * s], -.25 * s), .24 * s, .24 * s, '#ffffff', {nol:1}); }
+/* sitzende Katze */
+function skCat(S, x, y, z, c, o = {}){ const s = o.s || 1, P = skBP(x, y, z, s), ink = '#1a1418', ch = o.chest, dk = ISH(c, .7);
+  S.ell(P(0, .1), 6 * s, 1.5 * s, '#120e14', {nol:1, op:.28});
+  /* Schwanz hinten, um die Pfoten gelegt */
+  [[3.4, 1.8], [5.6, 3.2], [6.4, 6], [5.6, 8.4]].reduce((a, b) => { S.line(P(...a), P(...b), c, 1.4 * s); return b; });
+  [-1, 1].forEach(k => skBlob(S, P(k * 2.5, 2.4), 2.1 * s, 2.2 * s, c));
+  skBlob(S, P(0, 4.6), 3.2 * s, 4.1 * s, c); if (ch) S.ell(P(0, 4.6), 1.7 * s, 2.6 * s, ch, {sw:.3});
+  [-1, 1].forEach(k => { skBlob(S, P(k * 1.1, 2.2), .85 * s, 2.3 * s, c, {hi:false}); S.ell(P(k * 1.1, .55), .95 * s, .6 * s, ch || ISH(c, 1.25), {sw:.3}); });
+  if (o.stripes) [[-2.6, 6, -1.6, 5], [2.6, 6, 1.6, 5], [-2.8, 3.8, -1.8, 3.2], [2.8, 3.8, 1.8, 3.2]].forEach(([a, b, c2, d]) => S.line(P(a, b), P(c2, d), dk, .5));
+  /* Ohren und Kopf */
+  [-1, 1].forEach(k => { S.poly([P(k * .9, 11.4), P(k * 3, 14.4), P(k * 3.4, 10.4)], c, {sw:.45}); S.poly([P(k * 1.5, 11.4), P(k * 2.85, 13.5), P(k * 3, 11)], o.inner || '#e8a0b4', {sw:0, nol:1}); });
+  skBlob(S, P(0, 9.7), 3.6 * s, 3 * s, c); if (ch) S.ell(P(0, 8.9), 1.8 * s, 1.3 * s, ch, {nol:1});
+  if (o.stripes) [[-.7, 12.4, -.5, 11.2], [0, 12.6, 0, 11.3], [.7, 12.4, .5, 11.2]].forEach(([a, b, c2, d]) => S.line(P(a, b), P(c2, d), dk, .45));
+  [-1, 1].forEach(k => skEye(S, P(k * 1.45, 10.2), s * .95, o.eye, {slit:1}));
+  S.poly([P(-.45, 9.1), P(.45, 9.1), P(0, 8.6)], '#e88aa4', {sw:.2}); S.line(P(0, 8.6), P(0, 8.2), ink, .25); S.line(P(-.7, 8), P(0, 8.2), ink, .25); S.line(P(.7, 8), P(0, 8.2), ink, .25);
+  [-1, 1].forEach(k => { S.line(P(k * 1.2, 8.7), P(k * 4.2, 9.4), '#d8d4dc', .22, {op:.8, nol:1}); S.line(P(k * 1.2, 8.4), P(k * 4.1, 8.1), '#d8d4dc', .22, {op:.8, nol:1}); });
+  if (o.collar) { S.line(P(-2.5, 7.2), P(2.5, 7.2), o.collar, .9 * s); S.ell(P(0, 6.6), .55 * s, .55 * s, '#d9b04a', {sw:.25}); } }
+/* schlafende Katze, eingerollt */
+function skCatSleep(S, x, y, z, c, s = 1){ const P = skBP(x, y, z, s), ink = '#1a1418';
+  S.ell(P(0, .1), 7 * s, 1.6 * s, '#120e14', {nol:1, op:.28});
+  skBlob(S, P(.6, 2.6), 6 * s, 2.8 * s, c); [[5.8, 1.4], [3, .5], [-1, .4], [-4.2, .9]].reduce((a, b) => { S.line(P(...a), P(...b), c, 1.3 * s); return b; });
+  [-1, 1].forEach(k => S.poly([P(-3.6 + k * .9, 4.6), P(-3.6 + k * 2.2, 7), P(-3.6 + k * 2.6, 4.2)], c, {sw:.4}));
+  skBlob(S, P(-3.6, 4.4), 2.9 * s, 2.4 * s, ISH(c, 1.08)); S.ell(P(-3.6, 3.6), 1.3 * s, .8 * s, ISH(c, 1.4), {nol:1}); [-1, 1].forEach(k => skEye(S, P(-3.6 + k * 1.15, 4.7), s * .9, null, {shut:1})); S.poly([P(-4, 4), P(-3.2, 4), P(-3.6, 3.6)], '#e88aa4', {sw:.15});
+  S.ell(P(-2.2, 1.6), 1.1 * s, .7 * s, ISH(c, 1.25), {sw:.3});
+  [[5.4, 7.6, .9], [6.6, 9, .7]].forEach(([dx, dz, r]) => { const q = P(dx, dz), Q = (a, b) => skH([q[0], q[1], q[2] + b * s * r], a * s * r); S.line(Q(-.6, .6), Q(.6, .6), '#e8e4f4', .35, {nol:1}); S.line(Q(.6, .6), Q(-.6, -.6), '#e8e4f4', .35, {nol:1}); S.line(Q(-.6, -.6), Q(.6, -.6), '#e8e4f4', .35, {nol:1}); }); }
+/* sitzender Hund (Mops oder Hund mit Schlappohren) */
+function skDog(S, x, y, z, c, o = {}){ const s = o.s || 1, P = skBP(x, y, z, s), ink = '#1a1418', mz = o.muzzle || ISH(c, 1.3);
+  S.ell(P(0, .1), 6.2 * s, 1.6 * s, '#120e14', {nol:1, op:.28});
+  [[3.2, 1.8], [4.6, 3.2], [5, 4.6]].reduce((a, b) => { S.line(P(...a), P(...b), c, 1.2 * s); return b; });
+  [-1, 1].forEach(k => skBlob(S, P(k * 2.7, 2.3), 2.3 * s, 2.2 * s, c));
+  skBlob(S, P(0, 4.6), 3.4 * s, 4 * s, c); if (o.chest) S.ell(P(0, 4.4), 1.8 * s, 2.5 * s, o.chest, {sw:.3});
+  [-1, 1].forEach(k => { skBlob(S, P(k * 1.3, 2.2), .95 * s, 2.3 * s, c, {hi:false}); S.ell(P(k * 1.3, .55), 1.05 * s, .62 * s, o.paw || ISH(c, 1.2), {sw:.3}); });
+  if (o.collar) { S.line(P(-2.7, 7.3), P(2.7, 7.3), o.collar, 1 * s); [-1.6, -.5, .6, 1.7].forEach(d => S.dot(P(d, 7.3), .3 * s, SK.silver)); }
+  skBlob(S, P(0, 9.8), 3.8 * s, 3.2 * s, c);
+  [-1, 1].forEach(k => skBlob(S, P(k * 3.5, 9.6), 1.3 * s, 2.3 * s, o.ear || ISH(c, .65), {hi:false}));
+  S.ell(P(0, 8.4), 2.3 * s, 1.6 * s, mz, {sw:.3}); if (o.wrinkle) [10.6, 11.2].forEach(dz => S.line(P(-1.4, dz), P(1.4, dz), ISH(c, .65), .3));
+  [-1, 1].forEach(k => skEye(S, P(k * 1.5, 10.2), s, '#3a2414'));
+  S.ell(P(0, 9.1), .8 * s, .55 * s, ink, {sw:.2}); S.ell(P(-.25, 9.25), .25 * s, .15 * s, '#ffffff', {nol:1, op:.6}); S.line(P(0, 8.6), P(0, 8), ink, .25); S.line(P(-.9, 7.9), P(0, 8), ink, .25); S.line(P(.9, 7.9), P(0, 8), ink, .25);
+  if (o.tongue) S.ell(P(.3, 7.4), .55 * s, .7 * s, '#e0708a', {sw:.25}); }
+Object.assign(SKF, {
+  tier_katze_schwarz: S => skCat(S, 8, 8, 0, '#1e1c24', {s:1.45, eye:'#e8c83a', collar:'#9a1a2a', inner:'#c87a94'}),
+  tier_katze_weiss: S => skCat(S, 8, 8, 0, '#ecebe6', {s:1.45, eye:'#6aa8e0', inner:'#eaa4bd', collar:'#d4508a'}),
+  tier_katze_grau: S => skCat(S, 8, 8, 0, '#9a98a2', {s:1.45, eye:'#8ac85a', stripes:1, chest:'#d8d6dc'}),
+  tier_katze_schlafend: S => skCatSleep(S, 9, 7, 0, '#3a3742', 1.35),
+  tier_mops: S => skDog(S, 8, 8, 0, '#d8bc8e', {s:1.45, muzzle:'#3a2a24', ear:'#3a2a24', wrinkle:1, tongue:1, chest:'#e6d0aa', collar:'#7c1b2c'}),
+  tier_hund_schwarz: S => skDog(S, 8, 8, 0, '#34303a', {s:1.45, muzzle:'#6a6672', ear:'#1e1c22', collar:'#141218', chest:'#4a4652', paw:'#5a5662'}),
+  /* Dackel, stehend von der Seite */
+  tier_dackel: S => { const s = 1.4, P = skBP(10, 8, 0, s), c = '#8a4a26', ink = '#1a1418';
+    S.ell(P(0, .1), 9 * s, 1.5 * s, '#120e14', {nol:1, op:.28});
+    [[6.6, 4.4], [8.4, 5.8], [9.2, 7]].reduce((a, b) => { S.line(P(...a), P(...b), c, .9 * s); return b; });
+    [[-4.2, 1.2], [4, 1.2]].forEach(([dx, dz]) => skBlob(S, P(dx + .8, dz), .9 * s, 1.5 * s, ISH(c, .8), {hi:false}));
+    skBlob(S, P(0, 3.4), 7 * s, 2.4 * s, c); S.ell(P(0, 2.3), 4.8 * s, .9 * s, '#c88a5a', {nol:1, op:.8});
+    [[-4.4, 1.1], [3.6, 1.1]].forEach(([dx, dz]) => { skBlob(S, P(dx, dz), .9 * s, 1.5 * s, c, {hi:false}); S.ell(P(dx - .3, .2), 1 * s, .5 * s, ISH(c, .7), {sw:.3}); });
+    S.line(P(-6, 4.2), P(-2.8, 4.6), '#7c1b2c', .9 * s); S.dot(P(-4.6, 3.6), .4 * s, '#d9b04a');
+    skBlob(S, P(-7.4, 6), 2.6 * s, 2.2 * s, c); skBlob(S, P(-9.6, 5.2), 1.8 * s, 1.2 * s, c, {hi:false}); S.ell(P(-11, 5.4), .55 * s, .45 * s, ink, {sw:.2});
+    skBlob(S, P(-6.6, 5.2), 1.2 * s, 2.4 * s, '#5a2a14', {hi:false}); skEye(S, P(-8.4, 6.6), s * .9, '#3a2414'); S.line(P(-10.8, 4.6), P(-9.4, 4.6), ink, .25); },
+  /* Fledermaus auf einem kleinen Ständer, Flügel offen */
+  tier_fledermaus: S => { const s = 1.3, x = 8, y = 8, P = skBP(x, y, 0, s), c = '#2a2432', m = '#4a3a56';
+    S.box(x - 3, y - 3, 0, 6, 6, 1.2, SK.wood, {sw:.4}); skCyl(S, x, y, 1.2, .7, 9, SK.wood, {n:8}); S.box(x - 4.5, y - .5, 10.2, 9, 1, .9, SK.wood2, {sw:.4});
+    const z0 = 11.1, W = (k) => [P(k * 1.2, z0 / s + 4.4), P(k * 4, z0 / s + 7.4), P(k * 7.4, z0 / s + 6.2), P(k * 8.6, z0 / s + 3.4), P(k * 7, z0 / s + 3.6), P(k * 6.2, z0 / s + 2), P(k * 4.6, z0 / s + 2.8), P(k * 3.4, z0 / s + 1.4), P(k * 1.4, z0 / s + 2.6)];
+    [-1, 1].forEach(k => { S.poly(W(k), m, {sw:.45}); [[4, 7.4, 4.6, 2.8], [4, 7.4, 6.2, 2], [4, 7.4, 7, 3.6]].forEach(([a, b, c2, d]) => S.line(P(k * a, z0 / s + b), P(k * c2, z0 / s + d), ISH(m, .65), .3)); });
+    skBlob(S, P(0, z0 / s + 3.4), 1.9 * s, 2.6 * s, c); [-1, 1].forEach(k => S.poly([P(k * .4, z0 / s + 6.6), P(k * 1.4, z0 / s + 8.6), P(k * 1.8, z0 / s + 6)], c, {sw:.4}));
+    skBlob(S, P(0, z0 / s + 6.2), 1.9 * s, 1.6 * s, c); [-1, 1].forEach(k => skEye(S, P(k * .75, z0 / s + 6.4), s * .7, '#d02a3a'));
+    S.line(P(-.4, z0 / s + 5.3), P(-.3, z0 / s + 4.9), '#ffffff', .2); S.line(P(.4, z0 / s + 5.3), P(.3, z0 / s + 4.9), '#ffffff', .2); },
+  /* Ratte */
+  tier_ratte: S => { const s = 1.45, P = skBP(8, 8, 0, s), c = '#b8b4bc', ink = '#1a1418';
+    S.ell(P(0, .1), 6 * s, 1.3 * s, '#120e14', {nol:1, op:.28});
+    [[3.6, 1.2], [6.4, .8], [8.4, 2], [9, 4]].reduce((a, b) => { S.line(P(...a), P(...b), '#e8a8b8', .7 * s); return b; });
+    skBlob(S, P(1, 2.4), 4.2 * s, 2.5 * s, c); [-1, 1].forEach(k => S.ell(P(-1 + k * 1.6, .5), .9 * s, .45 * s, '#e8a8b8', {sw:.25}));
+    skBlob(S, P(-3.6, 3.6), 2.2 * s, 1.9 * s, c); skBlob(S, P(-5.4, 3), 1.2 * s, .9 * s, c, {hi:false}); S.ell(P(-6.4, 3.1), .4 * s, .35 * s, '#e88aa4', {sw:.15});
+    [-1, 1].forEach(k => { const e = P(-3.2 + k * 1.2, 5.3); S.ell(e, 1.1 * s, 1.1 * s, c, {sw:.3}); S.ell(e, .65 * s, .65 * s, '#eaa4bd', {nol:1}); });
+    skEye(S, P(-4.4, 3.9), s * .6, '#d02a3a'); [[-6, 3.2, -8.4, 4], [-6, 3, -8.4, 2.4]].forEach(([a, b, c2, d]) => S.line(P(a, b), P(c2, d), '#e8e4ec', .2, {nol:1})); },
+  /* schwarzer Hase */
+  tier_hase: S => { const s = 1.45, P = skBP(8, 8, 0, s), c = '#26242c', ink = '#1a1418';
+    S.ell(P(0, .1), 5.4 * s, 1.4 * s, '#120e14', {nol:1, op:.28}); S.ell(P(3.4, 2.4), 1.4 * s, 1.3 * s, '#ecebe6', {sw:.3});
+    [-1, 1].forEach(k => skBlob(S, P(k * 2.2, 1.8), 2.2 * s, 1.7 * s, c)); skBlob(S, P(0, 4), 3.2 * s, 3.6 * s, c); S.ell(P(0, 3.8), 1.6 * s, 2.2 * s, '#3a3842', {nol:1});
+    [-1, 1].forEach(k => { skBlob(S, P(k * 1.1, 1.5), .8 * s, 1.5 * s, c, {hi:false}); S.ell(P(k * 2.6, .5), 1.3 * s, .55 * s, '#3a3842', {sw:.3}); });
+    [-1, 1].forEach(k => { skBlob(S, P(k * 1.4, 12.4), 1.1 * s, 3.4 * s, c, {hi:false}); S.ell(P(k * 1.4, 12.4), .5 * s, 2.5 * s, '#c87a94', {nol:1, op:.8}); });
+    skBlob(S, P(0, 8.2), 3 * s, 2.7 * s, c); [-1, 1].forEach(k => skEye(S, P(k * 1.2, 8.7), s * .85, '#c02a3a'));
+    S.poly([P(-.4, 7.6), P(.4, 7.6), P(0, 7.1)], '#e88aa4', {sw:.15}); S.line(P(0, 7.1), P(0, 6.7), '#8a8692', .25); [-1, 1].forEach(k => S.line(P(k * .9, 7.3), P(k * 3.4, 7.8), '#8a8692', .2, {nol:1})); },
+  /* Schlange, aufgerollt mit erhobenem Kopf */
+  tier_schlange: S => { const c = '#3d7a46', cx = 8, cy = 8, dk = '#2a5a32', ys = '#c8d870';
+    S.ell([cx, cy, .1], 8, 4.4, '#120e14', {nol:1, op:.28});
+    [[7, 0], [5.6, 1.6], [4.2, 3.1]].forEach(([r, z]) => { const R = skCirc(cx, cy, r, 22); skBand(S, cx, cy, r - 1.4, r, 0, Math.PI * 2, z, () => 1.6, c, 22).inner(); skBand(S, cx, cy, r - 1.4, r, 0, Math.PI * 2, z, () => 1.6, c, 22).top(); skBand(S, cx, cy, r - 1.4, r, 0, Math.PI * 2, z, () => 1.6, c, 22).outer();
+      for (let i = 0; i < 9; i++) { const a = -Math.PI / 4 + (i - 4) * .28; S.ell([cx + (r - .7) * Math.cos(a), cy + (r - .7) * Math.sin(a), z + 1.62], .45, .3, i % 2 ? dk : ys, {nol:1}); } });
+    const n = [[cx + 1, cy + 1, 4.6], [cx + 2, cy + 3, 7], [cx + 2.4, cy + 4.2, 9.6]]; n.reduce((a, b) => { S.line(a, b, c, 2); return b; });
+    const h = [cx + 2.6, cy + 4.6, 10.6]; S.ell(h, 2.2, 1.5, c, {sw:.4}); S.ell(skH(h, -.4), 1.2, .7, ISH(c, 1.2), {nol:1});
+    [-1, 1].forEach(k => skEye(S, skH([h[0], h[1], h[2] + .5], k * .9), .7, '#e8c83a', {slit:1}));
+    S.line(skH([h[0], h[1], h[2] - .8], 0), skH([h[0], h[1], h[2] - 2.2], 0), '#d02a3a', .3); S.line(skH([h[0], h[1], h[2] - 2.2], 0), skH([h[0], h[1], h[2] - 2.7], -.4), '#d02a3a', .25); S.line(skH([h[0], h[1], h[2] - 2.2], 0), skH([h[0], h[1], h[2] - 2.7], .4), '#d02a3a', .25); },
+  /* Vogelspinne im Terrarium */
+  tier_spinne: S => { const W = 22, D = 14, H = 14, g = SK.glass, fr = '#2f2a33';
+    S.box(0, 0, 0, W, D, 1.4, fr); S.box(.4, .4, 1.4, W - .8, D - .8, 2.6, '#5a3a24', {sw:.4}); for (let i = 0; i < 9; i++) S.dot([2 + (i * 7) % 18, 2 + (i * 5) % 10, 4.02], .35, '#3a2414');
+    S.fy(.4, .4, 1.4, W - .4, H, g, {op:.25, sw:.4}); S.fx(.4, .4, 1.4, D - .4, H, g, {op:.2, sw:.4});
+    S.line([4, 4, 4], [10, 6, 9], '#4a3a2a', 1); S.line([10, 6, 9], [13, 5, 10], '#4a3a2a', .7); skPlant(S, 17, 4, 4, '#4f6b45');
+    const sp = [11, 8, 4.4], leg = (k, d) => { const a = [sp[0] + k * 1.2, sp[1] + d * .5, sp[2] + .8], b = [sp[0] + k * 4.4, sp[1] + d * 1.9, sp[2] + 2.6], c2 = [sp[0] + k * 6, sp[1] + d * 3, sp[2]]; S.line(a, b, '#3a2418', 1); S.line(b, c2, '#3a2418', .85); };
+    [-1.5, -.5, .5, 1.5].forEach(d => leg(-1, d)); S.ell([sp[0] + 2, sp[1], sp[2] + 1.4], 2.8, 2, '#3a2418', {sw:.4}); S.ell([sp[0] - 1, sp[1], sp[2] + 1.5], 2, 1.6, '#4a2e1e', {sw:.4}); S.ell(skH([sp[0] - .8, sp[1], sp[2] + 1.6], -.3), .4, .3, '#d07a3a', {nol:1});
+    [-1.5, -.5, .5, 1.5].forEach(d => leg(1, d)); S.dot([sp[0] - 1.6, sp[1], sp[2] + 1.4], .25, '#e8e2d6');
+    S.fy(D - .4, .4, 1.4, W - .4, H, g, {op:.18, sw:.5}); S.fx(W - .4, .4, 1.4, D - .4, H, g, {op:.15, sw:.5}); S.ftop(H + .6, 0, 0, W, D, g, {op:.2, sw:.3}); S.box(-.2, -.2, H, W + .4, 1.2, 1.2, fr); S.box(-.2, -.2, H, 1.2, D + .4, 1.2, fr); S.box(W - 1, -.2, H, 1.2, D + .4, 1.2, fr); S.box(-.2, D - 1, H, W + .4, 1.2, 1.2, fr); for (let x = 3; x < W - 2; x += 2.5) S.line([x, 1, H + 1.21], [x, D - 1, H + 1.21], ISH(fr, 1.4), .3); S.shine(D - .4, 1, 2, W - 1, H - 1); },
+  /* Katzenkorb mit Kissen */
+  tier_korb: S => { const cx = 11, cy = 9, r = 10, rat = '#a8743e', P = Math.PI;
+    const B = skBand(S, cx, cy, r - 1.6, r, 0, P * 2, 0, a => 4.4 + 1.8 * Math.max(0, -Math.sin(a)), rat, 26); B.inner();
+    S.ell([cx, cy + .6, 3.2], r - 2, (r - 2) * .5, '#7c1b2c', {sw:.4}); S.ell(skH([cx, cy + .6, 3.6], -2), 4, 1.6, ISH('#7c1b2c', 1.3), {nol:1, op:.7}); S.ell([cx + 3, cy + 2, 3.4], 2, .9, '#e8e2d6', {sw:.3});
+    B.top(); B.outer(); for (let i = 0; i < 16; i++) { const a = -P / 4 + (i - 8) * .19; if (Math.cos(a) + Math.sin(a) > .1) [1.4, 3.2].forEach(z => S.line([cx + r * Math.cos(a), cy + r * Math.sin(a), z], [cx + r * Math.cos(a + .1), cy + r * Math.sin(a + .1), z + 1], ISH(rat, .7), .35)); } },
+  /* Krähe auf einem Ast */
+  kraehe: S => { const s = 1.3, P = skBP(8, 6, 0, s), c = '#1c1a22', ink = '#1a1418';
+    isoPrX(S, skCirc(2, 1.4, 1.4, 10), 0, 16, '#4a3628'); S.line([12, 2, 2.6], [14, 1, 5], '#4a3628', .8);
+    S.poly([P(2, 4.6), P(6.2, 2.2), P(6.6, 3.2), P(2.6, 5.8)], ISH(c, .9), {sw:.4});
+    [-1, 1].forEach(k => { S.line(P(k * .7, 3.3), P(k * .7, 2.4), '#4a4652', .45); });
+    skBlob(S, P(0, 5.2), 3 * s, 2.6 * s, c); S.poly([P(.4, 6.6), P(3.6, 5.4), P(2.6, 3.8), P(.4, 4.2)], '#2e2a36', {sw:.35});
+    skBlob(S, P(-1.6, 8.4), 1.9 * s, 1.7 * s, c); S.poly([P(-3.2, 8.8), P(-6, 8), P(-3.2, 7.8)], '#5a5662', {sw:.35}); S.line(P(-3.2, 8.3), P(-5.6, 8), '#8a8692', .2, {nol:1});
+    skEye(S, P(-2.2, 9), s * .55, null); S.dot(skH(P(-2.2, 9), -.1), .12, '#ffffff'); },
+  /* Schleiereule auf einer Sitzstange */
+  nc_eule: S => { const s = 1.35, x = 8, y = 8, P = skBP(x, y, 15.6 / s, s), c = '#c9a46a', w = '#8a6a44';
+    S.box(x - 4, y - 4, 0, 8, 8, 1.4, SK.wood, {sw:.4}); skCyl(S, x, y, 1.4, .8, 13, SK.wood, {n:8}); S.box(x - 6, y - .8, 14.4, 12, 1.6, 1.2, SK.wood2, {sw:.4});
+    [-1, 1].forEach(k => S.line(P(k * .9, 0), P(k * .9, -.6), '#8a8692', .45));
+    skBlob(S, P(0, 4), 3.4 * s, 4 * s, c); [-1, 1].forEach(k => skBlob(S, P(k * 3, 3.8), 1.4 * s, 3.2 * s, w, {hi:false})); for (let i = 0; i < 6; i++) S.dot(P(-1.2 + (i % 3) * 1.2, 2.6 + Math.floor(i / 3) * 1.4), .3, '#6a4a2a');
+    skBlob(S, P(0, 9), 3.6 * s, 3 * s, c); S.poly([P(0, 7), P(-2.8, 8.4), P(-2.6, 10.6), P(-1, 11.2), P(0, 10.4), P(1, 11.2), P(2.6, 10.6), P(2.8, 8.4)], '#f4efe4', {sw:.35});
+    [-1, 1].forEach(k => skEye(S, P(k * 1.2, 9.5), s * .85, null)); S.poly([P(-.35, 8.6), P(.35, 8.6), P(0, 7.8)], '#c9a24a', {sw:.2}); },
+  /* Ritualkreis mit Kerzen */
+  hw_leichensack: S => { const c = 16, R = 16; skRugP(S, skCirc(c, c, R, 32), '#1c1418', {fn:z => {
+    [R - 1.5, R - 3.6].forEach(r => { const Q = skCirc(c, c, r, 40); for (let i = 0; i < 40; i++) S.line([...Q[i], z], [...Q[(i + 1) % 40], z], '#a01a2a', .4); });
+    const st = []; for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 4 / 5; st.push([c + (R - 3.8) * Math.cos(a), c + (R - 3.8) * Math.sin(a), z + .01]); } st.forEach((p, i) => S.line(p, st[(i + 1) % 5], '#c8202e', .5));
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; S.dot([c + (R - 2.55) * Math.cos(a), c + (R - 2.55) * Math.sin(a), z + .02], .3, '#c8202e'); }
+    S.ell([c, c, z + .03], 6, 3, '#c8202e', {nol:1, op:.12}); }});
+    skSkull(S, c, c, .7, 2); for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * 2 / 5; skCandleR(S, c + (R - 1.6) * Math.cos(a), c + (R - 1.6) * Math.sin(a), .7, 2.6 + (i % 2) * 1.6, .9, i % 2 ? '#2a2630' : SK.bone); } },
+});
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
-const SKF_W = {girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
+const SKF_W = {girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17, tier_katze_schwarz:9, tier_katze_weiss:9, tier_katze_grau:9, tier_katze_schlafend:9, tier_mops:9, tier_hund_schwarz:9, tier_dackel:11, tier_fledermaus:9, tier_ratte:9, tier_hase:9, tier_schlange:9, tier_spinne:9.5, tier_korb:11, kraehe:6.5, nc_eule:9, hw_leichensack:26}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
 for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3, flat:!!FURN[id].wall}), cnt = r.area; /* v803: Wand-Sachen flach, die Schräge kommt im Zimmer */
   Object.assign(FURN[id], {svg:r.svg, vb:r.vb, w:SKF_W[id] ?? Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[id] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('skf', k, e); } }
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
