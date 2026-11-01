@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c68549020ee3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b52a71f611b7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10521,7 +10521,10 @@ const nameFont = u => ''; /* v575: Namen in der normalen Schrift (Inaya: keine S
 /* v702 (Inaya): Repost zeigt den Originalbeitrag der Person (Kopf, Design, Likes, Kommentare) mit „… hat repostet“ darüber, wie bei Insta. Der Repost-Knopf darauf nimmt ihn zurück. Ohne Original (gelöscht, nicht geladen) bleibt die alte Karte */
 let RPIN = false;
 const RP_HEAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>';
-function rpOrig(p){ const sh = p.share; if (!sh?.pid || !sh.a) return null; const o = postFind(sh.a, sh.pid); return o && o.type !== 'teilen' && !o.arch ? o : null; }
+function rpOrig(p){ const sh = p.share; if (!sh?.pid || !sh.a) return null; const o = postFind(sh.a, sh.pid); if (o) return o.type !== 'teilen' && !o.arch ? o : null;
+  /* v833 (Inaya): Original nicht geladen (z. B. reiner Text-Beitrag, älter als die Beiträge im Profil): aus der Repost-Kopie nachbauen, damit es trotzdem wie der Originalbeitrag mit „… hat repostet“ aussieht */
+  if (sh.a === S.me || !profUser(sh.a) || !/^[\w-]+$/.test(sh.pid)) return null; const own = sh.bigk === sh.a + '/' + sh.pid; if (sh.bigk && !own) return null;
+  return {id:sh.pid, author:sh.a, type:sh.type || 'gedanke', text:sh.text || '', ts:sh.ts || p.ts, img:sh.img || '', bigimg:own && !sh.img ? 1 : 0, url:sh.url || '', ...(sh.lp ? {lp:sh.lp} : {}), reactions:{}, comments:[], remote:true, rpSyn:1}; }
 function postHTML(p){
   if (p.type === 'teilen' && !RPIN && !isHidden(p)) { const o = rpOrig(p); if (o) { RPIN = true; let h = ''; try { h = postHTML(o); } finally { RPIN = false; }
     if (h) return h.replace(/^(\s*<article[^>]*>)/, `$1<div class="rphead">${RP_HEAD}<span>${ulinkH(p.author)} <span>hat repostet</span></span></div>`); } }
