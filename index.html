@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='622c0671937c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ab018c7aef83';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -601,7 +601,7 @@ html,body{overflow-x:clip} /* v804: auch am Handy kein seitlicher Bildlauf */
 .room.iso .redge{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
 .room.iso .redge .cap{fill:#d9d8de}.room.iso .redge .capd{fill:#a9a8b0}.room.iso .redge .slab{fill:#1b1b1f}.room.iso .redge .slab2{fill:#26262b}.room.iso .redge path.ln{fill:none;stroke:#00000059;stroke-width:1;vector-effect:non-scaling-stroke}
 .f3w{display:block;width:100%;aspect-ratio:1;max-height:100%;transform:translateX(-7%) translateY(8%) skewY(26.565deg) scale(.74);transform-origin:50% 60%}.f3w>svg{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;overflow:visible;display:block}.room.iso .ritem.r3{transform-origin:50% 100%}.room.iso .ritem.rw{transform-origin:50% 50%}.room.iso .ritem svg{overflow:visible}
-.ritem{position:absolute}
+.ritem{position:absolute}.ritem.rhang .rcord{position:absolute;left:50%;bottom:96%;width:1.6px;height:900px;margin-left:-.8px;background:#26222a;pointer-events:none} /* v814: Schnur der Deckenlampe bis an die Decke */
 .ritem svg{width:100%;height:auto;display:block;overflow:visible}
 .ritem.av{width:14%}
 .room[data-live] .ritem.av{transition:left .7s ease-in-out,top .7s ease-in-out}.room[data-live]{cursor:pointer}
@@ -7051,7 +7051,7 @@ function rHost(items, it){ // größtes Möbel, auf dessen Fläche die Unterkant
   for (const o of items) { if (o === it || !rFloor(o.k) || o.on === it.k) continue; const b = rRect(o); if (!(rider && rHostK(o.k)) && b.w < a.w * 1.3) continue; /* Ablagen nehmen jedes Deko-Teil, egal wie groß (Inaya, 2026-10-17) */
     if (px > b.x + b.w * .04 && px < b.x + b.w * .96 && py > b.y + b.h * .05 && py < b.y + b.h * .9 && (!best || b.w > rRect(best).w)) best = o; }
   return best; }
-function rZ(items, it, d = 0){ const f = FURN[it.k]; if (f.rug) return 2; if (f.wall) return 1; const h = it.on && d < 4 ? items.find(o => o.k === it.on && o !== it) : null;
+function rZ(items, it, d = 0){ const f = FURN[it.k]; if (f.rug) return 2; if (f.wall) return 1; if (f.hang) return 880; const h = it.on && d < 4 ? items.find(o => o.k === it.on && o !== it) : null;
   return h ? rZ(items, h, d + 1) + 1 + d : rScr(rDim(it), it.x, it.y).z; }
 const ROOM_COLS = [['#141416','Schwarz'],['#3a3a40','Grau'],['#8a8a92','Silber'],['#e9e7e2','Weiß'],['#4a0f1c','Bordeaux'],['#8a1020','Rot'],['#c86a8a','Rosa'],['#3d1f5c','Violett'],['#9a6fd0','Lila'],['#1d2b4a','Nachtblau'],['#5f8fc0','Blau'],['#1f3d2e','Tannengrün'],['#5fae6b','Grün'],['#8a6a2a','Bronze'],['#d4af37','Gold'],['#4a2e1e','Holz']];
 function roomColorRow(label, k, cur){ // k: 'item' (ausgewähltes Möbel), 'wallC' oder 'floorC'
@@ -7079,7 +7079,7 @@ const rBoxy = k => false && RBOXY(k); /* v792 (Inaya: „wie sehen die Möbel au
 const RBOXY = k => { const f = FURN[k]; return !!f && !f.wall && !f.rug && (['bett', 'sofa', 'schrank'].includes(f.r) || /tisch|kommode|regal|kamin|truhe|vitrine|sarg|kiste|spind|amp|altar|klavier|orgel|standuhr|bank|thron|sessel/i.test(k + ' ' + f.name)) && !/lampe|leuchter|kerze/i.test(k + ' ' + f.name); };
 const rRot = it => rBoxy(it.k);
 /* Maße eines Stücks im flachen Rahmen: w in % der Breite, h in % der Höhe (16:10); Avatar 14 % breit, 1:2 */
-function rDim(it, vis){ if (it === 'av') { const w = vis ? 15.5 : 16.5; /* v810 (Inaya): Avatare etwas größer, passend zu den Sticker-Möbeln */ return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, wall:!!f.wall, rug:!!f.rug}; }
+function rDim(it, vis){ if (it === 'av') { const w = vis ? 15.5 : 16.5; /* v810 (Inaya): Avatare etwas größer, passend zu den Sticker-Möbeln */ return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, hang:!!f.hang, wall:!!f.wall, rug:!!f.rug}; }
 /* v804 (Inaya): Möbel bleiben im Zimmer. Ragt ein Stück seitlich (oder an der Wand oben) heraus, wird es nach innen gerückt */
 function rFit(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc, m = Math.min(.5, wS / 2 + .01);
   if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2), X = Math.max(m, Math.min(1 - m, P.X)), Y = Math.max(hS / 2 + .005, P.Y); if (Math.abs(X - P.X) < 1e-4 && Math.abs(Y - P.Y) < 1e-4) return {x, y}; const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; }
@@ -7089,7 +7089,7 @@ function rFit(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI
   const v = rInvF(.5 + (P.X - .5) * lo, cy + (P.Y - cy) * lo); return {x:v.lx - d.w / 2, y:v.fy - d.h}; }
 function rScr(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc; ({x, y} = rFit(d, x, y));
   if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS / 2) / RI.H * 100, w:wS * 100, z:1, X:P.X, Y:P.Y}; }
-  const P = rIsoF(x + d.w / 2, y + d.h); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS) / RI.H * 100, w:wS * 100, z:d.rug ? 2 : 10 + Math.round((P.Y - RI.wh) * 200), X:P.X, Y:P.Y}; }
+  const P = rIsoF(x + d.w / 2, y + d.h), lift = d.hang ? .17 : 0; return {l:(P.X - wS / 2) * 100, t:(P.Y - lift - hS) / RI.H * 100, w:wS * 100, z:d.rug ? 2 : d.hang ? 880 : 10 + Math.round((P.Y - RI.wh) * 200), X:P.X, Y:P.Y - lift}; } /* v814: Deckenlampen schweben über ihrem Bodenpunkt */
 const rStyle = (d, x, y) => { const q = rScr(d, +x || 0, +y || 0); return `left:${q.l.toFixed(2)}%;top:${q.t.toFixed(2)}%;width:${q.w.toFixed(2)}%`; };
 function rPut(el, d, x, y, z){ if (!el) return; const q = rScr(d, +x || 0, +y || 0); el.style.left = q.l.toFixed(2) + '%'; el.style.top = q.t.toFixed(2) + '%'; el.style.width = q.w.toFixed(2) + '%'; if (z) el.style.zIndex = q.z; }
 /* Zeiger → Stelle im flachen Rahmen (off = Abstand Zeiger zum Ankerpunkt, in Raumbreiten) */
@@ -7118,10 +7118,11 @@ function furn3D(it){ const f = FURN[it.k], [vw, vh] = f.vb, id = 'r3' + (++R3N),
 function roomHTML(u, edit, live=edit, noAv=false){ /* v812: noAv = ohne Avatar (Zimmer im Profil, Inaya) */
   const r = u.room, sel = edit && roomSel;
   if (r.items.some(it => !FURN[it.k])) { r.items = r.items.filter(it => FURN[it.k]); roomSel = null; } // entfernte Möbel/Poster verschwinden aus dem Zimmer
+  r.items.forEach(it => { if (FURN[it.k]?.hang && !it.hg) { it.hg = 1; it.y = 84 - itemH(it.k) * itS(it); } }); /* v814: früher an der Wand, jetzt mitten über dem Boden */
   const items = r.items.map((it, i) => {
     const f = FURN[it.k]; if (!f) return '';
     const sc = itS(it), hs = sel != null && sel !== 'av' ? r.items[sel] : null, z = hs === it ? 900 : hs && it.on === hs.k ? 901 : rZ(r.items, it); // ausgewähltes Stück nach vorn, was darauf steht, bleibt davor
-    return `<div class="ritem${sel === i ? ' sel' : ''}${f.wall ? ' rw' : rBoxy(it.k) ? ' r3' : ''}" ${edit ? `data-drag="${i}"` : ''} style="${rStyle(rDim(it), it.x, it.y)};z-index:${z};${rTf(it) ? 'transform:' + rTf(it) + ';' : ''}">${rBoxy(it.k) ? furn3D(it) : furnSVG(it.k, it.c)}${edit && sel === i && furnScal(it.k) ? `<i class="rszh" data-rsz="${i}" title="Ziehen: größer oder kleiner" aria-hidden="true"></i>` : ''}</div>`;
+    return `<div class="ritem${sel === i ? ' sel' : ''}${f.wall ? ' rw' : f.hang ? ' rhang' : rBoxy(it.k) ? ' r3' : ''}" ${edit ? `data-drag="${i}"` : ''} style="${rStyle(rDim(it), it.x, it.y)};z-index:${z};${rTf(it) ? 'transform:' + rTf(it) + ';' : ''}">${f.hang ? '<i class="rcord" aria-hidden="true"></i>' : ''}${rBoxy(it.k) ? furn3D(it) : furnSVG(it.k, it.c)}${edit && sel === i && furnScal(it.k) ? `<i class="rszh" data-rsz="${i}" title="Ziehen: größer oder kleiner" aria-hidden="true"></i>` : ''}</div>`;
   }).join('');
   const z = rScr(rDim('av'), r.av.x, r.av.y).z, fl = edit && sel != null && sel !== 'av' && r.items[sel] ? rFloatHTML(r.items[sel]) : '';
   return `<div class="rscroll"><div class="room iso ${edit ? 'edit' : ''}" id="${edit ? 'room' : ''}" ${live && !edit ? 'data-live="1"' : ''}>
@@ -7890,8 +7891,8 @@ const HELPERS = {
     steck:'Ich bin Andy, Nachteule und Helfer bei Noctibat. Tagsüber schlafe ich, nachts skate ich, höre alte Platten und schaue Horrorfilme mit viel Popcorn. Frag mich gern alles.'}, /* Steckbrief (Inaya, 2026-10-18); about = So geht’s */
 };
 // Juliets Zimmer: weiß wie ein Geisterschloss, rote Akzente (Inaya, 2026-10-11)
-HELPERS.juliet.room = {wall:'damast',wallC:'#e6e5ea',floor:'teppich',floorC:'#c9c7cf',av:{x:38,y:40},items:[{k:'spinnennetz',x:0,y:0},{k:'portraet',x:4,y:12,c:'#ecebef'},{k:'kleiderschrank',x:2,y:36.7,c:'#ecebef'},{k:'bett',x:17,y:36.7,c:'#f2f1f4'},{k:'fenster',x:47,y:8},{k:'nachttisch',x:49,y:60,c:'#e4e3e8'},{k:'kronleuchter',x:62,y:0},{k:'schminktisch',x:62,y:42.8,c:'#ecebef'},{k:'regal',x:79,y:42,c:'#dddce2'},{k:'kraehe',x:83,y:32.6},{k:'kandelaber',x:94,y:52},{k:'teppich',x:32,y:77,c:'#8a1020'},{k:'tier_katze_schwarz',x:54,y:73},{k:'tier_korb',x:72,y:83,c:'#8a1020'},{k:'kerzen',x:4,y:82}]};
-HELPERS.andy.room = {wall:'stein',floor:'schach',av:{x:48,y:42},items:[{k:'spinnennetz',x:89,y:0},{k:'fenster',x:6,y:8},{k:'po_him',x:31,y:12},{k:'po_typeo',x:44,y:14},{k:'standuhr',x:1,y:42},{k:'stehlampe',x:19,y:40.8},{k:'sofa',x:28,y:54.2},{k:'regal',x:58,y:42},{k:'kraehe',x:62,y:32.4},{k:'sarg',x:74,y:41.6},{k:'amp',x:84,y:60.6},{k:'gitarre',x:93,y:47.2},{k:'t_fleder',x:28,y:78},{k:'couchtisch',x:35,y:80},{k:'tier_hund_schwarz',x:64,y:78},{k:'schaedel',x:4,y:66}]};
+HELPERS.juliet.room = {wall:'damast',wallC:'#e6e5ea',floor:'teppich',floorC:'#c9c7cf',av:{x:44,y:76},items:[{k:"fenster", x:18.5, y:14}, {k:"portraet", x:5, y:18.2, c:"#ecebef"}, {k:"lichterkette", x:61, y:0.1}, {k:"wandteppich", x:53.5, y:17.3}, {k:"spinnennetz", x:43.5, y:-0.6}, {k:"kreuz", x:90.5, y:19.3}, {k:"kleiderschrank", x:30.6, y:8.6, m:1, c:"#ecebef"}, {k:"schminktisch", x:8.5, y:20.1, m:1, c:"#ecebef"}, {k:"nachttisch", x:51.9, y:43.4, c:"#e4e3e8", m:0}, {k:"bett", x:53.5, y:-8.6, c:"#f2f1f4", m:0}, {k:"teppich", x:33.9, y:61.1, c:"#8a1020", m:1}, {k:"tier_katze_schwarz", x:44.5, y:65.1, m:1}, {k:"tier_korb", x:36.5, y:78.6, c:"#8a1020", m:1}, {k:"kandelaber", x:15.9, y:49.6, m:1}, {k:"kerzen", x:59.4, y:76.6, m:0}, {k:"kronleuchter", x:37, y:63.48136482939633, hg:1, m:1}]}; /* v814: neu eingerichtet (Inaya) */
+HELPERS.andy.room = {wall:'stein',floor:'schach',av:{x:52,y:76},items:[{k:"fenster", x:14.9, y:14}, {k:"spinnennetz", x:43.5, y:-0.6}, {k:"po_him", x:57.5, y:19.8}, {k:"po_typeo", x:67.5, y:19.8}, {k:"po_slipknot", x:77.5, y:19.8}, {k:"standuhr", x:41.9, y:12.7, m:1}, {k:"regal", x:27.8, y:14.5, m:1}, {k:"sofa", x:47.3, y:29, m:0}, {k:"stehlampe", x:75, y:24.9, m:0}, {k:"sarg", x:82.4, y:26.7, m:0}, {k:"t_fleder", x:30.6, y:54, m:1}, {k:"couchtisch", x:36.1, y:53.4, m:1}, {k:"amp", x:73.3, y:64, m:0}, {k:"gitarre", x:67.3, y:65.5, m:0}, {k:"tier_hund_schwarz", x:41.5, y:68.4, m:1}, {k:"schaedel", x:5.2, y:50.1, m:1}, {k:"l_haenge", x:26.5, y:63.093333333333334, hg:1, m:1}]}; /* v814: neu eingerichtet (Inaya) */
 for (const h of Object.values(HELPERS)) { h.deko = h.room.items.map(i => i.k); h.earned = 999; }
 const HELPER_POSTS = [
   // Gemeinsamer Beitrag von Juliet und Andy (Inaya, 2026-10-14): Hilfe und Fragen, Knöpfe führen direkt in den Chat mit den beiden
@@ -15645,6 +15646,37 @@ Object.assign(SKF, {
     [[2.6, 'E', 6, 1.2], [10.2, 'FP', 3.4, .75], [15.4, 'TOZ', 2.6, .6], [19.8, 'LPED', 2, .5], [23.6, 'PECFD', 1.6, .42]].forEach(([d, t, h, w]) => { const tw = t.length * h / 1.4 * .78 + (t.length - 1) * h * .26; skText(S, .54, t, (W - tw) / 2, H - d - h, h, '#141216', w, {nol:1}); });
     S.line([2, .54, 4.6], [W - 6, .54, 4.6], '#9a1018', .3, {nol:1}); [[2, H - .6], [W - 2, H - .6]].forEach(([x, z]) => FP(S, .56, [[x - 1.6, z - .8], [x + 1.6, z - .4], [x + 1.4, z + .8], [x - 1.8, z + .4]], '#d9d2bf', {sw:.2, op:.9})); },
 });
+/* v814 (Inaya): Deckenlampen hängen frei im Raum (3D, schräg von oben), Schnur bis an die Decke, stehen nicht mehr an einer Wand */
+const HANG_IDS = ['kronleuchter', 'l_haenge', 'hw_birne', 'hw_deckenlampe'];
+Object.assign(SKF, {
+  kronleuchter: S => { const cx = 14, cy = 14, g = '#2a2630', br = '#b8902a', z0 = 10;
+    S.line([cx, cy, z0 + 14], [cx, cy, z0 + 26], '#4a4652', .6);
+    skCyl(S, cx, cy, z0 + 9, 1.4, 5, g, {n:10}); S.ell([cx, cy, z0 + 8.6], 2.4, 1.3, g, {sw:.4}); skBall(S, cx, cy, z0 + 6.4, 1.6, g);
+    const N = 6, arm = i => { const a = i / N * Math.PI * 2 + .3, ex = cx + 10 * Math.cos(a), ey = cy + 10 * Math.sin(a); return {a, ex, ey}; };
+    const back = [], front = []; for (let i = 0; i < N; i++) { const A = arm(i); (Math.cos(A.a) + Math.sin(A.a) < 0 ? back : front).push(A); }
+    const draw = ({ex, ey}) => { S.line([cx, cy, z0 + 6], [(cx + ex) / 2, (cy + ey) / 2, z0 + 3], g, .8); S.line([(cx + ex) / 2, (cy + ey) / 2, z0 + 3], [ex, ey, z0 + 4.4], g, .8);
+      skCyl(S, ex, ey, z0 + 4.4, 1.4, .6, br, {n:10, sw:.3}); skCandleR(S, ex, ey, z0 + 5, 2.8, .55); S.ell([ex, ey, z0 + 3.2], .35, .7, '#e8eef8', {sw:.15, op:.9}); };
+    back.forEach(draw); S.ell([cx, cy, z0 + 2.4], 1, 1.6, '#e8eef8', {sw:.25, op:.9}); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; S.ell([cx + 4 * Math.cos(a), cy + 4 * Math.sin(a), z0 + 4.4], .3, .6, '#e8eef8', {sw:.12, op:.85}); } front.forEach(draw); },
+  l_haenge: S => { const cx = 6, cy = 6, g = '#1c1a20', z0 = 6, W = 7.4, H = 13;
+    S.line([cx, cy, z0 + H + 4], [cx, cy, z0 + H + 16], '#4a4652', .5); for (let z = z0 + H + 4.6; z < z0 + H + 15; z += 1.5) S.ell([cx, cy, z], .35, .55, '#5a5662', {sw:.18});
+    skFrust(S, cx, cy, z0 + H, 5.4, 1.4, 3.2, g, {n:4}); S.ell([cx, cy, z0 + H + 3.6], 1, .7, g, {sw:.3});
+    S.box(cx - W / 2, cy - W / 2, z0, W, W, H, g, {nof:1, nor:1, not:1}); S.box(cx - W / 2 + .3, cy - W / 2 + .3, z0 + .5, W - .6, W - .6, H - 1, '#f3c25c', {op:.55});
+    skGlow(S, [cx, cy, z0 + 6], 7, '#f3c25c', .2); skCandleR(S, cx, cy, z0 + 1, 3, .9); [[cx, cy + W / 2, 8, .7], [cx + W / 2, cy, 10, .55]].forEach(([x, y, z, s], i) => i ? SP(S, x + .02, SK_BAT.map(([u, v]) => [y + u * s, z0 + z - v * s]), '#141216', {sw:.15}) : FP(S, y + .02, SK_BAT.map(([u, v]) => [x + u * s, z0 + z - v * s]), '#141216', {sw:.15}));
+    [[0, 0], [W, 0], [0, W], [W, W]].forEach(([dx, dy]) => S.line([cx - W / 2 + dx, cy - W / 2 + dy, z0], [cx - W / 2 + dx, cy - W / 2 + dy, z0 + H], g, .8));
+    S.box(cx - W / 2 - .4, cy - W / 2 - .4, z0 - 1, W + .8, W + .8, 1, g); skFrust(S, cx, cy, z0 - 2.6, .6, W / 2 - .2, 1.6, g, {n:4}); },
+  hw_birne: S => { const cx = 4, cy = 4, z0 = 4;
+    S.line([cx, cy, z0 + 7], [cx, cy, z0 + 24], '#26222a', .5); skCyl(S, cx, cy, z0 + 5, 1.1, 2.6, '#3a3640', {n:10});
+    skGlow(S, [cx, cy, z0 + 2.4], 6, '#f8e090', .24); skBall(S, cx, cy, z0 + 2.6, 2.3, '#fbe9a8'); S.line([cx - .9, cy, z0 + 2.4], [cx - .3, cy, z0 + 3.6], '#c88a2a', .3, {nol:1}); S.line([cx - .3, cy, z0 + 3.6], [cx + .3, cy, z0 + 2.4], '#c88a2a', .3, {nol:1}); S.line([cx + .3, cy, z0 + 2.4], [cx + .9, cy, z0 + 3.6], '#c88a2a', .3, {nol:1}); },
+  hw_deckenlampe: S => { const cx = 10, cy = 10, z0 = 8;
+    S.line([cx, cy, z0 + 12], [cx, cy, z0 + 26], '#26222a', .5); skCyl(S, cx, cy, z0 + 9.4, 1, 2.6, '#3a3640', {n:10});
+    const P = (r, a, z) => [cx + r * Math.cos(a) + (z0 + 10 - z) * .25, cy + r * Math.sin(a), z];
+    const n = 16, sd = []; for (let i = 0; i < n; i++) { const a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2, am = (a0 + a1) / 2; sd.push({a0, a1, d:Math.cos(am) + Math.sin(am)}); }
+    const shade = (f, back) => f.filter(s => back ? s.d < 0 : s.d >= 0).sort((p, q) => p.d - q.d).forEach(s => S.poly([P(1.6, s.a0, z0 + 9.4), P(1.6, s.a1, z0 + 9.4), P(7.4, s.a1, z0 + 3 + (s.a1 > 3.6 && s.a1 < 5 ? -1.6 : 0)), P(7.4, s.a0, z0 + 3 + (s.a0 > 3.6 && s.a0 < 5 ? -1.6 : 0))], back ? '#2a2630' : ISH('#5a5662', .8 + .3 * s.d / 1.4), {sw:.35}));
+    shade(sd, true); skGlow(S, [cx + 1.6, cy, z0 + 2], 5, '#ffe680', .22); S.poly([[cx + 1, cy, z0 + 4.4], [cx + 2.6, cy, z0 + 4.2], [cx + 2.4, cy, z0 + 2.2], [cx + 1.8, cy, z0 + 3.2], [cx + 1.2, cy, z0 + 2]], '#d8d6de', {sw:.25, op:.85}); shade(sd, false);
+    const W = [[cx + 3, cy + 1, z0 + 5], [cx + 4, cy + 2, z0 + 1], [cx + 3.4, cy + 2.4, z0 - 3], [cx + 4.4, cy + 2, z0 - 6]]; for (let i = 0; i < W.length - 1; i++) S.line(W[i], W[i + 1], '#26222a', .45);
+    const e = W[W.length - 1]; [[-1.6, -1.2], [1.6, -1], [-.4, -2.2], [1.4, .8], [-1.4, .6]].forEach(([dx, dz]) => S.line(e, [e[0] + dx, e[1], e[2] + dz], '#ffe680', .3, {nol:1})); skGlow(S, e, 2.4, '#ffe680', .28); },
+});
+HANG_IDS.forEach(k => { if (!FURN[k]) return; delete FURN[k].wall; FURN[k].hang = 1; });
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
 const SKF_W = {spiegel:9, spinnennetz:11, portraet:8, lichterkette:28, kronleuchter:14, kreuz:5, vorhang:15, neon_rawr:14, neon_herz:8, neon_stern:7, l_neonmond:9, nc_neonbat:18, graffiti:20, wandteppich:13, piratenflagge:14, schachflagge:14, rz_lichter:20, rz_wimpel:20, rz_schminklicht:10, l_wandkerze:6, l_haenge:7, nc_zauberspiegel:12, hw_birne:6, hw_schrift:16, hw_darmkette:52, hw_organkette:30, hw_deckenlampe:12, hw_kreuze:30, hw_kreuze_schwarz:30, hw_kreuze_gold:30, hw_kreuze_reihe:30, hw_kreuz_gross:12, hw_kreuz_rosenkranz:10, hw_kreuze_holz:24, hw_roentgen:15, hw_sehtafel:8, girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17, tier_katze_schwarz:9, tier_katze_weiss:9, tier_katze_grau:9, tier_katze_schlafend:9, tier_mops:9, tier_hund_schwarz:9, tier_dackel:11, tier_fledermaus:9, tier_ratte:9, tier_hase:9, tier_schlange:9, tier_spinne:9.5, tier_korb:11, kraehe:6.5, nc_eule:9, hw_leichensack:26}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
