@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1dd29a8f5a9d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='add21d1dd223';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2898,7 +2898,7 @@ html.fitpg,html.fitpg body{overflow:hidden;overscroll-behavior:none}body[data-pg
 .mirror-card{position:relative}.wardrobe .mirror-card{padding-bottom:14px!important} /* v816 (Inaya): Rahmen ohne Symbol oben und unten, deckt die Reiter nicht mehr ab */
 .mirror-card>.ltools.lside{left:8px;right:auto;top:8px;transform:none;flex-direction:row;gap:6px}.mirror-card>.ltools.lside .ltool{width:34px;height:34px}.mirror-card>.ltools.lside .ltool svg{width:17px;height:17px} /* v817/v818 (Inaya): waagerecht oben links wie im Zimmer */
 .rstick>.ltools.lside{left:8px;top:8px;flex-direction:row;gap:6px}
-.rstick{min-width:0}.rstick>.roomtabs{margin:6px 12px 0;min-width:0}.rstick>.hslbar{margin-inline:12px} /* v825: Reiter fest unter dem Zimmer wie im Möbelhaus */
+.rstick{min-width:0}.room .ritem.rbad{opacity:.5} /* v826: hier ist kein Platz */.rstick>.roomtabs{margin:6px 12px 0;min-width:0}.rstick>.hslbar{margin-inline:12px} /* v825: Reiter fest unter dem Zimmer wie im Möbelhaus */
 .ltools.lside .ltool{width:40px;height:40px;min-height:0;padding:0;border-radius:50%;place-content:center;background:color-mix(in srgb,var(--paper-2,#1b1a1f) 88%,transparent);border:1px solid var(--line);box-shadow:0 2px 8px #0008}
 .rstick>.ltools.lside .ltool{width:34px;height:34px}
 .ltools.lside .ltool span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.ltools.lside .ltool svg{width:20px;height:20px}.rstick>.ltools.lside .ltool svg{width:17px;height:17px}
@@ -7067,7 +7067,7 @@ function rHost(items, it){ // größtes Möbel, auf dessen Fläche die Unterkant
 /* v825 (Inaya): Möbel überlappen nicht versehentlich. Grundfläche am Boden = Quadrat in Boden-Koordinaten (a, b von 0 bis 1, Umkehrung von rIsoF), Wandsachen = Rechteck auf ihrer Wand; nur ein schmaler Rand darf sich berühren */
 const rSolid = it => { const f = FURN[it.k]; return !!f && !f.rug && !f.hang && !it.on && !/kette|netz|wimpel/i.test(it.k + ' ' + (f.name || '')); };
 function rFoot(it){ const d = rDim(it), p = rFit(d, +it.x || 0, +it.y || 0);
-  if (d.wall) return {w:1, l:p.x + d.w / 2 < 50, x0:p.x, x1:p.x + d.w, y0:p.y, y1:p.y + d.h};
+  if (d.wall) { const q = rScr(d, p.x, p.y), hw = q.w / 200, hh = d.h / 100 * .625 * RI.sc / 2, v = q.Y - rWallBase(q.X * 100); return {w:1, l:q.X < .5, x0:q.X - hw, x1:q.X + hw, y0:v - hh, y1:v + hh}; } /* v826: wie gezeichnet, entlang der Wand */
   const ab = (X, Y) => [2 * (Y - RI.wh) + (X - .5), 2 * (Y - RI.wh) - (X - .5)], fp = FURN[it.k].fp, vb = FURN[it.k].vb;
   if (fp && vb?.[0]) { /* Sticker-Möbel: echte Grundfläche aus der Zeichnung (isoMake: x nach rechts unten = a, y nach links unten = b; gespiegelt getauscht) */
     const q = rScr(d, p.x, p.y), sc = q.w / 100 / vb[0], mir = rMir(it), X0 = q.l / 100 + (mir ? vb[0] + fp[4] : -fp[4]) * sc, Y0 = q.t / 100 * RI.H - fp[5] * sc, [a, b] = ab(X0, Y0), k = 2 * sc;
@@ -7079,11 +7079,11 @@ function rOver(A, B){ if (!!A.w !== !!B.w || (A.w && A.l !== B.l)) return false;
 const rObs = (items, it) => items.filter(o => o !== it && rSolid(o) && o.on !== it.k).map(rFoot); /* Grundflächen der anderen, einmal berechnet */
 const rHits = (items, it, obs) => { if (!rSolid(it)) return false; const A = rFoot(it); return (obs || rObs(items, it)).some(B => rOver(A, B)); };
 /* freie Stelle möglichst nah: null = steht schon frei, false = nirgends Platz */
-function rFree(items, it){ const obs = rObs(items, it); if (!rHits(items, it, obs)) return null; const d = rDim(it), wall = !!FURN[it.k]?.wall, p0 = rFit(d, +it.x || 0, +it.y || 0), P = wall ? null : rIsoF(p0.x + d.w / 2, p0.y + d.h);
+function rFree(items, it){ const obs = rObs(items, it); if (!rHits(items, it, obs)) return null; const d = rDim(it), wall = !!FURN[it.k]?.wall, side = wall && rFoot(it).l, p0 = rFit(d, +it.x || 0, +it.y || 0), P = wall ? null : rIsoF(p0.x + d.w / 2, p0.y + d.h);
   for (let r = 1; r <= 45; r++) for (let i = 0; i < 24; i++) { const t = i / 24 * Math.PI * 2; let x, y;
     if (wall) { x = p0.x + Math.cos(t) * r * 1.4; y = p0.y + Math.sin(t) * r * 1.4; }
     else { const v = rInvF(P.X + Math.cos(t) * r * .011, P.Y + Math.sin(t) * r * .0055); x = v.lx - d.w / 2; y = v.fy - d.h; }
-    const q = rFit(d, x, y), c = {...it, x:Math.round(q.x * 10) / 10, y:Math.round(q.y * 10) / 10}; if (!rHits(items, c, obs)) return {x:c.x, y:c.y}; }
+    const q = rFit(d, x, y), c = {...it, x:Math.round(q.x * 10) / 10, y:Math.round(q.y * 10) / 10}; if (wall && (rFoot(c).l !== side)) continue; /* v826: auf derselben Wand bleiben */ if (!rHits(items, c, obs)) return {x:c.x, y:c.y}; }
   return false; }
 function rZ(items, it, d = 0){ const f = FURN[it.k]; if (f.rug) return 2; if (f.wall) return 1; if (f.hang) return 880; const h = it.on && d < 4 ? items.find(o => o.k === it.on && o !== it) : null;
   return h ? rZ(items, h, d + 1) + 1 + d : rScr(rDim(it), it.x, it.y).z; }
@@ -7116,7 +7116,11 @@ const rRot = it => rBoxy(it.k);
 function rDim(it, vis){ if (it === 'av') { const w = vis ? 15.5 : 16.5; /* v810 (Inaya): Avatare etwas größer, passend zu den Sticker-Möbeln */ return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, hang:!!f.hang, wall:!!f.wall, rug:!!f.rug}; }
 /* v804 (Inaya): Möbel bleiben im Zimmer. Ragt ein Stück seitlich (oder an der Wand oben) heraus, wird es nach innen gerückt */
 function rFit(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc, m = Math.min(.5, wS / 2 + .01);
-  if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2), X = Math.max(m, Math.min(1 - m, P.X)), Y = Math.max(hS / 2 + .005, P.Y); if (Math.abs(X - P.X) < 1e-4 && Math.abs(Y - P.Y) < 1e-4) return {x, y}; const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; }
+  if (d.wall) { /* v826 (Inaya): ganz auf EINER Wand (nie über die Ecke in die andere), oben unter der Wandkante, unten über dem Boden */
+    const P = rIsoW(x + d.w / 2, y + d.h / 2), hw = wS / 2, L = P.X < .5, lo = L ? hw + .008 : .5 + hw + .006, hi = L ? .5 - hw - .006 : 1 - hw - .008;
+    const X = lo <= hi ? Math.max(lo, Math.min(hi, P.X)) : (L ? .25 : .75), base = rWallBase(X * 100), top = base - RI.wh, Yhi = base - hS / 2 - .004, Ylo = top + hS / 2 + .006;
+    const Y = Ylo <= Yhi ? Math.max(Ylo, Math.min(Yhi, P.Y)) : Yhi; if (Math.abs(X - P.X) < 1e-4 && Math.abs(Y - P.Y) < 1e-4) return {x, y};
+    const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; }
   /* v811 (Inaya): am Boden überall hin, nur die Grundfläche (linke und rechte Ecke unten, 2:1 schräg) bleibt auf dem Boden, damit Schränke und Betten nicht in die Wand ragen */
   const P = rIsoF(x + d.w / 2, y + d.h), cy = RI.wh + .25, hw = Math.min(.5, wS / 2) * (d.av ? .45 : .92), ins = (X, Y) => Math.max(Math.abs(X - hw - .5) / .5 + Math.abs(Y - hw * .5 - cy) / .25, Math.abs(X + hw - .5) / .5 + Math.abs(Y - hw * .5 - cy) / .25) <= 1.0005;
   if (ins(P.X, P.Y)) return {x, y}; let lo = 0, hi = 1; for (let i = 0; i < 22; i++) { const t = (lo + hi) / 2; if (ins(.5 + (P.X - .5) * t, cy + (P.Y - cy) * t)) lo = t; else hi = t; }
@@ -7272,7 +7276,7 @@ document.addEventListener('pointerup', () => { if (!rsz) return; rsz = null; sav
 document.addEventListener('input', e => { if (e.target.id !== 'r-size') return; const it = me().room.items[roomSel]; if (!it) return; const f = FURN[it.k], s0 = itS(it), cx = +it.x + f.w * s0 / 2, by = +it.y + itemH(it.k) * s0;
   rszApply(it, f, +e.target.value, cx, by); const el = document.querySelector(`#room [data-drag="${roomSel}"]`); if (el) { rPut(el, rDim(it), it.x, it.y); el.style.transform = rTf(it); } clearTimeout(rsz?.t); setTimeout(save, 300); });
 /* v811 (Inaya): beim Zoomen mit zwei Fingern nichts versehentlich mitbewegen: zweiter Finger bricht das Ziehen ab, das Stück springt zurück */
-function rDragCancel(){ const d = dragging; if (!d) return; dragging = null; d.ref.x = d.ox; d.ref.y = d.oy; rPut(d.el, d.dd, d.ox, d.oy); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
+function rDragCancel(){ const d = dragging; if (!d) return; dragging = null; cancelAnimationFrame(d.raf); d.el.classList.remove('rbad'); d.ref.x = d.ox; d.ref.y = d.oy; rPut(d.el, d.dd, d.ox, d.oy); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
   for (const c of d.kids || []) { c.o.x = c.ox; c.o.y = c.oy; rPut(c.el, rDim(c.o), c.ox, c.oy); } d.roomEl.classList.remove('rdrag'); }
 document.addEventListener('pointerdown', e => {
   if (!e.isPrimary || RZ.t?.d0) return; const el = e.target.closest('#room [data-drag]'); if (!el) return;
@@ -7281,20 +7285,24 @@ document.addEventListener('pointerdown', e => {
   const kids = key === 'av' ? [] : me().room.items.map((o, i) => ({o, i})).filter(({o}) => o.on === ref.k && o !== ref).map(({o, i}) => ({o, ox:+o.x, oy:+o.y, el:document.querySelector(`#room [data-drag="${i}"]`)}));
   const roomEl = document.getElementById('room'), dd = key === 'av' ? rDim('av') : rDim(ref);
   roomEl.classList.add('rdrag'); /* v799: Knöpfe am Stück beim Ziehen ausblenden */
-  dragging = {el, ref, room, roomEl, dd, off:rOff(roomEl, dd, ref.x, ref.y, e.clientX, e.clientY), sx:e.clientX, sy:e.clientY, ox:ref.x, oy:ref.y, moved:false, key, kids};
+  dragging = {el, ref, room, roomEl, dd, off:rOff(roomEl, dd, ref.x, ref.y, e.clientX, e.clientY), sx:e.clientX, sy:e.clientY, ox:ref.x, oy:ref.y, moved:false, key, kids, obs:key === 'av' ? null : rObs(me().room.items, ref)};
   el.setPointerCapture(e.pointerId); e.preventDefault();
 });
+/* v826 (Inaya: „alles flüssig“): erst ab 6 px Bewegung ziehen (Antippen verschiebt nichts mehr), je Bild nur einmal rechnen, vorn/hinten beim Ziehen mitführen, ohne Platz halb durchsichtig */
+function rDragPaint(){ const d = dragging; if (!d || !d.ev) return; const e = d.ev; d.ev = null; d.raf = 0;
+  const p = rPick(d.roomEl, d.dd, e.clientX, e.clientY, d.off); d.ref.x = p.x; d.ref.y = p.y; /* v791: Zeiger schräg auf Boden bzw. Wand umgerechnet */
+  rPut(d.el, d.dd, d.ref.x, d.ref.y, !d.dd.wall && !d.dd.rug); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
+  const z = +d.el.style.zIndex || 0; for (const c of d.kids || []) { c.o.x = c.ox + (d.ref.x - d.ox); c.o.y = c.oy + (d.ref.y - d.oy); rPut(c.el, rDim(c.o), c.o.x, c.o.y); if (c.el && z) c.el.style.zIndex = z + 1; }
+  if (d.obs) d.el.classList.toggle('rbad', !rHost(me().room.items, d.ref) && rHits(me().room.items, d.ref, d.obs)); }
 document.addEventListener('pointermove', e => {
   if (!dragging || !e.isPrimary || RZ.t?.d0) return;
-  const d = dragging, dx = (e.clientX - d.sx) / d.room.width * 100, dy = (e.clientY - d.sy) / d.room.height * 100;
-  if (Math.abs(dx) + Math.abs(dy) > .5) d.moved = true;
-  const p = rPick(d.roomEl, d.dd, e.clientX, e.clientY, d.off); d.ref.x = p.x; d.ref.y = p.y; /* v791: Zeiger schräg auf Boden bzw. Wand umgerechnet */
-  rPut(d.el, d.dd, d.ref.x, d.ref.y); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
-  for (const c of d.kids || []) { c.o.x = c.ox + (d.ref.x - d.ox); c.o.y = c.oy + (d.ref.y - d.oy); rPut(c.el, rDim(c.o), c.o.x, c.o.y); }
+  const d = dragging; if (!d.moved) { if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) return; d.moved = true; }
+  d.ev = {clientX:e.clientX, clientY:e.clientY}; if (!d.raf) d.raf = requestAnimationFrame(rDragPaint);
 });
 document.addEventListener('pointerup', () => {
   if (!dragging) return;
-  const d = dragging; dragging = null;
+  if (dragging.ev) { cancelAnimationFrame(dragging.raf); rDragPaint(); } dragging.el.classList.remove('rbad');
+  const d = dragging; dragging = null; if (!d.moved) { d.ref.x = d.ox; d.ref.y = d.oy; }
   d.ref.x = Math.round(d.ref.x * 10) / 10; d.ref.y = Math.round(d.ref.y * 10) / 10;
   for (const c of d.kids || []) { c.o.x = Math.round(c.o.x * 10) / 10; c.o.y = Math.round(c.o.y * 10) / 10; }
   if (d.key !== 'av' && d.moved) { const items = me().room.items, h = rHost(items, d.ref), was = d.ref.on; if (h) { d.ref.on = h.k; if (was !== h.k) toast(`Steht jetzt auf: ${(FURN[h.k].name || '').replace(/\u00ad/g, '')}`); } else delete d.ref.on;
@@ -16145,7 +16153,7 @@ function ncPlace(k){ const u = me(), f = FURN[k]; ROOM_UNDO = null; /* Neues aus
 /* Möbelhaus: das ausgewählte Möbel in der Zimmer-Vorschau verschieben (nur Vorschau, Stelle wird beim Aufstellen übernommen) */
 document.addEventListener('pointerdown', e => { const card = e.target.closest?.('.ncroom.ncdrag'); if (!card || !MSEL) return; const items = card.querySelectorAll('.room .ritem:not(.av)'), el = items[items.length - 1]; if (!el || !el.contains(e.target)) return;
   const room = card.querySelector('.room'), f = FURN[MSEL], pl0 = me().room.items.find(x => x.k === MSEL), it0 = {...(pl0 || {}), k:MSEL, x:MSELPOS?.x ?? pl0?.x ?? (f.wall ? 40 : 42), y:MSELPOS?.y ?? pl0?.y ?? (f.wall ? 12 : 48)}, d = rDim(it0), off = rOff(room, d, it0.x, it0.y, e.clientX, e.clientY); e.preventDefault(); el.classList.add('ncmoving'); try { el.setPointerCapture(e.pointerId); } catch {}
-  const mv = ev => { const p = rPick(room, d, ev.clientX, ev.clientY, off), x = Math.round(p.x * 10) / 10, y = Math.round(p.y * 10) / 10; MSELPOS = {x, y}; rPut(el, d, x, y); el.style.transform = rTf({...it0, x, y}); }; /* v791: schräg wie im Zimmer */
+  let go = false; const mv = ev => { if (!go) { if (Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 6) return; go = true; } /* v826: Antippen verschiebt nichts */ const p = rPick(room, d, ev.clientX, ev.clientY, off), x = Math.round(p.x * 10) / 10, y = Math.round(p.y * 10) / 10; MSELPOS = {x, y}; rPut(el, d, x, y); el.style.transform = rTf({...it0, x, y}); }; /* v791: schräg wie im Zimmer */
   const up = () => { el.classList.remove('ncmoving'); el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
   el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); });
 /* Look anziehen: Teile, die einem nicht gehören, bleiben weg */
