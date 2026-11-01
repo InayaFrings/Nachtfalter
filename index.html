@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9b71e01b64a5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='83990cffb124';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -14499,6 +14499,172 @@ Object.assign(SKF, {
     S.poly([[30, 10, 15.6], [37, 13, 15.6], [33, 17, 15.6], [28, 15, 15.6]], '#2a2622', {sw:.6}); S.ell([32.5, 13.5, 16.2], 2.2, 1.4, '#e9e4d8'); S.ell([30.8, 14.5, 16.4], 1.3, 1, '#f3efe7');
     const sp = []; for (let i = 0; i <= 8; i++) sp.push([33 + (i % 2 ? 1 : -1), 13.5, 15.6 + i * .7]); for (let i = 0; i < sp.length - 1; i++) S.line(sp[i], sp[i + 1], '#bfbcc6', .5);
     S.poly([[W, 12, 9], [W, 16, 12], [W, 19, 8], [W, 15, 5]], '#2a2622', {sw:.5}); S.line([3, D - .5, 6], [6, D - .5, 3], '#2a2622', .5); S.line([8, D - .5, 8], [10, D - .5, 5.6], '#2a2622', .5); },
+});
+/* v798: Schränke, Regale, Tische, Technik im Sticker-Stil */
+function skShelf(S, o = {}){ const W = o.W || 26, D = o.D || 9, H = o.H || 52, c = o.c || SK.wood, n = o.n || 4, t = 1.6, lg = o.leg || 0;
+  if (lg && !o.noLeg) [[.5, D - 2], [W - 2, D - 2], [W - 2, .5]].forEach(([x, y]) => S.box(x, y, 0, 1.5, 1.5, lg, ISH(c, .8)));
+  FP(S, 1, [[t, lg], [W - t, lg], [W - t, H], [t, H]], o.back || SK.inner);
+  S.box(0, 0, lg, t, D, H - lg, c);
+  const gap = (H - lg - t) / n;
+  for (let s = 0; s < n; s++) { const z = lg + s * gap; S.box(t, 1, z, W - 2 * t, D - 1, t, ISH(c, 1.06), {sw:.6}); if (o.fill) o.fill(s, z + t, gap - t, t, W - t, D); }
+  S.box(t, 1, H - t, W - 2 * t, D - 1, t, c, {sw:.6}); S.box(W - t, 0, lg, t, D, H - lg, c);
+  if (o.crown !== false) S.box(-.7, -.7, H, W + 1.4, D + 1.4, 1.8, o.cc || ISH(c, 1.18)); }
+/* Schubladen auf der Vorderseite */
+function skDrawers(S, y, x0, x1, z0, z1, n, c, o = {}){ const h = (z1 - z0) / n; for (let i = 0; i < n; i++) { const a = z0 + i * h + .5, b = z0 + (i + 1) * h - .5; FP(S, y, [[x0, a], [x1, a], [x1, b], [x0, b]], c, {sw:.6}); if (o.knob) S.dot([(x0 + x1) / 2, y + .05, (a + b) / 2], .75, o.kc || SK.silver); else S.grip([(x0 + x1) / 2 - 1.6, y + .05, (a + b) / 2], [(x0 + x1) / 2 + 1.6, y + .05, (a + b) / 2], o.kc || SK.silver, .9); if (o.label) FP(S, y + .02, [[(x0 + x1) / 2 - 1.8, b - 1.8], [(x0 + x1) / 2 + 1.8, b - 1.8], [(x0 + x1) / 2 + 1.8, b - .6], [(x0 + x1) / 2 - 1.8, b - .6]], '#e8e2d6', {sw:.3}); } }
+/* Zylinder stehend */
+const skCirc = (cx, cy, r, n = 14) => Array.from({length:n}, (_, i) => { const a = i / n * Math.PI * 2; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; });
+function skCyl(S, cx, cy, z, r, h, c, o = {}){ isoPrZ(S, skCirc(cx, cy, r, o.n || 14), z, h, c, o); }
+/* Glas, Flasche, Kerze-Gruppe */
+function skJar(S, x, y, z, w, h, c, lid = SK.wood2){ S.box(x, y, z, w, w, h, c, {op:.85, sw:.5}); S.box(x - .3, y - .3, z + h, w + .6, w + .6, 1, lid, {sw:.4}); }
+function skBottle(S, x, y, z, c, h = 4){ S.box(x, y, z, 1.8, 1.8, h, c, {sw:.45}); S.box(x + .5, y + .5, z + h, .8, .8, 1.4, c, {sw:.4}); S.box(x + .35, y + .35, z + h + 1.4, 1.1, 1.1, .6, '#5a4434', {sw:.3}); }
+/* kleine Pflanze im Topf */
+function skPlant(S, x, y, z, c = '#3d6b46'){ S.box(x - 1.4, y - 1.4, z, 2.8, 2.8, 2.6, '#2e2934', {sw:.5}); [[-2, 3.5], [-.8, 5], [.6, 4.8], [2, 3.2], [0, 6]].forEach(([d, h]) => S.ell(skH([x, y, z + 2.6 + h * .7], d * .9), 1.1, 1.6, c)); }
+
+Object.assign(SKF, {
+  /* Bücherregal */
+  regal: S => skShelf(S, {W:28, H:54, n:4, fill:(s, z, h, x0, x1, D) => {
+    if (s === 0) { skBooks(S, x0 + .5, x1 - 7, D - .5, z, h - 2, 1); S.box(x1 - 6, 2.5, z, 5.5, D - 3.5, 4.5, '#5a4434', {sw:.5}); S.box(x1 - 6.3, 2.3, z + 4.5, 6.1, D - 3.1, .9, '#3e2e24', {sw:.4}); }
+    if (s === 1) { skSkull(S, x0 + 3, D - 2.5, z, 2.2); skBooks(S, x0 + 6.5, x1 - .5, D - .5, z, h - 2, 4); }
+    if (s === 2) { skBooks(S, x0 + .5, x1 - 8, D - .5, z, h - 2.5, 7); skCandle(S, x1 - 5, D - 3, z, 4); skCandle(S, x1 - 2.4, D - 4, z, 2.6); }
+    if (s === 3) { skPlant(S, x0 + 3.5, D - 3.5, z); skBooks(S, x0 + 7, x1 - .5, D - .5, z, h - 3, 2); } } }),
+  /* Manga-Regal mit Kisten (bunt) */
+  rz_manga: S => skShelf(S, {W:28, H:44, n:3, c:'#f3efe7', back:'#f5c6d8', cc:'#ffffff', fill:(s, z, h, x0, x1, D) => {
+    const cols = ['#ff6fb5', '#6ee6a0', '#7fd0ff', '#ffd45c', '#b58cff', '#ff8a5c'];
+    if (s === 1) { let x = x0 + .4, i = s * 5; while (x < x1 - 1.6) { S.box(x, D - 3.4, z, 1.5, 3, h - 3 - (i % 3) * .6, cols[i % 6], {sw:.4}); x += 1.65; i++; } }
+    else { const k = s ? '#ff8ac0' : '#7fd0ff'; S.box(x0 + .5, 2, z, 10, D - 2.5, h - 1.5, k, {sw:.6}); FP(S, D - .5 + .01, [[x0 + 3, z + h / 2 - 1.5], [x0 + 8, z + h / 2 - 1.5], [x0 + 8, z + h / 2 + 1], [x0 + 3, z + h / 2 + 1]], '#ffffff', {sw:.4});
+      S.box(x0 + 11.5, 2, z, 10, D - 2.5, h - 1.5, s ? '#ffd45c' : '#b58cff', {sw:.6}); skPlush(S, x1 - 2.6, D - 3, z, s ? '#6ee6a0' : '#ff6fb5', {ears:s ? 'hase' : 'katze', s:.75}); } } }),
+  /* Kommode mit Spitzendeckchen */
+  kommode: S => { const W = 30, D = 13, H = 24, c = SK.wood;
+    [[.5, D - 2], [W - 2.5, D - 2], [W - 2.5, .5]].forEach(([x, y]) => isoPrY(S, [[x, 0], [x + 2, 0], [x + 2.2, 3], [x - .2, 3]], y, y + 2, ISH(c, .8)));
+    S.box(0, 0, 3, W, D, H - 3, c); skDrawers(S, D, 1.4, W - 1.4, 4, H - 1.5, 3, SK.wood2);
+    S.box(-.6, -.6, H, W + 1.2, D + 1.2, 1.4, ISH(c, 1.2));
+    const lace = []; for (let i = 0; i <= 12; i++) lace.push([6 + i * 1.5, D - 1.2 + (i % 2) * .8, H + 1.42]); S.poly([[6, 1.5, H + 1.42], [24, 1.5, H + 1.42], ...lace.reverse()], '#efe9df', {sw:.4}); FP(S, D + .62, [[6, H + .2], [24, H + .2], ...Array.from({length:13}, (_, i) => [24 - i * 1.5, H + 1.4 - (i % 2) * 1.6])].map(([x, z]) => [x, z]), '#efe9df', {sw:.35});
+    skCandle(S, 9, 5, H + 1.4, 5); S.box(15, 3, H + 1.4, 6, 1.4, 7.5, SK.wood2, {sw:.5}); FP(S, 4.42, [[16, H + 2.6], [20, H + 2.6], [20, H + 7.8], [16, H + 7.8]], '#8d8996', {sw:.4}); S.ell([18, 4.5, H + 5.4], 1, 1.3, '#2a2730'); skBottle(S, 23, 6, H + 1.4, '#6c3a54', 3); },
+  /* Nachttisch mit Kerze */
+  nachttisch: S => { const W = 14, D = 12, H = 16, c = SK.wood; [[.5, D - 2], [W - 2, D - 2], [W - 2, .5]].forEach(([x, y]) => S.box(x, y, 0, 1.5, 1.5, 4, ISH(c, .8)));
+    S.box(0, 0, 4, W, D, H - 4, c); skDrawers(S, D, 1.2, W - 1.2, 9, H - 1, 1, SK.wood2, {knob:1}); FP(S, D, [[1.2, 5], [W - 1.2, 5], [W - 1.2, 8], [1.2, 8]], SK.inner, {sw:.5}); S.box(3, D - 3, 5, 6, 2.5, 1.2, SK.red, {sw:.4}); S.box(-.5, -.5, H, W + 1, D + 1, 1.2, ISH(c, 1.2));
+    skCandle(S, 4, 5, H + 1.2, 5); skCandle(S, 6.2, 3.5, H + 1.2, 3); S.box(7.5, 5, H + 1.2, 5, 4, 1.4, '#2a2730', {sw:.5}); S.box(7.8, 5.3, H + 2.6, 4.4, 3.4, 1, SK.dred, {sw:.4}); },
+  /* Couchtisch */
+  couchtisch: S => { const W = 32, D = 20, H = 11, c = SK.wood;
+    [[1, D - 3], [W - 3, D - 3], [W - 3, 1], [1, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, H - 2, c));
+    S.box(2, 2, 2.5, W - 4, D - 4, 1, ISH(c, 1.1), {sw:.5}); S.box(5, 5, 3.5, 7, 6, 1.2, SK.red, {sw:.4}); S.box(5.3, 5.3, 4.7, 6.4, 5.4, 1, '#2a2730', {sw:.4});
+    S.box(0, 0, H - 2, W, D, 2, c); S.ftop(H + .02, 3, 3, W - 3, D - 3, ISH(c, 1.35), {sw:.4});
+    skCandle(S, 8, 7, H, 3.5); skCandle(S, 10, 9.5, H, 2.2); skSkull(S, 18, 10, H, 2.2); S.box(23, 5, H, 5, 7, 1.2, '#efe9df', {sw:.4}); S.line([23.4, 8.5, H + 1.25], [27.6, 8.5, H + 1.25], '#8d8996', .3); S.ell([26, 14, H + .3], 2, 1.2, '#2a2730'); },
+  /* Schreibtisch mit Röhrenmonitor */
+  pc: S => { const W = 36, D = 16, H = 17, c = SK.wood;
+    S.box(0, 0, 0, 9, D, H - 1.5, c); skDrawers(S, D, 1, 8, 1, H - 2.5, 3, SK.wood2); S.box(W - 2, 0, 0, 2, D, H - 1.5, c); S.box(0, 0, H - 1.5, W, D, 1.5, ISH(c, 1.15));
+    S.box(14, 1.5, H, 13, 11, 11, '#cfc9bb'); FP(S, 12.51, [[15.5, H + 2], [25.5, H + 2], [25.5, H + 10], [15.5, H + 10]], '#2c3a34', {sw:.6}); FP(S, 12.52, [[16.3, H + 2.8], [24.7, H + 2.8], [24.7, H + 9.2], [16.3, H + 9.2]], '#3f6b52', {sw:.3}); [0, 1, 2].forEach(i => S.line([17, 12.53, H + 8.2 - i * 1.4], [21 + i, 12.53, H + 8.2 - i * 1.4], '#9de0b4', .5)); S.dot([25, 12.55, H + 1.1], .4, '#c23a5a');
+    S.box(14, 12.5, H, 12, 3.2, .9, '#bfb9aa', {sw:.5}); for (let i = 0; i < 5; i++) S.line([14.8 + i * 2.2, 13.4, H + .95], [15.8 + i * 2.2, 14.6, H + .95], '#8d8778', .4);
+    S.ell([30, 13, H + .6], 1.2, .9, '#bfb9aa'); S.box(4, 5, H, 3, 3, 3.6, '#2a2730', {sw:.5}); S.ell([5.5, 6.5, H + 4.2], 1.2, .6, '#4a2a2a'); skCandle(S, 32, 5, H, 4); },
+  /* Rosa Schreibtisch mit Computer */
+  rz_pc: S => { const W = 36, D = 16, H = 17, c = '#f3efe7', pk = '#f08cb8';
+    [[0, 0], [W - 2, 0]].forEach(([x]) => S.box(x, 0, 0, 2, D, H - 1.5, pk)); S.box(2, 1, 6, W - 4, D - 2, 1.2, pk, {sw:.5}); S.box(0, 0, H - 1.5, W, D, 1.5, c);
+    S.box(17, 3, H, 2, 2, 4, '#e8e4ec'); S.box(11, 2, H + 4, 14, 1.4, 9.5, '#f3efe7'); FP(S, 3.41, [[12, H + 5], [24, H + 5], [24, H + 12.5], [12, H + 12.5]], '#3b2f54', {sw:.5}); skStar(S, 16, 3.42, H + 10, 1.5, '#ffd45c'); S.ell([20, 3.43, H + 8], 2, 1.4, '#ff8ac0'); S.ell(skH([19.5, 3.45, H + 8.8], 0), .7, .7, '#ff8ac0');
+    S.box(11, 9, H, 13, 3.6, .8, '#ffffff', {sw:.5}); for (let i = 0; i < 6; i++) S.dot([12 + i * 2, 10.8, H + .85], .35, pk); S.ell([28, 10, H + .5], 1.3, 1, '#ffffff');
+    skPlush(S, 4, 8, H, '#ff8ac0', {ears:'katze', s:.9}); S.box(29, 3, H, 3, 3, 3.4, '#7fd0ff', {sw:.5}); S.ell([30.5, 4.5, H + 4], 1.2, .5, '#ffd6ec'); },
+  /* Apothekerschrank */
+  s_apotheke: S => { const W = 30, D = 13, H = 50, c = '#3b2d27';
+    S.box(0, 0, 0, W, D, 26, c); for (let col = 0; col < 4; col++) skDrawers(S, D, 1 + col * 7, 7.4 + col * 7, 1.5, 25, 5, ISH(c, 1.18), {knob:1, label:1, kc:'#c9a24a'});
+    S.box(-.6, -.6, 26, W + 1.2, D + 1.2, 1.2, ISH(c, 1.2));
+    skShelf(S, {W, D:7, H, leg:27.2, noLeg:1, n:2, c, back:ISH(c, .55), fill:(s, z, h, x0, x1, D) => { for (let i = 0; i < 5; i++) skJar(S, x0 + .5 + i * 5.2, 2.5, z, 3.4, h - 3 - (i % 2) * 1.5, ['#9fc2a4', '#c6b37a', '#b7a6d6', '#e6dfcf', '#c98a8a'][(i + s * 2) % 5]); } } );
+  },
+  /* Gotischer Schrank: eine Tür mit Fensterrose */
+  s_gotisch: S => { const W = 24, D = 14, H = 58, c = '#2a2530';
+    [[1, D - 3], [W - 3, D - 3], [W - 3, 1]].forEach(([x, y]) => S.box(x, y, 0, 2, 2, 3, SK.inner));
+    isoPrY(S, skArch(0, 3, W, H, 1), 0, D, c);
+    FP(S, D + .01, skArch(2, 5, W - 2, H - 3, 1), '#3a3442', {sw:.6}); FP(S, D + .02, skArch(4, 8, W - 4, H - 8, 1), '#2e2934', {sw:.5});
+    const rose = skCirc(W / 2, H - 19, 4.6, 16).map(([x, z]) => [x, z]); FP(S, D + .03, rose, SK.dred, {sw:.6}); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; S.line([W / 2, D + .04, H - 19], [W / 2 + 4.2 * Math.cos(a), D + .04, H - 19 + 4.2 * Math.sin(a)], '#2e2934', .5); } S.dot([W / 2, D + .05, H - 19], .9, SK.red);
+    [[W / 2 - 3.5, 12, W / 2 - .6, 30], [W / 2 + .6, 12, W / 2 + 3.5, 30]].forEach(([a, b, c2, d]) => FP(S, D + .03, skArch(a, b, c2, d, 1), ISH('#2e2934', .8), {sw:.4}));
+    S.grip([W - 5, D + .1, 26], [W - 5, D + .1, 31], SK.silver, .9); S.ell([W / 2, D - .5, H + 1.2], 1.2, 1.2, SK.silver); },
+  /* Glasvitrine mit Figuren (bunt) */
+  rz_figuren: S => { const W = 22, D = 11, H = 46, c = '#f3efe7';
+    S.box(0, 0, 0, W, D, 5, c); FP(S, .5, [[1.5, 5], [W - 1.5, 5], [W - 1.5, H - 2], [1.5, H - 2]], '#f5c6d8');
+    const sh = z => S.box(1.5, .5, z, W - 3, D - 1.5, .8, '#e6f1f7', {op:.8, sw:.35});
+    [[5, 0], [14.5, 1]].forEach(([z, k]) => { skPlush(S, 5, 5, z, k ? '#7fd0ff' : '#ff8ac0', {ears:'katze', s:.8}); skPlush(S, 11, 5, z, k ? '#ffd45c' : '#6ee6a0', {ears:'baer', s:.8}); skPlush(S, 17, 5, z, k ? '#b58cff' : '#ff8a5c', {ears:'hase', s:.75}); });
+    sh(14); sh(24); [[5, '#ff6fb5'], [11, '#7fd0ff'], [17, '#6ee6a0']].forEach(([x, col]) => { S.box(x - 1.5, 4, 24.8, 3, 3, 1, '#ffffff', {sw:.4}); skStar(S, x, 5.5, 27.5, 0, col); S.ell(skH([x, 5.5, 28], 0), 1.5, 2, col); });
+    sh(34); [[4, '#ffd45c'], [9, '#ff8ac0'], [14, '#7fd0ff'], [18, '#b58cff']].forEach(([x, col], i) => S.box(x - 1, 4, 34.8, 2.2, 2.2, 3 + (i % 2) * 1.5, col, {sw:.4}));
+    FP(S, D, [[1.5, 5], [W - 1.5, 5], [W - 1.5, H - 2], [1.5, H - 2]], SK.glass, {op:.28, s:'#ffffff', sw:.4}); S.shine(D, 3, 10, 9, 26);
+    [[0, 1.5], [W - 1.5, W]].forEach(([a, b]) => FP(S, D, [[a, 5], [b, 5], [b, H - 2], [a, H - 2]], c, {sw:.6})); SP(S, W, [[0, 5], [D, 5], [D, H - 2], [0, H - 2]], ISH(c, .8)); S.box(-.5, -.5, H - 2, W + 1, D + 1, 2, '#ff8ac0'); },
+  /* Rostiger Spind */
+  hw_spind: S => { const W = 26, D = 13, H = 52, c = '#5b6a62';
+    S.box(0, 0, 0, W, D, H, c); [[1.2, W / 2 - .5], [W / 2 + .5, W - 1.2]].forEach(([a, b], k) => { FP(S, D, [[a, 2], [b, 2], [b, H - 2], [a, H - 2]], ISH(c, 1.08), {sw:.6}); for (let i = 0; i < 4; i++) S.line([a + 2, D + .03, H - 5 - i * 1.4], [b - 2, D + .03, H - 5 - i * 1.4], ISH(c, .55), .6); S.grip([b - 2, D + .05, 27], [b - 2, D + .05, 31], '#a9a8b0', .9); FP(S, D + .02, [[a + 2.5, 12], [a + 5.5, 12], [a + 5.5, 14], [a + 2.5, 14]], '#e6dfcf', {sw:.3}); });
+    [[3, 6, 2.6], [W - 6, 40, 3.2], [8, 22, 1.8], [W - 4, 10, 2.2], [18, 46, 1.6]].forEach(([x, z, r]) => S.ell(skH([x, D, z], 0), r, r * .7, '#8a4a2a', {op:.85})); S.dot([W / 2 - 3, D + .05, 6], .7, '#8a4a2a');
+    S.box(-.4, -.4, H, W + .8, D + .8, 1, ISH(c, 1.2)); },
+  /* Kaputter Medizinschrank */
+  hw_medschrank: S => { const W = 22, D = 11, H = 46, c = '#d6d4cc';
+    [[.5, D - 1.6], [W - 1.6, D - 1.6], [W - 1.6, .5]].forEach(([x, y]) => S.box(x, y, 0, 1.2, 1.2, 4, '#8a8992'));
+    S.box(0, 0, 4, W, D, 9, c); skDrawers(S, D, 1, W - 1, 5, 12.5, 2, ISH(c, 1.04), {kc:'#8a8992'});
+    FP(S, .5, [[1.5, 13], [W - 1.5, 13], [W - 1.5, H - 2], [1.5, H - 2]], '#bfc6c4');
+    S.box(1.5, .5, 25, W - 3, D - 1.5, .7, '#e8eef0', {sw:.35}); S.box(1.5, .5, 35, W - 3, D - 1.5, .7, '#e8eef0', {sw:.35});
+    skBottle(S, 3, 4, 13, '#7a5a3a', 4); skBottle(S, 6.5, 4, 13, '#3d6b46', 5); S.box(11, 3, 13, 4, 4, 3, '#efe9df', {sw:.4}); skBottle(S, 3, 4, 25.7, '#9fc2c4', 3.6); S.box(8, 4, 25.7, 6, 3, 3.2, '#efe9df', {sw:.4}); FP(S, 7.02, [[9.5, 26.6], [12.5, 26.6], [12.5, 28], [9.5, 28]], '#3d9a5a', {sw:.2}); skBottle(S, 16, 4, 25.7, '#7a5a3a', 3); skJar(S, 4, 3.5, 35.7, 4, 4, '#c6b37a'); skBottle(S, 12, 4, 35.7, '#5a3a5a', 3.2);
+    FP(S, D, [[1.5, 13], [W - 1.5, 13], [W - 1.5, H - 2], [1.5, H - 2]], SK.glass, {op:.25, s:'#ffffff', sw:.4});
+    [[[6, 13], [9, 22], [7, 28], [11, 36]], [[9, 22], [14, 25], [18, 23]], [[7, 28], [3, 31]]].forEach(l => { for (let i = 0; i < l.length - 1; i++) S.line([l[i][0], D + .05, l[i][1]], [l[i + 1][0], D + .05, l[i + 1][1]], '#ffffff', .4); });
+    [[0, 1.5], [W - 1.5, W]].forEach(([a, b]) => FP(S, D, [[a, 13], [b, 13], [b, H - 2], [a, H - 2]], c, {sw:.6})); SP(S, W, [[0, 13], [D, 13], [D, H - 2], [0, H - 2]], ISH(c, .8)); S.box(-.4, -.4, H - 2, W + .8, D + .8, 2, c);
+    FP(S, D + .1, [[W / 2 - 1, H + 1], [W / 2 + 1, H + 1], [W / 2 + 1, H + 2.6], [W / 2 + 2.6, H + 2.6], [W / 2 + 2.6, H + 4.6], [W / 2 + 1, H + 4.6], [W / 2 + 1, H + 6.2], [W / 2 - 1, H + 6.2], [W / 2 - 1, H + 4.6], [W / 2 - 2.6, H + 4.6], [W / 2 - 2.6, H + 2.6], [W / 2 - 1, H + 2.6]], '#3d9a5a', {sw:.5}); },
+  /* Kaputter Instrumententisch auf Rollen */
+  hw_instrtisch: S => { const W = 22, D = 14, t = '#a9a8b0';
+    const wheel = (x, y, z = 0) => { S.ell([x, y, z + 1.1], 1.1, 1.1, '#2a2830'); S.dot([x, y, z + 1.1], .35, t); };
+    wheel(1, 1); wheel(W - 1, 1); [[1, 1], [W - 1, 1], [1, D - 1], [W - 1, D - 1]].forEach(([x, y], i) => S.line([x, y, 2], [x, y, i === 2 ? 15 : 18], t, 1.1));
+    S.box(.5, .5, 8, W - 1, D - 1, .8, '#bdbcc4', {sw:.5}); S.box(4, 4, 8.8, 6, 4, 1.5, '#e6e4dc', {sw:.4});
+    S.poly([[0, 0, 18], [W, 0, 18], [W, D, 18], [0, D, 15]], '#c9c8d0', {sw:.6}); S.poly([[0, D, 15], [W, D, 18], [W, D, 17], [0, D, 14]], '#9a99a2', {sw:.5});
+    [[5, 5, 18.1, 11, 4, 17.6], [6, 8, 17.6, 13, 9, 17.9], [14, 4, 18.1, 18, 7, 18.1]].forEach(([a, b, c, d, e, f]) => S.line([a, b, c], [d, e, f], '#e8e8ee', .6)); S.ell([15, 10, 18], 2, 1.1, '#e8e8ee');
+    wheel(W - 1, D - 1); S.ell([3, D + 2.5, .6], 1.1, .7, '#2a2830'); },
+  /* Standuhr */
+  standuhr: S => { const W = 14, D = 10, H = 62, c = SK.wood;
+    S.box(-1, -1, 0, W + 2, D + 2, 8, c); S.box(1, 1, 8, W - 2, D - 2, 32, c); FP(S, D - 1 + .01, skArch(3.5, 12, W - 3.5, 37, 0), '#3a3442', {sw:.5}); FP(S, D - .98, skArch(4.5, 13, W - 4.5, 36, 0), SK.glass, {op:.25, sw:.3});
+    S.line([W / 2, D - 1.1, 34], [W / 2, D - 1.1, 20], '#c9a24a', .6); S.ell([W / 2, D - 1.05, 19], 2.2, 2.2, '#c9a24a');
+    S.box(-1, -1, 40, W + 2, D + 2, 18, c); isoPrY(S, skArch(-1, 58, W + 1, 66, 1), -1, D + 1, ISH(c, 1.15));
+    FP(S, D + 1.01, skCirc(W / 2, 49, 5.6, 20), '#efe9df', {sw:.6}); for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; S.dot([W / 2 + 4.5 * Math.cos(a), D + 1.02, 49 + 4.5 * Math.sin(a)], .3, '#2a2730'); }
+    S.line([W / 2, D + 1.03, 49], [W / 2, D + 1.03, 52.6], '#2a2730', .55); S.line([W / 2, D + 1.03, 49], [W / 2 + 2.4, D + 1.03, 47.8], '#2a2730', .55); S.dot([W / 2, D + 1.05, 61], .9, SK.red); },
+  /* Röhrenfernseher */
+  fernseher: S => { const W = 20, D = 13, c = SK.wood;
+    S.box(0, 0, 0, W, D, 8, c); FP(S, D + .01, [[1.5, 1.5], [W - 1.5, 1.5], [W - 1.5, 6.5], [1.5, 6.5]], SK.inner, {sw:.5}); S.box(3, D - 3.5, 1.5, 4, 3, 4.5, '#3a3442', {sw:.4}); S.box(7.5, D - 3.5, 1.5, 4, 3, 4.5, SK.red, {sw:.4});
+    S.box(1, 1, 8, W - 2, D - 2, 14, '#3a3640'); FP(S, D - 1 + .01, [[2.5, 10], [W - 6, 10], [W - 6, 20], [2.5, 20]], '#1a181d', {sw:.6}); FP(S, D - .98, [[3.3, 10.8], [W - 6.8, 10.8], [W - 6.8, 19.2], [3.3, 19.2]], '#8d8f99', {sw:.3});
+    for (let i = 0; i < 18; i++) S.dot([3.8 + (i * 7 % 9), D - .96, 11.5 + (i * 5 % 8)], .35, i % 2 ? '#e8e8ee' : '#4a4a52'); S.shine(D - .95, 3.3, 10.8, W - 6.8, 19.2);
+    [16.5, 18.3].forEach((x, i) => S.ell([x, D - .9, 17 - i * 3], .8, .8, '#b9b6c2')); S.box(W - 5.2, D - 1.2, 11, 3.4, .3, 2, '#2a2730', {sw:.3});
+    S.line([W / 2, D / 2, 22], [W / 2 - 6, D / 2 - 3, 31], '#9a99a2', .6); S.line([W / 2, D / 2, 22], [W / 2 + 5, D / 2 + 2, 32], '#9a99a2', .6); S.ell([W / 2, D / 2, 22.6], 2, 1, '#2a2730'); },
+  /* Verstärker */
+  amp: S => { const W = 22, D = 11, H = 24; S.box(0, 0, 0, W, D, H, '#1e1c22'); FP(S, D + .01, [[1.4, 1.4], [W - 1.4, 1.4], [W - 1.4, H - 5], [1.4, H - 5]], '#2e2b34', {sw:.6});
+    for (let i = 0; i < 9; i++) S.line([2.2, D + .02, 2.6 + i * 1.75], [W - 2.2, D + .02, 2.6 + i * 1.75], '#3e3a46', .5); S.ell(skH([W / 2, D + .03, (H - 5) / 2 + 1], 0), 6.2, 5.6, '#25212a', {op:.6});
+    FP(S, D + .01, [[1.4, H - 4], [W - 1.4, H - 4], [W - 1.4, H - 1], [1.4, H - 1]], '#c9a24a', {sw:.4}); for (let i = 0; i < 5; i++) S.dot([3.5 + i * 3.2, D + .05, H - 2.5], .65, '#1e1c22'); S.dot([W - 2.6, D + .05, H - 2.5], .45, '#e0384f');
+    S.box(W / 2 - 3, D / 2 - .8, H, 6, 1.6, 1, '#2a2730', {sw:.4}); FP(S, D + .03, [[3, 4], [6.5, 4], [6.5, 5.2], [3, 5.2]], '#e6dfcf', {sw:.2}); },
+  /* Plattenspieler mit Platten */
+  platten: S => { const W = 26, D = 15, H = 13, c = SK.wood;
+    S.box(0, 0, 0, W, D, H, c); FP(S, D + .01, [[1.2, 1], [W - 1.2, 1], [W - 1.2, H - 1], [1.2, H - 1]], SK.inner, {sw:.5});
+    for (let i = 0; i < 14; i++) S.box(2 + i * 1.55, 2, 1, 1.35, D - 3, H - 2.6, ['#1a181d', '#7c1b2c', '#e6dfcf', '#3a3442', '#c9a24a', '#24414a'][i % 6], {sw:.35});
+    S.box(-.4, -.4, H, W + .8, D + .8, 1, ISH(c, 1.2)); S.box(3, 1.5, H + 1, 16, 12, 2, '#2a2730'); S.ell([10.5, 7.5, H + 3.1], 5.2, 2.7, '#141216'); S.ell([10.5, 7.5, H + 3.15], 3.4, 1.8, '#25212a'); S.ell([10.5, 7.5, H + 3.2], 1.2, .65, SK.red);
+    S.line([17.5, 3, H + 3.4], [14, 8, H + 3.6], SK.silver, .7); S.dot([17.5, 3, H + 3.4], .9, '#8a8892'); [[16, 10.5], [17.5, 10.5]].forEach(([x, y]) => S.dot([x, y, H + 3.05], .45, '#c9a24a'));
+    S.box(20.5, 3, H + 1, 5, 10, 6.5, '#1a181d', {sw:.5}); S.box(21, 3.5, H + 1, 4, 9, 6.6, SK.dred, {sw:.3}); },
+  /* Kirchenorgel */
+  nc_orgel: S => { const W = 36, D = 16, c = SK.wood, P = Math.PI;
+    S.box(0, 0, 0, W, 6, 22, c); for (let i = 0; i < 9; i++) { const h = 22 + [14, 20, 26, 32, 38, 32, 26, 20, 14][i], x = 3 + i * 3.8; skCyl(S, x, 3, 22, 1.6, h - 22, '#b9b6c2', {n:10}); S.poly(skCirc(x, 3, 1.6, 10).map(([a, b]) => [a, b, 22.02]), '#2a2730', {sw:.3}); FP(S, 4.6, [[x - .7, 25], [x + .7, 25], [x, 26.4]], '#2a2730', {sw:.2}); S.ell([x, 3, h + .2], 1.6, .8, '#d8d4e4'); }
+    isoPrY(S, skArch(0, 22, W, 26, 0).map(([x, z]) => [x, Math.min(z, 26)]), 0, 1, c);
+    S.box(1, 6, 0, W - 2, D - 6, 12, c); S.box(1, 6, 12, W - 2, 5, 3, ISH(c, 1.1)); S.ftop(12.02, 3, 11, W - 3, 15, '#efe9df', {sw:.5}); for (let i = 0; i < 15; i++) S.line([3.6 + i * 2.1, 11, 12.05], [3.6 + i * 2.1, 15, 12.05], '#8d8996', .3); for (let i = 0; i < 10; i++) if (i % 7 !== 2 && i % 7 !== 6) S.box(4.6 + i * 3, 11, 12.05, 1.1, 2.4, .5, '#1a181d', {sw:.2});
+    skCandle(S, 3, 9, 15, 4); skCandle(S, W - 3, 9, 15, 4); FP(S, D, [[3, 2], [W - 3, 2], [W - 3, 10], [3, 10]], SK.wood2, {sw:.6}); for (let i = 0; i < 4; i++) FP(S, D + .01, skArch(5 + i * 7.5, 3, 10 + i * 7.5, 9, 1), SK.dred, {sw:.4}); },
+  /* Gotischer Kamin mit Feuer */
+  nc_kamin: S => { const W = 32, D = 10, H = 34, st = '#56525c';
+    S.box(0, 0, 0, W, D, H, st); FP(S, D + .01, skArch(7, 0, W - 7, 22, 1), '#141216', {sw:.6});
+    for (let r = 0; r < 6; r++) for (let i = 0; i < 4; i++) { const x = (r % 2 ? 1.5 : 0) + i * 8; if (x > W - 3) continue; FP(S, D + .005, [[x + .3, r * 5.6 + .3], [Math.min(W - .3, x + 7.6), r * 5.6 + .3], [Math.min(W - .3, x + 7.6), r * 5.6 + 5.3], [x + .3, r * 5.6 + 5.3]], ISH(st, .92 + ((r + i) % 3) * .06), {sw:.35}); }
+    FP(S, D + .02, skArch(7, 0, W - 7, 22, 1), '#141216', {sw:.6}); S.box(9, 3, 0, 14, 5, 1.5, '#3e2e24', {sw:.4}); [[11, 6], [16, 7], [21, 6]].forEach(([x, y]) => { S.box(x - 2.5, y - 1, 1.5, 5, 2, 1.6, '#5a4434', {sw:.4}); });
+    const fl = (x, h, s, c) => FP(S, D + .03, [[x - 3 * s, 2], [x + 3 * s, 2], [x + 2.4 * s, 2 + h * .45], [x + .5 * s, 2 + h * .7], [x + 1 * s, 2 + h], [x - .6 * s, 2 + h * .62], [x - 1.8 * s, 2 + h * .8], [x - 2.5 * s, 2 + h * .4]], c, {sw:.4});
+    [[11, 9], [16, 13], [21, 8.5]].forEach(([x, h]) => { fl(x, h, 1, '#e0581c'); fl(x, h * .6, .6, '#f3c25c'); });
+    S.box(-1.5, -1, H, W + 3, D + 2.5, 2.5, ISH(st, 1.2)); skCandle(S, 3, 6, H + 2.5, 5); skCandle(S, W - 3, 6, H + 2.5, 3.5); skSkull(S, W / 2, 6, H + 2.5, 2.4); S.box(W / 2 + 5, 4, H + 2.5, 4, 1.4, 6, SK.wood2, {sw:.4}); },
+  /* Quallen-Aquarium */
+  nc_aquarium: S => { const W = 28, D = 13, c = SK.wood;
+    S.box(0, 0, 0, W, D, 14, c); skDrawers(S, D, 1.2, W - 1.2, 1.5, 13, 2, SK.wood2, {knob:1});
+    S.box(.5, .5, 14, W - 1, D - 1, 20, '#28365a', {op:.9, not:1}); S.ftop(30, .5, .5, W - .5, D - .5, '#3e5a8a', {op:.6, sw:.3});
+    [[7, 6, 22, '#d8a6e8'], [16, 5, 26, '#a6d8f0'], [22, 7, 19, '#f0a6c8']].forEach(([x, y, z, col]) => { S.ell([x, y, z], 2.4, 1.6, col, {op:.9}); for (let i = 0; i < 4; i++) S.line([x - 1.5 + i, y, z - 1], [x - 1.8 + i * 1.1, y, z - 5 - (i % 2)], col, .4); S.ell([x - .6, y, z + .5], .7, .4, '#ffffff', {op:.5}); });
+    S.ell([5, D - 3, 15], 3, 1, '#c9b48a'); S.ell([20, D - 4, 15], 4, 1.2, '#c9b48a'); S.line([24, D - 4, 15], [25, D - 4, 21], '#3d6b46', .7); S.line([25, D - 4, 15], [26.5, D - 4, 19], '#3d6b46', .7);
+    FP(S, D - .5, [[.5, 14], [W - .5, 14], [W - .5, 34], [.5, 34]], '#9fc8e8', {op:.15, s:'#c8e2f4', sw:.5}); S.shine(D - .48, 2, 18, 8, 32); S.box(-.3, -.3, 34, W + .6, D + .6, 1.4, SK.wood2); },
+  /* Matratze mit Flicken */
+  b_matratze: S => { const W = 30, L = 50; S.box(0, 0, 0, W, L, 6, '#cfcabd'); for (let y = 6; y < L - 3; y += 6) for (let x = 4; x < W - 2; x += 6) S.dot([x, y, 6.02], .45, '#9a9488');
+    [[3, 22, 9, 6, '#7c1b2c'], [18, 34, 8, 7, '#3a3442'], [15, 10, 6, 5, '#5a3a7a']].forEach(([x, y, w, d, col]) => { S.ftop(6.03, x, y, x + w, y + d, col, {sw:.4}); for (let i = 0; i <= w; i += 1.2) { S.line([x + i, y - .3, 6.05], [x + i, y + .3, 6.05], '#efe9df', .25); S.line([x + i, y + d - .3, 6.05], [x + i, y + d + .3, 6.05], '#efe9df', .25); } });
+    S.box(3, 2, 6, 12, 8, 3, '#efe9df'); S.box(16, 3, 6, 10, 7, 2.6, '#2a2730'); S.poly([[3, 26, 6.05], [27, 24, 6.05], [28, 46, 6.05], [5, 47, 6.05]], '#2a2430', {op:.95, sw:.6}); S.poly([[3, 26, 6.1], [27, 24, 6.1], [27.2, 27, 6.1], [3, 29, 6.1]], SK.red, {sw:.4}); },
+  /* Grammophon */
+  grammophon: S => { const W = 14, D = 12, c = SK.wood;
+    S.box(0, 0, 0, W, D, 6, c); FP(S, D + .01, [[1.5, 1], [W - 1.5, 1], [W - 1.5, 5], [1.5, 5]], SK.wood2, {sw:.5}); S.dot([W - 2, D + .05, 3], .5, '#c9a24a'); S.ell([W / 2, D / 2, 6.3], 4.4, 2.4, '#141216'); S.ell([W / 2, D / 2, 6.35], 1, .55, SK.red);
+    S.line([W - 2, 2, 6.5], [W - 2, 2, 12], '#c9a24a', 1); S.line([W - 2, 2, 12], [W / 2 - 2, 2, 18], '#c9a24a', 1.2);
+    const hc = [W / 2 - 5, 2, 26], th = [W / 2 - 2, 2, 18]; S.poly([skH(th, -.5), skH(th, .5), skH(hc, 3.2), skH(hc, -3.2)], '#c9a24a', {sw:.6}); S.ell(hc, 6.6, 5, '#d9b85a'); S.ell(hc, 4.6, 3.5, '#5a4434'); S.ell([hc[0], hc[1], hc[2] - .4], 1.4, 1, '#2a1f1d'); },
 });
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
