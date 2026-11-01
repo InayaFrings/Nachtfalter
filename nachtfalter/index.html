@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c1d5aae6c0e1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2eaf00305ec5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -248,7 +248,7 @@ label.f{display:grid;gap:4px}
 .fr-schlicht .pic{border:1px solid var(--p-line)}
 .fr-doppel .pic{border:6px double var(--p-fg)}
 .fr-ornament .pic{border:2px solid var(--p-fg);box-shadow:0 0 0 5px var(--p-bg),0 0 0 6px var(--p-fg)}
-.fr-ornament::before,.fr-ornament::after{content:"❦\FE0E";position:absolute;left:50%;transform:translateX(-50%);font:22px/1 Georgia,serif;color:var(--p-fg);background:var(--p-bg);padding:0 6px;z-index:1}
+.fr-ornament::before,.fr-ornament::after{content:none;display:none;position:absolute;left:50%;transform:translateX(-50%);font:22px/1 Georgia,serif;color:var(--p-fg);background:var(--p-bg);padding:0 6px;z-index:1}
 .fr-ornament::before{top:-18px}
 .fr-ornament::after{bottom:-18px;transform:translateX(-50%) rotate(180deg)}
 .fr-dornen .pic{border:2px solid var(--p-fg)}
@@ -1882,7 +1882,7 @@ body.callhere .callpill{display:none}body.chatfull .callpill{top:calc(8px + env(
 .pcrtrim2{display:grid;gap:8px}.pcrtrim2 .vtr{background:var(--p-panel,#3a3a3e);border:1px solid var(--p-line,#ffffff30)}.pcrtrim2 .vtrplay{color:var(--p-fg,#fff);border-right-color:var(--p-line,#0a0a0b)}.pcrtlbl{font:600 14px var(--f-body);font-variant-numeric:tabular-nums;text-align:center}
 .pcrpick .nosb{bottom:auto;top:36px;left:5px}
 .pcam2{display:inline-flex;flex:none}.pcam2>.cameo+.cameo{margin-left:-14px;box-shadow:0 0 0 2px var(--p-bg,#111);border-radius:50%}
-.rfloat{position:absolute;z-index:1000;display:flex;gap:8px;transform:translate(-50%,calc(-100% - 10px))}.rfloat.lo{transform:translate(-50%,6px)}.room.rdrag .rfloat{display:none}
+.rfloat{position:absolute;z-index:1000;display:flex;gap:8px;transform:translate(-50%,calc(-100% - 10px))}.rfloat.lo{transform:translate(-50%,6px)}.room.rdrag .rfloat{display:none}.rfloat.rfix{left:auto;right:8px;top:8px;transform:none;gap:6px}.rfloat.rfix .rfb{width:34px;height:34px}.rfloat.rfix .rfb svg{width:17px;height:17px} /* v816 (Inaya): Spiegeln/Wegräumen als Leiste oben rechts in der freien Ecke, nicht mehr über dem Stück (sonst schlecht zu greifen) */
 .rfb{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;padding:0;background:#0a0a0be6;color:#ecebe7;border:1px solid #ecebe78c;box-shadow:0 2px 8px #000a;cursor:pointer}.rfb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
 .rszh{position:absolute;right:-12px;bottom:-12px;width:26px;height:26px;border-radius:50%;background:var(--fg,#eee);border:2px solid var(--bg,#111);box-shadow:0 1px 6px #000a;cursor:nwse-resize;touch-action:none;z-index:5}
 .rszh::after{content:'';position:absolute;inset:7px;border-right:2px solid var(--bg,#111);border-bottom:2px solid var(--bg,#111)}.ritem[style*="scaleX(-1)"] .rszh{right:auto;left:-12px}
@@ -2890,6 +2890,15 @@ html.fitpg,html.fitpg body{overflow:hidden;overscroll-behavior:none}body[data-pg
 /* v677: Kacheln in Garderobe und Zimmer mit gleichem Abstand oben und unten (Inaya) */
 .wardrobe .ltools{margin:0!important}.wardrobe .ltools + .ctabs{padding-top:0}
 .ltools.rtools{margin:-6px 0 0!important}.ltools.rtools + .lbl.mfh{margin-top:0}
+/* v816 (Inaya): Lookbuch/Speichern/Ausziehen bzw. Zimmerbuch/Speichern/Ausräumen als kleine runde Symbole an der Seite: Garderobe rechts neben dem Avatar, Zimmer oben links in der leeren Ecke */
+.ltools.lside{position:absolute;z-index:6;display:flex!important;flex-direction:column;gap:8px;margin:0!important;grid-template-columns:none;width:auto!important;align-items:center}
+.mirror-card{position:relative}.wardrobe .mirror-card{padding-bottom:14px!important} /* v816 (Inaya): Rahmen ohne Symbol oben und unten, deckt die Reiter nicht mehr ab */
+.mirror-card>.ltools.lside{right:10px;top:50%;transform:translateY(-50%)}
+.rstick{position:relative}.rstick>.ltools.lside{left:8px;top:8px;flex-direction:row;gap:6px}
+.ltools.lside .ltool{width:40px;height:40px;min-height:0;padding:0;border-radius:50%;place-content:center;background:color-mix(in srgb,var(--paper-2,#1b1a1f) 88%,transparent);border:1px solid var(--line);box-shadow:0 2px 8px #0008}
+.rstick>.ltools.lside .ltool{width:34px;height:34px}
+.ltools.lside .ltool span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.ltools.lside .ltool svg{width:20px;height:20px}.rstick>.ltools.lside .ltool svg{width:17px;height:17px}
+.rhead.redit{justify-content:flex-end} /* v816 (Inaya): kein „Mein Zimmer“ mehr, das steht schon oben in der Leiste */
 /* v774 (Inaya): Chat wie bei WhatsApp, im Noctibat-Stil. Kopf: Pfeil, Bild, Name + Status, schlichte Symbole ohne Kästen. Schreibleiste: ein großes rundes Feld (Totenkopf links, Text, Sticker, Plus), daneben der runde Knopf Mikrofon/Senden. */
 .chatpanel .ch-head{gap:4px;align-items:center}
 .chatpanel .ch-head .btn.iconb{border:0!important;background:transparent!important;width:42px;height:42px;min-width:0;min-height:0;padding:0;display:grid;place-items:center;box-shadow:none!important}
@@ -7101,7 +7110,7 @@ function rMir(it){ if (it.m == null) { const f = FURN[it.k]; it.m = ((+it.x || 0
 /* v799: Spiegeln und Wegräumen direkt am ausgewählten Stück im Zimmer */
 function rFloatHTML(it){ const f = FURN[it.k]; if (!f) return ''; const q = rScr(rDim(it), it.x, it.y), lo = q.t < 9;
   const mir = f.r !== 'poster' ? `<button type="button" class="rfb" data-act="flip" title="Spiegeln" aria-label="Spiegeln"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M9 7.5L4 12l5 4.5z"/><path d="M15 7.5l5 4.5-5 4.5z"/></svg></button>` : '';
-  return `<div class="rfloat${lo ? ' lo' : ''}" style="left:${(q.l + q.w / 2).toFixed(2)}%;top:${q.t.toFixed(2)}%">${mir}<button type="button" class="rfb" data-act="unplace-sel" title="Wegräumen" aria-label="Wegräumen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>`; }
+  return `<div class="rfloat rfix">${mir}<button type="button" class="rfb" data-act="unplace-sel" title="Wegräumen" aria-label="Wegräumen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>`; }
 const rOri = it => it.o === 'L' || it.o === 'R' ? it.o : (+it.x || 0) + FURN[it.k].w * itS(it) / 2 < 50 ? 'L' : 'R';
 function rTf(it){ const f = FURN[it.k]; if (!f) return ''; if (f.wall) return `skewY(${(+it.x || 0) + f.w * itS(it) / 2 < 50 ? -26.565 : 26.565}deg)${it.f && f.r !== 'poster' ? ' scaleX(-1)' : ''}`;
   if (f.iso) return rMir(it) ? 'scaleX(-1)' : ''; /* v799: kein automatisches Spiegeln mehr, nur über „Spiegeln“ (Inaya) */
@@ -7171,7 +7180,7 @@ function rbModal(u, own){
     ${sel ? `<div class="row lookctl"><button type="button" class="btn" data-act="rb-use">Dieses Zimmer einrichten</button><button type="button" class="btn ghost" data-act="rb-del">Aus dem Zimmerbuch löschen</button></div>` : ''}
   </div></div>`;
 }
-const roomTools = () => `<div class="ltools rtools"><button type="button" class="ltool" data-act="rb-open" data-id="${esc(S.me)}">${RB_ICO}<span>Zimmerbuch</span></button><button type="button" class="ltool" data-act="rb-save">${LT_SAVE}<span>Zimmer speichern</span></button><button type="button" class="ltool" data-act="rb-clear">${LT_CLEAR}<span>Komplett ausräumen</span></button></div>`; /* gleiche Reihenfolge wie in der Garderobe: Buch, Speichern, Leeren (Inaya, 2026-10-18) */
+const roomTools = () => `<div class="ltools rtools lside"><button type="button" class="ltool" data-act="rb-open" data-id="${esc(S.me)}">${RB_ICO}<span>Zimmerbuch</span></button><button type="button" class="ltool" data-act="rb-save">${LT_SAVE}<span>Zimmer speichern</span></button><button type="button" class="ltool" data-act="rb-clear">${LT_CLEAR}<span>Komplett ausräumen</span></button></div>`; /* gleiche Reihenfolge wie in der Garderobe: Buch, Speichern, Leeren (Inaya, 2026-10-18) */
 function rbUse(){ const u = me(), r = u.roomsBook?.[rbSel]; if (!r) return; const room = u.room, skipped = (r.items || []).filter(x => !FURN[x.k] || !ncOwns(ncF(x.k))).length;
   room.items = (r.items || []).filter(x => FURN[x.k] && ncOwns(ncF(x.k))).map(x => ({...x}));
   const surfOk = (key, s) => surfAvail(s).includes(key);
@@ -7194,7 +7203,7 @@ function roomView(){
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k]?.name || '' : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
-  const head = `<div class="rhead"><h2 class="card-h">Mein Zimmer</h2><div class="ricons">
+  const head = `<div class="rhead redit"><div class="ricons">
       ${roomMode === 'edit' ? '<button class="btn ghost rdone" data-act="rcancel">Abbrechen</button><button class="btn rdone" data-act="rmode" data-v="edit">Fertig</button>' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
       ${roomMode === 'edit' ? '' : u.roomOpen && social ? `<button class="ricon ${rShare ? 'on' : ''}" data-act="rshare" aria-pressed="${rShare}" aria-label="Freunde einladen" title="Freunde einladen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7"/><path d="M12 15V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/></svg></button>` : ''}
       ${roomMode === 'edit' ? '' : ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
@@ -7218,13 +7227,13 @@ function roomView(){
   const doneRow = ''; /* v812 (Inaya): Abbrechen und Fertig stehen oben im Kopf, unten nicht mehr */
   // Handy: alles in einer Karte, damit das Zimmer beim Möbel-Aussuchen oben stehen bleibt
   if (isMob()) return `<div class="card">${head}<div class="card-in">
-      <div class="rstick">${roomHTML(u, true)}</div>
-      ${selRow}${roomTools()}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}${RB === S.me ? rbModal(u, true) : ''}
+      <div class="rstick">${roomTools()}${roomHTML(u, true)}</div>
+      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}${RB === S.me ? rbModal(u, true) : ''}
     </div></div>`;
   return `<div class="card">${head}<div class="card-in">
       <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deko, Lampen, Haustiere und Kuscheltiere kannst du auf ein Bett, Sofa, einen Schrank oder Tisch ziehen, dann sitzen bzw. stehen sie darauf. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
-      <div class="rstick">${roomHTML(u, true)}</div>
-      ${selRow}${roomTools()}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}${RB === S.me ? rbModal(u, true) : ''}
+      <div class="rstick">${roomTools()}${roomHTML(u, true)}</div>
+      ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}${RB === S.me ? rbModal(u, true) : ''}
     </div></div>`; // eine Karte: das Zimmer bleibt beim Möbel-Aussuchen oben stehen (Inaya, 2026-10-15)
 }
 // Griff unten rechts: größer und kleiner ziehen (Mitte und Unterkante bleiben, wo sie sind)
@@ -11397,13 +11406,12 @@ function shopView(isShop){
   }).join('');
   const empty = shopCat === 'body' ? '' : !isShop ? `<p class="note">Hier hast du noch nichts. <button class="lnk" data-act="nav" data-v="mall">Zur Mall</button></p>` : isShop ? `<p class="note">In dieser Abteilung hast du schon alles. Schau in deine <button class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button> oder in eine andere Abteilung.</p>` : '';
   return `<div class="wardrobe">
-    <div class="card mirror-card">
+    <div class="card mirror-card">${isShop ? '' : `<div class="ltools lside"><button type="button" class="ltool" data-act="lb-open" data-id="${u.id}" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="ltool" data-act="look-save">${LT_SAVE}<span>Look speichern</span></button><button type="button" class="ltool" data-act="undress">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>`}
       ${portrait({outfit:shown}, {frame:'ornament',shape:'bogen'}, 'mirror')}
       ${trial ? `<p class="note">Du probierst gerade etwas an.</p><button class="btn ghost" data-act="untry">Anprobe beenden</button>` : `<p class="note">Klick auf ein Teil, um es anzuprobieren.</p>`}
     </div>
     <div class="card"><h2 class="card-h">${isShop ? 'Shop' : 'Garderobe'}</h2><div class="card-in">
       <p class="note">${isShop ? 'Neue Sachen für deinen Avatar. Punkte sammelst du, wenn du Bilder, Filme und Gedanken teilst oder bei Freunden reagierst.' : 'Alles hier ist für dich. Klick ein Teil an, um es anzuprobieren.'}</p>
-      ${isShop ? '' : `<div class="ltools"><button type="button" class="ltool" data-act="lb-open" data-id="${u.id}" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="ltool" data-act="look-save">${LT_SAVE}<span>Look speichern</span></button><button type="button" class="ltool" data-act="undress">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>`}
       <div class="ctabs">${catTabs(shopCat, 'cat', !isShop, u.outfit, i => fitsW(i, u.outfit), null, isShop ? null : ncNewTabs())}</div>
       ${!isShop && shopCat === 'body' ? colorPanel(shopCat, u.outfit, 'color') : ''}
       ${isShop ? '' : sideBar(shopCat, u.outfit, 'color')}${items ? `<div class="shopgrid">${items}</div>` : empty}
