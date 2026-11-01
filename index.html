@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e9e8720dde6b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e2d7cee92ec0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7083,7 +7083,10 @@ function rDim(it, vis){ if (it === 'av') { const w = vis ? 15.5 : 16.5; /* v810 
 /* v804 (Inaya): Möbel bleiben im Zimmer. Ragt ein Stück seitlich (oder an der Wand oben) heraus, wird es nach innen gerückt */
 function rFit(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc, m = Math.min(.5, wS / 2 + .01);
   if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2), X = Math.max(m, Math.min(1 - m, P.X)), Y = Math.max(hS / 2 + .005, P.Y); if (Math.abs(X - P.X) < 1e-4 && Math.abs(Y - P.Y) < 1e-4) return {x, y}; const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; }
-  const P = rIsoF(x + d.w / 2, y + d.h), X = Math.max(m, Math.min(1 - m, P.X)); if (Math.abs(X - P.X) < 1e-4) return {x, y}; const v = rInvF(X, P.Y); return {x:v.lx - d.w / 2, y:v.fy - d.h}; }
+  /* v811 (Inaya): am Boden überall hin, nur die Grundfläche (linke und rechte Ecke unten, 2:1 schräg) bleibt auf dem Boden, damit Schränke und Betten nicht in die Wand ragen */
+  const P = rIsoF(x + d.w / 2, y + d.h), cy = RI.wh + .25, hw = Math.min(.5, wS / 2) * (d.av ? .45 : .92), ins = (X, Y) => Math.max(Math.abs(X - hw - .5) / .5 + Math.abs(Y - hw * .5 - cy) / .25, Math.abs(X + hw - .5) / .5 + Math.abs(Y - hw * .5 - cy) / .25) <= 1.0005;
+  if (ins(P.X, P.Y)) return {x, y}; let lo = 0, hi = 1; for (let i = 0; i < 22; i++) { const t = (lo + hi) / 2; if (ins(.5 + (P.X - .5) * t, cy + (P.Y - cy) * t)) lo = t; else hi = t; }
+  const v = rInvF(.5 + (P.X - .5) * lo, cy + (P.Y - cy) * lo); return {x:v.lx - d.w / 2, y:v.fy - d.h}; }
 function rScr(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc; ({x, y} = rFit(d, x, y));
   if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS / 2) / RI.H * 100, w:wS * 100, z:1, X:P.X, Y:P.Y}; }
   const P = rIsoF(x + d.w / 2, y + d.h); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS) / RI.H * 100, w:wS * 100, z:d.rug ? 2 : 10 + Math.round((P.Y - RI.wh) * 200), X:P.X, Y:P.Y}; }
@@ -7140,7 +7143,7 @@ function rzSet(sc, s, x, y){ const r = sc.querySelector('.room'), W = sc.clientW
 function rzApply(){ if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); } const sc = rzEls()[0]; if (sc && RZ.s > 1) rzSet(sc, RZ.s, RZ.x, RZ.y); }
 const rzPt = (sc, t) => { const R = sc.getBoundingClientRect(); return {x:t.clientX - R.left, y:t.clientY - R.top}; };
 document.addEventListener('touchstart', e => { const sc = e.target.closest?.('.rscroll'); if (!sc || !rzEls().includes(sc)) return; if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); }
-  if (e.touches.length === 2) { const a = rzPt(sc, e.touches[0]), b = rzPt(sc, e.touches[1]); RZ.t = {sc, d0:Math.hypot(a.x - b.x, a.y - b.y) || 1, s0:RZ.s, m0:{x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}, x0:RZ.x, y0:RZ.y}; e.preventDefault(); }
+  if (e.touches.length >= 2) { rDragCancel(); if (rsz) { rsz = null; render(); } } if (e.touches.length === 2) { const a = rzPt(sc, e.touches[0]), b = rzPt(sc, e.touches[1]); RZ.t = {sc, d0:Math.hypot(a.x - b.x, a.y - b.y) || 1, s0:RZ.s, m0:{x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}, x0:RZ.x, y0:RZ.y}; e.preventDefault(); }
   else if (e.touches.length === 1 && RZ.s > 1 && !sc.querySelector('.room.edit')) { const a = rzPt(sc, e.touches[0]); RZ.t = {sc, pan:1, p0:a, x0:RZ.x, y0:RZ.y, mv:0}; } }, {passive:false});
 document.addEventListener('touchmove', e => { const t = RZ.t; if (!t) return;
   if (t.pan) { if (e.touches.length !== 1) return; const a = rzPt(t.sc, e.touches[0]); t.mv = Math.max(t.mv, Math.hypot(a.x - t.p0.x, a.y - t.p0.y)); rzSet(t.sc, RZ.s, t.x0 + a.x - t.p0.x, t.y0 + a.y - t.p0.y); e.preventDefault(); return; }
@@ -7234,8 +7237,11 @@ document.addEventListener('pointermove', e => { if (!rsz) return; const d = rsz,
 document.addEventListener('pointerup', () => { if (!rsz) return; rsz = null; save(); render(); });
 document.addEventListener('input', e => { if (e.target.id !== 'r-size') return; const it = me().room.items[roomSel]; if (!it) return; const f = FURN[it.k], s0 = itS(it), cx = +it.x + f.w * s0 / 2, by = +it.y + itemH(it.k) * s0;
   rszApply(it, f, +e.target.value, cx, by); const el = document.querySelector(`#room [data-drag="${roomSel}"]`); if (el) { rPut(el, rDim(it), it.x, it.y); el.style.transform = rTf(it); } clearTimeout(rsz?.t); setTimeout(save, 300); });
+/* v811 (Inaya): beim Zoomen mit zwei Fingern nichts versehentlich mitbewegen: zweiter Finger bricht das Ziehen ab, das Stück springt zurück */
+function rDragCancel(){ const d = dragging; if (!d) return; dragging = null; d.ref.x = d.ox; d.ref.y = d.oy; rPut(d.el, d.dd, d.ox, d.oy); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
+  for (const c of d.kids || []) { c.o.x = c.ox; c.o.y = c.oy; rPut(c.el, rDim(c.o), c.ox, c.oy); } d.roomEl.classList.remove('rdrag'); }
 document.addEventListener('pointerdown', e => {
-  const el = e.target.closest('#room [data-drag]'); if (!el) return;
+  if (!e.isPrimary || RZ.t?.d0) return; const el = e.target.closest('#room [data-drag]'); if (!el) return;
   const room = document.getElementById('room').getBoundingClientRect();
   const key = el.dataset.drag, ref = key === 'av' ? me().room.av : me().room.items[+key];
   const kids = key === 'av' ? [] : me().room.items.map((o, i) => ({o, i})).filter(({o}) => o.on === ref.k && o !== ref).map(({o, i}) => ({o, ox:+o.x, oy:+o.y, el:document.querySelector(`#room [data-drag="${i}"]`)}));
@@ -7245,7 +7251,7 @@ document.addEventListener('pointerdown', e => {
   el.setPointerCapture(e.pointerId); e.preventDefault();
 });
 document.addEventListener('pointermove', e => {
-  if (!dragging) return;
+  if (!dragging || !e.isPrimary || RZ.t?.d0) return;
   const d = dragging, dx = (e.clientX - d.sx) / d.room.width * 100, dy = (e.clientY - d.sy) / d.room.height * 100;
   if (Math.abs(dx) + Math.abs(dy) > .5) d.moved = true;
   const p = rPick(d.roomEl, d.dd, e.clientX, e.clientY, d.off); d.ref.x = p.x; d.ref.y = p.y; /* v791: Zeiger schräg auf Boden bzw. Wand umgerechnet */
