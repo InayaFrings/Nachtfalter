@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='49ed870361a5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='212bcbf3f85e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7197,11 +7197,11 @@ document.addEventListener('touchmove', e => { const t = RZ.t; if (!t) return;
 document.addEventListener('touchend', e => { if (RZ.t && (RZ.t.pan ? e.touches.length === 0 : e.touches.length < 2)) RZ.t = null; });
 document.addEventListener('touchcancel', () => { RZ.t = null; });
 ['gesturestart', 'gesturechange'].forEach(n => document.addEventListener(n, e => { if (e.target.closest?.('.rscroll')) e.preventDefault(); }, {passive:false}));
-const FURN_TABS = [['wand','Wand'],['boden','Boden'],['alle','Alle'],['poster','Poster'],['bett','Betten'],['sofa','Sofas'],['lampe','Lampen'],['fenster','Fenster'],['schrank','Schränke'],['tisch','Tische'],['tier','Haustiere'],['teppich','Teppiche'],['deko','Deko']];
+const FURN_TABS = [['poster','Poster'],['bett','Betten'],['sofa','Sofas'],['lampe','Lampen'],['fenster','Fenster'],['schrank','Schränke'],['tisch','Tische'],['tier','Haustiere'],['teppich','Teppiche'],['deko','Deko'],['wand','Wand'],['boden','Boden']]; /* v829 (Inaya): kein Reiter „Alle“ mehr, Zimmer und Möbelhaus in derselben Reihenfolge */
 /* v825 (Inaya): Reiter passen zu den Möbeln. Nur die Anzeige-Kategorie, f.r bleibt (Preise hängen daran) */
 const FTAB_FIX = {himmelbett:'bett', mondlampe:'lampe', fernseher:'tisch', schminktisch:'tisch', nachttisch:'tisch'};
 const ftab = k => { const f = FURN[k]; if (!f) return ''; if (FTAB_FIX[k]) return FTAB_FIX[k]; const n = k + ' ' + (f.name || ''); if (f.wall || f.rug || f.hang) return f.r; if (/kommode/i.test(n)) return 'schrank'; if (/(?<!go)tisch/i.test(n) && !/lampe|leuchte|kerze/i.test(n)) return 'tisch'; /* nicht „gotisch“ */ if (f.r === 'deko' && /bett/i.test(n)) return 'bett'; return f.r; };
-let furnTab = 'alle';
+let furnTab = 'poster';
 /* Zimmerbuch (Inaya, 2026-10-17): Zimmer wie Looks speichern; andere sehen es auf dem Profil (rechts gegenüber vom Lookbuch) */
 let RB = null, rbSel = null, ROOM_UNDO = null; const RB_MAX = 20;
 const RB_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M5.8 13.2L8 11.2l2.2 2V16H5.8z"/><path d="M13.8 13.2L16 11.2l2.2 2V16h-4.4z"/></svg>';
@@ -7228,7 +7228,7 @@ function rbUse(){ const u = me(), r = u.roomsBook?.[rbSel]; if (!r) return; cons
 function roomView(){
   const u = me(), r = u.room;
   const placed = new Set(r.items.map(i => i.k));
-  if (furnTab === 'raum') furnTab = 'wand';
+  if (furnTab === 'raum') furnTab = 'wand'; if (!FURN_TABS.some(([k]) => k === furnTab)) furnTab = 'poster';
   const shop = furnTab === 'wand' || furnTab === 'boden' ? '' : FURN_IDS.filter(k => !FURN[k].surf && (furnTab === 'alle' || ftab(k) === furnTab) && (ncOwns(ncF(k)) || placed.has(k))).map(k => {
     const f = FURN[k], owned = true, here = placed.has(k);
     const btn = here ? `<button class="btn ghost" data-act="unplace" data-k="${k}">Wegräumen</button>`
@@ -15873,7 +15873,7 @@ const NC_GIFT = '<svg class="ncgi" viewBox="0 0 24 24" aria-hidden="true"><path 
 const NC_BAG = '<svg class="ncgi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4z"/><path d="M8.8 10.6V7a3.2 3.2 0 0 1 6.4 0v3.6"/></svg>';
 const NC_LOCK = '<svg class="ncgi" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
 const WAL = {d:null, err:'', unsub:null, q:Promise.resolve(), creating:false, claiming:false, keepTry:0};
-let NCPOST = null, mallCat = 'back', furnShop = 'alle', MTRY = null, MSEL = null, NCGIFT = null, NCPRICE = null;
+let NCPOST = null, mallCat = 'back', furnShop = 'poster', MTRY = null, MSEL = null, NCGIFT = null, NCPRICE = null;
 const NCCART = new Map(); /* Einkaufstasche: id -> Preis (nur im Browser, bis gekauft) */
 function walStart(){ if (!social || WAL.unsub) return; const ref = social.db.doc('wallet/' + social.uid);
   WAL.unsub = ref.onSnapshot(d => { if (!d.exists) { if (!d.metadata.fromCache) walCreate(); return; } const o = WAL.d; WAL.d = d.data(); WAL.err = ''; ncNewSync();
@@ -16143,7 +16143,7 @@ function mallView(){ if (!social || !ncShopOk()) return `<section class="ncpage"
       <div class="shopgrid ncgrid">${cards}</div></div></div></div></section>`; } /* Coins und Tasche oben im Kopf wie im Möbelhaus (Inaya, 2026-10-18) */
 /* Möbelhaus: alle Möbel; im eigenen Zimmer probestellen, in die Tasche legen, verschenken */
 function moebelView(){ if (!social || !ncShopOk()) return `<section class="ncpage">${ncHead('Möbelhaus', true)}${ncWait()}</section>`;
-  const tabs = [...FURN_TABS.filter(([k]) => k !== 'wand' && k !== 'boden'), ['wand', 'Wand'], ['boden', 'Boden']], shopOk = k => ncPaid(FURN[k]) && !evOut(FURN[k]), evs = (evSweep(), evBar('moebel', FURN_IDS.filter(shopOk).map(k => FURN[k]))), ef = MEV.moebel, evR = ef ? new Set(FURN_IDS.filter(k => shopOk(k) && FURN[k].ev === ef).map(k => ftab(k))) : null, ids = (evR && furnShop !== 'alle' && !evR.has(furnShop) && (furnShop = 'alle'), FURN_IDS.filter(k => shopOk(k) && (!ef || FURN[k].ev === ef) && (furnShop === 'alle' || ftab(k) === furnShop))).sort((a, b) => (evOn(FURN[b]) - evOn(FURN[a])) || (ncHas(ncF(a)) - ncHas(ncF(b))) || (FURN[a].ex ? -1 : 0) - (FURN[b].ex ? -1 : 0));
+  const tabs = FURN_TABS; if (!tabs.some(([k]) => k === furnShop)) furnShop = 'poster'; const shopOk = k => ncPaid(FURN[k]) && !evOut(FURN[k]), evs = (evSweep(), evBar('moebel', FURN_IDS.filter(shopOk).map(k => FURN[k]))), ef = MEV.moebel, evR = ef ? new Set(FURN_IDS.filter(k => shopOk(k) && FURN[k].ev === ef).map(k => ftab(k))) : null, ids = (evR && !evR.has(furnShop) && evR.size && (furnShop = FURN_TABS.find(([k]) => evR.has(k))?.[0] || furnShop), FURN_IDS.filter(k => shopOk(k) && (!ef || FURN[k].ev === ef) && (furnShop === 'alle' || ftab(k) === furnShop))).sort((a, b) => (evOn(FURN[b]) - evOn(FURN[a])) || (ncHas(ncF(a)) - ncHas(ncF(b))) || (FURN[a].ex ? -1 : 0) - (FURN[b].ex ? -1 : 0));
   if (MSEL && !ids.includes(MSEL)) { MSEL = null; MSELC = null; MSELPOS = null; } /* nichts automatisch auswählen */
   const u = me(), f = FURN[MSEL], sf = f?.surf, own = MSEL && ncOwns(ncF(MSEL)), pl = sf ? null : u.room.items.find(x => x.k === MSEL), placed = sf ? u.room[sf] === f.key : !!pl; /* sf: Tapete/Boden statt Möbelstück */
   /* leeres Zimmer: nur was in der Tasche liegt, das ausgewählte Stück zuletzt (zum Verschieben) (Inaya, 2026-10-16) */
