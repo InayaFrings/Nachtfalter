@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7d4f39ba66f3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='53dca8407677';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -15133,10 +15133,172 @@ Object.assign(SKF, {
       const g = [[5, 4], [6, 6], [6, 14], ...isoArc(9.5, 14, 3.5, Math.PI, 0, 10).slice(1), [13, 6], [14, 4], [12.4, 5], [11, 3.6], [9.5, 5], [8, 3.6], [6.6, 5]]; FP(S, y + .01, g, '#e8eaf0', {sw:.4, op:.85});
       [[8, 14], [11, 14]].forEach(([x, z]) => FP(S, y + .02, skCirc(x, z, .8, 8), '#141216', {sw:0})); FP(S, y + .02, skCirc(9.5, 11.6, .6, 8), '#141216', {sw:0}); }}); },
 });
+/* v805: bessere Artikel (Inaya: „verbesser die artikel“) */
+/* weiche Form mit Licht und Schatten (Plüsch, Polster) */
+function skBlob(S, p, rx, ry, c, o = {}){ S.ell(p, rx, ry, c, {sw:o.sw ?? .5});
+  S.ell(skH([p[0], p[1], p[2] - ry * .34], rx * .22), rx * .66, ry * .48, ISH(c, .82), {nol:1, op:.7});
+  S.ell(skH([p[0], p[1], p[2] + ry * .16], -rx * .16), rx * .7, ry * .66, ISH(c, 1.1), {nol:1, op:.85});
+  if (o.hi !== false) S.ell(skH([p[0], p[1], p[2] + ry * .46], -rx * .34), rx * .26, ry * .17, ISH(c, 1.38), {nol:1, op:.75}); }
+/* Kuscheltier sitzend, von vorn: Ohren baer/hase/katze, Augen knopf/x/glanz, Flicken, Naht, Riss */
+function skPlush3(S, x, y, z, c, o = {}){ const s = o.s || 1, P = (dx, dz) => skH([x, y, z + dz * s], dx * s * .5), dk = ISH(c, .6), bl = o.belly || ISH(c, 1.28), ink = '#1a1418';
+  S.ell(P(0, .1), 6.4 * s, 1.6 * s, '#120e14', {nol:1, op:.28});
+  /* Ohren hinter dem Kopf */
+  if ((o.ears || 'baer') === 'baer') [-1, 1].forEach(k => { if (o.torn && k > 0) return; skBlob(S, P(k * 3.7, 12.8), 1.75 * s, 1.75 * s, c, {hi:false}); S.ell(P(k * 3.7, 12.7), .95 * s, .95 * s, o.inner || ISH(c, 1.35), {nol:1}); });
+  if (o.ears === 'hase') [-1, 1].forEach(k => { skBlob(S, P(k * 2.3, 15.6), 1.3 * s, 3.6 * s, c, {hi:false}); S.ell(P(k * 2.3, 15.4), .65 * s, 2.6 * s, o.inner || '#eaa4bd', {nol:1}); });
+  if (o.ears === 'katze') [-1, 1].forEach(k => { S.poly([P(k * 1.8, 12), P(k * 4.6, 15.6), P(k * 5, 10.6)], c, {sw:.5}); S.poly([P(k * 2.6, 12), P(k * 4.3, 14.4), P(k * 4.4, 11.2)], o.inner || '#eaa4bd', {sw:0, nol:1}); });
+  /* Beine mit Pfoten */
+  [-1, 1].forEach(k => { skBlob(S, P(k * 3, 1.7), 2.3 * s, 1.75 * s, c); S.ell(P(k * 3.15, 1.45), 1.25 * s, 1 * s, bl, {sw:.35}); [-.6, 0, .6].forEach(d => S.ell(P(k * 3.15 + d, 2.25), .28 * s, .22 * s, ISH(bl, .8), {nol:1})); });
+  /* Bauch */
+  skBlob(S, P(0, 5.2), 4.2 * s, 4.3 * s, c); S.ell(P(0, 4.7), 2.5 * s, 2.7 * s, bl, {sw:.35}); S.ell(P(-.6, 5.4), 1.1 * s, .9 * s, ISH(bl, 1.12), {nol:1, op:.8});
+  if (o.stitch) for (let i = 0; i < 5; i++) S.line(P(-.5, 3 + i * 1.05), P(.5, 3.35 + i * 1.05), dk, .28);
+  /* Arme */
+  [-1, 1].forEach(k => skBlob(S, P(k * 4.3, 5.6), 1.45 * s, 2.5 * s, c));
+  /* Kopf */
+  skBlob(S, P(0, 10.2), 4.6 * s, 4 * s, c);
+  if (o.stitch) for (let i = 0; i < 4; i++) S.line(P(-.45, 12.2 + i * .65), P(.45, 12.45 + i * .65), dk, .26);
+  S.ell(P(0, 8.8), 2.1 * s, 1.5 * s, o.muzzle || ISH(c, 1.32), {sw:.3}); S.ell(P(-.4, 9.2), .8 * s, .45 * s, '#ffffff', {nol:1, op:.25});
+  S.ell(P(0, 9.35), .7 * s, .48 * s, ink, {nol:1}); S.ell(P(-.2, 9.5), .22 * s, .14 * s, '#ffffff', {nol:1, op:.7});
+  S.line(P(0, 8.9), P(0, 8.3), ink, .3); S.line(P(-.9, 8.15), P(0, 8.3), ink, .3); S.line(P(.9, 8.15), P(0, 8.3), ink, .3);
+  [-1, 1].forEach(k => S.ell(P(k * 3.1, 9.2), .85 * s, .5 * s, o.blush || '#e98fa6', {nol:1, op:.45}));
+  const eye = (k, kind) => { const e = P(k * 1.9, 10.6);
+    if (kind === 'x') { const a = (dx, dz) => skH([e[0], e[1], e[2] + dz * s], dx * s); S.line(a(-.6, -.6), a(.6, .6), ink, .5); S.line(a(-.6, .6), a(.6, -.6), ink, .5); return; }
+    if (kind === 'knopf') { S.ell(e, .85 * s, .85 * s, o.btn || '#7c1b2c', {sw:.3}); S.dot(skH([e[0], e[1], e[2] + .2 * s], -.2 * s), .14 * s, ink); S.dot(skH([e[0], e[1], e[2] + .2 * s], .2 * s), .14 * s, ink); S.dot(skH([e[0], e[1], e[2] - .2 * s], -.2 * s), .14 * s, ink); S.dot(skH([e[0], e[1], e[2] - .2 * s], .2 * s), .14 * s, ink); return; }
+    S.ell(e, .72 * s, .8 * s, ink, {sw:.2}); S.ell(skH([e[0], e[1], e[2] + .28 * s], -.22 * s), .26 * s, .26 * s, '#ffffff', {nol:1}); S.ell(skH([e[0], e[1], e[2] - .3 * s], .22 * s), .12 * s, .12 * s, '#ffffff', {nol:1, op:.8}); };
+  eye(-1, o.eyeL || 'glanz'); eye(1, o.eyeR || 'glanz');
+  if (o.patch) { const p = P(2.6, 3.4), Q = (a, b) => skH([p[0], p[1], p[2] + b * s], a * s); S.poly([Q(-1.1, -.9), Q(1.1, -1), Q(1.2, .95), Q(-1, 1.05)], o.patch, {sw:.35}); [[-1.1, -.9, 1.1, -1], [1.1, -1, 1.2, .95], [1.2, .95, -1, 1.05], [-1, 1.05, -1.1, -.9]].forEach(([a, b, c2, d]) => { for (let t = .2; t < 1; t += .3) { const u = a + (c2 - a) * t, v = b + (d - b) * t; S.line(Q(u - .15, v - .15), Q(u + .15, v + .15), '#e8e2d6', .2); } }); }
+  if (o.bow) { const b = P(o.ears === 'hase' ? 2.6 : 3.2, 13.2), Q = (a, d) => skH([b[0], b[1], b[2] + d * s], a * s); S.poly([Q(0, 0), Q(-1.4, .8), Q(-1.4, -.8)], o.bow, {sw:.3}); S.poly([Q(0, 0), Q(1.4, .8), Q(1.4, -.8)], o.bow, {sw:.3}); S.ell(b, .45 * s, .45 * s, ISH(o.bow, 1.2), {sw:.25}); }
+  if (o.torn) { [[3.7, 12.4, 1.1], [4.6, 13.4, .85], [-4.7, 4.4, .9], [-5.2, 3.4, .75]].forEach(([dx, dz, r]) => S.ell(P(dx, dz), r * s, r * .85 * s, '#f1eee8', {sw:.3})); S.line(P(-4, 6), P(-4.2, 3), dk, .3); } }
+/* Kegel/Trichter zwischen zwei Punkten (für Grammophon-Trichter), nur sichtbare Seiten */
+function skCone(S, a, b, r0, r1, cols, n = 16){ const v = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], L = Math.hypot(...v), w = v.map(q => q / L), up = Math.abs(w[2]) < .9 ? [0, 0, 1] : [1, 0, 0];
+  const cr = (p, q) => [p[1] * q[2] - p[2] * q[1], p[2] * q[0] - p[0] * q[2], p[0] * q[1] - p[1] * q[0]], nz = q => { const l = Math.hypot(...q); return q.map(t => t / l); };
+  const u1 = nz(cr(w, up)), u2 = cr(w, u1), V = [1, 1, 1.2], ring = (c, r, t) => [c[0] + r * (Math.cos(t) * u1[0] + Math.sin(t) * u2[0]), c[1] + r * (Math.cos(t) * u1[1] + Math.sin(t) * u2[1]), c[2] + r * (Math.cos(t) * u1[2] + Math.sin(t) * u2[2])];
+  const F = []; for (let i = 0; i < n; i++) { const t0 = i / n * Math.PI * 2, t1 = (i + 1) / n * Math.PI * 2, tm = (t0 + t1) / 2, nr = [Math.cos(tm) * u1[0] + Math.sin(tm) * u2[0], Math.cos(tm) * u1[1] + Math.sin(tm) * u2[1], Math.cos(tm) * u1[2] + Math.sin(tm) * u2[2]], sl = (r0 - r1) / L, nn = nz(nr.map((q, k) => q + w[k] * sl)), d = nn[0] * V[0] + nn[1] * V[1] + nn[2] * V[2];
+    F.push({q:[ring(a, r0, t0), ring(a, r0, t1), ring(b, r1, t1), ring(b, r1, t0)], d, i, lt:.75 + .35 * Math.max(0, (nn[2] - nn[0] * .3 + nn[1] * .2))}); }
+  return {F, inner:Array.from({length:n}, (_, i) => ring(b, r1 * .96, i / n * Math.PI * 2)), rim:Array.from({length:n}, (_, i) => ring(b, r1, i / n * Math.PI * 2)), front:w[0] + w[1] + w[2] * 1.2 > 0, draw(back){ F.filter(f => back ? f.d <= 0 : f.d > 0).forEach(f => S.poly(f.q, ISH(cols[f.i % cols.length], back ? .62 : Math.min(1.15, f.lt)), {sw:.4})); } }; }
+/* gebogenes Polster-Band (Clubsessel): Ring zwischen ri und ro um (cx, cy), Winkel a0..a1, Höhe h(a) */
+function skBand(S, cx, cy, ri, ro, a0, a1, z, hf, c, n = 20){ const P = (r, a, zz) => [cx + r * Math.cos(a), cy + r * Math.sin(a), zz], seg = []; for (let i = 0; i < n; i++) { const t0 = a0 + (a1 - a0) * i / n, t1 = a0 + (a1 - a0) * (i + 1) / n; seg.push([t0, t1, (t0 + t1) / 2]); }
+  return {inner(){ seg.filter(([, , m]) => Math.cos(m) + Math.sin(m) < 0).forEach(([t0, t1, m]) => S.poly([P(ri, t0, z), P(ri, t1, z), P(ri, t1, z + hf(t1)), P(ri, t0, z + hf(t0))], ISH(c, .78 + .2 * (-Math.sin(m))), {sw:.4})); },
+    top(){ seg.forEach(([t0, t1]) => S.poly([P(ri, t0, z + hf(t0)), P(ri, t1, z + hf(t1)), P(ro, t1, z + hf(t1)), P(ro, t0, z + hf(t0))], ISH(c, 1.2), {sw:.4})); },
+    outer(){ seg.filter(([, , m]) => Math.cos(m) + Math.sin(m) > 0).sort((p, q) => (Math.cos(p[2]) + Math.sin(p[2])) - (Math.cos(q[2]) + Math.sin(q[2]))).forEach(([t0, t1, m]) => S.poly([P(ro, t0, z), P(ro, t1, z), P(ro, t1, z + hf(t1)), P(ro, t0, z + hf(t0))], ISH(c, .8 + .25 * Math.sin(m)), {sw:.4})); },
+    ends(){ [a0, a1].forEach(t => { const nx = Math.cos(t + (t === a0 ? -Math.PI / 2 : Math.PI / 2)), ny = Math.sin(t + (t === a0 ? -Math.PI / 2 : Math.PI / 2)); if (nx + ny > 0) S.poly([P(ri, t, z), P(ro, t, z), P(ro, t, z + hf(t)), P(ri, t, z + hf(t))], ISH(c, 1.05), {sw:.4}); }); } }; }
+/* gedrechseltes Holzbein */
+const skLeg = (S, x, y, h, c) => { skCyl(S, x, y, 0, .7, h * .45, c, {n:8, sw:.4}); S.ell([x, y, h * .5], .95, .55, ISH(c, 1.2), {sw:.3}); skCyl(S, x, y, h * .55, .85, h * .45, c, {n:8, sw:.4}); };
+/* Samt-Glanz auf Polster */
+const skVel = (S, a, b, c) => S.line(a, b, ISH(c, 1.45), .45, {op:.55, nol:1});
+
+Object.assign(SKF, {
+  /* Ohrensessel: gerundete Rückenlehne mit Rolle, Ohren, Polsterkissen, gedrechselte Beine, Knopfheftung, Zierkissen */
+  sessel: S => { const W = 24, D = 22, c = '#4b1a3a', P = Math.PI, wd = '#3a2622';
+    [[2, D - 2.5], [W - 2, D - 2.5], [W - 2, 2.5]].forEach(([x, y]) => skLeg(S, x, y, 3.2, wd));
+    isoPrY(S, [[1.5, 3], [W - 1.5, 3], [W - 1.5, 27], ...isoArc(W / 2, 27, W / 2 - 1.5, 0, P, 14).slice(1, -1).map(([x, z]) => [x, 27 + (z - 27) * .62])], 0, 5.5, c);
+    skTuft(S, 4.5, W - 4.5, 15, 29, c, 4, 3); skVel(S, [5, 5.55, 22], [7, 5.55, 30], c); skVel(S, [9, 5.55, 20], [10.5, 5.55, 31], c);
+    /* Ohren */
+    const wing = x => isoPrX(S, [[2, 13], [9, 13], ...isoArc(9, 19, 6, -P / 2, P / 2, 8).slice(1), [6, 26], [3, 29], [2, 29]], x, x + 2.4, c);
+    wing(0);
+    /* Sitzkissen gerundet */
+    isoPrX(S, [[5.5, 3], [D - .5, 3], [D - .5, 9], ...isoArc(D - 3, 9, 2.5, 0, P / 2, 4).slice(1), [6, 11.5]], 3.2, W - 3.2, ISH(c, 1.04));
+    isoPrX(S, [[6, 11.3], [D - 1, 11.3], [D - 1, 12.4], ...isoArc(D - 3, 12.4, 2, 0, P / 2, 3).slice(1), [6.5, 14.4]], 3.6, W - 3.6, ISH(c, 1.12)); skVel(S, [6, D - 1, 13.6], [16, D - 1, 13.6], c);
+    /* Armlehnen mit Schnecke vorn */
+    const arm = x => { isoPrX(S, [[3, 3], [D - 1, 3], [D - 1, 13], ...isoArc(D - 3, 13, 2, 0, P, 6).slice(1), [3, 15]], x, x + 3.2, c);
+      isoPrY(S, skCirc(x + 1.6, 13, 2.3, 12), D - 1, D + .2, ISH(c, 1.1)); S.ell([x + 1.6, D + .25, 13], .9, .9, ISH(c, .7), {nol:1}); };
+    arm(0); skBlob(S, [W / 2, 8, 18.4], 4.4, 3.8, '#7c1b2c'); S.dot(skH([W / 2, 8, 18.4], 0), .5, '#c9a24a'); arm(W - 3.2); wing(W - 2.4); },
+  /* Clubsessel: runde Lehne aus einem Stück, dickes Kissen, Ziernieten */
+  so_clubsessel: S => { const W = 26, D = 24, c = '#5a1626', cx = W / 2, cy = D / 2 - 1, P = Math.PI, wd = SK.wood;
+    [P * .3, P * .75, P * 1.85].forEach(a => skCyl(S, cx + 9.5 * Math.cos(a), cy + 9.5 * Math.sin(a), 0, .8, 2.2, wd, {n:8, sw:.4}));
+    const hf = a => 11 + 9 * Math.pow(Math.max(0, -Math.sin(a)), 1.4), B = skBand(S, cx, cy, 8.4, 12.6, P * .78, P * 2.22, 2, hf, c, 26);
+    B.inner(); skCyl(S, cx, cy + 1, 2, 9.4, 7.5, ISH(c, .9), {n:20});
+    S.ell([cx, cy + 1.5, 9.6], 8.6, 4.4, ISH(c, 1.14), {sw:.5}); S.ell(skH([cx, cy + 1, 10.2], -2), 4, 1.6, ISH(c, 1.32), {nol:1, op:.7}); S.line([cx - 7, cy + 5, 9.6], [cx + 6, cy + 6.5, 9.6], ISH(c, .7), .35);
+    B.top(); B.ends(); B.outer();
+    for (let i = 0; i < 9; i++) { const a = P * .3 - i * .12 * P / 1.2 + P * .05; }
+    for (let i = 0; i < 11; i++) { const a = P * 1.62 + (i - 5) * .16; if (Math.cos(a) + Math.sin(a) > 0) S.dot([cx + 12.7 * Math.cos(a), cy + 12.7 * Math.sin(a), 3.4], .45, SK.silver); }
+    [[-1, 0], [1, 0]].forEach(([k]) => { const a = k < 0 ? P * .78 : P * 2.22; S.ell([cx + 10.5 * Math.cos(a), cy + 10.5 * Math.sin(a), hf(a) + 2.1], 2.3, 1.2, ISH(c, 1.2), {sw:.4}); }); },
+  /* Instrumententisch: Rollen, Ablage mit Tuch, Schale mit Instrumenten, Fläschchen, Rost; eine Rolle ab, Platte schief */
+  hw_instrtisch: S => { const W = 24, D = 14, t = '#b4b3bb', dt = '#8a8992', H = 18;
+    const wheel = (x, y) => { S.box(x - .4, y - .4, 1.4, .8, .8, 1, dt, {sw:.3}); S.ell([x, y, 1], 1.15, 1.15, '#26232a', {sw:.4}); S.ell([x, y, 1], .45, .45, t, {nol:1}); };
+    wheel(1.2, 1.2); wheel(W - 1.2, 1.2); wheel(1.2, D - 1.2);
+    [[1.2, 1.2, H], [W - 1.2, 1.2, H], [1.2, D - 1.2, H - 2.6], [W - 1.2, D - 1.2, H - .4]].forEach(([x, y, h]) => { S.line([x, y, 2.4], [x, y, h], ISH(t, .7), 1.5); S.line([x, y, 2.4], [x, y, h], t, .9); S.line([x - .2, y, 3], [x - .2, y, h - .5], '#ffffff', .25, {op:.5, nol:1}); });
+    /* untere Ablage mit Handtuch und Gläsern */
+    S.box(.6, .6, 6.5, W - 1.2, D - 1.2, .8, '#c4c3cb', {sw:.5}); S.box(3, 2.5, 7.3, 8, 6, 1, '#e8e4da', {sw:.4}); S.line([3.4, 5.5, 8.32], [10.6, 5.5, 8.32], '#9ab0a8', .35); [[6, 7, 8.33, 1.1], [8, 4, 8.33, .6]].forEach(([x, y, z, r]) => S.ell([x, y, z], r, r * .6, '#8a4a3a', {nol:1, op:.55}));
+    skJar(S, 15, 6, 7.3, 1.6, 4.2, '#c3d2dc', '#6a8a5a'); skJar(S, 19, 9, 7.3, 1.3, 3.2, '#c3d2dc', '#8a3a4a');
+    /* schiefe Platte (hinten links tiefer, eine Rolle fehlt) */
+    const T = [[0, 0, H + .2], [W, 0, H + .4], [W, D, H], [0, D, H - 2.6]]; S.poly(T, '#d2d1d8', {sw:.6}); S.poly([[0, D, H - 2.6], [W, D, H], [W, D, H - .9], [0, D, H - 3.5]], dt, {sw:.5}); S.poly([[W, 0, H + .4], [W, D, H], [W, D, H - .9], [W, 0, H - .5]], ISH(dt, .85), {sw:.5});
+    const top = (x, y) => [x, y, H + .2 + .2 * x / W - (2.8 * y / D) * (1 - x / W) - .4 * y / D * x / W + .02];
+    /* Nierenschale mit Instrumenten */
+    S.ell(top(15, 6), 4.2, 2.1, '#9a99a2', {sw:.4}); S.ell(top(15, 6.2), 3.4, 1.5, '#c9c8d0', {nol:1});
+    S.line(top(12.6, 5), top(17.4, 7.2), '#e8e8ee', .45); S.line(top(12.2, 4.8), top(13.4, 5.4), '#3a3440', .7);
+    S.line(top(13.4, 7.4), top(17, 5.2), '#e8e8ee', .4); S.dot(top(13.4, 7.4), .45, SK.silver);
+    /* Schere, Spritze, Tupfer */
+    const sc = top(5, 4); S.ell([sc[0] - .6, sc[1], sc[2]], .6, .45, '#3a3440', {sw:.2}); S.ell([sc[0] + .4, sc[1] + .6, sc[2]], .6, .45, '#3a3440', {sw:.2}); S.line(top(5.5, 4.6), top(9, 2.6), '#e8e8ee', .45); S.line(top(5.6, 4.2), top(9.2, 3.4), '#e8e8ee', .45);
+    S.line(top(4, 9.5), top(10, 11), '#dfe9ee', 1.1); S.line(top(4, 9.5), top(10, 11), '#9ab8c8', .5); S.line(top(10, 11), top(11.4, 11.4), SK.silver, .3); S.line(top(3.4, 9.3), top(4, 9.5), '#3a3440', .6);
+    [[20, 11, '#e8e4da'], [21.6, 12, '#d9c4b8']].forEach(([x, y, col]) => S.ell(top(x, y), .9, .6, col, {sw:.25}));
+    /* Rost und Kratzer */
+    [[3, 1.5, .9], [21, 3, .7], [8, 12, .6]].forEach(([x, y, r]) => S.ell(top(x, y), r, r * .6, '#8a4a22', {nol:1, op:.5}));
+    S.ell([3.5, D + 2.6, .5], 1.15, .7, '#26232a', {sw:.4}); S.ell([3.5, D + 2.6, .6], .45, .3, t, {nol:1}); },
+  /* alte Matratze am Boden: Steppung, verrutschtes Laken, dicke Kissen, Decke mit Falten, Buch und Kerze */
+  b_matratze: S => { const W = 30, L = 50, H = 6, mc = '#d8d2c2', P = Math.PI;
+    isoPrX(S, [[0, 0], [L, 0], [L, H - 1.5], ...isoArc(L - 1.5, H - 1.5, 1.5, 0, P / 2, 3).slice(1), ...isoArc(1.5, H - 1.5, 1.5, P / 2, P, 3)], 0, W, mc);
+    for (let x = 2.5; x < W; x += 5) S.line([x, L + .02, .8], [x, L + .02, H - .8], ISH(mc, .85), .3); for (let i = 0; i < 9; i++) S.dot([W + .02, 3 + i * 5.4, H / 2], .3, ISH(mc, .75));
+    for (let y = 18; y < L - 2; y += 5) for (let x = 3; x < W - 2; x += 5) S.dot([x, y, H + .02], .38, ISH(mc, .78));
+    /* Laken halb heruntergezogen */
+    S.poly([[1, 1, H + .05], [W - 1, 1, H + .05], [W - 1, 26, H + .05], [16, 30, H + .05], [1, 27, H + .05]], '#ecebef', {sw:.4}); S.poly([[1, 27, H + .05], [16, 30, H + .05], [15, 30.4, H - 3], [1, 27.4, H - 2]], '#cfcdd6', {sw:.3});
+    /* Kissen */
+    skBlob(S, [8, 6, H + 2], 5.4, 2.6, '#f2f0f4'); skBlob(S, [21, 7, H + 1.8], 5, 2.4, '#3a3442'); S.ell([21, 7, H + 2.2], 1.4, .8, SK.red, {nol:1, op:.8});
+    /* Decke mit Falten, rutscht über die Kante */
+    const bl = '#3a1a2e'; S.poly([[0, 22, H + .4], [W + .5, 19, H + .4], [W + 1.5, 44, H + .4], [W + 1.5, 46, H - 4], [W - 4, 47, 0.4], [6, 48, .4], [-1, 46, H - 3], [-1, 40, H + .4]], bl, {sw:.5});
+    S.poly([[W + 1.5, 44, H + .4], [W + 1.5, 46, H - 4], [W + 1.2, 41, 0.4], [W + 1.3, 30, H - 2]], ISH(bl, .7), {sw:.4});
+    [[4, 26, 10, 44], [12, 24, 18, 45], [20, 22, 25, 43]].forEach(([a, b, c2, d]) => { S.line([a, b, H + .45], [c2, d, H + .45], ISH(bl, 1.35), .5, {op:.8, nol:1}); S.line([a + .8, b, H + .45], [c2 + .8, d, H + .45], ISH(bl, .7), .35, {nol:1}); });
+    for (let x = 2; x < W; x += 3) S.dot([x, 21.5 - x * .1, H + .46], .3, '#c9a24a');
+    /* Buch und Kerze daneben */
+    S.box(W + 4, 6, 0, 6, 8, 1.6, '#2f3a5a', {sw:.4}); S.box(W + 4.2, 6.2, 1.6, 5.6, 7.6, .25, '#ecebe7', {sw:.2}); skCandleR(S, W + 6, 20, 0, 3.4, 1); },
+  /* Grammophon: Holzkasten mit Messing, Kurbel, Schallplatte, Tonarm, Blütentrichter */
+  grammophon: S => { const W = 15, D = 13, H = 7, c = '#4a2e24', br = '#c9a24a';
+    S.box(0, 0, 0, W, D, 1, ISH(c, .8)); S.box(.5, .5, 1, W - 1, D - 1, H - 1, c); S.box(-.2, -.2, H, W + .4, D + .4, 1.1, ISH(c, 1.1));
+    FP(S, D - .45, [[2, 2], [W - 2, 2], [W - 2, H - 1.3], [2, H - 1.3]], ISH(c, 1.25), {sw:.4}); FP(S, D - .4, [[3, 3], [W - 3, 3], [W - 3, H - 2.3], [3, H - 2.3]], ISH(c, .85), {sw:.3});
+    [[.6, D - .3, 1.5], [W - .6, D - .3, 1.5], [.6, D - .3, H - .2], [W - .6, D - .3, H - .2]].forEach(p => S.dot(p, .45, br));
+    /* Kurbel rechts */
+    S.line([W - .3, D / 2, H / 2], [W + 2, D / 2, H / 2], br, .6); S.line([W + 2, D / 2, H / 2], [W + 2, D / 2 + 2, H / 2 - 1.6], br, .6); S.ell([W + 2, D / 2 + 2, H / 2 - 1.6], .6, .6, '#2a1f1d', {sw:.3});
+    /* Platte */
+    skCyl(S, W / 2, D / 2, H + 1.1, 5.2, .5, '#2a2730', {n:20}); S.ell([W / 2, D / 2, H + 1.65], 4.3, 2.15, '#141216', {nol:1}); [3.6, 2.8].forEach(r => S.ell([W / 2, D / 2, H + 1.66], r, r * .5, '#2e2a34', {nol:1, op:.7})); S.ell([W / 2, D / 2, H + 1.67], 1.3, .65, SK.red, {nol:1}); S.dot([W / 2, D / 2, H + 1.7], .2, br);
+    /* Tonarm */
+    skCyl(S, W - 2.2, 2.2, H + 1.1, .9, 1.6, br, {n:10}); S.line([W - 2.2, 2.2, H + 2.6], [W / 2 + 2, D / 2 - .5, H + 2.4], br, .6); S.box(W / 2 + 1.4, D / 2 - 1, H + 1.7, 1.4, 1, .7, '#2a2730', {sw:.3});
+    /* Trichter: Hals aus dem Kasten nach oben, Blüte nach vorn links */
+    S.line([W - 2.2, 1.6, H + 2.6], [W - 2.2, 1.6, H + 8], br, 1.2); S.line([W - 2.2, 1.6, H + 8], [W - 4, 1.6, H + 11], br, 1.4);
+    const C = skCone(S, [W - 4, 1.6, H + 11], [W / 2 - 4, 4, H + 19.5], .8, 7.2, ['#d9b04a', '#b8862a'], 12); C.draw(true);
+    S.poly(C.inner, '#3a2a1a', {sw:.4}); S.poly(C.inner.map((p, i) => { const q = C.inner[(i + 6) % 12]; return [p[0] * .6 + q[0] * .4, p[1] * .6 + q[1] * .4, p[2] * .6 + q[2] * .4]; }), '#1c140e', {sw:0, nol:1});
+    C.draw(false); C.rim.forEach((p, i) => { if (i % 2 === 0) S.dot(p, .35, '#f0d890'); }); },
+  /* Kuscheltiere */
+  girplusch: S => skPlush3(S, 9, 9, 0, '#5a9a4a', {s:1.6, belly:'#b8dca0', ears:'baer', stitch:1, eyeR:'knopf', btn:'#2a2630', bow:'#e05a8a'}),
+  teddy: S => skPlush3(S, 9, 9, 0, '#7a6458', {s:1.6, belly:'#b8a090', eyeL:'x', eyeR:'knopf', patch:'#7c1b2c', stitch:1}),
+  hw_teddy: S => skPlush3(S, 9, 9, 0, '#5a4c46', {s:1.6, belly:'#8a7a70', eyeL:'x', eyeR:'knopf', btn:'#3d1f5c', torn:1, patch:'#3d1f5c', stitch:1}),
+  rz_pluesch: S => { const k = '#e08ab0'; S.box(2, 2, 0, 30, 18, 3.2, k); S.ftop(3.21, 3, 3, 31, 19, '#f2b6cf', {sw:.3}); for (let x = 4; x < 31; x += 3) S.dot([x, 20.05, 1.6], .4, '#fff0f6');
+    skBlob(S, [12, 8, 4.6], 6, 1.8, '#f6d6e4'); skBlob(S, [24, 7, 4.4], 5, 1.6, '#c8b6f0');
+    skPlush3(S, 9, 5, 3.2, '#efe9e2', {s:1, ears:'hase', belly:'#fbf6f0'}); skPlush3(S, 25, 4, 3.2, '#2a2630', {s:.95, ears:'katze', inner:'#eaa4bd', belly:'#4a4452', bow:'#7c1b2c'});
+    skPlush3(S, 17, 11, 3.2, '#b07a5a', {s:1.08, belly:'#e0bc9c', eyeR:'knopf'}); skPlush3(S, 28, 16, 3.2, '#d06a9a', {s:.72, ears:'baer', belly:'#f2b0cc'});
+    skPlush3(S, 6, 15, 3.2, '#8ab8e0', {s:.66, ears:'baer', belly:'#cfe4f6', bow:'#f3e6a8'}); skStar(S, 31, 3, 3.3, 1.4, '#f3e6a8'); },
+  /* Haufen alter Porzellanpuppen: Kleider mit Rüschen, Locken, Schleifen, Risse */
+  hw_glieder: S => { const ink = '#26202a', skin = '#f1e9e0';
+    S.ell([18, 10, .1], 19, 7, '#1c161c', {nol:1, op:.35});
+    const doll = (x, y, z, s, dress, hair, o = {}) => { const P = (dx, dz) => skH([x, y, z + dz * s], dx * s * .5);
+      [-1, 1].forEach(k => { S.line(P(k * 1.6, 1.4), P(k * 2.6, -.2), '#ecebe7', 1.1 * s); S.ell(P(k * 2.7, -.3), .7 * s, .5 * s, '#1c1a20', {sw:.3}); });
+      S.poly([P(-3.4, .8), P(3.4, .8), P(1.6, 5.6), P(-1.6, 5.6)], dress, {sw:.45}); for (let i = 0; i < 7; i++) S.ell(P(-3 + i, .8), .55 * s, .45 * s, ISH(dress, 1.35), {sw:.2});
+      S.poly([P(-1.6, 5.4), P(1.6, 5.4), P(1.2, 6.2), P(-1.2, 6.2)], '#f4f1ea', {sw:.3}); [-1, 1].forEach(k => { S.line(P(k * 1.6, 5), P(k * (o.wave && k > 0 ? 3.2 : 2.6), o.wave && k > 0 ? 6.6 : 2.6), skin, .9 * s); });
+      S.ell(P(0, 8.2), 2.6 * s, 2.5 * s, hair, {sw:.4}); S.ell(P(0, 8), 2.15 * s, 2.15 * s, skin, {sw:.35}); S.ell(P(-.6, 8.6), .9 * s, .7 * s, '#ffffff', {nol:1, op:.5});
+      S.poly([P(-2.2, 8.6), P(-1, 10.2), P(1.2, 10.3), P(2.3, 8.4), P(1.4, 9.4), P(0, 8.9), P(-1.3, 9.4)], hair, {sw:.3}); [-1, 1].forEach(k => S.ell(P(k * 2.6, 7.4), .7 * s, 1.1 * s, hair, {sw:.3}));
+      if (o.bow) { const b = P(1.8, 10.2), Q = (a, d) => skH([b[0], b[1], b[2] + d * s], a * s); S.poly([Q(0, 0), Q(-1, .6), Q(-1, -.6)], o.bow, {sw:.25}); S.poly([Q(0, 0), Q(1, .6), Q(1, -.6)], o.bow, {sw:.25}); }
+      [-1, 1].forEach(k => { const e = P(k * .8, 8.2); if (o.x && k > 0) { S.line(skH([e[0], e[1], e[2] - .35 * s], -.35 * s), skH([e[0], e[1], e[2] + .35 * s], .35 * s), ink, .3); S.line(skH([e[0], e[1], e[2] + .35 * s], -.35 * s), skH([e[0], e[1], e[2] - .35 * s], .35 * s), ink, .3); } else { S.ell(e, .38 * s, .44 * s, ink, {nol:1}); S.dot(skH([e[0], e[1], e[2] + .12 * s], -.1 * s), .11 * s, '#ffffff'); } });
+      S.ell(P(0, 7.1), .38 * s, .22 * s, '#a8505a', {nol:1}); [-1, 1].forEach(k => S.ell(P(k * 1.3, 7.4), .5 * s, .3 * s, '#e8a0a8', {nol:1, op:.5}));
+      if (o.crack) { S.line(P(.4, 10), P(1, 8.6), '#6e6975', .3); S.line(P(1, 8.6), P(.5, 7.6), '#6e6975', .3); S.line(P(1, 8.6), P(1.8, 8.2), '#6e6975', .25); } };
+    doll(13, 2, 1.4, 1.2, '#4f111c', '#3b2d27', {bow:'#ecebe7', wave:1}); doll(24, 2, 1.2, 1.2, '#3a4a5a', '#2a1f1d', {bow:'#7c1b2c'});
+    doll(7, 9, 0, 1.12, '#5a3a5a', '#c9a24a', {crack:1});     doll(18, 10, 0, 1.1, '#6a5a72', '#e8d8a8', {x:1}); doll(29, 9, 0, 1.12, '#2f2a33', '#7a4a2a', {crack:1});
+    /* einzelner Kopf und Arm vorn */
+    const h = [13, 17, 1.8]; S.ell(h, 2.2, 2.1, '#2a1f1d', {sw:.4}); S.ell(skH(h, .3), 1.9, 1.85, skin, {sw:.35}); S.ell(skH([h[0], h[1], h[2] + .2], -.3), .35, .4, ink, {nol:1}); S.line(skH([h[0], h[1], h[2] + .5], .7), skH([h[0], h[1], h[2] - .3], 1.1), '#6e6975', .25);
+  },
+});
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
+const SKF_W = {girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
 for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3, flat:!!FURN[id].wall}), cnt = r.area; /* v803: Wand-Sachen flach, die Schräge kommt im Zimmer */
-  Object.assign(FURN[id], {svg:r.svg, vb:r.vb, w:Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[id] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('skf', k, e); } }
+  Object.assign(FURN[id], {svg:r.svg, vb:r.vb, w:SKF_W[id] ?? Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[id] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('skf', k, e); } }
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
 const surfAvail = kind => [...(kind === 'wall' ? WALLS : FLOORS).map(([k]) => k), ...FURN_IDS.filter(k => FURN[k].surf === kind && !!WAL.d?.inv?.[ncF(k)]).map(k => FURN[k].key)]; /* gratis + gekauft */
 function surfGrid(kind){ const r = me().room, cur = kind === 'wall' ? r.wall : r.floor, ck = kind === 'wall' ? 'wallC' : 'floorC', act = kind === 'wall' ? 'wall' : 'floor';
