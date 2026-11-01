@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='578095cebd34';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='43d9ea18b594';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2898,7 +2898,7 @@ html.fitpg,html.fitpg body{overflow:hidden;overscroll-behavior:none}body[data-pg
 .ltools.lside .ltool{width:40px;height:40px;min-height:0;padding:0;border-radius:50%;place-content:center;background:color-mix(in srgb,var(--paper-2,#1b1a1f) 88%,transparent);border:1px solid var(--line);box-shadow:0 2px 8px #0008}
 .rstick>.ltools.lside .ltool{width:34px;height:34px}
 .ltools.lside .ltool span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.ltools.lside .ltool svg{width:20px;height:20px}.rstick>.ltools.lside .ltool svg{width:17px;height:17px}
-.rhead.redit{justify-content:flex-end} /* v816 (Inaya): kein „Mein Zimmer“ mehr, das steht schon oben in der Leiste */
+.rhead.redit{justify-content:flex-end}.mtop.mtrow{display:flex;gap:2px;align-items:center} /* v816 (Inaya): kein „Mein Zimmer“ mehr, das steht schon oben in der Leiste */
 /* v774 (Inaya): Chat wie bei WhatsApp, im Noctibat-Stil. Kopf: Pfeil, Bild, Name + Status, schlichte Symbole ohne Kästen. Schreibleiste: ein großes rundes Feld (Totenkopf links, Text, Sticker, Plus), daneben der runde Knopf Mikrofon/Senden. */
 .chatpanel .ch-head{gap:4px;align-items:center}
 .chatpanel .ch-head .btn.iconb{border:0!important;background:transparent!important;width:42px;height:42px;min-width:0;min-height:0;padding:0;display:grid;place-items:center;box-shadow:none!important}
@@ -7203,11 +7203,7 @@ function roomView(){
   }).join('');
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k]?.name || '' : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
-  const head = roomMode === 'edit' ? '' : `<div class="rhead redit"><div class="ricons">
-      ${roomMode === 'edit' ? '' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
-      ${roomMode === 'edit' ? '' : u.roomOpen && social ? `<button class="ricon ${rShare ? 'on' : ''}" data-act="rshare" aria-pressed="${rShare}" aria-label="Freunde einladen" title="Freunde einladen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7"/><path d="M12 15V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/></svg></button>` : ''}
-      ${roomMode === 'edit' ? '' : ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
-    </div></div>${rShare && u.roomOpen ? roomShareSheet() : ''}`;
+  const head = rShare && u.roomOpen && roomMode !== 'edit' ? roomShareSheet() : ''; /* v821 (Inaya): Stift, Sprechblase und Teilen stehen oben rechts in der Leiste (mobTop) */
   // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
   // Raumchat direkt im Zimmer (wie bei Momio/MSP): Verlauf und Eingabe gleich unter dem Raum
   const chatOn = roomMode === 'chat' || !!u.roomOpen;
@@ -8470,6 +8466,8 @@ function mobTop(nNew, ntN){ // Handy: Freunde und Chats oben rechts wie bei Momi
   if (V.name === 'design' && !obDesign) return '<div class="mtop">' + MT_OK('pe-save') + '</div>';
   if (V.name === 'room' && roomMode === 'edit') return '<div class="mtop">' + MT_OK('rmode', 'edit') + '</div>';
   if (V.name === 'wardrobe') return '<div class="mtop">' + MT_OK('ward-done') + '</div>';
+  if (V.name === 'room') { const u = me() || {}, ib = (act, v, l, path, extra = '', on) => `<button type="button" class="mti round${on ? ' on' : ''}" data-act="${act}"${v ? ` data-v="${v}"` : ''} aria-label="${l}" title="${l}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
+    return `<div class="mtop mtrow">${u.roomOpen && social ? ib('rshare', '', 'Freunde einladen', '<path d="M4 12v7h16v-7"/><path d="M12 15V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/>', '', rShare) : ''}${ib('rmode', 'edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}${ib('rmode', 'chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '', roomMode === 'chat')}</div>`; }
   if (V.name === 'chats' && CH.mode === 'group' && CH.gdraft?.id) return '<div class="mtop">' + MT_OK('g-save') + '</div>';
   if (MH_PAGES[V.name] || chSubPg()) return '<div class="mtop"><span class="mti round" aria-hidden="true" style="visibility:hidden"></span></div>';
   if (V.name === 'profile' && (!V.arg || V.arg === S.me)) return `<div class="mtop">${b('nav', 'settings', MOB_ICONS.gear, 'Einstellungen', newMembers()).replace('class="mti"', 'class="mti round"')}</div>`; /* eigenes Profil: Zahnrad statt Glocke (Inaya) */
