@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='af91302f2b84';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7d4f39ba66f3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -584,7 +584,8 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 /* Zimmer */
 .room{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;border:1px solid var(--line);background:#141416;user-select:none;-webkit-user-select:none}
 /* v791: Zimmer wie bei Momio (Inaya): schwebender Kasten von schräg oben, Wand links, Wand rechts, Rauten-Boden (2:1). Maße in Raumbreiten: Wandhöhe .3, Höhe .82 (RI) */
-.room.iso{aspect-ratio:100/82;border:0;background:none;overflow:visible}
+.room.iso{aspect-ratio:100/82;border:0;background:none;overflow:hidden} /* v804: nichts ragt aus dem Zimmer, sonst wird die Seite am Handy breiter und die Leiste unten verrutscht */
+html,body{overflow-x:clip} /* v804: auch am Handy kein seitlicher Bildlauf */
 .room.iso .wall,.room.iso .floor{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .room.iso .wall.wl{clip-path:polygon(0 30.49%,50% 0,50% 36.59%,0 67.07%)}.room.iso .wall.wr{clip-path:polygon(50% 0,100% 30.49%,100% 67.07%,50% 36.59%)}
 .room.iso .floor{clip-path:polygon(50% 36.59%,100% 67.07%,50% 97.56%,0 67.07%)}
@@ -7076,14 +7077,18 @@ const RBOXY = k => { const f = FURN[k]; return !!f && !f.wall && !f.rug && (['be
 const rRot = it => rBoxy(it.k);
 /* Maße eines Stücks im flachen Rahmen: w in % der Breite, h in % der Höhe (16:10); Avatar 14 % breit, 1:2 */
 function rDim(it, vis){ if (it === 'av') { const w = vis ? 13 : 14; return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, wall:!!f.wall, rug:!!f.rug}; }
-function rScr(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc;
+/* v804 (Inaya): Möbel bleiben im Zimmer. Ragt ein Stück seitlich (oder an der Wand oben) heraus, wird es nach innen gerückt */
+function rFit(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc, m = Math.min(.5, wS / 2 + .01);
+  if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2), X = Math.max(m, Math.min(1 - m, P.X)), Y = Math.max(hS / 2 + .005, P.Y); if (Math.abs(X - P.X) < 1e-4 && Math.abs(Y - P.Y) < 1e-4) return {x, y}; const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; }
+  const P = rIsoF(x + d.w / 2, y + d.h), X = Math.max(m, Math.min(1 - m, P.X)); if (Math.abs(X - P.X) < 1e-4) return {x, y}; const v = rInvF(X, P.Y); return {x:v.lx - d.w / 2, y:v.fy - d.h}; }
+function rScr(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc; ({x, y} = rFit(d, x, y));
   if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS / 2) / RI.H * 100, w:wS * 100, z:1, X:P.X, Y:P.Y}; }
   const P = rIsoF(x + d.w / 2, y + d.h); return {l:(P.X - wS / 2) * 100, t:(P.Y - hS) / RI.H * 100, w:wS * 100, z:d.rug ? 2 : 10 + Math.round((P.Y - RI.wh) * 200), X:P.X, Y:P.Y}; }
 const rStyle = (d, x, y) => { const q = rScr(d, +x || 0, +y || 0); return `left:${q.l.toFixed(2)}%;top:${q.t.toFixed(2)}%;width:${q.w.toFixed(2)}%`; };
 function rPut(el, d, x, y, z){ if (!el) return; const q = rScr(d, +x || 0, +y || 0); el.style.left = q.l.toFixed(2) + '%'; el.style.top = q.t.toFixed(2) + '%'; el.style.width = q.w.toFixed(2) + '%'; if (z) el.style.zIndex = q.z; }
 /* Zeiger → Stelle im flachen Rahmen (off = Abstand Zeiger zum Ankerpunkt, in Raumbreiten) */
 function rPick(room, d, cx, cy, off = {X:0, Y:0}){ const R = room.getBoundingClientRect(), X = (cx - R.left) / R.width - off.X, Y = (cy - R.top) / R.width - off.Y;
-  if (d.wall) { const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; } const v = rInvF(X, Y); return {x:v.lx - d.w / 2, y:v.fy - d.h}; }
+  if (d.wall) { const v = rInvW(X, Y); return rFit(d, v.lx - d.w / 2, v.cy - d.h / 2); } const v = rInvF(X, Y); return rFit(d, v.lx - d.w / 2, v.fy - d.h); }
 function rOff(room, d, x, y, cx, cy){ const R = room.getBoundingClientRect(), q = rScr(d, +x || 0, +y || 0); return {X:(cx - R.left) / R.width - q.X, Y:(cy - R.top) / R.width - q.Y}; }
 /* v799: Spiegel-Stand fester Sticker-Möbel (Feld m). Alte Stücke ohne m behalten einmal, wie sie zuletzt standen (früher automatisch an der linken Wand gespiegelt) */
 function rMir(it){ if (it.m == null) { const f = FURN[it.k]; it.m = ((+it.x || 0) + f.w * itS(it) / 2 < 50) !== !!it.f ? 1 : 0; } return !!it.m; }
