@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7a96a8f51abd';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e9e8720dde6b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -584,6 +584,9 @@ fieldset.opt legend{padding:0;margin-bottom:6px}
 /* Zimmer */
 .room{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;border:1px solid var(--line);background:#141416;user-select:none;-webkit-user-select:none}
 /* v791: Zimmer wie bei Momio (Inaya): schwebender Kasten von schräg oben, Wand links, Wand rechts, Rauten-Boden (2:1). Maße in Raumbreiten: Wandhöhe .3, Höhe .82 (RI) */
+.paside .card.fullav,.paside .card.gbcard{background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border-color:var(--p-line)} /* v810 (Inaya): Avatar, Begleiter und Gästebuch in der Kastenfarbe des Profils */
+.paside .card.fullav .card-h,.paside .card.gbcard .card-h,.paside .gbcard .lbl{color:var(--p-fg)}.paside .gbcard .muted,.paside .fullav .muted{color:var(--p-muted)}.paside .gbcard input[type=text],.paside .gbcard textarea{background:var(--p-field);color:var(--p-fg);border-color:var(--p-line)}
+.rscroll{overflow-x:hidden!important;touch-action:pan-y}.rscroll.rzoomed{touch-action:none}.rscroll > .room{transform-origin:0 0} /* v810: Zimmer mit zwei Fingern zoomen */
 .room.iso{aspect-ratio:100/82;border:0;background:none;overflow:hidden} /* v804: nichts ragt aus dem Zimmer, sonst wird die Seite am Handy breiter und die Leiste unten verrutscht */
 html,body{overflow-x:clip} /* v804: auch am Handy kein seitlicher Bildlauf */
 .room.iso .wall,.room.iso .floor{position:absolute;inset:0;overflow:hidden;pointer-events:none}
@@ -7076,7 +7079,7 @@ const rBoxy = k => false && RBOXY(k); /* v792 (Inaya: „wie sehen die Möbel au
 const RBOXY = k => { const f = FURN[k]; return !!f && !f.wall && !f.rug && (['bett', 'sofa', 'schrank'].includes(f.r) || /tisch|kommode|regal|kamin|truhe|vitrine|sarg|kiste|spind|amp|altar|klavier|orgel|standuhr|bank|thron|sessel/i.test(k + ' ' + f.name)) && !/lampe|leuchter|kerze/i.test(k + ' ' + f.name); };
 const rRot = it => rBoxy(it.k);
 /* Maße eines Stücks im flachen Rahmen: w in % der Breite, h in % der Höhe (16:10); Avatar 14 % breit, 1:2 */
-function rDim(it, vis){ if (it === 'av') { const w = vis ? 13 : 14; return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, wall:!!f.wall, rug:!!f.rug}; }
+function rDim(it, vis){ if (it === 'av') { const w = vis ? 15.5 : 16.5; /* v810 (Inaya): Avatare etwas größer, passend zu den Sticker-Möbeln */ return {w, h:w * 3.2, av:1}; } const f = FURN[it.k], sc = itS(it); return {w:f.w * sc, h:itemH(it.k) * sc, wall:!!f.wall, rug:!!f.rug}; }
 /* v804 (Inaya): Möbel bleiben im Zimmer. Ragt ein Stück seitlich (oder an der Wand oben) heraus, wird es nach innen gerückt */
 function rFit(d, x, y){ const wS = d.w * RI.sc / 100, hS = d.h / 100 * .625 * RI.sc, m = Math.min(.5, wS / 2 + .01);
   if (d.wall) { const P = rIsoW(x + d.w / 2, y + d.h / 2), X = Math.max(m, Math.min(1 - m, P.X)), Y = Math.max(hS / 2 + .005, P.Y); if (Math.abs(X - P.X) < 1e-4 && Math.abs(Y - P.Y) < 1e-4) return {x, y}; const v = rInvW(X, Y); return {x:v.lx - d.w / 2, y:v.cy - d.h / 2}; }
@@ -7128,6 +7131,24 @@ function roomHTML(u, edit, live=edit){
   </div></div>`;
 }
 let roomSel = null, dragging = null;
+/* v810 (Inaya): Zimmer mit zwei Fingern ranzoomen (1- bis 3-fach), gezoomt mit einem Finger verschieben (nicht beim Einrichten, dort zieht ein Finger Möbel). Bleibt beim Neuzeichnen, gilt je Seite */
+const RZ = {s:1, x:0, y:0, key:'', t:null};
+const rzKey = () => V.name + ':' + (V.arg || '');
+const rzEls = () => [...document.querySelectorAll('.rscroll')].filter(e => !e.closest('.rbmini, .modal'));
+function rzSet(sc, s, x, y){ const r = sc.querySelector('.room'), W = sc.clientWidth, H = r ? r.offsetHeight : sc.clientHeight; s = Math.max(1, Math.min(3, s)); x = Math.max(W * (1 - s), Math.min(0, x)); y = Math.max(H * (1 - s), Math.min(0, y)); if (s < 1.03) { s = 1; x = 0; y = 0; }
+  Object.assign(RZ, {s, x, y, key:rzKey()}); if (r) r.style.transform = s === 1 ? '' : `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${s.toFixed(3)})`; sc.classList.toggle('rzoomed', s > 1); }
+function rzApply(){ if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); } const sc = rzEls()[0]; if (sc && RZ.s > 1) rzSet(sc, RZ.s, RZ.x, RZ.y); }
+const rzPt = (sc, t) => { const R = sc.getBoundingClientRect(); return {x:t.clientX - R.left, y:t.clientY - R.top}; };
+document.addEventListener('touchstart', e => { const sc = e.target.closest?.('.rscroll'); if (!sc || !rzEls().includes(sc)) return; if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); }
+  if (e.touches.length === 2) { const a = rzPt(sc, e.touches[0]), b = rzPt(sc, e.touches[1]); RZ.t = {sc, d0:Math.hypot(a.x - b.x, a.y - b.y) || 1, s0:RZ.s, m0:{x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}, x0:RZ.x, y0:RZ.y}; e.preventDefault(); }
+  else if (e.touches.length === 1 && RZ.s > 1 && !sc.querySelector('.room.edit')) { const a = rzPt(sc, e.touches[0]); RZ.t = {sc, pan:1, p0:a, x0:RZ.x, y0:RZ.y, mv:0}; } }, {passive:false});
+document.addEventListener('touchmove', e => { const t = RZ.t; if (!t) return;
+  if (t.pan) { if (e.touches.length !== 1) return; const a = rzPt(t.sc, e.touches[0]); t.mv = Math.max(t.mv, Math.hypot(a.x - t.p0.x, a.y - t.p0.y)); rzSet(t.sc, RZ.s, t.x0 + a.x - t.p0.x, t.y0 + a.y - t.p0.y); e.preventDefault(); return; }
+  if (e.touches.length !== 2) return; const a = rzPt(t.sc, e.touches[0]), b = rzPt(t.sc, e.touches[1]), m = {x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}, s = Math.max(1, Math.min(3, t.s0 * Math.hypot(a.x - b.x, a.y - b.y) / t.d0));
+  rzSet(t.sc, s, m.x - (t.m0.x - t.x0) * s / t.s0, m.y - (t.m0.y - t.y0) * s / t.s0); e.preventDefault(); }, {passive:false});
+document.addEventListener('touchend', e => { if (RZ.t && (RZ.t.pan ? e.touches.length === 0 : e.touches.length < 2)) RZ.t = null; });
+document.addEventListener('touchcancel', () => { RZ.t = null; });
+['gesturestart', 'gesturechange'].forEach(n => document.addEventListener(n, e => { if (e.target.closest?.('.rscroll')) e.preventDefault(); }, {passive:false}));
 const FURN_TABS = [['wand','Wand'],['boden','Boden'],['alle','Alle'],['poster','Poster'],['bett','Betten'],['sofa','Sofas'],['lampe','Lampen'],['fenster','Fenster'],['schrank','Schränke'],['tier','Haustiere'],['teppich','Teppiche'],['deko','Deko']];
 let furnTab = 'alle';
 /* Zimmerbuch (Inaya, 2026-10-17): Zimmer wie Looks speichern; andere sehen es auf dem Profil (rechts gegenüber vom Lookbuch) */
@@ -8638,8 +8659,8 @@ function salonEnd(){ // Handy und PC: ganz unten im Salon der eigene Avatar mit 
 function asideHTML(){
   const u = me(), others = ['juliet', 'andy'].map(id => S.users[id]).filter(Boolean); // nur die Helfer, Freunde stehen auf dem Profil
   // Handy (Inaya): unten kein eigenes Profilbild und kein eigener Avatar mehr, Helfer nur in den Einstellungen; auf dem eigenen Profil steht der Avatar mit Pose aber wieder da (Inaya, 2026-10-10)
-  const mob = isMob(), pid = V.name === 'profile' ? (V.arg || S.me) : S.me;
-  return `<aside class="aside">
+  const mob = isMob(), pid = V.name === 'profile' ? (V.arg || S.me) : S.me, pu = V.name === 'profile' ? S.users[pid] : null;
+  return `<aside class="aside${pu ? ' paside' : ''}"${pu ? ` style="${themeStyle(pu.theme || {})}"` : ''}>
     ${mob || V.name === 'profile' && (V.arg || S.me) === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
     ${V.name === 'profile' ? '<div class="pcleft">' : ''}${mob && pid === S.me && V.name !== 'profile' ? '' : fullCard()}${V.name === 'profile' ? '</div><div class="pcright">' : ''}
     ${mob && V.name !== 'settings' && !(V.name === 'profile' && matchMedia('(min-width:1200px)').matches) ? '' : `<div class="card helpcard"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
@@ -17152,7 +17173,7 @@ function renderInner(){
   setTimeout(fitChk, 0); setTimeout(fitChk, 600); document.body.dataset.pg = V.name; document.body.classList.toggle('obopen', !!me()?.obOpen); document.body.classList.toggle('chlist', V.name === 'chats' && !CH.open && innerWidth < 762); /* v699: Chatliste endet wie Suche und Profil 16 px über der Leiste */ /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
-  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs();
+  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs(); rzApply();
   restoreX();
   const mb = document.getElementById('msgs'); if (mb) { mb.dataset.h = '1'; MSGH = {cid:CH.open, h:''}; msgRest(mb, msgA); msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
