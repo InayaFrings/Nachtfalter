@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='43d9ea18b594';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1cd1a735ad63';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -1112,7 +1112,7 @@ footer.foot .lnk{color:var(--muted)}
   .dsave .btn{flex:1}
   .dsave .btn.ghost{flex:0 0 auto}
   /* Zimmer: randlos über die ganze Breite, Posen als runde Knöpfe */
-  .card:has(> .rhead){margin-inline:-12px;border-left:0;border-right:0}
+  .card:has(> .rhead),.card.rcard{margin-inline:-12px;border-left:0;border-right:0} /* v822: Zimmer-Karte randlos auch ohne Kopf, sonst saß das Zimmer nicht mittig */
   .chips button{border-radius:999px}
   .rposes button{min-height:44px;border-radius:999px;padding:8px 16px}
   .rscroll{margin-inline:-12px}
@@ -7207,7 +7207,7 @@ function roomView(){
   // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
   // Raumchat direkt im Zimmer (wie bei Momio/MSP): Verlauf und Eingabe gleich unter dem Raum
   const chatOn = roomMode === 'chat' || !!u.roomOpen;
-  if (roomMode !== 'edit') return `<div class="card">${head}<div class="card-in">
+  if (roomMode !== 'edit') return `<div class="card rcard">${head}<div class="card-in">
       ${roomWithChat(roomHTML(u, false, true), chatOn, poseBar())}${chatOn ? roomChatInline(true) : ''}${(pubRoomsWatch(), '')}<div class="row">${hopBtn()}</div>${RB === S.me ? rbModal(u, true) : ''}
       ${chatOn ? '' : `<p class="note">Mit dem Stift richtest du dein Zimmer ein, mit der Sprechblase öffnest du einen Raumchat.</p>`}
     </div></div>
@@ -7222,11 +7222,11 @@ function roomView(){
   if (!ROOM_UNDO) ROOM_UNDO = JSON.stringify({room:u.room, deko:u.deko}); /* Stand vor dem Bearbeiten, für „Abbrechen“ */
   const doneRow = ''; /* v812 (Inaya): Abbrechen und Fertig stehen oben im Kopf, unten nicht mehr */
   // Handy: alles in einer Karte, damit das Zimmer beim Möbel-Aussuchen oben stehen bleibt
-  if (isMob()) return `<div class="card">${head}<div class="card-in">
+  if (isMob()) return `<div class="card rcard">${head}<div class="card-in">
       <div class="rstick">${roomTools()}${roomHTML(u, true)}</div>
       ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}${RB === S.me ? rbModal(u, true) : ''}
     </div></div>`;
-  return `<div class="card">${head}<div class="card-in">
+  return `<div class="card rcard">${head}<div class="card-in">
       <p class="note">Zieh Möbel und deinen Avatar mit der Maus oder dem Finger an ihren Platz. Deko, Lampen, Haustiere und Kuscheltiere kannst du auf ein Bett, Sofa, einen Schrank oder Tisch ziehen, dann sitzen bzw. stehen sie darauf. Deine Freunde können dein Zimmer in deinem Profil besuchen.</p>
       <div class="rstick">${roomTools()}${roomHTML(u, true)}</div>
       ${selRow}<h3 class="lbl mfh">Möbelhaus</h3>${furnTabs}${grid}${doneRow}${RB === S.me ? rbModal(u, true) : ''}
