@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e2d7cee92ec0';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f7f5d3011c10';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7115,7 +7115,7 @@ function furn3D(it){ const f = FURN[it.k], [vw, vh] = f.vb, id = 'r3' + (++R3N),
   let cp = ''; for (let i = n; i >= 1; i--) cp += `<use href="#${id}" x="${f1(sx * dp * i / n)}" y="${f1(-dp * i / n)}"/>`;
   /* Seiten: eine dunkle Fläche in der Farbe des Möbels, oben etwas heller (Licht von oben) */
   return `<svg viewBox="0 0 ${vw} ${vh}" overflow="visible" aria-hidden="true"><defs><filter id="${id}d" x="-60%" y="-60%" width="220%" height="220%" color-interpolation-filters="sRGB"><feFlood flood-color="${sd2}"/><feComposite in2="SourceAlpha" operator="in"/></filter><g id="${id}"${fl}>${body}</g></defs><g filter="url(#${id}d)">${cp}</g><use href="#${id}"/></svg>`; }
-function roomHTML(u, edit, live=edit){
+function roomHTML(u, edit, live=edit, noAv=false){ /* v812: noAv = ohne Avatar (Zimmer im Profil, Inaya) */
   const r = u.room, sel = edit && roomSel;
   if (r.items.some(it => !FURN[it.k])) { r.items = r.items.filter(it => FURN[it.k]); roomSel = null; } // entfernte Möbel/Poster verschwinden aus dem Zimmer
   const items = r.items.map((it, i) => {
@@ -7129,7 +7129,7 @@ function roomHTML(u, edit, live=edit){
     <div class="floor"><i style="background:${floorBG(r.floor, r.floorC)}"></i></div>
     <svg class="redge" viewBox="0 0 100 82" preserveAspectRatio="none" aria-hidden="true"><path class="slab" d="M0 55L50 80L50 82.4L0 57.4Z"/><path class="slab2" d="M50 80L100 55L100 57.4L50 82.4Z"/><path class="capd" d="M0 25L0 55L-.9 55.45L-.9 24.55Z"/><path class="capd" d="M100 25L100 55L100.9 55.45L100.9 24.55Z"/><path class="cap" d="M-.9 24.55L50 -1L100.9 24.55L100 25L50 0L0 25Z"/><path class="ln" d="M50 0V30M0 55L50 30L100 55"/></svg>
     ${items}
-    <div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} ${live && !edit ? 'data-rav="1"' : ''} style="${rStyle(rDim('av'), r.av.x, r.av.y)};z-index:${z}">${avatar(u.outfit,'full')}</div>${fl}
+    ${noAv ? '' : `<div class="ritem av ${sel === 'av' ? 'sel' : ''}" ${edit ? 'data-drag="av"' : ''} ${live && !edit ? 'data-rav="1"' : ''} style="${rStyle(rDim('av'), r.av.x, r.av.y)};z-index:${z}">${avatar(u.outfit,'full')}</div>`}${fl}
     ${live ? '<div class="visitors" id="roomvis"></div><div class="says" id="roomsay" aria-hidden="true"></div>' : ''}
   </div></div>`;
 }
@@ -7194,9 +7194,9 @@ function roomView(){
   const selName = roomSel === 'av' ? 'Dein Avatar' : roomSel != null && r.items[roomSel] ? FURN[r.items[roomSel].k]?.name || '' : '';
   const ico = (m, label, path, extra='') => `<button class="ricon ${roomMode === m ? 'on' : ''}" data-act="rmode" data-v="${m}" aria-pressed="${roomMode === m}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${extra}</button>`;
   const head = `<div class="rhead"><h2 class="card-h">Mein Zimmer</h2><div class="ricons">
-      ${roomMode === 'edit' ? '<button class="btn rdone" data-act="rmode" data-v="edit">✓ Fertig</button>' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
-      ${u.roomOpen && social ? `<button class="ricon ${rShare ? 'on' : ''}" data-act="rshare" aria-pressed="${rShare}" aria-label="Freunde einladen" title="Freunde einladen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7"/><path d="M12 15V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/></svg></button>` : ''}
-      ${ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
+      ${roomMode === 'edit' ? '<button class="btn ghost rdone" data-act="rcancel">Abbrechen</button><button class="btn rdone" data-act="rmode" data-v="edit">Fertig</button>' : ico('edit', 'Zimmer bearbeiten', '<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>')}
+      ${roomMode === 'edit' ? '' : u.roomOpen && social ? `<button class="ricon ${rShare ? 'on' : ''}" data-act="rshare" aria-pressed="${rShare}" aria-label="Freunde einladen" title="Freunde einladen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7h16v-7"/><path d="M12 15V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/></svg></button>` : ''}
+      ${roomMode === 'edit' ? '' : ico('chat', 'Raumchat', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>', u.roomOpen ? '<i class="dot" aria-label="offen"></i>' : '')}
     </div></div>${rShare && u.roomOpen ? roomShareSheet() : ''}`;
   // Erst nur das Zimmer; Bearbeiten und Raumchat über die zwei Symbole oben rechts
   // Raumchat direkt im Zimmer (wie bei Momio/MSP): Verlauf und Eingabe gleich unter dem Raum
@@ -7214,7 +7214,7 @@ function roomView(){
     : ''}</div>`;
   const furnTabs = `<div class="chips roomtabs" role="tablist" aria-label="Kategorie">${FURN_TABS.map(([k, l]) => `<button type="button" role="tab" data-act="ftab" data-v="${k}" aria-selected="${furnTab === k}" aria-pressed="${furnTab === k}">${l}${ncNewFurnTab(k) ? NEWDOT : ''}</button>`).join('')}</div>`, grid = furnTab === 'wand' || furnTab === 'boden' ? surfGrid(furnTab === 'wand' ? 'wall' : 'floor') : `${shop ? `<div class="shopgrid">${shop}</div>` : ''}<p class="note"><button class="lnk" data-act="nav" data-v="moebel">Mehr im Möbelhaus</button></p>`; // eigener Reiter für Tapete und Boden (Inaya, 2026-10-15)
   if (!ROOM_UNDO) ROOM_UNDO = JSON.stringify({room:u.room, deko:u.deko}); /* Stand vor dem Bearbeiten, für „Abbrechen“ */
-  const doneRow = `<div class="row"><span class="sp"></span><button class="btn ghost" data-act="rcancel">Abbrechen</button><button class="btn" data-act="rmode" data-v="edit">Fertig</button></div>`;
+  const doneRow = ''; /* v812 (Inaya): Abbrechen und Fertig stehen oben im Kopf, unten nicht mehr */
   // Handy: alles in einer Karte, damit das Zimmer beim Möbel-Aussuchen oben stehen bleibt
   if (isMob()) return `<div class="card">${head}<div class="card-in">
       <div class="rstick">${roomHTML(u, true)}</div>
@@ -11225,7 +11225,7 @@ function profileView(id){
   if (profTab === 'news') { const n = posts.filter(p => p.type === 'neu'); panel = n.length ? `<div class="feed insta pfeed">${n.map(x => postHTML(x)).join('')}</div>` : '<p class="muted" style="margin:0">Gerade gibt es nichts Neues.</p>'; }
   if (profTab === 'chat') panel = chatHTML(u);
   const roomGo = own ? 'data-act="nav" data-v="room"' : u.remote ? `data-act="room-visit" data-id="${u.id}"` : '';
-  if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false));
+  if (profTab === 'room') panel = (roomGo ? `<div class="proom" ${roomGo} role="button" tabindex="0" aria-label="Zimmer betreten">${roomHTML(u, false, false, true)}<span class="proom-hint">Zimmer betreten →</span></div>` : roomHTML(u, false, false, true));
   if (profTab === 'posts') panel = (own ? (isMob() ? pcPlus('compose-open') + (composeOpen ? pcFull('compose-close') : '') : composeOpen ? `<div class="tile compose">${composeHTML()}<button class="lnk" data-act="compose-close">Abbrechen</button></div>` : `<div class="row" style="margin-bottom:14px"><button class="btn" data-act="compose-open">＋ Beitrag erstellen</button></div>`) : '') + (posts.some(p => p.type !== 'teilen') ? `<div class="feed insta pfeed">${(pinCtx = true, posts.filter(p => !p.arch && p.type !== 'teilen').sort(pinSort).map(x => postHTML(x)).join(''))}</div>` + (pinCtx = false, '') : `<p class="muted" style="margin:0">Noch keine Beiträge.</p>`);
   if (profTab === 'tagged') { // Beiträge, auf denen man markiert ist (Inaya, 2026-10-12)
     const seen = new Set(), tg = [...S.posts, ...Object.values(S.users).filter(x => x.remote).flatMap(x => x.posts || []), ...ownerPubPosts()].filter(p => !p.arch && ptagsClean(p.tags).some(t => t.id === u.id) && !seen.has((p.author || '') + '/' + p.id) && seen.add((p.author || '') + '/' + p.id)).sort((a, b) => b.ts - a.ts);
