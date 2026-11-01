@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ff182a2e1cd2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='862d883147fe';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -15508,12 +15508,13 @@ Object.assign(SKF, {
     for (let i = 0; i < 5; i++) S.ell([cx - 4 + i * 2, 2.4, 10.4 - (i % 2) * .8], .35, .7, '#e8eef8', {sw:.15, op:.85}); S.ell([cx, 2.4, 9.4], .45, .9, '#e8eef8', {sw:.2}); },
   /* Verziertes Kreuz */
   kreuz: S => skCross(S, 6.5, 22, .2, 'latein', '#2a2a30', {gem:'#8a1020', fil:'#d4af37'}),
-  /* Samtvorhang */
-  vorhang: S => { const W = 27, H = 45, v = '#6a1426';
-    const drape = (x0, x1, k) => { const P = [[x0, H - 1], [x1, H - 1]]; for (let z = H - 1; z >= 0; z -= 3) { const t = 1 - z / H, pinch = z > 14 && z < 20 ? .55 : 1; P.push([k > 0 ? x0 + (x1 - x0) * (z < 17 ? 1 : pinch)  : x1 - (x1 - x0) * (z < 17 ? 1 : pinch), z]); } P.push([k > 0 ? x0 : x1, 0]);
-      const Q = k > 0 ? P : P; FP(S, 1, Q, v, {sw:.5}); for (let i = 1; i < 4; i++) { const xx = x0 + (x1 - x0) * i / 4; S.line([xx, 1.02, H - 1.5], [k > 0 ? x0 + (xx - x0) * .5 : x1 - (x1 - xx) * .5, 1.02, 17], ISH(v, i % 2 ? .6 : 1.4), .45, {nol:1}); S.line([k > 0 ? x0 + (xx - x0) * .5 : x1 - (x1 - xx) * .5, 1.02, 17], [xx, 1.02, 1], ISH(v, i % 2 ? .6 : 1.4), .45, {nol:1}); }
-      S.ell([k > 0 ? x0 + (x1 - x0) * .55 : x1 - (x1 - x0) * .55, 1.1, 17], 1.4, .8, '#c9a24a', {sw:.3}); };
-    drape(1, 11, 1); drape(W - 11, W - 1, -1); S.box(-1, 0, H - 1, W + 2, 1.4, 1.2, '#2a2228'); [-1.4, W + 1.4].forEach(x => S.ell([x, 1.4, H - .4], 1.1, 1.1, '#c9a24a', {sw:.3})); },
+  /* Samtvorhang: zwei Bahnen, gerafft, unten aufgefächert, Stange mit Ringen und Knäufen */
+  vorhang: S => { const W = 27, H = 45, v = '#6a1426', T = H - 1.4;
+    const L = [[1, T], [12.4, T], [12, 38], [10.6, 30], [8.4, 22.6], [6.2, 18], [5.4, 16.2], [6.6, 12], [8.6, 6.4], [10.6, .6], [9.2, 0], [7.4, .5], [5.4, 0], [3.4, .5], [1.4, 0], [.2, .5], [1.4, 9], [2.4, 16.2], [1.6, 24], [1, 32]];
+    const drape = m => { const X = x => m ? W - x : x, P = L.map(([x, z]) => [X(x), z]); FP(S, 1, P, v, {sw:.5});
+      [[3, T, 3.6, 16.6, 2.4, .5], [6, T, 4.4, 16.6, 4.8, .3], [9.2, T, 5.2, 16.6, 7.4, .5]].forEach(([a, b, c2, d, e, f], i) => { const col = ISH(v, i % 2 ? .62 : 1.45); S.line([X(a), 1.02, b], [X(c2), 1.02, d], col, .5, {nol:1, op:.8}); S.line([X(c2), 1.02, d], [X(e), 1.02, f], col, .5, {nol:1, op:.8}); });
+      FP(S, 1.05, [[X(1.8), 15.2], [X(6.2), 15.2], [X(6.2), 17.4], [X(1.8), 17.4]], '#c9a24a', {sw:.3}); S.line([X(4), 1.08, 15.2], [X(4.2), 1.08, 12.4], '#c9a24a', .45); S.ell([X(4.2), 1.1, 11.8], .6, .9, '#e2c26a', {sw:.25}); };
+    drape(0); drape(1); S.box(-1, 0, T, W + 2, 1.4, 1.2, '#2a2228'); for (let x = 1.6; x < W - 1; x += 2.6) S.ell([x, 1.45, T + .3], .55, .7, '#c9a24a', {sw:.2}); [-1.4, W + 1.4].forEach(x => S.ell([x, 1.45, T + .6], 1.1, 1.1, '#c9a24a', {sw:.3})); },
   /* Neonschild RAWR */
   neon_rawr: S => { const W = 36, H = 14; isoPrY(S, [[0, 0], [W, 0], [W, H], [0, H]], 0, 1.2, '#141216'); [[1.4, 1.4], [W - 1.4, 1.4], [1.4, H - 1.4], [W - 1.4, H - 1.4]].forEach(([x, z]) => S.dot([x, 1.22, z], .35, '#5a5662'));
     skText(S, 1.6, 'RAWR', 5, 3.6, 7, '#ff4fb0', .9, {glow:1, core:'#ffd8ec', wide:.82, gap:.4}); },
