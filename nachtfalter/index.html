@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='6d60028c6935';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='af91302f2b84';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -13956,7 +13956,7 @@ const ISH = (c, f) => shade(c, f);
 const ISO_OL = c => { if (!/^#/.test(c)) return '#141016'; const l = hex2hsl(nHex(c))[2]; return l < .2 ? shade(c, 1.9) === c ? '#3a3640' : (l < .1 ? '#3e3a44' : shade(c, .45)) : shade(c, .4); };
 function isoMake(draw, opt = {}){
   const E = [];
-  const pt = p => IV(...p);
+  const pt = opt.flat ? p => [p[0] - p[1] * .3, -p[2] + p[1] * .3] : p => IV(...p); /* flat: Wand-Sachen von vorn (y = Abstand zur Wand, leichte Kante) */
   const S = {
     poly(pts, fill, o = {}){ E.push({k:'p', pts:pts.map(pt), fill, o}); },
     /* Kasten: sichtbar sind Oberseite, Vorderseite (+y, heller) und rechte Seite (+x, dunkler) */
@@ -13971,8 +13971,8 @@ function isoMake(draw, opt = {}){
     /* Feld auf der Vorderseite mit Rand (Türen, Schubladen) */
     panel(y, x0, z0, x1, z1, c, o = {}){ S.fy(y, x0, z0, x1, z1, c, {sw:.7, ...o}); },
     grip(a, b, c = '#b8b8c0', w = 1.3){ E.push({k:'l', a:pt(a), b:pt(b), c:ISO_OL(c), w:w + .9}); E.push({k:'l', a:pt(a), b:pt(b), c, w}); },
-    shine(y, x0, z0, x1, z1){ E.push({k:'l', a:pt([x0 + (x1 - x0) * .2, y, z0 + (z1 - z0) * .55]), b:pt([x0 + (x1 - x0) * .55, y, z0 + (z1 - z0) * .9]), c:'#ffffff', w:.9, op:.5}); E.push({k:'l', a:pt([x0 + (x1 - x0) * .2, y, z0 + (z1 - z0) * .3]), b:pt([x0 + (x1 - x0) * .4, y, z0 + (z1 - z0) * .5]), c:'#ffffff', w:.7, op:.4}); },
-    line(a, b, c, w = .6){ E.push({k:'l', a:pt(a), b:pt(b), c, w}); },
+    shine(y, x0, z0, x1, z1){ E.push({k:'l', a:pt([x0 + (x1 - x0) * .2, y, z0 + (z1 - z0) * .55]), b:pt([x0 + (x1 - x0) * .55, y, z0 + (z1 - z0) * .9]), c:'#ffffff', w:.9, op:.5, nol:1}); E.push({k:'l', a:pt([x0 + (x1 - x0) * .2, y, z0 + (z1 - z0) * .3]), b:pt([x0 + (x1 - x0) * .4, y, z0 + (z1 - z0) * .5]), c:'#ffffff', w:.7, op:.4, nol:1}); },
+    line(a, b, c, w = .6, o = {}){ E.push({k:'l', a:pt(a), b:pt(b), c, w, op:o.op, nol:o.nol}); },
     dot(p, r, c){ const q = pt(p); E.push({k:'c', q, r, c}); },
     ell(p, rx, ry, c, o = {}){ const q = pt(p); E.push({k:'e', q, rx, ry, c, o}); },
   };
@@ -13986,7 +13986,7 @@ function isoMake(draw, opt = {}){
     : e.k === 'c' ? `<circle cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" r="${e.r}" fill="${e.c}"/>`
     : `<ellipse cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" rx="${e.rx}" ry="${e.ry}" fill="${e.c}"${e.o.op ? ` opacity="${e.o.op}"` : ''}/>`).join('');
   /* Sticker-Umriss: alles einmal dick und dunkel darunter */
-  const ol = opt.ol ? `<g fill="${opt.olc || '#0c090d'}" stroke="${opt.olc || '#0c090d'}" stroke-width="${opt.ol * 2}" stroke-linejoin="round" stroke-linecap="round">${E.map(e => e.k === 'p' ? (e.o.nol ? '' : `<path d="M${e.pts.map(P).join('L')}Z"/>`) : e.k === 'l' ? `<path d="M${P(e.a)}L${P(e.b)}" fill="none" stroke-width="${e.w + opt.ol * 2}"/>` : e.k === 'c' ? `<circle cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" r="${e.r}"/>` : e.o.nol ? '' : `<ellipse cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" rx="${e.rx}" ry="${e.ry}"/>`).join('')}</g>` : '';
+  const ol = opt.ol ? `<g fill="${opt.olc || '#0c090d'}" stroke="${opt.olc || '#0c090d'}" stroke-width="${opt.ol * 2}" stroke-linejoin="round" stroke-linecap="round">${E.map(e => e.k === 'p' ? (e.o.nol ? '' : `<path d="M${e.pts.map(P).join('L')}Z"/>`) : e.k === 'l' ? (e.nol ? '' : `<path d="M${P(e.a)}L${P(e.b)}" fill="none" stroke-width="${e.w + opt.ol * 2}"/>`) : e.k === 'c' ? `<circle cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" r="${e.r}"/>` : e.o.nol ? '' : `<ellipse cx="${f(e.q[0] - x0)}" cy="${f(e.q[1] - y0)}" rx="${e.rx}" ry="${e.ry}"/>`).join('')}</g>` : '';
   const area = {}; E.forEach(e => { if (e.k !== 'p' || e.o.op) return; let a = 0; e.pts.forEach(([x, y], i) => { const [u, v] = e.pts[(i + 1) % e.pts.length]; a += x * v - u * y; }); area[e.fill] = (area[e.fill] || 0) + Math.abs(a) / 2; });
   return {svg:ol + svg, vb:[f(x1 - x0), f(y1 - y0)], area};
 }
@@ -15050,9 +15050,87 @@ Object.assign(SKF, {
   hw_lache: S => { S.poly([[0, 0, 0], [40, 0, 0], [40, 26, 0], [0, 26, 0]], '#d8dce4', {op:.06, sw:0, nol:1});
     [[8, 8, 7], [20, 6, 8], [32, 9, 7], [12, 18, 8], [26, 18, 9], [36, 20, 6], [4, 22, 5]].forEach(([x, y, r], i) => { S.ell([x, y, 1], r, r * .45, '#d8dce4', {nol:1, op:.28}); S.ell([x + 1, y + 1, 1.6], r * .6, r * .28, '#f1f2f6', {nol:1, op:.3}); }); },
 });
+/* v803: Fenster im Sticker-Stil (flach von vorn: x rechts, z hoch, y = Abstand zur Wand) */
+const SKY = '#1b1f3a', SKY2 = '#2a2f55', FRW = '#2f2a33';
+const skBatF = (S, y, cx, cz, s, c = '#141216') => FP(S, y, SK_BAT.map(([u, v]) => [cx + u * s, cz - v * s]), c, {sw:.2});
+const skStarF = (S, y, x, z, r, c = '#f3e6a8') => { const P = []; for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, rr = i % 2 ? r * .38 : r; P.push([x + rr * Math.cos(a), z + rr * Math.sin(a)]); } FP(S, y, P, c, {sw:.2}); };
+const skMoonF = (S, y, x, z, r, full) => { if (full) { FP(S, y, skCirc(x, z, r, 20), '#efe6c4', {sw:.4}); [[-.3, .2, .25], [.3, -.3, .18], [.1, .45, .12]].forEach(([a, b, c]) => FP(S, y + .01, skCirc(x + a * r, z + b * r, c * r, 10), '#d6cba4', {sw:0})); } else FP(S, y, skMoon(x, z, r), '#efe6c4', {sw:.4}); };
+/* Fensterrahmen mit Himmel: shape = Umriss (x/z), inner = Glas; view(y) zeichnet hinein; bars = Sprossen */
+function skWin(S, o){ const fr = o.fr || FRW, yv = .4;
+  isoPrY(S, o.shape, 0, 1.6, fr); FP(S, 1.62, o.inner, o.sky || SKY, {sw:.4});
+  if (o.glow !== false) FP(S, 1.63, o.inner.map(([x, z]) => [x, z]), SKY2, {sw:0, op:.35});
+  if (o.view) o.view(1.66);
+  (o.bars || []).forEach(([a, b]) => S.line([a[0], 1.8, a[1]], [b[0], 1.8, b[1]], fr, o.bw || 1.2));
+  if (o.shine !== false) { const xs = o.inner.map(p => p[0]), zs = o.inner.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs); S.line([x0 + (x1 - x0) * .18, 1.9, z0 + (z1 - z0) * .5], [x0 + (x1 - x0) * .38, 1.9, z0 + (z1 - z0) * .78], '#ffffff', .7, {op:.45, nol:1}); S.line([x0 + (x1 - x0) * .18, 1.9, z0 + (z1 - z0) * .32], [x0 + (x1 - x0) * .28, 1.9, z0 + (z1 - z0) * .46], '#ffffff', .5, {op:.4, nol:1}); }
+  if (o.sill) S.box(o.sill[0], 0, o.sill[1], o.sill[2] - o.sill[0], 3.2, 1.6, ISH(fr, 1.15)); }
+const skInset = (pts, d) => { const cx = pts.reduce((a, p) => a + p[0], 0) / pts.length, cz = pts.reduce((a, p) => a + p[1], 0) / pts.length; return pts.map(([x, z]) => { const L = Math.hypot(x - cx, z - cz) || 1; return [x - (x - cx) / L * d, z - (z - cz) / L * d]; }); };
+
+Object.assign(SKF, {
+  fenster: S => { const sh = skArch(0, 0, 26, 36), inn = skArch(2.4, 2.4, 23.6, 33.6);
+    skWin(S, {shape:sh, inner:inn, sill:[-1.5, -.2, 27.5], bars:[[[13, 2.4], [13, 33.6]], [[2.4, 15], [23.6, 15]]], view:y => { skMoonF(S, y, 17, 24, 4.6); [[6, 28], [8, 20], [20, 9], [6, 7]].forEach(([x, z], i) => skStarF(S, y, x, z, .8 + (i % 2) * .4)); skBatF(S, y, 7, 11, .9); }}); },
+  f_rosette: S => { const c = 15, R = 15, cols = ['#7c1b2c', '#3d1f5c', '#24414a', '#4f111c', '#5a3a7a', '#b8862a'];
+    isoPrY(S, skCirc(c, c, R, 28), 0, 1.6, FRW); FP(S, 1.62, skCirc(c, c, R - 2, 28), SKY, {sw:.4});
+    for (let i = 0; i < 12; i++) { const a0 = i / 12 * Math.PI * 2, a1 = (i + 1) / 12 * Math.PI * 2, am = (a0 + a1) / 2; FP(S, 1.66, [[c + 4.5 * Math.cos(a0), c + 4.5 * Math.sin(a0)], [c + 12.6 * Math.cos(a0 + .06), c + 12.6 * Math.sin(a0 + .06)], [c + 13 * Math.cos(am), c + 13 * Math.sin(am)], [c + 12.6 * Math.cos(a1 - .06), c + 12.6 * Math.sin(a1 - .06)], [c + 4.5 * Math.cos(a1), c + 4.5 * Math.sin(a1)]], cols[i % cols.length], {sw:.5, s:FRW}); }
+    FP(S, 1.7, skCirc(c, c, 4.6, 16), FRW, {sw:.4}); FP(S, 1.72, skCirc(c, c, 3, 12), '#b8862a', {sw:.3}); FP(S, 1.74, skCirc(c, c, 1.4, 8), SK.red, {sw:.2});
+    for (let i = 0; i < 12; i++) { const a = (i + .5) / 12 * Math.PI * 2; FP(S, 1.75, skCirc(c + 9 * Math.cos(a), c + 9 * Math.sin(a), 1, 8), '#e9dfb8', {sw:.2}); } },
+  f_gitter: S => { const sh = [[0, 0], [26, 0], [26, 28], [0, 28]], inn = [[2.4, 2.4], [23.6, 2.4], [23.6, 25.6], [2.4, 25.6]];
+    skWin(S, {shape:sh, inner:inn, sill:[-1.5, -.2, 27.5], view:y => { skMoonF(S, y, 16, 18, 5, 1); skStarF(S, y, 6, 21, 1); skStarF(S, y, 9, 8, .7); FP(S, y, [[2.4, 2.4], [23.6, 2.4], [23.6, 5], [18, 7], [12, 4.6], [6, 6.4], [2.4, 4.4]], '#141218', {sw:.3}); }});
+    [6.6, 10.8, 15, 19.2].forEach(x => { S.box(x - .5, 1.7, 2, 1, .9, 24, '#45404c', {sw:.4}); S.dot([x, 2.65, 26], .6, '#6e6975'); }); S.box(2.4, 1.7, 13, 21.2, .9, 1, '#45404c', {sw:.4}); },
+  f_bleiglas: S => { const sh = skArch(0, 0, 14, 44, 1), inn = skArch(2, 2, 12, 41.4, 1), cols = ['#7c1b2c', '#3d1f5c', '#24414a', '#b8862a', '#4f111c'];
+    skWin(S, {shape:sh, inner:inn, shine:false, sill:[-1.2, -.2, 15.2], view:y => { for (let j = 0; j < 9; j++) for (let i = 0; i < 3; i++) { const x = 2 + i * 3.33 + (j % 2) * 1.66, z = 2 + j * 3.6; if (x + 3.3 > 12.1 || z > 31) continue; FP(S, y, [[x + 1.66, z], [x + 3.33, z + 1.8], [x + 1.66, z + 3.6], [x, z + 1.8]], cols[(i * 3 + j) % 5], {sw:.4, s:FRW}); }
+      FP(S, y, skCirc(7, 35.5, 2.4, 12), '#b8862a', {sw:.4, s:FRW}); FP(S, y + .01, [[6.4, 33.4], [7.6, 33.4], [7.6, 35], [9, 35], [9, 36], [7.6, 36], [7.6, 37.6], [6.4, 37.6], [6.4, 36], [5, 36], [5, 35], [6.4, 35]], SK.red, {sw:.2}); }}); },
+  f_lanzett: S => { const sh = skArch(0, 0, 32, 46, 1), L = skArch(3, 2.4, 14.6, 30, 1), R = skArch(17.4, 2.4, 29, 30, 1);
+    isoPrY(S, sh, 0, 1.6, FRW); FP(S, 1.62, skArch(2, 1.6, 30, 44, 1), ISH(FRW, 1.25), {sw:.4});
+    [L, R].forEach((p, k) => { FP(S, 1.66, p, SKY, {sw:.5}); }); skMoonF(S, 1.7, 9, 18, 3.2); [[21, 22], [26, 13], [6, 8], [24, 6]].forEach(([x, z]) => skStarF(S, 1.7, x, z, .8)); skBatF(S, 1.7, 22, 16, .7);
+    FP(S, 1.66, skCirc(16, 36, 4, 16), SK.red, {sw:.5}); FP(S, 1.7, skCirc(16, 36, 1.8, 10), '#b8862a', {sw:.3}); [L, R].forEach(p => { const xs = p.map(q => q[0]); S.line([Math.min(...xs) + 2, 1.9, 14], [Math.min(...xs) + 4, 1.9, 20], '#ffffff', .6, {op:.45, nol:1}); });
+    S.box(-1.2, 0, -.2, 34.4, 3.2, 1.6, ISH(FRW, 1.15)); },
+  f_bullauge: S => { const c = 13, R = 13;
+    isoPrY(S, skCirc(c, c, R, 26), 0, 2, '#4a4652'); FP(S, 2.02, skCirc(c, c, R - 3, 24), SKY, {sw:.5}); FP(S, 2.03, skCirc(c + 2, c + 2, R - 6, 20), SKY2, {sw:0, op:.4});
+    skMoonF(S, 2.06, c + 4, c + 3, 3); [[c - 4, c + 3, .9], [c - 1, c - 2, 1.1], [c + 3, c - 4, .7]].forEach(([x, z, s]) => skBatF(S, 2.08, x, z, s));
+    for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; S.dot([c + (R - 1.4) * Math.cos(a), 2.1, c + (R - 1.4) * Math.sin(a)], .55, SK.silver); } S.line([c - 6, 2.2, c + 2], [c - 3, 2.2, c + 6], '#ffffff', .7, {op:.45, nol:1}); },
+  f_skyline: S => { const W = 46, H = 28, sh = [[0, 0], [W, 0], [W, H], [0, H]], inn = [[2.2, 2.2], [W - 2.2, 2.2], [W - 2.2, H - 2.2], [2.2, H - 2.2]];
+    skWin(S, {shape:sh, inner:inn, sill:[-1.5, -.2, W + 1.5], bars:[[[W / 3, 2.2], [W / 3, H - 2.2]], [[W * 2 / 3, 2.2], [W * 2 / 3, H - 2.2]]], view:y => {
+      skMoonF(S, y, 36, 21, 2.6, 1); [[8, 23], [20, 24], [28, 19], [42, 16]].forEach(([x, z]) => skStarF(S, y, x, z, .7));
+      const B = [[2.2, 9], [6, 14], [10, 8], [13, 17], [17, 11], [21, 15], [25, 7], [28, 12], [32, 18], [36, 10], [40, 13], [W - 2.2, 9]]; let x = 2.2;
+      B.forEach(([x1, h], i) => { if (i === 0) return; FP(S, y, [[x, 2.2], [x1, 2.2], [x1, h], [x, h]], i % 2 ? '#141218' : '#1c1a24', {sw:.2}); for (let wz = 4; wz < h - 1.5; wz += 2.4) for (let wx = x + 1; wx < x1 - 1; wx += 1.8) if ((Math.round(wx * 7 + wz * 3) % 3) === 0) FP(S, y + .01, [[wx, wz], [wx + .8, wz], [wx + .8, wz + 1], [wx, wz + 1]], '#f3c25c', {sw:0}); x = x1; });
+      FP(S, y + .02, [[13.5, 17], [14.5, 21], [15.5, 17]], '#141218', {sw:.2}); }}); },
+  f_herz: S => { const H = SK_HEART.map(([u, v]) => [14 + u * 14, 13 - v * 14]), I = SK_HEART.map(([u, v]) => [14 + u * 11, 13.4 - v * 11]);
+    isoPrY(S, H, 0, 1.6, FRW); FP(S, 1.62, I, SKY, {sw:.4}); FP(S, 1.64, SK_HEART.map(([u, v]) => [14 + u * 7, 13.6 - v * 7]), '#3a1e3e', {sw:0, op:.6});
+    skMoonF(S, 1.68, 17, 16, 3); skStarF(S, 1.68, 9, 18, 1); skStarF(S, 1.68, 12, 9, .7); S.line([14, 1.8, 3], [14, 1.8, 21], FRW, 1); S.line([5, 1.8, 14], [23, 1.8, 14], FRW, 1); S.line([6, 1.9, 16], [8, 1.9, 19], '#ffffff', .6, {op:.45, nol:1}); },
+  f_laeden: S => { const W = 24, H = 30, x0 = 10, sh = [[x0, 0], [x0 + W, 0], [x0 + W, H], [x0, H]], inn = [[x0 + 2.2, 2.2], [x0 + W - 2.2, 2.2], [x0 + W - 2.2, H - 2.2], [x0 + 2.2, H - 2.2]];
+    const shut = (a, b) => { FP(S, .6, [[a, -.5], [b, -.5], [b, H + .5], [a, H + .5]], '#3b2d27', {sw:.6}); for (let z = 2; z < H - 1; z += 1.8) S.line([a + 1, .62, z], [b - 1, .62, z + .6], ISH('#3b2d27', 1.5), .35); FP(S, .64, [[a + 1, H / 2 - .6], [b - 1, H / 2 - .6], [b - 1, H / 2 + .6], [a + 1, H / 2 + .6]], ISH('#3b2d27', .7), {sw:.3}); };
+    shut(0, x0 - .6); shut(x0 + W + .6, 2 * x0 + W);
+    skWin(S, {shape:sh, inner:inn, sill:[x0 - 1.5, -.2, x0 + W + 1.5], bars:[[[x0 + W / 2, 2.2], [x0 + W / 2, H - 2.2]], [[x0 + 2.2, H / 2], [x0 + W - 2.2, H / 2]]], view:y => { skMoonF(S, y, x0 + 17, 22, 3); [[x0 + 5, 24], [x0 + 7, 10], [x0 + 18, 8]].forEach(([x, z]) => skStarF(S, y, x, z, .8)); }});
+    [[x0 + 2, '#7c1b2c'], [x0 + 7, '#5a3a7a'], [x0 + 12, '#7c1b2c'], [x0 + 17, '#e8e2d6'], [x0 + 21, '#7c1b2c']].forEach(([x, c]) => { S.ell([x, 3.4, 2], 1.6, 1.4, c, {sw:.3}); }); S.box(x0 - .5, 0, -.4, W + 1, 3.6, 1.8, '#3e3a44'); },
+  f_gewitter: S => { const sh = skArch(0, 0, 26, 36), inn = skArch(2.4, 2.4, 23.6, 33.6);
+    skWin(S, {shape:sh, inner:inn, sky:'#24263a', sill:[-1.5, -.2, 27.5], bars:[[[13, 2.4], [13, 33.6]]], view:y => {
+      [[6, 26, 4.2], [11, 28, 3.6], [17, 27, 4.4], [21, 25, 3]].forEach(([x, z, r]) => FP(S, y, skCirc(x, z, r, 12), '#4a4c62', {sw:.3}));
+      FP(S, y + .01, [[15, 24], [11, 15], [14, 15], [10, 5], [18, 17], [15, 17], [18, 24]], '#f3e6a8', {sw:.4, s:'#c9a24a'});
+      for (let i = 0; i < 9; i++) S.line([4 + i * 2.2, y + .02, 18 - (i % 3) * 3], [3 + i * 2.2, y + .02, 15 - (i % 3) * 3], '#8a90b0', .3); }}); },
+  f_spitze: S => { const sh = [[0, 0], [26, 0], [26, 34], [0, 34]], inn = [[2.2, 2.2], [23.8, 2.2], [23.8, 31.8], [2.2, 31.8]];
+    skWin(S, {shape:sh, inner:inn, sill:[-1.5, -.2, 27.5], bars:[[[13, 2.2], [13, 31.8]], [[2.2, 17], [23.8, 17]]], view:y => { skMoonF(S, y, 17, 24, 3.4); skStarF(S, y, 7, 26, 1); }});
+    const lace = (a, b, dir) => { const P = [[a, 33], [b, 33]]; for (let z = 31; z >= 3; z -= 2) P.push([b - dir * (Math.sin(z) * .6 + (z < 14 ? (14 - z) * .45 : 0)), z]); P.push([a, 2]); FP(S, 2.2, P, '#f1eee8', {sw:.4, op:.85}); for (let z = 6; z < 32; z += 3) for (let x = Math.min(a, b) + 1.5; x < Math.max(a, b) - 1.5 - (z < 14 ? (14 - z) * .45 : 0); x += 2.5) S.dot([x, 2.25, z], .45, '#cfc9be'); };
+    lace(.4, 9.5, 1); lace(25.6, 16.5, -1); S.box(-1, 0, 33, 28, 2.8, 1.2, '#4a4352'); },
+  f_dach: S => { const W = 36, H = 24, sh = [[0, 0], [W, 0], [W, H], [0, H]], inn = [[2.4, 2.4], [W - 2.4, 2.4], [W - 2.4, H - 2.4], [2.4, H - 2.4]];
+    skWin(S, {shape:sh, inner:inn, fr:'#3b2d27', bars:[[[W / 2, 2.4], [W / 2, H - 2.4]]], view:y => { for (let i = 0; i < 14; i++) skStarF(S, y, 4 + ((i * 37) % 29), 4 + ((i * 17) % 16), .5 + (i % 3) * .35); skMoonF(S, y, 27, 15, 3); FP(S, y, [[2.4, 2.4], [W - 2.4, 2.4], [W - 2.4, 3.6], [2.4, 6]], '#2f3060', {sw:0, op:.6}); }});
+    S.line([W / 2 - 3, 2, H - 1], [W / 2 + 3, 2, H - 1], SK.silver, .8); },
+  f_friedhof: S => { const sh = skArch(0, 0, 26, 38), inn = skArch(2.4, 2.4, 23.6, 35.6);
+    skWin(S, {shape:sh, inner:inn, sill:[-1.5, -.2, 27.5], bars:[[[13, 2.4], [13, 35.6]], [[2.4, 18], [23.6, 18]]], view:y => {
+      skMoonF(S, y, 8, 27, 4, 1); FP(S, y, [[2.4, 2.4], [23.6, 2.4], [23.6, 8], [16, 10], [8, 9], [2.4, 7]], '#141218', {sw:.2});
+      [[5, 8.5, 2.2, 4], [10, 9.5, 1.8, 3.4], [19, 9.4, 2, 3.8]].forEach(([x, z, w, h]) => FP(S, y + .01, skArch(x - w, z - .5, x + w, z + h), '#3a3842', {sw:.3}));
+      FP(S, y + .01, [[14.4, 9], [15.4, 9], [15.4, 13], [17, 13], [17, 14], [15.4, 14], [15.4, 15.6], [14.4, 15.6], [14.4, 14], [12.8, 14], [12.8, 13], [14.4, 13]], '#3a3842', {sw:.3});
+      [[21, 9, 21, 26], [21, 20, 17, 25], [21, 22, 23.4, 27], [21, 16, 23.4, 19]].forEach(([a, b, c2, d]) => S.line([a, y + .02, b], [c2, y + .02, d], '#141218', .9)); }}); },
+  f_vollmond: S => { const sh = skArch(0, 0, 28, 40), inn = skArch(2.4, 2.4, 25.6, 37.6);
+    skWin(S, {shape:sh, inner:inn, sill:[-1.5, -.2, 29.5], view:y => { skMoonF(S, y, 14, 21, 8, 1); [[8, 27, 1.1], [19, 30, .8], [21, 14, 1], [7, 12, .7], [14, 33, .6]].forEach(([x, z, s]) => skBatF(S, y + .02, x, z, s)); }}); },
+  hw_moerder: S => { const sh = [[0, 0], [26, 0], [26, 32], [0, 32]], inn = [[2.2, 2.2], [23.8, 2.2], [23.8, 29.8], [2.2, 29.8]];
+    skWin(S, {shape:sh, inner:inn, sky:'#1a1c2c', sill:[-1.5, -.2, 27.5], bars:[[[13, 2.2], [13, 29.8]], [[2.2, 16], [23.8, 16]]], view:y => {
+      skMoonF(S, y, 19, 25, 2.6, 1); FP(S, y, [[2.2, 2.2], [23.8, 2.2], [23.8, 6], [2.2, 7]], '#101016', {sw:0});
+      const g = [[5, 4], [6, 6], [6, 14], ...isoArc(9.5, 14, 3.5, Math.PI, 0, 10).slice(1), [13, 6], [14, 4], [12.4, 5], [11, 3.6], [9.5, 5], [8, 3.6], [6.6, 5]]; FP(S, y + .01, g, '#e8eaf0', {sw:.4, op:.85});
+      [[8, 14], [11, 14]].forEach(([x, z]) => FP(S, y + .02, skCirc(x, z, .8, 8), '#141216', {sw:0})); FP(S, y + .02, skCirc(9.5, 11.6, .6, 8), '#141216', {sw:0}); }}); },
+});
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
-for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3}), cnt = r.area;
+for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3, flat:!!FURN[id].wall}), cnt = r.area; /* v803: Wand-Sachen flach, die Schräge kommt im Zimmer */
   Object.assign(FURN[id], {svg:r.svg, vb:r.vb, w:Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1}); FMAIN[id] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('skf', k, e); } }
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
 const surfAvail = kind => [...(kind === 'wall' ? WALLS : FLOORS).map(([k]) => k), ...FURN_IDS.filter(k => FURN[k].surf === kind && !!WAL.d?.inv?.[ncF(k)]).map(k => FURN[k].key)]; /* gratis + gekauft */
