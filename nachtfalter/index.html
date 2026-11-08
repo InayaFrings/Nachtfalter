@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e277890dddcf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='70bc87def94c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8060,7 +8060,10 @@ const lookSigOf = u => bkHash(JSON.stringify([u.outfit || null, u.pose || '']));
 function lookMark(){ const u = S.users?.[S.me]; if (!u || u.remote || u.helper) return; const s = lookSigOf(u); if (u.lookSig !== s) { if (u.lookSig) u.lookTs = Date.now(); u.lookSig = s; } }
 function lookTake(u, x, lt){ if (!u || !x?.outfit || !(+lt > (u.lookTs || 0))) return false; u.outfit = normOutfit({...x.outfit}); u.pose = x.pose || ''; u.lookTs = +lt; u.lookSig = lookSigOf(u); return true; }
 let lookPT = 0; async function lookPull(){ if (!social || Date.now() - lookPT < 3000) return; lookPT = Date.now(); try { const d = await social.db.doc('profiles/' + social.uid).get(); const x = d.exists ? d.data() : null; if (lookTake(me(), x, x?.lt)) { save(); softRender(); } } catch {} }
-function save(){
+/* v841: Gelesen-Stand im offenen Chat: nur auf dem Gerät merken (gebündelt), nicht bei jeder Nachricht Profil und Kontosicherung hochladen; über Geräte geht er über nf-seen */
+let SAVES = null;
+function saveSoft(){ clearTimeout(SAVES); SAVES = setTimeout(() => { SAVES = null; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }, 1500); }
+function save(){ clearTimeout(SAVES); SAVES = null;
   lookMark(); S.savedAt = Date.now();
   cloudQueue();
   if (typeof socialStart === 'function') { if (!social) { if (socialStart() !== false && social) presenceStart(); } else publishProfile(); }
@@ -8389,7 +8392,7 @@ function navScroll(y){ if (!(y > 0)) return; NAVR.lastY = y; let done = false; [
 const ANC = {id:null, top:0, fix:false};
 function ancFind(){ if (ANC.fix) return; ANC.id = null; if (window.scrollY < 8) return; for (const el of document.querySelectorAll('#app article.post[data-pid]')) { const r = el.getBoundingClientRect(); if (r.bottom > 90) { ANC.id = el.dataset.pid; ANC.top = r.top; return; } } }
 function ancFix(){ if (!ANC.id) return; const el = document.querySelector(`#app article.post[data-pid="${CSS.escape(ANC.id)}"]`); if (!el) { ANC.id = null; return; } const d = el.getBoundingClientRect().top - ANC.top; if (Math.abs(d) > 1) { ANC.fix = true; window.scrollBy(0, d); requestAnimationFrame(() => { ANC.fix = false; }); } }
-addEventListener('scroll', ancFind, {passive:true});
+{ let q = 0; addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(() => { q = 0; ancFind(); }); }, {passive:true}); } /* v841: höchstens einmal je Bild, sonst ruckelt das Scrollen */
 if (window.ResizeObserver) { const ancObs = () => { const app = document.getElementById('app'); if (app) new ResizeObserver(() => ancFix()).observe(app); }; if (document.readyState === 'loading') addEventListener('DOMContentLoaded', ancObs); else ancObs(); }
 ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { NAVR.touched = true; }, {passive:true, once:true}));
 addEventListener('scroll', () => { clearTimeout(NAVR.t); NAVR.t = setTimeout(navSave, 400); }, {passive:true});
@@ -11556,9 +11559,14 @@ function softRender(){
   if (softT) return;
   softT = setTimeout(() => { softT = null;
     const a = document.activeElement;
-    if (a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'checkbox')) && a.value) return;
+    if (fldTyp(a) && a.isConnected) { SOFTP = true; return; } /* v841: solange getippt wird (auch im leeren Feld), nichts im Hintergrund neu zeichnen; danach einmal nachholen */
     render(); }, 150);
 }
+let SOFTP = false;
+/* v841: Senden-Pfeil antippen lässt die Tastatur offen wie bei WhatsApp (der Knopf nimmt dem Textfeld nicht den Fokus) */
+const KEEPKB = '.csend:not(.vrsend), .rmsend';
+['pointerdown', 'mousedown'].forEach(t => document.addEventListener(t, e => { const b = e.target.closest?.(KEEPKB); if (!b) return; const f = b.closest('form'), a = document.activeElement; if (f && fldTyp(a) && f.contains(a) && e.cancelable) e.preventDefault(); }, true));
+document.addEventListener('focusout', () => { if (SOFTP) setTimeout(() => { if (SOFTP && !fldTyp(document.activeElement)) { SOFTP = false; softRender(); } }, 400); });
 // Profil laden: erst sofort aus dem Zwischenspeicher, dann im Hintergrund frisch vom Server (Inaya, 2026-10-15)
 const profPut = (id, d) => { if (!d?.exists) return false; const x = d.data(), nm = typeof NM !== 'undefined' ? NM[id] : null; if (nm?.n) x.name = nm.n; if (nm?.h) x.handle = nm.h; PROF[id] = x; return true; };
 const LPS = {}; // laufende Server-Abfragen je Profil
@@ -11686,13 +11694,13 @@ async function setMine(list, again){
   syncFriends();
 }
 let deleting = false;
-let lastPubJs = '';
+let lastPubJs = '', lastPubKey = '', lastPubAt = 0, PPM_LOOK = false;
 /* Nutzername auch im Firebase-Konto (displayName), damit die E-Mail „Passwort zurücksetzen“ mit %DISPLAY_NAME% den Namen zeigt (Inaya, 2026-10-18); schreibt nichts in Firestore */
 function authNameSync(){ try { const au = window.firebase?.auth?.().currentUser, n = me()?.handle; if (au && n && au.displayName !== n) au.updateProfile({displayName:n}).catch(() => {}); } catch {} }
 /* v722 (Inaya: „Beiträge dürfen gar nicht erst verloren gehen“): zweite Sicherung neben der Kontosicherung (v720). Vor jedem Veröffentlichen liest publishProfile das eigene Profil vom Server;
    eigene Beiträge, die dort stehen, auf diesem Gerät aber fehlen (von einem anderen Gerät gepostet) und nicht gelöscht sind (S.delP), werden übernommen statt überschrieben. Großes Bild aus chats/pimg_<uid>. */
 async function profPostsMerge(){ if (!social || !Array.isArray(S.posts)) return false;
-  let d; try { d = await social.db.doc('profiles/' + social.uid).get(); } catch { return false; } if (!d.exists) return false; if (lookTake(me(), d.data(), d.data().lt)) { setTimeout(() => softRender(), 0); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} cloudQueue(); } if (!Array.isArray(d.data().posts)) return false;
+  let d; try { d = await social.db.doc('profiles/' + social.uid).get(); } catch { return false; } if (!d.exists) return false; if (lookTake(me(), d.data(), d.data().lt)) { PPM_LOOK = true; setTimeout(() => softRender(), 0); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} cloudQueue(); } if (!Array.isArray(d.data().posts)) return false;
   const have = new Set(S.posts.map(p => p.id)), dp = S.delP || {}, add = [];
   for (const x of d.data().posts) { if (!x || !x.id || have.has(x.id) || dp[x.id] || trashed(x.id) || (S.trash || []).some(y => y.id === x.id)) continue;
     const p = {author:S.me, reactions:{}, comments:[]}; for (const k in x) if (x[k] !== null && x[k] !== '' && k !== 'bigimg' && k !== 'img') p[k] = x[k];
@@ -11703,9 +11711,8 @@ function publishProfile(){ authNameSync();
   if (!social || deleting) return; acctRemember();
   clearTimeout(pubTimer);
   pubTimer = setTimeout(async () => {
-    const u = me(); if (!u || u.remote) return;
+    const u = me(); if (!u || u.remote) return; if (chBusy()) { publishProfile(); return; } /* v841: solange ein Chat lädt, hat er die Leitung */
     if (trashApply()) save(); trashPurge();
-    if (await profPostsMerge()) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} softRender(); } /* v722: nie Beiträge eines anderen Geräts überschreiben */
     const posts = S.posts.filter(p => p.author === S.me && !p.arch).sort(pinSort).slice(0, 40) /* v704: bis 40 statt 15 Beiträge, damit ältere bei anderen nicht verschwinden; wird unten gekürzt, wenn das Profil zu groß ist */
       .map(p => ({id:p.id, pin:p.pin || 0, type:p.type, text:p.text || '', url:p.url || '', lp:p.lp || null, img:'', bigimg:p.img || p.bigimg ? 1 : 0, ts:p.ts, edited:p.edited || 0, pub:p.pub ? 1 : 0, full:p.img, share:p.share || null, audio:p.audio || null, clip:p.clip || null, mu:p.mu || null, tags:p.tags || [], sg:sgClean(p.sg), sgi:p.sgi ? 1 : 0, gal:p.gal ? p.gal.filter(x => x.k || x.t === 'v').map(x => x.t === 'i' ? {t:'i', k:x.k, ...(x.tg ? {tg:x.tg} : {}), ...(x.sk ? {sk:x.sk} : {})} : x) : null, gar:p.gar || ''}));
     let budget = 120000; /* kleine Bilder zusätzlich direkt im Profil (schneller), JEDES Bild aber auch als eigenes Dokument */
@@ -11732,8 +11739,10 @@ function publishProfile(){ authNameSync();
     if (big()) doc.cover = null;
     if (big() && doc.banner) doc.banner = {...doc.banner, img:null};
     if (big()) doc.pic = null;
-    const js = JSON.stringify(doc); if (js === lastPubJs) return; // unverändert: nicht erneut 240 KB hochladen
-    try { await social.db.doc('profiles/' + social.uid).set(JSON.parse(js)); lastPubJs = js;
+    const js = JSON.stringify(doc), jk = JSON.stringify({...doc, seen:0, ts:0}); if (js === lastPubJs) return; // unverändert: nicht erneut 240 KB hochladen
+    if (jk === lastPubKey && Date.now() - lastPubAt < 300000) return; /* v841: nur seen/ts anders (jede gelesene Nachricht speichert): nichts lesen, nichts hochladen, höchstens alle 5 Minuten */
+    PPM_LOOK = false; if (await profPostsMerge() || PPM_LOOK) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} softRender(); publishProfile(); return; } /* v722: nie Beiträge eines anderen Geräts überschreiben (v841: erst lesen, wenn wirklich geschrieben wird) */
+    try { await social.db.doc('profiles/' + social.uid).set(JSON.parse(js)); lastPubJs = js; lastPubKey = jk; lastPubAt = Date.now();
       { const av = bkHash(JSON.stringify([doc.outfit, doc.pose, doc.pet])); if (NM[social.uid] && NM[social.uid].av !== av) { NM[social.uid].av = av; social.db.doc('handles/' + social.uid).set({av, at:typeof srvNow === 'function' ? srvNow() : Date.now()}, {merge:true}).catch(() => {}); } } /* v680: anderen sagen, dass sich der Avatar geändert hat */ if (NCPOST && doc.lastPost?.id === NCPOST) { const id = NCPOST; NCPOST = null; xpGain('p', id); } } catch {}
   }, 1500);
 }
@@ -11864,7 +11873,7 @@ function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
   return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 60).onSnapshot({includeMetadataChanges:true}, snap => {
     CH.mraw = snap.docs.filter(d => !isDel(d.id) && !(chHidAt(id) && (+d.data().ts || 0) <= chHidAt(id))).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); { const nl = CH.mraw[CH.mraw.length - 1]; const mineNew = nl && nl.id !== CH.lastMid && CH.lastMid && nl.d?.from === social.uid; CH.lastMid = nl?.id; drawMsgs(first && !keep || mineNew ? 'end' : 0); } e2Prev(id); rdMark();
     if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
-function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (!c) return; let t = +c.last || 0; for (const m of (CH.mraw || [])) if (!m.pend && +m.d?.ts > t) t = +m.d.ts; /* v697: auch die neueste Nachricht zählt, die Chatliste kommt oft erst nach den Nachrichten */ if (t && ((S.seen || {})[c.id] || 0) < t) { S.seen = {...(S.seen || {}), [c.id]:t}; save(); seenPush(0, {[c.id]:t}); } }
+function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (!c) return; let t = +c.last || 0; for (const m of (CH.mraw || [])) if (!m.pend && +m.d?.ts > t) t = +m.d.ts; /* v697: auch die neueste Nachricht zählt, die Chatliste kommt oft erst nach den Nachrichten */ if (t && ((S.seen || {})[c.id] || 0) < t) { S.seen = {...(S.seen || {}), [c.id]:t}; saveSoft(); seenPush(0, {[c.id]:t}); } }
 /* v699 (Inaya: Hochscrollen im Chat flüssig): Die Stelle hängt an der obersten sichtbaren Nachricht (msgAnc/msgRest), nicht mehr an scrollTop.
    Vorher sprang der Chat bei jedem Neuzeichnen (jede Firestore-Meldung, jedes render(), jedes nachgeladene Bild) nach unten. Unten bleibt unten. */
 const msgAnc = box => { if (!box || !box.isConnected) return null; if (box.scrollHeight - box.scrollTop - box.clientHeight < 60) return {b:1}; const top = box.getBoundingClientRect().top;
@@ -17132,7 +17141,7 @@ document.addEventListener('touchend', e => {
 const kbArm = (ms=350) => { clearTimeout(kbT); kbT = setTimeout(() => { const a = document.activeElement; if (kbDone !== a && kbAlign()) kbDone = a; }, ms); };
 const kbSoon = () => { kbDone = null; kbArm(350); };
 if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (kbDone !== document.activeElement) kbArm(250); }); // nur solange die Tastatur noch aufgeht
-document.addEventListener('focusin', e => { if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
+document.addEventListener('focusin', e => { if (FREST) return; if (isTyping(e.target)) { document.body.classList.add('kbopen'); kbSoon(); } if (chatKb(e.target)) { vvFit(); document.body.classList.add('chatkb'); const m = document.getElementById('msgs') || document.getElementById('chatlog'); setTimeout(() => { vvFit(); if (m) m.scrollTop = m.scrollHeight; }, 350); } });
 document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!isTyping(a)) { document.body.classList.remove('kbopen'); kbDone = null; } if (!chatKb(a)) document.body.classList.remove('chatkb'); }, 120));
 /* v581: Safari meldet kein focusout, wenn das Eingabefeld beim Neuzeichnen verschwindet. Dann blieb „Tastatur offen“ stehen und die untere Leiste war weg. */
 function kbCheck(){ if (!document.body.classList.contains('kbopen') && !document.body.classList.contains('chatkb')) return; const a = document.activeElement; if (!isTyping(a) || !a.isConnected) { document.body.classList.remove('kbopen'); kbDone = null; } if (!chatKb(a) || !a?.isConnected) document.body.classList.remove('chatkb'); }
@@ -17292,6 +17301,17 @@ function mediaPut(root, m){ if (!m || (!m.im.size && !m.vd.size)) return;
   if (m.vd.size) root.querySelectorAll('.main [data-act=clipplay],.main [data-act=gclip]').forEach(b => { const w = m.vd.get(mvKey(b)); if (!w) return; m.vd.delete(mvKey(b)); b.replaceWith(w); const v = w.querySelector('video'); if (v) { VAUTO.io?.observe(v); if (w._play) { const go = () => { if (v.isConnected && v.paused) v.play().catch(() => {}); }; go(); setTimeout(go, 0); setTimeout(go, 120); } } }); /* Chrome hält ein umgehängtes Video kurz an */
   if (m.im.size) root.querySelectorAll('.main img').forEach(n => { const k = n.dataset.pimg ? 'p:' + n.dataset.pimg : n.getAttribute('src'), l = k && m.im.get(k); if (!l?.length) return; const o = l.shift();
     const src = o.getAttribute('src'); [...o.attributes].forEach(a => o.removeAttribute(a.name)); [...n.attributes].forEach(a => o.setAttribute(a.name, a.value)); if (!n.getAttribute('src') && src) o.setAttribute('src', src); n.replaceWith(o); }); }
+/* v841 (Inaya: im Chat ging die Tastatur beim Schreiben von selbst zu, alles stockte): Jedes Neuzeichnen ersetzt das ganze #app, das Eingabefeld mit dem Fokus verschwand und das Handy schloss die Tastatur.
+   focusTake merkt das Feld mit dem Fokus, focusPut setzt genau diesen Knoten (Text, Cursor, Fokus, Listener) an die Stelle seines neuen Gegenstücks. Felder ohne id werden über ihr Formular erkannt. */
+let FREST = false; /* gerade wird nur der Fokus nach dem Neuzeichnen zurückgegeben: keine Tastatur-Reaktionen */
+const fldTyp = el => !!el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && !['checkbox','radio','file','range','color','button','submit','hidden','image','reset'].includes(el.type)));
+const fldKey = el => { if (el.id) return '#' + el.id; const f = el.closest('form'); if (!f) return ''; return 'f:' + JSON.stringify(f.dataset) + '|' + el.tagName + '|' + (el.name || '') + '|' + [...f.querySelectorAll(el.tagName)].indexOf(el); };
+function focusTake(root){ const a = document.activeElement; if (!fldTyp(a) || !root.contains(a)) return null; const k = fldKey(a); if (!k) return null; let s0 = null, s1 = null; try { s0 = a.selectionStart; s1 = a.selectionEnd; } catch {} return {el:a, k, s0, s1, top:a.scrollTop}; }
+function focusPut(root, f){ if (!f) return; let n = null;
+  if (f.k[0] === '#') n = root.querySelector('#' + CSS.escape(f.k.slice(1))); else n = [...root.querySelectorAll('form input, form textarea')].find(x => !x.id && fldKey(x) === f.k);
+  if (!n || n.tagName !== f.el.tagName) { if (document.activeElement !== f.el) document.body.classList.remove('chatkb'); return; }
+  const o = f.el, v = o.value; [...o.attributes].forEach(a => { if (!n.hasAttribute(a.name) && a.name !== 'style') o.removeAttribute(a.name); }); [...n.attributes].forEach(a => { if (a.name !== 'value' && a.name !== 'style' && o.getAttribute(a.name) !== a.value) o.setAttribute(a.name, a.value); });
+  n.replaceWith(o); if (o.value !== v) o.value = v; FREST = true; try { o.focus({preventScroll:true}); } finally { FREST = false; } try { if (f.s0 != null) o.setSelectionRange(f.s0, f.s1); } catch {} o.scrollTop = f.top; }
 function render(){ const ancV = V.name + '|' + V.arg; renderInner(); ncNewPop(); if (ancV === ANC.v) ancFix(); else ANC.id = null; ANC.v = ancV; if (VREC || document.getElementById('vrbar')) voicePaint(); if (VSEND.length) voicePend(); }
 /* v820 (Inaya): Garderobe, Zimmer einrichten und Profil bearbeiten speichern nur mit „Fertig“ oben rechts. Pfeil zurück oder Weggehen verwirft */
 let WARD_UNDO = null;
@@ -17322,14 +17342,14 @@ function renderInner(){
   const body = {pet:petView, home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, archive:archiveView, liked:likedView, visit:visitView, shopping:shoppingView, mall:mallView, moebel:moebelView}[V.name] || homeView;
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
-  const mkeep = mediaTake(app);
+  const mkeep = mediaTake(app), fkeep = focusTake(app), cmOld = document.getElementById('cm-in'), cmDraft = cmOld?.value ? {cid:CH.open, v:cmOld.value} : null;
   app.innerHTML = `<div class="shell">${rail()}
     <main class="main${wide ? ' wide' : ''}">${body()}${V.name === 'home' ? salonEnd() : ''}</main>
     ${wide ? '' : asideHTML()}
     ${pmenuSheet()}
     <footer class="foot"><span>Noctibat · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
-  mediaPut(app, mkeep); /* v719: geladene Bilder und laufende Videos bleiben beim Neuzeichnen stehen */
+  mediaPut(app, mkeep); focusPut(app, fkeep); if (cmDraft && cmDraft.cid === CH.open) { const ci = document.getElementById('cm-in'); if (ci && !ci.value) { ci.value = cmDraft.v; mlFit?.(ci); cmTyped(); } } /* v841: angefangene Nachricht bleibt auch ohne Fokus stehen (z. B. Sticker-Leiste geöffnet) */ /* v719: geladene Bilder und laufende Videos bleiben beim Neuzeichnen stehen */
   setTimeout(fitChk, 0); setTimeout(fitChk, 600); document.body.dataset.pg = V.name; document.body.classList.toggle('obopen', !!me()?.obOpen); document.body.classList.toggle('chlist', V.name === 'chats' && (!CH.open || ['info', 'media', 'gadd'].includes(CH.mode)) && innerWidth < 762); /* v813: Kontaktinfo/Medien wie die Chatliste, kein Scrollen ins Leere */ /* v699: Chatliste endet wie Suche und Profil 16 px über der Leiste */ /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : null);
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
