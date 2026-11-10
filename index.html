@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ccc280f24e02';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f5e7674c3537';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -9473,7 +9473,19 @@ const STCOL = ['#ffffff','#111111','#9a9aa2','#e0303a','#ff6fa8','#a35bff','#3d8
 const stTexts = st => Array.isArray(st.texts) ? st.texts : st.text ? [{t:st.text, x:50, y:60, s:7, c:'#ffffff', st:'klassisch', bg:0}] : [];
 const stTxtAttrs = (x, i) => `class="sttxt st-${esc(x.st || 'klassisch')}${x.bg ? ' bg' + (+x.bg) : ''}${x.u ? ' sttag' : ''}${x.m && x.m.length ? ' hasm' : ''}"${i == null ? '' : ` data-ti="${i}"`} style="left:${+x.x}%;top:${+x.y}%;--fs:${+x.s || 7};${x.r ? `--tr:${+x.r};` : ''}--tc:${esc(x.c || '#fff')};--tk:${isLight(x.c || '#fff') ? '#111' : '#fff'};${x.u ? '' : stOut(x)}"`;
 const stTextsHTML = (l, edit) => l.map((x, i) => `<div ${stTxtAttrs(x, edit ? i : null)}${!edit && x.u ? ` data-act="st-tagprof" data-id="${esc(x.u)}" role="button" tabindex="0" aria-label="Profil von ${esc(x.t)}"` : ''}>${edit || x.u ? esc(x.t) : mentionHTML(esc(x.t), x.m, 'st-tagprof')}</div>`).join('');
-const STIMG = {}, STVID = {}; let stMute = false;
+const STIMG = {}, STVID = {}; let stMute = (() => { try { return sessionStorage.getItem('nf-stmute') === '1'; } catch { return false; } })();
+/* v848 (Inaya: „Ton genau wie bei Insta“): Ton an/aus gilt für alle folgenden Storys, ohne Nachfrage. Ein einziges Video-Element für alle Storys (STVEL):
+   das iPhone erlaubt Ton nur einem Element, das einmal beim Antippen gestartet wurde; mit immer neuen Elementen kam jedes Mal wieder stumm + „Tippen für Ton“.
+   stBlk = Browser hat Ton gerade verweigert (nicht die Wahl der Person); das nächste Antippen in der Story schaltet ihn dann still ein. */
+let stBlk = false; const STVEL = document.createElement('video'); STVEL.setAttribute('playsinline', ''); STVEL.playsInline = true; STVEL.preload = 'auto';
+function stMuteSet(m){ stMute = m; stBlk = false; try { sessionStorage.setItem('nf-stmute', m ? '1' : '0'); } catch {} }
+function stVidUnlock(){ if (stMute) return; try { if (!STVEL.isConnected) { STVEL.onended = STVEL.ontimeupdate = null; STVEL.removeAttribute('data-s'); STVEL.removeAttribute('data-l'); STVEL.src = ST_SILENT; } STVEL.muted = false; const p = STVEL.play(); if (p) p.then(() => { if (stBlk) { stBlk = false; stSndMark(); } }).catch(() => { if (STVEL.isConnected) { STVEL.muted = true; STVEL.play().catch(() => {}); } }); } catch {} }
+['touchend', 'click'].forEach(t => document.addEventListener(t, e => { if (!STV || stMute || !stBlk || !e.target.closest?.('#storyov') || e.target.closest('[data-act="st-snd"]')) return; stAuNA = false; stAu.muted = false; if (stAuSrc) stAu.play().catch(() => {}); stVidUnlock(); }, true));
+/* Story-Video vorladen (v848): Video-Stücke zusammensetzen, bevor die Story dran ist */
+function stVidGet(uid, st){ if (!social || !st?.vid?.n) return; const k = uid + '/' + st.id; if (STVID[k] !== undefined) return; STVID[k] = '';
+  const cur = () => STV && stCur()?.id === st.id;
+  songURL(uid === S.me ? social.uid : uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; if (cur()) storyPaint(); }).catch(() => { STVID[k] = null; if (cur()) storyPaint(); }); }
+function stPre(uid, st){ if (!st) return; if (st.vid?.n) stVidGet(uid, st); else if (!st.img) stImgGet(uid, st.id, st.thumb); }
 let stNew = null, STV = null, stTimer = null;
 function storySweep(){ // abgelaufene eigene Storys ins Story-Archiv
   S.stories = S.stories || []; S.storyArch = S.storyArch || []; let moved = 0;
@@ -9528,7 +9540,7 @@ function stImgGet(uid, id, thumb){ if (!social) return; const k = uid + '/' + id
 /* Vorladen: sobald die Story-Ringe zu sehen sind, die jeweils nächste Story jeder Person holen. */
 let STPRE = 0;
 function stPrefetch(){ if (!social || Date.now() - STPRE < 20000) return; STPRE = Date.now();
-  setTimeout(() => { for (const u of storyUsers().slice(0, 15)) { const l = storiesOf(u.id), i = Math.max(0, l.findIndex(st => !(S.stSeen || {})[u.id + '_' + st.id])); for (const st of l.slice(i, i + 2)) if (!st.img) stImgGet(u.id, st.id, st.thumb); } }, 400); }
+  setTimeout(() => { for (const u of storyUsers().slice(0, 15)) { const l = storiesOf(u.id), i = Math.max(0, l.findIndex(st => !(S.stSeen || {})[u.id + '_' + st.id])); l.slice(i, i + 2).forEach((st, j) => { if (!st.vid?.n || j === 0) stPre(u.id, st); }); } }, 400); }
 let stScrollY = 0;
 // Story-Musik (Inaya, 2026-10-11): Spotify lässt sich auf dem iPhone nicht von selbst starten. Darum eine eigene Musikleiste
 // mit der 30-Sekunden-Hörprobe (iTunes-Suche), die beim Antippen der Story sofort losspielt. Platz und Größe wählt man selbst.
@@ -9562,7 +9574,7 @@ function stAuUnlock(){ if (stAuSrc) return; stAuWin = null; stAu.loop = false; /
 const STEQ = '<span class="steq" aria-hidden="true"><i></i><i></i><i></i></span>';
 function stHeadMu(mu){ return MUSIK && mu && mu.t ? `<span class="sthmu">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}${mu.pv ? ' · ' + muSrc(mu).n : ''}</span></span>` : ''; }
 function stSpMu(){ return null; } // Spotify entfernt (Inaya, 2026-10-14)
-function stSndMark(){ document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = stMute ? NFI.mute : NFI.snd; b.setAttribute('aria-label', stMute ? 'Ton an' : 'Ton aus'); }); }
+function stSndMark(){ const m = stMute || stBlk; document.querySelectorAll('#storyov .stsnd').forEach(b => { b.innerHTML = m ? NFI.mute : NFI.snd; b.setAttribute('aria-label', m ? 'Ton an' : 'Ton aus'); }); }
 const MU_WIN = 15, MU_LEN = 30; // Hörproben sind 30 Sekunden lang, die Story spielt 15 davon
 // Fehlersuche Ton (Inaya, 2026-10-12): zeigt kurz, warum ein Song nicht spielt
 function auDiag(m){ try { console.warn('Ton:', m); } catch {} }
@@ -9655,14 +9667,14 @@ function storyPaint(){
   if (stNew) { ov.innerHTML = stEditorHTML(); stEditWire(); stVV(); return; }
   const g = STV.list[STV.ui], st = g && g.items[STV.ii]; if (!st) { stClose(); return; }
   const u = profUser(g.uid) || me(), own = g.uid === S.me, src = storyImg(g.uid, st.id, st.img, st.thumb);
-  let vsrc = ''; if (st.vid && st.vid.n && social) { const k = g.uid + '/' + st.id; vsrc = STVID[k] || ''; if (STVID[k] === undefined) { STVID[k] = ''; songURL(own ? social.uid : g.uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; storyPaint(); }).catch(() => { STVID[k] = null; storyPaint(); }); } }
+  let vsrc = ''; if (st.vid && st.vid.n && social) { stVidGet(g.uid, st); vsrc = STVID[g.uid + '/' + st.id] || ''; }
   if (!STV.arch && !own) stViewMark(g.uid, st.id);
   S.stSeen = S.stSeen || {}; if (!STV.arch && !S.stSeen[g.uid + '_' + st.id]) { const sk = g.uid + '_' + st.id; S.stSeen[sk] = Date.now(); if (g.uid !== S.me) taskHit('st'); for (const k in S.stSeen) if (Date.now() - S.stSeen[k] > 2 * STORY_H) delete S.stSeen[k]; stSeenKeep(sk); }
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div><div id="stsh"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe${st.v === 2 ? ' v2' : ''}" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)} data-raw>${esc(u.name || '')}${hmark(u)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString(LOC()) : ago(st.ts)}</small></span>${u.handle ? `<small class="stwh" data-raw>@${esc(u.handle)}</small>` : ''}${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute ? 'Ton an' : 'Ton aus'}">${stMute ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
-    ${st.v === 2 ? '<div class="stcv">' : ''}${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : st.thumb ? `<img class="stthph" src="${esc(st.thumb)}" alt="">` : '<p class="stload">Story wird geladen …</p>'}
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)} data-raw>${esc(u.name || '')}${hmark(u)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString(LOC()) : ago(st.ts)}</small></span>${u.handle ? `<small class="stwh" data-raw>@${esc(u.handle)}</small>` : ''}${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? '<button class="lnk" data-act="hl-rm">Entfernen</button>' : '') : ''}${st.vid || st.mu || st.song ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute || stBlk ? 'Ton an' : 'Ton aus'}">${stMute || stBlk ? NFI.mute : NFI.snd}</button>` : ''}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>
+    ${st.v === 2 ? '<div class="stcv">' : ''}${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : st.thumb ? `<img class="stthph" src="${esc(st.thumb)}" alt="">` : ''}
     ${st.v === 2 ? stStkHTML(st.stk, false, stICtx()) : ''}${stTextsHTML(stTexts(st))}${st.v === 2 ? '</div>' : ''}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
     ${STV.arch && STV.hl ? '' : STV.arch ? `<div class="starchbar"><button class="btn" data-act="st-m-hl">Als Highlight speichern</button><button class="btn ghost" data-act="st-m-del">Löschen</button></div>` : !social ? '' : stcSheetHTML(g, st, own, u)}
@@ -9670,7 +9682,7 @@ function storyPaint(){
     </div></div>`;
   const mu = st.mu || null;
   const skey = g.uid + '/' + st.id, fresh = STV.key !== skey; if (fresh) { STV.key = skey; STV.t0 = Date.now(); }
-  { const nx = g.items[STV.ii + 1] ? [g.uid, g.items[STV.ii + 1]] : STV.list[STV.ui + 1] ? [STV.list[STV.ui + 1].uid, STV.list[STV.ui + 1].items[stFirst(STV.list[STV.ui + 1])]] : null; if (nx && nx[1] && !nx[1].img) stImgGet(nx[0], nx[1].id, nx[1].thumb); } /* nächste Story schon holen */
+  { const ng = STV.list[STV.ui + 1]; stPre(g.uid, g.items[STV.ii + 1]); stPre(g.uid, g.items[STV.ii + 2]); if (ng) { const f = stFirst(ng); stPre(ng.uid, ng.items[f]); stPre(ng.uid, ng.items[f + 1]); } } /* die nächsten Storys schon holen (v848: auch Videos) */
   const waitImg = !st.vid && !src; if (waitImg) STV.t0 = Date.now(); /* Zeit läuft erst, wenn die Story zu sehen ist */
   const dur = st.mu || st.song ? 15000 : 7000, gone = Date.now() - STV.t0; // Song-Storys 15 Sekunden, dann nächste Person oder zu
   const vbad = st.vid && STVID[skey] === null; // Video ließ sich nicht laden: wie ein Foto weiterlaufen
@@ -9679,10 +9691,15 @@ function storyPaint(){
   if (mu) { stAu.loop = true; if (STV.delAsk || STV.hold) stAu.pause(); else stAuPlay(mu, fresh, true); } else stAuStop();
   stSpPlay(mu ? '' : st.song, g.uid + '/' + st.id); if (stSp?.c) { try { STV.delAsk || STV.hold ? stSp.c.pause() : stSp.c.resume(); } catch {} } stSwipeWire();
   clearTimeout(stTimer);
-  const ve = ov.querySelector('video.stvid');
+  let ve = ov.querySelector('video.stvid');
+  if (ve) { /* v848: immer dasselbe Video-Element (STVEL), damit der Ton an bleibt und ein Neuzeichnen das Video nicht von vorn startet */
+    const nsrc = ve.getAttribute('src'), same = STVEL.getAttribute('src') === nsrc;
+    for (const a of ['class', 'style', 'data-s', 'data-l']) { const v = ve.getAttribute(a); if (v == null) STVEL.removeAttribute(a); else STVEL.setAttribute(a, v); }
+    STVEL.loop = false; if (!same) STVEL.src = nsrc; else if (fresh) { try { STVEL.currentTime = +STVEL.dataset.s || 0; } catch {} }
+    ve.replaceWith(STVEL); ve = STVEL; } else STVEL.pause();
   if (ve && (STV.delAsk || STV.hold)) ve.pause();
-  else if (ve) { ve.muted = stMute; ve.play().catch(() => { ve.muted = true; stMute = true; stSndMark(); ve.play().catch(() => {}); if (!ov.querySelector('.stsndhint')) ov.querySelector('.stframe, .stbox')?.insertAdjacentHTML('beforeend', `<button class="stsndhint" data-act="st-snd">${NFI.mute}<span>Tippen für Ton</span></button>`); });
-    ov.querySelector('.stsndhint') && !stMute && ov.querySelector('.stsndhint').remove(); if (!STV.arch || STV.hl) ve.onended = () => stStep(1);
+  else if (ve) { ve.muted = stMute; const pr = ve.play(); if (pr) pr.catch(e => { if (e?.name !== 'NotAllowedError' || ve.muted || !STV) return; ve.muted = true; stBlk = true; stSndMark(); ve.play().catch(() => {}); }); /* Ton verweigert: stumm weiter, ohne Nachfrage; nächstes Antippen schaltet ihn ein */
+    ve.onended = !STV.arch || STV.hl ? () => stStep(1) : null;
     ve.ontimeupdate = () => { if (!nb) return; const s0 = +ve.dataset.s || 0, L = +ve.dataset.l || ((ve.duration || 0) - s0); if (L > 0) nb.style.backgroundPosition = (100 - Math.min(1, Math.max(0, (ve.currentTime - s0) / L)) * 100) + '% 0'; }; }
   else if ((!st.vid || vbad) && !waitImg && (!STV.arch || STV.hl) && !STV.delAsk && !STV.hold) stTimer = setTimeout(() => stStep(1), Math.max(250, dur - gone));
 }
@@ -9902,7 +9919,7 @@ function storyOrder(){ // gleiche Reihenfolge wie die Story-Leiste: erst du, dan
 }
 const stFirst = g => Math.max(0, g.items.findIndex(st => !(S.stSeen || {})[g.uid + '_' + st.id]));
 function stOpen(uid){ // durch alle Leute mit Story tippen und wischen (Inaya, 2026-10-11)
-  stAuUnlock();
+  stAuUnlock(); stVidUnlock();
   let ids = storyOrder(); if (!ids.includes(uid)) ids = [uid, ...ids];
   const list = ids.map(id => ({uid:id, items:storiesOf(id)})).filter(g => g.items.length); if (!list.length) return;
   const ui = Math.max(0, list.findIndex(g => g.uid === uid)); STV = {list, ui, ii:stFirst(list[ui])}; storyPaint();
@@ -9946,7 +9963,7 @@ function stStep(d){ if (!STV) return; const g = STV.list[STV.ui]; STV.ii += d;
   if (STV.ii >= g.items.length) { STV.ui++; STV.ii = 0; if (STV.ui >= STV.list.length) return stClose(); }
   if (STV.ii < 0) { if (STV.ui === 0) STV.ii = 0; else { STV.ui--; STV.ii = STV.list[STV.ui].items.length - 1; } }
   storyPaint(); }
-function stClose(){ stSpStop(); stAuStop(); stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
+function stClose(){ STVEL.pause(); stSpStop(); stAuStop(); stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
 let STUP = 0; // Storys, die gerade hochladen: Ring dreht sich (Inaya, 2026-10-12)
 async function stShare(){ STUP++; try { await stShare0(); taskHit('po'); } finally { STUP = Math.max(0, STUP - 1); if (!stNew && !STV) render(); else document.querySelectorAll(".sring.upl").forEach(x => STUP || x.classList.remove("upl")); } }
 async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochgeladen wird im Hintergrund (Inaya, 2026-10-11)
@@ -18501,7 +18518,7 @@ document.addEventListener('click', async e => {
   else if (a === 'e-mux') { if (!mdraft) return; mdraft.songMu = null; mdraft.songSpX = true; stAuStop(); render(); }
   else if (a === 'st-tagadd') { const n = stNew, u = stFriends().find(x => x.id === b.dataset.id); if (!n || !u) return; if (!n.texts.some(x => x.u === u.id)) n.texts.push({t:u.name, u:u.id, x:50, y:62 + (n.texts.filter(x => x.u).length % 4) * 6, s:5, c:'#111111', st:'modern', bg:0}); n.tool = null; storyPaint(); }
   else if (a === 'st-tagprof') { const uid = b.dataset.id; stClose(); go('profile', uid); }
-  else if (a === 'st-snd') { document.querySelectorAll('.stsndhint').forEach(x => x.remove()); stMute = !stMute; const v = document.querySelector('#storyov video.stvid'); if (v) { v.muted = stMute; v.play().catch(() => {}); } if (stAuSrc) { stAu.muted = stMute; stAu.play().catch(() => {}); } stSndMark(); }
+  else if (a === 'st-snd') { document.querySelectorAll('.stsndhint').forEach(x => x.remove()); stMuteSet(stBlk ? false : !stMute); const v = document.querySelector('#storyov video.stvid'); if (v) { v.muted = stMute; v.play().catch(() => {}); } if (stAuSrc) { stAu.muted = stMute; stAu.play().catch(() => {}); } stSndMark(); }
   else if (a === 'st-tdone') { const n = stNew; if (!n || n.edit == null) return; stTaCommit(); const x = n.texts[n.edit];
     if (x.m) x.m = x.m.filter(m => x.t.includes('@' + m.n));
     if (x.m && x.m.length === 1 && x.t.trim() === '@' + x.m[0].n) { x.u = x.m[0].id; x.t = x.m[0].n; delete x.m; x.s = Math.min(x.s, 6); } // nur ein @Name: wird zur Namensblase
