@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9991dcddb852';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='7e87f068f7d3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3047,6 +3047,10 @@ form:is([data-form=pcomment],[data-form=rwall]) .cinw .pcthumb{align-self:center
 .cinfo .cibox>.ciedf{padding:10px 16px}
 .cinfo .ciedf input,.cinfo .ciedf textarea{width:100%;font:17px/1.4 var(--f-body);text-align:left}
 .cinfo .ciedb{justify-content:flex-end;gap:8px}
+.cinfo.cithm{--fg:var(--p-fg);--ink:var(--p-bg);--dim:var(--p-muted);--line:var(--p-line);--line-soft:color-mix(in srgb,var(--p-line) 70%,transparent);--paper:var(--p-soft);--paper-2:color-mix(in srgb,var(--p-panel) 92%,transparent);color:var(--p-fg);background-color:var(--p-bg);background-image:var(--p-pattern);border:1px solid var(--p-line);border-radius:14px;padding:12px;margin:0} /* v845: Info-Seiten im Chat-Design */
+.cinfo.cithm.hasbg{background-image:linear-gradient(#0008,#0008),var(--ci-img);background-size:cover;background-position:center;background-attachment:local}
+.cinfo.cithm .citile{background:color-mix(in srgb,var(--p-soft) 92%,transparent)}
+.cinfo.cithm .cired{color:#e0685f}
 .cinfo .citabs{display:grid;grid-template-columns:repeat(2,1fr);border-bottom:1px solid var(--line-soft)}
 .cinfo .citab{background:none;border:0;border-bottom:2px solid transparent;padding:12px 4px;color:var(--muted);font:600 15px/1.2 var(--f-display)}
 .cinfo .citab[aria-selected=true]{color:var(--fg);border-bottom-color:var(--fg)}
@@ -12025,6 +12029,8 @@ function ciMemsHTML(c){
 }
 /* v813 (Inaya): Name oder Bild einer Person im Chat antippen = ihre Kontaktinfo, von dort geht es ins Profil. In Gruppen: Kontaktinfo der Person mit Nachricht/Profil, ohne Medien des Gruppenchats */
 const ciPerson = uid => { const me0 = social?.uid, id = 'dm_' + [me0, uid].sort().join('_'); return CH.list.find(x => x.id === id) || {id, members:[me0, uid], group:false}; };
+/* v845 (Inaya): Kontaktinfo, Gruppeninfo und „Medien und Links“ im Design des jeweiligen Chats (Farbe, Muster, Hintergrundbild aus „Chat gestalten“) */
+function ciThemeAttr(c, solo){ const oc = CH.list.find(x => x.id === CH.open), t = c?.theme || (solo ? oc?.theme : null) || BLANK_THEME(), src = c?.theme ? c : solo && oc?.theme ? oc : c; const img = t.bg ? chBg(src) : ''; const ok = typeof img === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(img); return ` cithm${ok ? ' hasbg' : ''}" style="${themeStyle(normTheme({...t}))}${ok ? `;--ci-img:url('${cssUrl(img)}')` : ''}`; }
 function chInfoHTML(c, solo){
   const g = !!c.group, ed = g && gAdmin(c), o = g ? null : c.members.find(m => m !== social?.uid), ou = o ? uidUser(o) : null, md = ciCollect(), cnt = md.m.length + md.l.length;
   const nm = chatName(c), desc = String(c.desc || '');
@@ -12047,7 +12053,7 @@ function chInfoHTML(c, solo){
   const mems = g ? `<section class="cibox"><h3 class="cih">${ciMemTxt(c.members.length)}</h3>${c.pub ? '' : `<button type="button" class="cirow ciaddm" data-act="chat-add"><span class="ciaddi">${CI_ICO.add}</span><span>Mitglieder hinzufügen</span></button>`}${ciMemsHTML(c)}</section>` : '';
   const bad = g ? (c.pub && c.createdBy === social?.uid ? '' : `<section class="cibox"><button type="button" class="cirow cired" data-act="chat-leave">${CI_ICO.out}<span>Gruppe verlassen</span></button></section>`)
     : `<section class="cibox"><button type="button" class="cirow cired" data-act="block" data-id="${esc(o || '')}">${CI_ICO.blk}<span>${esc(nmOf(o) || '')} blockieren</span></button>${CH.list.some(x => x.id === c.id) ? `<button type="button" class="cirow cired" data-act="chat-rm" data-id="${esc(c.id)}">${TRASH_SVG}<span>Chat löschen</span></button>` : ''}</section>`; /* v820 (Inaya): Chat löschen nur hier */
-  return `<div class="cinfo"><section class="cibox cihero">${av}${name}${sub}${tiles ? `<div class="citiles">${tiles}</div>` : ''}</section>${dsc}${solo ? '' : media}${solo ? `<section class="cibox"><button type="button" class="cirow" data-act="profile" data-id="${esc(o || '')}">${CI_ICO.user}<span>Profil ansehen</span>${CI_ICO.go}</button></section>` : opts}${mems}${bad}</div>`;
+  return `<div class="cinfo${ciThemeAttr(c, solo)}"><section class="cibox cihero">${av}${name}${sub}${tiles ? `<div class="citiles">${tiles}</div>` : ''}</section>${dsc}${solo ? '' : media}${solo ? `<section class="cibox"><button type="button" class="cirow" data-act="profile" data-id="${esc(o || '')}">${CI_ICO.user}<span>Profil ansehen</span>${CI_ICO.go}</button></section>` : opts}${mems}${bad}</div>`;
 }
 function chMediaHTML(c){
   const md = ciCollect(), t = ['m', 'l'].includes(CH.mtab) ? CH.mtab : 'm';
@@ -12058,7 +12064,7 @@ function chMediaHTML(c){
   if (t === 'l') body = md.l.length ? md.l.map(x => { let h = ''; try { h = new URL(x.u).hostname.replace(/^www\./, ''); } catch {} return `<a class="cilink" href="${esc(x.u)}" target="_blank" rel="noopener noreferrer"><span class="ciico">${CI_ICO.link}</span><span class="cilt"><b>${esc(h)}</b><small class="muted" data-raw>${esc(x.u)}</small><small class="muted" data-raw>${esc(who(x.m))} · ${ciDate(x.m.ts)}</small></span></a>`; }).join('') : '<p class="note ciempty">Noch keine Links in diesem Chat.</p>';
   if (t === 'd') body = md.d.length ? md.d.map(m => `<div class="cidoc"><small class="muted" data-raw>${esc(who(m))} · ${ciDate(m.ts)}</small>${msgMedia(m)}</div>`).join('') : '<p class="note ciempty">Noch keine Sprachnachrichten oder Lieder in diesem Chat.</p>';
   const more = CH.mraw && CH.mraw.length >= (CH.lim || 60) ? `<button type="button" class="btn ghost cimorebtn" data-act="ci-older">Ältere Nachrichten durchsuchen</button>` : '';
-  return `<div class="cinfo cimedia">${tabs}<section class="cibox cimbody">${body}${more}</section></div>`;
+  return `<div class="cinfo cimedia${ciThemeAttr(c)}">${tabs}<section class="cibox cimbody">${body}${more}</section></div>`;
 }
 let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz unten (Inaya, 2026-10-10)
 function chatsView(){
