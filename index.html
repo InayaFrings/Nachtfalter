@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='df47de753444';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='659ea9c81636';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3395,10 +3395,30 @@ const isDress = i => /kleid|^sd_|^md_/.test(i.id);
 const isSkirt = i => /rock|tutu|tuell|kilt|^lw_mini|^lw_falten|^hw_bleistift|^hw_korsage/.test(i.id);
 const inBottom = c => BOTTOM_SUB.some(([k]) => k === c);
 let wearTimer = null;
+/* v872 (Inaya): Gesichts-Teile (Augen, Lippen, Make-up, Bart, Piercings, Ohrringe) zeigen den Avatar im Spiegel von Garderobe und Mall ganz nah, andere Reiter zoomen wieder heraus. Weich über den viewBox (bleibt in jedem Browser scharf), Bauchnabel-Piercing zeigt den Bauch */
+const ZM = {cur:null, tgt:null, raf:0, t0:0, from:null, nav:null, tab:'', pg:''};
+const ZM_FOC = {w:{face:[175, 200, 196], ear:[175, 206, 262], navel:[173, 578, 190]}, m:{face:[200, 180, 188], ear:[200, 186, 250], navel:[200, 566, 190]}}; /* Mitte x, y und Größe in Figur-Koordinaten */
+function zmWant(){ const c = V.name === 'wardrobe' ? shopCat : V.name === 'mall' ? mallCat : null; if (!c) return null;
+  const tab = c + '|' + jewelSub; if (tab !== ZM.tab) { ZM.tab = tab; ZM.nav = null; }
+  if (c === 'jewel') return jewelSub === 'pierc' ? (ZM.nav === 'p_nabel' ? 'navel' : 'face') : jewelSub === 'ohr' ? 'ear' : null;
+  return inFace(c) ? 'face' : null; }
+function zmApply(){ const sv = document.querySelector('.wardrobe .mirror .pic > svg');
+  if (!sv || (V.name !== 'wardrobe' && V.name !== 'mall')) { ZM.cur = ZM.tgt = null; ZM.pg = ''; cancelAnimationFrame(ZM.raf); ZM.raf = 0; return; }
+  if (!sv.dataset.vb0) sv.dataset.vb0 = sv.getAttribute('viewBox');
+  const full = sv.dataset.vb0.split(' ').map(Number), w = zmWant(), o = V.name === 'mall' ? (MTRY || ncBare()) : (trial || me().outfit), F = w && ZM_FOC[o?.body === 'm' ? 'm' : 'w'][w];
+  let tgt = full; if (F) { const r = sv.getBoundingClientRect(), a = r.width > 0 && r.height > 0 ? r.width / r.height : 1, W = a >= 1 ? F[2] * a : F[2], H = a >= 1 ? F[2] : F[2] / a; tgt = [F[0] - W / 2, F[1] - H / 2, W, H]; }
+  const same = (p, q) => p && q && p.every((v, k) => Math.abs(v - q[k]) < .5), put = v => { const e = document.querySelector('.wardrobe .mirror .pic > svg'); if (e) e.setAttribute('viewBox', v.map(n => n.toFixed(1)).join(' ')); };
+  if (ZM.pg !== V.name || !ZM.cur || matchMedia('(prefers-reduced-motion: reduce)').matches) { ZM.pg = V.name; cancelAnimationFrame(ZM.raf); ZM.raf = 0; ZM.cur = ZM.tgt = tgt; put(tgt); return; } /* beim Öffnen gleich richtig, ohne Fahrt */
+  put(ZM.cur); if (same(tgt, ZM.tgt)) return; /* neu gezeichnet: an der Stelle weiter, wo die Fahrt gerade ist */
+  ZM.from = ZM.cur; ZM.tgt = tgt; ZM.t0 = performance.now(); cancelAnimationFrame(ZM.raf);
+  const step = now => { const t = Math.min(1, (now - ZM.t0) / 460), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    ZM.cur = ZM.from.map((v, k) => v + (ZM.tgt[k] - v) * e); put(ZM.cur); ZM.raf = t < 1 ? requestAnimationFrame(step) : 0; };
+  ZM.raf = requestAnimationFrame(step); }
 function mobWear(id){ // Handy wie Momio: Spiegel und Häkchen sofort, Vorschaubilder kurz danach
   const i = item(id), o = me().outfit; if (!i) return;
+  ZM.nav = id;
   wearItem(o, i); trial = null; save();
-  const pic = document.querySelector('.wardrobe .mirror .pic'); if (pic) pic.innerHTML = avatar(o, 'full');
+  const pic = document.querySelector('.wardrobe .mirror .pic'); if (pic) pic.innerHTML = avatar(o, 'full'); zmApply();
   document.querySelectorAll('.wardrobe .shopgrid .item').forEach(el => { const t = el.querySelector('.thumb'), it = t && item(t.dataset.id); if (it) el.classList.toggle('on', isOn(o, it)); });
   clearTimeout(wearTimer); wearTimer = setTimeout(() => { if (V.name === 'wardrobe') softRender(); }, 650);
 }
@@ -16443,7 +16463,7 @@ document.addEventListener('click', e => { const b = e.target.closest?.('[data-ac
   else if (a === 'nc-cat') { mallCat = b.dataset.c; render(); } /* Event-Filter bleibt beim Reiterwechsel an (Inaya, v702) */
   else if (a === 'nc-ftab') { furnShop = b.dataset.v; render(); }
   else if (a === 'ev-f' || a === 'ev-x') { const sh = b.dataset.s; if (!(sh in MEV)) return; MEV[sh] = a === 'ev-x' || MEV[sh] === b.dataset.v ? null : b.dataset.v; render(); } /* Event-Filter an/aus, nochmal antippen = aus */
-  else if (a === 'nc-try') { const i = item(id); if (!i) return; const base = MTRY || ncBare(), was = isOn(base, i), t = JSON.parse(JSON.stringify(base)); wearItem(t, i); if (was && !i.none && !MULTI.includes(i.cat) && !NONE_ITEM[i.cat]) t[i.cat] = ncBare()[i.cat]; if (i.cat === 'face' && isOn(t, i) && !i.none) t.eyeform = 'e_rund'; if (i.sub === 'pierc' && isOn(t, i)) t.lips = 'l_neutral'; MTRY = t; /* v764 (Inaya): Piercings am normalen Mund zeigen */ /* v759 (Inaya): Make-up auf den normalen Augen zeigen */ /* Augen/Mund ohne „Keine“: abwählen = wieder die eigenen */
+  else if (a === 'nc-try') { const i = item(id); if (!i) return; ZM.nav = id; const base = MTRY || ncBare(), was = isOn(base, i), t = JSON.parse(JSON.stringify(base)); wearItem(t, i); if (was && !i.none && !MULTI.includes(i.cat) && !NONE_ITEM[i.cat]) t[i.cat] = ncBare()[i.cat]; if (i.cat === 'face' && isOn(t, i) && !i.none) t.eyeform = 'e_rund'; if (i.sub === 'pierc' && isOn(t, i)) t.lips = 'l_neutral'; MTRY = t; /* v764 (Inaya): Piercings am normalen Mund zeigen */ /* v759 (Inaya): Make-up auf den normalen Augen zeigen */ /* Augen/Mund ohne „Keine“: abwählen = wieder die eigenen */
     if (!MULTI.includes(i.cat)) for (const k of [...NCCART.keys()]) { const j = item(k); if (j && j.cat === i.cat && k !== i.id) NCCART.delete(k); } /* eine Frisur, ein Oberteil … in der Tasche */
     ncCartTog(i.id, !(was && NCCART.has(i.id))); render(); }
   else if (a === 'nc-color') { const t = JSON.parse(JSON.stringify(MTRY || ncBare())); setColor(t, b.dataset.k, b.dataset.v); MTRY = t; render(); }
@@ -18038,7 +18058,7 @@ function renderInner(){
   setTimeout(fitChk, 0); setTimeout(fitChk, 600); document.body.dataset.pg = V.name === 'petv' ? 'pet' : V.name; railFit(); /* v852: Besuchs-Seite wie die eigene Begleiter-Seite */ document.body.classList.toggle('obopen', !!me()?.obOpen); document.body.classList.toggle('chlist', V.name === 'chats' && (!CH.open || ['info', 'media', 'gadd'].includes(CH.mode)) && innerWidth < 762); /* v813: Kontaktinfo/Medien wie die Chatliste, kein Scrollen ins Leere */ /* v699: Chatliste endet wie Suche und Profil 16 px über der Leiste */ /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : V.name === 'pet' || V.name === 'petv' ? petTheme(V.name === 'petv' ? V.arg : S.me) : null); /* v852: Begleiter-Seite im Profil-Design */
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
-  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs(); lvLoad(); rzApply();
+  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs(); lvLoad(); rzApply(); zmApply();
   restoreX();
   const mb = document.getElementById('msgs'); if (mb) { mb.dataset.h = '1'; MSGH = {cid:CH.open, h:''}; msgRest(mb, msgA); msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
