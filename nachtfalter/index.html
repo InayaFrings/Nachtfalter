@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='56ea50ffd201';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8e1905728ce6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7586,7 +7586,7 @@ let authMode = 'reg', obCat = 'body', mdraft = null;
 let inviteCode = (() => { try { const m = (location.hash + location.search).match(/einladung=([\w-]+)/i); return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } })();
 let gateMode = inviteCode ? 'invite' : '';
 /* Eigener Einladungslink ?ref=<uid> (Inaya, 2026-10-17): bis zur Registrierung merken */
-try { const m = location.search.match(/[?&]ref=([\w-]{10,40})/); if (m) sessionStorage.setItem('nf-ref', m[1]); } catch {}
+try { const m = location.search.match(/[?&]ref=([\w-]{10,40})/), h = location.search.match(/[?&]u=([^&#]{1,40})/); /* v880 (Inaya): der Profil-Link ?u=<nutzername> zählt auch als Einladung, der zuletzt geöffnete Link gilt */ if (m) { sessionStorage.setItem('nf-ref', m[1]); sessionStorage.removeItem('nf-refh'); } else if (h) { sessionStorage.setItem('nf-refh', decodeURIComponent(h[1]).toLowerCase().replace(/^@/, '')); sessionStorage.removeItem('nf-ref'); } } catch {}
 // Einladen nur mit Einmal-Links: jeder Link ist ein eigenes Dokument invites/<zufall> und wird bei der Registrierung verbraucht
 let INV = {link: '', busy: false};
 const newToken = () => [...crypto.getRandomValues(new Uint8Array(18))].map(x => 'abcdefghijkmnpqrstuvwxyz23456789'[x % 32]).join('');
@@ -17982,12 +17982,12 @@ function findView(){ if (social && !BR.ids && !BR.busy) setTimeout(loadBrowse, 4
 }
 /* Einladen-Box (Inaya, 2026-10-17): eigener Link, je 10 neue Konten → 3000 Nocti-Coins */
 const REF = {n:null, w:null}, REF_N = 10, REF_C = 3000;
-const refLink = () => 'https://www.noctibat.com/?ref=' + (social?.uid || '');
+const refLink = () => me()?.handle ? profLink(me()) : 'https://www.noctibat.com/?ref=' + (social?.uid || ''); /* v880 (Inaya): Einladungslink = eigener Profil-Link; alte ?ref=-Links zählen weiter */
 function refWatch(){ if (REF.w || !social) return; REF.w = social.db.doc('refc/' + social.uid).onSnapshot(d => { REF.n = Object.keys(d.data()?.u || {}).length; softRender(); }, () => { REF.w = null; }); }
 function refBoxHTML(){ if (!social) return ''; refWatch(); const n = REF.n ?? 0, got = WAL.d?.rf || 0, open = Math.floor(n / REF_N) - got, cur = Math.max(0, Math.min(REF_N, open > 0 ? REF_N : n - got * REF_N));
   const bats = Array.from({length:REF_N}, (_, i) => `<svg class="refb${i < cur ? ' on' : ''}" viewBox="-22 -10 44 20" aria-hidden="true"><path d="${NC_BATP}"/></svg>`).join('');
   return `<div class="card refcard"><h2 class="card-h">Freunde einladen</h2><div class="card-in refbox">
-    <p class="refsub">${LANG === 'en' ? `For every <b>${REF_N} people</b> who create an account through your link, you get <span class="refc">${NC_ICO}<b>${REF_C}</b></span> Nocti-Coins.` : `Für je <b>${REF_N} Leute</b>, die sich über deinen Link ein Konto anlegen, bekommst du <span class="refc">${NC_ICO}<b>${REF_C}</b></span> Nocti-Coins.`}</p>
+    <p class="refsub">${LANG === 'en' ? `Share your profile link. For every <b>${REF_N} people</b> who create an account through it, you get <span class="refc">${NC_ICO}<b>${REF_C}</b></span> Nocti-Coins.` : `Teil deinen Profil-Link. Für je <b>${REF_N} Leute</b>, die sich darüber ein Konto anlegen, bekommst du <span class="refc">${NC_ICO}<b>${REF_C}</b></span> Nocti-Coins.`}</p>
     <div class="refbats" role="progressbar" aria-valuemin="0" aria-valuemax="${REF_N}" aria-valuenow="${cur}" aria-label="${cur} von ${REF_N} eingeladen">${bats}</div>
     <p class="refn">${LANG === 'en' ? `<b>${cur} of ${REF_N}</b>${n ? ` · ${n} invited in total` : ''}` : `<b>${cur} von ${REF_N}</b>${n ? ` · insgesamt ${n} eingeladen` : ''}`}</p>
     ${open > 0 ? `<button type="button" class="btn refgo" data-act="ref-claim">${NC_ICO} ${REF_C} Coins abholen</button>` : ''}
@@ -19892,7 +19892,7 @@ document.addEventListener('submit', async e => {
     const first = obDesign || !!u.obOpen; obDesign = false;
     if (u.obOpen) { /* erst jetzt wird das Konto gespeichert */
       if (await handleTaken(u.handle)) { obDesign = true; toAbout(); const err = document.getElementById('e-handle-err'); if (err) { err.textContent = '@' + u.handle + ' ist bereits vergeben.'; err.hidden = false; err.scrollIntoView({block:'center'}); } return; }
-      try { const ref = sessionStorage.getItem('nf-ref'); if (ref && NF_AUTH?.claimRef) { await NF_AUTH.claimRef(ref); sessionStorage.removeItem('nf-ref'); } } catch {} /* zählt für den eigenen Link der einladenden Person */
+      try { let ref = sessionStorage.getItem('nf-ref'); const rh = sessionStorage.getItem('nf-refh'); if (!ref && rh && cloud?.handles) { const q = await cloud.handles.where('h', '==', rh).limit(1).get(); ref = q.empty ? '' : q.docs[0].id; } if (ref && ref !== cloud?.uid && NF_AUTH?.claimRef) { await NF_AUTH.claimRef(ref); sessionStorage.removeItem('nf-ref'); sessionStorage.removeItem('nf-refh'); } } catch {} /* zählt für den eigenen Link der einladenden Person */
       delete u.obOpen; try { sessionStorage.removeItem('nf-ob'); } catch {} claimHandle(u.handle); welcomeDMs();
     }
     save(); go('profile', S.me); toast(first ? 'Fertig! Das ist deine Seite.' : 'Profil gespeichert'); /* Bestätigungen zeigt toast seit v617 nicht mehr */
