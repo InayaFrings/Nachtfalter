@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='18fdbeffe22e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='87b09382995b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -17204,7 +17204,7 @@ async function muAppleAM(uid, r){ let col = 0, tid = 0;
   if (muPlatOf(r.u) === 'am') { const m = r.u.match(/[?&]i=(\d+)/), m2 = r.u.match(/\/(\d{5,})(?:[/?#]|$)/); if (m) tid = +m[1]; else if (m2) col = +m2[1]; }
   if (!col && !tid) { const {A, aa} = muDzNames(uid), t = muNm(r.t); if (!t) return [];
     const res = await muItl('https://itunes.apple.com/search?' + new URLSearchParams({term:(A + ' ' + r.t).trim(), media:'music', entity:r.k === 's' ? 'song' : 'album', limit:'25', country:'DE'}));
-    const nm = x => muNm(r.k === 's' ? x.trackName : x.collectionName), hit = res.find(x => nm(x) === t && aa.includes(muNm(x.artistName))) || res.find(x => nm(x) === t && aa.some(a => a.length > 3 && muNm(x.artistName).includes(a)));
+    const nm = x => muNm(r.k === 's' ? x.trackName : x.collectionName), hit = res.find(x => nm(x) === t && aa.includes(muNm(x.artistName))) || res.find(x => nm(x) === t && aa.some(a => a.length > 3 && muNm(x.artistName).includes(a))) || res.find(x => nm(x) === t && aa.some(a => a.length > 3 && (muRawNm(r.k === 's' ? x.trackName : x.collectionName).includes(a) || muRawNm(x.artistName).includes(a) || muRawNm(x.collectionArtistName).includes(a)))); /* v877: Mitwirkende (feat., &) */
     if (!hit) return []; if (r.k === 's') tid = hit.trackId; else col = hit.collectionId; }
   const res = await muItl('https://itunes.apple.com/lookup?' + new URLSearchParams(tid ? {id:tid, country:'DE'} : {id:col, entity:'song', limit:'60', country:'DE'}));
   return res.filter(x => x.wrapperType === 'track' && MU_APV.test(x.previewUrl || '')).slice(0, 40).map(x => ({i:+x.trackId || 0, t:String(x.trackName || '').slice(0, 120), pv:String(x.previewUrl).slice(0, 400), al:safeHref(x.trackViewUrl).slice(0, 300)})); }
@@ -17216,14 +17216,29 @@ const muArtOk = (aa, n) => { n = muNm(n); return !!n && (aa.includes(n) || aa.so
 async function muDzTracks(alb, trk){ const l = trk ? [await muDz('track/' + trk)] : ((await muDz('album/' + alb + '/tracks?limit=60')).data || []);
   return l.filter(x => x && x.id && MU_APV.test(x.preview || '')).slice(0, 40).map(x => ({i:+x.id, dz:1, t:String(x.title || '').slice(0, 120), pv:String(x.preview).slice(0, 400), al:'https://www.deezer.com/track/' + (+x.id)})); }
 async function muDzDisco(id, C){ C = C || {}; if (!C.disco) C.disco = {}; if (!C.disco[id]) C.disco[id] = muDz('artist/' + id + '/albums?limit=100').then(j => Array.isArray(j.data) ? j.data : []).catch(() => []); return C.disco[id]; }
+/* v877: Mitwirkende prüfen: zuerst „feat. Name“ im Titel, sonst die Liste contributors des Tracks bzw. Albums (höchstens 8 Abrufe) */
+const muRawNm = s => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+async function muDzCollab(tl, aa, sg){ const long = aa.filter(a => a.length > 3);
+  for (const x of tl) if (long.some(a => muRawNm(x.title).includes(a) || muRawNm(x.title_version).includes(a))) return {x, a:{id:0, n:''}};
+  for (const x of tl.slice(0, 8)) { let d = null; try { d = await muDz((sg ? 'track/' : 'album/') + x.id); } catch { continue; }
+    const c = (Array.isArray(d.contributors) ? d.contributors : []).find(c => muArtOk(aa, c.name)); if (c) return {x, a:{id:+c.id || 0, n:String(c.name || '')}}; }
+  return null; }
+async function muDzByArtist(aa, t, C, sg){ C.dzArt = C.dzArt || {};
+  for (const a of aa.filter(a => a.length > 2).slice(0, 3)) { if (!(a in C.dzArt)) C.dzArt[a] = muDz('search/artist?' + new URLSearchParams({q:a, limit:'10'})).then(j => (Array.isArray(j.data) ? j.data : []).filter(x => muNm(x.name) === a)).catch(() => []);
+    for (const ar of (await C.dzArt[a]).slice(0, 2)) { C.top = C.top || {}; if (!C.top[ar.id]) C.top[ar.id] = muDz('artist/' + ar.id + '/top?limit=100').then(j => Array.isArray(j.data) ? j.data : []).catch(() => []);
+      const h = (await C.top[ar.id]).find(x => muNm(sg ? x.title : x.album?.title) === t); if (h) return {id:sg ? +h.id : +h.album?.id || 0, a:{id:+ar.id, n:String(ar.name || '')}}; } }
+  return null; }
 async function muDeezer(uid, r, C){ C = C || {}; let alb = 0, trk = 0; const m = (r.u || '').match(/deezer\.com\/(?:[a-z]{2}\/)?(album|track)\/(\d+)/i); if (m) { if (m[1].toLowerCase() === 'album') alb = +m[2]; else trk = +m[2]; }
   if (!alb && !trk) { const {A, aa} = muDzNames(uid), t = muNm(r.t); if (!t) return []; const sg = r.k === 's', ep = sg ? 'search' : 'search/album', nm = x => muNm(x.title);
     const dza = +MUI[uid]?.dza || 0; if (dza) { const h = (await muDzDisco(dza, C)).find(x => nm(x) === t); if (h) alb = h.id; }
     const tries = alb ? [] : [...(A ? [(`artist:"${A}" `) + (sg ? `track:"${r.t}"` : `album:"${r.t}"`), A + ' ' + r.t] : []), r.t];
     for (const q of tries) { let l = []; try { const j = await muDz(ep + '?' + new URLSearchParams({q, limit:'50'})); l = Array.isArray(j.data) ? j.data : []; } catch (e) { if (q === r.t && !C.ok) throw e; continue; } C.ok = 1;
-      const tl = l.filter(x => nm(x) === t), hit = tl.find(x => muArtOk(aa, x.artist?.name));
-      if (hit) { if (sg) trk = hit.id; else alb = hit.id; C.art = C.art || {}; C.art[r.id] = {id:+hit.artist?.id || 0, n:String(hit.artist?.name || '')}; break; }
+      const tl = l.filter(x => nm(x) === t); let hit = tl.find(x => muArtOk(aa, x.artist?.name)), ha = hit ? {id:+hit.artist?.id || 0, n:String(hit.artist?.name || '')} : null;
+      if (!hit) { const co = await muDzCollab(tl, aa, sg); if (co) { hit = co.x; ha = co.a; } } /* v877 (Inaya): Songs mit mehreren Musikern („feat.“, Mitwirkende) zählen auch */
+      if (hit) { if (sg) trk = hit.id; else alb = hit.id; C.art = C.art || {}; C.art[r.id] = ha; break; }
       if (q === r.t) { C.cand = C.cand || {}; C.cand[r.id] = tl.slice(0, 20).map(x => ({id:+x.id, a:+x.artist?.id || 0, n:String(x.artist?.name || '')})); } }
+    if (!alb && !trk) { const f = await muDzByArtist(aa, t, C, sg).catch(() => null); /* v877: über die Künstlerseite, dort stehen auch Songs, an denen man mitwirkt */
+      if (f && f.id) { if (sg) trk = f.id; else alb = f.id; C.art = C.art || {}; C.art[r.id] = f.a; } }
     if (!alb && !trk) return []; }
   return muDzTracks(alb, trk); }
 async function muApple(uid, r, C){ let a = null; try { a = await muTo(muAppleAM(uid, r), 14000); } catch (e) { console.warn('apple', e); } if (a && a.length) return a; return muDeezer(uid, r, C); }
@@ -17413,7 +17428,7 @@ function muRelOpen(uid, id){ const r = MUI[uid]?.rel.find(x => x.id === id); if 
     <div class="muemb" id="muemb">${E ? `<button type="button" class="btn muplay" data-act="mx-emb" data-u="${esc(uid)}" data-i="${esc(id)}">${MU_PLAY}<span>Hier anhören</span></button><p class="note">Der Player kommt von ${MU_PL[p]}. Wer dort angemeldet ist, hört den ganzen Song, und es zählt als echter Stream.</p>` : ''}</div>
     ${(() => { const tl = MUI[uid].snd.filter(x => x.r === r.id), ap = muApOnly(MUI[uid], r); return tl.length + ap.length ? `<h3 class="lbl mush">${esc(tr('Als Sound in Beiträgen und Storys'))}</h3><div class="musnds">${tl.map(x => muSndRow(uid, x, false)).join('')}${ap.map(x => muApRow(uid, r, x)).join('')}</div>` : ''; })()}
     <a class="btn ghost muopen" href="${esc(r.u)}" target="_blank" rel="noopener">${MU_ICO(MU_EXT)}<span>${esc(tr('In {0} öffnen').replace('{0}', MU_PL[p] || 'Musik-App'))}</span></a>
-    ${uid === social?.uid ? `<button type="button" class="btn ghost muopen" data-act="mx-story" data-u="${esc(uid)}" data-i="${esc(id)}">${MU_ICO('<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>')}<span>${esc(tr('In deiner Story teilen'))}</span></button>` : ''}</div>`;
+    </div>`; /* v877 (Inaya): „In deiner Story teilen“ wieder raus */
   m.addEventListener('click', e => { if (e.target === m) m.remove(); }); document.body.appendChild(m); if (typeof i18nNode === 'function') try { i18nNode(m); } catch {} sndCounts(m); }
 function muEmbGo(uid, id){ const r = MUI[uid]?.rel.find(x => x.id === id), E = r && muEmbed(r.u), box = document.getElementById('muemb'); if (!E || !box) return; stAuStop?.(); extAllow?.(E.p === 'yt' ? 'youtube' : E.p);
   box.innerHTML = `<iframe src="${esc(E.src)}" title="${esc(r.t || 'Player')}" ${E.h ? `height="${E.h}"` : 'style="aspect-ratio:16/9;height:auto"'} allow="autoplay; encrypted-media; fullscreen; clipboard-write" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>`; }
