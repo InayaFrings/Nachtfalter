@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b0650ad2a313';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='fa383d72b06b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -18935,7 +18935,7 @@ function sfxVoice(k, soft){ const ac = sfxCtx(); if (!ac) return; const m = soft
 const sfxTap = k => { if (sfxGap('tap', 220)) sfxVoice(k); };
 /* Streicheln: Katze schnurrt, solange man streichelt, die anderen machen ab und zu leise ihren Laut */
 function sfxStroke(k){ const ac = sfxCtx(); if (!ac) return; if (k === 'katze') { if (sfxGap('purr', 1450)) sfxPurrR(); return; }
-  if (sfxGap('strk', 1500)) sfxVoice(k, true); if (sfxGap('heart', 260)) sfxT(ac, 1250 + Math.random() * 300, 1700, .09, {v:.05}); }
+  if (sfxGap('strk', 1500)) sfxVoice(k, true); /* v906: kein erzeugtes Glitzern mehr bei den Herzchen, nur echte Laute (Inaya) */ }
 /* Füttern: Plopp, wenn das Essen im Mund landet, dann Knuspern */
 /* Knuspern: ein Biss = viele winzige Knackser (5 bis 18 ms, hell), unregelmäßig über etwa 120 ms verteilt */
 function sfxBite(ac, at, v){ const n = 12 + Math.floor(Math.random() * 8); for (let i = 0; i < n; i++) { const x = Math.random(); sfxN(ac, .005 + Math.random() * .013, {at:at + x * x * .13, ft:'highpass', f:1400 + Math.random() * 3500, q:.7, v:v * (.35 + Math.random() * .65) * (1 - x * .5), a:.001}); } sfxN(ac, .05, {at, ft:'bandpass', f:900, q:1.5, v:v * .35, a:.002}); }
