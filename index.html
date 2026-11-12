@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='014eceb0873d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9d91ef255eba';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2348,6 +2348,7 @@ form[data-form=cmsg]{position:relative}.mnall{display:grid!important;place-items
 .ststkg{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:4px}
 .ststkg button{aspect-ratio:1;background:none;border:0;padding:6px;border-radius:10px;cursor:pointer}.ststkg button:active,.ststkg button:hover{background:#ffffff14}
 .ststkg svg{width:100%;height:100%;display:block}
+.ststkg .stmk{aspect-ratio:1;display:grid;place-items:center;align-content:center;gap:2px;border:1.5px dashed currentColor;border-radius:12px;opacity:.75;cursor:pointer;font-size:11px}.ststkg .stmk svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.ststkg .stmk:active{opacity:1}
 .ststkg.stown img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}.stownw{margin:4px 0 10px;font-size:13px;opacity:.6}
 .sttile .ststk{pointer-events:none}
 .nt-th{position:relative}.nt-th .nt-tx{font:600 9.5px/1.2 var(--f-body,system-ui),sans-serif;color:inherit;padding:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-align:left;overflow-wrap:break-word;word-break:normal;hyphens:auto;width:100%;max-width:100%;box-sizing:border-box;min-width:0}.nt-th .nt-tx .emo{width:11px;height:11px;vertical-align:-2px}
@@ -9389,7 +9390,7 @@ const STK_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11l5 
 const stSgIn = (x, i, ctx) => { if (x.s) return sgItemHTML(x.s, true); const src = x.p || (ctx && SPH[ctx.key]?.[i]) || ''; return sgOkImg(src) ? `<img src="${esc(src)}" alt="Sticker" draggable="false">` : ''; }; // Sticker und GIFs aus dem Sticker-Menü (Inaya, 2026-10-12)
 const stStkHTML = (l, edit, ctx) => (Array.isArray(l) ? l : []).map((x, i) => x.k === 'sg' ? `<div class="ststk stsg${x.s?.u ? ' gif' : ''}"${edit ? ` data-si="${i}"` : ''} style="left:${+x.x}%;top:${+x.y}%;width:${+x.w}%;--tr:${+x.r || 0}">${stSgIn(x, i, ctx)}</div>` : STI_K[x.k] ? stIHTML(x, i, edit, ctx) : STK[x.k] ? `<div class="ststk"${edit ? ` data-si="${i}"` : ''} style="left:${+x.x}%;top:${+x.y}%;width:${+x.w}%;--tr:${+x.r || 0}">${stkSVG(x.k)}</div>` : '').join('');
 /* v888 (Inaya): statt der Reiter „Story-Sticker | Sticker & GIFs“ oben „‹ Zurück“ wie in der Sticker-Auswahl, Fenster in den Farben des eigenen Designs */
-const stSgTabs = n => `<div class="stpkh"><button type="button" class="stpkb" data-act="st-sgtab" data-v="">‹ Zurück</button><b>Sticker &amp; GIFs</b><span></span></div>`;
+const stSgTabs = n => `<div class="stpkh"><button type="button" class="stpkb" data-act="st-sgtab" data-v="">‹ Zurück</button><b>GIFs</b><span></span></div>`;
 const stStkPanel = n => n?.sgTab && (SG.tgt = 'story') ? `<div class="stmpanel ststkp stsgw stpk mythm" style="${myThemeStyle()}"><i class="stshg" aria-hidden="true"></i>${stSgTabs(n)}<div id="sgp" class="sgp stsgp" role="dialog" aria-label="Sticker und GIFs">${sgPanelHTML()}</div></div>` : `<div class="stmpanel ststkp stpk mythm" style="${myThemeStyle()}"><i class="stshg" aria-hidden="true"></i>${stPillsHTML(n)}</div>`;
 /* ---------- Interaktive Story-Sticker wie bei Insta (Inaya, 2026-10-12): Umfrage, Totenkopf-Regler, Fotosticker mit Formen ---------- */
 const STI_K = {poll:1, sld:1, pho:1, loc:1, men:1, ht:1, lnk:1, cd:1, ask:1, dbd:1, av:1, hlk:1, post:1, nsg:1}, SPH = {}, SQ = {};
@@ -9421,8 +9422,9 @@ const STAV = [['Sitzen','sitzen','full',{lips:'l_grins'}], ['Springen','springen
 function stAvHTML(u, i){ const v = STAV[i] || STAV[0], o = u?.outfit; if (!o) return ''; const mv = poseMove(v[1]); return `<span class="stav stavf${v[2] === 'bust' ? ' stavb' : ''}${mv ? ' mv-' + mv : ''}">${avatar({...o, ...v[3]}, v[2], v[1])}</span>`; }
 const STPC = {loc:'#ff5d73', men:'#58a6ff', mu:'#c084fc', dbd:'#ffb547', pho:'#34d399', ask:'#f472b6', av:'#fde047', poll:'#22d3ee', sld:'#fb7185', lnk:'#60a5fa', ht:'#a3e635', cd:'#fb923c'}; // bunte Sticker-Icons (Inaya, 2026-10-13)
 /* v887 (Inaya): eigene Sticker aus dem Sticker Maker stehen in der Story-Auswahl ganz oben */
-function stOwnStkHTML(){ if (!SG.own) return social ? `<b class="sttagh">Eigene Sticker</b><p class="stownw">Lädt …</p>` : ''; const l = SG.own.filter(x => sgOkImg(x.img)); if (!l.length) return '';
-  return `<b class="sttagh">Eigene Sticker</b><div class="ststkg stown">${l.map(x => `<button type="button" data-act="st-sgown" data-v="${esc(x.id)}" aria-label="Eigener Sticker"><img src="${esc(x.img)}" alt="" draggable="false"></button>`).join('')}</div>`; }
+function stOwnStkHTML(){ if (!SG.own) return social ? `<b class="sttagh">Eigene Sticker</b><p class="stownw">Lädt …</p>` : ''; const l = SG.own.filter(x => sgOkImg(x.img));
+  /* v893 (Inaya): direkt hier einen neuen Sticker erstellen, er landet gleich in der Story */
+  return `<b class="sttagh">Eigene Sticker</b><div class="ststkg stown"><label class="stmk" aria-label="Eigenen Sticker erstellen"><input type="file" id="st-sgfile" accept="image/*" hidden>${SG_ICO.plus}<small>Erstellen</small></label>${l.map(x => `<button type="button" data-act="st-sgown" data-v="${esc(x.id)}" aria-label="Eigener Sticker"><img src="${esc(x.img)}" alt="" draggable="false"></button>`).join('')}</div>`; }
 function stPillsHTML(n){ const pill = (k, l) => { const ic = STPN[k]?.[1] || (k === 'sld' ? emoSVG('verliebt') : STPI[k]), q = ` data-q="${esc(l.toLowerCase())}" style="--ic:${STPC[k] || '#eeedf2'};--tc:${STPN[k]?.[0] || '#9a99a3'}"`;
     if (k === 'pho' || k === 'pol' || k === 'strip') return `<label class="stpill"${q}>${ic}<span>${l}</span><input type="file" accept="image/*" id="${k === 'pho' ? 'st-phf' : k === 'pol' ? 'st-polf' : 'st-strf'}"${k === 'strip' ? ' multiple' : ''} hidden></label>`;
     return `<button type="button" class="stpill" data-act="${k === 'mu' ? 'st-music' : 'st-pill'}" data-v="${k}"${q}>${ic}<span>${l}</span></button>`; };
@@ -13108,7 +13110,7 @@ function sgGrid(){
   return `<div class="sggrid${g ? ' gifs' : ''}">${make}${tiles}</div>${empty}${g && SG.gsub === 'srch' && SG.key ? '<p class="sgby">Powered by GIPHY</p>' : ''}`;
 }
 function sgPanelHTML(){
-  const only = SG.tgt === 'post' ? 'g' : SG.tgt === 'pcr' ? 's' : null; if (only) SG.mode = only; // Neuer Beitrag: unten nur GIFs, im Bearbeiten nur Sticker (Inaya, 2026-10-13)
+  const only = SG.tgt === 'post' || SG.tgt === 'story' ? 'g' : SG.tgt === 'pcr' ? 's' : null; /* v893: Story-GIFs nur GIFs, Sticker stehen in der Sticker-Auswahl */ if (only) SG.mode = only; // Neuer Beitrag: unten nur GIFs, im Bearbeiten nur Sticker (Inaya, 2026-10-13)
   const t = (act, v, on, ico, lbl) => `<button type="button" class="sgtab" data-act="${act}" data-v="${v}" aria-pressed="${on}" aria-label="${lbl}" title="${lbl}">${ico}</button>`;
   const sub = SG.mode === 's' ? `${t('sg-sub', 'fav', SG.sub === 'fav', SG_ICO.star, 'Favoriten')}${t('sg-sub', 'all', SG.sub === 'all', SG_ICO.stk, 'Alle Sticker')}${t('sg-sub', 'own', SG.sub === 'own', SG_ICO.own, 'Eigene Sticker')}`
     : `${t('sg-gsub', 'fav', SG.gsub === 'fav', SG_ICO.star, 'GIF-Favoriten')}${t('sg-gsub', 'srch', SG.gsub === 'srch', SG_ICO.srch, 'GIFs suchen')}`;
@@ -13216,10 +13218,10 @@ async function sgMkSave(){
   if (!sgOkImg(img)) return toast('Das Bild ist zu groß.');
   await sgLoad(); const src = social ? (m.src || sgSrcOf(m.img)) : '', x = {id:m.id || 's' + Date.now().toString(36), img, ts:Date.now(), ...(src ? {src, mk:sgMkRecipe(m)} : {})};
   if (social) { try { await sgCol('stk').doc(x.id).set({img, ts:x.ts, ...(src ? {src, mk:x.mk} : {})}); } catch { return toast('Der Sticker konnte nicht gespeichert werden.'); } } else { S.sgOwn = [x, ...(S.sgOwn || []).filter(y => y.id !== x.id)].slice(0, 60); save(); }
-  SG.own = [x, ...SG.own.filter(y => y.id !== x.id)]; SG.mk = null; document.getElementById('sgmk')?.remove(); SG.mode = 's'; SG.sub = 'own'; sgPaint(); toast('Sticker gespeichert');
+  SG.own = [x, ...SG.own.filter(y => y.id !== x.id)]; SG.mk = null; document.getElementById('sgmk')?.remove(); if (SG.stMk && stNew) { SG.stMk = false; stSgAdd({img}); return; } SG.mode = 's'; SG.sub = 'own'; sgPaint(); toast('Sticker gespeichert');
 }
 document.addEventListener('change', e => {
-  if (e.target.id !== 'sg-file') return; const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
+  if (e.target.id !== 'sg-file' && e.target.id !== 'st-sgfile') return; SG.stMk = e.target.id === 'st-sgfile' && !!stNew; const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
   const url = URL.createObjectURL(file), img = new Image(); img.onload = () => { SG.mk = {img, z:1, x:0, y:0, sh:'circ', rim:true, tx:sgTxNew()}; sgMkPaint(); }; img.onerror = () => toast('Dieses Bild lässt sich nicht öffnen.'); img.src = url;
 });
 document.addEventListener('input', e => {
@@ -19353,7 +19355,7 @@ document.addEventListener('click', async e => {
   else if (a === 'sg-txdel') { const t = SG.mk?.tx; if (!t) return; t.t = ''; sgMkPaint(); }
   else if (a === 'sg-del') { const p = SG.view[+b.dataset.i]; if (!p?._own) return; if (!await askYesNo('Diesen Sticker löschen?', 'Ja, löschen', 'Nein')) return;
     SG.own = SG.own.filter(x => x.id !== p._own); if (social) sgCol('stk').doc(p._own).delete().catch(() => {}); else { S.sgOwn = SG.own; save(); } sgPaint(true); }
-  else if (a === 'sg-mkx') { SG.mk = null; document.getElementById('sgmk')?.remove(); }
+  else if (a === 'sg-mkx') { SG.mk = null; SG.stMk = false; document.getElementById('sgmk')?.remove(); }
   else if (a === 'sg-mksh') { if (SG.mk) { SG.mk.sh = b.dataset.v; sgMkPaint(); } }
   else if (a === 'sg-mkrim') { if (SG.mk) { SG.mk.rim = !SG.mk.rim; sgMkPaint(); } }
   else if (a === 'sg-mkok') { b.disabled = true; await sgMkSave(); }
