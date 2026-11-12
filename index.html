@@ -9514,16 +9514,14 @@ const stSlUp = e => { if (!STSL || e.pointerId !== STSL.id) return; const s = ST
 document.addEventListener('pointerup', stSlUp, true); document.addEventListener('pointercancel', stSlUp, true);
 // Fotosticker: Foto aus der Galerie, klein gerechnet, damit die Story leicht bleibt
 document.addEventListener('change', async e => { if (e.target.id !== 'st-strf') return; const fs = [...(e.target.files || [])].slice(0, 4), n = stNew; e.target.value = ''; if (!fs.length || !n) return; // Fotostreifen: bis zu 4 Fotos untereinander
-  if ((n.stk || []).filter(x => x.p).length >= 3) return toast('Höchstens 3 Fotosticker pro Story.');
   try { const W = 300, H = 225, P = 12, c = document.createElement('canvas'); c.width = W + 2 * P; c.height = fs.length * (H + P) + P; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
     for (let j = 0; j < fs.length; j++) { const url = URL.createObjectURL(fs[j]), im = await stLoadImg(url), r = Math.max(W / im.naturalWidth, H / im.naturalHeight), w = im.naturalWidth * r, h = im.naturalHeight * r; g.save(); g.beginPath(); g.rect(P, P + j * (H + P), W, H); g.clip(); g.drawImage(im, P + (W - w) / 2, P + j * (H + P) + (H - h) / 2, w, h); g.restore(); URL.revokeObjectURL(url); }
-    n.stk = n.stk || []; n.stk.push({k:'pho', p:c.toDataURL('image/jpeg', .8), sh:'orig', ar:Math.round(c.height / c.width * 1000) / 1000, x:50, y:45, w:34, r:-4}); n.tool = null; n.hint = false; storyPaint(); }
+    n.stk = n.stk || []; n.stk.push({k:'pho', p:c.toDataURL('image/jpeg', .8), sh:'orig', ar:Math.round(c.height / c.width * 1000) / 1000, x:50, y:45, w:34, r:-4}); stPlace(n); n.tool = null; n.hint = false; storyPaint(); }
   catch { toast('Die Fotos ließen sich nicht öffnen.'); } });
 document.addEventListener('change', async e => { if (e.target.id !== 'st-phf' && e.target.id !== 'st-polf') return; const pol = e.target.id === 'st-polf', f = e.target.files?.[0], n = stNew; e.target.value = ''; if (!f || !n) return;
-  if ((n.stk || []).filter(x => x.p).length >= 3) return toast('Höchstens 3 Fotosticker pro Story.');
   try { const url = URL.createObjectURL(f), im = await stLoadImg(url), s = Math.min(1, 420 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
     c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s)); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-    n.stk = n.stk || []; n.stk.push({k:'pho', p:c.toDataURL('image/jpeg', .78), sh:pol ? 'pol' : 'orig', ar:Math.round(c.height / c.width * 1000) / 1000, x:50, y:42, w:pol ? 46 : 44, r:pol ? -3 : 0}); n.tool = null; n.hint = false; storyPaint(); }
+    n.stk = n.stk || []; n.stk.push({k:'pho', p:c.toDataURL('image/jpeg', .78), sh:pol ? 'pol' : 'orig', ar:Math.round(c.height / c.width * 1000) / 1000, x:50, y:42, w:pol ? 46 : 44, r:pol ? -3 : 0}); stPlace(n); n.tool = null; n.hint = false; storyPaint(); }
   catch { toast('Das Foto ließ sich nicht öffnen.'); } });
 // Umfrage und Regler bearbeiten (Frage und Antworten)
 const STIFP = {loc:'Ort eingeben, z. B. Berlin', ht:'hashtag', lnk:'https://…', ask:'Stell mir eine Frage', dbd:'z. B. Zeig dein Outfit', cd:'Name vom Countdown', men:'@Nutzername suchen', hlk:''};
@@ -9699,9 +9697,14 @@ function storyImg(uid, id, local, thumb){
 /* Story-Bild: erst vom Gerät (Firestore-Zwischenspeicher), dann vom Server; bei Fehler nach kurzer Zeit nochmal statt ewig „lädt“ (Inaya, v694). */
 function stImgGet(uid, id, thumb){ if (!social) return; const k = uid + '/' + id; if (STIMG[k] !== undefined) return; STIMG[k] = 0;
   const ref = social.db.doc('profiles/' + (uid === S.me ? social.uid : uid) + '/story/' + id), cur = () => STV && stCur()?.id === id;
-  const got = d => { if (!d.exists || !d.data().img) return false; STIMG[k] = d.data().img; if (d.data().ph) SPH[k] = d.data().ph; if (cur()) storyPaint(); return true; };
+  const got = d => { if (!d.exists || !d.data().img) return false; STIMG[k] = d.data().img; if (d.data().ph) SPH[k] = {...(SPH[k] || {}), ...d.data().ph}; if (d.data().phx) stPhxGet(uid, id, +d.data().phx); if (cur()) storyPaint(); return true; };
   ref.get({source:'cache'}).then(d => got(d) || Promise.reject()).catch(() => ref.get().then(d => { if (!got(d)) { STIMG[k] = thumb || ''; if (cur()) storyPaint(); } })
     .catch(() => setTimeout(() => { if (!STIMG[k]) { delete STIMG[k]; if (cur()) storyPaint(); } }, 2000))); }
+/* v894: weitere Bildsticker aus profiles/<uid>/stph_<id>/c<j> (erst Gerät, dann Server) */
+const STPHX = {};
+function stPhxGet(uid, id, m){ const k = uid + '/' + id; if (STPHX[k]) return; STPHX[k] = 1; const o = uid === S.me ? social.uid : uid;
+  for (let j = 0; j < Math.min(m, 40); j++) { const r = social.db.doc(`profiles/${o}/stph_${id}/c${j}`), put = d => { if (!d.exists || !d.data().ph) return false; SPH[k] = {...(SPH[k] || {}), ...d.data().ph}; if (STV && stCur()?.id === id) storyPaint(); return true; };
+    r.get({source:'cache'}).then(d => put(d) || Promise.reject()).catch(() => r.get().then(put).catch(() => { delete STPHX[k]; })); } }
 /* Vorladen: sobald die Story-Ringe zu sehen sind, die jeweils nächste Story jeder Person holen. */
 let STPRE = 0;
 function stPrefetch(){ if (!social || Date.now() - STPRE < 20000) return; STPRE = Date.now();
@@ -10334,12 +10337,15 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
   if (n.tb) { n.img = await stTbRender(n.tb); n.thumb = await storyThumb(n.img); }
   else if (n.m) { try { n.img = await stBake(n); } catch {} n.thumb = await storyThumb(n.img); }
   const mu = n.mu ? {t:n.mu.t, a:n.mu.a, art:n.mu.art, pv:n.mu.pv, s:+n.mu.s || 0, l:Math.min(MU_WIN, muL(n.mu)), ...nbKeep(n.mu)} : null; if (mu) for (const k in mu) if (mu[k] === undefined) delete mu[k];
-  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.cf ? {cf:1} : n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).slice(0, 10).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
-  if (n.stk?.length) st.stk = n.stk.slice(0, 20).map(x => ({k:x.k, x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, w:Math.round(x.w * 10) / 10, r:Math.round(+x.r || 0),
+  const st = {id:'s' + Date.now().toString(36), ts:Date.now(), f:n.f, ...(n.cf ? {cf:1} : n.pub ? {pub:1} : {}), song:mu ? '' : n.song, ...(mu ? {mu, mp:{x:Math.round(n.mp.x * 10) / 10, y:Math.round(n.mp.y * 10) / 10, w:Math.round(n.mp.w)}} : {}), texts:n.texts.filter(x => x.t.trim()).map(x => ({...x, t:x.t.slice(0, 200), x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, r:Math.round(+x.r || 0)})), thumb:n.thumb, v:2}; // das große Bild liegt nur in Firestore, nicht im Browser-Speicher
+  if (n.stk?.length) st.stk = n.stk.map(x => ({k:x.k, x:Math.round(x.x * 10) / 10, y:Math.round(x.y * 10) / 10, w:Math.round(x.w * 10) / 10, r:Math.round(+x.r || 0),
     ...(x.k === 'poll' ? {q:String(x.q || '').slice(0, 80), o:(x.o || []).slice(0, 4).map(o => String(o).slice(0, 40))} : x.k === 'sld' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'pho' ? {sh:x.sh || 'orig', ar:+x.ar || 1, p:x.p} : x.k === 'sg' ? (x.s ? {s:sgClean(x.s)} : {p:x.p})
       : ['loc', 'ht', 'lnk', 'men'].includes(x.k) ? {t:String(x.t || '').slice(0, 300), ...(x.u ? {u:x.u} : {})} : x.k === 'ask' || x.k === 'dbd' ? {q:String(x.q || '').slice(0, 80)} : x.k === 'cd' ? {q:String(x.q || '').slice(0, 60), d:+x.d || 0} : x.k === 'av' ? {u:x.u || stMyId(), ...(x.p != null ? {p:Math.max(0, Math.min(STAV.length - 1, +x.p || 0))} : {})} : x.k === 'hlk' ? {u:x.u, h:x.h, t:String(x.t || '').slice(0, 40)}
       : x.k === 'post' ? {a:String(x.a || ''), id:String(x.id || ''), t:String(x.t || '').slice(0, 140), n:String(x.n || '').slice(0, 60), ...(/^data:image\/jpeg;base64,/.test(x.th || '') && x.th.length < 120000 ? {th:x.th} : {})} : x.k === 'nsg' ? {u:String(x.u || '').slice(0, 64), ri:String(x.ri || '').slice(0, 20), rk:x.rk === 's' ? 's' : 'a', t:String(x.t || '').slice(0, 120), a:String(x.a || '').slice(0, 80), ...(safePic(x.art) && x.art.length < 40000 ? {art:x.art} : {})} : {})}));
-  const ph = {}; (st.stk || []).forEach((x, i) => { if ((x.k === 'pho' || x.k === 'sg') && x.p) ph[i] = x.p; });
+  /* v894 (Inaya: beliebig viele Sticker): Bildsticker passen nicht alle in das Story-Dokument (1 MB). Was nicht mehr hineinpasst, liegt in profiles/<uid>/stph_<id>/c<j>. Lokal und im Profil bleiben die Bilder nicht in st.stk. */
+  const ph = {}, phx = []; { const M = 850000; let room = M - (n.img || '').length, cur = null, cs = 0;
+    (st.stk || []).forEach((x, i) => { if (!((x.k === 'pho' || x.k === 'sg') && x.p)) return; const L = x.p.length + 24; if (L <= room) { ph[i] = x.p; room -= L; } else { if (!cur || cs + L > M) { cur = {}; cs = 0; phx.push(cur); } cur[i] = x.p; cs += L; } }); }
+  if (social) { (st.stk || []).forEach(x => { delete x.p; }); if (phx.length) st.phx = phx.length; SPH[S.me + '/' + st.id] = Object.assign({}, ph, ...phx); }
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); }
   if (n.vid || social) toast('Deine Story wird gepostet …');
   if (n.vid) {
@@ -10353,7 +10359,7 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
     catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); return; }
     STVID[S.me + '/' + st.id] = n.vid.url;
   }
-  if (social) { try { await social.db.doc('profiles/' + social.uid + '/story/' + st.id).set({img:n.img, ts:st.ts, ...(Object.keys(ph).length ? {ph} : {})}); } catch { toast('Die Story ließ sich gerade nicht hochladen.'); return; } }
+  if (social) { try { await Promise.all(phx.map((c, j) => social.db.doc(`profiles/${social.uid}/stph_${st.id}/c${j}`).set({ph:c}))); await social.db.doc('profiles/' + social.uid + '/story/' + st.id).set({img:n.img, ts:st.ts, ...(Object.keys(ph).length ? {ph} : {}), ...(phx.length ? {phx:phx.length} : {})}); } catch { toast('Die Story ließ sich gerade nicht hochladen.'); return; } }
   STIMG[S.me + '/' + st.id] = n.img; S.stories = [...(S.stories || []), st].slice(-12); save(); render(); toast('Deine Story ist 24 Stunden für deine Freunde sichtbar.');
 }
 /* ---------- Story erstellen wie bei Insta (Inaya, 2026-10-11): erst Kamera (aufnehmen oder aus der Galerie hochladen), dann im selben Feld zuschneiden, dann der Editor ---------- */
@@ -10859,6 +10865,27 @@ function stEditWire(){
   const msz = document.getElementById('st-musz'); if (msz) msz.addEventListener('input', () => { n.mp.w = +msz.value; const m = document.getElementById('stmued'); if (m) { m.style.width = msz.value + '%'; m.style.setProperty('--mw', msz.value); } });
   const so = document.getElementById('st-song'); if (so) so.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.querySelector('[data-act=st-songok]')?.click(); } });
 }
+/* v894 (Inaya): neue Sticker landen nicht alle genau übereinander, sondern an einer freien Stelle daneben */
+function stPlace(n){ const clamp = (v, a, b) => Math.min(b, Math.max(a, v)), l = n?.stk, o = l?.[l.length - 1]; if (!o) return; const busy = (x, y) => l.some(q => q !== o && Math.hypot(q.x - x, (q.y - y) * .56) < 7);
+  if (!busy(o.x, o.y)) return; for (const [dx, dy] of [[0, -14], [0, 14], [-22, -7], [22, -7], [-22, 9], [22, 9], [0, -26], [0, 26], [-20, -22], [20, -22], [-20, 24], [20, 24], [-28, 0], [28, 0]]) { const x = clamp(o.x + dx, 15, 85), y = clamp(o.y + dy, 12, 86); if (!busy(x, y)) { o.x = x; o.y = y; return; } }
+  const k = l.length % 7; o.x = clamp(o.x + (k - 3) * 5, 15, 85); o.y = clamp(o.y + (k - 3) * 4, 12, 86); }
+/* v894 (Inaya): Auswahl-Fenster im Story-Editor (Sticker, GIFs, Hintergrund, Musik …) schließen durch Tippen daneben oder Runterziehen */
+let STPEAT = 0, STSW = null;
+function stPanelClose(){ const n = stNew; if (!n) return; n.tool = null; n.sgTab = false; n.stkAll = false; if (SG.tgt === 'story') SG.tgt = null; storyPaint(); }
+document.addEventListener('pointerdown', e => { STPEAT = 0; const n = stNew; if (!n || !n.tool || n.edit != null || n.ifm) return; const fr = document.getElementById('stfr'), pn = fr?.querySelector('.stmpanel'), t = e.target; if (!pn || !t?.closest) return;
+  if (pn.contains(t) || t.closest('.cgrid-bg,#sgmk,.toast,.snack,.stside,.sttop')) return;
+  if (!fr.contains(t) && !(t.closest('.stbox') && !t.closest('button,a,input,label,[data-act]'))) return;
+  e.preventDefault(); e.stopPropagation(); STPEAT = Date.now(); stPanelClose(); }, true);
+document.addEventListener('click', e => { if (Date.now() - STPEAT < 700 && e.target?.closest?.('.stbox')) { e.preventDefault(); e.stopPropagation(); } STPEAT = 0; }, true);
+const stSwScroll = (t, pn) => { for (let el = t; el && el !== pn.parentNode; el = el.parentElement) if (el.scrollTop > 0 && el.scrollHeight > el.clientHeight + 2) return true; return false; };
+document.addEventListener('touchstart', e => { const t = e.target, pn = t?.closest?.('#stfr .stmpanel'); STSW = null; if (!pn || e.touches.length > 1 || t.closest('input,textarea,select,[role=slider],.mutrim')) return;
+  STSW = {pn, x:e.touches[0].clientX, y:e.touches[0].clientY, on:false, grip:!!t.closest('.stshg,.mugrip'), sc:stSwScroll(t, pn)}; }, {passive:true, capture:true});
+document.addEventListener('touchmove', e => { const s = STSW; if (!s || e.touches.length > 1) { if (s?.on) { s.pn.style.transform = ''; } STSW = null; return; } const dx = e.touches[0].clientX - s.x, dy = e.touches[0].clientY - s.y;
+  if (!s.on) { if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return; if (dy <= 0 || Math.abs(dx) > dy || (s.sc && !s.grip)) { STSW = null; return; } s.on = true; s.pn.style.transition = 'none'; }
+  e.preventDefault(); s.dy = Math.max(0, dy); s.pn.style.transform = `translateY(${s.dy}px)`; }, {passive:false, capture:true});
+const stSwEnd = () => { const s = STSW; STSW = null; if (!s?.on) return; STPEAT = Date.now(); if (s.dy > Math.min(90, s.pn.offsetHeight * .25)) { s.pn.style.transition = 'transform .16s ease-in'; s.pn.style.transform = `translateY(${s.pn.offsetHeight + 20}px)`; setTimeout(stPanelClose, 150); }
+  else { s.pn.style.transition = 'transform .18s ease-out'; s.pn.style.transform = ''; setTimeout(() => { s.pn.style.transition = ''; }, 200); } };
+document.addEventListener('touchend', stSwEnd, true); document.addEventListener('touchcancel', stSwEnd, true);
 /* v889 (Inaya): Hilfslinien beim Verschieben: senkrecht, waagerecht, diagonal und genau in der Mitte; rastet dort leicht ein */
 let STG = '';
 function stSnap(v, R){ const T = 1.6, ar = R.height / R.width; let {x, y} = v; const on = [];
@@ -13143,9 +13170,8 @@ async function sgSearch(){
   const l = await gifFetch(q, 30); if (my !== SG.qn) return; SG.res = l.list; SG.err = l.err;
   SG.busy = false; sgPaint(true);
 }
-function stSgAdd(p){ const n = stNew; if (!n) return; n.stk = n.stk || []; if (n.stk.length >= 20) return toast('Höchstens 20 Sticker pro Story.');
-  if (p.img && n.stk.filter(x => x.p).length >= 3) return toast('Höchstens 3 Bildsticker pro Story.');
-  n.stk.push({...(p.k ? {k:p.k} : p.img ? {k:'sg', p:p.img} : {k:'sg', s:p}), x:50, y:45, w:p.u ? 46 : 34, r:0}); n.tool = null; n.hint = false; storyPaint(); }
+function stSgAdd(p){ const n = stNew; if (!n) return; n.stk = n.stk || []; /* v894 (Inaya): keine Grenze mehr */
+  n.stk.push({...(p.k ? {k:p.k} : p.img ? {k:'sg', p:p.img} : {k:'sg', s:p}), x:50, y:45, w:p.u ? 46 : 34, r:0}); stPlace(n); n.tool = null; n.hint = false; storyPaint(); }
 let GST = null; // vorgemerktes GIF {key, p}
 const gstKey = f => f.dataset.form === 'cmsg' ? 'c:' + (CH.open || '') : f.dataset.form === 'rwall' ? 'w:' + (WL.uid || '') : 'p:' + (f.dataset.k || '');
 function gstPaint(){
@@ -17307,7 +17333,7 @@ function postDelete(pid, quiet){
 }
 // Story aus dem Archiv löschen: Eintrag, Highlights, Bild und Video auf dem Server (Inaya, 2026-10-13)
 function storyArchDelete(st){ S.storyArch = (S.storyArch || []).filter(x => x.id !== st.id); S.stories = (S.stories || []).filter(x => x.id !== st.id); hlDrop(st.id); save();
-  if (social) { social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); if (st.vid?.n) for (let i = 0; i < st.vid.n; i++) social.db.doc(`profiles/${social.uid}/sv_${st.id}/c${i}`).delete().catch(() => {}); } }
+  if (social) { social.db.doc('profiles/' + social.uid + '/story/' + st.id).delete().catch(() => {}); for (let j = 0; j < (+st.phx || 0); j++) social.db.doc(`profiles/${social.uid}/stph_${st.id}/c${j}`).delete().catch(() => {}); if (st.vid?.n) for (let i = 0; i < st.vid.n; i++) social.db.doc(`profiles/${social.uid}/sv_${st.id}/c${i}`).delete().catch(() => {}); } }
 /* Gelikte Beiträge (Inaya, 2026-10-30): Einstellungen → „Gelikte Beiträge“ zeigt alle Beiträge, die man selbst gelikt hat.
    Ein Like ist chats/pi_<besitzer>_<beitrag>/m/<uid>_klike. Gemerkt wird S.liked = {<pi-Schlüssel>: Zeit} (wandert mit der Kontosicherung),
    gesetzt beim Liken/Entliken (plike) und abgeglichen, sobald die Likes eines Beitrags vom Server kommen (likedSync).
@@ -19441,11 +19467,11 @@ document.addEventListener('click', async e => {
   else if (a === 'st-pill') { const n = stNew; if (!n) return; const k = b.dataset.v; n.stk = n.stk || []; if (n.stk.length >= 20) return toast('Höchstens 20 Sticker pro Story.');
     if (k === 'poll' || k === 'sld') { b.dataset.v = k; n.stk.push(k === 'poll' ? {k, q:'', o:['', ''], x:50, y:46, w:72, r:0} : {k, q:'', x:50, y:46, w:72, r:0}); n.ifm = {i:n.stk.length - 1, d:{q:'', o:k === 'poll' ? ['', ''] : []}, neu:1}; }
     else if (k === 'av') { n.stkAll = 'av'; return storyPaint(); }
-    else { if (k === 'hlk' && !(S.hl || []).length) return toast('Du hast noch keine Highlights.'); n.stk.push({k, x:50, y:46, w:k === 'ask' || k === 'dbd' || k === 'cd' ? 70 : 46, r:0}); n.ifm = {i:n.stk.length - 1, d:{q:'', o:[]}, neu:1}; }
+    else { if (k === 'hlk' && !(S.hl || []).length) return toast('Du hast noch keine Highlights.'); n.stk.push({k, x:50, y:46, w:k === 'ask' || k === 'dbd' || k === 'cd' ? 70 : 46, r:0}); stPlace(n); n.ifm = {i:n.stk.length - 1, d:{q:'', o:[]}, neu:1}; }
     n.tool = null; n.hint = false; n.stkAll = false; storyPaint(); setTimeout(() => document.getElementById('sti-q')?.focus(), 60); }
   else if (a === 'st-stkall') { const n = stNew; if (!n) return; n.stkAll = b.dataset.v || false; storyPaint(); if (n.stkAll && n.stkAll !== 'av' && !SG.own) sgLoad().then(() => { if (stNew?.stkAll) storyPaint(); }); }
   else if (a === 'st-sgown') { const x = (SG.own || []).find(y => y.id === b.dataset.v); if (x) stSgAdd({img:x.img}); }
-  else if (a === 'st-avadd') { const n = stNew; if (!n) return; n.stk = n.stk || []; if (n.stk.length >= 20) return toast('Höchstens 20 Sticker pro Story.'); const i = +b.dataset.v || 0; n.stk.push({k:'av', u:stMyId(), p:i, x:50, y:48, w:STAV[i][2] === 'full' ? 30 : 40, r:0}); n.tool = null; n.hint = false; n.stkAll = false; storyPaint(); }
+  else if (a === 'st-avadd') { const n = stNew; if (!n) return; n.stk = n.stk || []; const i = +b.dataset.v || 0; n.stk.push({k:'av', u:stMyId(), p:i, x:50, y:48, w:STAV[i][2] === 'full' ? 30 : 40, r:0}); stPlace(n); n.tool = null; n.hint = false; n.stkAll = false; storyPaint(); }
   else if (a === 'st-gifs') { const n = stNew; if (!n) return; n.sgTab = true; if (SG.form) sgClose(); SG.tgt = 'story'; SG.mode = 'g'; storyPaint(); await sgLoad(); if (SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); }
   else if (a === 'st-ifmen' || a === 'st-ifhl') { const n = stNew; if (!n?.ifm) return; const x = n.stk[n.ifm.i]; if (!x) return;
     if (a === 'st-ifmen') { x.u = b.dataset.id; x.t = (b.querySelector('small')?.textContent || b.querySelector('b')?.textContent || '').replace(/^@/, ''); } else { const h = (S.hl || []).find(y => y.id === b.dataset.id); if (!h) return; x.u = stMyId(); x.h = h.id; x.t = h.t; }
@@ -19460,7 +19486,7 @@ document.addEventListener('click', async e => {
   else if (a === 'st-ifok') { const n = stNew; if (!n?.ifm) return; stIfmRead(n); const x = n.stk[n.ifm.i], d = n.ifm.d; if (x) { x.q = d.q.trim();
       if (x.k === 'poll') { x.o = d.o.map(o => o.trim()); x.o = x.o.map((o, a) => o || (a === 0 ? 'Ja' : a === 1 ? 'Nein' : '')).filter(Boolean); if (x.o.length < 2) x.o = ['Ja', 'Nein']; } }
     n.ifm = null; storyPaint(); }
-  else if (a === 'st-stkadd') { const n = stNew; if (!n) return; n.stk = n.stk || []; if (n.stk.length >= 20) { toast('Höchstens 20 Sticker pro Story.'); return; } n.stk.push({k:b.dataset.v, x:50, y:45, w:34, r:0}); n.tool = null; n.hint = false; storyPaint(); }
+  else if (a === 'st-stkadd') { const n = stNew; if (!n) return; n.stk = n.stk || []; n.stk.push({k:b.dataset.v, x:50, y:45, w:34, r:0}); stPlace(n); n.tool = null; n.hint = false; storyPaint(); }
   else if ((a === 'st-bgc' || a === 'st-bgp') && stNew && !stNew.tb) { const n = stNew, cur = n.bg || 'blur', v = b.dataset.v; if (a === 'st-bgc') n.bg = v === 'blur' ? 'blur' : {c:v, p:cur === 'blur' ? '' : cur.p || ''}; else n.bg = {c:cur === 'blur' ? '#26262b' : cur.c, p:v, ...(cur !== 'blur' && cur.a ? {a:1} : {})}; stMBgUpdate(); }
   else if (a === 'st-bgauto') { const n = stNew; if (!n) return; const el = document.getElementById('stmed'), cur = n.bg || 'blur', c = el && stImgColor(el); if (!c) { toast('Die Farbe konnte nicht aus dem Bild gelesen werden.'); return; } n.bg = {c, p:cur === 'blur' ? '' : cur.p || '', a:1}; stMBgUpdate(); }
   else if (a === 'st-bgc' || a === 'st-bgp') { const n = stNew; if (!n?.tb) return; if (a === 'st-bgc') n.tb.c = b.dataset.v; else n.tb.p = b.dataset.v;
