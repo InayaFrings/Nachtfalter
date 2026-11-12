@@ -665,3 +665,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v904 (Inaya): Katze miaut (`katze1`/`katze2`, gemeinfrei) und schnurrt (`purr`, gemeinfrei, `sfxPurrR`) mit echten Aufnahmen, Füttern knuspert mit einer echten Aufnahme (`crunch`, CC BY 4.0, Namensnennung in `vendor/LIZENZEN.txt`), drei Bisse. Quellen und Lizenzen der Töne stehen in `vendor/LIZENZEN.txt`. Hase und Rabe sind noch erzeugt (Inaya schickt eigene Dateien).
 - Seit v905 (Inaya, eigene Datei von Pixabay „000_crow.wav“): Der Rabe krächzt mit echter Aufnahme (`rabe1`, `rabe3`, doppelt `rabe4` beim Antippen, `rabe2` leiser beim Streicheln).
 - Seit v906 (Inaya): Beim Streicheln kein erzeugtes Glitzern mehr zu den Herzchen (`sfxStroke`), nur der echte Laut des Tiers.
+- Seit v907 (Inaya): Schlafen und Aufwecken ohne Töne (`sfxSleep`/`sfxWake` bleiben ungenutzt im Code).
