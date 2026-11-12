@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5fb5ec3ed621';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5992098bc324';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10843,10 +10843,10 @@ function stEditWire(){
 let STG = '';
 function stSnap(v, R){ const T = 1.6, ar = R.height / R.width; let {x, y} = v; const on = [];
   if (Math.abs(x - 50) < T) { x = 50; on.push('v'); } if (Math.abs(y - 50) < T / ar * 1.2) { y = 50; on.push('h'); }
-  if (!on.length || on.length === 2) { if (Math.abs(x - y) < T) { if (!on.length) { const m = (x + y) / 2; x = y = m; } on.push('d1'); } if (Math.abs(x + y - 100) < T) { if (!on.includes('d1') && on.length < 2) { const k = (100 - x - y) / 2; x += k; y += k; } on.push('d2'); } }
+  /* v890 (Inaya): nur senkrecht und waagerecht, keine Diagonalen */
   if (on.includes('v') && on.includes('h')) on.push('c'); stGuide(on); return {...v, x, y}; }
 function stGuide(on){ const cv = document.getElementById('stcv'); if (!cv) return; let g = document.getElementById('stguide');
-  if (!g) { cv.insertAdjacentHTML('beforeend', '<div class="stguide" id="stguide" aria-hidden="true"><i class="gv"></i><i class="gh"></i><svg viewBox="0 0 100 100" preserveAspectRatio="none"><line class="gd1" x1="0" y1="0" x2="100" y2="100"/><line class="gd2" x1="100" y1="0" x2="0" y2="100"/></svg></div>'); g = document.getElementById('stguide'); }
+  if (!g) { cv.insertAdjacentHTML('beforeend', '<div class="stguide" id="stguide" aria-hidden="true"><i class="gv"></i><i class="gh"></i></div>'); g = document.getElementById('stguide'); }
   const k = (on || []).join(' '); g.setAttribute('class', 'stguide' + (k ? ' on ' + k : '')); if (k && k !== STG && k.length > STG.length) { try { navigator.vibrate?.(8); } catch {} } STG = k; }
 function stNewText(y){ const n = stNew; n.tool = null; n.editOld = null; n.texts.push({t:'', x:50, y:y || 40, s:8, c:'#ffffff', st:(n.texts[n.texts.length - 1] || {}).st || 'klassisch', bg:0}); n.edit = n.texts.length - 1; storyPaint(); }
 function stFStep(dir){
