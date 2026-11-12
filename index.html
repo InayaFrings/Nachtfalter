@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='317b237e1931';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8166ef6bfb81';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8899,7 +8899,7 @@ function pinMenu(el, x, y){
   document.querySelector('.pinpop')?.remove();
   const kind = el.dataset.pk, id = el.dataset.pid, on = isPin(kind, id);
   const m = document.createElement('div'); m.className = 'pinpop'; m.setAttribute('role', 'menu');
-  m.innerHTML = `<div class="pinsheet"><p class="pinname">${esc(el.dataset.pn || '')}</p><button type="button" role="menuitem" data-act="pin" data-k="${kind}" data-id="${esc(id)}">${PIN_ICO}<span>${on ? 'Nicht mehr anpinnen' : 'Oben anpinnen'}</span></button><button type="button" class="pincancel" data-act="pin-close">Abbrechen</button></div>`;
+  m.innerHTML = `<div class="pinsheet"><p class="pinname">${esc(el.dataset.pn || '')}</p><button type="button" role="menuitem" data-act="pin" data-k="${kind}" data-id="${esc(id)}">${PIN_ICO}<span>${on ? 'Nicht mehr anpinnen' : 'Oben anpinnen'}</span></button>${kind === 'c' && /^dm_/.test(id) ? `<button type="button" role="menuitem" class="pindel" data-act="chat-rm" data-id="${esc(id)}">${TRASH_SVG}<span>Chat löschen</span></button>` : ''}<button type="button" class="pincancel" data-act="pin-close">Abbrechen</button></div>`;
   document.body.appendChild(m);
   if (!isMob()) { const sh = m.firstChild; sh.style.left = Math.min(x, innerWidth - 230) + 'px'; sh.style.top = Math.min(y, innerHeight - 140) + 'px'; m.classList.add('at'); }
   const t0 = Date.now(); m.addEventListener('click', e => { if (e.target === m && Date.now() - t0 > 450) m.remove(); });
@@ -12832,6 +12832,7 @@ function vWave(lv, n=36){ // 36 Balken, je 0–9
 async function voiceSend(j){
   if (!VSEND.includes(j)) VSEND.push(j); j.err = ''; j.step = 'Wird gesendet …'; voicePend();
   try {
+    if (j.re === undefined) { const r = CH.re; j.re = r && r.cid === j.cid ? {id:r.id, from:r.from, t:r.t, ...(r.s ? {s:r.s} : {})} : null; if (j.re) { CH.re = null; try { chRePaint(); } catch {} } } /* v899: Antwort auf eine Nachricht auch als Sprachnachricht */
     const k = j.k = j.k || 'v' + Date.now().toString(36); try { VOICEURL[k] = VOICEURL[k] || URL.createObjectURL(j.blob); } catch {}
     if (social.db.batch && j.blob.size < 3 * 1024 * 1024) { // ein einziger Schreibvorgang: Tonstücke, Nachricht und Chat-Vorschau zusammen
       const e2 = e2Chat(j.cid); let b64, mk = null;
@@ -12840,7 +12841,7 @@ async function voiceSend(j){
       if (j.cancel) return; // schon gelöscht
       const C = 900000, n = Math.ceil(b64.length / C), v = Date.now(), ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6), bt = social.db.batch();
       const audio = {n, v, type:j.type, name:'Sprachnachricht', k, ok:ts, voice:1, d:j.dur, w:j.w || '', ...(mk || {})};
-      const doc = e2 ? await e2Seal(j.cid, mid, ts, {text:'', audio}, e2Members(j.cid)) : {from:social.uid, text:'', ts, audio}; if (e2) E2E.dec[mid + '@' + ts] = e2Clean({text:'', audio});
+      const rx = j.re ? {re:j.re} : {}, doc = e2 ? await e2Seal(j.cid, mid, ts, {text:'', audio, ...rx}, e2Members(j.cid)) : {from:social.uid, text:'', ts, audio, ...rx}; if (e2) E2E.dec[mid + '@' + ts] = e2Clean({text:'', audio, ...rx});
       for (let i = 0; i < n; i++) bt.set(social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`), {v, d:b64.slice(i * C, (i + 1) * C)});
       bt.set(social.db.doc('chats/' + j.cid + '/m/' + mid), doc);
       if (!j.cid.startsWith('zimmer_') && !j.cid.startsWith('wall_')) bt.update(social.db.doc('chats/' + j.cid), {last:ts, lastText:e2 ? '🔒' : '♪ Sprachnachricht', lastFrom:social.uid});
@@ -12849,7 +12850,7 @@ async function voiceSend(j){
     }
     const au = await vTimeout(uploadPostAudio(new File([j.blob], 'Sprachnachricht', {type:j.type}), k, (i, n) => { j.step = `Wird gesendet … ${Math.round(i / n * 100)} %`; voicePend(); }, e2Chat(j.cid)), 60000);
     if (j.cancel) { for (let i = 0; i < au.n; i++) social.db.doc(`profiles/${social.uid}/pa_${k}/c${i}`).delete().catch(() => {}); return; }
-    const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur, w:j.w || ''}}), 30000);
+    const ok = await vTimeout(sendMsg(j.cid, '', {audio:{...au, type:j.type, name:'Sprachnachricht', k, ok:Date.now(), voice:1, d:j.dur, w:j.w || ''}, ...(j.re ? {re:j.re} : {})}), 30000);
     if (!ok) throw new Error('recht');
     VSEND.splice(VSEND.indexOf(j), 1); voicePend();
   } catch (e) { j.err = e?.message === 'nokey' ? `${chatWho(e.uid)} hat Noctibat seit dem Update noch nicht geöffnet. Danach kannst du die Sprachnachricht verschlüsselt senden.` : e?.message === 'zeit' ? 'Die Verbindung hängt gerade.' : e?.message === 'recht' ? 'Noctibat durfte die Nachricht nicht speichern.' : e2Chat(j.cid) && !E2E.on ? (E2E.err || 'Die Verschlüsselung ist auf diesem Gerät noch nicht bereit.') : 'Das Hochladen hat nicht geklappt.'; voicePend(); }
@@ -13265,6 +13266,8 @@ function e2Card(){ if (!social) return '';
     <p class="note">Deine Geräte geben sich den Chatverlauf automatisch frei. Dein Schlüssel ist mit deinem Passwort gesichert, ein gutes Passwort schützt ihn am besten.</p>
   </div></div>`; }
 async function sendMsg(cid, text, extra={}){
+  if (!extra.re && !extra.kind && CH.re && CH.re.cid === cid && (text || extra.img || extra.audio || extra.clip || extra.stk || extra.gif || extra.gift || extra.post || extra.prof || extra.story)) { /* v899 (Inaya): Antworten geht mit allem (Sprachnachricht, Foto, Video, Geschenk, Sticker, GIF …) */
+    const r = CH.re; extra = {...extra, re:{id:r.id, from:r.from, t:r.t, ...(r.s ? {s:r.s} : {})}}; CH.re = null; setTimeout(() => { try { chRePaint(); } catch {} }, 0); }
   const ts = Date.now(), mid = 'm' + ts.toString(36) + Math.random().toString(36).slice(2, 6);
   try {
     if (e2Chat(cid)) { // privat: nur verschlüsselt, nie im Klartext an den Server
@@ -18506,7 +18509,8 @@ function scrollXs(root){
    mediaTake merkt vor dem Neuzeichnen fertig geladene Bilder und laufende Videos, mediaPut setzt genau diese Knoten wieder an die neue Stelle. */
 const mvKey = b => (b.dataset.u || '') + '|' + (b.dataset.id || '') + '|' + (b.dataset.act === 'gclip' ? b.dataset.i : '');
 function mediaTake(root){ const im = new Map(), vd = new Map();
-  root.querySelectorAll('.main img').forEach(o => { if (!o.complete || !o.naturalWidth) return; const k = o.dataset.pimg ? 'p:' + o.dataset.pimg : o.getAttribute('src'); if (!k) return; (im.get(k) || im.set(k, []).get(k)).push(o); });
+  const et = window.event?.target; /* v899: das gerade angetippte Bild nie umhängen, sonst landet der Klick im neuen Knopf (Profilbild im Chat-Kopf öffnete über die Kontaktinfo hinweg das Profil) */
+  root.querySelectorAll('.main img').forEach(o => { if (!o.complete || !o.naturalWidth || (et && (o === et || o.contains?.(et)))) return; const k = o.dataset.pimg ? 'p:' + o.dataset.pimg : o.getAttribute('src'); if (!k) return; (im.get(k) || im.set(k, []).get(k)).push(o); });
   root.querySelectorAll('.main [data-bk]').forEach(w => { const v = w.querySelector('video'); if (v) { w._play = !v.paused; vd.set(w.dataset.bk, w); } });
   const lv = new Map(); if (Element.prototype.moveBefore) root.querySelectorAll('.lvid.on[data-lk]').forEach(w => { let pk = document.getElementById('lvpark'); if (!pk) { pk = document.createElement('div'); pk.id = 'lvpark'; pk.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden'; document.body.appendChild(pk); } try { pk.moveBefore(w, null); lv.set(w.dataset.lk, w); } catch {} }); /* v851: laufender Video-Link bleibt (moveBefore lädt den Player nicht neu) */
   return {im, vd, lv}; }
