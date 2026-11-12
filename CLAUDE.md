@@ -666,3 +666,4 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Seit v905 (Inaya, eigene Datei von Pixabay „000_crow.wav“): Der Rabe krächzt mit echter Aufnahme (`rabe1`, `rabe3`, doppelt `rabe4` beim Antippen, `rabe2` leiser beim Streicheln).
 - Seit v906 (Inaya): Beim Streicheln kein erzeugtes Glitzern mehr zu den Herzchen (`sfxStroke`), nur der echte Laut des Tiers.
 - Seit v907 (Inaya): Schlafen und Aufwecken ohne Töne (`sfxSleep`/`sfxWake` bleiben ungenutzt im Code).
+- Seit v908 (Inaya): Hase mit echter Aufnahme (Pixabay „rabbit sounds“, `hase1`–`hase3` beim Antippen, `hase4` leise). Beim Streicheln vorerst nur die Katze (Schnurren), Fledermaus, Hase und Rabe sind dabei still (`sfxStroke`, auch der Knopf „Streicheln“ beim Begleiter von Freunden). Alle Tier-Töne zum Anhören: `/mnt/project-files/notes/toene-live/`.
