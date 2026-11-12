@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='ca4dc87e71b5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1806f0125658';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -18885,7 +18885,7 @@ function sfxCtx(){ if (!sfxOn()) return null; const ac0 = SFX.ac; if (ac0) { if 
   try { const ac = new AC(), out = ac.createGain(), dl = ac.createDelay(1), fb = ac.createGain(), wet = ac.createGain(), lp = ac.createBiquadFilter();
     out.gain.value = 1; dl.delayTime.value = .16; fb.gain.value = .25; wet.gain.value = .2; lp.type = 'lowpass'; lp.frequency.value = 2400;
     out.connect(ac.destination); out.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(ac.destination);
-    SFX.ac = ac; SFX.out = out; ac.resume?.().catch(() => {}); return ac; } catch { return null; } }
+    SFX.ac = ac; SFX.out = out; ac.resume?.().catch(() => {}); setTimeout(() => sfxPreload(), 0); return ac; } catch { return null; } }
 /* Im Antippen freischalten (sonst bleibt es am iPhone stumm): auf Begleiter-Seiten und in der Begleiter-Auswahl */
 document.addEventListener('pointerdown', () => { if (SFX.ac || (sfxOn() && (/^pet/.test(document.body.dataset.pg || '') || /^pet/.test(V?.name || '') || document.querySelector('.ppick, #phatch')))) sfxCtx(); }, true);
 const sfxGap = (k, ms) => { const n = performance.now(); if (n - (SFX.last[k] || 0) < ms) return false; SFX.last[k] = n; return true; };
@@ -18916,10 +18916,18 @@ function sfxPurr(ac, d = 1.3, v = .5, at = 0){ const t = ac.currentTime + at, sr
   env.gain.setValueAtTime(.0001, t); env.gain.exponentialRampToValueAtTime(v, t + .2); env.gain.setValueAtTime(v, t + d - .35); env.gain.exponentialRampToValueAtTime(.0001, t + d);
   src.connect(bp); bp.connect(am); os.connect(of); of.connect(og); og.connect(am); am.connect(env); env.connect(SFX.out);
   src.start(t, Math.random()); os.start(t); lfo.start(t); [src, os, lfo].forEach(x => x.stop(t + d + .05)); }
+/* v903: echte Aufnahmen als kleine MP3s in pwa/sfx/ (Fledermaus aus Inayas Pixabay-Datei), werden einmal geladen und über WebAudio abgespielt */
+const SFX_V = 903, SFX_SMP = {fled:['fled1', 'fled3'], fledSoft:['fled2']};
+function sfxLoad(n){ const ac = SFX.ac; if (!ac) return null; SFX.buf = SFX.buf || {}; if (SFX.buf[n] !== undefined) return SFX.buf[n]; SFX.buf[n] = null;
+  fetch(`/pwa/sfx/${n}.mp3?v=${SFX_V}`).then(r => r.ok ? r.arrayBuffer() : Promise.reject()).then(b => new Promise((ok, no) => ac.decodeAudioData(b, ok, no))).then(b => { SFX.buf[n] = b; }, () => { delete SFX.buf[n]; }); return null; }
+function sfxPreload(k){ if (!SFX.ac) return; Object.entries(SFX_SMP).filter(([x]) => !k || x.startsWith(k)).forEach(([, l]) => l.forEach(sfxLoad)); }
+/* Spielt eine Aufnahme; false, wenn sie (noch) nicht da ist, dann nimmt der Aufrufer den erzeugten Ton */
+function sfxSmp(list, v = 1){ const ac = sfxCtx(); if (!ac || !list?.length) return false; const n = list[Math.floor(Math.random() * list.length)], b = sfxLoad(n); if (!b) { list.forEach(sfxLoad); return false; }
+  const src = ac.createBufferSource(), g = ac.createGain(); src.buffer = b; src.playbackRate.value = .95 + Math.random() * .1; g.gain.value = v; src.connect(g); g.connect(SFX.out); src.start(); return true; }
 /* Stimme je Begleiter: Katze „mrrau“, Fledermaus Fiepen, Hase Schnuppern + Quieken, Rabe Krächzen */
 function sfxVoice(k, soft){ const ac = sfxCtx(); if (!ac) return; const m = soft ? .6 : 1;
   if (k === 'katze') sfxF(ac, [430, 640, 700, 520], soft ? .38 : .5, [[900, 4, 1], [1700, 5, .55], [2800, 6, .25]], {v:.55 * m, a:.06});
-  else if (k === 'fled') { sfxT(ac, 2100, 3000, .07, {v:.1 * m}); sfxT(ac, 2500, 3500, .08, {at:.1, v:.09 * m}); if (!soft) sfxT(ac, 2300, 3200, .06, {at:.21, v:.06}); }
+  else if (k === 'fled') { if (sfxSmp(soft ? SFX_SMP.fledSoft : SFX_SMP.fled, soft ? .55 : .8)) return; sfxT(ac, 2100, 3000, .07, {v:.1 * m}); sfxT(ac, 2500, 3500, .08, {at:.1, v:.09 * m}); if (!soft) sfxT(ac, 2300, 3200, .06, {at:.21, v:.06}); }
   else if (k === 'hase') { for (let i = 0; i < (soft ? 2 : 3); i++) sfxN(ac, .06, {at:i * .085, f:4200, q:1.4, v:.45 * m, a:.01}); sfxT(ac, 1300, 1650, .11, {at:soft ? .2 : .28, v:.16 * m, w:'triangle', a:.01}); }
   else if (k === 'rabe') { sfxF(ac, [560, 600, 470], .26, [[1100, 3, 1], [1900, 4, .6], [3000, 5, .25]], {v:.5 * m, a:.02, am:42}); if (!soft) sfxF(ac, [540, 580, 450], .22, [[1100, 3, 1], [1900, 4, .6], [3000, 5, .25]], {at:.34, v:.38, a:.02, am:42}); }
   else sfxT(ac, 600, 800, .1, {v:.12 * m}); }
