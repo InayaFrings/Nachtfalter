@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='fedcdd2fb7a6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='54026480000b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8481,6 +8481,7 @@ Object.assign(I18N_EN, {"Entwurf:": "Draft:", "Entwurf": "Draft", "Entwürfe": "
 Object.assign(I18N_EN, {"Highlight bearbeiten": "Edit highlight", "Aus diesem Highlight entfernen": "Remove from this highlight", "Highlight archivieren": "Archive highlight", "Highlight löschen": "Delete highlight", "Highlight „{0}“ löschen?": "Delete highlight “{0}”?", "Titelbild ändern": "Change cover", "Name des Highlights": "Highlight name", "Titelbild aus deinen Storys": "Cover from your stories", "Highlight-Archiv": "Highlight archive", "{0} Highlights": "{0} highlights", "Highlight-Optionen": "Highlight options", "Hier landen Highlights, die du archivierst. Halte dazu ein Highlight in deinem Profil gedrückt.": "Highlights you archive end up here. To archive one, press and hold it on your profile."}); /* v895: Highlights */
 Object.assign(I18N_EN, {'Fotos oder Videos hinzufügen':'Add photos or videos', 'Fotos und Videos':'Photos and videos', 'Personen markieren':'Tag people', 'Wer sieht das?':'Who can see this?', 'Sticker entfernen':'Remove sticker', 'GIF entfernen':'Remove GIF'});
 Object.assign(I18N_EN, {'Nachricht dazu':'Message with it'});
+Object.assign(I18N_EN, {'Töne':'Sounds','Kleine Geräusche, zum Beispiel wenn du deinen Begleiter streichelst, fütterst oder badest. Am iPhone sind sie stumm, wenn der Lautlos-Schalter an ist.':'Little sounds, for example when you pet, feed or bathe your companion. On iPhone they are silent when the silent switch is on.','An':'On','Aus':'Off'});
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -18105,7 +18106,8 @@ function settingsView(){
     <div class="setlist">
     <div class="setrow"><div class="setinfo"><span class="lbl">Profil</span><span class="setval">${u.priv ? 'Privat: nur Freunde sehen deine Beiträge und dein Zimmer.' : 'Öffentlich: alle sehen dein Profil.'}</span><span class="seg"><button data-act="set-priv" data-v="0" aria-pressed="${!u.priv}">Öffentlich</button><button data-act="set-priv" data-v="1" aria-pressed="${!!u.priv}">Privat</button></span></div></div>
     </div>`) + sec('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9M12 3C9.4 5.6 8.1 8.6 8.1 12s1.3 6.4 3.9 9"/>', 'Sprache', `<p class="pawhy">In welcher Sprache möchtest du Noctibat sehen? Das ändert nur die Anzeige. Alle sehen weiter dieselben Profile, Beiträge und Chats.</p>
-    <div class="langpick" data-raw role="radiogroup" aria-label="Sprache · Language">${Object.entries(LANGS).map(([k, l]) => `<button type="button" class="btn${k === LANG ? '' : ' ghost'}" data-act="lang" data-v="${k}" role="radio" aria-checked="${k === LANG}">${l}</button>`).join('')}</div>`) + sec('<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10h14V9M10 13h4"/>', 'Archiv', `<p class="pawhy">Beiträge und Storys, die du archivierst, verschwinden für alle anderen, bleiben aber für dich gespeichert. Du kannst sie jederzeit wieder veröffentlichen oder endgültig löschen. Archivieren geht über die drei Punkte ⋯ an einem Beitrag oder einer Story.</p>
+    <div class="langpick" data-raw role="radiogroup" aria-label="Sprache · Language">${Object.entries(LANGS).map(([k, l]) => `<button type="button" class="btn${k === LANG ? '' : ' ghost'}" data-act="lang" data-v="${k}" role="radio" aria-checked="${k === LANG}">${l}</button>`).join('')}</div>`) + sec('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>', 'Töne', `<p class="pawhy">Kleine Geräusche, zum Beispiel wenn du deinen Begleiter streichelst, fütterst oder badest. Am iPhone sind sie stumm, wenn der Lautlos-Schalter an ist.</p>
+    <div class="setlist"><div class="setrow"><div class="setinfo"><span class="lbl">Töne</span><span class="seg"><button data-act="set-sfx" data-v="1" aria-pressed="${sfxOn()}">An</button><button data-act="set-sfx" data-v="0" aria-pressed="${!sfxOn()}">Aus</button></span></div></div></div>`) + sec('<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10h14V9M10 13h4"/>', 'Archiv', `<p class="pawhy">Beiträge und Storys, die du archivierst, verschwinden für alle anderen, bleiben aber für dich gespeichert. Du kannst sie jederzeit wieder veröffentlichen oder endgültig löschen. Archivieren geht über die drei Punkte ⋯ an einem Beitrag oder einer Story.</p>
     <div class="archset"><button type="button" class="archsetb" data-act="arch-go" data-v="posts">${ARCH_SVG}<span><b>Archivierte Beiträge</b><small>${archPosts().length === 1 ? '1 Beitrag' : archPosts().length + ' Beiträge'}</small></span><i aria-hidden="true">›</i></button><button type="button" class="archsetb" data-act="arch-go" data-v="story"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Archivierte Storys</b><small>${(S.storyArch || []).length === 1 ? '1 Story' : (S.storyArch || []).length + ' Storys'}</small></span><i aria-hidden="true">›</i></button><button type="button" class="archsetb" data-act="arch-go" data-v="trash">${TRASH_SVG}<span><b>Zuletzt gelöscht (30 Tage)</b><small>${(S.trash || []).length === 1 ? '1 Beitrag' : (S.trash || []).length + ' Beiträge'}</small></span><i aria-hidden="true">›</i></button></div>
 `) + sec(LIKED_ICO, 'Gelikte Beiträge', `<p class="pawhy">Hier siehst du alle Beiträge, die du gelikt hast. Nur du siehst diese Liste.</p>
     <div class="archset"><button type="button" class="archsetb" data-act="liked-go"><svg viewBox="0 0 24 24" aria-hidden="true">${LIKED_ICO}</svg><span><b>Gelikte Beiträge</b><small>${likedCount() === 1 ? '1 Beitrag' : likedCount() + ' Beiträge'}</small></span><i aria-hidden="true">›</i></button></div>`) + muSetCard((i, t, b, c = '') => sec(i, t, b, c + ' mucard')) + wrap(e2Card(), '<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>') + wrap(blockedCard(), '<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>') + pushCard()
@@ -18385,6 +18387,7 @@ document.addEventListener('click', async e => {
   else if (a === 'g-create') { grabGroupDraft(); document.querySelector('form[data-form="group"]')?.requestSubmit(); }
   else if (a === 'chat-group') { CH.gdraft = {pub:b.dataset.v === 'pub', name:'', members:[], theme:{...BLANK_THEME(), box:'#26262b'}}; CH.mode = 'group'; render(); scrollTo(0, 0); }
   else if (a === 'chat-dm' || a === 'dm') { if (social) openDM(id); }
+  else if (a === 'set-sfx') { try { localStorage.setItem('nf-sfx', b.dataset.v === '0' ? '0' : '1'); } catch {} if (b.dataset.v !== '0') sfxTest(); else SFX.ac?.suspend?.().catch(() => {}); render(); }
   else if (a === 'set-priv') { me().priv = b.dataset.v === '1' ? 1 : 0; save(); publishProfile(); render(); toast(me().priv ? 'Dein Profil ist jetzt privat' : 'Dein Profil ist jetzt öffentlich'); }
   else if (a === 'mh-pick') { MH.open = !MH.open; render(); }
   else if (a === 'salon-mode') { S.salonMode = b.dataset.v === 'pub' ? 'pub' : 'fr'; postAud = S.salonMode; MH.open = false; if (V.name !== 'home') go('home'); save(); /* neuer Beitrag: Freunde/Öffentlich wie der gewählte Bereich */ if (S.salonMode === 'pub') loadPubFeed(true); render(); }
@@ -18789,7 +18792,7 @@ function petXP(n){ const p = petMe(); if (!p || n <= 0) return 0; const day = nc
   n = Math.max(0, Math.min(Math.round(n), PET_XP_DAY - p.dx.x)); if (!n || p.lv >= PET_LV_MAX) return 0; p.dx.x += n; p.xp = (p.xp || 0) + n; let up = 0;
   while (p.lv < PET_LV_MAX && p.xp >= petNeedXP(p.lv)) { p.xp -= petNeedXP(p.lv); p.lv++; up++; }
   if (up) { petLvUp(p); petSave(true); if (V.name === 'pet' && !PETS.game) setTimeout(render, 50); } else setTimeout(petPaint, 30); return n; }
-function petLvUp(p){ const news = Object.entries(PET_DECO).flatMap(([s, o]) => Object.entries(o).filter(([, x]) => x.lv === p.lv).map(([, x]) => x.n));
+function petLvUp(p){ setTimeout(sfxLevel, 300); const news = Object.entries(PET_DECO).flatMap(([s, o]) => Object.entries(o).filter(([, x]) => x.lv === p.lv).map(([, x]) => x.n));
   setTimeout(() => { const el = document.createElement('div'); el.className = 'petlvup'; el.setAttribute('role', 'status');
     el.innerHTML = `<div><small>${esc(tr('Level-Aufstieg'))}</small><b>${esc(p.n)} · ${esc(tr('Level {0}').replace('{0}', p.lv))}</b>${news.length ? `<span>${esc(tr('Neu freigeschaltet'))}: ${news.map(x => esc(tr(x))).join(', ')}</span>` : ''}</div>`;
     document.body.appendChild(el); requestAnimationFrame(() => el.classList.add('in')); setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 400); }, 3800); }, 300);
@@ -18870,7 +18873,74 @@ function phSkull(ck){ const sk = 'M50 9C70 9 87 25 86 46C86 56 82 63 76 68V76C76
     <g class="phtop"><g clip-path="url(#phctop)">${body}</g></g><g class="phbot"><g clip-path="url(#phcbot)">${body}</g></g>
     <clipPath id="phcsk"><path d="${sk}"/></clipPath><g clip-path="url(#phcsk)"><path class="phcrack" filter="url(#phrough)" d="${seam}"/>
     <path class="phstitch" filter="url(#phrough)" d="M18 32L22 40M22 32L18 40M30 33L34 41M34 33L30 41M42 31L46 39M46 31L42 39M54 32L58 40M58 32L54 40M66 30L70 38M70 30L66 38M78 32L82 40M82 32L78 40"/></g></svg>`; }
-function petHatch(k){ const K = PET_KINDS[k], parts = Array.from({length:18}, (_, i) => { const a = i / 18 * Math.PI * 2 + Math.random() * .3, d = 130 + Math.random() * 160;
+/* ---------- Töne (seit v901) ----------
+   Inaya: „es fehlen Soundeffekte, gerade beim Begleiter“. Alle Töne entstehen im Browser (WebAudio), es wird nichts geladen.
+   Leise und dunkel-verspielt (Moll, Glocken, weiches Echo). Schalter Einstellungen → Töne (localStorage nf-sfx, '0' = aus).
+   iPhone: audioSession „ambient“, dann sind die Töne bei eingeschaltetem Lautlos-Schalter stumm und Musik anderer Apps läuft weiter. */
+const SFX = {ac:null, out:null, nb:null, last:{}};
+const sfxOn = () => { try { return localStorage.getItem('nf-sfx') !== '0'; } catch { return true; } };
+function sfxCtx(){ if (!sfxOn()) return null; const ac0 = SFX.ac; if (ac0) { if (ac0.state !== 'running') ac0.resume?.().catch(() => {}); return ac0; }
+  try { if (navigator.audioSession) navigator.audioSession.type = 'ambient'; } catch {}
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+  try { const ac = new AC(), out = ac.createGain(), dl = ac.createDelay(1), fb = ac.createGain(), wet = ac.createGain(), lp = ac.createBiquadFilter();
+    out.gain.value = 1; dl.delayTime.value = .16; fb.gain.value = .25; wet.gain.value = .2; lp.type = 'lowpass'; lp.frequency.value = 2400;
+    out.connect(ac.destination); out.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(ac.destination);
+    SFX.ac = ac; SFX.out = out; ac.resume?.().catch(() => {}); return ac; } catch { return null; } }
+/* Im Antippen freischalten (sonst bleibt es am iPhone stumm): auf Begleiter-Seiten und in der Begleiter-Auswahl */
+document.addEventListener('pointerdown', () => { if (SFX.ac || (sfxOn() && (/^pet/.test(document.body.dataset.pg || '') || /^pet/.test(V?.name || '') || document.querySelector('.ppick, #phatch')))) sfxCtx(); }, true);
+const sfxGap = (k, ms) => { const n = performance.now(); if (n - (SFX.last[k] || 0) < ms) return false; SFX.last[k] = n; return true; };
+function sfxNoise(ac){ if (SFX.nb) return SFX.nb; const n = ac.sampleRate * 2, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; return SFX.nb = b; }
+function sfxEnv(ac, g, t, v, a, d){ g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(.0002, v), t + a); g.gain.exponentialRampToValueAtTime(.0001, t + d); }
+/* Ton: Oszillator von f0 nach f1 in d Sekunden (o.at Verzögerung, o.w Wellenform, o.v Lautstärke, o.a Anschlag, o.lp Tiefpass) */
+function sfxT(ac, f0, f1, d, o = {}){ const t = ac.currentTime + (o.at || 0), os = ac.createOscillator(), g = ac.createGain(); os.type = o.w || 'sine';
+  os.frequency.setValueAtTime(f0, t); if (f1 !== f0) os.frequency.exponentialRampToValueAtTime(f1, t + (o.fd || d)); sfxEnv(ac, g, t, o.v ?? .3, o.a ?? .01, d);
+  let n = os; if (o.lp) { const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp; os.connect(f); n = f; } n.connect(g); g.connect(SFX.out); os.start(t); os.stop(t + d + .05); }
+/* Rauschen durch einen Filter (o.ft Art, o.f Frequenz, o.f1 Ziel, o.q Güte) */
+function sfxN(ac, d, o = {}){ const t = ac.currentTime + (o.at || 0), src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(); src.buffer = sfxNoise(ac);
+  f.type = o.ft || 'bandpass'; f.frequency.setValueAtTime(o.f || 1000, t); if (o.f1) f.frequency.exponentialRampToValueAtTime(o.f1, t + d); f.Q.value = o.q ?? 1; sfxEnv(ac, g, t, o.v ?? .3, o.a ?? .005, d);
+  src.connect(f); f.connect(g); g.connect(SFX.out); src.start(t, Math.random() * 1.5); src.stop(t + d + .05); }
+/* Glocke: Grundton + leise Obertöne, klingt lange aus */
+function sfxBell(ac, f, at, v = .14, d = 1.1){ sfxT(ac, f, f, d, {at, v, a:.004, w:'triangle'}); sfxT(ac, f * 2, f * 2, d * .6, {at, v:v * .35, a:.004}); sfxT(ac, f * 3.01, f * 3.01, d * .35, {at, v:v * .15, a:.004}); }
+/* Schnurren: brummende Säge, im Takt von etwa 22 Hz lauter und leiser */
+function sfxPurr(ac, d = 1.3, v = .32, at = 0){ const t = ac.currentTime + at, os = ac.createOscillator(), f = ac.createBiquadFilter(), am = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain(), env = ac.createGain();
+  os.type = 'sawtooth'; os.frequency.setValueAtTime(52, t); os.frequency.linearRampToValueAtTime(46, t + d); f.type = 'lowpass'; f.frequency.value = 700; f.Q.value = 2;
+  am.gain.value = .55; lfo.frequency.value = 22; lg.gain.value = .45; lfo.connect(lg); lg.connect(am.gain);
+  env.gain.setValueAtTime(.0001, t); env.gain.exponentialRampToValueAtTime(v, t + .18); env.gain.setValueAtTime(v, t + d - .3); env.gain.exponentialRampToValueAtTime(.0001, t + d);
+  os.connect(f); f.connect(am); am.connect(env); env.connect(SFX.out); os.start(t); lfo.start(t); os.stop(t + d + .05); lfo.stop(t + d + .05);
+  sfxN(ac, d, {at, ft:'lowpass', f:420, q:.7, v:v * .5, a:.15}); }
+/* Stimme je Begleiter: Katze „mrrp“, Fledermaus Fiepen, Hase Schnuppern, Rabe leises Krächzen */
+function sfxVoice(k, soft){ const ac = sfxCtx(); if (!ac) return; const m = soft ? .55 : 1;
+  if (k === 'katze') { sfxT(ac, 360, 660, .14, {w:'triangle', v:.2 * m, lp:1800}); sfxT(ac, 660, 470, .16, {at:.12, w:'triangle', v:.18 * m, lp:1800}); sfxPurr(ac, .45, .12 * m, .08); }
+  else if (k === 'fled') { sfxT(ac, 2100, 3000, .07, {v:.1 * m}); sfxT(ac, 2500, 3500, .08, {at:.1, v:.09 * m}); if (!soft) sfxT(ac, 2300, 3200, .06, {at:.21, v:.06}); }
+  else if (k === 'hase') { for (let i = 0; i < 3; i++) sfxN(ac, .045, {at:i * .075, f:3200, q:4, v:.22 * m}); sfxT(ac, 880, 660, .12, {at:.24, v:.12 * m, w:'triangle'}); }
+  else if (k === 'rabe') { sfxT(ac, 300, 220, .2, {w:'sawtooth', v:.1 * m, lp:1300, a:.02}); sfxN(ac, .18, {f:900, q:2, v:.12 * m, a:.02}); if (!soft) sfxT(ac, 280, 210, .16, {at:.26, w:'sawtooth', v:.07, lp:1200, a:.02}); }
+  else sfxT(ac, 600, 800, .1, {v:.12 * m}); }
+const sfxTap = k => { if (sfxGap('tap', 220)) sfxVoice(k); };
+/* Streicheln: Katze schnurrt, solange man streichelt, die anderen machen ab und zu leise ihren Laut */
+function sfxStroke(k){ const ac = sfxCtx(); if (!ac) return; if (k === 'katze') { if (sfxGap('purr', 1150)) sfxPurr(ac, 1.35, .2); return; }
+  if (sfxGap('strk', 1500)) sfxVoice(k, true); if (sfxGap('heart', 260)) sfxT(ac, 1250 + Math.random() * 300, 1700, .09, {v:.05}); }
+/* Füttern: Plopp, wenn das Essen im Mund landet, dann Knuspern */
+function sfxFeed(k, fav){ const ac = sfxCtx(); if (!ac) return; sfxT(ac, 320, 110, .14, {at:.78, v:.28}); [.9, 1.08, 1.27, 1.48].forEach((at, i) => sfxN(ac, .07, {at, f:2200 + Math.random() * 1200, q:.9, v:.2 - i * .03}));
+  if (fav) setTimeout(() => sfxVoice(k, true), 1550); }
+/* Baden: Bläschen beim Einschäumen, Rauschen und Tropfen beim Abspülen, Funkeln wenn sauber */
+function sfxBubble(){ const ac = sfxCtx(); if (!ac || !sfxGap('bub', 90)) return; const f = 380 + Math.random() * 360; sfxT(ac, f, f * 2.6, .06, {v:.13, a:.004}); }
+function sfxRinse(){ const ac = sfxCtx(); if (!ac) return; sfxN(ac, 1.2, {ft:'lowpass', f:3200, f1:500, q:.6, v:.18, a:.08}); for (let i = 0; i < 6; i++) { const f = 1100 + Math.random() * 700; sfxT(ac, f, f * .55, .06, {at:.15 + i * .17 + Math.random() * .06, v:.08}); } }
+function sfxClean(){ const ac = sfxCtx(); if (!ac) return; [1318.5, 1760, 2093].forEach((f, i) => sfxBell(ac, f, i * .07, .06, .7)); }
+/* Schlafen: absteigendes Schlaflied und ein leises Schnarchen; Aufwecken: aufsteigend */
+function sfxSleep(){ const ac = sfxCtx(); if (!ac) return; [659.25, 523.25, 440].forEach((f, i) => sfxBell(ac, f, i * .28, .1, 1.1)); sfxN(ac, 1.4, {at:1, ft:'lowpass', f:260, f1:700, q:1.4, v:.12, a:.9}); }
+function sfxWake(k){ const ac = sfxCtx(); if (!ac) return; [440, 523.25, 659.25].forEach((f, i) => sfxBell(ac, f, i * .09, .09, .7)); setTimeout(() => sfxVoice(k), 330); }
+/* Spiele: Fangen wird mit jedem Treffer etwas höher (Moll-Pentatonik), am Ende ein kleines Motiv */
+const SFX_PENTA = [440, 523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.5, 1567.98, 1760];
+function sfxCatch(n, treat){ const ac = sfxCtx(); if (!ac) return; const f = SFX_PENTA[Math.min(SFX_PENTA.length - 1, (n - 1) % 11)]; if (treat) sfxT(ac, 260, 120, .1, {v:.18}); sfxT(ac, f, f, .22, {w:'triangle', v:.14, a:.004}); sfxT(ac, f * 2, f * 2, .12, {v:.04, a:.004}); }
+function sfxGameEnd(n){ const ac = sfxCtx(); if (!ac) return; (n >= PGAME_MIN ? [440, 523.25, 659.25, 880] : [523.25, 440]).forEach((f, i) => sfxBell(ac, f, i * .12, .11, .9)); }
+/* Level-Aufstieg: Glockenspiel nach oben mit Glitzern */
+function sfxLevel(){ const ac = sfxCtx(); if (!ac) return; [659.25, 880, 1046.5, 1318.5].forEach((f, i) => sfxBell(ac, f, i * .11, .13, 1.4)); sfxN(ac, .9, {at:.35, ft:'highpass', f:6000, q:.5, v:.05, a:.2}); }
+/* Schlüpfen: Knacken an der Naht, dann Aufreißen mit Glocken und der erste Laut */
+function sfxHatch(k){ const ac = sfxCtx(); if (!ac) return; [.5, .95, 1.35, 1.7, 2.05, 2.35].forEach((at, i) => sfxN(ac, .05, {at, ft:'highpass', f:1800 + i * 200, q:.7, v:.12 + i * .03}));
+  sfxN(ac, .8, {at:2.75, ft:'bandpass', f:500, f1:3500, q:.8, v:.1, a:.05}); [440, 523.25, 659.25, 880, 1046.5].forEach((f, i) => sfxBell(ac, f, 2.85 + i * .09, .1, 1.2)); setTimeout(() => sfxVoice(k), 3500); }
+/* Einstellungen: kurzer Ton beim Einschalten */
+const sfxTest = () => { const ac = sfxCtx(); if (ac) [523.25, 659.25].forEach((f, i) => sfxBell(ac, f, i * .1, .1, .8)); };
+function petHatch(k){ sfxHatch(k); const K = PET_KINDS[k], parts = Array.from({length:18}, (_, i) => { const a = i / 18 * Math.PI * 2 + Math.random() * .3, d = 130 + Math.random() * 160;
     return `<i class="php" style="--dx:${Math.round(Math.cos(a) * d)}px;--dy:${Math.round(Math.sin(a) * d)}px;--r:${Math.round(Math.random() * 360)}deg;--d:${(Math.random() * .25).toFixed(2)}s">${PH_DOODLE[i % 4](K.ck || K.glow)}</i>`; }).join('');
   document.getElementById('phatch')?.remove(); const el = document.createElement('div'); el.id = 'phatch'; el.className = `phatch pk-${k}`; el.style.setProperty('--pg', K.glow);
   el.innerHTML = `<div class="phrays"></div><div class="phorb">${phSkull(K.ck || K.glow)}</div><div class="phflash"></div><div class="phring"></div><div class="phparts">${parts}</div>
@@ -18955,7 +19025,7 @@ function petFoamAt(cx, cy){ const b = PETS.bath, sc = document.getElementById('p
   const r = f.getBoundingClientRect(); if (cx < r.left + r.width * .12 || cx > r.right - r.width * .12 || cy < r.top + r.height * .1 || cy > r.bottom - r.height * .05) return;
   const s = sc.getBoundingClientRect(), z = 26 + Math.random() * 22, e = document.createElement('i'); e.className = 'pfb';
   e.style.cssText = `left:${(cx - s.left) / s.width * 100}%;top:${(cy - s.top) / s.height * 100}%;width:${z}px;height:${z}px`; lay.appendChild(e);
-  if (Math.random() < .35) petFx('bub', '', (cx - s.left) / s.width * 100 + (Math.random() * 10 - 5), (cy - s.top) / s.height * 100 - 6, 1300);
+  sfxBubble(); if (Math.random() < .35) petFx('bub', '', (cx - s.left) / s.width * 100 + (Math.random() * 10 - 5), (cy - s.top) / s.height * 100 - 6, 1300);
   b.n++; const bar = document.querySelector('#pbathbar i'); if (bar) bar.style.width = Math.min(100, b.n / PET_FOAM_N * 100) + '%';
   if (b.n % 5 === 0) petTemp('love', 700);
   if (b.n >= PET_FOAM_N) { b.done = true; setTimeout(() => petBathEnd(true), 450); } }
@@ -18964,7 +19034,7 @@ function petBathEnd(ok){ const b = PETS.bath, p = petMe(), sc = document.getElem
   document.querySelector('.pact[data-act="pet-bath"]')?.classList.remove('on');
   const fin = () => { lay?.remove(); bar?.remove(); sc?.classList.remove('bathing', 'rinse'); if (h && p) h.textContent = petHint(p); };
   if (!ok || !p) return fin();
-  if (h) h.textContent = tr('Abspülen …'); sc?.classList.add('rinse');
+  if (h) h.textContent = tr('Abspülen …'); sc?.classList.add('rinse'); sfxRinse(); setTimeout(sfxClean, 1300);
   for (let i = 0; i < 18; i++) setTimeout(() => petFx('drop', '', 30 + Math.random() * 40, 8 + Math.random() * 20, 900), i * 60);
   petWant('bath'); const v = petVals(p), x = petXP((100 - v.c) / 5); petSet(p, {c:100, p:4}); petSave();
   setTimeout(() => { fin(); petTemp('love', 1200); petPaint(); toast(tr('{0} ist jetzt ganz sauber.').replace('{0}', p.n) + (x ? ` · +${x} XP` : '')); }, 1300); }
@@ -18974,18 +19044,18 @@ document.addEventListener('pointermove', e => { const s = PETS.st; if (!s) retur
   if (PETS.bath) { const d = Math.hypot(e.clientX - s.x, e.clientY - s.y); s.x = e.clientX; s.y = e.clientY; s.moved = true; PETS.bath.d += d; if (PETS.bath.d > 30) { PETS.bath.d = 0; petFoamAt(e.clientX, e.clientY); } return; }
   s.d += Math.hypot(e.clientX - s.x, e.clientY - s.y); s.x = e.clientX; s.y = e.clientY;
   if (s.d > 70) { s.d = 0; s.moved = true; const r = f.getBoundingClientRect(), sc = document.getElementById('pscene').getBoundingClientRect();
-    petFx('heart', PFX_HEART, (e.clientX - sc.left) / sc.width * 100, (e.clientY - sc.top) / sc.height * 100); const full = petVals(p).p >= 99.5; petSet(p, {p:1.5}); if (!full) PETS.stroke++;
+    petFx('heart', PFX_HEART, (e.clientX - sc.left) / sc.width * 100, (e.clientY - sc.top) / sc.height * 100); sfxStroke(p.k); const full = petVals(p).p >= 99.5; petSet(p, {p:1.5}); if (!full) PETS.stroke++;
     if (PETS.stroke % 6 === 0) { taskHit('ps'); if (!full) petXP(1); } /* XP nur, solange Laune nicht voll (Inaya, v657) */ if (PETS.temp !== 'love') petTemp('love', 900); else { clearTimeout(PETS.tempT); PETS.tempT = setTimeout(() => { PETS.temp = ''; petPaint(); }, 900); } petSave(); } });
-document.addEventListener('pointerup', () => { const s = PETS.st; PETS.st = null; if (PETS.bath) return; if (s && !s.moved) { const f = document.getElementById('petfig'); if (f && petMe() && !petMe().sl) { f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop'); petTemp('love', 700); } } });
+document.addEventListener('pointerup', () => { const s = PETS.st; PETS.st = null; if (PETS.bath) return; if (s && !s.moved) { const f = document.getElementById('petfig'); if (f && petMe() && !petMe().sl) { sfxTap(petMe().k); f.classList.remove('hop'); void f.offsetWidth; f.classList.add('hop'); petTemp('love', 700); } } });
 document.addEventListener('pointercancel', () => { PETS.st = null; });
 /* Spielen: einen leuchtenden Nachtfalter fangen (12 Sekunden) */
 function petPlay(){ const p = petMe(); if (!p || PETS.game) return; if (p.sl) return toast(tr('{0} schläft gerade.').replace('{0}', p.n)); const v = petVals(p); if (v.e < 10) return toast(tr('{0} ist zu müde zum Spielen.').replace('{0}', p.n));
   const sc = document.getElementById('pscene'); if (!sc) return; petWant('play'); const g = PETS.game = {n:0, left:12};
   sc.insertAdjacentHTML('beforeend', `<button type="button" class="pmoth" id="pmoth" aria-label="${esc(tr('Nachtfalter fangen'))}"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M20 15C14 3 4 2 2 8c2 6 10 8 18 7zM20 15c6-12 16-13 18-7-2 6-10 8-18 7zM20 15c-5 5-11 9-15 7 1-5 8-7 15-7zM20 15c5 5 11 9 15 7-1-5-8-7-15-7z" fill="#f4e6a8" stroke="#120e16" stroke-width="1.4"/><path d="M20 9v13" stroke="#120e16" stroke-width="2.4" stroke-linecap="round"/></svg></button><div class="pghud" id="pghud"><b>0</b><small>12 s</small></div>`);
   const m = document.getElementById('pmoth'), hud = document.getElementById('pghud'), mv = () => { m.style.left = (8 + Math.random() * 76) + '%'; m.style.top = (8 + Math.random() * 56) + '%'; }; mv();
-  m.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); g.n++; hud.querySelector('b').textContent = g.n; petFx('spark', '✦', parseFloat(m.style.left) + 4, parseFloat(m.style.top) + 4, 700); mv(); petTemp('love', 500); });
+  m.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); g.n++; sfxCatch(g.n); hud.querySelector('b').textContent = g.n; petFx('spark', '✦', parseFloat(m.style.left) + 4, parseFloat(m.style.top) + 4, 700); mv(); petTemp('love', 500); });
   g.mv = setInterval(mv, 950); g.tm = setInterval(() => { g.left--; hud.querySelector('small').textContent = g.left + ' s'; if (g.left > 0) return;
-    clearInterval(g.mv); clearInterval(g.tm); m.remove(); hud.remove(); PETS.game = null; taskHit('pp'); petSet(p, {p:Math.min(40, g.n * 4), e:-Math.min(10, g.n)}); const x = petXP(Math.min(14, g.n + 2)); petSave(); petPaint(); petGameCoins('moth', g.n);
+    clearInterval(g.mv); clearInterval(g.tm); m.remove(); hud.remove(); PETS.game = null; taskHit('pp'); petSet(p, {p:Math.min(40, g.n * 4), e:-Math.min(10, g.n)}); const x = petXP(Math.min(14, g.n + 2)); petSave(); petPaint(); sfxGameEnd(g.n); petGameCoins('moth', g.n);
     /* v711 (Inaya): kein Hinweis nach dem Spielen */ }, 1000); }
 /* v786 (Inaya: „mehr für den Begleiter, Minispiele die Coins geben“): Jedes Begleiter-Spiel gibt einmal am Tag 15 Nocti-Coins + 10 XP (XP-Art g wie die alten Minigames,
    die eingespielten Regeln erlauben dafür mem/ttt/hang/bat: Nachtfalter = bat, Leckerli = mem), ab PGAME_MIN Punkten. */
@@ -19008,14 +19078,14 @@ function petTreatGame(){ const p = petMe(); if (!p || PETS.game) return; if (p.s
     if (now > g.spawn) { g.spawn = now + Math.max(420, 900 - el * 22); const d = document.createElement('i'); d.className = 'ptgfood'; d.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${PET_FOOD_SVG[foods[Math.floor(Math.random() * foods.length)]]}</svg>`;
       const it = {el:d, x:6 + Math.random() * 88, y:-8, v:22 + el * 1.6 + Math.random() * 10}; d.style.left = it.x + '%'; box.appendChild(d); g.items.push(it); }
     for (const it of g.items) { it.y += it.v * dt / 1000; it.el.style.top = it.y + '%';
-      if (!it.done && it.y > 70 && it.y < 84 && Math.abs(it.x - g.x) < 11) { it.done = 1; g.n++; hud.querySelector('b').textContent = g.n; it.el.classList.add('got'); petFx('spark', '✦', it.x, 72, 600); setTimeout(() => it.el.remove(), 250); }
+      if (!it.done && it.y > 70 && it.y < 84 && Math.abs(it.x - g.x) < 11) { it.done = 1; g.n++; sfxCatch(g.n, 1); hud.querySelector('b').textContent = g.n; it.el.classList.add('got'); petFx('spark', '✦', it.x, 72, 600); setTimeout(() => it.el.remove(), 250); }
       else if (it.y > 104) { it.done = 1; it.el.remove(); } }
     g.items = g.items.filter(it => !it.done || it.el.isConnected && it.el.classList.contains('got'));
     requestAnimationFrame(step); };
   requestAnimationFrame(step);
   g.tm = setInterval(() => { g.left--; hud.querySelector('small').textContent = g.left + ' s'; if (g.left > 0) return;
     clearInterval(g.tm); PETS.game = null; document.removeEventListener('keydown', g.kh); document.removeEventListener('keyup', g.kh); box.remove(); hud.remove(); fig.style.visibility = ''; sc.classList.remove('gaming'); taskHit('pp');
-    petSet(p, {f:Math.min(30, g.n * 3), p:Math.min(25, g.n * 2), e:-Math.min(8, g.n)}); petXP(Math.min(14, g.n + 2)); petSave(); petPaint(); petGameCoins('treat', g.n); }, 1000); }
+    petSet(p, {f:Math.min(30, g.n * 3), p:Math.min(25, g.n * 2), e:-Math.min(8, g.n)}); petXP(Math.min(14, g.n + 2)); petSave(); petPaint(); sfxGameEnd(g.n); petGameCoins('treat', g.n); }, 1000); }
 function petAct(a, b){ const p = petMe();
   if (a === 'pet-pick') { PETPICK = b.dataset.v; render(); return; }
   if (a === 'pet-pick-go') { petPickGo(); return; }
@@ -19030,10 +19100,10 @@ function petAct(a, b){ const p = petMe();
   else if (a === 'pet-eat') { if (p.sl) return toast(tr('{0} schläft gerade.').replace('{0}', p.n)); const f = PET_FOOD[b.dataset.v], v = petVals(p); if (!f) return; if (v.f >= 99.5) return; /* v624: nur wenn Satt ganz voll ist (Inaya) */
     petWant('feed'); taskHit('pf'); const fav = PET_KINDS[p.k].fav === b.dataset.v, gain = Math.min(f.f, 100 - v.f); petSet(p, {f:f.f, p:fav ? 8 : 2}); const x = petXP(gain / 4 + (fav ? 3 : 0)); petSave();
     if (petVals(p).f >= 99.5) { const sh = document.querySelector('.psheet'); if (sh) { const h = sh.querySelector(':scope > b'); if (h) h.textContent = tr('{0} ist satt.').replace('{0}', p.n); sh.querySelectorAll('.pfood').forEach(x => x.disabled = true); } } /* v677: sofort grau und „ist satt“, sobald Satt voll ist (Inaya) */
-    petFeedFly(p.k, `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[b.dataset.v]}</svg>`); setTimeout(() => petTemp('eat', 1300), 850); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500);
+    sfxFeed(p.k, fav); petFeedFly(p.k, `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[b.dataset.v]}</svg>`); setTimeout(() => petTemp('eat', 1300), 850); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500);
     setTimeout(petPaint, 1800); if (x) toast(`+${x} XP`); }
   else if (a === 'pet-bath') { if (PETS.bath) return petBathEnd(false); if (PETS.game) return; let rr = !!document.querySelector('.psheet'); if (p.sl) { petSet(p); p.sl = 0; petSave(); rr = true; } PETSHEET = ''; if (rr) render(); petBathStart(); }
-  else if (a === 'pet-sleep') { if (!p.sl) petWant('sleep'); petSet(p); if (p.sl) { p.sl = 0; } else { p.sl = Date.now(); PETSHEET = ''; } petSave(); render(); }
+  else if (a === 'pet-sleep') { if (!p.sl) petWant('sleep'); petSet(p); if (p.sl) { p.sl = 0; sfxWake(p.k); } else { p.sl = Date.now(); PETSHEET = ''; sfxSleep(); } petSave(); render(); }
   else if (a === 'pet-play') { if (PETS.game) return; PETSHEET = PETSHEET === 'play' ? '' : 'play'; render(); }
   else if (a === 'pet-game') { PETSHEET = ''; render(); setTimeout(() => b.dataset.v === 'treat' ? petTreatGame() : petPlay(), 30); }
   else if (a === 'pet-wear') { const sl = b.dataset.s, id = b.dataset.v, x = PET_DECO[sl]?.[id]; if (id && x && p.lv < x.lv) return toast(tr('Gibt es ab Level {0}.').replace('{0}', x.lv));
@@ -19102,17 +19172,17 @@ function pvvHop(){ const f = document.getElementById('petfig'); if (!f) return; 
 function pvvDo(a){ const o = V.arg, st = PVIS[o + '|' + ncDay()]; if (!pvvOk(o) || !st || st[a]) return; pvGo(o, a, null); setTimeout(pvvPaint, 0); }
 function pvvAct(a, b){ const o = V.arg, p = pvvPet(o); if (!p || !pvvOk(o)) return;
   if (a === 'pvv-feed') { PVSHEET = PVSHEET === 'feed' ? '' : 'feed'; render(); return; }
-  if (a === 'pvv-pet') { PVSHEET = ''; if (document.querySelector('.pvpg .psheet')) render(); pvvHop(); [[34, 34], [52, 24], [68, 36], [44, 46], [60, 48]].forEach(([x, y], i) => setTimeout(() => petFx('heart', PFX_HEART, x, y), i * 140)); pvvTemp('love', 1400); pvvDo('pet'); return; }
+  if (a === 'pvv-pet') { PVSHEET = ''; if (document.querySelector('.pvpg .psheet')) render(); sfxVoice(p.k); if (p.k === 'katze') { const ac = sfxCtx(); if (ac) sfxPurr(ac, 1.4, .28, .3); } pvvHop(); [[34, 34], [52, 24], [68, 36], [44, 46], [60, 48]].forEach(([x, y], i) => setTimeout(() => petFx('heart', PFX_HEART, x, y), i * 140)); pvvTemp('love', 1400); pvvDo('pet'); return; }
   if (a === 'pvv-eat') { const st = PVIS[o + '|' + ncDay()], id = b.dataset.v; if (!PET_FOOD[id] || !st || st.feed) return; const fav = PET_KINDS[p.k].fav === id;
-    pvvDo('feed'); petFeedFly(p.k, `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[id]}</svg>`); setTimeout(() => pvvTemp('eat', 1300), 850); setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 40, 26), 1650); setTimeout(() => { if (V.name === 'petv' && PVSHEET === 'feed') { PVSHEET = ''; render(); } }, 2300); } } /* Auswahl geht nach dem Essen zu */
+    pvvDo('feed'); sfxFeed(p.k, true); petFeedFly(p.k, `<svg viewBox="0 0 24 24">${PET_FOOD_SVG[id]}</svg>`); setTimeout(() => pvvTemp('eat', 1300), 850); setTimeout(() => petFx('heart', PFX_HEART, 62, 30), 1500); if (fav) setTimeout(() => petFx('heart', PFX_HEART, 40, 26), 1650); setTimeout(() => { if (V.name === 'petv' && PVSHEET === 'feed') { PVSHEET = ''; render(); } }, 2300); } } /* Auswahl geht nach dem Essen zu */
 /* Streicheln mit Finger oder Maus wie beim eigenen Begleiter; nach ein paar Herzchen zählt es als gestreichelt */
 document.addEventListener('pointerdown', e => { if (V.name !== 'petv' || !e.target.closest?.('#petfig') || !pvvPet(V.arg)) return; PVV.st = {x:e.clientX, y:e.clientY, d:0, moved:false}; try { e.target.closest('#petfig').setPointerCapture?.(e.pointerId); } catch {} });
 document.addEventListener('pointermove', e => { const s = PVV.st; if (!s || V.name !== 'petv') return; const sc = document.getElementById('pscene'); if (!sc) return;
   s.d += Math.hypot(e.clientX - s.x, e.clientY - s.y); s.x = e.clientX; s.y = e.clientY; if (s.d <= 70) return; s.d = 0; s.moved = true;
-  const r = sc.getBoundingClientRect(); petFx('heart', PFX_HEART, (e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 100);
+  const r = sc.getBoundingClientRect(); petFx('heart', PFX_HEART, (e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 100); sfxStroke(pvvPet(V.arg)?.k);
   if (PVV.temp !== 'love') pvvTemp('love', 900); else { clearTimeout(PVV.t); PVV.t = setTimeout(() => { PVV.temp = ''; pvvPaint(); }, 900); }
   if (++PVV.n >= 4) pvvDo('pet'); });
-document.addEventListener('pointerup', () => { const s = PVV.st; PVV.st = null; if (s && !s.moved && V.name === 'petv') { pvvHop(); pvvTemp('love', 700); } });
+document.addEventListener('pointerup', () => { const s = PVV.st; PVV.st = null; if (s && !s.moved && V.name === 'petv') { sfxTap(pvvPet(V.arg)?.k); pvvHop(); pvvTemp('love', 700); } });
 document.addEventListener('pointercancel', () => { PVV.st = null; });
 document.addEventListener('pointerdown', e => { if (V.name !== 'petv' || !PVSHEET || !document.querySelector('.pvpg .psheet')) return; if (e.target.closest('.psheet, [data-act]')) return; PVSHEET = ''; render(); }, true);
 document.addEventListener('change', e => { if (e.target.classList?.contains('prpick')) petRoomSet(e.target.dataset.k, e.target.value); });
