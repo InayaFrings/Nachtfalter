@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='32ae2d051cfa';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3111890279bc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3262,6 +3262,7 @@ body.lvfon{overflow:hidden}
 .pcrl{flex:1 1 auto;min-width:0}.pcrv{flex:0 1 auto;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--p-muted,var(--muted));font-size:14px}
 .pcrc{display:grid;font-style:normal}.pcrc svg{width:18px;height:18px;opacity:.55}
 .pcrow:hover,.pcrow:active{background:color-mix(in srgb,var(--p-fg,#eeedf2) 7%,transparent)}
+.pcaud{display:flex;justify-content:flex-end;margin-bottom:-4px}.pcaud .paudb{margin-left:0}
 .pcff{flex:none;padding:10px 14px 12px;border-top:1px solid var(--line);background:#0a0a0b}.pcff .pcshare{display:block;width:100%;min-height:50px;font-size:17px}
 </style>
 
@@ -11243,6 +11244,7 @@ function paintCompose(){
   const box = document.getElementById('patts'); if (box) box.innerHTML = composeAtt();
   const h = document.getElementById('pchero'); if (h) h.innerHTML = pcHeroHTML();
   const r = document.getElementById('pcrows'); if (r) r.innerHTML = pcRowsHTML();
+  const au = document.getElementById('pcaud'); if (au) au.innerHTML = pcAudHTML();
   const a = document.getElementById('paud'); if (a) a.value = aud();
 }
 // Handy: nur ein Feld mit Plus, Tippen öffnet den Editor als eigene Seite über den ganzen Bildschirm (Inaya, 2026-10-12)
@@ -11265,18 +11267,19 @@ function pcHeroHTML(){
 document.addEventListener('input', e => { if (e.target.id !== 'purl') return; const v = document.querySelector('.pcrow[data-v=video]'); if (!v) return; let h = ''; try { h = new URL(e.target.value.trim()).hostname.replace(/^www\./, ''); } catch {} let el = v.querySelector('.pcrv'); if (!h) { el?.remove(); return; } if (!el) { el = document.createElement('small'); el.className = 'pcrv'; el.dataset.raw = ''; v.querySelector('.pcrc').before(el); } el.textContent = h; });
 function pcRowsHTML(){
   const row = (k, ic, l, v, at, inner) => `<label class="pcrow${v ? ' on' : ''}" data-v="${k}" ${at || ''}><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg><span class="pcrl">${l}</span>${v ? `<small class="pcrv" data-raw>${esc(v)}</small>` : ''}<i class="pcrc">${PC_CHEV}</i>${inner || ''}</label>`, B = a => `data-act="${a}" role="button" tabindex="0"`;
-  const nm = PCR?.items.length || (postCrop || (PVIDEO && !PVIDEO.busy) ? 1 : 0), url = document.getElementById('purl')?.value || PURLV || '';
+  const url = document.getElementById('purl')?.value || PURLV || '';
   let host = ''; try { host = url ? new URL(url).hostname.replace(/^www\./, '') : ''; } catch {}
-  return [navigator.mediaDevices?.getUserMedia ? row('kam', CICO.kam, 'Kamera', '', B('pc-cam')) : '',
-    row('foto', CICO.foto, 'Fotos und Videos', nm ? String(nm) : '', '', '<input id="pfile" type="file" accept="image/*,video/*" multiple hidden>'),
-    row('stk', CICO.gif, 'GIF', PSG ? tr(sgIsGif(PSG) ? 'GIF' : 'Sticker') : '', B('psg-open')),
+  return [row('stk', CICO.gif, 'GIF', PSG ? tr(sgIsGif(PSG) ? 'GIF' : 'Sticker') : '', B('psg-open')),
     row('video', CICO.video, 'Link', PLINK ? host : '', B('plink')),
     row('tag', CICO.tag, 'Personen markieren', PTAGS.map(t => t.n).join(', '), B('ptag-open')),
     muPickOK() || PMU || PAUDIO ? row('musik', CICO.musik, 'Musik', PMU ? [PMU.a, PMU.t].filter(Boolean).join(' · ') : PAUDIO ? PAUDIO.name : '', B('pmu-open')) : '',
-    social ? row('aud', PC_AUD[aud()], 'Wer sieht das?', tr(aud() === 'pub' ? 'Öffentlich' : 'Nur Freunde'), B('paud-tog')) : ''].join(''); }
+  ].join(''); }
+/* v897 (Inaya): Öffentlich/Nur Freunde wieder oben rechts im Beitrag, Kamera und Fotos/Videos nur noch über das große Feld oben */
+const pcAudHTML = () => social ? `<button type="button" class="paudb" data-act="paud-tog" aria-label="Wer sieht das? Antippen zum Umschalten"><svg viewBox="0 0 24 24" aria-hidden="true">${PC_AUD[aud()]}</svg>${aud() === 'pub' ? 'Öffentlich' : 'Nur Freunde'}<i aria-hidden="true">▾</i></button>` : '';
 function composeHTML(){
   const mt = me()?.theme, pt = mt && mt.box ? postTheme(normTheme({...mt})) : ''; // Feld sieht schon aus wie der fertige Beitrag (Inaya, 2026-10-11)
   return `      <form data-form="post" id="pform" class="pform pcins${pt ? ' tp' : ''}" style="display:grid;gap:14px;${pt}">
+        ${social ? `<div class="pcaud" id="pcaud">${pcAudHTML()}</div>` : ''}
         <div id="pchero" class="pchero">${pcHeroHTML()}</div>
         <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text">${esc(PTXT)}</textarea></div>
         <div class="mnlist" id="pmsug" hidden></div>
