@@ -25,7 +25,16 @@ service cloud.firestore {
       allow delete: if me(uid) || isOwner(); }
     // nur Unterordner (z. B. e2ee); {rest=**} allein würde auch das Profil selbst treffen und die Bildprüfung aushebeln
     match /profiles/{uid}/{sub}/{rest=**} { allow read: if invited(); allow write: if me(uid); }
-    match /handles/{uid} { allow read: if invited(); allow create, update: if me(uid) && notBanned(); allow delete: if me(uid) || isOwner(); }
+    // v928: Abo-Abzeichen (ab = Ablauf des Abos) nur, wenn es zum Abo in subs/<uid> passt
+    function abOk(uid) { return !('ab' in request.resource.data) || request.resource.data.ab == 0 || (resource != null && resource.data.get('ab', 0) == request.resource.data.ab)
+      || (exists(/databases/$(database)/documents/subs/$(uid)) && get(/databases/$(database)/documents/subs/$(uid)).data.e == request.resource.data.ab); }
+    match /handles/{uid} { allow read: if invited(); allow create, update: if me(uid) && notBanned() && abOk(uid); allow delete: if me(uid) || isOwner(); }
+    // v928: Abo-Status {p: plus|premium, e: Ablauf ms, ps: Beginn des bezahlten Zeitraums ms, src}. Schreibt nur der Server (Cloud Function nach Stripe, Admin-SDK);
+    // Inaya darf sich zum Testen selbst ein Test-Abo geben
+    match /subs/{uid} { allow read: if me(uid) || isOwner();
+      allow create, update: if isOwner() && me(uid) && request.resource.data.src == 'test' && request.resource.data.p in ['plus', 'premium']
+        && request.resource.data.e is int && request.resource.data.ps is int && request.resource.data.keys().hasOnly(['p', 'e', 'ps', 'src']);
+      allow delete: if isOwner() && me(uid); }
     match /friends/{uid} { allow read: if invited(); allow write: if me(uid); allow delete: if isOwner(); }
 
     // Einladungslinks: jeder Link gilt nur einmal
@@ -212,9 +221,16 @@ service cloud.firestore {
     function lvOk(l, x) { return l is int && l >= 1 && l <= 50 && lvT(l) <= x && (l == 50 || x < lvT(l + 1)); } // höchstens Level 50
     function lvC(l) { return 30 * (l - 1) + 100 * math.floor(l / 5); }
     function lvC2(l) { return 100 * (l - 1) + 300 * math.floor(l / 5); } // seit v677: 100 je Level, +300 alle 5 Level
-    function lvC4(l) { return [0, 0, 155, 355, 560, 790, 1025, 1280, 1575, 1875, 2180, 2510, 2845, 3225, 3610, 4020, 4435, 4870, 5345, 5825, 6310, 6820, 7335, 7895, 8460, 9050, 9645, 10260, 10915, 11575, 12240, 12930, 13625, 14365, 15110, 15880, 16655, 17450, 18285, 19125, 19970, 20840, 21715, 22635, 23560, 24510, 25465, 26440, 27455, 28475, 29500][l]; } // seit v681: Tabelle, je Level 155 bis 1025 Coins, unterschiedlich große Schritte
+    function lvC4(l) { return [0, 0, 155, 355, 560, 790, 1025, 1280, 1575, 1875, 2180, 2510, 2845, 3225, 3610, 4020, 4435, 4870, 5345, 5825, 6310, 6820, 7335, 7895, 8460, 9050, 9645, 10260, 10915, 11575, 12240, 12930, 13625, 14365, 15110, 15880, 16655, 17450, 18285, 19125, 19970, 20840, 21715, 22635, 23560, 24510, 25465, 26440, 27455, 28475, 29500][l]; }
+    function lvD4(a, b) { let t = [0, 0, 155, 355, 560, 790, 1025, 1280, 1575, 1875, 2180, 2510, 2845, 3225, 3610, 4020, 4435, 4870, 5345, 5825, 6310, 6820, 7335, 7895, 8460, 9050, 9645, 10260, 10915, 11575, 12240, 12930, 13625, 14365, 15110, 15880, 16655, 17450, 18285, 19125, 19970, 20840, 21715, 22635, 23560, 24510, 25465, 26440, 27455, 28475, 29500]; return t[a] - t[b]; } // v928: Tabelle nur einmal anlegen (spart Ausdrücke) // seit v681: Tabelle, je Level 155 bis 1025 Coins, unterschiedlich große Schritte
     function lvC3(l) { return 100 * (l - 1) + 5 * (l - 1) * (l - 2); } // seit v679: Level 2 = 100, jedes weitere Level 10 mehr (Level 50 = 580)
-    function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && (N().c == W().c + coins + lvC4(N().l) - lvC4(W().l) || N().c == W().c + coins + lvC3(N().l) - lvC3(W().l) || N().c == W().c + coins + lvC2(N().l) - lvC2(W().l) || N().c == W().c + coins + lvC(N().l) - lvC(W().l)); }
+    // v928: ohne Levelaufstieg zuerst der einfache Vergleich (die Level-Tabellen kosten über 100 Ausdrücke)
+    function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && ((N().l == W().l && N().c == W().c + coins) || N().c == W().c + coins + lvD4(N().l, W().l) || N().c == W().c + coins + lvC3(N().l) - lvC3(W().l) || N().c == W().c + coins + lvC2(N().l) - lvC2(W().l) || N().c == W().c + coins + lvC(N().l) - lvC(W().l)); }
+    // v928: Abo. op.m = 2 verdoppelt Coins und XP der Tagesbelohnung, Aufgaben und Spiele sowie alle anderen XP, nur mit laufendem Abo
+    function subP() { return /databases/$(database)/documents/subs/$(request.auth.uid); }
+    function aboOk() { return exists(subP()) && get(subP()).data.e > request.time.toMillis(); }
+    // ohne op.m bleibt es bei einem einzigen Vergleich (die Besuchs-XP liegen nah an der Grenze von 1000 Ausdrücken)
+    function gainM(xp, coins, c2) { return !('m' in N().op) ? gain(xp, coins) : (N().op.m == 2 && aboOk() && gain(xp * 2, c2)); }
     function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2, 'b': 40, 'v': 10, 'w': 5}[k]; }
     function xc(k) { return k == 'g' ? 15 : k == 'b' ? 50 : 0; } // b = Begleiter-Levelaufstieg (seit v677)
     function xcap(k) { return {'f': 5, 'p': 3, 'l': 10, 'c': 8, 'g': 4, 'j': 3, 'k': 1, 'm': 10, 'b': 3, 'v': 3, 'w': 5}[k]; } // v754: v = Begleiter von Freunden besucht, w = eigener Begleiter wurde besucht
@@ -247,7 +263,7 @@ service cloud.firestore {
     function xpOp(op) { let k = op.k; let ref = op.ref;
       return k in ['f', 'p', 'l', 'c', 'g', 'j', 'k', 'm', 'b', 'v', 'w'] && ref is string && ref.size() > 0 && ref.size() < 160
         && N().diff(W()).affectedKeys().hasOnly(['x', 'l', 'c', 'xd', 'fx', 'gx', 'op']) && N().inv == W().inv && N().dd == W().dd
-        && gain(xv(k), xc(k)) && xpProof(op)
+        && gainM(xv(k), xc(k), xc(k) * (k == 'g' ? 2 : 1)) && xpProof(op)
         && (k == 'f' ? (!(ref in W().fx) && N().fx.diff(W().fx).affectedKeys().hasOnly([ref]) && N().gx == W().gx && xdOk(k, ''))
           : (k == 'j' || k == 'k' || k == 'b') ? (!((k + ref) in W().gx) && N().gx.diff(W().gx).affectedKeys().hasOnly([k + ref]) && N().fx == W().fx && xdOk(k, ''))
           : (N().fx == W().fx && N().gx == W().gx && xdOk(k, k + ':' + (k == 'm' ? op.d : ref)))); }
@@ -282,10 +298,10 @@ service cloud.firestore {
           && N().inv.diff(W().inv).removedKeys().size() == 0 && N().inv.diff(W().inv).changedKeys().size() == 0
           && N().inv.diff(W().inv).addedKeys().size() <= 150 && N().inv.diff(W().inv).addedKeys().difference(hadSet()).size() == 0)
         // Tagesbelohnung: einmal je Tag 25 Coins und 20 XP
-        || (N().op.t == 'daily' && W().dd < today() && N().dd == today() && gain(20, 25)
+        || (N().op.t == 'daily' && W().dd < today() && N().dd == today() && gainM(20, 25, 50)
           && N().diff(W()).affectedKeys().hasOnly(['c', 'x', 'l', 'dd', 'op']))
         // v754: tägliche Aufgabe abholen, 30 Coins und 10 XP
-        || (N().op.t == 'task' && tdOk(N().op.i) && gain(10, 30) && N().diff(W()).affectedKeys().hasOnly(['c', 'x', 'l', 'td', 'op']))
+        || (N().op.t == 'task' && tdOk(N().op.i) && gainM(10, 30, 60) && N().diff(W()).affectedKeys().hasOnly(['c', 'x', 'l', 'td', 'op']))
         // XP (bei Minigames auch Coins) für eine echte Aktivität
         || (N().op.t == 'xp' && xpOp(N().op))
         // Kaufen: ein oder mehrere Teile (Einkaufstasche), Preise aus site/prices
@@ -305,7 +321,10 @@ service cloud.firestore {
           && getAfter(giftDoc(N().op.g)).data.st == 'taken' && N().diff(W()).affectedKeys().hasOnly(['c', 'inv', 'op'])
           && (!(get(giftDoc(N().op.g)).data.i in W().inv)
             ? (N().c == W().c && invAdded([get(giftDoc(N().op.g)).data.i]))
-            : (N().inv == W().inv && N().c == W().c + price(get(giftDoc(N().op.g)).data.i)))));
+            : (N().inv == W().inv && N().c == W().c + price(get(giftDoc(N().op.g)).data.i))))
+        // v928: Monats-Coins im Abo, je bezahltem Zeitraum (ps) einmal: Plus 1200, Premium 2200
+        || (N().op.t == 'abo' && aboOk() && N().ab == get(subP()).data.ps && W().get('ab', 0) != N().ab
+          && N().c == W().c + (get(subP()).data.p == 'premium' ? 2200 : 1200) && N().diff(W()).affectedKeys().hasOnly(['c', 'ab', 'op'])));
       // Owner (Inaya) kann einzelnen Mitgliedern Coins schenken (Einstellungen → Nur für dich als Owner), höchstens 10.000 auf einmal
       allow update: if isOwner() && N().op is map && N().op.t == 'grant' && N().op.n is int && N().op.n > 0 && N().op.n <= 10000
         && N().c == W().c + N().op.n && N().diff(W()).affectedKeys().hasOnly(['c', 'op']);
