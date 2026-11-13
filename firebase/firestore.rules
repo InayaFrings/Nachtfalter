@@ -329,6 +329,9 @@ service cloud.firestore {
         || (N().op.t == 'abo' && exists(subP()) && get(subP()).data.e > request.time.toMillis() && N().ab == get(subP()).data.ps && W().get('ab', 0) != N().ab
           && N().c == W().c + (get(subP()).data.p == 'premium' ? 2200 : 1200) && N().diff(W()).affectedKeys().hasOnly(['c', 'ab', 'op']))
         // v930: Premium-Shirt einmal ins Inventar, solange Premium läuft (bleibt nach der Kündigung)
+        // v933: Monats-Paket im Abo (Sticker-Paket pk:…, Kleidung, Möbel): genau die Einträge aus site/abo.d[<JJJJMM>] für den laufenden Monat (UTC)
+        || (N().op.t == 'abomo' && aboOk() && N().op.m is string && N().op.m == string(request.time.year() * 100 + request.time.month())
+          && invAdded(get(/databases/$(database)/documents/site/abo).data.d[N().op.m]) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op']))
         || (N().op.t == 'abosh' && (isOwner() || (aboOk() && get(subP()).data.p == 'premium')) && invAdded(['abo_premium']) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op'])));
       // Owner (Inaya) kann einzelnen Mitgliedern Coins schenken (Einstellungen → Nur für dich als Owner), höchstens 10.000 auf einmal
       allow update: if isOwner() && N().op is map && N().op.t == 'grant' && N().op.n is int && N().op.n > 0 && N().op.n <= 10000
