@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8459c6431994';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='226bd60f5173';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -535,7 +535,7 @@ body.stopen{overflow:hidden}.storyov{position:fixed;inset:0;z-index:3000;backgro
 /* Profilbild in der Mitgliederliste (Inaya, 2026-10-15) */
 .gmwho{display:flex;align-items:center;gap:12px}.gmwho>span{min-width:0}.gmav{width:42px;height:42px;padding:0;cursor:pointer}.gmav svg,.gmav img{width:100%;height:100%;display:block}
 .iconb,.btn.iconb{width:46px;padding:0;min-width:0;display:inline-grid;place-items:center;align-self:stretch;min-height:40px}.iconb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}.gdel{border:1px solid var(--fg);padding:12px;display:grid;gap:10px}
-.pz{display:flex;flex-wrap:wrap;gap:16px}.pfr .pz{justify-content:center}.pfr .pz .m{text-align:center}@media all /*760*/{.plinks{justify-content:center}}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
+.pz{display:flex;flex-wrap:wrap;gap:16px}.pfr .pz{justify-content:center}.pfr .pz .m{text-align:center}.pfr .pz{gap:12px 8px}.pfr .pz .m{width:76px;min-width:0;display:grid;justify-items:center;align-content:start;gap:4px}.pfr .pz .m>.uname{max-width:100%;min-width:0;display:flex;justify-content:center;align-items:center}.pfr .pz .m>.uname>.lnk{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} /* v927: gleich breit, damit sie mittig nebeneinander stehen, egal wie lang der Name ist */@media all /*760*/{.plinks{justify-content:center}}.pfr{display:grid;gap:10px}.pfr .lbl{margin:0}.pzc{padding:0;cursor:pointer}
 .pz .m{display:grid;justify-items:center;gap:4px;font-size:15px}
 .pz .cameo{width:58px;height:58px;border-color:var(--p-line)}
 .ptabs{display:flex;gap:22px;border-bottom:1px solid var(--p-line);flex-wrap:wrap}
@@ -11929,7 +11929,10 @@ let bestOpen = false;
 /* Beste Freunde und Partner (seit v582, Inaya): 3 beste Freunde (Stern) und 1 Partner (Herz), klein neben dem Profilbild */
 const BF_ICO = {p:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.9c0 5.4-7.5 10-7.5 10z"/></svg>',
   b:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.3l2.65 5.4 5.95.85-4.3 4.2 1 5.9L12 16.85 6.7 19.65l1-5.9-4.3-4.2 5.95-.85z"/></svg>'};
+/* v927 (Inaya: „3 von 3, aber es sind nur 2“): beste Freunde und Partner, die keine Freunde mehr sind, zählen nicht und fliegen raus, sobald die Freundesliste geladen ist */
+function bestClean(){ if (!FR.synced) return false; const b0 = S.best || [], ok = id => isFriend(id) || !!S.users[id]?.helper, b = b0.filter(id => ok(id) && id !== S.partner).slice(0, 3), pa = S.partner && ok(S.partner) ? S.partner : ''; const ch = b.length !== b0.length || pa !== (S.partner || ''); S.best = b; S.partner = pa; return ch; }
 function bestPicker(){
+  if (bestClean()) { save(); setTimeout(publishProfile, 0); }
   const fr = Object.values(S.users).filter(f => f.remote && isFriend(f.id)).sort((a, b) => a.name.localeCompare(b.name)), best = (S.best || []).slice(0, 3), pa = S.partner || '';
   return `<div class="bestpick"><div class="rsheet-h"><b>${esc(tr('Beste Freunde und Partner'))}</b><button type="button" class="lnk" data-act="best-open">${esc(tr('Fertig'))}</button></div>
     <p class="note bfnote"><span class="bfi p">${BF_ICO.p}</span> ${esc(tr('Partner (1)'))} · <span class="bfi b">${BF_ICO.b}</span> ${esc(tr('Beste Freunde ({0} von 3)').replace('{0}', best.length))}</p>
@@ -19696,8 +19699,8 @@ document.addEventListener('click', async e => {
     save(); render(); toast(`${i.name} gekauft. Es liegt jetzt in deiner Garderobe.`);
   }
   else if (a === 'best-open') { bestOpen = !bestOpen; render(); }
-  else if (a === 'best-tog') { const l = (S.best || []).filter(x => x !== S.partner).slice(0, 3); S.best = l.includes(id) ? l.filter(x => x !== id) : l.length < 3 ? [...l, id] : l; if (S.partner === id && S.best.includes(id)) S.partner = ''; save(); publishProfile(); render(); }
-  else if (a === 'partner-tog') { S.partner = S.partner === id ? '' : id; if (S.partner) S.best = (S.best || []).filter(x => x !== id); save(); publishProfile(); render(); }
+  else if (a === 'best-tog') { bestClean(); const l = (S.best || []).filter(x => x !== S.partner).slice(0, 3); S.best = l.includes(id) ? l.filter(x => x !== id) : l.length < 3 ? [...l, id] : l; if (S.partner === id && S.best.includes(id)) S.partner = ''; save(); publishProfile(); render(); }
+  else if (a === 'partner-tog') { bestClean(); S.partner = S.partner === id ? '' : id; if (S.partner) S.best = (S.best || []).filter(x => x !== id); save(); publishProfile(); render(); }
   else if (a === 'rposeopen') { rPoseOpen = !rPoseOpen; render(); }
   else if (a === 'rpose') {
     RM.me.pose = b.dataset.v; document.querySelectorAll('[data-act=rpose]').forEach(x => x.setAttribute('aria-pressed', x === b));
