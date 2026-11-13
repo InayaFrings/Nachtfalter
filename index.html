@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='85a602e7c4a3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='cace828c2bbe';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10728,6 +10728,12 @@ const camStops = () => { const L = CAMZ, c = L.cap, r = []; if (c) { if (c.min <
   else { if (L.uw) r.push(.5); r.push(1, 2); } return r; };
 const camRange = () => { const L = CAMZ, c = L.cap; return c ? [c.min, Math.min(c.max, 10)] : [L.uw ? .5 : 1, 4]; };
 const camFmt = v => (Math.round(v * 10) / 10).toString().replace('.', LANG === 'en' ? '.' : ',');
+/* v917 (Inaya): Doppeltippen in den Sucher dreht die Kamera (vorn/hinten), nicht während einer Aufnahme und nicht mit zwei Fingern */
+const CAMDT = {t:0, x:0, y:0, n:0};
+document.addEventListener('pointerdown', e => { if (e.isPrimary) CAMDT.n = 1; else CAMDT.n = 2; }, true);
+document.addEventListener('pointerup', e => { if (!e.isPrimary || CAMDT.n > 1 || !e.target.closest?.('.stcvf') || stCam?.mode !== 'cam' || !stCam.stream || stRec || stCam.noCam) return;
+  const now = Date.now(); if (now - CAMDT.t < 320 && Math.hypot(e.clientX - CAMDT.x, e.clientY - CAMDT.y) < 40) { CAMDT.t = 0; stCam.facing = stCam.facing === 'user' ? 'environment' : 'user'; stCamStart(); return; }
+  CAMDT.t = now; CAMDT.x = e.clientX; CAMDT.y = e.clientY; }, true);
 /* v916 (Inaya: vorne wie die Apple-Kamera): Vorderkamera ohne Zahlen, nur ein runder Knopf weit/normal. [weit, normal] */
 const camFront = () => { const [lo, hi] = camRange(); return [lo, Math.min(hi, lo * 1.25)]; };
 const CAM_EXP = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-6.5 6.5M10 20H4v-6M4 20l6.5-6.5"/></svg>', CAM_COL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4l-6 6M14 5v5h5M4 20l6-6M10 19v-5H5"/></svg>';
