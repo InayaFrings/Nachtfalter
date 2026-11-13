@@ -84,3 +84,6 @@ exports.pushFriend = fn.firestore.document('friends/{uid}').onWrite(async (ch, c
     await sendTo(u, 'friends', T => ({tag: 'fr-' + ctx.params.uid, title: mutual ? T.accepted(who) : T.request(who), body: '', link: SITE + '?p=' + encodeURIComponent(ctx.params.uid)})).catch(() => {});
   }
 });
+
+/* v932: Abo über Stripe (aboCheckout, aboWebhook, aboCancel, aboResume) */
+Object.assign(exports, require("./abo"));

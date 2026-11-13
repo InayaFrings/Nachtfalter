@@ -112,6 +112,12 @@
     action, // Ergebnis eines E-Mail-Links (Adresse bestätigt usw.)
     resetEmail: () => RESET ? RESET.email : null,
     email: () => user ? user.email : null,
+    // v932: Cloud Functions aufrufen (aufrufbare Funktionen, z. B. aboCheckout), mit dem Anmelde-Schlüssel der Person
+    async call(name, data){ await ready; if (!user) return {error: 'unauthenticated'}; try {
+      const base = window.NF_FN_BASE || ('https://europe-west3-' + C.config.projectId + '.cloudfunctions.net/');
+      const r = await fetch(base + name, {method: 'POST', headers: {'Content-Type': 'application/json', Authorization: 'Bearer ' + await user.getIdToken()}, body: JSON.stringify({data: data || {}})});
+      const j = await r.json().catch(() => ({})); return j.error ? {error: String(j.error.status || 'error').toLowerCase().replace(/_/g, '-'), msg: j.error.message || ''} : {ok: true, result: j.result};
+    } catch (e) { return {error: 'unavailable'}; } },
     async signUp(email, pw){ try { const r = await auth.createUserWithEmailAndPassword(email, pw); user = r.user; return {ok: true, needsConfirm: false}; } catch (e) { return {error: de(e)}; } },
     async signIn(email, pw){ try { const r = await auth.signInWithEmailAndPassword(email, pw); user = r.user; return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async signOut(){ try { await auth.signOut(); } catch {} user = null; try { if (await CACHE) { await fs.terminate(); await fs.clearPersistence(); } } catch {} }, // Zwischenspeicher dieses Kontos vom Gerät löschen
