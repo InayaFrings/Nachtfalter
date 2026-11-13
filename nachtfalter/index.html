@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='84b77445a4ae';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='8405c145026f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10698,8 +10698,9 @@ async function stCamStart(dev){
   if (!stCam) return; stCamStop(); stCam.noCam = false; if (!dev) CAMZ = {z:1, d:1, lens:'main', f:stCam.facing};
   try {
     if (!navigator.mediaDevices?.getUserMedia) throw 0;
-    const vc = dev ? {deviceId:{exact:dev}, width:{ideal:1080}, height:{ideal:1920}} : {facingMode:stCam.facing, width:{ideal:1080}, height:{ideal:1920}}; const st = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); // Mikro erst beim Gedrückthalten: ein offenes Mikro schaltet am iPhone den Ton der ganzen Seite leise/aus (Inaya, 2026-10-12)
+    const dm = CAMSW ? {width:{ideal:1920}, height:{ideal:1080}} : {width:{ideal:1080}, height:{ideal:1920}}, vc = dev ? {deviceId:{exact:dev}, ...dm} : {facingMode:stCam.facing, ...dm}; /* v913: Safari tauscht Breite/Höhe im Hochformat, dann umgekehrt fragen (CAMSW) */ const st = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); // Mikro erst beim Gedrückthalten: ein offenes Mikro schaltet am iPhone den Ton der ganzen Seite leise/aus (Inaya, 2026-10-12)
     if (!stCam || stCam.mode !== 'cam') { st.getTracks().forEach(t => t.stop()); return; }
+    { const ss = st.getVideoTracks()[0]?.getSettings?.() || {}; if (ss.width > ss.height && innerHeight > innerWidth && !CAMSW_T) { CAMSW_T = 1; CAMSW = !CAMSW; try { localStorage.setItem('nf-camsw', CAMSW ? '1' : '0'); } catch {} st.getTracks().forEach(t => t.stop()); return stCamStart(dev); } } /* v913: kam das Bild quer, obwohl das Handy hochkant ist, einmal mit getauschten Maßen neu */
     stCam.stream = st; const v = document.getElementById('stvid'); if (v) { v.srcObject = st; v.play().catch(() => {}); } stFlashBtn(); camInit(dev);
   } catch { if (dev) { CAMZ.lens = 'main'; CAMZ.uw = null; return stCamStart(CAMZ.main || ''); } if (stCam?.post) { stCam = null; storyPaint(); toast('Die Kamera ist hier nicht freigegeben. Tipp auf „Foto“, dort kannst du die Handy-Kamera wählen.'); } else if (stCam) { stCam = {facing:stCam.facing, mode:'pick', noCam:true}; storyPaint(); toast('Die Kamera ist hier nicht freigegeben. Tipp nochmal auf Kamera, dann öffnet sich die Handy-Kamera.'); } }
 }
@@ -10708,6 +10709,7 @@ async function stCamStart(dev){
    1. Kann die Kamera selbst zoomen (Android: getCapabilities().zoom), geht alles darüber, auch 0,5 bei Weitwinkel-Handys.
    2. Sonst: Ultraweitwinkel als eigene Kamera (iPhone: „Back Ultra Wide Camera“), zum Wechseln, und Zoom ab 1 als Ausschnitt (CAMZ.d). */
 let CAMZ = {z:1, d:1, lens:'main'};
+let CAMSW = (() => { try { return localStorage.getItem('nf-camsw') === '1'; } catch { return false; } })(), CAMSW_T = 0;
 const camCap = t => { try { const z = t?.getCapabilities?.().zoom; return z && z.max > z.min ? z : null; } catch { return null; } };
 const camKind = lb => { const s = (lb || '').toLowerCase(); if (/front|vorder|selfie|facing front|user/.test(s)) return 'front'; if (/dual|triple|dreifach|doppel/.test(s)) return 'multi'; if (/ultra/.test(s)) return 'uw'; if (/tele/.test(s)) return 'tele'; return 'back'; };
 async function camInit(dev){
