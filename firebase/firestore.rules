@@ -231,7 +231,7 @@ service cloud.firestore {
     function gain(xp, coins) { return N().x == W().x + xp && lvOk(N().l, N().x) && ((N().l == W().l && N().c == W().c + coins) || N().c == W().c + coins + lvD4(N().l, W().l) || N().c == W().c + coins + lvC3(N().l) - lvC3(W().l) || N().c == W().c + coins + lvC2(N().l) - lvC2(W().l) || N().c == W().c + coins + lvC(N().l) - lvC(W().l)); }
     // v928: Abo. op.m = 2 verdoppelt Coins und XP der Tagesbelohnung, Aufgaben und Spiele sowie alle anderen XP, nur mit laufendem Abo
     function subP() { return /databases/$(database)/documents/subs/$(request.auth.uid); }
-    function aboOk() { return exists(subP()) && get(subP()).data.e > request.time.toMillis(); }
+    function aboOk() { return (exists(subP()) && get(subP()).data.e > request.time.toMillis()) || isOwner(); } // v931: die Owner hat alle Abo-Funktionen auch ohne Abo
     // ohne op.m bleibt es bei einem einzigen Vergleich (die Besuchs-XP liegen nah an der Grenze von 1000 Ausdrücken)
     function gainM(xp, coins, c2) { return !('m' in N().op) ? gain(xp, coins) : (N().op.m == 2 && aboOk() && gain(xp * 2, c2)); }
     function xv(k) { return {'f': 25, 'p': 15, 'l': 3, 'c': 5, 'g': 10, 'j': 15, 'k': 30, 'm': 2, 'b': 40, 'v': 10, 'w': 5}[k]; }
@@ -326,10 +326,10 @@ service cloud.firestore {
             ? (N().c == W().c && invAdded([get(giftDoc(N().op.g)).data.i]))
             : (N().inv == W().inv && N().c == W().c + price(get(giftDoc(N().op.g)).data.i))))
         // v928: Monats-Coins im Abo, je bezahltem Zeitraum (ps) einmal: Plus 1200, Premium 2200
-        || (N().op.t == 'abo' && aboOk() && N().ab == get(subP()).data.ps && W().get('ab', 0) != N().ab
+        || (N().op.t == 'abo' && exists(subP()) && get(subP()).data.e > request.time.toMillis() && N().ab == get(subP()).data.ps && W().get('ab', 0) != N().ab
           && N().c == W().c + (get(subP()).data.p == 'premium' ? 2200 : 1200) && N().diff(W()).affectedKeys().hasOnly(['c', 'ab', 'op']))
         // v930: Premium-Shirt einmal ins Inventar, solange Premium läuft (bleibt nach der Kündigung)
-        || (N().op.t == 'abosh' && aboOk() && get(subP()).data.p == 'premium' && invAdded(['abo_premium']) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op'])));
+        || (N().op.t == 'abosh' && (isOwner() || (aboOk() && get(subP()).data.p == 'premium')) && invAdded(['abo_premium']) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op'])));
       // Owner (Inaya) kann einzelnen Mitgliedern Coins schenken (Einstellungen → Nur für dich als Owner), höchstens 10.000 auf einmal
       allow update: if isOwner() && N().op is map && N().op.t == 'grant' && N().op.n is int && N().op.n > 0 && N().op.n <= 10000
         && N().c == W().c + N().op.n && N().diff(W()).affectedKeys().hasOnly(['c', 'op']);
