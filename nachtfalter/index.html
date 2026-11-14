@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='c02ff0b09258';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0065e3521f9e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3110,6 +3110,21 @@ body.chatfull .chatmain>.chatpanel>.ch-head{margin:calc(-8px - env(safe-area-ins
 .chatpanel>.ch-head .chtitle small.chst.typ{opacity:1;font-weight:600}
 .chatpanel>.ch-head .btn.iconb{width:42px;height:42px;border-radius:50%!important;transition:background .15s}
 .chatpanel>.ch-head .btn.iconb{color:var(--p-fg)!important}.chatpanel>.ch-head .btn.iconb:hover{background:color-mix(in srgb,var(--p-fg) 10%,transparent)!important}.chatpanel>.ch-head .chavh{box-shadow:none!important}
+/* v954 (Inaya, nach ihrem WhatsApp-Bild, im Noctibat-Stil): Zurück als runder Knopf, rechts eine Pille mit Video, Anruf, •••, Ring ums Profilbild */
+.chatpanel>.ch-head{gap:8px;padding:8px 10px 8px 8px;--chpill:color-mix(in srgb,var(--p-fg) 10%,var(--p-bg));--chpl:color-mix(in srgb,var(--p-fg) 16%,transparent)}
+body.chatfull .chatmain>.chatpanel>.ch-head{padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px 8px}
+.chatpanel>.ch-head .btn.iconb.chback{height:44px!important;width:auto!important;min-width:44px;padding:0 12px 0 10px!important;justify-content:center;background:var(--chpill)!important;border:1px solid var(--chpl)!important;border-radius:999px!important;gap:2px!important}
+.chatpanel>.ch-head .btn.iconb.chback svg{width:24px!important;height:24px!important;stroke-width:2.2!important}
+.chatpanel>.ch-head .chbackn{margin-left:0!important}
+.chatpanel>.ch-head .chavh{width:42px!important;height:42px!important;margin-right:2px!important;box-shadow:0 0 0 2px var(--p-bg),0 0 0 4px color-mix(in srgb,var(--p-fg) 22%,transparent)!important;transition:box-shadow .2s}
+.chatpanel>.ch-head .chavb.on .chavh{box-shadow:0 0 0 2px var(--p-bg),0 0 0 4.5px #b57cf2!important}
+.chatpanel>.ch-head .chavb{margin:0 2px 0 4px}
+.chatpanel>.ch-head .chbtns{height:46px;padding:0 3px;flex:none;gap:0!important;background:var(--chpill);border:1px solid var(--chpl);border-radius:999px;align-items:center}
+.chatpanel>.ch-head .chbtns .btn.iconb{width:40px!important;height:40px!important;background:none!important}
+.chatpanel>.ch-head .chbtns .btn.iconb:hover{background:color-mix(in srgb,var(--p-fg) 10%,transparent)!important}
+.chatpanel>.ch-head .chbtns .btn.iconb svg{width:25px!important;height:25px!important}
+.chatpanel>.ch-head .chbtns .chmore{width:40px!important}.chatpanel>.ch-head .chbtns .chmore svg{width:23px!important;height:23px!important}
+.chatpanel>.ch-head .ch-name{font-size:17px!important}.chatpanel>.ch-head .chtitle small.chst{font-size:13px!important;opacity:.62!important}
 .chmenu{position:fixed;z-index:3000;min-width:210px;background:#1c1c1f;color:#eeedf2;border:1px solid #ffffff1c;border-radius:14px;padding:6px;box-shadow:0 14px 40px -10px #000c;display:grid;animation:chmin .14s ease-out;transform-origin:top right}.chmenu button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;background:none;color:inherit;font:500 15px var(--f-body);text-align:left;border-radius:9px;cursor:pointer}.chmenu button:hover,.chmenu button:focus-visible{background:#ffffff12}.chmenu svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;opacity:.85}@keyframes chmin{from{opacity:0;transform:scale(.94)}}
 .chatpanel>.ch-head .btn.iconb svg{width:26px;height:26px;stroke-width:1.7} /* v953: Symbole größer (Inaya) */.chatpanel>.ch-head .chmore{width:34px!important}
 .chatpanel .bubble .meta{display:flex;justify-content:flex-end;align-items:center;gap:6px;font-size:11px;margin-top:2px}
@@ -12779,10 +12794,10 @@ const lastSeenOf = id => Math.max(LSEEN[id] || 0, +PROF[id]?.seen || 0);
 function lastSeenTxt(ts){
   const d = new Date(ts), n = new Date(srvNow()), day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(), diff = Math.round((day(n) - day(d)) / 864e5), en = LANG === 'en';
   const hm = d.toLocaleTimeString(LOC(), {hour:'2-digit', minute:'2-digit'});
-  if (diff <= 0) return en ? 'last seen ' + hm : 'zuletzt online ' + hm; /* v953 (Inaya): kurz wie bei WhatsApp, mehr Platz für die Symbole */
-  if (diff === 1) return en ? 'last seen yesterday ' + hm : 'zuletzt online gestern ' + hm;
+  if (diff <= 0) return en ? 'last seen today at ' + hm : 'zul. online heute um ' + hm; /* v954 (Inaya): wie bei WhatsApp „zul. online …“ */
+  if (diff === 1) return en ? 'last seen yesterday at ' + hm : 'zul. online gestern um ' + hm;
   const dt = d.toLocaleDateString(LOC(), d.getFullYear() === n.getFullYear() ? {day:'numeric', month:'numeric'} : {day:'numeric', month:'numeric', year:'numeric'});
-  return en ? `last seen ${dt} ${hm}` : `zuletzt online ${dt}${/\.$/.test(dt) ? '' : '.'} ${hm}`;
+  return en ? `last seen ${dt} at ${hm}` : `zul. online am ${dt}${/\.$/.test(dt) ? '' : '.'} um ${hm}`;
 }
 function lsFetch(id){ if (!social || !id) return; social.db.doc('presence/lastseen/p/' + id).get().then(d => { const t = +d.data()?.t || 0; if (t > (LSEEN[id] || 0)) { LSEEN[id] = t; paintTyping(); } }).catch(() => {}); }
 let LSW = 0; function lsWrite(force){ if (!social || !me() || obOpen()) return; if (!force && Date.now() - LSW < 30000) return; LSW = Date.now(); social.db.doc('presence/lastseen/p/' + social.uid).set({by:social.uid, t:srvNow()}).catch(() => {}); }
@@ -12804,6 +12819,7 @@ function chStatus(c){
 function paintTyping(){
   const el = document.getElementById('chst'); if (!el) return; const c = CH.list.find(x => x.id === CH.open); if (!c) return;
   const [t, typ] = chStatus(c); if (el.textContent !== t) el.textContent = t; el.classList.toggle('typ', !!typ); el.hidden = !t;
+  { const o = !c.group && (c.members || []).find(m => m !== social?.uid); document.querySelector('.ch-head .chavb')?.classList.toggle('on', !!o && ONLINE.has(o)); } /* v954: Ring um das Profilbild, wenn online */
 }
 setInterval(paintTyping, 1000);
 // Mehrzeilige Schreibfelder wie bei WhatsApp: wachsen bis etwa 5 Zeilen, danach scrollt man im Feld (Inaya, 2026-10-13)
@@ -13053,7 +13069,7 @@ function chatsView(){
     const c = CH.list.find(x => x.id === CH.open);
     if (c) right = `<section class="themed chatpanel cpanel${c.theme?.bg ? ' hasbg' : ''}" style="${themeStyle(normTheme({...(c.theme || BLANK_THEME())}))}">
       <header class="ch-head"><button class="btn ghost iconb chback" data-act="chat-back" aria-label="Zurück zu allen Chats" title="Alle Chats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>${(() => { const n = CH.list.filter(x => x.id !== c.id && unread(x)).length + hNew('andy') + hNew('juliet'); return n ? `<span class="chbackn">${n > 99 ? '99+' : n}</span>` : ''; })()}</button><button type="button" class="chavb" data-act="chat-info" aria-label="${c.group ? 'Gruppeninfo' : 'Kontaktinfo'}">${chAvHTML(c, 'chavh')}</button><div class="chtitle">${c.group ? `<button type="button" class="ch-name chprof" data-act="chat-info" aria-label="Gruppeninfo">${esc(chatName(c))}</button>` : (() => { const o = c.members.find(m => m !== social?.uid); return `<button type="button" class="ch-name chprof" data-act="chat-info" aria-label="Kontaktinfo">${esc(chatName(c))}${markOf(o)}</button>`; })()}<small class="muted chst${chStatus(c)[1] ? ' typ' : ''}" id="chst" data-raw${chStatus(c)[0] ? '' : ' hidden'}>${esc(chStatus(c)[0])}</small></div>
-        <span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${c.group ? tkBtnHTML(c) : ''}<button class="btn ghost iconb chmore" data-act="ch-menu" aria-label="Mehr" title="Mehr" aria-haspopup="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor" stroke="none"/></svg></button></span></header>
+        <span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${c.group ? tkBtnHTML(c) : ''}<button class="btn ghost iconb chmore" data-act="ch-menu" aria-label="Mehr" title="Mehr" aria-haspopup="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.9" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.9" fill="currentColor" stroke="none"/></svg></button></span></header>
       <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
       ${chatAttach ? `<div class="attsheet"><label class="attopt" aria-label="Fotos und Videos" title="Fotos und Videos"><input type="file" id="cm-img" accept="image/*,video/*" data-vmix="cm-vid" hidden><span class="atti">${ATT_FOTO}</span></label>${chPubNow() || !MUSIK ? '' : `<label class="attopt" aria-label="MP3" title="MP3"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span></label>`}${/^dm_/.test(CH.open || '') ? `<button type="button" class="attopt" data-act="gift-chat" aria-label="Geschenk" title="Geschenk"><span class="atti">${NC_GIFT}</span></button>` : ''}<button type="button" class="attopt" data-act="prof-share" aria-label="Profil teilen" title="Profil teilen"><span class="atti">${PSHR_ICO}</span></button><button type="button" class="attopt" data-act="att-link" aria-label="Link" title="Link"><span class="atti">${ATT_LINK}</span></button></div>` : ''}
