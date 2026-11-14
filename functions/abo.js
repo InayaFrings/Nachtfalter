@@ -27,6 +27,9 @@ const MAIL_RX = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
 let STRIPE = null;
 function stripe(){ const k = process.env.STRIPE_SECRET; if (!k) return null; if (!STRIPE) STRIPE = require('stripe')(k); return STRIPE; }
 const err = (code, msg) => new functions.https.HttpsError(code, msg);
+/* Live- oder Testschlüssel? Kunden und Abos aus der Sandbox gelten im Live-Betrieb nicht (und umgekehrt). Alte Einträge ohne lv stammen aus der Sandbox. */
+const LIVE = () => /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET || '');
+const sameMode = d => !!(d && d.lv) === LIVE();
 
 /* Alter aus dem Geburtsdatum im Profil (bd = JJJJ-MM-TT); ohne Datum gilt die Person als minderjährig */
 function ageOf(bd){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(bd || '')); if (!m) return 0;
@@ -42,7 +45,7 @@ function periodOf(sub){ const it = sub.items && sub.items.data && sub.items.data
 async function writeSub(sub){ const md = sub.metadata || {}, uid = md.uid, p = md.p; if (!uid || !PLANS[p]) { console.warn('Abo ohne uid/p', sub.id); return; }
   const per = periodOf(sub), live = ['active', 'trialing', 'past_due'].includes(sub.status);
   const e = live ? per.e : Math.min(per.e || Date.now(), (sub.ended_at || sub.canceled_at || Date.now() / 1000) * 1000);
-  await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || '')});
+  await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || ''), lv: !!sub.livemode});
   console.log('ABO', JSON.stringify({uid, p, st: sub.status, e: new Date(e).toISOString(), ce: !!sub.cancel_at_period_end}));
   if (live) await refBonus(uid).catch(err => console.error('ABO refBonus', err)); }
 
@@ -74,7 +77,7 @@ exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
   if (!PLANS[p]) throw err('invalid-argument', 'Unbekanntes Abo.');
   if (!(data && data.wv === true)) throw err('failed-precondition', 'Bitte bestätige den sofortigen Start.');
   const cur = await db.doc('subs/' + uid).get();
-  if (cur.exists && cur.data().src === 'stripe' && cur.data().e > Date.now()) throw err('already-exists', 'Du hast schon ein Abo.');
+  if (cur.exists && cur.data().src === 'stripe' && cur.data().e > Date.now() && sameMode(cur.data())) throw err('already-exists', 'Du hast schon ein Abo.');
   const bd = await birthOf(uid), adult = ageOf(bd) >= 18, pe = String(data && data.pe || '').trim().toLowerCase();
   if (!adult && !(data.pc === true && MAIL_RX.test(pe))) throw err('failed-precondition', 'Unter 18 braucht es die Zustimmung und E-Mail-Adresse eines Elternteils.');
   const mail = adult ? (ctx.auth.token.email || '') : pe, P = PLANS[p];
@@ -82,9 +85,9 @@ exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
   const S = stripe();
   if (!S) { if (EMU) { console.log('ABO DRY checkout', JSON.stringify({uid, p, y, adult, mail})); return {url: SITE + '?abo=dry'}; } throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); }
   /* Kunde je Person merken (server-intern, die Regeln lassen niemanden lesen) */
-  const kref = db.doc('aboCus/' + uid), k = await kref.get(); let cus = k.exists ? k.data().id : '';
+  const kref = db.doc('aboCus/' + uid), k = await kref.get(); let cus = k.exists && sameMode(k.data()) ? k.data().id : '';
   if (cus && mail && k.data().mail !== mail) { await S.customers.update(cus, {email: mail}); await kref.set({mail}, {merge: true}); }
-  if (!cus) { const c = await S.customers.create({email: mail || undefined, metadata: {uid}}); cus = c.id; await kref.set({id: cus, mail}); }
+  if (!cus) { const c = await S.customers.create({email: mail || undefined, metadata: {uid}}); cus = c.id; await kref.set({id: cus, mail, lv: LIVE()}); }
   const s = await S.checkout.sessions.create({mode: 'subscription', customer: cus, client_reference_id: uid, locale: en ? 'en' : 'de',
     line_items: [{quantity: 1, price_data: {currency: 'eur', unit_amount: y ? P.y : P.m, recurring: {interval: y ? 'year' : 'month'}, product_data: {name: P.n}}}],
     subscription_data: {metadata: {uid, p}}, metadata: {uid, p},
@@ -102,7 +105,7 @@ exports.aboWebhook = fn.https.onRequest(async (req, res) => {
 });
 
 async function mySub(ctx){ const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
-  const d = await db.doc('subs/' + uid).get(); if (!d.exists || d.data().src !== 'stripe' || !d.data().sid) throw err('not-found', 'Kein Abo gefunden.');
+  const d = await db.doc('subs/' + uid).get(); if (!d.exists || d.data().src !== 'stripe' || !d.data().sid || !sameMode(d.data())) throw err('not-found', 'Kein Abo gefunden.');
   const S = stripe(); if (!S) throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); return {S, sid: d.data().sid}; }
 exports.aboCancel = fn.https.onCall(async (data, ctx) => { const {S, sid} = await mySub(ctx); await writeSub(await S.subscriptions.update(sid, {cancel_at_period_end: true})); return {ok: true}; });
 exports.aboResume = fn.https.onCall(async (data, ctx) => { const {S, sid} = await mySub(ctx); await writeSub(await S.subscriptions.update(sid, {cancel_at_period_end: false})); return {ok: true}; });
