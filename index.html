@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='23c5a54a881e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e9cf7b3c8953';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -650,8 +650,8 @@ html,body{overflow-x:clip} /* v804: auch am Handy kein seitlicher Bildlauf */
 .room[data-live] .ritem.av{transition:left .7s ease-in-out,top .7s ease-in-out}.room[data-live]{cursor:pointer}
 .rposes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.rposes button{background:none;border:1px solid var(--line);color:var(--fg);padding:6px 10px;font:inherit;cursor:pointer}.rposes button[aria-pressed=true]{background:var(--fg);color:var(--bg)}
 .room.edit .ritem{cursor:grab;touch-action:none}
-/* v962 (Inaya: Poster hinter Bett oder Schrank ließ sich nicht antippen): nur die gemalten Teile eines Stücks fangen Klicks, durchsichtige Stellen lassen sie zum Stück dahinter durch */
-.room .ritem,.room .ritem svg{pointer-events:none}.room .ritem svg *{pointer-events:visiblePainted}.room .ritem .rszh{pointer-events:auto}
+/* v963: Die Stücke bleiben für Finger greifbar (sonst scrollte Safari am iPhone statt zu ziehen). Nur kurz beim Antippen (Klasse rhit) zählen allein die gemalten Teile, siehe rHitItem */
+.room.rhit .ritem,.room.rhit .ritem svg{pointer-events:none}.room.rhit .ritem svg *{pointer-events:visiblePainted}
 .room.edit .ritem.sel{outline:1px dashed var(--fg);outline-offset:3px}
 .fthumb{display:grid;place-items:center;padding:12px}
 .shopgrid{grid-auto-flow:row dense}.item{position:relative}
@@ -7733,8 +7733,11 @@ document.addEventListener('input', e => { if (e.target.id !== 'r-size') return; 
 /* v811 (Inaya): beim Zoomen mit zwei Fingern nichts versehentlich mitbewegen: zweiter Finger bricht das Ziehen ab, das Stück springt zurück */
 function rDragCancel(){ const d = dragging; if (!d) return; dragging = null; cancelAnimationFrame(d.raf); d.el.classList.remove('rbad'); d.ref.x = d.ox; d.ref.y = d.oy; rPut(d.el, d.dd, d.ox, d.oy); if (d.key !== 'av') d.el.style.transform = rTf(d.ref);
   for (const c of d.kids || []) { c.o.x = c.ox; c.o.y = c.oy; rPut(c.el, rDim(c.o), c.ox, c.oy); } d.roomEl.classList.remove('rdrag'); }
+/* v963: Welches Stück liegt wirklich unter dem Finger? Nur gemalte Teile zählen, durchsichtige Stellen gehören zum Stück dahinter (z. B. Poster hinter dem Bett) */
+function rHitItem(x, y){ const room = document.getElementById('room'); if (!room) return null; let t = null; room.classList.add('rhit'); try { t = document.elementFromPoint(x, y); } catch {} room.classList.remove('rhit'); return t?.closest?.('#room [data-drag]') || null; }
 document.addEventListener('pointerdown', e => {
-  if (!e.isPrimary || RZ.t?.d0) return; const el = e.target.closest('#room [data-drag]'); if (!el) return;
+  if (!e.isPrimary || RZ.t?.d0) return; let el = e.target.closest('#room [data-drag]'); if (!el) return;
+  if (el.dataset.drag !== 'av') { const h = rHitItem(e.clientX, e.clientY); if (h) el = h; }
   const room = document.getElementById('room').getBoundingClientRect();
   const key = el.dataset.drag, ref = key === 'av' ? me().room.av : me().room.items[+key];
   const kids = key === 'av' ? [] : me().room.items.map((o, i) => ({o, i})).filter(({o}) => o.on === ref.k && o !== ref && rRider(o.k)).map(({o, i}) => ({o, ox:+o.x, oy:+o.y, el:document.querySelector(`#room [data-drag="${i}"]`)}));
