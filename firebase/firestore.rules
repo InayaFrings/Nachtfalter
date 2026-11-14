@@ -277,6 +277,9 @@ service cloud.firestore {
     function sumP(l) { return pAt(l, 0) + pAt(l, 1) + pAt(l, 2) + pAt(l, 3) + pAt(l, 4) + pAt(l, 5) + pAt(l, 6) + pAt(l, 7) + pAt(l, 8) + pAt(l, 9) + pAt(l, 10) + pAt(l, 11); }
     function okAt(l, n) { return l.size() <= n || price(l[n]) > 0; }
     function allP(l) { return okAt(l, 0) && okAt(l, 1) && okAt(l, 2) && okAt(l, 3) && okAt(l, 4) && okAt(l, 5) && okAt(l, 6) && okAt(l, 7) && okAt(l, 8) && okAt(l, 9) && okAt(l, 10) && okAt(l, 11); }
+    // v945: Premium (laufendes Abo Premium oder die Owner) kauft mit 20 % Rabatt (abgerundet zugunsten der Person)
+    function premOk() { return isOwner() || (exists(subP()) && get(subP()).data.e > request.time.toMillis() && get(subP()).data.p == 'premium'); }
+    function buyD(l) { let s = sumP(l); return N().c == W().c - (s - s / 5); }
     function invAdded(l) { return N().inv.diff(W().inv).addedKeys() == l.toSet() && N().inv.diff(W().inv).removedKeys().size() == 0 && N().inv.diff(W().inv).changedKeys().size() == 0; }
     // Was man vor dem Shop schon trug bzw. im Zimmer stehen hatte (einmalig übernommen)
     function wornSet(o) { return [o.get('back', ''), o.get('front', ''), o.get('top', ''), o.get('bottom', ''), o.get('shoes', ''), o.get('jacket', ''), o.get('eyeform', ''), o.get('lips', ''), o.get('face', ''), o.get('beard', '')].toSet()
@@ -356,7 +359,13 @@ service cloud.firestore {
         // v936: Erlös aus dem Sticker-Laden abholen: 70 % (Rest verschwindet)
         || (N().op.t == 'spin' && get(saleDoc(N().op.g)).data.to == uid && get(saleDoc(N().op.g)).data.st == 'open' && getAfter(saleDoc(N().op.g)).data.st == 'taken'
           && N().c == W().c + get(saleDoc(N().op.g)).data.n * 7 / 10 && N().diff(W()).affectedKeys().hasOnly(['c', 'op']))
-        || (N().op.t == 'abosh' && (isOwner() || (aboOk() && get(subP()).data.p == 'premium')) && invAdded(['abo_premium']) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op'])));
+        || (N().op.t == 'abosh' && (isOwner() || (aboOk() && get(subP()).data.p == 'premium')) && invAdded(['abo_premium']) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op']))
+        // v945: Kaufen mit Premium-Rabatt (20 %), sonst wie 'buy'
+        || (N().op.t == 'buyp' && premOk() && N().op.its is list && N().op.its.size() >= 1 && N().op.its.size() <= 12 && N().op.its.toSet().size() == N().op.its.size()
+          && allP(N().op.its) && invAdded(N().op.its) && buyD(N().op.its) && N().c >= 0 && N().diff(W()).affectedKeys().hasOnly(['c', 'inv', 'op']))
+        // v945: Premium-Monatsteil: genau die Einträge aus site/abo.p[<JJJJMM>] für den laufenden Monat (UTC)
+        || (N().op.t == 'abomp' && premOk() && N().op.m is string && N().op.m == string(request.time.year() * 100 + request.time.month())
+          && invAdded(get(/databases/$(database)/documents/site/abo).data.p[N().op.m]) && N().diff(W()).affectedKeys().hasOnly(['inv', 'op'])));
       // Owner (Inaya) kann einzelnen Mitgliedern Coins schenken (Einstellungen → Nur für dich als Owner), höchstens 10.000 auf einmal
       allow update: if isOwner() && N().op is map && N().op.t == 'grant' && N().op.n is int && N().op.n > 0 && N().op.n <= 10000
         && N().c == W().c + N().op.n && N().diff(W()).affectedKeys().hasOnly(['c', 'op']);
