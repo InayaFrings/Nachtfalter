@@ -5,6 +5,7 @@
    - aboWebhook (Stripe ruft auf): schreibt den Abo-Status nach subs/<uid> = {p, e, ps, src:'stripe', cy, ce, st, sid, cus}.
      Nur dieser Weg (Admin-SDK) darf subs schreiben, die Firestore-Regeln lassen sonst nur Inayas Test-Abo zu.
    - aboCancel / aboResume (aufrufbar): kündigt zum Ende des bezahlten Zeitraums bzw. nimmt die Kündigung zurück.
+   - v936: Abo-Werbebonus (refBonus, 500 Coins) und Sound-Bonus (sndBonus, 5 Coins je Benutzung, höchstens 300 am Tag), beides nur für Abonnenten.
    Einrichten (einmal, braucht ein Stripe-Konto eines Erwachsenen):
      firebase functions:secrets:set STRIPE_SECRET   (Geheimschlüssel sk_live_… bzw. zum Testen sk_test_…)
      firebase functions:secrets:set STRIPE_WHSEC    (Signatur-Geheimnis des Webhooks whsec_…)
@@ -42,7 +43,30 @@ async function writeSub(sub){ const md = sub.metadata || {}, uid = md.uid, p = m
   const per = periodOf(sub), live = ['active', 'trialing', 'past_due'].includes(sub.status);
   const e = live ? per.e : Math.min(per.e || Date.now(), (sub.ended_at || sub.canceled_at || Date.now() / 1000) * 1000);
   await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || '')});
-  console.log('ABO', JSON.stringify({uid, p, st: sub.status, e: new Date(e).toISOString(), ce: !!sub.cancel_at_period_end})); }
+  console.log('ABO', JSON.stringify({uid, p, st: sub.status, e: new Date(e).toISOString(), ce: !!sub.cancel_at_period_end}));
+  if (live) await refBonus(uid).catch(err => console.error('ABO refBonus', err)); }
+
+/* v936: Abo-Werbebonus. Wer über den eigenen Link eingeladen hat (refd/<neu>.by) und selbst ein Abo hat, bekommt einmal je Freund 500 Coins,
+   sobald der Freund ein Abo abschließt. Gemerkt in aboRef/<freund> (nur Server). */
+const live = s => s.exists && s.data().e > Date.now();
+async function earns(uid){ if (live(await db.doc('subs/' + uid).get())) return true; try { const o = await db.doc('site/owner').get(); return o.exists && o.data().uid === uid; } catch { return false; } } /* Owner verdient auch ohne Abo */
+async function refBonus(uid){ const r = await db.doc('refd/' + uid).get(); const by = r.exists ? r.data().by : ''; if (!by || by === uid) return;
+  if (!await earns(by)) return;
+  const mark = db.doc('aboRef/' + uid), wref = db.doc('wallet/' + by);
+  await db.runTransaction(async t => { const [m, w] = await Promise.all([t.get(mark), t.get(wref)]); if (m.exists || !w.exists) return;
+    t.update(wref, {c: (w.data().c || 0) + 500, op: {t: 'refabo', n: 500, from: uid}}); t.set(mark, {by, ts: Date.now()}); });
+  console.log('ABO refBonus', JSON.stringify({by, uid})); }
+
+/* v936: Sound-Bonus. Wird ein Noctibat-Sound in einem Beitrag oder einer Story benutzt (chats/snd_<musiker>_<k>/m/<autor>_<id>), bekommt die Musikerin
+   bzw. der Musiker 5 Coins, höchstens 300 am Tag (deutsche Zeit, Feld sb = {d, n}), nur mit Abo und nicht für eigene Beiträge. */
+const BTZ = new Intl.DateTimeFormat('en-US', {timeZone: 'Europe/Berlin', hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'});
+function berlinDay(ms = Date.now()){ const p = Object.fromEntries(BTZ.formatToParts(new Date(ms)).map(x => [x.type, x.value])), o = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - (ms - ms % 1000); return Math.floor((ms + o) / 864e5); }
+exports.sndBonus = fn.firestore.document('chats/{cid}/m/{mid}').onCreate(async (snap, ctx) => { const cid = ctx.params.cid; if (!cid.startsWith('snd_')) return;
+  const mu = cid.split('_')[1], by = (snap.data() || {}).by; if (!mu || !by || by === mu || !ctx.params.mid.startsWith(by + '_')) return;
+  if (!await earns(mu)) return;
+  const day = berlinDay(), wref = db.doc('wallet/' + mu);
+  await db.runTransaction(async t => { const w = await t.get(wref); if (!w.exists) return; const sb = w.data().sb && w.data().sb.d === day ? w.data().sb.n || 0 : 0; if (sb + 5 > 300) return;
+    t.update(wref, {c: (w.data().c || 0) + 5, sb: {d: day, n: sb + 5}, op: {t: 'snd', n: 5}}); }); });
 
 exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
   const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
