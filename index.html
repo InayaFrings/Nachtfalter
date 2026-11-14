@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b0a8e161fdb8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='92d09e50e20d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8488,7 +8488,7 @@ function cloudParts(){ const out = {}; for (const [k, v] of Object.entries(S)) {
 function cloudQueue(){
   if (!cloud || obOpen()) return;
   clearTimeout(cloudTimer);
-  cloudTimer = setTimeout(cloudFlush, 8000);
+  cloudTimer = setTimeout(cloudFlush, 3000); /* v961: 3 s statt 8 s, damit andere Geräte es schnell sehen */
 }
 function cloudFlush(){ clearTimeout(cloudTimer); cloudTimer = null; cloudBusy = cloudBusy.then(cloudWrite, cloudWrite); }
 document.addEventListener('visibilitychange', () => { if (document.hidden && cloudTimer) cloudFlush(); });
@@ -8519,11 +8519,46 @@ async function cloudWrite(){
   for (const [k, l] of Object.entries(parts)) { ks[k] = l.length; l.forEach((c, i) => { const id = k + '.' + i, x = hstr(c); h[id] = x; if (last[id] !== x) jobs.push(cloud.col.doc('nf2-' + ckId(k) + '-' + i).set({s:c})); }); }
   try {
     await Promise.all(jobs);
-    await cloud.col.doc('nf-meta').set({v:2, ks, h, ts:S.savedAt || Date.now()}); CLAST = h; CLOUDSTAT = {n:Object.keys(h).length, w:jobs.length, kb:Math.round(Object.values(parts).flat().reduce((a, c) => a + c.length, 0) / 1024), t:Date.now()};
+    await cloud.col.doc('nf-meta').set({v:2, ks, h, ts:S.savedAt || Date.now(), dv:CDEV}); CLAST = h; CSNAPU = (parts.users || []).join(''); CLOUDSTAT = {n:Object.keys(h).length, w:jobs.length, kb:Math.round(Object.values(parts).flat().reduce((a, c) => a + c.length, 0) / 1024), t:Date.now()};
     if (!cloud.ok) { cloud.ok = true; refreshFoot(); }
   } catch (e) { if (e?.code === 'resource_exhausted') toast('Speicher voll: Das Foto ist zu groß.'); }
 }
 let CLOUDSTAT = null;
+/* v961 (Inaya: „was man am Handy einrichtet, soll automatisch auf allen Geräten gespeichert sein, wo man gleichzeitig angemeldet ist“):
+   Jedes Gerät hört live auf nf-meta. Schreibt ein anderes Gerät (dv ≠ CDEV), werden nur die geänderten Bereiche geholt und übernommen.
+   Hat dieses Gerät in einem Bereich selbst etwas Ungespeichertes (eigene Prüfsumme ≠ CLAST), bleibt der eigene Stand; Beiträge werden zusammengeführt, der Look nach Zeit. */
+const CDEV = Math.random().toString(36).slice(2, 10);
+let CLIVE = null, CPULL = Promise.resolve(), CSNAPU = ''; /* CSNAPU: Bereich users wie zuletzt mit der Sicherung abgeglichen (für den Vergleich je Einstellung) */
+const cSnapU = () => { try { CSNAPU = (cloudParts().users || []).join(''); } catch {} };
+const cAreaH = (h, k) => { const ids = Object.keys(h || {}).filter(id => id.startsWith(k + '.') && /^\d+$/.test(id.slice(k.length + 1))).sort((a, b) => +a.slice(k.length + 1) - +b.slice(k.length + 1)); return ids.map(id => h[id]).join(','); };
+function cloudLive(){ if (CLIVE || !cloud?.col) return;
+  CLIVE = cloud.col.doc('nf-meta').onSnapshot(sn => { if (!sn.exists || sn.metadata.hasPendingWrites) return; const m = sn.data(); if (!m || m.v !== 2 || m.dv === CDEV) return; CPULL = CPULL.then(() => cloudPull(m), () => cloudPull(m)); }, () => {}); }
+async function cloudPull(m){ if (!cloud?.loaded || obOpen() || !S.me) return false;
+  const rh = m.h || {}, base = CLAST || {}, parts = cloudParts(), todo = [];
+  for (const [k, n] of Object.entries(m.ks || {})) { if (k === 'savedAt') continue;
+    const remote = Array.from({length:n}, (_, i) => rh[k + '.' + i] || '').join(','), mine = (parts[k] || []).map(hstr).join(',');
+    if (remote === mine) continue; const dirty = mine !== cAreaH(base, k);
+    if (dirty && !['posts', 'trash', 'users', 'seen', 'stSeen', 'delP', 'notifSeen', 'trashM', 'archM'].includes(k)) continue; /* hier selbst geändert: eigener Stand gewinnt beim nächsten Speichern */
+    todo.push([k, n, dirty]); }
+  if (!todo.length) { if (!cloudTimer) CLAST = rh; return false; }
+  let any = false, usersCh = false;
+  for (const [k, n, dirty] of todo) { let val;
+    try { const l = await Promise.all(Array.from({length:n}, (_, i) => cloud.col.doc('nf2-' + ckId(k) + '-' + i).get())); if (l.some(d => !d.exists)) continue; val = JSON.parse(l.map(d => d.data().s || '').join('')); } catch { continue; }
+    if (k === 'users') { if (!val || typeof val !== 'object' || !val[S.me] || !S.users?.[S.me]) continue;
+      if (dirty) { /* eigene Änderung offen: je Einstellung vergleichen; was hier seit dem letzten Abgleich nicht geändert wurde, kommt vom anderen Gerät */
+        let bm = null; try { bm = JSON.parse(CSNAPU || 'null')?.[S.me] || null; } catch {} const lm = S.users[S.me], rm = val[S.me], J = JSON.stringify;
+        if (bm) for (const f of new Set([...Object.keys(rm), ...Object.keys(lm)])) { if (f === 'lookTs' || f === 'lookSig' || f === 'outfit' || f === 'pose') continue; if (J(lm[f]) === J(bm[f]) && J(rm[f]) !== J(lm[f])) { if (rm[f] === undefined) delete lm[f]; else lm[f] = JSON.parse(J(rm[f])); any = true; } }
+        if (lookTake(lm, rm, rm.lookTs)) any = true; continue; }
+      const keep = Object.fromEntries(Object.entries(S.users || {}).filter(([, u]) => u?.remote)); S.users = {...keep, ...val}; usersCh = any = true; continue; }
+    if (k === 'posts' || k === 'trash') { if (dirty) { if (await cloudPostsMerge(rh)) any = true; continue; } S[k] = val; any = true; continue; }
+    if (k === 'seen' || k === 'stSeen' || k === 'delP') { S[k] = seenMax(val, S[k]); any = true; continue; }
+    if (k === 'trashM' || k === 'archM') { S[k] = absMax(val, S[k]); any = true; continue; }
+    if (k === 'notifSeen') { S[k] = Math.max(+val || 0, +S[k] || 0); any = true; continue; }
+    S[k] = val; any = true; }
+  if (!any) return false;
+  if (usersCh) S = ensureHelpers(S); try { postsFix(); } catch {} if (!todo.some(t => t[0] === 'users' && t[2])) cSnapU();
+  if (!cloudTimer) CLAST = rh; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+  softRender(); return true; }
 // (Kein automatisches Neuverbinden mehr: das las jedes Mal alles neu. Ursache für hängendes Schreiben war das aufgebrauchte Tageskontingent.)
 // Reparatur (Inaya, 2026-10-14): Mit mehreren Geräten konnten sich Stücke verschiedener Stände mischen, dann ließ sich ein Bereich nicht mehr lesen.
 // Kaputte Bereiche kommen aus dem Stand auf diesem Gerät (fb) oder aus der alten Sicherung (nf-0 …); danach wird alles neu geschrieben.
@@ -8544,7 +8579,7 @@ async function cloudRead(col, meta, fb){
   for (let i = 0; i < m.n; i++) { const d = await col.doc('nf-' + i).get(); str += d.exists ? d.data().s : ''; }
   CLAST = null; return JSON.parse(str);
 }
-async function cloudReinit(){ cloud = null; await cloudInit(); }
+async function cloudReinit(){ try { CLIVE?.(); } catch {} CLIVE = null; cloud = null; await cloudInit(); }
 // Beim Anmelden: Konto auch im Claude-Konto suchen, falls der Browser-Stand fehlt oder älter ist
 async function findLogin(contact, pw){
   const hs = new Set(await Promise.all(pwVariants(pw).map(hashPw)));
@@ -8591,6 +8626,7 @@ async function cloudInit(){
     } else if (S.me || S.pending || meta.exists) { cloud.loaded = true; cloudQueue(); }
     else { cloud.ok = true; }
     if (me()?.handle && !me().obOpen) claimHandle(me().handle);
+    cSnapU(); cloudLive(); /* v961: Änderungen anderer Geräte live übernehmen */
     acctRemember(); refreshFoot();
     socialStart(); presenceStart(); setTimeout(locRestore, 50);
   } catch {}
@@ -13620,7 +13656,7 @@ function e2aAsk(force, out){ if (!social || E2A.kp || (E2A.asked && !force) || d
     <div class="pabtns"><button type="button" class="btn ghost" data-r="${out ? 'out' : 'x'}">${out ? 'Ohne abmelden' : 'Später'}</button><button type="submit" class="btn">${out ? 'Sichern und abmelden' : 'Speichern'}</button></div></form>`;
   m.addEventListener('click', e => { if (e.target.closest('[data-r="out"]')) { m.remove(); doLogout(); return; } if (e.target.closest('[data-r="x"]') || e.target === m) m.remove(); });
   document.body.appendChild(m); setTimeout(() => document.getElementById('e2a-pw')?.focus(), 50); }
-async function doLogout(){ clearTimeout(cloudTimer); cloud = null; await e2Logout(); NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.(); location.reload(); }); }
+async function doLogout(){ clearTimeout(cloudTimer); try { CLIVE?.(); } catch {} CLIVE = null; cloud = null; await e2Logout(); NF_AUTH.signOut().finally(() => { try { localStorage.removeItem(KEY); } catch {} NF_AUTH.forget?.(); location.reload(); }); }
 async function e2aCheckPw(pw){ if (PUB) return !(await NF_AUTH.reauth(pw)).error; return !!me()?.pwh && await hashPw(pw) === me().pwh; }
 // Passwort geändert: Sicherung mit dem neuen Passwort neu verschlüsseln
 async function e2aRepass(oldPw, newPw){ try { const d = await e2aRef().get(); if (!d.exists || !d.data().ct) return e2aUnlock(newPw); const x = d.data(), jwk = await e2aOpen(x, oldPw); await e2aRef().set({...x, ...(await e2aSeal(jwk, newPw)), ts:Date.now()}); return true; } catch { return false; } }
