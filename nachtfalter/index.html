@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='bb517751a89f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b0a8e161fdb8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3462,13 +3462,13 @@ const KEY = 'nachtfalter-v2' + (window.NF_AUTH?.slot ? ':' + NF_AUTH.slot : '');
 // Musik vorerst ausgeschaltet (Inaya, 2026-10-14, rechtlich unklar): keine Hörproben von Apple Music/Deezer, keine MP3s, keine Musik in Profil, Storys und Beiträgen.
 // Gespeicherte Songs bleiben erhalten und werden nur nicht gezeigt. Wieder einschalten: auf true setzen. Sprachnachrichten sind davon nicht betroffen.
 const MUSIK = false;
-const ABO = false; /* v928: Abo Plus/Premium. Aus = nur Inaya (Owner) sieht Abo-Seite, Abzeichen und Schimmer und kann sich ein Test-Abo geben. Erst einschalten, wenn Bezahlung (Stripe), Impressum, AGB, Widerruf und Datenschutz fertig sind */
+const ABO = true; /* v960 (14.11.2026): eingeschaltet */ /* v928: Abo Plus/Premium. Aus = nur Inaya (Owner) sieht Abo-Seite, Abzeichen und Schimmer und kann sich ein Test-Abo geben. Erst einschalten, wenn Bezahlung (Stripe), Impressum, AGB, Widerruf und Datenschutz fertig sind */
 const ABO_LIM_AB = 0; /* v929: ab wann (ms) die Grenzen ohne Abo für Mitglieder gelten, 0 = sofort mit ABO */
-const ABO_START = 0; /* v933: erster Abo-Monat als JJJJMM (z. B. 202612). Beim Einschalten von ABO setzen: dann gibt es im ersten Monat das Paket „Von Anfang an dabei“, danach jeden Monat das nächste aus ABO_DROPS. 0 = noch nicht gestartet */
-const ABO_PAY = false, ABO_PAY_OWNER = false; /* v958: Sandbox getestet. v959: Stripe läuft jetzt LIVE (rk_live + Live-Webhook), darum zahlt auch die Owner nicht mehr über Stripe (wäre echtes Geld), ihr Knopf startet wieder das interne Test-Abo. Für alle einschalten: ABO_PAY = true */
+const ABO_START = 202611; /* v960: November 2026 = Paket „Von Anfang an dabei“ */ /* v933: erster Abo-Monat als JJJJMM (z. B. 202612). Beim Einschalten von ABO setzen: dann gibt es im ersten Monat das Paket „Von Anfang an dabei“, danach jeden Monat das nächste aus ABO_DROPS. 0 = noch nicht gestartet */
+const ABO_PAY = true, ABO_PAY_OWNER = false; /* v960: echte Bezahlung über Stripe live für alle */ /* v958: Sandbox getestet. v959: Stripe läuft jetzt LIVE (rk_live + Live-Webhook), darum zahlt auch die Owner nicht mehr über Stripe (wäre echtes Geld), ihr Knopf startet wieder das interne Test-Abo. Für alle einschalten: ABO_PAY = true */
 const aboPay = () => ABO_PAY || (ABO_PAY_OWNER && amOwner); /* v932: echte Bezahlung über Stripe (Cloud Function aboCheckout). Erst einschalten, wenn STRIPE_SECRET/STRIPE_WHSEC gesetzt sind und der Webhook eingetragen ist; bis dahin startet der Knopf für Inaya ein Test-Abo */
-const RECHT = false; /* v932: Links auf Impressum und Abo-Bedingungen (impressum.html, abo-bedingungen.html). Erst einschalten, wenn die Lücken ausgefüllt und geprüft sind */
-const DSE = false; /* Datenschutzerklärung (datenschutz.html) verlinken: erst einschalten, wenn Name, Anschrift und die übrigen Lücken ausgefüllt sind */
+const RECHT = true; /* v960 */ /* v932: Links auf Impressum und Abo-Bedingungen (impressum.html, abo-bedingungen.html). Erst einschalten, wenn die Lücken ausgefüllt und geprüft sind */
+const DSE = true; /* v960 */ /* Datenschutzerklärung (datenschutz.html) verlinken: erst einschalten, wenn Name, Anschrift und die übrigen Lücken ausgefüllt sind */
 const REACTIONS = ['lach','schock','herz','wein','wut']; // Inayas Totenkopf-Reaktionen (2026-10-10), seit 2026-10-12 nur noch als Likes gezählt
 const LIKE_IN = r => r === 'like' || REACTIONS.includes(r);
 const HEART = on => `<svg class="lheart" viewBox="-2 0 28 24" aria-hidden="true"><path class="lhw" d="M2.6 8.6C.8 7.4-1 8-1.6 9.6c1.1 0 1.8.4 2.2 1.2-.9.1-1.4.6-1.5 1.4 1.3-.4 2.5-.2 3.3.6M21.4 8.6c1.8-1.2 3.6-.6 4.2 1-1.1 0-1.8.4-2.2 1.2.9.1 1.4.6 1.5 1.4-1.3-.4-2.5-.2-3.3.6" fill="none"/><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.4 7.6 3.6 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4c3.6 0 5.8 3.6 4.5 7.1-1.8 4.8-9.3 9.4-9.3 9.4z" fill="${on ? 'currentColor' : 'none'}"/></svg>`;
@@ -7892,7 +7892,7 @@ function regView(){
       ${birthInput('reg-birth', S.pending?.birth || '')}
       <label class="f" for="reg-pw"><span class="lbl">Passwort (mindestens 6 Zeichen)</span><input id="reg-pw" type="password" autocomplete="new-password" minlength="6" required></label>
       <span id="reg-err" class="err" hidden></span>
-      ${DSE ? `<p class="note dslink">Wie wir mit deinen Daten umgehen: <a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a></p>` : ''}
+      ${DSE ? `<p class="note dslink">Wie wir mit deinen Daten umgehen: <a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a>${RECHT ? ` · <a href="/impressum.html" target="_blank" rel="noopener">Impressum</a>` : ''}</p>` : ''}
       <div class="row"><button class="btn ghost" type="button" data-act="to-landing">Zurück</button><span class="sp"></span><button class="btn" type="submit">Weiter</button></div>
       ${PUB ? '' : '<p class="note">Im Entwurf wird noch keine SMS und keine E-Mail verschickt. Die Bestätigung kommt dazu, sobald Noctibat online geht.</p>'}
     </form>` : forgotPw ? forgotHTML() : `<form data-form="login">
@@ -8954,7 +8954,7 @@ function gateView(){
       <button class="btn" data-act="gmode" data-v="login">Ich habe schon ein Konto</button>
       <button class="btn ghost" data-act="reg-open">Konto erstellen</button>
     </div>${langSwHTML()}${acctBackHTML()}
-    ${DSE ? `<p class="note dslink"><a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a></p>` : ''}
+    ${DSE ? `<p class="note dslink"><a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a>${RECHT ? ` · <a href="/impressum.html" target="_blank" rel="noopener">Impressum</a>` : ''}</p>` : ''}
   </div></div>`;
 }
 function rail(){
@@ -18957,7 +18957,7 @@ function settingsView(){
     + sec('<path d="M14 4H6v16h8"/><path d="M10 12h11M18 9l3 3-3 3"/>', 'Abmelden und Konto', `
     <div class="row"><button class="btn ghost logoutbtn" data-act="logout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3h9v18"/><path d="M5 3l5 2.2v14.6L5 21" fill="currentColor" fill-opacity=".18"/><circle cx="8.6" cy="12.4" r=".6" fill="currentColor"/><path d="M2.5 21h12.5"/><path d="M16 12h6.5M19.5 9l3 3-3 3"/></svg>Abmelden</button></div>
     <div class="setlist deldanger"><div class="setrow"><div class="setinfo"><span class="lbl">Konto löschen</span><span class="setval muted">Löscht dein Konto und alles, was dazugehört.</span><button class="btn ghost setedit" data-act="delacct">Löschen</button></div></div></div>
-    ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}${DSE ? `<p class="note dslink"><a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a></p>` : ''}`, 'setlast')
+    ${PUB ? '' : '<p class="note">Im Entwurf werden noch keine E-Mails oder SMS verschickt. Passwort vergessen geht deshalb noch nicht.</p>'}${DSE ? `<p class="note dslink"><a href="/datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a>${RECHT ? ` · <a href="/impressum.html" target="_blank" rel="noopener">Impressum</a>` : ''}</p>` : ''}`, 'setlast')
     + (own ? `<h2 class="setown"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8z"/></svg>Nur für dich als Owner</h2><div class="setownl">${own}</div>` : '');
 }
 
