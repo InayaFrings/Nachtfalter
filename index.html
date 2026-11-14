@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0065e3521f9e';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='c2e0e957fad7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -882,6 +882,10 @@ footer.foot .lnk{color:var(--muted)}
   .mb.on{color:var(--fg)}
   .mb.on::before{content:"";position:absolute;top:-5px;left:28%;right:28%;height:2px;background:var(--fg)}
   .mb .dot{position:absolute;top:6px;left:calc(50% + 8px)}
+.cbadge{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#b57cf2;color:#fff;font:700 11.5px/1 var(--f-body);font-style:normal;letter-spacing:0;vertical-align:middle;margin-left:6px;box-shadow:0 0 0 2px var(--bg,#0a0a0b)} /* v955: Zahl ungelesener Nachrichten */
+.mb .cbadge.mbb{position:absolute;top:2px;left:calc(50% + 4px);margin:0}
+.clist:has(.chavl)>i.cbadge{position:absolute;right:12px;top:50%;transform:translateY(-50%);margin:0;box-shadow:none}
+.ctabs2 button{position:relative}.ctabs2 .cbadge{position:absolute;top:2px;right:6px;margin:0;min-width:17px;height:17px;font-size:10.5px;box-shadow:none}
   .toast,.snack{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
   footer.foot{margin-top:0}
   /* Karten etwas schlanker, Zimmer randlos über die ganze Breite */
@@ -8691,6 +8695,7 @@ Object.assign(I18N_EN, {"20 % Premium-Rabatt": "20% Premium discount", "Mondlich
 Object.assign(I18N_EN, {"Beste Freunde ({0} von {1})": "Best friends ({0} of {1})"});
 Object.assign(I18N_EN, {"Aura deines Avatars": "Your avatar's aura", "Ein leuchtender Schein um deinen Avatar im Profil. Nur mit Premium.": "A glowing aura around your avatar on your profile. Premium only."});
 Object.assign(I18N_EN, {"Bewegt-Farbe": "Animation colour", "Die Farbe deines bewegten Hintergrunds. „Automatisch“ nimmt die Schriftfarbe deines Profils.": "The colour of your animated background. “Automatic” uses your profile's text colour."});
+Object.assign(I18N_EN, {"{0} ungelesen": "{0} unread"});
 Object.assign(I18N_EN, {"Test beenden": "End test", "Für dich als Owner startet der Knopf ein Test-Abo.": "As the owner, the button starts a test subscription for you."});
 Object.assign(I18N_EN, {"Premium-Shirt": "Premium shirt", "Dein Premium-Shirt liegt jetzt in deiner Garderobe.": "Your Premium shirt is now in your wardrobe."}); /* v930 */
 Object.assign(I18N_EN, {"Danke für dein Abo! {0} Nocti-Coins für diesen Monat sind da.": "Thanks for subscribing! {0} Nocti-Coins for this month are here.", "/ Jahr": "/ year", "/ Monat": "/ month", "statt {0}": "instead of {0}", "+{0} Nocti-Coins im Monat": "+{0} Nocti-Coins a month", "+ eigenes Premium-Shirt": "+ exclusive Premium shirt", "Dein Abo": "Your plan", "Zahlungspflichtig abonnieren": "Subscribe and pay", "Mit einem Abo sammelst du doppelt so viele Coins und XP und bekommst jeden Monat Nocti-Coins dazu. Plus und Premium können genau dasselbe, Premium gibt mehr Monats-Coins und ein eigenes Shirt.": "With a subscription you collect twice as many coins and XP and get extra Nocti-Coins every month. Plus and Premium do exactly the same; Premium gives more monthly coins and its own shirt.", "Noch nicht freigeschaltet: Das siehst nur du als Owner. Mitglieder sehen das Abo erst, wenn es eingeschaltet ist.": "Not live yet: only you as the owner can see this. Members will see the subscription once it is switched on.", "Dafür müssen erst die neuen Firestore-Regeln (ab v928) eingespielt sein.": "The new Firestore rules (v928 or later) need to be deployed first.", "Dein Abo: {0}, läuft bis {1}": "Your plan: {0}, runs until {1}", "Test": "Test", "Monatlich": "Monthly", "Jährlich": "Yearly", "Die Bezahlung wird gerade eingerichtet.": "Payment is being set up.", "Doppelte tägliche Belohnung: 50 Coins und 40 XP": "Double daily reward: 50 coins and 40 XP", "Tägliche Aufgaben: je 60 Coins und 20 XP": "Daily tasks: 60 coins and 20 XP each", "Begleiter-Spiele: je 30 Coins und 20 XP": "Companion games: 30 coins and 20 XP each", "Alle anderen XP doppelt (Beiträge, Likes, Freunde, Begleiter …)": "All other XP doubled (posts, likes, friends, companion …)", "Fledermaus-Abzeichen am Namen": "Bat badge next to your name", "Schimmer um deinen Story-Kreis": "Shimmer around your story circle", "Was du im Abo bekommst, bleibt dir nach der Kündigung": "Everything you get with the subscription stays after you cancel", "Test-Abo für dich (zählt nicht als echtes Abo)": "Test subscription for you (not a real subscription)", "Aus": "Off", "Noctibat-Abo": "Noctibat subscription", "Das hat nicht geklappt. Versuch es nochmal.": "That didn't work. Please try again."}); /* v928: Abo */
@@ -8950,7 +8955,7 @@ function gateView(){
   </div></div>`;
 }
 function rail(){
-  const nNew = CH.list.filter(unread).length + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
+  const nNew = CH.list.reduce((s, c) => s + unrN(c), 0) + hNew('andy') + hNew('juliet'), ntN = V.name === 'notifs' ? 0 : ntNew();
   ntWatch();
   /* PC-Leiste seit v572 wie die Handy-Version (Inaya), im PC-Format wie Instagram am Computer: Salon, Suchen, Shop, Chats, Mitteilungen, Erstellen, Profil; unten „Mehr“ mit Einstellungen und Abmelden.
      Freunde, Zimmer, Garderobe und Begleiter erreicht man wie am Handy über das Profil. */
@@ -9081,7 +9086,7 @@ const MOB_ICONS = {
 };
 let roomMode = ''; // '' = nur ansehen, 'edit' = einrichten, 'chat' = Raumchat
 function mobNav(cur, nNew){
-  const it = (k, l, act='nav') => `<button aria-label="${l}" class="mb ${(k === 'more' ? mobMore : cur === k && !mobMore) ? 'on' : ''}" data-act="${k === 'more' ? 'mob-more' : act}" data-v="${k}" ${k === 'more' ? `aria-expanded="${mobMore}"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS[RAIL_ICO[k] || k]}</svg><span>${l}</span>${k === 'chats' && nNew ? '<i class="dot" aria-label="neu"></i>' : ''}</button>`;
+  const it = (k, l, act='nav') => `<button aria-label="${l}" class="mb ${(k === 'more' ? mobMore : cur === k && !mobMore) ? 'on' : ''}" data-act="${k === 'more' ? 'mob-more' : act}" data-v="${k}" ${k === 'more' ? `aria-expanded="${mobMore}"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS[RAIL_ICO[k] || k]}</svg><span>${l}</span>${k === 'chats' && nNew ? `<i class="cbadge mbb" aria-label="${esc(tr('{0} ungelesen').replace('{0}', nNew))}">${unrFmt(nNew)}</i>` : ''}</button>`; /* v955: Zahl statt Punkt */
   // „Mehr“ ersetzt durch Minigames (Inaya): alles andere ist oben (Freunde, Chats, Zahnrad für Einstellungen) oder in dieser Leiste
   const ntN = V.name === 'notifs' ? 0 : ntNew() + reqNew();
   return `<nav class="mobnav" aria-label="Hauptnavigation"><span class="mnlogo pconly">${logoSVG()}</span>${it('home','Salon')}${it('shopping','Shop')}${it('chats','Chat')}${it('find','Suche')}${it('profile','Profil')}<span class="mnsep pconly"></span>${it('create','Erstellen','fab-post').replace('class="mb ', 'class="mb pconly ').replace('data-v="create"', 'data-v="home"')}${it('notifs','Mitteilungen').replace('class="mb ', 'class="mb pconly ').replace('</button>', ntN ? '<i class="dot" aria-label="neu"></i></button>' : '</button>')}${it('settings','Einstellungen').replace('class="mb ', 'class="mb pconly ').replace('</button>', V.name !== 'settings' && newMembers() ? '<i class="dot" aria-label="neu"></i></button>' : '</button>')}</nav>
@@ -12522,7 +12527,7 @@ function socialStart(){
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incReady = true; FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (CH.open && CH.unsub) markSeen(); if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (CH.open && CH.unsub) markSeen(); unrSoon(); /* v955 */ if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
     Promise.all([...new Set(CH.list.filter(c => !c.group).flatMap(c => c.members))].filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender); /* v655: Gruppenmitglieder erst, wenn ihr Bild gebraucht wird */
   }, () => {});
   { const fd = db.doc('friends/' + social.uid), frPut = d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; };
@@ -12775,6 +12780,19 @@ const chatWho = id => id === social?.uid ? tr('Du') : nmOf(id) || tr('Jemand'); 
 const markOf = id => !id ? '' : id === social?.uid ? hmark(me()) : hmark(S.users[id] || (PROF[id] ? profUser(id) : {id, remote:true}));
 const whoH = id => esc(chatWho(id)) + markOf(id);
 const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last > ((S.seen || {})[c.id] || 0);
+/* v955 (Inaya): Zahl ungelesener Nachrichten je Chat (wie bei WhatsApp). Nur für Chats mit Neuem: Nachrichten nach dem eigenen Gelesen-Stand, von anderen, ohne Reaktionen, höchstens 99 */
+const UNR = {}; let UNRT = null;
+const unrKey = c => c.last + ':' + ((S.seen || {})[c.id] || 0);
+const unrN = c => { if (!unread(c)) return 0; const u = UNR[c.id]; return u && u.k === unrKey(c) ? u.n : (u?.n || 1); };
+const unrFmt = n => n > 99 ? '99+' : String(n);
+const unrBadge = n => n ? `<i class="cbadge" aria-label="${esc(tr('{0} ungelesen').replace('{0}', n))}">${unrFmt(n)}</i>` : '';
+const unrSoon = () => { clearTimeout(UNRT); UNRT = setTimeout(unrFetch, 400); };
+async function unrFetch(){ if (!social) return; let ch = false;
+  for (const c of CH.list) { if (!unread(c)) continue; const k = unrKey(c); if (UNR[c.id]?.k === k || UNR[c.id]?.busy === k) continue; UNR[c.id] = {...(UNR[c.id] || {}), busy:k};
+    try { const seen = (S.seen || {})[c.id] || 0, q = await social.db.collection(`chats/${c.id}/m`).where('ts', '>', seen).orderBy('ts', 'desc').limit(99).get();
+      const n = q.docs.filter(d => !d.id.startsWith('r_') && d.data().from !== social.uid && d.data().kind !== 'react').length; UNR[c.id] = {k, n:Math.max(1, n)}; ch = true; }
+    catch { UNR[c.id] = {k, n:UNR[c.id]?.n || 1}; } }
+  if (ch) softRender(); }
 // „… schreibt“ / „… nimmt Audio auf“: jede Person setzt chats/<id>/t/<uid> = {ts, k} (k: t = schreibt, a = nimmt Audio auf), alle 4 s erneuert, gilt 8 s (Inaya, 2026-10-11, Audio seit v773)
 let typLast = 0, typK = '', typCid = '';
 function typingSet(k){
@@ -13045,7 +13063,7 @@ let chatTab = 'priv'; // Chats: Reiter Privatchats / Gruppenchats, Helfer ganz u
 function chatsView(){
   if ((CH.mode === 'group' && !CH.gdraft) || (['gadd', 'info', 'media'].includes(CH.mode) && !CH.open)) CH.mode = CH.open ? 'chat' : null; /* v643: nie ohne Entwurf zeichnen */
   const friends = Object.values(S.users).filter(u => u.remote);
-  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && (CH.mode === 'chat' || CH.mode === 'talks') ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${esc(c.id)}">${chAvHTML(c, 'chavl')}<b>${esc(chatName(c))}${c.group ? '' : markOf(c.members.find(m => m !== social?.uid))}</b>${unread(c) ? '<i class="dot" aria-label="neu"></i>' : ''}<small>${cdrPrev(c) || (c.lastText ? '<span data-raw>' + etx(chatPrevText(c)) + '</span>' : '')}</small></button>${pinMark('c', c.id)}</div>`).join('');
+  const list = [...CH.list].filter(c => ctabOf(c) === chatTab).sort(byPin('c')).map(c => `<div class="clrow" data-pk="c" data-pid="${esc(c.id)}" data-pn="${esc(chatName(c))}"><button class="clist ${c.id === CH.open && (CH.mode === 'chat' || CH.mode === 'talks') ? 'on' : ''}${c.theme ? ' ctheme' : ''}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''} data-act="chat-open" data-id="${esc(c.id)}">${chAvHTML(c, 'chavl')}<b>${esc(chatName(c))}${c.group ? '' : markOf(c.members.find(m => m !== social?.uid))}</b>${unrBadge(unrN(c))}<small>${cdrPrev(c) || (c.lastText ? '<span data-raw>' + etx(chatPrevText(c)) + '</span>' : '')}</small></button>${pinMark('c', c.id)}</div>`).join('');
   let right = ''; /* v622: kein Hinweis mehr (Inaya) */
   if (CH.mode === 'new') right = ncHubHTML(friends); /* v780: Neuer Chat wie bei WhatsApp (Inaya) */
   if (CH.mode === 'group') right = groupForm(friends);
@@ -13079,7 +13097,7 @@ function chatsView(){
   return `<div class="card"><div class="card-in">
     <div class="chatwrap ${CH.mode ? 'open' : ''}">
       <div class="chatside"><div class="chtop">
-        <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats'],['pub','Öffentliche Gruppen']].map(([k, l]) => { const n = CH.list.filter(c => ctabOf(c) === k && unread(c)).length + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}" aria-label="${l}" title="${l}"><svg class="cti" viewBox="0 0 24 24" aria-hidden="true">${CTICO[k]}</svg><span class="ctl">${l}</span>${n ? ' <i class="dot" aria-label="neu"></i>' : ''}</button>`; }).join('')}</div>
+        <div class="ctabs2" role="tablist">${[['priv','Privatchats'],['group','Gruppenchats'],['pub','Öffentliche Gruppen']].map(([k, l]) => { const n = CH.list.filter(c => ctabOf(c) === k).reduce((s, c) => s + unrN(c), 0) + (k === 'priv' ? hNew('andy') + hNew('juliet') : 0); return `<button role="tab" data-act="chat-tab" data-v="${k}" aria-selected="${chatTab === k}" aria-label="${l}" title="${l}"><svg class="cti" viewBox="0 0 24 24" aria-hidden="true">${CTICO[k]}</svg><span class="ctl">${l}</span>${unrBadge(n)}</button>`; }).join('')}</div>
         <div class="clscroll">${social || CH.snap ? list || `<p class="note">${chatTab === 'group' ? 'Noch keine Gruppenchats.' : chatTab === 'pub' ? 'Du bist noch in keiner öffentlichen Gruppe.' : 'Noch keine Chats mit Freunden.'}</p>` : '<p class="note">Chats mit Freunden gehen, sobald du in der geteilten Noctibat-Seite angemeldet bist.</p>'}
         ${social && chatTab === 'pub' ? (() => { loadPubGroups(); const l = PUBG.filter(c => !(c.members || []).includes(social.uid)); if (!l.length) return ''; /* v622: ohne weitere Gruppen kein Hinweis */ return `<p class="lbl" style="margin:14px 0 0">Gruppen zum Beitreten</p>${l.length > 4 ? `<input type="search" id="pubg-q" placeholder="Gruppe suchen …" aria-label="Öffentliche Gruppe suchen" autocomplete="off">` : ''}<div id="pubg-list">${l.length ? l.map(c => `<div class="pubg clist${c.theme ? ' ctheme' : ''}" data-n="${esc((c.name || '').toLowerCase())}" ${c.theme ? `style="${themeStyle(normTheme({...c.theme}))}"` : ''}><span class="pubgt"><b>${esc(c.name || 'Gruppe')}</b><small>${(c.members || []).length === 1 ? '1 Person' : (c.members || []).length + ' Leute'}${c.lastText ? ' · ' + etx(c.lastText) : ''}</small></span><button class="btn ghost" data-act="pubg-join" data-id="${esc(c.id)}">Beitreten</button></div>`).join('') : '<p class="note">Gerade gibt es keine weiteren öffentlichen Gruppen. Mach selbst eine auf!</p>'}</div>`; })() : ''}
         </div></div>
