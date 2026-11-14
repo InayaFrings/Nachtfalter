@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7bdeaa96e46f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='184d0cb31b6a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -1619,6 +1619,19 @@ form:is([data-form=pcomment],[data-form=rwall]) .pcthumb{flex:none;align-self:ce
 .sgsearch{margin:8px 10px 0;flex:none}.sgsearch svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}.sgsearch input{flex:1;min-width:0;border:0;background:none;color:inherit;font:inherit;padding:9px 0;outline:none}
 .sgbody{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:8px 10px 12px;-webkit-overflow-scrolling:touch}
 .sggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px}
+/* v938: Paket-Leiste unten wie bei WhatsApp */
+.sgpks{display:flex;gap:4px;padding:6px 8px;border-top:1px solid #ffffff14;flex:none;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.sgpks::-webkit-scrollbar{display:none}
+.sgpk{flex:none;display:grid;place-items:center;width:44px;height:40px;border:0;border-radius:10px;background:none;color:#a9a8b0;cursor:pointer;padding:0}
+.sgpk svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sgpk.pic{padding:5px}.sgpk.pic>svg,.sgpk.pic>img,.sgpk.pic>*{width:30px;height:30px;object-fit:contain;stroke:none;fill:initial}.sgpk.pic img{border-radius:6px}
+.sgpk[aria-pressed="true"]{background:#ffffff1f;color:#fff}
+.sgpkadd{border:1px dashed #ffffff40;width:40px;margin-left:2px}
+.sgpkh{display:flex;align-items:center;gap:8px;min-height:30px;margin:0 2px 8px}.sgpkh b{font:700 14px var(--f-display,'Space Grotesk'),Inter,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.sgpkh small{opacity:.6;font-size:12px;white-space:nowrap}.sgpkh .sp{flex:1}
+.sgpkb{display:grid;place-items:center;width:32px;height:30px;border:0;border-radius:8px;background:none;color:inherit;opacity:.75;cursor:pointer;padding:0;flex:none}.sgpkb:hover{opacity:1;background:#ffffff14}.sgpkb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sgpkform{display:grid;gap:10px;padding:6px 2px}.sgpkform b{font:700 15px var(--f-display,'Space Grotesk'),Inter,sans-serif}.sgpkform input{border-radius:12px;background:#1c1c1f;color:#eeedf2;border:1px solid #ffffff33;padding:10px 12px;font:16px Inter,sans-serif;width:100%}.sgpkform .row{display:flex;align-items:center;gap:8px}.sgpkform .sp{flex:1}.sgpkform .chip{border:1px solid #ffffff33;background:none;color:inherit;border-radius:999px;padding:8px 14px;font:inherit;cursor:pointer}.sgpkform .btn{border-radius:999px;font:600 14px Inter,sans-serif;padding:9px 16px;background:#eeedf2;color:#111;border-color:#eeedf2}
+.sgmkpk{display:grid;gap:10px;padding:12px 16px 0;border-top:1px solid #ffffff1f;margin-top:4px}.sgmkpk .sgmks{padding:0}.sgmkpk .sgmkpknew{border-style:dashed}.sgmkpk input{border-radius:12px;background:#1c1c1f;color:#eeedf2;border:1px solid #ffffff33;padding:9px 12px;font:16px Inter,sans-serif;width:100%}
+.stsgw.mythm .sgpks{border-top-color:var(--p-line);padding:8px 0 0}.stsgw.mythm .sgpk{color:var(--p-muted)}.stsgw.mythm .sgpk[aria-pressed="true"]{background:color-mix(in srgb,var(--p-fg) 14%,transparent);color:var(--p-fg)}.stsgw.mythm .sgpkadd{border-color:var(--p-line)}
+.stsgw.mythm .sgpkform input{background:var(--p-panel);color:var(--p-fg);border-color:var(--p-line)}.stsgw.mythm .sgpkform .btn{background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}.stsgw.mythm .sgpkform .chip{border-color:var(--p-line)}
 .sggrid.gifs{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 .sgt{position:relative;aspect-ratio:1}
 .sgt.gif{aspect-ratio:4/3}
@@ -1660,7 +1673,7 @@ form:is([data-form=pcomment],[data-form=rwall]) .pcthumb{flex:none;align-self:ce
 .sgmkhint{color:#9a99a3;font-size:12px}
 .sgt .sgedit{position:absolute;left:2px;bottom:2px;width:24px;height:24px;border-radius:50%;border:0;background:#000a;color:#fff;display:grid;place-items:center;padding:0;cursor:pointer}.sgt .sgedit svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
 .sgmks .chip{border:1px solid #ffffff33;background:none;color:inherit;border-radius:999px;padding:7px 13px;font:inherit;cursor:pointer}.sgmks .chip[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}
-@media all /*760*/{.sgp{height:min(300px,44vh)}.sgmkp{inset:0;transform:none;left:0;top:0;width:100%;height:100%;border:0;align-content:start;padding-top:env(safe-area-inset-top,0px)}}
+@media all /*760*/{.sgp{height:min(350px,50vh)}.sgmkp{inset:0;transform:none;left:0;top:0;width:100%;height:100%;border:0;align-content:start;padding-top:env(safe-area-inset-top,0px)}}
 .mshfull{width:min(300px,72vw);cursor:pointer;margin-bottom:2px}
 .mshfull .feed{margin:0;padding:0;gap:0}
 .mshfull article.post{margin:0;pointer-events:none}
@@ -8577,6 +8590,7 @@ Object.assign(I18N_EN, {"Statistik": "Statistics", "Lädt …": "Loading …", "
 Object.assign(I18N_EN, {"Bewegte Sticker aus Videos gibt es mit dem Noctibat-Abo.": "Animated stickers from videos come with the Noctibat subscription.", "Dieses Video lässt sich nicht öffnen. Versuch ein MP4 oder MOV.": "This video can't be opened. Try an MP4 or MOV.", "Dein Browser kann keine bewegten Sticker aufnehmen.": "Your browser can't record animated stickers.", "Der bewegte Sticker ist zu groß. Nimm ein kürzeres oder ruhigeres Video.": "The animated sticker is too big. Use a shorter or calmer video.", "Bewegte Sticker brauchen eine Verbindung.": "Animated stickers need a connection.", "Bewegte eigene Sticker aus kurzen Videos": "Animated custom stickers from short videos", "Start": "Start", "Bewegter Sticker: {0} Sekunden ab der gewählten Stelle, ohne Ton.": "Animated sticker: {0} seconds from the chosen point, no sound."});
 Object.assign(I18N_EN, {"Dein Monats-Paket ist da: neue Sticker, Kleidung und Möbel.": "Your monthly pack is here: new stickers, clothes and furniture.", "Jeden Monat ein Sticker-Paket, ein Kleidungsstück und ein Möbelstück, die dir bleiben": "A sticker pack, a piece of clothing and a piece of furniture every month that you keep", "Seit-2026-Pulli": "Since-2026 sweater", "Urkunde Gründungsmitglied": "Founding member certificate", "Erste Nacht": "First Night"}); /* v933 */
 Object.assign(I18N_EN, {"Als Owner hast du alle Abo-Funktionen, auch ohne Abo.": "As the owner you have all subscription features, even without a subscription."});
+Object.assign(I18N_EN, {"Meine Sticker": "My stickers", "Paket": "Pack", "Gekauftes Paket": "Bought pack", "Gefühle": "Feelings", "Emo & Scene": "Emo & scene", "Sticker-Pakete": "Sticker packs", "Neues Paket": "New pack", "1 Sticker": "1 sticker", "{0} Sticker": "{0} stickers", "Paket umbenennen": "Rename pack", "Paket löschen": "Delete pack", "Name des Pakets": "Pack name", "Paket anlegen": "Create pack", "Du hast schon {0} Pakete.": "You already have {0} packs.", "Das Paket konnte nicht gespeichert werden.": "The pack couldn't be saved.", "Paket „{0}“ mit {1} Stickern löschen?": "Delete pack “{0}” with {1} stickers?", "Paket „{0}“ löschen?": "Delete pack “{0}”?", "Das Paket konnte nicht gelöscht werden.": "The pack couldn't be deleted.", "Name des neuen Pakets": "Name of the new pack", "Gib dem neuen Paket einen Namen.": "Give the new pack a name.", "Sticker gespeichert in „{0}“": "Sticker saved to “{0}”"}); /* v938: Sticker-Pakete */
 Object.assign(I18N_EN, {"Test beenden": "End test", "Für dich als Owner startet der Knopf ein Test-Abo.": "As the owner, the button starts a test subscription for you."});
 Object.assign(I18N_EN, {"Premium-Shirt": "Premium shirt", "Dein Premium-Shirt liegt jetzt in deiner Garderobe.": "Your Premium shirt is now in your wardrobe."}); /* v930 */
 Object.assign(I18N_EN, {"Danke für dein Abo! {0} Nocti-Coins für diesen Monat sind da.": "Thanks for subscribing! {0} Nocti-Coins for this month are here.", "/ Jahr": "/ year", "/ Monat": "/ month", "statt {0}": "instead of {0}", "+{0} Nocti-Coins im Monat": "+{0} Nocti-Coins a month", "+ eigenes Premium-Shirt": "+ exclusive Premium shirt", "Dein Abo": "Your plan", "Zahlungspflichtig abonnieren": "Subscribe and pay", "Mit einem Abo sammelst du doppelt so viele Coins und XP und bekommst jeden Monat Nocti-Coins dazu. Plus und Premium können genau dasselbe, Premium gibt mehr Monats-Coins und ein eigenes Shirt.": "With a subscription you collect twice as many coins and XP and get extra Nocti-Coins every month. Plus and Premium do exactly the same; Premium gives more monthly coins and its own shirt.", "Noch nicht freigeschaltet: Das siehst nur du als Owner. Mitglieder sehen das Abo erst, wenn es eingeschaltet ist.": "Not live yet: only you as the owner can see this. Members will see the subscription once it is switched on.", "Dafür müssen erst die neuen Firestore-Regeln (ab v928) eingespielt sein.": "The new Firestore rules (v928 or later) need to be deployed first.", "Dein Abo: {0}, läuft bis {1}": "Your plan: {0}, runs until {1}", "Test": "Test", "Monatlich": "Monthly", "Jährlich": "Yearly", "Die Bezahlung wird gerade eingerichtet.": "Payment is being set up.", "Doppelte tägliche Belohnung: 50 Coins und 40 XP": "Double daily reward: 50 coins and 40 XP", "Tägliche Aufgaben: je 60 Coins und 20 XP": "Daily tasks: 60 coins and 20 XP each", "Begleiter-Spiele: je 30 Coins und 20 XP": "Companion games: 30 coins and 20 XP each", "Alle anderen XP doppelt (Beiträge, Likes, Freunde, Begleiter …)": "All other XP doubled (posts, likes, friends, companion …)", "Fledermaus-Abzeichen am Namen": "Bat badge next to your name", "Schimmer um deinen Story-Kreis": "Shimmer around your story circle", "Was du im Abo bekommst, bleibt dir nach der Kündigung": "Everything you get with the subscription stays after you cancel", "Test-Abo für dich (zählt nicht als echtes Abo)": "Test subscription for you (not a real subscription)", "Aus": "Off", "Noctibat-Abo": "Noctibat subscription", "Das hat nicht geklappt. Versuch es nochmal.": "That didn't work. Please try again."}); /* v928: Abo */
@@ -9612,7 +9626,11 @@ const STPC = {loc:'#ff5d73', men:'#58a6ff', mu:'#c084fc', dbd:'#ffb547', pho:'#3
 /* v887 (Inaya): eigene Sticker aus dem Sticker Maker stehen in der Story-Auswahl ganz oben */
 function stOwnStkHTML(){ if (!SG.own) return social ? `<b class="sttagh">Eigene Sticker</b><p class="stownw">Lädt …</p>` : ''; const l = SG.own.filter(x => sgOkImg(x.img));
   /* v893 (Inaya): direkt hier einen neuen Sticker erstellen, er landet gleich in der Story */
-  return `<b class="sttagh">Eigene Sticker</b><div class="ststkg stown"><label class="stmk" aria-label="Eigenen Sticker erstellen"><input type="file" id="st-sgfile" accept="image/*" hidden>${SG_ICO.plus}<small>Erstellen</small></label>${l.map(x => `<button type="button" data-act="st-sgown" data-v="${esc(x.id)}" aria-label="Eigener Sticker"><img src="${esc(x.img)}" alt="" draggable="false"></button>`).join('')}</div>`; }
+  const mk = `<label class="stmk" aria-label="Eigenen Sticker erstellen"><input type="file" id="st-sgfile" accept="image/*" hidden>${SG_ICO.plus}<small>Erstellen</small></label>`, tile = x => `<button type="button" data-act="st-sgown" data-v="${esc(x.id)}" aria-label="Eigener Sticker"><img src="${esc(x.img)}" alt="" draggable="false"></button>`;
+  /* v938: nach Paketen getrennt, „Erstellen“ steht im ersten */
+  const P = typeof sgPkList === 'function' && SG.pk ? sgPkList().filter((id, i) => !i || sgPkItems(id).length) : null;
+  if (!P || P.length < 2) return `<b class="sttagh">Eigene Sticker</b><div class="ststkg stown">${mk}${l.map(tile).join('')}</div>`;
+  return P.map((id, i) => `<b class="sttagh" data-raw>${esc(sgPkName(id))}</b><div class="ststkg stown">${i ? '' : mk}${sgPkItems(id).map(tile).join('')}</div>`).join(''); }
 function stPillsHTML(n){ const pill = (k, l) => { const ic = STPN[k]?.[1] || (k === 'sld' ? emoSVG('verliebt') : STPI[k]), q = ` data-q="${esc(l.toLowerCase())}" style="--ic:${STPC[k] || '#eeedf2'};--tc:${STPN[k]?.[0] || '#9a99a3'}"`;
     if (k === 'pho' || k === 'pol' || k === 'strip') return `<label class="stpill"${q}>${ic}<span>${l}</span><input type="file" accept="image/*" id="${k === 'pho' ? 'st-phf' : k === 'pol' ? 'st-polf' : 'st-strf'}"${k === 'strip' ? ' multiple' : ''} hidden></label>`;
     return `<button type="button" class="stpill" data-act="${k === 'mu' ? 'st-music' : 'st-pill'}" data-v="${k}"${q}>${ic}<span>${l}</span></button>`; };
@@ -13589,10 +13607,10 @@ const sgMsgHTML = (p, ctx='') => { p = sgClean(p); if (!p) return ''; return `<b
 // Bibliothek: eigene Sticker und Favoriten liegen privat beim Nutzer (data/users/<uid>/...)
 const sgCol = n => social ? social.db.collection(`data/users/${social.uid}/nf-sg/${n}`) : null;
 async function sgLoad(){
-  if (SG.own && SG.fav) return;
-  if (!social) { SG.own = S.sgOwn || []; SG.fav = S.sgFav || []; return; }
+  if (SG.own && SG.fav && SG.pk) return;
+  if (!social) { SG.own = S.sgOwn || []; SG.fav = S.sgFav || []; SG.pk = S.sgPk || []; return; }
   const rd = async n => { try { const q = await sgCol(n).get(); return q.docs.map(d => ({id:d.id, ...d.data()})).sort((a, b) => (b.ts || 0) - (a.ts || 0)); } catch { return []; } };
-  [SG.own, SG.fav] = await Promise.all([rd('stk'), rd('sgfav')]);
+  [SG.own, SG.fav, SG.pk] = await Promise.all([rd('stk'), rd('sgfav'), rd('pk')]); SG.pk.reverse(); /* v938: eigene Pakete, ältestes zuerst */
   SG.own = SG.own.filter(x => sgOkImg(x.img)); SG.fav = SG.fav.map(x => ({...x, p:sgClean(x.p)})).filter(x => x.p);
 }
 async function sgGifKey(){ if (SG.key !== null) return SG.key; SG.key = ''; if (social) { try { const d = await social.db.doc('site/gif').get(); SG.key = (d.exists && d.data().giphy) || ''; } catch {} } return SG.key; }
@@ -13602,29 +13620,75 @@ async function sgFavToggle(p){ p = sgClean(p); if (!p) return; await sgLoad(); c
   else { const x = {id, p, ts:Date.now()}; SG.fav.unshift(x); if (social) sgCol('sgfav').doc(id).set({p, ts:x.ts}).catch(() => toast('Favorit konnte nicht gespeichert werden.')); else { S.sgFav = SG.fav; save(); } toast('Zu Favoriten hinzugefügt'); } }
 function sgList(){
   if (SG.mode === 'g') return SG.gsub === 'fav' ? (SG.fav || []).filter(x => sgIsGif(x.p)).map(x => x.p) : SG.res;
-  if (SG.sub === 'fav') return (SG.fav || []).filter(x => !sgIsGif(x.p)).map(x => x.p);
-  if (SG.sub === 'own') return (SG.own || []).map(x => ({img:x.img, ...(sgOkVid(x.vid) ? {vid:x.vid, sh:x.sh} : {}), _own:x.id, _ed:!!x.src && !x.vid}));
-  return [...spOwnedStickers(), ...stkKeys(true).map(k => ({k})), ...Object.keys(EMOS).map(e => ({e}))]; /* v933: Abo-Pakete zuerst, nur wenn man sie hat */
+  sgSubFix(); const u = SG.sub;
+  if (u === 'fav') return (SG.fav || []).filter(x => !sgIsGif(x.p)).map(x => x.p);
+  if (u.startsWith('o:')) return sgPkItems(u.slice(2)).map(x => ({img:x.img, ...(sgOkVid(x.vid) ? {vid:x.vid, sh:x.sh} : {}), _own:x.id, _ed:!!x.src && !x.vid}));
+  if (u.startsWith('sp:')) { const id = u.slice(3); if (SPK.items[id]) return SPK.items[id]; spItems(id).then(() => sgPaint()); return []; }
+  if (u.startsWith('pk:') || u.startsWith('c:')) { const c = u.startsWith('pk:') ? u : u.slice(2); return Object.keys(STK).filter(k => STK[k][1] === c).map(k => ({k})); }
+  return Object.keys(EMOS).map(e => ({e}));
 }
+/* v938 (Inaya: „Sticker wie bei WhatsApp“): eigene Sticker in Paketen. Pakete unter data/users/<uid>/nf-sg/pk/<id> = {n, ts}, Sticker mit Feld pk.
+   Ohne (gültiges) pk liegt ein Sticker im Grundpaket SGPK_DEF („Meine Sticker“, umbenennbar über ein Dokument mit derselben ID).
+   Unten in der Sticker-Auswahl eine Leiste: Favoriten, Sticker-Laden, eigene Pakete, gekaufte Pakete (sp:), Abo-Pakete (pk:), Kategorien (c:), Gefühle (emo), Plus = neues Paket. */
+const SGPK_DEF = 'meine', SGPK_MAX = 30;
+const sgPkOf = x => x?.pk && (SG.pk || []).some(p => p.id === x.pk) ? x.pk : SGPK_DEF;
+const sgPkItems = id => (SG.own || []).filter(x => sgOkImg(x.img) && sgPkOf(x) === id);
+const sgPkName = id => (SG.pk || []).find(p => p.id === id)?.n || (id === SGPK_DEF ? tr('Meine Sticker') : tr('Paket'));
+/* Grundpaket nur zeigen, wenn etwas drin ist oder es kein anderes Paket gibt */
+const sgPkList = () => { const L = (SG.pk || []).filter(p => p.id !== SGPK_DEF).map(p => p.id); return sgPkItems(SGPK_DEF).length || !L.length ? [SGPK_DEF, ...L] : L; };
+function sgTabs(){ const T = [{k:'fav', ico:SG_ICO.star, l:'Favoriten'}];
+  if ((ABO || amOwner) && social) T.push({k:'shop', ico:SP_ICO, l:'Sticker-Laden'});
+  for (const id of sgPkList()) { const f = sgPkItems(id)[0]; T.push({k:'o:' + id, ico:f ? `<img src="${esc(f.img)}" alt="" draggable="false">` : SG_ICO.own, pic:!!f, l:sgPkName(id), raw:1}); }
+  for (const k of Object.keys(WAL.d?.inv || {})) if (k.startsWith('sp:')) { const id = k.slice(3), f = SPK.items[id]?.[0]; T.push({k, ico:f ? sgItemHTML(f) : SG_ICO.stk, pic:!!f, l:(SPK.list || []).find(x => x.id === id)?.n || tr('Gekauftes Paket'), raw:1}); }
+  for (const pk of Object.keys(STK_PACKS)) if (aboPkOwn(pk)) { const f = Object.keys(STK).find(k => STK[k][1] === 'pk:' + pk); if (f) T.push({k:'pk:' + pk, ico:stkSVG(f), pic:1, l:STK_PACKS[pk]}); }
+  for (const [c, l] of STK_CAT) { const f = Object.keys(STK).find(k => STK[k][1] === c); if (f) T.push({k:'c:' + c, ico:stkSVG(f), pic:1, l}); }
+  T.push({k:'emo', ico:sgItemHTML({e:Object.keys(EMOS)[0]}), pic:1, l:'Gefühle'}); return T; }
+/* alte Werte (own/all) und Pakete, die es nicht mehr gibt, auf einen gültigen Reiter stellen */
+function sgSubFix(){ const ks = sgTabs().map(t => t.k); if (SG.sub === 'own') SG.sub = 'o:' + (sgPkList().includes(SG.pkLast) ? SG.pkLast : sgPkList()[0]); if (!ks.includes(SG.sub)) SG.sub = ks.find(k => k.startsWith('pk:') || k.startsWith('c:')) || ks[0]; }
+function sgPksHTML(){ sgSubFix(); return `<div class="sgpks hscroll" role="tablist" aria-label="${esc(tr('Sticker-Pakete'))}">${sgTabs().map(t => `<button type="button" class="sgpk${t.pic ? ' pic' : ''}" role="tab" data-act="sg-sub" data-v="${esc(t.k)}" aria-pressed="${SG.sub === t.k}" aria-selected="${SG.sub === t.k}" title="${esc(t.raw ? t.l : tr(t.l))}" aria-label="${esc(t.raw ? t.l : tr(t.l))}">${t.ico}</button>`).join('')}<button type="button" class="sgpk sgpkadd" data-act="sg-pknew" title="${esc(tr('Neues Paket'))}" aria-label="${esc(tr('Neues Paket'))}">${SG_ICO.plus}</button></div>`; }
+function sgPkHeadHTML(own){ const u = SG.sub; if (u === 'shop') return ''; const t = sgTabs().find(x => x.k === u); if (!t) return '';
+  const id = own ? u.slice(2) : '', n = own ? sgPkItems(id).length : 0;
+  return `<div class="sgpkh"><b${t.raw ? ' data-raw' : ''}>${esc(t.raw ? t.l : tr(t.l))}</b>${own ? `<small>${n === 1 ? tr('1 Sticker') : tr('{0} Sticker').replace('{0}', n)}</small><span class="sp"></span><button type="button" class="sgpkb" data-act="sg-pkren" data-v="${esc(id)}" aria-label="${esc(tr('Paket umbenennen'))}" title="${esc(tr('Paket umbenennen'))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>${id !== SGPK_DEF ? `<button type="button" class="sgpkb" data-act="sg-pkdel" data-v="${esc(id)}" aria-label="${esc(tr('Paket löschen'))}" title="${esc(tr('Paket löschen'))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg></button>` : ''}` : ''}</div>`; }
+function sgPkFormHTML(){ const f = SG.pkForm, ren = f.k === 'ren';
+  return `<form class="sgpkform" data-form="sgpk" onsubmit="return false"><b>${esc(tr(ren ? 'Paket umbenennen' : 'Neues Paket'))}</b><input type="text" id="sg-pkn" maxlength="30" autocomplete="off" enterkeyhint="done" placeholder="${esc(tr('Name des Pakets'))}" value="${esc(ren ? sgPkName(f.id) : '')}" aria-label="${esc(tr('Name des Pakets'))}"><div class="row"><button type="button" class="chip" data-act="sg-pkx">${esc(tr('Abbrechen'))}</button><span class="sp"></span><button type="button" class="btn" data-act="sg-pkok">${esc(tr(ren ? 'Speichern' : 'Paket anlegen'))}</button></div></form>`; }
+async function sgPkSave(id, n){ n = String(n || '').trim().slice(0, 30); if (!n) return null; await sgLoad();
+  const nw = !id; if (nw) { if ((SG.pk || []).filter(p => p.id !== SGPK_DEF).length >= SGPK_MAX) { toastNow(tr('Du hast schon {0} Pakete.').replace('{0}', SGPK_MAX)); return null; } id = 'p' + Date.now().toString(36); }
+  const old = (SG.pk || []).find(p => p.id === id), x = {id, n, ts:old?.ts || Date.now()};
+  if (social) sgCol('pk').doc(id).set({n, ts:x.ts}).catch(() => toastNow(tr('Das Paket konnte nicht gespeichert werden.'))); /* nicht warten: erscheint sofort, Firestore speichert im Hintergrund */
+  SG.pk = old ? SG.pk.map(p => p.id === id ? x : p) : [...(SG.pk || []), x]; if (!social) { S.sgPk = SG.pk; save(); } return id; }
+async function sgPkDel(id){ if (id === SGPK_DEF) return; const L = sgPkItems(id);
+  if (!await askYesNo(L.length ? tr('Paket „{0}“ mit {1} Stickern löschen?').replace('{0}', sgPkName(id)).replace('{1}', L.length) : tr('Paket „{0}“ löschen?').replace('{0}', sgPkName(id)), tr('Ja, löschen'), tr('Nein'))) return;
+  const ids = new Set(L.map(x => x.id)); SG.own = SG.own.filter(x => !ids.has(x.id)); SG.pk = SG.pk.filter(p => p.id !== id);
+  if (social) { const b = social.db.batch(); ids.forEach(i => b.delete(sgCol('stk').doc(i))); b.delete(sgCol('pk').doc(id)); b.commit().catch(() => toastNow(tr('Das Paket konnte nicht gelöscht werden.'))); } else { S.sgOwn = SG.own; S.sgPk = SG.pk; save(); }
+  SG.sub = 'own'; SG.top = true; sgPaint(); }
+const sgPkRemember = id => { SG.pkLast = id; try { localStorage.setItem('nf-sgpk', id); } catch {} };
+try { SG.pkLast = localStorage.getItem('nf-sgpk') || ''; } catch {}
+/* Sticker Maker: in welches Paket? */
+function sgMkPkHTML(m){ const L = [...new Set([...sgPkList(), ...(m.pk && m.pk !== '+' ? [m.pk] : [])])];
+  return `<div class="sgmkpk"><b class="sgmkh">${esc(tr('Paket'))}</b><div class="sgmks" role="group" aria-label="${esc(tr('Paket'))}">${L.map(id => `<button type="button" class="chip" data-act="sg-mkpk" data-v="${esc(id)}" aria-pressed="${m.pk === id}" data-raw>${esc(sgPkName(id))}</button>`).join('')}<button type="button" class="chip sgmkpknew" data-act="sg-mkpk" data-v="+" aria-pressed="${m.pk === '+'}">+ ${esc(tr('Neues Paket'))}</button></div>${m.pk === '+' ? `<input type="text" id="sg-mkpkn" maxlength="30" autocomplete="off" placeholder="${esc(tr('Name des neuen Pakets'))}" value="${esc(m.pkn || '')}" aria-label="${esc(tr('Name des neuen Pakets'))}">` : ''}</div>`; }
+const sgMkPkStart = () => { const u = SG.sub || ''; if (u.startsWith('o:')) return u.slice(2); return sgPkList().includes(SG.pkLast) ? SG.pkLast : sgPkList()[0] || SGPK_DEF; };
+/* vor dem Speichern: neues Paket anlegen, gibt die Paket-ID zurück (oder null bei Fehler) */
+async function sgMkPkResolve(m){ if (m.pk !== '+') return m.pk || SGPK_DEF; const n = String(m.pkn || '').trim(); if (!n) { toastNow(tr('Gib dem neuen Paket einen Namen.')); document.getElementById('sg-mkpkn')?.focus(); return null; } const id = await sgPkSave(null, n); if (id) { m.pk = id; m.pkn = ''; } return id; }
 function sgGrid(){
   if (SG.mode === 's' && SG.sub === 'shop') { SG.view = []; return spShopHTML(); } /* v936: Sticker-Laden */
   if (SG.mode === 'g' && SG.gsub === 'srch' && !extOk('giphy')) { SG.view = []; return `<div class="sgask">${gifAsk()}</div>`; }
-  const l = SG.view = sgList(), g = SG.mode === 'g', own = !g && SG.sub === 'own';
+  const l = SG.view = sgList(), g = SG.mode === 'g', own = !g && SG.sub.startsWith('o:');
   const tiles = l.map((p, i) => `<div class="sgt${g ? ' gif' : ''}"><button type="button" class="sgi" data-act="sg-send" data-i="${i}" aria-label="${g ? 'GIF' : 'Sticker'} senden">${sgItemHTML(p)}</button><button type="button" class="sgstar" data-act="sg-fav" data-i="${i}" aria-pressed="${sgFavHas(p)}" aria-label="${sgFavHas(p) ? 'Aus Favoriten entfernen' : 'Zu Favoriten'}">${SG_ICO.star}</button>${own ? `<button type="button" class="sgdel" data-act="sg-del" data-i="${i}" aria-label="Sticker löschen">${SG_ICO.x}</button>${p._ed ? `<button type="button" class="sgedit" data-act="sg-edit" data-i="${i}" aria-label="Sticker bearbeiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>` : ''}` : ''}</div>`).join('');
   const make = own ? `<div class="sgt"><label class="sgi sgmake" aria-label="Eigenen Sticker erstellen"><input type="file" id="sg-file" accept="image/*${typeof aboFx === 'function' && aboFx() ? ',video/*' : ''}" hidden>${SG_ICO.plus}<small>Erstellen</small></label></div>` : '';
   let empty = '';
-  if (!l.length) empty = !SG.own || !SG.fav ? '<p class="sgnote">Lädt …</p>' : g ? (SG.gsub === 'fav' ? '<p class="sgnote">Noch keine GIF-Favoriten. Tipp bei einem GIF auf den Stern.</p>' : SG.busy ? '<p class="sgnote">Sucht …</p>' : `<p class="sgnote">${esc(SG.err || 'Keine GIFs gefunden.')}</p>`) : SG.sub === 'fav' ? '<p class="sgnote">Noch keine Favoriten. Tipp bei einem Sticker auf den Stern.</p>' : own ? '' : '';
-  return `<div class="sggrid${g ? ' gifs' : ''}">${make}${tiles}</div>${empty}${g && SG.gsub === 'srch' && SG.key ? '<p class="sgby">Powered by GIPHY</p>' : ''}`;
+  if (!l.length) empty = !SG.own || !SG.fav ? '<p class="sgnote">Lädt …</p>' : !g && SG.sub.startsWith('sp:') ? '<p class="sgnote">Lädt …</p>' : g ? (SG.gsub === 'fav' ? '<p class="sgnote">Noch keine GIF-Favoriten. Tipp bei einem GIF auf den Stern.</p>' : SG.busy ? '<p class="sgnote">Sucht …</p>' : `<p class="sgnote">${esc(SG.err || 'Keine GIFs gefunden.')}</p>`) : SG.sub === 'fav' ? '<p class="sgnote">Noch keine Favoriten. Tipp bei einem Sticker auf den Stern.</p>' : own ? '' : '';
+  if (!g && SG.pkForm) return sgPkFormHTML();
+  return `${g ? '' : sgPkHeadHTML(own)}<div class="sggrid${g ? ' gifs' : ''}">${make}${tiles}</div>${empty}${g && SG.gsub === 'srch' && SG.key ? '<p class="sgby">Powered by GIPHY</p>' : ''}`;
 }
 function sgPanelHTML(){
   const only = SG.tgt === 'post' || SG.tgt === 'story' ? 'g' : SG.tgt === 'pcr' ? 's' : null; /* v893: Story-GIFs nur GIFs, Sticker stehen in der Sticker-Auswahl */ if (only) SG.mode = only; // Neuer Beitrag: unten nur GIFs, im Bearbeiten nur Sticker (Inaya, 2026-10-13)
   const t = (act, v, on, ico, lbl) => `<button type="button" class="sgtab" data-act="${act}" data-v="${v}" aria-pressed="${on}" aria-label="${lbl}" title="${lbl}">${ico}</button>`;
-  const sub = SG.mode === 's' ? `${(ABO || amOwner) && social ? t('sg-sub', 'shop', SG.sub === 'shop', SP_ICO, 'Sticker-Laden') : ''}${t('sg-sub', 'fav', SG.sub === 'fav', SG_ICO.star, 'Favoriten')}${t('sg-sub', 'all', SG.sub === 'all', SG_ICO.stk, 'Alle Sticker')}${t('sg-sub', 'own', SG.sub === 'own', SG_ICO.own, 'Eigene Sticker')}`
+  const sub = SG.mode === 's' ? '' /* v938: Pakete stehen unten in der Leiste (sgPksHTML) */
     : `${t('sg-gsub', 'fav', SG.gsub === 'fav', SG_ICO.star, 'GIF-Favoriten')}${t('sg-gsub', 'srch', SG.gsub === 'srch', SG_ICO.srch, 'GIFs suchen')}`;
   const search = SG.mode === 'g' && SG.gsub === 'srch' ? `<label class="musearch sgsearch">${SG_ICO.srch}<input type="search" id="sg-q" placeholder="GIFs suchen …" value="${esc(SG.q)}" autocomplete="off" enterkeyhint="search" aria-label="GIFs suchen"></label>` : '';
-  return `<div class="sghead">${only ? '' : `<div class="sgmodes">${t('sg-mode', 's', SG.mode === 's', SG_ICO.stk, 'Sticker')}${t('sg-mode', 'g', SG.mode === 'g', SG_ICO.gif, 'GIFs')}</div><span class="sgsep" aria-hidden="true"></span>`}<div class="sgsubs">${sub}</div><button type="button" class="sgtab sgx" data-act="sg-close" aria-label="Schließen">${SG_ICO.x}</button></div>${search}<div class="sgbody" id="sg-body">${sgGrid()}</div>`;
+  return `<div class="sghead">${only ? '' : `<div class="sgmodes">${t('sg-mode', 's', SG.mode === 's', SG_ICO.stk, 'Sticker')}${t('sg-mode', 'g', SG.mode === 'g', SG_ICO.gif, 'GIFs')}</div><span class="sgsep" aria-hidden="true"></span>`}<div class="sgsubs">${sub}</div><button type="button" class="sgtab sgx" data-act="sg-close" aria-label="Schließen">${SG_ICO.x}</button></div>${search}<div class="sgbody" id="sg-body">${sgGrid()}</div>${SG.mode === 's' ? sgPksHTML() : ''}`;
 }
-function sgPaint(keepQ){ const el = document.getElementById('sgp'); if (!el) return; if (keepQ) { const b = document.getElementById('sg-body'); if (b) { b.innerHTML = sgGrid(); return; } } const st = el.querySelector('.sgbody')?.scrollTop || 0; el.innerHTML = sgPanelHTML(); const b = el.querySelector('.sgbody'); if (b) b.scrollTop = st; }
+function sgPaint(keepQ){ const el = document.getElementById('sgp'); if (!el) return; if (keepQ) { const b = document.getElementById('sg-body'); if (b) { b.innerHTML = sgGrid(); return; } } const st = el.querySelector('.sgbody')?.scrollTop || 0, sl = el.querySelector('.sgpks')?.scrollLeft || 0; el.innerHTML = sgPanelHTML(); const b = el.querySelector('.sgbody'); if (b) b.scrollTop = SG.top ? 0 : st; const k = el.querySelector('.sgpks'); if (k) { k.scrollLeft = sl; if (SG.top) k.querySelector('[aria-pressed=true]')?.scrollIntoView({block:'nearest', inline:'nearest'}); } SG.top = false; el.querySelector('#sg-pkn')?.focus(); }
 async function sgOpen(btn){
   const f = btn.closest('form'); if (!f) return; const ex = document.getElementById('sgp');
   if (ex && SG.form === f) return sgClose();
@@ -13707,25 +13771,26 @@ function sgTxHTML(t){ return `<div class="sgmktx"><b class="sgmkh">Text</b>
     <div class="sgmkcol" role="group" aria-label="Textfarbe">${SGTC.map(c => `<button type="button" data-act="sg-txc" data-v="${c}" style="background:${c}" aria-pressed="${t.c === c}" aria-label="Farbe ${c}"></button>`).join('')}<button type="button" class="chip" data-act="sg-txo" aria-pressed="${!!t.o}">Kontur</button></div>
     <label class="sgmkz"><span>Textgröße</span><input type="range" id="sg-ts" min="0.07" max="0.3" step="0.005" value="${t.s}"></label>
     <small class="sgmkhint">Den Text kannst du mit dem Finger auf dem Bild verschieben.</small></div>`; }
-function sgMkHTML(){ const m = SG.mk; m.tx = m.tx || sgTxNew();
+function sgMkHTML(){ const m = SG.mk; m.tx = m.tx || sgTxNew(); if (m.pk === undefined) m.pk = sgMkPkStart();
   return `<div class="sgmkb" data-act="sg-mkx"></div><div class="sgmkp" role="dialog" aria-label="Sticker erstellen"><header class="pcfh"><button type="button" class="pcfx" data-act="sg-mkx" aria-label="Abbrechen">${SG_ICO.x}</button><b>Sticker erstellen</b><span></span></header>
   <div class="sgmkc"><canvas id="sg-cv" width="300" height="300" aria-label="Vorschau, mit dem Finger verschieben"></canvas></div>
   <label class="sgmkz"><span>Größe</span><input type="range" id="sg-z" min="0.4" max="3" step="0.01" value="${m.z}"></label>
   <div class="sgmks">${SGSH.map(([v, l]) => `<button type="button" class="chip" data-act="sg-mksh" data-v="${v}" aria-pressed="${m.sh === v}">${l}</button>`).join('')}${m.sh !== 'orig' ? `<button type="button" class="chip" data-act="sg-mkrim" aria-pressed="${m.rim}">Weißer Rand</button>` : ''}</div>
   ${m.vid ? `<label class="sgmkz"><span>Start</span><input type="range" id="sg-vs" min="0" max="${Math.max(0, m.vdur - m.vd).toFixed(2)}" step="0.05" value="${m.vs}"></label><small class="sgmkhint" style="padding:0 16px">Bewegter Sticker: ${m.vd.toFixed(1).replace('.', ',')} Sekunden ab der gewählten Stelle, ohne Ton.</small>` : ''}
   ${sgTxHTML(m.tx)}
+  ${sgMkPkHTML(m)}
   <div class="row sgmkf"><span class="sp"></span><button type="button" class="btn" data-act="sg-mkok">${m.id ? 'Änderungen speichern' : 'Sticker speichern'}</button></div></div>`; }
 function sgMkPaint(){ let el = document.getElementById('sgmk'); if (!el) { el = document.createElement('div'); el.id = 'sgmk'; el.className = 'sgmk'; document.body.appendChild(el); } const sc = el.querySelector('.sgmkp')?.scrollTop || 0; el.innerHTML = sgMkHTML(); const p = el.querySelector('.sgmkp'); if (p) p.scrollTop = sc; sgDraw(document.getElementById('sg-cv')); sgFontReady(SG.mk?.tx).then(() => sgDraw(document.getElementById('sg-cv'))); }
 // Ausgangsbild klein mitspeichern, damit man Text und Ausschnitt später noch ändern kann
 function sgSrcOf(img){ try { const k = Math.min(1, 640 / Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); const x = c.getContext('2d'); x.drawImage(img, 0, 0, c.width, c.height); const d = c.toDataURL('image/png').length < 200000 ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', .82); return d.length < 330000 ? d : ''; } catch { return ''; } }
 const sgMkRecipe = m => ({z:+m.z || 1, x:+m.x || 0, y:+m.y || 0, sh:m.sh, rim:!!m.rim, ...(m.tx && String(m.tx.t || '').trim() ? {tx:{t:String(m.tx.t).slice(0, 60), f:m.tx.f, c:m.tx.c, o:m.tx.o ? 1 : 0, s:+m.tx.s, x:+m.tx.x, y:+m.tx.y}} : {})});
 async function sgMkSave(){
-  const m = SG.mk; if (!m) return; if (m.vid) return sgVidSave(m); /* v933 */ await sgFontReady(m.tx); const cv = document.createElement('canvas'); let img = '';
+  const m = SG.mk; if (!m || m.busy) return; await sgLoad(); m.busy = true; const pk = await sgMkPkResolve(m); m.busy = false; if (!pk) return; /* v938: Paket */ if (m.vid) return sgVidSave(m); /* v933 */ await sgFontReady(m.tx); const cv = document.createElement('canvas'); let img = '';
   for (const s of [256, 200, 160]) { cv.width = cv.height = s; sgDraw(cv, true); img = cv.toDataURL('image/webp', .86); if (!img.startsWith('data:image/webp')) img = cv.toDataURL('image/png'); if (img.length < 260000) break; }
   if (!sgOkImg(img)) return toast('Das Bild ist zu groß.');
-  await sgLoad(); const src = social ? (m.src || sgSrcOf(m.img)) : '', x = {id:m.id || 's' + Date.now().toString(36), img, ts:Date.now(), ...(src ? {src, mk:sgMkRecipe(m)} : {})};
-  if (social) { try { await sgCol('stk').doc(x.id).set({img, ts:x.ts, ...(src ? {src, mk:x.mk} : {})}); } catch { return toast('Der Sticker konnte nicht gespeichert werden.'); } } else { S.sgOwn = [x, ...(S.sgOwn || []).filter(y => y.id !== x.id)].slice(0, 60); save(); }
-  SG.own = [x, ...SG.own.filter(y => y.id !== x.id)]; SG.mk = null; document.getElementById('sgmk')?.remove(); if (SG.stMk && stNew) { SG.stMk = false; stSgAdd({img}); return; } SG.mode = 's'; SG.sub = 'own'; sgPaint(); toast('Sticker gespeichert');
+  await sgLoad(); const src = social ? (m.src || sgSrcOf(m.img)) : '', x = {id:m.id || 's' + Date.now().toString(36), img, ts:Date.now(), pk, ...(src ? {src, mk:sgMkRecipe(m)} : {})};
+  if (social) { try { await sgCol('stk').doc(x.id).set({img, ts:x.ts, pk, ...(src ? {src, mk:x.mk} : {})}); } catch { return toast('Der Sticker konnte nicht gespeichert werden.'); } } else { S.sgOwn = [x, ...(S.sgOwn || []).filter(y => y.id !== x.id)].slice(0, 60); save(); }
+  SG.own = [x, ...SG.own.filter(y => y.id !== x.id)]; SG.mk = null; document.getElementById('sgmk')?.remove(); sgPkRemember(pk); if (SG.stMk && stNew) { SG.stMk = false; stSgAdd({img}); return; } SG.mode = 's'; SG.sub = 'o:' + pk; SG.top = true; sgPaint(); toastNow(tr('Sticker gespeichert in „{0}“').replace('{0}', sgPkName(pk)));
 }
 /* v933: Video öffnen: höchstens 3 Sekunden, ohne Ton, Vorschau läuft in Schleife */
 function sgVidOpen(file){ const v = document.createElement('video'), url = URL.createObjectURL(file); v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto'; v.src = url;
@@ -13743,9 +13808,9 @@ async function sgVidSave(m){ const MT = ['video/webm;codecs=vp9', 'video/webm;co
   let vid = ''; for (const [S0, br] of [[240, 300000], [200, 180000], [160, 110000]]) { vid = await asUrl(await rec1(S0, br)); if (sgOkVid(vid) && vid.length < 560000) break; }
   m.rec = false; if (!sgOkVid(vid) || vid.length >= 560000) { toastNow('Der bewegte Sticker ist zu groß. Nimm ein kürzeres oder ruhigeres Video.'); sgVidLoop(); return; }
   let img = poster.toDataURL('image/webp', .8); if (!img.startsWith('data:image/webp')) img = poster.toDataURL('image/png');
-  await sgLoad(); const x = {id:'v' + Date.now().toString(36), img, vid, sh:m.sh, ts:Date.now()};
-  if (social) { try { await sgCol('stk').doc(x.id).set({img, vid, sh:m.sh, ts:x.ts}); } catch { return toastNow('Der Sticker konnte nicht gespeichert werden.'); } } else return toastNow('Bewegte Sticker brauchen eine Verbindung.');
-  SG.own = [x, ...SG.own]; URL.revokeObjectURL(m.url); SG.mk = null; document.getElementById('sgmk')?.remove(); SG.mode = 's'; SG.sub = 'own'; sgPaint(); }
+  await sgLoad(); const pk = m.pk && m.pk !== '+' ? m.pk : SGPK_DEF, x = {id:'v' + Date.now().toString(36), img, vid, sh:m.sh, ts:Date.now(), pk};
+  if (social) { try { await sgCol('stk').doc(x.id).set({img, vid, sh:m.sh, ts:x.ts, pk}); } catch { return toastNow('Der Sticker konnte nicht gespeichert werden.'); } } else return toastNow('Bewegte Sticker brauchen eine Verbindung.');
+  SG.own = [x, ...SG.own]; URL.revokeObjectURL(m.url); SG.mk = null; document.getElementById('sgmk')?.remove(); sgPkRemember(pk); SG.mode = 's'; SG.sub = 'o:' + pk; SG.top = true; sgPaint(); toastNow(tr('Sticker gespeichert in „{0}“').replace('{0}', sgPkName(pk))); }
 document.addEventListener('change', e => {
   if (e.target.id !== 'sg-file' && e.target.id !== 'st-sgfile') return; SG.stMk = e.target.id === 'st-sgfile' && !!stNew; const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
   if (/^video\//.test(file.type) || /\.(mov|mp4|m4v|webm)$/i.test(file.name || '')) { if (!aboFx()) return toastNow('Bewegte Sticker aus Videos gibt es mit dem Noctibat-Abo.'); return sgVidOpen(file); } /* v933 */
@@ -13755,10 +13820,11 @@ document.addEventListener('input', e => {
   if (e.target.id === 'sg-z' && SG.mk) { SG.mk.z = +e.target.value; sgDraw(document.getElementById('sg-cv')); }
   else if (e.target.id === 'sg-vs' && SG.mk?.vid) { SG.mk.vs = +e.target.value; SG.mk.vid.currentTime = SG.mk.vs; }
   else if (e.target.id === 'sg-tx' && SG.mk?.tx) { SG.mk.tx.t = e.target.value.replace(/\n{3,}/g, '\n\n'); const d = document.querySelector('[data-act=sg-txdel]'); if (d) d.hidden = !SG.mk.tx.t; sgDraw(document.getElementById('sg-cv')); sgFontReady(SG.mk.tx).then(() => sgDraw(document.getElementById('sg-cv'))); }
+  else if (e.target.id === 'sg-mkpkn' && SG.mk) SG.mk.pkn = e.target.value;
   else if (e.target.id === 'sg-ts' && SG.mk?.tx) { SG.mk.tx.s = +e.target.value; sgDraw(document.getElementById('sg-cv')); }
   else if (e.target.id === 'sg-q') { SG.q = e.target.value; clearTimeout(sgQT); sgQT = setTimeout(sgSearch, 380); }
 });
-document.addEventListener('keydown', e => { if (e.target.id === 'sg-q' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+document.addEventListener('keydown', e => { if (e.target.id === 'sg-q' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } else if (e.target.id === 'sg-pkn' && e.key === 'Enter') { e.preventDefault(); document.querySelector('[data-act=sg-pkok]')?.click(); } else if (e.target.id === 'sg-mkpkn' && e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
 { let drag = null, pts = new Map();
   document.addEventListener('pointerdown', e => { if (e.target.id !== 'sg-cv' || !SG.mk) return; e.preventDefault(); e.target.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
     const r = e.target.getBoundingClientRect(), u = (e.clientX - r.left) / r.width, v = (e.clientY - r.top) / r.height, bb = SG.mk.tx?.bb, k = .05;
@@ -20193,14 +20259,20 @@ document.addEventListener('click', async e => {
   else if (a === 'psg-open') { if (SG.form) sgClose(); PSGP = !PSGP; SG.tgt = PSGP ? 'post' : null; paintCompose(); if (PSGP) { await sgLoad(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); } }
   else if (a === 'st-sgtab') { const n = stNew; if (!n) return; n.sgTab = !!b.dataset.v; if (n.sgTab) { if (SG.form) sgClose(); SG.tgt = 'story'; } storyPaint(); if (n.sgTab) { await sgLoad(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); sgPaint(); } }
   else if (a === 'sg-mode') { SG.mode = b.dataset.v; sgPaint(); if (SG.mode === 'g' && SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
-  else if (a === 'sg-sub') { SG.sub = b.dataset.v; sgPaint(); }
+  else if (a === 'sg-sub') { SG.sub = b.dataset.v; SG.pkForm = null; SG.top = true; if (SG.sub.startsWith('o:')) sgPkRemember(SG.sub.slice(2)); sgPaint(); }
+  else if (a === 'sg-pknew') { await sgLoad(); SG.pkForm = {k:'new'}; sgPaint(); }
+  else if (a === 'sg-pkren') { SG.pkForm = {k:'ren', id:b.dataset.v}; sgPaint(); }
+  else if (a === 'sg-pkx') { SG.pkForm = null; sgPaint(); }
+  else if (a === 'sg-pkok') { const f = SG.pkForm, n = document.getElementById('sg-pkn')?.value || ''; if (!f) return; if (!n.trim()) return document.getElementById('sg-pkn')?.focus(); b.disabled = true; const id = await sgPkSave(f.k === 'ren' ? f.id : null, n); b.disabled = false; if (!id) return; SG.pkForm = null; SG.sub = 'o:' + id; sgPkRemember(id); SG.top = true; sgPaint(); }
+  else if (a === 'sg-pkdel') sgPkDel(b.dataset.v);
+  else if (a === 'sg-mkpk') { const m = SG.mk; if (!m) return; m.pk = b.dataset.v; sgMkPaint(); if (m.pk === '+') setTimeout(() => document.getElementById('sg-mkpkn')?.focus(), 30); }
   else if (a === 'sg-gsub') { SG.gsub = b.dataset.v; sgPaint(); if (SG.gsub === 'srch' && !SG.res.length) sgSearch(); }
   else if (a === 'gst-x') { GST = null; gstPaint(); }
   else if (a === 'st-pqgif') { const p = ST_PQG[+b.dataset.i]; if (p) stSgAdd(p); }
   else if (a === 'sg-send') { const p = SG.view[+b.dataset.i]; if (p) sgSend(p); }
   else if (a === 'sg-fav') { const p = SG.view[+b.dataset.i]; if (!p) return; await sgLoad(); if (sgFavHas(p) && !(SG.mode === 's' ? SG.sub === 'fav' : SG.gsub === 'fav')) return toast(sgIsGif(p) ? 'Dieses GIF wurde bereits hinzugefügt.' : 'Dieser Sticker wurde bereits hinzugefügt.'); await sgFavToggle(p); sgPaint(true); } // schon gespeichert: nur Hinweis, entfernen im Favoriten-Reiter (Inaya, 2026-10-13)
   else if (a === 'sg-edit') { const p = SG.view[+b.dataset.i], x = p?._own && (SG.own || []).find(y => y.id === p._own); if (!x?.src) return; const img = new Image();
-    img.onload = () => { const r = x.mk || {}; SG.mk = {img, id:x.id, src:x.src, z:+r.z || 1, x:+r.x || 0, y:+r.y || 0, sh:r.sh || 'circ', rim:r.rim !== false, tx:{...sgTxNew(), ...(r.tx || {})}}; sgMkPaint(); }; img.onerror = () => toast('Dieser Sticker lässt sich nicht mehr bearbeiten.'); img.src = x.src; }
+    img.onload = () => { const r = x.mk || {}; SG.mk = {img, id:x.id, src:x.src, pk:sgPkOf(x), z:+r.z || 1, x:+r.x || 0, y:+r.y || 0, sh:r.sh || 'circ', rim:r.rim !== false, tx:{...sgTxNew(), ...(r.tx || {})}}; sgMkPaint(); }; img.onerror = () => toast('Dieser Sticker lässt sich nicht mehr bearbeiten.'); img.src = x.src; }
   else if (a === 'sg-txf' || a === 'sg-txc') { const t = SG.mk?.tx; if (!t) return; if (a === 'sg-txf') t.f = b.dataset.v; else t.c = b.dataset.v; sgMkPaint(); }
   else if (a === 'sg-txo') { const t = SG.mk?.tx; if (!t) return; t.o = t.o ? 0 : 1; sgMkPaint(); }
   else if (a === 'sg-txdel') { const t = SG.mk?.tx; if (!t) return; t.t = ''; sgMkPaint(); }
