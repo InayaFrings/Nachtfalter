@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='d672441f4176';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='213bb248cf3b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3387,7 +3387,7 @@ body.chatfull .chatmain>.chatpanel>.ch-head{padding:calc(8px + env(safe-area-ins
 body.lvfon{overflow:hidden}
 /* v857: Musiker-Konten */
 .mumark svg{width:.95em;height:.95em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.mutab{display:grid;gap:12px}.mued1{justify-content:flex-start;margin:0}
+.mutab{display:grid;gap:12px}.pshbtn.mued1{margin:0}
 .mush{margin:6px 0 0}
 .mupls{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .mupl{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--p-line,var(--line));border-radius:999px;color:inherit;text-decoration:none;font:600 13px/1 var(--f-body);background:color-mix(in srgb,var(--p-soft,var(--paper-2)) 92%,transparent)}
@@ -3412,9 +3412,27 @@ body.lvfon{overflow:hidden}
 /* v1001 (Inaya: CD soll auch mit Nachbarn ganz herauskommen, 3 je Reihe): Cover nimmt 64 % der Spalte, rechts daneben ist Platz für die CD */
 .murel .murt[data-cdk] .mucv{width:64%}.murel .murt.cdon .mudisc{transform:translateX(60%)}.murel .murt.cdon .mucv .murc{transform:rotate(-2deg)}
 @media (hover:hover) and (pointer:fine){.murel .murt[data-cdk]:hover .mudisc{transform:translateX(60%)}.murel .murt[data-cdk]:hover .mucv .murc{transform:rotate(-2deg)}}
-/* v1003 (Inaya: Alben zu klein, kein Eyecatcher): große Covers in einer Reihe zum Wischen, die nächste schaut am Rand an */
-.murel{display:flex;gap:14px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 calc(-1 * var(--murelpad, 0px));padding:4px 0 8px}.murel::-webkit-scrollbar{display:none}
-.murel .murt[data-cdk]{flex:0 0 min(70%, 270px);scroll-snap-align:start}.murel .murt b{font-size:15px}.murel .murt small{font-size:12px}
+/* v1005 (Inaya): Album-Fenster cooler */
+.musheet2{overflow:hidden;isolation:isolate;padding:22px 18px 18px!important;gap:16px!important;border-radius:18px!important}
+.mushbg{position:absolute;inset:-30px;z-index:-1;background-size:cover;background-position:center;filter:blur(28px) saturate(1.2) brightness(.42);transform:scale(1.15)}
+.musheet2::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#0000 0,#000a 70%,#000c)}
+.musheet2 .musx{color:#fff;z-index:2}
+.mushero{display:flex;justify-content:center;padding:6px 0 0}.mushcv{width:min(52vw,200px);margin-right:min(16vw,60px)}.mushcv .murc{box-shadow:0 14px 34px #000b,0 0 0 1px #0008;border-radius:8px}
+.mushcv .mudisc{transform:translateX(20%)}.musheet2.playing .mushcv .mudisc{transform:translateX(52%)}.musheet2.playing .mushcv .mudr{animation:mucdspin 1.8s linear infinite}.musheet2.playing .mushcv .murc{transform:rotate(-2deg)}
+.mushtx{display:grid;gap:4px;text-align:center;color:#fff}.mushtx small{font:600 11px/1.2 var(--f-body);letter-spacing:.16em;text-transform:uppercase;opacity:.7}.mushtx b{font:700 27px/1.1 var(--f-display);overflow-wrap:anywhere}
+.mushact{display:flex;gap:10px;justify-content:center}.mushact .muplay1{flex:1;max-width:220px;border-radius:999px;padding:13px 18px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:16px}.mushact .muplay1 svg{width:20px;height:20px;fill:currentColor}
+.mushext{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #ffffff55;border-radius:999px;padding:12px 16px;color:#fff;text-decoration:none;font:500 14px/1 var(--f-body);background:#ffffff12}.mushext.wide{flex:1;max-width:280px}
+.mushext svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.musheet2 .mush{color:#fff;opacity:.7;margin:4px 0 -6px;text-align:left}
+.musheet2 .musnds{gap:0;counter-reset:musn}.musheet2 .musnd{border:0;border-radius:0;background:none;padding:10px 2px;border-top:1px solid #ffffff22;color:#fff}.musheet2 .musnd:first-child{border-top:0}
+.musheet2 .musnd::before{counter-increment:musn;content:counter(musn);width:18px;flex:none;text-align:center;font:600 13px/1 var(--f-body);opacity:.55}
+.musheet2 .muprev{border-color:#ffffff66!important;color:#fff}.musheet2 .musndt small{opacity:.7}
+@media (prefers-reduced-motion:reduce){.musheet2.playing .mushcv .mudr{animation-duration:8s}}
+.musheet2 .musndt{display:grid;gap:2px;min-width:0}.musheet2 .sndme{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.musheet2 .sndme small{color:#fffa}.musheet2 .mupinb{font-size:12.5px;color:#fff;opacity:.85}
+.murel .murt[data-cdk] .mucv{width:72%}.murel .murt.cdon .mudisc{transform:translateX(44%)}
+@media (hover:hover) and (pointer:fine){.murel .murt[data-cdk]:hover .mudisc{transform:translateX(44%)}}
+/* v1005 (Inaya: immer zwei nebeneinander, nach unten aufgelistet, kein seitliches Wischen): Raster mit 2 Spalten, Cover 64 % der Spalte, Platz für die CD daneben */
+.murel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}.murel .murt b{font-size:15px}.murel .murt small{font-size:12px}
 @media (prefers-reduced-motion:reduce){.murt.cdon .mudr,.murt[data-cdk]:hover .mudr{animation-duration:6s}}
 /* v1001 (Inaya: „Deine Musik“ cooler, lädt zum Posten ein): Studio-Kopf, Hülle mit CD als Vorschau, Ablagefeld für Songs */
 .mued2{gap:14px}.mued2 .mukick{display:block;font:600 11px/1.2 var(--f-body);letter-spacing:.14em;text-transform:uppercase;opacity:.62;margin-bottom:4px}
@@ -10700,7 +10718,7 @@ stAu.addEventListener('pause', () => setTimeout(muMarkPrev)); stAu.addEventListe
 function muRowOn(b){ if (stAu.paused) return false; const d = MUI[b.dataset.u]; if (!d) return false;
   if (b.dataset.act === 'mx-ap') { const x = d.rel.find(y => y.id === b.dataset.r)?.tk?.find(y => +y.i === +b.dataset.i); return !!x && (stAuSrc === x.pv || stAuSrc === DZPV[x.i]); }
   const x = d.snd.find(y => y.k === b.dataset.k); if (!x) return false; const pv = nbPv({nb:1, u:b.dataset.u, k:x.k, v:x.v, n:x.n, type:x.type}); return !!pv && stAuSrc === pv; }
-function muPlay1Mark(){ document.querySelectorAll('#musheet .musnds .muprev').forEach(b => { b.innerHTML = muRowOn(b) ? MU_PAUSE : MU_PLAY; });
+function muPlay1Mark(){ document.querySelectorAll('#musheet .musnds .muprev').forEach(b => { b.innerHTML = muRowOn(b) ? MU_PAUSE : MU_PLAY; }); { const c = document.querySelector('#musheet .musheet2'); if (c) c.classList.toggle('playing', [...c.querySelectorAll('.musnds .muprev')].some(muRowOn)); }
   document.querySelectorAll('.muplay1').forEach(b => { const on = [...(b.closest('#musheet')?.querySelectorAll('.musnds .muprev') || [])].some(muRowOn); b.innerHTML = (on ? MU_PAUSE : MU_PLAY) + `<span>${esc(tr(on ? 'Pause' : 'Anhören'))}</span>`; }); } /* v877: Play-Knopf im Album-Fenster und Zeilen-Symbole */
 ['play', 'pause', 'ended'].forEach(ev => stAu.addEventListener(ev, () => setTimeout(muPlay1Mark, 80)));
 // Musiksuche nur mit Titel oder Band, keine Links (Inaya, 2026-10-14): Songs kommen ausschließlich aus Apple Music und Deezer
@@ -19562,13 +19580,16 @@ function muTabHTML(u, own){ const uid = muUid(u), d = muInfo(uid); if (!d) retur
   const grid = (t, l) => l.length ? `<h3 class="lbl mush">${t}</h3><div class="murel">${l.map(r => muTile(uid, r)).join('')}</div>` : '';
   const lrow = lp.length ? `<div class="plinks mulinks">${lp.filter(([p, l]) => safeHref(l)).map(([p, l]) => `<a class="plink pic" href="${esc(safeHref(l))}" target="_blank" rel="noopener" aria-label="${MU_PL[p]} öffnen" title="${MU_PL[p]}"><svg viewBox="0 0 24 24" aria-hidden="true">${MU_PLI[p] || ''}</svg></a>`).join('')}</div>` : ''; /* v859 (Inaya): Links als Symbole in einer Reihe oben */
   const body = grid('Alben', al) + grid('Singles', si);
-  return `<div class="mutab">${lrow}${own ? '<div class="row mued1"><button type="button" class="btn ghost" data-act="mx-edit">Musik bearbeiten</button></div>' : ''}${al.length || si.length ? body : lp.length ? '' : `<p class="muted" style="margin:0">${own ? 'Unter „Musik bearbeiten“ fügst du deine Alben und Singles hinzu.' : 'Noch keine Musik.'}</p>`}</div>`; }
+  return `<div class="mutab">${lrow}${own ? '<button type="button" class="pshbtn bestbtn mued1" data-act="mx-edit">Musik bearbeiten</button>' : ''}${al.length || si.length ? body : lp.length ? '' : `<p class="muted" style="margin:0">${own ? 'Unter „Musik bearbeiten“ fügst du deine Alben und Singles hinzu.' : 'Noch keine Musik.'}</p>`}</div>`; }
 function muRelOpen(uid, id){ const r = MUI[uid]?.rel.find(x => x.id === id); if (!r) return; document.getElementById('musheet')?.remove(); const E = muEmbed(r.u), p = muPlatOf(r.u);
   const m = document.createElement('div'); m.className = 'modal musheet'; m.id = 'musheet'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
-  m.innerHTML = `<div class="card modal-card"><button type="button" class="musx" data-act="mx-close" aria-label="Schließen">✕</button><div class="muhd"><span class="murc">${r.art ? `<img src="${esc(r.art)}" alt="">` : MU_ICO(MU_NOTE)}</span><div><small>${r.k === 's' ? 'Single' : 'Album'}</small><b data-raw>${esc(r.t || 'Ohne Titel')}</b><span class="muted" data-raw>${esc(muArtist(uid))}</span></div></div>
-    ${(MUI[uid].snd.some(x => x.r === r.id) || muApOnly(MUI[uid], r).length) ? `<button type="button" class="btn muplay muplay1" data-act="mx-play1">${MU_PLAY}<span>${esc(tr('Anhören'))}</span></button>` : ''}
-    ${(() => { const tl = MUI[uid].snd.filter(x => x.r === r.id), ap = muApOnly(MUI[uid], r); return tl.length + ap.length ? `<h3 class="lbl mush">${esc(tr('Als Sound in Beiträgen und Storys'))}</h3><div class="musnds">${tl.map(x => muSndRow(uid, x, false)).join('')}${ap.map(x => muApRow(uid, r, x)).join('')}</div>` : ''; })()}
-    <a class="btn ghost muopen" href="${esc(r.u)}" target="_blank" rel="noopener">${MU_ICO(MU_EXT)}<span>${esc(tr('In {0} öffnen').replace('{0}', MU_PL[p] || 'Musik-App'))}</span></a>
+  const tl = MUI[uid].snd.filter(x => x.r === r.id), ap = muApOnly(MUI[uid], r), canPlay = tl.length + ap.length > 0, cov = r.art ? `<img src="${esc(r.art)}" alt="">` : MU_ICO(MU_NOTE);
+  /* v1005 (Inaya: Album-Fenster optisch cooler): Cover groß mit CD, die beim Abspielen herausgleitet und sich dreht, Hintergrund aus dem Cover, Songs als Liste */
+  m.innerHTML = `<div class="card modal-card musheet2">${r.art ? `<span class="mushbg" aria-hidden="true" style="background-image:url('${cssUrl(r.art)}')"></span>` : ''}<button type="button" class="musx" data-act="mx-close" aria-label="Schließen">✕</button>
+    <div class="mushero"><span class="mucv mushcv"><span class="mudisc" aria-hidden="true"><span class="mudr">${r.art ? `<img src="${esc(r.art)}" alt="">` : ''}</span></span><span class="murc">${cov}</span></span></div>
+    <div class="mushtx"><small>${r.k === 's' ? 'Single' : 'Album'} · <span data-raw>${esc(muArtist(uid))}</span></small><b data-raw>${esc(r.t || 'Ohne Titel')}</b></div>
+    <div class="mushact">${canPlay ? `<button type="button" class="btn muplay muplay1" data-act="mx-play1">${MU_PLAY}<span>${esc(tr('Anhören'))}</span></button>` : ''}<a class="mushext${canPlay ? '' : ' wide'}" href="${esc(r.u)}" target="_blank" rel="noopener" aria-label="${esc(tr('In {0} öffnen').replace('{0}', MU_PL[p] || 'Musik-App'))}">${MU_PLI[p] ? `<svg viewBox="0 0 24 24" aria-hidden="true">${MU_PLI[p]}</svg>` : MU_ICO(MU_EXT)}<span>${esc(canPlay ? (MU_PL[p] || 'Musik-App') : tr('In {0} öffnen').replace('{0}', MU_PL[p] || 'Musik-App'))}</span></a></div>
+    ${canPlay ? `<h3 class="lbl mush">${esc(tr('Als Sound in Beiträgen und Storys'))}</h3><div class="musnds">${tl.map(x => muSndRow(uid, x, false)).join('')}${ap.map(x => muApRow(uid, r, x)).join('')}</div>` : ''}
     </div>`; /* v877 (Inaya): „In deiner Story teilen“ wieder raus */
   m.addEventListener('click', e => { if (e.target === m) m.remove(); }); document.body.appendChild(m); if (typeof i18nNode === 'function') try { i18nNode(m); } catch {} sndCounts(m); }
 function muEmbGo(uid, id){ const r = MUI[uid]?.rel.find(x => x.id === id), E = r && muEmbed(r.u), box = document.getElementById('muemb'); if (!E || !box) return; stAuStop?.(); extAllow?.(E.p === 'yt' ? 'youtube' : E.p);
