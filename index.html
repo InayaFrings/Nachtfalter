@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='09c7fcdd7574';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1eb97e261059';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -8236,8 +8236,8 @@ const ftab = k => { const f = FURN[k]; if (!f) return ''; if (FTAB_FIX[k]) retur
 let furnTab = 'poster', RSEL_SCROLL = null;
 /* v962 (Inaya): Wer im Zimmer ein Möbel antippt, landet unten in der Liste beim selben Möbel (Reiter + Karte markiert) */
 function rSelShow(){ const k = RSEL_SCROLL; RSEL_SCROLL = null; if (!k) return; requestAnimationFrame(() => { const card = document.querySelector(`.fthumb[data-k="${CSS.escape(k)}"]`)?.closest('.item'); const tab = document.querySelector('.roomtabs [aria-selected="true"]');
-  tab?.scrollIntoView({block:'nearest', inline:'center'}); if (!card) return; const st = document.querySelector('.rstick'), off = (st ? st.getBoundingClientRect().bottom : 0) + 12, r = card.getBoundingClientRect();
-  if (r.top < off || r.bottom > innerHeight - 90) window.scrollTo({top:Math.max(0, window.scrollY + r.top - off - 8), behavior:'smooth'}); card.classList.remove('fpulse'); void card.offsetWidth; card.classList.add('fpulse'); }); }
+  if (tab) { const bar = tab.parentElement; if (bar) bar.scrollLeft = Math.max(0, tab.offsetLeft - (bar.clientWidth - tab.offsetWidth) / 2); } /* v1032: ohne scrollIntoView, das verschob am iPhone die ganze feste Seite unter die Statusleiste */ if (!card) return; const st = document.querySelector('.rstick'), off = (st ? st.getBoundingClientRect().bottom : 0) + 12, r = card.getBoundingClientRect();
+  if (!FIXPG() && (r.top < off || r.bottom > innerHeight - 90)) window.scrollTo({top:Math.max(0, window.scrollY + r.top - off - 8), behavior:'smooth'}); card.classList.remove('fpulse'); void card.offsetWidth; card.classList.add('fpulse'); }); }
 /* Zimmerbuch (Inaya, 2026-10-17): Zimmer wie Looks speichern; andere sehen es auf dem Profil (rechts gegenüber vom Lookbuch) */
 let RB = null, rbSel = null, ROOM_UNDO = null; const RB_MAX = 20;
 const RB_ICO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M5.8 13.2L8 11.2l2.2 2V16H5.8z"/><path d="M13.8 13.2L16 11.2l2.2 2V16h-4.4z"/></svg>';
@@ -21220,7 +21220,7 @@ function fitChk(){ const de = document.documentElement; let on = FIXPG();
   if (on !== de.classList.contains('fitpg')) { de.classList.toggle('fitpg', on); if (on) scrollTo(0, 0); } fixFit(); }
 /* v1027 (Inaya: in der Mall verdeckte die Leiste unten die Teile): Auf den festen Seiten wird gemessen, ob die Teile-Reihe über die untere Leiste ragt
    (Safe Area, Statusleiste, längere Reiter …). Dann wird der Spiegel bzw. das Zimmer um genau so viel kleiner (--fixsh, je Seite gemerkt in FIXSH). */
-const FIXSH = {};
+const FIXSH = {}; { const fixTop = () => { if (!document.documentElement.classList.contains('fitpg') || document.activeElement?.matches?.('input,textarea,[contenteditable]')) return; const vv = window.visualViewport; if (scrollY > 0 || (vv && vv.scale <= 1.01 && vv.offsetTop > 0.5)) scrollTo(0, 0); }; addEventListener('scroll', fixTop, {passive:true}); window.visualViewport?.addEventListener('scroll', fixTop); } /* v1032 (Inaya: beim Zimmer einrichten rutschte die Leiste oben unter die Uhrzeit): feste Seiten bleiben immer ganz oben */
 function fixFit(){ const de = document.documentElement, k = V.name + (V.name === 'room' ? roomMode : ''); if (!FIXPG()) { if (de.style.getPropertyValue('--fixsh')) de.style.removeProperty('--fixsh'); return; }
   const cur = FIXSH[k] || 0; if (de.style.getPropertyValue('--fixsh') !== cur + 'px') de.style.setProperty('--fixsh', cur + 'px');
   const nav = document.querySelector('.mobnav'); if (!nav || !nav.getClientRects().length) return; const top = nav.getBoundingClientRect().top;
@@ -22089,7 +22089,7 @@ document.addEventListener('click', async e => {
   else if (a === 'pdr-del') pdrDel(b.dataset.id);
   else if (a === 'sdr-open') sdrOpen(b.dataset.id);
   else if (a === 'sdr-del') sdrDel(b.dataset.id);
-  else if (a === 'place') { const f = FURN[b.dataset.k], its = me().room.items, nit = {k:b.dataset.k, x:44, y:f.wall ? 10 : 46}; its.push(nit); { const fr = rSpawn(its, nit); if (fr) Object.assign(nit, fr); } /* v964: freie, sichtbare Stelle */ roomSel = me().room.items.length - 1; save(); render(); document.getElementById('room')?.scrollIntoView({block:'center'}); }
+  else if (a === 'place') { const f = FURN[b.dataset.k], its = me().room.items, nit = {k:b.dataset.k, x:44, y:f.wall ? 10 : 46}; its.push(nit); { const fr = rSpawn(its, nit); if (fr) Object.assign(nit, fr); } /* v964: freie, sichtbare Stelle */ roomSel = me().room.items.length - 1; save(); render(); if (!FIXPG()) document.getElementById('room')?.scrollIntoView({block:'center'}); }
   else if (a === 'unplace') { const r = me().room; r.items = r.items.filter(i => i.k !== b.dataset.k); r.items.forEach(o => { if (o.on === b.dataset.k) delete o.on; }); roomSel = null; save(); render(); }
   else if (a === 'unplace-sel') { const r = me().room, gone = r.items[roomSel]; r.items.splice(roomSel, 1); if (gone) r.items.forEach(o => { if (o.on === gone.k) delete o.on; }); roomSel = null; save(); render(); }
   else if (a === 'rrot') { const it = me().room.items[roomSel]; if (it && rRot(it)) { it.o = rOri(it) === 'L' ? 'R' : 'L'; delete it.ry; save(); render(); } } /* v791: zur anderen Wand drehen */
