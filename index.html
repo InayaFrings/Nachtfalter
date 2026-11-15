@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1c1df8138de3';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ff9ea8fa7889';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3873,6 +3873,20 @@ body.lvfon{overflow:hidden}
 .abodet .abofeat{margin-top:6px}.abodet .abofh{display:none}
 .abonow{padding:10px 12px;gap:5px;margin:0 0 12px}.abonow p{font-size:12.5px}.abomlnk{justify-self:start;font-size:12.5px;color:#d8d2e0;text-decoration:underline;padding:2px 0}
 .abowrap .abolinks{font-size:11.5px;margin-top:8px}
+
+/* v1012 (Inaya: „zu kunterbunt, wie Casino-Werbung“): schlicht in Schwarz-Weiß, keine Animationen, kein Leuchten, nur „Plus“ lila und „Premium“ im Regenbogen als Schrift */
+.abowrap{background:#121014;border:1px solid #ffffff1f}
+.abohbat{background:none;box-shadow:none;border:1px solid #ffffff40}
+.abotrial{animation:none;border:1px solid #ffffff2e;background:#ffffff0a;box-shadow:none;font:600 13px var(--f-body);letter-spacing:0;text-transform:none}.abotrial small{opacity:.65}
+.abosave{background:#ffffff1a;color:inherit}.abocyc button[aria-pressed=true] .abosave{background:#140f1b1a;color:#140f1b}
+.abowrap .aboplan,.abowrap .aboplan[data-v=plus],.abowrap .aboplan[data-v=premium]{border:1px solid #ffffff26;background:#ffffff06;box-shadow:none!important;animation:none;opacity:1}
+.abowrap .aboplan.sel,.abowrap .aboplan[data-v=plus].sel,.abowrap .aboplan[data-v=premium].sel{border:1.5px solid #f4f2ee;background:#ffffff0d}
+.abowrap .aboplan .abopr,.abowrap .aboplan[data-v=plus] .abopr,.abowrap .aboplan[data-v=premium] .abopr{color:#f4f2ee;background:none;-webkit-text-fill-color:currentColor}
+.abobadge{background:#f4f2ee;color:#140f1b;box-shadow:none;font-size:9.5px}
+.abocta,.abocta.k-plus,.abocta.k-premium{background:#f4f2ee!important;color:#140f1b!important;box-shadow:none;animation:none;text-shadow:none}
+.abonow,.abonow.prem{border:1px solid #ffffff26;background:#ffffff06}.abobar i{background:#f4f2ee}.abotag{background:#ffffff1a;color:#f4f2ee}.abotag.off{background:#ffffff1a;color:#ffb3c0}
+.abowrap .abofeat .abog,.abowrap .abofeat.k-plus .abog,.abowrap .abofeat.k-premium .abog:not(.aboprem),.abowrap .abofeat.k-premium .abog.aboprem{border:1px solid #ffffff26!important;background:none}
+.abowrap .abofeat .abog.aboprem{border-color:#ffffff55!important}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -18414,7 +18428,7 @@ function aboSetHTML(){ const on = aboOn(), d = SUB.d, y = SUB.cyc === 'y', sel =
   const plan = k => { const Q = ABO_P[k], cur = on && d.p === k, me = k === sel;
     return `<div class="aboplan${cur ? ' on' : ''}${me ? ' sel' : ''}" data-act="abo-sel" data-v="${k}" role="radio" aria-checked="${me}" tabindex="0">${k === 'premium' ? `<span class="abobadge">${esc(tr('Alles drin'))}</span>` : ''}<i class="abochk" aria-hidden="true"></i>
       <b class="abon">${Q.n}</b><span class="abopr">${aboEur(y ? Q.y : Q.m)}<small>${esc(per)}</small></span><span class="aboc">${NC_ICO}<span>${esc(tr('+{0} Coins im Monat').replace('{0}', Q.c.toLocaleString(LOC())))}</span></span>${cur ? `<span class="abocur">${esc(tr('Dein Abo'))}</span>` : ''}</div>`; };
-  const fx = `<span class="abofx" aria-hidden="true">${Array.from({length:9}, (_, i) => `<i style="--x:${(i * 37 + 11) % 100}%;--y:${(i * 53 + 7) % 100}%;--d:${(i % 5) * .7}s;--s:${.6 + (i % 4) * .25}"></i>`).join('')}</span>`;
+  const fx = '' && `<span class="abofx" aria-hidden="true">${Array.from({length:9}, (_, i) => `<i style="--x:${(i * 37 + 11) % 100}%;--y:${(i * 53 + 7) % 100}%;--d:${(i % 5) * .7}s;--s:${.6 + (i % 4) * .25}"></i>`).join('')}</span>`;
   const now = () => { const left = Math.max(0, Math.ceil((+d.e - srvNow()) / 864e5)), tot = Math.max(1, Math.round((+d.e - (+d.ps || +d.e - ABO_TRIAL * 864e5)) / 864e5)), tr0 = aboTrialing(), pr = aboEur(cyc ? ABO_P[d.p].y : ABO_P[d.p].m);
     const txt = d.src !== 'stripe' ? tr('Läuft bis {1}.') + (d.src === 'test' ? ' ' + tr('Test') : '') : tr0 ? (d.ce ? tr('Gekündigt. Dein Gratis-Monat endet am {1}, es wird nichts abgebucht.') : tr(cyc ? 'Dein Gratis-Monat läuft bis {1}. Danach {2} pro Jahr, außer du kündigst vorher.' : 'Dein Gratis-Monat läuft bis {1}. Danach {2} pro Monat, außer du kündigst vorher.')) : d.ce ? tr('Gekündigt, endet am {1}.') : tr('Verlängert sich am {1}.');
     return `<div class="abonow${d.p === 'premium' ? ' prem' : ''}"><span class="abonowh">${ABO_BAT}<b>${esc(tr('Dein Abo: {0}').replace('{0}', ABO_P[d.p].n))}</b>${tr0 ? `<i class="abotag">${esc(tr('Gratis-Monat'))}</i>` : d.ce ? `<i class="abotag off">${esc(tr('Gekündigt'))}</i>` : ''}</span>
@@ -18425,7 +18439,7 @@ function aboSetHTML(){ const on = aboOn(), d = SUB.d, y = SUB.cyc === 'y', sel =
   return `<div class="abobox"><div class="abowrap">
     <div class="abohero">${fx}<span class="abohbat">${ABO_BAT}</span><span class="abohtx"><b class="aboht"><span class="abopl">Plus</span> &amp; <span class="aboprm">Premium</span></b>
       <small class="abohs">${esc(tr('Doppelte Coins und XP, Coins jeden Monat und mehr Glanz fürs Profil.'))}</small></span></div>
-    ${tri ? `<span class="abotrial">✦ ${esc(tr('1. Monat gratis'))} · <small>${esc(tr('jederzeit kündbar'))}</small> ✦</span>` : ''}
+    ${tri ? `<span class="abotrial">${esc(tr('1. Monat gratis'))} · <small>${esc(tr('jederzeit kündbar'))}</small></span>` : ''}
     ${ABO ? '' : `<p class="note abonote">${esc(tr('Noch nicht freigeschaltet: Das siehst nur du als Owner. Mitglieder sehen das Abo erst, wenn es eingeschaltet ist.'))}</p>`}
     ${amOwner && !on ? `<p class="note abonote">${esc(tr('Als Owner hast du alle Abo-Funktionen, auch ohne Abo.'))}</p>` : ''}
     ${SUB.old ? `<p class="note abonote">${esc(tr('Dafür müssen erst die neuen Firestore-Regeln (ab v928) eingespielt sein.'))}</p>` : ''}
