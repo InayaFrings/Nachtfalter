@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='95cca8e4d0f2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d687395de85a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -198,7 +198,7 @@
 .drhd .drx svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* v973 (Inaya): Avatar in Garderobe und Mall größer, Auswahl in Garderobe, Mall, Zimmer und Möbelhaus als EINE Reihe zum seitlichen Wischen, mit Regler darunter (hslFit) */
-.wardrobe:not(.obwear .wardrobe) .mirror-card{height:clamp(160px,calc(100dvh - 500px),460px)!important} /* v993: passt ohne Scrollen */ /* v974: Avatar so groß wie möglich, Reiter, Teile-Reihe und Regler bleiben ohne Scrollen sichtbar */
+.wardrobe:not(.obwear .wardrobe) .mirror-card{height:clamp(120px,calc(100dvh - 400px - min(150px,(100vw - 40px) / 2.2)),460px)!important} /* v998: Teile so groß wie im Möbelhaus, Spiegel passt sich an */ /* v993: passt ohne Scrollen */ /* v974: Avatar so groß wie möglich, Reiter, Teile-Reihe und Regler bleiben ohne Scrollen sichtbar */
 .wardrobe .ctabs{width:100%;max-width:100%;padding-left:0!important;padding-right:0!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}.wardrobe .ctabs>.tabs{width:100%!important;max-width:none!important;box-sizing:border-box}.wardrobe .ctabs>.hslbar,.wardrobe .shopgrid+.hslbar{margin-left:2px!important;margin-right:2px!important}.shopgrid.hsl>.item .thumb,.shopgrid.hsl>.item>.ncthumb{max-height:150px}
 .shopgrid.hsl{gap:8px!important;padding:2px 2px 6px!important;scroll-snap-type:x proximity;overscroll-behavior-x:contain;align-items:stretch}
 .shopgrid.hsl>.item{flex:0 0 calc((100% - 16px) / 3.25)!important;width:auto!important;max-width:150px;min-width:92px;scroll-snap-align:start}
@@ -3657,7 +3657,7 @@ body.lvfon{overflow:hidden}
 
 /* v992 (Inaya): Beiträge nicht zu lang; Platzhalter im neuen Beitrag ganz leicht und nicht fett */
 .post .thought.pclamp{display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden}
-.post .pmoretx{display:block;margin:-2px 0 6px auto;background:none;border:0;padding:2px 4px;font:600 13px var(--f-body);color:var(--p-muted,var(--muted));cursor:pointer}
+.post .pmoretx-old{display:block;margin:-2px 0 6px auto;background:none;border:0;padding:2px 4px;font:600 13px var(--f-body);color:var(--p-muted,var(--muted));cursor:pointer}
 .post .plinkc{margin:8px 0 2px}
 .pcrow.pcrow-off{opacity:.45;cursor:default}
 .ptwrap{position:relative}.ptcnt{display:block;text-align:right;font:500 12px var(--f-body);opacity:.6;margin:4px 2px 0}.ptcnt.hi{color:#ff6b7f;opacity:1}
@@ -3665,7 +3665,7 @@ body.lvfon{overflow:hidden}
 #ptext{font-weight:400}
 
 .post.tp .thought.pclamp{padding-bottom:0!important;margin-bottom:0!important;max-height:calc(8 * 1.45em + 12px)}
-.post.tp .pmoretx{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
+.post.tp .pmoretx-old{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
 
 /* v993: Möbelhaus und Zimmer einrichten passen ohne Scrollen auf den Bildschirm */
 /* v995: Zimmer in Möbelhaus und Zimmer einrichten genau gleich groß */.rcard .rstick .rscroll{width:100%!important;max-width:min(100%,calc((100dvh - 500px) / .82))!important;margin-left:auto!important;margin-right:auto!important}
@@ -3680,6 +3680,20 @@ body.lvfon{overflow:hidden}
 .wardrobe:not(.obwear .wardrobe) .shopgrid.hsl>.item:not(.ncitem){padding-bottom:36px!important;position:relative}
 .wardrobe:not(.obwear .wardrobe) .shopgrid.hsl>.item:not(.ncitem)>.cdot{top:auto!important;bottom:3px!important;right:5px!important}
 
+
+/* v998: „… mehr“ / „weniger“ wie bei Insta */
+.thought.ptlong .ptfull,.thought.ptlong.open .ptcut{display:none}.thought.ptlong.open .ptfull{display:inline}
+.thought .pmorei{white-space:nowrap}
+.thought .pmoretx,.thought .plesstx{display:inline;background:none;border:0;padding:0;margin:0;font:inherit;line-height:inherit;color:color-mix(in srgb,var(--p-fg,var(--fg)) 55%,transparent);cursor:pointer;width:auto;min-height:0;text-align:left;opacity:1}
+.thought .pmoretx:hover,.thought .plesstx:hover{color:color-mix(in srgb,var(--p-fg,var(--fg)) 75%,transparent)}
+.thought .plessw{display:block;margin-top:6px}
+
+/* v998 (Inaya): Mall und Garderobe mit so großen Kacheln wie im Möbelhaus (2,2 je Breite) */
+.mallpg .shopgrid.hsl>.item,.wardrobe:not(.obwear .wardrobe) .shopgrid.hsl>.item{flex-basis:calc((100% - 16px) / 2.2)!important;max-width:210px}
+.ncic{flex:none} /* nie zusammengedrückt, bleibt rund (bei 4-stelligen Preisen wurde es oval) */
+/* v998 (Inaya): Verschenken-Fenster: Liste bleibt im Kasten, „Schenken“/„hat es schon“ nicht abgeschnitten */
+.giftfr{grid-template-columns:minmax(0,1fr);width:100%}.giftfr li{min-width:0}.giftfr li>small{flex:none;white-space:nowrap}
+.giftfr .btn{border-radius:999px}.giftcard{overflow-x:hidden}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9200,6 +9214,7 @@ Object.assign(I18N_EN, {"Sticker-Pakete suchen …": "Search sticker packs …",
 Object.assign(I18N_EN, {"Nur mit Plus & Premium": "Plus & Premium only"}); /* v984 */
 Object.assign(I18N_EN, {"mehr anzeigen": "show more", "nur ohne Fotos": "only without photos", "Fotos und GIF zusammen geht nicht. Das GIF wurde entfernt.": "Photos and a GIF together aren't possible. The GIF was removed."}); /* v992 */
 Object.assign(I18N_EN, {"Zimmer leer räumen": "Clear the room"}); /* v993 */
+Object.assign(I18N_EN, {"mehr": "more", "weniger": "less"}); /* v998 */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -9509,7 +9524,7 @@ const splReady = () => { const app = document.getElementById('app'); if (!app?.c
   if (PUB && !social) return false;
   return V.name !== 'home' || (!feedWait(S.salonMode === 'pub') && !!app.querySelector('.feed')); };
 { const sm = document.querySelector('#splash small'); if (sm) sm.textContent = tr('ein Ort für Freunde'); }
-SPL.iv = setInterval(() => { if (!(splReady() || Date.now() - SPL.t0 > 4000)) return; clearInterval(SPL.iv);
+SPL.iv = setInterval(() => { if (!(splReady() || Date.now() - SPL.t0 > 2500)) return; /* v998: Startbildschirm höchstens 2,5 s, dahinter lädt alles vor */ clearInterval(SPL.iv);
   const el = document.getElementById('splash'); if (el) { el.classList.add('out'); setTimeout(() => el.remove(), 400); }
   setTimeout(() => { if (MH.logo) { MH.logo = false; MH.anim = true; if (S.me && S.unlocked) softRender(); } }, 1000); /* oben noch kurz das Logo, dann Öffentlich/Freunde */ }, 100);
 /* Kopfzeile (seit v577, Inaya): Auf jeder Seite, von der man zurück kann, steht oben links der Pfeil wie bei den Mitteilungen (kein Zurück-Knopf mehr auf der Seite).
@@ -12023,6 +12038,8 @@ const PMORE = new Set();
 /* v992 (Inaya: nicht „A, Enter, A, Enter …“ 1000 Zeilen lang): höchstens 15 Zeilen und nie mehr als eine Leerzeile hintereinander; weitere Umbrüche werden zu Leerzeichen. Beim Tippen und beim Speichern. */
 const POST_LINES = 15;
 function postTxtFix(t){ t = String(t || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n'); let n = 0; t = t.replace(/\n/g, () => ++n < POST_LINES ? '\n' : ' '); return [...t].slice(0, 1000).join(''); }
+/* v998: Kürzung wie bei Insta: höchstens 6 Zeilen und etwa 260 Zeichen, an einer Wortgrenze */
+function ptCutOf(t){ let c = String(t).split('\n').slice(0, 6).join('\n'); if (c.length > 260) { c = c.slice(0, 260); const sp = c.search(/\s\S*$/); if (sp > 180) c = c.slice(0, sp); } return c.replace(/\s+$/, ''); }
 function postHTML(p){
   if (p.type === 'teilen' && !RPIN && !isHidden(p)) { const o = rpOrig(p); if (o) { RPIN = true; let h = ''; try { h = postHTML(o); } finally { RPIN = false; }
     if (h) return h.replace(/^(\s*<article[^>]*>)/, `$1<div class="rphead">${RP_HEAD}<span>${ulinkH(p.author)} <span>hat repostet</span></span></div>`); } }
@@ -12032,8 +12049,10 @@ function postHTML(p){
   let body = '';
   const tags = ptagsClean(p.tags), spT = ''; // Spotify entfernt (Inaya, 2026-10-14)
   const ptk = p.author + '_' + p.id, ptr = !a.helper && p.text && p.author !== S.me && ptrShow(p.text) ? (PTRT[ptk] = p.text, PTR[ptk]?.on ? 1 : 2) : 0; /* v869: Helfer-Texte übersetzt, Beiträge echter Leute mit „Übersetzen“ */
-  const lng = p.text && (p.text.length > 380 || (p.text.match(/\n/g) || []).length > 6) && !PMORE.has(p.author + '_' + p.id); /* v992: lange Texte nach 8 Zeilen mit „mehr anzeigen“ */
-  const txt = p.text ? `<blockquote class="thought${lng ? ' pclamp' : ''}">${ptr === 1 ? etx(PTR[ptk].t) : htHTML(mentionHTML(etx(a.helper ? tr(p.text) : p.text), tags, 'profile'))}</blockquote>${lng ? `<button type="button" class="pmoretx" data-act="pmore" data-k="${esc(p.author + '_' + p.id)}">${esc(tr('mehr anzeigen'))}</button>` : ''}${ptr ? `<button type="button" class="ptrans" data-act="ptr" data-k="${esc(ptk)}">${ptr === 1 ? 'Original anzeigen' : 'Übersetzen'}</button>` : ''}` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
+  const ptRaw = p.text ? (ptr === 1 ? PTR[ptk].t : a.helper ? tr(p.text) : p.text) : '', ptFmt = t => ptr === 1 ? etx(t) : htHTML(mentionHTML(etx(t), tags, 'profile')), pmk = p.author + '_' + p.id;
+  const lng = ptRaw && (ptRaw.length > 380 || (ptRaw.match(/\n/g) || []).length > 6); /* v998 (Inaya: „wie bei Insta“): lange Texte gekürzt mit „… mehr“ in grauer Schrift, ausgeklappt unten „weniger“ */
+  const ptCut = lng ? ptCutOf(ptRaw) : '';
+  const txt = p.text ? (lng ? `<blockquote class="thought ptlong${PMORE.has(pmk) ? ' open' : ''}" data-k="${esc(pmk)}"><span class="ptcut">${ptFmt(ptCut)}<span class="pmorei">… <button type="button" class="pmoretx" data-act="pmore">${esc(tr('mehr'))}</button></span></span><span class="ptfull">${ptFmt(ptRaw)}<span class="plessw"><button type="button" class="plesstx" data-act="pless">${esc(tr('weniger'))}</button></span></span></blockquote>` : `<blockquote class="thought">${ptFmt(ptRaw)}</blockquote>`) + `${ptr ? `<button type="button" class="ptrans" data-act="ptr" data-k="${esc(ptk)}">${ptr === 1 ? 'Original anzeigen' : 'Übersetzen'}</button>` : ''}` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
@@ -12603,7 +12622,7 @@ function pubPosts(){
 /* Salon ohne Springen (Inaya, 2026-10-16): Der Feed erscheint erst, wenn alle Quellen da sind (Freundesprofile mit dem Stand vom Server,
    öffentliche Beiträge, Beiträge der Owner für alle), dann einmal in der richtigen Reihenfolge. Vorher Platzhalter, höchstens FEEDW.max ms.
    Vorher kamen erst ältere Beiträge (Gerätestand, eigene, Helfer) und die neueren schoben sich nach und nach darüber. */
-const FEEDW = {t0:Date.now(), max:6000, was:false};
+const FEEDW = {t0:Date.now(), max:3000, was:false}; /* v998 (Inaya: höchstens etwa 3 s Laden): vorher 6 s */
 const FEED_SKEL = `<div class="fskel" aria-busy="true" aria-label="Lädt …">${'<div class="fsk fsk2"><header><i></i><b></b></header><em></em><nav><u></u><u></u><u></u><u class="r"></u></nav><span></span><span class="s"></span></div>'.repeat(3)}</div>`; /* v569: sieht aus wie ein Beitrag */
 function feedWait(pubMode){ if (!(social || PUB && S.me) || Date.now() - FEEDW.t0 > FEEDW.max) return false;
   const own = !social || (OWNK && (!OWNER || OWNER === social.uid || S.users[OWNER] || OWNR));
@@ -13113,7 +13132,8 @@ function softRender(){
   if (softT) return;
   softT = setTimeout(() => { softT = null;
     const a = document.activeElement;
-    if ((fldTyp(a) && a.isConnected) || document.querySelector('#app .lvid.on')) { SOFTP = true; return; } /* v851: auch solange ein Video-Link läuft */ /* v841: solange getippt wird (auch im leeren Feld), nichts im Hintergrund neu zeichnen; danach einmal nachholen */
+    if ((fldTyp(a) && a.isConnected) || document.querySelector('#app .lvid.on')) { SOFTP = true; return; }
+    if (rqBusy()) { softRender(); return; } /* v998: nicht neu zeichnen, solange gewischt wird */ RBG = true; /* v851: auch solange ein Video-Link läuft */ /* v841: solange getippt wird (auch im leeren Feld), nichts im Hintergrund neu zeichnen; danach einmal nachholen */
     render(); }, 150);
 }
 let SOFTP = false;
@@ -20104,7 +20124,12 @@ function focusPut(root, f){ if (!f) return; let n = null;
   if (!n || n.tagName !== f.el.tagName) { if (document.activeElement !== f.el) document.body.classList.remove('chatkb'); return; }
   const o = f.el, v = o.value; [...o.attributes].forEach(a => { if (!n.hasAttribute(a.name) && a.name !== 'style') o.removeAttribute(a.name); }); [...n.attributes].forEach(a => { if (a.name !== 'value' && a.name !== 'style' && o.getAttribute(a.name) !== a.value) o.setAttribute(a.name, a.value); });
   n.replaceWith(o); if (o.value !== v) o.value = v; FREST = true; try { o.focus({preventScroll:true}); } finally { FREST = false; } try { if (f.s0 != null) o.setSelectionRange(f.s0, f.s1); } catch {} o.scrollTop = f.top; }
-function render(){ const ancV = V.name + '|' + V.arg; renderInner(); ncNewPop(); if (ancV === ANC.v) ancFix(); else ANC.id = null; ANC.v = ancV; drLoad(); if (VREC || document.getElementById('vrbar') || (CH.open && DR && DR.v[CH.open])) voicePaint(); if (VSEND.length) voicePend(); }
+/* v998 (Inaya: „man scrollt und es stockt“): Hintergrund-Neuzeichnen (Daten vom Server) wartet, solange gewischt wird, und lässt die Seite stehen, wenn sich nichts geändert hat */
+const RQ = {scroll:0, touch:false}; let RBG = false, LASTH = '';
+addEventListener('scroll', () => { RQ.scroll = performance.now(); }, {passive:true, capture:true});
+addEventListener('touchstart', () => { RQ.touch = true; }, {passive:true, capture:true}); ['touchend', 'touchcancel'].forEach(t => addEventListener(t, e => { if (!e.touches?.length) { RQ.touch = false; RQ.scroll = performance.now(); } }, {passive:true, capture:true}));
+const rqBusy = () => RQ.touch || performance.now() - RQ.scroll < 220;
+function render(){ if (!window.event && rqBusy() && S.me && S.unlocked && !CH.open) { softRender(); return; } const ancV = V.name + '|' + V.arg; if (!window.event) RBG = true; try { renderInner(); } finally { RBG = false; } ncNewPop(); if (ancV === ANC.v) ancFix(); else ANC.id = null; ANC.v = ancV; drLoad(); if (VREC || document.getElementById('vrbar') || (CH.open && DR && DR.v[CH.open])) voicePaint(); if (VSEND.length) voicePend(); }
 /* v820 (Inaya): Garderobe, Zimmer einrichten und Profil bearbeiten speichern nur mit „Fertig“ oben rechts. Pfeil zurück oder Weggehen verwirft */
 let WARD_UNDO = null;
 function editGuard(){ const u = me(); if (!u) return;
@@ -20134,13 +20159,15 @@ function renderInner(){
   const body = {pet:petView, petv:petvView, home:homeView, profile:() => profileView(V.arg || S.me), friends:friendsView, find:findView, shop:() => shopView(false), wardrobe:() => shopView(false), games:gamesView, design:designView, room:roomView, chats:chatsView, notifs:notifView, browse:browseView, settings:settingsView, archive:archiveView, liked:likedView, musik:muEditView, visit:visitView, shopping:shoppingView, mall:mallView, moebel:moebelView}[V.name] || homeView;
   const pu = V.name === 'profile' ? profUser(V.arg || S.me) : null;
   const keepPv = document.getElementById('preview')?.scrollTop || 0, keepCol = document.querySelector('.design > div:first-child')?.scrollTop || 0;
-  const mkeep = mediaTake(app), fkeep = focusTake(app), cmOld = document.getElementById('cm-in'), cmDraft = cmOld?.value ? {cid:CH.open, v:cmOld.value} : null;
-  app.innerHTML = `<div class="shell">${rail()}
+  const html = `<div class="shell">${rail()}
     <main class="main${wide ? ' wide' : ''}">${body()}${V.name === 'home' ? salonEnd() : ''}</main>
     ${wide ? '' : asideHTML()}
     ${pmenuSheet()}
     <footer class="foot"><span>Noctibat · Entwurf</span><span id="savestate">${saveText()}</span>${PUB ? '' : '<button class="lnk" data-act="reset">Demo zurücksetzen</button>'}</footer>
   </div>`;
+  const hcmp = html.replace(/\bai\d+/g, 'ai'); /* Avatar-IDs zählen bei jedem Zeichnen hoch */ if (RBG && hcmp === LASTH && app.firstElementChild?.classList.contains('shell')) return; /* v998: nichts geändert, Seite bleibt stehen (kein Ruckeln, keine neu geladenen Bilder) */ LASTH = hcmp;
+  const mkeep = mediaTake(app), fkeep = focusTake(app), cmOld = document.getElementById('cm-in'), cmDraft = cmOld?.value ? {cid:CH.open, v:cmOld.value} : null;
+  app.innerHTML = html;
   mediaPut(app, mkeep); focusPut(app, fkeep); if (cmDraft && cmDraft.cid === CH.open) { const ci = document.getElementById('cm-in'); if (ci && !ci.value) { ci.value = cmDraft.v; mlFit?.(ci); cmTyped(); } } cdrFill(); /* v895: Entwurf je Chat */ /* v841: angefangene Nachricht bleibt auch ohne Fokus stehen (z. B. Sticker-Leiste geöffnet) */ /* v719: geladene Bilder und laufende Videos bleiben beim Neuzeichnen stehen */
   setTimeout(fitChk, 0); setTimeout(fitChk, 600); document.body.dataset.pg = V.name === 'petv' ? 'pet' : V.name; railFit(); /* v852: Besuchs-Seite wie die eigene Begleiter-Seite */ document.body.classList.toggle('obopen', !!me()?.obOpen); document.body.classList.toggle('chlist', V.name === 'chats' && (!CH.open || ['info', 'media', 'gadd'].includes(CH.mode)) && innerWidth < 762); /* v813: Kontaktinfo/Medien wie die Chatliste, kein Scrollen ins Leere */ /* v699: Chatliste endet wie Suche und Profil 16 px über der Leiste */ /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : V.name === 'pet' || V.name === 'petv' ? petTheme(V.name === 'petv' ? V.arg : S.me) : null); /* v852: Begleiter-Seite im Profil-Design */
@@ -21072,7 +21099,7 @@ document.addEventListener('click', async e => {
   else if (a === 'plink') { PLINK = true; paintCompose(); document.getElementById('purl')?.focus(); }
   else if (a === 'patt-x') { const v = b.dataset.v; if (v === 'foto') postCrop = null; else if (v === 'clip') PVIDEO = null; else if (v === 'musik') PAUDIO = null; else if (v === 'pmu') { PMU = null; stAuStop(); } else if (v === 'psg') PSG = null; else PLINK = false; paintCompose(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
-  else if (a === 'pmore') { PMORE.add(b.dataset.k); const q = b.previousElementSibling; if (q?.classList.contains('thought')) q.classList.remove('pclamp'); b.remove(); }
+  else if (a === 'pmore' || a === 'pless') { const q = b.closest('.ptlong'); if (!q) return; const on = a === 'pmore'; q.classList.toggle('open', on); if (on) PMORE.add(q.dataset.k); else { PMORE.delete(q.dataset.k); const t = q.getBoundingClientRect().top, top = (document.querySelector('.rail')?.getBoundingClientRect().bottom || 0) + 8; if (t < top) window.scrollBy(0, t - top - 60); } }
   else if (a === 'prof-posts') { profTab = b.dataset.v || 'posts'; render(); requestAnimationFrame(() => { const t = document.querySelector('.ptabs'); if (t) scrollTo({top:t.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--railh')) || 64) - 8, behavior:'smooth'}); }); } /* v991 (Inaya): Beiträge antippen zeigt die Beiträge darunter */
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
   else if (a === 'try' && isMob()) mobWear(id);
