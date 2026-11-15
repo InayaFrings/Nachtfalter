@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f7c9bcc6cf8d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='65f846a1bd07';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -12717,7 +12717,7 @@ function plinksHTML(u){
 // Unter dem Namen: Online-Status und ob ich schon eine Anfrage geschickt habe (Inaya, 2026-10-13)
 const reqSent = id => !!social && FR.mine.includes(id) && !FR.inc.includes(id);
 /* v683: Beiträge und Freunde, auch bei privaten Profilen; Freunde antippen öffnet die Liste (Inaya) */
-const pstatsHTML = (u, posts, circle) => `<div class="pstats"><span><b>${posts}</b> ${posts === 1 ? 'Beitrag' : 'Beiträge'}</span>${(u.id === S.me && !u.remote) || (u.remote && social) ? `<button type="button" class="pfrc" data-act="fr-list"${u.remote ? ` data-id="${esc(u.id)}"` : ''}><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</button>` : `<span><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</span>`}</div>`;
+const pstatsHTML = (u, posts, circle) => `<div class="pstats"><button type="button" class="pfrc ppostc" data-act="prof-posts" data-v="${u.helper ? 'news' : 'posts'}"><b>${posts}</b> ${posts === 1 ? 'Beitrag' : 'Beiträge'}</button>${(u.id === S.me && !u.remote) || (u.remote && social) ? `<button type="button" class="pfrc" data-act="fr-list"${u.remote ? ` data-id="${esc(u.id)}"` : ''}><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</button>` : `<span><b>${circle}</b> ${circle === 1 ? 'Freund' : 'Freunde'}</span>`}</div>`;
 const ageShow = u => u.helper ? null : u.remote ? u.age : ageOf(u.birth);
 /* v683: Alter antippen zeigt das Geburtsdatum (Inaya) */
 const bdOf = u => { const b = u.remote ? PROF[u.id]?.bd : u.birth; return /^\d{4}-\d{2}-\d{2}$/.test(b || '') ? b : ''; };
@@ -21036,6 +21036,7 @@ document.addEventListener('click', async e => {
   else if (a === 'plink') { PLINK = true; paintCompose(); document.getElementById('purl')?.focus(); }
   else if (a === 'patt-x') { const v = b.dataset.v; if (v === 'foto') postCrop = null; else if (v === 'clip') PVIDEO = null; else if (v === 'musik') PAUDIO = null; else if (v === 'pmu') { PMU = null; stAuStop(); } else if (v === 'psg') PSG = null; else PLINK = false; paintCompose(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
+  else if (a === 'prof-posts') { profTab = b.dataset.v || 'posts'; render(); requestAnimationFrame(() => { const t = document.querySelector('.ptabs'); if (t) scrollTo({top:t.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--railh')) || 64) - 8, behavior:'smooth'}); }); } /* v991 (Inaya): Beiträge antippen zeigt die Beiträge darunter */
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
   else if (a === 'try' && isMob()) mobWear(id);
   else if (a === 'try') { const t = {...(trial || me().outfit)}; t.hacc = {...(t.hacc || {})}; t.jewel = {...(t.jewel || {})}; t.legw = {...(t.legw || {})}; wearItem(t, item(id)); trial = t; render(); }
