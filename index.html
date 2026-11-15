@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='51f857adfb88';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='2286c035c031';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3668,15 +3668,18 @@ body.lvfon{overflow:hidden}
 .post.tp .pmore{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
 
 /* v993: Möbelhaus und Zimmer einrichten passen ohne Scrollen auf den Bildschirm */
-.moebel .ncroom .rscroll{width:100%!important;max-width:min(100%,calc((100dvh - 530px) / .82))!important;margin-left:auto!important;margin-right:auto!important}
+/* v995: Zimmer in Möbelhaus und Zimmer einrichten genau gleich groß */.rcard .rstick .rscroll{width:100%!important;max-width:min(100%,calc((100dvh - 500px) / .82))!important;margin-left:auto!important;margin-right:auto!important}
 /* v994 (Inaya): Möbelhaus wie Zimmer einrichten: eine randlose Karte, Zimmer über die ganze Breite, Reiter darunter, Möbel in derselben Karte */
-.ncpage.moebel>.nchead{display:none}.moebel .ncroom.mh1{position:static;z-index:auto}.moebel .ncroom.mh1>.card-in{padding:12px 14px 16px}
+.ncpage.moebel>.nchead,.ncpage.mallpg>.nchead{display:none}.ncpage.mallpg,.ncpage.moebel{gap:0}.moebel .ncroom.mh1{position:static;z-index:auto}.moebel .ncroom.mh1>.card-in{padding:12px 14px 16px}
 .moebel .ncroom.mh1 .room.iso{max-width:none}.moebel .ncroom.mh1 .rstick>.ncfloat{top:8px;left:8px;right:8px}
 .moebel .ncroom.mh1 .ncsel{margin:8px 12px 0}
+/* v995 (Inaya: „Copy-Paste identisch“): Kacheln beim Zimmer einrichten so hoch wie im Möbelhaus (Platz der Preis-Zeile, Farbpunkt unten rechts) */
+.rcard:not(.mh1) .shopgrid.hsl>.item:not(.ncitem){padding-bottom:44px!important}
+.rcard:not(.mh1) .shopgrid.hsl>.item:not(.ncitem)>.cdot{top:auto!important;bottom:9px!important;right:9px!important;width:30px;height:30px}
 /* v994 (Inaya): Garderobe-Kacheln so groß wie in der Mall (Platz der Preis-Zeile, Farbpunkt unten rechts wie das Geschenk) */
 .wardrobe:not(.obwear .wardrobe) .shopgrid.hsl>.item:not(.ncitem){padding-bottom:36px!important;position:relative}
 .wardrobe:not(.obwear .wardrobe) .shopgrid.hsl>.item:not(.ncitem)>.cdot{top:auto!important;bottom:3px!important;right:5px!important}
-.rcard .rstick .rscroll{width:100%;max-width:min(100%,calc((100dvh - 450px) / .82));margin-left:auto;margin-right:auto}
+
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
