@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='478bf3c5076c';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b82a01e044ee';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3910,6 +3910,20 @@ body.lvfon{overflow:hidden}
 .abodet{border-top:1px solid var(--p-line,#ffffff26);margin-top:14px}
 .abonow,.abonow.prem{border:1px solid var(--p-line,#ffffff33);background:none}.abobar{background:color-mix(in srgb,var(--p-fg,#fff) 18%,transparent)}.abobar i{background:var(--p-fg,#f4f2ee)}.abotag,.abotag.off{background:none;border:1px solid var(--p-line,#ffffff33);color:inherit}.abomlnk{color:inherit}
 .abowrap .abofeat .abog,.abowrap .abofeat .abog.aboprem{border:1px solid var(--p-line,#ffffff33)!important}
+
+/* v1014 (Inaya): Plus immer lila, Premium immer Regenbogen (Rahmen der Pakete, Liste darunter, Überschriften, Häkchen); in der Premium-Liste ist alles aus Plus lila. Liste erscheint beim Antippen eines Pakets. */
+.abowrap .aboplan[data-v=plus]{border:1.5px solid #b57cf2;background:none;padding:14px 8px}
+.abowrap .aboplan[data-v=plus].sel{border:2.5px solid #b57cf2;background:color-mix(in srgb,#b57cf2 12%,transparent);padding:13px 7px}
+.abowrap .aboplan[data-v=premium]{border:1.5px solid transparent;background:linear-gradient(var(--p-bg,#141416),var(--p-bg,#141416)) padding-box,linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de) border-box;padding:14px 8px}
+.abowrap .aboplan[data-v=premium].sel{border-width:2.5px;background:linear-gradient(color-mix(in srgb,#af52de 10%,var(--p-bg,#141416)),color-mix(in srgb,#af52de 10%,var(--p-bg,#141416))) padding-box,linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de) border-box;padding:13px 7px}
+.abowrap .abofeat{margin-top:14px}
+.abowrap .abofeat.k-plus .abog,.abowrap .abofeat.k-premium .abog:not(.aboprem){border:1.5px solid #b57cf2!important;background:none}
+.abowrap .abofeat .abog.aboprem{border:1.5px solid transparent!important;background:linear-gradient(var(--p-bg,#141416),var(--p-bg,#141416)) padding-box,linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de) border-box!important}
+.abowrap .abofeat.k-plus .abogh,.abowrap .abofeat.k-premium .abog:not(.aboprem) .abogh,.abowrap .abofeat.k-plus .abofh{color:#b57cf2;opacity:1}
+.abowrap .abofeat.k-plus .abolist li::before,.abowrap .abofeat.k-premium .abog:not(.aboprem) .abolist li::before{color:#b57cf2}
+.abowrap .abog.aboprem .abogh,.abowrap .abofeat.k-premium .abofh,.abowrap .abog.aboprem .abolist li::before{background:linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;opacity:1}
+.abowrap .abofeat .abopick{text-align:center;margin:14px 0 0}
+.abowrap .abolinks{margin-top:10px}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -18444,9 +18458,9 @@ function aboListHTML(k = aboSel()){ const ul = L => `<ul class="abolist">${L.map
   return `<div class="abofeat ${pr ? 'k-premium' : 'k-plus'}"><h3 class="abofh">${esc(tr(pr ? 'Das bekommst du mit Premium' : 'Das bekommst du mit Plus'))}</h3>${pr ? `<section class="abog aboprem"><b class="abogh">${esc(tr('Nur bei Premium'))}</b>${ul(ABO_PREM)}</section><p class="abopx">${esc(tr('Und dazu alles, was Plus kann:'))}</p>` : ''}${G.map(([h, L]) => `<section class="abog"><b class="abogh">${esc(tr(h))}</b>${ul(L)}</section>`).join('')}
     <p class="note abokeep">${esc(tr('Kleidung, Möbel, Sticker und Coins aus dem Abo bleiben dir nach der Kündigung. Gestaltung, doppelte Coins und XP und die höheren Grenzen gibt es nur, solange das Abo läuft.'))}</p></div>`; }
 /* v931 (Inaya): Pakete antippen = auswählen, der Knopf im gewählten Paket ist aktiv; beide Knöpfe unten auf einer Höhe. Für Inaya startet er (solange Stripe fehlt) ein Test-Abo */
-const aboSel = () => SUB.sel || (aboOn() ? SUB.d.p : 'premium'); /* v1011: Premium vorausgewählt, damit es nur einen Knopf gibt */
+const aboSel = () => SUB.sel || (aboOn() ? SUB.d.p : null); /* v1014 (Inaya): nichts vorausgewählt, erst Antippen zeigt Knopf und Liste */
 /* v1011 (Inaya: „voll langgezogen, nicht übersichtlich“): kompakt. Kopf in einer Zeile, Pakete als kleine Kacheln (antippen = wählen), EIN Knopf darunter, Liste „Was ist drin?“ zum Aufklappen */
-function aboSetHTML(){ const on = aboOn(), d = SUB.d, y = SUB.cyc === 'y', sel = aboSel(), tri = !on && aboTrial() && (ABO_PAY || aboPay()), cyc = d && d.cy === 'y', P = ABO_P[sel];
+function aboSetHTML(){ const on = aboOn(), d = SUB.d, y = SUB.cyc === 'y', sel = aboSel(), tri = !on && aboTrial() && (ABO_PAY || aboPay()), cyc = d && d.cy === 'y', P = ABO_P[sel] || ABO_P.premium;
   const sv = Math.round((1 - ABO_P.plus.y / (ABO_P.plus.m * 12)) * 100), per = tr(y ? '/ Jahr' : '/ Monat');
   const plan = k => { const Q = ABO_P[k], cur = on && d.p === k, me = k === sel;
     return `<div class="aboplan${cur ? ' on' : ''}${me ? ' sel' : ''}" data-act="abo-sel" data-v="${k}" role="radio" aria-checked="${me}" tabindex="0"><b class="abon">${Q.n}</b><span class="abopr">${aboEur(y ? Q.y : Q.m)}<small>${esc(per)}</small></span><span class="aboc">${esc(tr('+{0} Coins im Monat').replace('{0}', Q.c.toLocaleString(LOC())))}</span>${cur ? `<span class="abocur">${esc(tr('Dein Abo'))}</span>` : ''}</div>`; };
@@ -18456,7 +18470,7 @@ function aboSetHTML(){ const on = aboOn(), d = SUB.d, y = SUB.cyc === 'y', sel =
     return `<div class="abonow${d.p === 'premium' ? ' prem' : ''}"><span class="abonowh">${ABO_BAT}<b>${esc(tr('Dein Abo: {0}').replace('{0}', ABO_P[d.p].n))}</b>${tr0 ? `<i class="abotag">${esc(tr('Gratis-Monat'))}</i>` : d.ce ? `<i class="abotag off">${esc(tr('Gekündigt'))}</i>` : ''}</span>
       <p>${esc(txt.replace('{1}', aboDate(d.e)).replace('{2}', pr))}</p>${tr0 ? `<span class="abobar" style="--v:${Math.min(100, Math.max(4, (1 - left / tot) * 100)).toFixed(1)}%"><i></i></span><small class="abobarl">${esc(tr(left === 1 ? 'Noch 1 Tag gratis' : 'Noch {0} Tage gratis').replace('{0}', left))}</small>` : ''}
       ${d.src === 'stripe' ? `<button type="button" class="lnk abomlnk" data-act="${d.ce ? 'abo-resume' : 'abo-cancel'}">${esc(tr(d.ce ? 'Kündigung zurücknehmen' : tr0 ? 'Gratis-Monat kündigen' : 'Abo kündigen'))}</button>` : d.src === 'test' && amOwner ? `<button type="button" class="lnk abomlnk" data-act="abo-test" data-v="">${esc(tr('Test beenden'))}</button>` : ''}</div>`; };
-  const cur = on && d.p === sel, cta = cur ? '' : `<button type="button" class="btn abocta k-${sel}" data-act="abo-buy" data-v="${sel}">${esc(tr(tri ? '{0} 1 Monat gratis testen' : '{0} abonnieren').replace('{0}', P.n))}</button>
+  const cur = on && d.p === sel, cta = cur || !ABO_P[sel] ? '' : `<button type="button" class="btn abocta k-${sel}" data-act="abo-buy" data-v="${sel}">${esc(tr(tri ? '{0} 1 Monat gratis testen' : '{0} abonnieren').replace('{0}', P.n))}</button>
       <p class="abofine">${esc(tri ? tr(y ? 'Danach {0} im Jahr · jederzeit kündbar' : 'Danach {0} im Monat · jederzeit kündbar').replace('{0}', aboEur(y ? P.y : P.m)) : tr('Verlängert sich automatisch · jederzeit kündbar'))}</p>`;
   return `<div class="abobox"><div class="abowrap">
     <p class="abolead">${esc(tr('Doppelte Coins und XP, Coins jeden Monat und mehr Glanz fürs Profil.'))}${tri ? ` <b>${esc(tr('Der erste Monat ist gratis.'))}</b>` : ''}</p>
@@ -18467,8 +18481,8 @@ function aboSetHTML(){ const on = aboOn(), d = SUB.d, y = SUB.cyc === 'y', sel =
     <span class="seg abocyc"><button type="button" data-act="abo-cyc" data-v="m" aria-pressed="${!y}">${esc(tr('Monatlich'))}</button><button type="button" data-act="abo-cyc" data-v="y" aria-pressed="${y}">${esc(tr('Jährlich'))}<i class="abosave">−${sv} %</i></button></span>
     <div class="aboplans" role="radiogroup">${plan('plus')}${plan('premium')}</div>
     ${cta}
+    ${aboListHTML(sel)}
     ${ABO_PAY ? '' : aboPay() ? `<p class="note">${esc(tr('Stripe-Testmodus, nur für dich als Owner: bezahlen mit der Testkarte 4242 4242 4242 4242, beliebiges Datum in der Zukunft, beliebige Prüfnummer. Es fließt kein echtes Geld.'))}</p>` : `<p class="note">${esc(tr('Die Bezahlung wird gerade eingerichtet.'))}${amOwner ? ' ' + esc(tr('Für dich als Owner startet der Knopf ein Test-Abo.')) : ''}</p>`}
-    <details class="abodet"${SUB.det ? ' open' : ''}><summary>${esc(tr('Was ist in {0} drin?').replace('{0}', P.n))}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>${aboListHTML(sel)}</details>
     ${RECHT ? `<p class="note abolinks"><a href="/abo-bedingungen.html" target="_blank" rel="noopener">${esc(tr('Abo-Bedingungen'))}</a> · <a href="/abo-bedingungen.html#widerruf" target="_blank" rel="noopener">${esc(tr('Widerrufsbelehrung'))}</a> · <a href="/impressum.html" target="_blank" rel="noopener">${esc(tr('Impressum'))}</a></p>` : ''}</div></div>`; }
 document.addEventListener('toggle', e => { if (e.target?.classList?.contains('abodet')) SUB.det = e.target.open; }, true);
 /* v932: Abschließen. Bestätigungsfenster: Preis und Laufzeit, unter 18 E-Mail und Zustimmung eines Elternteils, Zustimmung zum sofortigen Start
