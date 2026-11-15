@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2286c035c031';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='95cca8e4d0f2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3657,7 +3657,7 @@ body.lvfon{overflow:hidden}
 
 /* v992 (Inaya): Beiträge nicht zu lang; Platzhalter im neuen Beitrag ganz leicht und nicht fett */
 .post .thought.pclamp{display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden}
-.post .pmore{display:block;margin:-2px 0 6px auto;background:none;border:0;padding:2px 4px;font:600 13px var(--f-body);color:var(--p-muted,var(--muted));cursor:pointer}
+.post .pmoretx{display:block;margin:-2px 0 6px auto;background:none;border:0;padding:2px 4px;font:600 13px var(--f-body);color:var(--p-muted,var(--muted));cursor:pointer}
 .post .plinkc{margin:8px 0 2px}
 .pcrow.pcrow-off{opacity:.45;cursor:default}
 .ptwrap{position:relative}.ptcnt{display:block;text-align:right;font:500 12px var(--f-body);opacity:.6;margin:4px 2px 0}.ptcnt.hi{color:#ff6b7f;opacity:1}
@@ -3665,7 +3665,7 @@ body.lvfon{overflow:hidden}
 #ptext{font-weight:400}
 
 .post.tp .thought.pclamp{padding-bottom:0!important;margin-bottom:0!important;max-height:calc(8 * 1.45em + 12px)}
-.post.tp .pmore{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
+.post.tp .pmoretx{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
 
 /* v993: Möbelhaus und Zimmer einrichten passen ohne Scrollen auf den Bildschirm */
 /* v995: Zimmer in Möbelhaus und Zimmer einrichten genau gleich groß */.rcard .rstick .rscroll{width:100%!important;max-width:min(100%,calc((100dvh - 500px) / .82))!important;margin-left:auto!important;margin-right:auto!important}
@@ -12033,7 +12033,7 @@ function postHTML(p){
   const tags = ptagsClean(p.tags), spT = ''; // Spotify entfernt (Inaya, 2026-10-14)
   const ptk = p.author + '_' + p.id, ptr = !a.helper && p.text && p.author !== S.me && ptrShow(p.text) ? (PTRT[ptk] = p.text, PTR[ptk]?.on ? 1 : 2) : 0; /* v869: Helfer-Texte übersetzt, Beiträge echter Leute mit „Übersetzen“ */
   const lng = p.text && (p.text.length > 380 || (p.text.match(/\n/g) || []).length > 6) && !PMORE.has(p.author + '_' + p.id); /* v992: lange Texte nach 8 Zeilen mit „mehr anzeigen“ */
-  const txt = p.text ? `<blockquote class="thought${lng ? ' pclamp' : ''}">${ptr === 1 ? etx(PTR[ptk].t) : htHTML(mentionHTML(etx(a.helper ? tr(p.text) : p.text), tags, 'profile'))}</blockquote>${lng ? `<button type="button" class="pmore" data-act="pmore" data-k="${esc(p.author + '_' + p.id)}">${esc(tr('mehr anzeigen'))}</button>` : ''}${ptr ? `<button type="button" class="ptrans" data-act="ptr" data-k="${esc(ptk)}">${ptr === 1 ? 'Original anzeigen' : 'Übersetzen'}</button>` : ''}` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
+  const txt = p.text ? `<blockquote class="thought${lng ? ' pclamp' : ''}">${ptr === 1 ? etx(PTR[ptk].t) : htHTML(mentionHTML(etx(a.helper ? tr(p.text) : p.text), tags, 'profile'))}</blockquote>${lng ? `<button type="button" class="pmoretx" data-act="pmore" data-k="${esc(p.author + '_' + p.id)}">${esc(tr('mehr anzeigen'))}</button>` : ''}${ptr ? `<button type="button" class="ptrans" data-act="ptr" data-k="${esc(ptk)}">${ptr === 1 ? 'Original anzeigen' : 'Übersetzen'}</button>` : ''}` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
