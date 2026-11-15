@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='dd2cdafe8d20';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='694e72434f88';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -1096,7 +1096,7 @@ footer.foot .lnk{color:var(--muted)}
   body:has(.pcfull){overflow:hidden}body:has(.pcfull) #app,body:has(.pcfull) .mobnav{visibility:hidden}body:has(.pcfull) .pcfull{visibility:visible}
   .pcfh{flex:none;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;min-height:52px;padding:0 6px;border-bottom:1px solid var(--line)}.pcfh b{text-align:center;font:600 17px var(--f-display)}
   .pcfx{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:var(--fg);cursor:pointer}.pcfx svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .pcfb{flex:1;overflow:auto;overscroll-behavior:contain;padding:12px 12px calc(24px + var(--kb,0px))}.pcfb .pform{min-height:100%;align-content:start;padding:16px}.pcfb .pform textarea#ptext{min-height:32vh;font-size:18px}
+  .pcfb{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px 12px 24px}.pcfb .pform{min-height:100%;align-content:start;padding:16px}.pcfb .pform textarea#ptext{min-height:32vh;font-size:18px}
   /* Garderobe: großer Avatar oben, Teile in vier Spalten, antippen zieht an */
   .wardrobe .mirror{width:min(30vw,124px)}
   .card-in > .chips[role=tablist]{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-bottom:8px!important}
@@ -3768,6 +3768,10 @@ body.lvfon{overflow:hidden}
 .giftfr .btn{border-radius:999px}.giftcard{overflow-x:hidden}
 .pelnk{border-color:color-mix(in srgb,var(--p-fg,#fff) 45%,transparent);color:var(--p-fg,#fff);background:color-mix(in srgb,var(--p-field,#000) 80%,transparent);padding:4px 14px;border-radius:14px}.pelnk i{width:22px;height:22px}.pelnk svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.pelnk input{font-size:16px}.pelnk input::placeholder{color:currentColor;opacity:.6} /* v1004 (Inaya): Profil-Links wie die Musik-Links: Symbol vorn, Plattform als Platzhalter */
 
+
+/* v1008: neuer Beitrag hängt an der Tastatur wie der Chat */
+.pcfull{top:var(--vvt,0px)!important;bottom:auto!important;height:var(--vvh,100%)!important;transition:none!important}
+.pcfull.pckb{padding-bottom:0}.pcfull.pckb .pcff{display:none}
 /* v1007 (Inaya: GIF, Link, Markieren, Musik sahen unsauber aus): jede Auswahl klappt direkt unter ihrer Zeile im selben Kasten auf, Pfeil dreht sich, Felder rund mit Symbol vorn, Markierte als Chips mit Profilbild, Freunde als Vorschläge, × statt „entfernen“-Links */
 .pcrg{display:grid;grid-template-columns:minmax(0,1fr);min-width:0;border-bottom:1px solid var(--p-line,var(--line))}.pcrg>.pcrow{border-bottom:0;width:auto;min-width:0;box-sizing:border-box}.pcrow.open{background:none}.pform.pcins.tp .pcrows>.pcrg:last-child,.pform.pcins.tp .pcrows>.pcrow:last-child{border-bottom:0}
 .pcrc svg{transition:transform .2s}.pcrow.open .pcrc svg{transform:rotate(90deg);opacity:.9}
@@ -12259,6 +12263,13 @@ function composeAtt(){ return ''; } /* v1007: alle Auswahlen stehen direkt unter
 const PC_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>', PC_AT = '<circle cx="12" cy="12" r="3.6"/><path d="M15.6 12v1.4a2.6 2.6 0 005.2 0V12a8.8 8.8 0 10-3.5 7"/>';
 function pcTagRes(q){ const x = u => !PTAGS.some(t => t.id === u.id); if (q) return mentionList(mentionFind(q).filter(x), 'ptag-add', q);
   const f = stFriends(), l = (f.length ? f : mentionPool()).filter(x).slice(0, 8); return l.length ? `<small class="pcpnh">${esc(tr(f.length ? 'Freunde' : 'Vorschläge'))}</small>` + mentionList(l, 'ptag-add', ' ') : ''; }
+/* v1008: Markieren zeichnet nur Chips, Zahl und Vorschläge neu; das Suchfeld bleibt stehen, die Tastatur bleibt offen */
+function pcTagPaint(clr){ const q = document.getElementById('ptagq'), g = document.querySelector('.pcrow[data-v=tag]')?.closest('.pcrg'); if (!q || !g) { paintCompose(); return; }
+  const h = document.getElementById('pchero'); if (h) h.innerHTML = pcHeroHTML();
+  const pn = q.closest('.pcpn'), tmp = document.createElement('div'); tmp.innerHTML = pcPanel('tag'); const nc = tmp.querySelector('.pcchips'), oc = pn.querySelector('.pcchips');
+  if (nc && oc) oc.replaceWith(nc); else if (nc) pn.prepend(nc); else oc?.remove();
+  if (clr) q.value = ''; const r = document.getElementById('ptagres'); if (r) r.innerHTML = pcTagRes(q.value.replace(/^@/, '').trim());
+  if (document.activeElement !== q) q.focus({preventScroll:true}); }
 function pcPanel(k){
   if (k === 'stk' && PSGP && !PSG) return `<div class="pcpn pcpn-gif"><div id="sgp" class="sgp pcsgp" role="dialog" aria-label="GIFs">${sgPanelHTML()}</div></div>`;
   if (k === 'video' && PLINK) { const url = document.getElementById('purl')?.value || PURLV || ''; return `<div class="pcpn"><label class="pcfld"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.video}</svg><input id="purl" type="url" inputmode="url" autocapitalize="none" spellcheck="false" placeholder="${esc(tr('Link einfügen'))}" aria-label="Link" value="${esc(url)}"></label><small class="pcpnh">${esc(tr('YouTube, TikTok, Instagram oder jede andere Seite'))}</small></div>`; }
@@ -12278,7 +12289,7 @@ document.addEventListener('input', e => {
   else if (e.target.id === 'sti-q' && document.getElementById('sti-ml')) { document.getElementById('sti-ml').innerHTML = mentionList(mentionFind(e.target.value.replace(/^@/, '').trim()), 'st-ifmen', e.target.value); }
   else if (e.target.id === 'ptagq') { const r = document.getElementById('ptagres'); if (r) r.innerHTML = pcTagRes(e.target.value.replace(/^@/, '').trim()); }
 });
-document.addEventListener('mousedown', e => { if (e.target.closest?.('#pmsug,#stmsug')) e.preventDefault(); });
+document.addEventListener('mousedown', e => { if (e.target.closest?.('#pmsug,#stmsug,#ptagres,.pcchip button')) e.preventDefault(); }); /* v1008: Antippen eines Vorschlags nimmt dem Suchfeld nicht den Fokus, die Tastatur bleibt offen */
 document.addEventListener('click', e => {
   const bx = e.target.closest?.('#ptagbox'); if (!bx || !PTAGS.length) return;
   const r = bx.getBoundingClientRect(), t = PTAGS[PTAGS.length - 1]; t.x = Math.round((e.clientX - r.left) / r.width * 100); t.y = Math.round((e.clientY - r.top) / r.height * 100); paintCompose();
@@ -12294,8 +12305,12 @@ function paintCompose(){
 const pcPlus = act => { const bx = /^#[0-9a-f]{6}$/i.test(me()?.theme?.box || '') ? me().theme.box : ''; return `<button type="button" class="pcplus" data-act="${act}" aria-label="Beitrag erstellen"${bx ? ` style="background:${bx};color:${autoFg(bx)};border:1px solid ${autoFg(bx)}33;border-style:solid"` : ''}><span aria-hidden="true">+</span></button>`; }; // Farbe vom eigenen Profil, Plus hell oder dunkel je nach Untergrund (Inaya, 2026-10-12)
 const pcFull = act => `<div class="pcfull" role="dialog" aria-modal="true" aria-label="Neuer Beitrag"><header class="pcfh"><button type="button" class="pcfx" data-act="${act}" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><b>Neuer Beitrag</b>${pdrBtn()}</header><div class="pcfb">${composeHTML()}</div><footer class="pcff"><button class="btn pcshare" type="submit" form="pform">Teilen</button></footer></div>`;
 // Handy: die Seite füllt genau den sichtbaren Bereich über der Tastatur, der Salon scheint nicht durch (wie die Kommentare)
-function pcFit(){ const el = document.querySelector('.pcfull'), vv = window.visualViewport; if (!el || !vv || !isMob()) return; const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop); el.style.top = vv.offsetTop + 'px'; el.style.height = (vv.height + kb) + 'px'; el.style.bottom = 'auto'; el.style.setProperty('--kb', kb + 'px'); }
-window.visualViewport?.addEventListener('resize', pcFit); window.visualViewport?.addEventListener('scroll', pcFit);
+/* v1008 (Inaya: „Tastatur nicht richtig angedockt, ruckelt beim Schließen“): Das Fenster nimmt dieselbe sichtbare Höhe wie der Chat (`--vvh`/`--vvt` aus `vvFit`, gleicht das Mitschieben des iPhones aus) und endet genau an der Tastatur. Mit Tastatur ist „Teilen“ ausgeblendet (Klasse `pckb`, hängt am Fokus, nicht an Messungen, darum springt nichts). Das Feld mit Fokus bzw. die offene Auswahl wird einmal sichtbar gerückt, wenn die Tastatur fertig ist (`pcKeep`). */
+function pcFit(){ const el = document.querySelector('.pcfull'); if (!el || !isMob()) return; const a = document.activeElement, kb = isTyping(a) && a.isConnected && el.contains(a); el.classList.toggle('pckb', kb); }
+let PCKT = 0; function pcKeep(){ clearTimeout(PCKT); PCKT = setTimeout(() => { const b = document.querySelector('.pcfull .pcfb'), a = document.activeElement; if (!b || !a || !b.contains(a) || !isTyping(a)) return; const t = a.closest('.pcrg') || a, br = b.getBoundingClientRect(), r = t.getBoundingClientRect(), ar = a.getBoundingClientRect(); let d = 0; if (r.bottom > br.bottom - 12) d = Math.min(r.bottom - br.bottom + 12, ar.top - br.top - 12); else if (ar.top < br.top + 8) d = ar.top - br.top - 8; if (Math.abs(d) > 2) b.scrollBy({top:d, behavior:'smooth'}); }, 320); }
+document.addEventListener('focusin', e => { if (!e.target.closest?.('.pcfull')) return; pcFit(); pcKeep(); });
+document.addEventListener('focusout', e => { if (!e.target.closest?.('.pcfull')) return; setTimeout(pcFit, 0); });
+window.visualViewport?.addEventListener('resize', () => { if (document.querySelector('.pcfull')) pcKeep(); });
 new MutationObserver(() => { if (document.querySelector('.pcfull:not([data-fit])')) { document.querySelectorAll('.pcfull').forEach(x => x.dataset.fit = 1); pcFit(); } }).observe(document.documentElement, {childList:true, subtree:true});
 /* v896 (Inaya: „wie bei Insta, wenn man einen Beitrag postet“): oben groß Foto/Video, darunter der Text, dann die Optionen als Zeilen mit Pfeil, „Teilen“ fest unten (pcFull). */
 const PC_CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>', PC_AUD = {cf:'<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.4 6.9 19.1l1-5.6-4.1-4 5.7-.8z"/>', pub:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/>', fr:'<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/>'};
@@ -21241,8 +21256,8 @@ document.addEventListener('click', async e => {
   else if (a === 'pmention') { const ta = document.getElementById('ptext'), u = mentionPool().find(x => x.id === b.dataset.id); if (!ta || !u) return;
     const pos = ta.selectionEnd ?? ta.value.length, head = ta.value.slice(0, pos).replace(/@[^\s@]*$/, '@' + u.name + ' '); ta.value = head + ta.value.slice(pos); try { ta.setSelectionRange(head.length, head.length); } catch {} ta.focus();
     document.getElementById('pmsug').hidden = true; if (!PTAGS.some(t => t.id === u.id)) { PTAGS.push({id:u.id, n:u.name, ...(postCrop ? {x:50, y:50} : {})}); paintCompose(); } }
-  else if (a === 'ptag-add') { const u = mentionPool().find(x => x.id === b.dataset.id); if (u && !PTAGS.some(t => t.id === u.id)) PTAGS.push({id:u.id, n:u.name, ...(postCrop ? {x:50, y:50} : {})}); paintCompose(); const q = document.getElementById('ptagq'); if (q) { q.value = ''; q.focus({preventScroll:true}); } }
-  else if (a === 'ptag-x') { PTAGS.splice(+b.dataset.i, 1); paintCompose(); }
+  else if (a === 'ptag-add') { const u = mentionPool().find(x => x.id === b.dataset.id); if (u && !PTAGS.some(t => t.id === u.id)) PTAGS.push({id:u.id, n:u.name, ...(postCrop ? {x:50, y:50} : {})}); pcTagPaint(true); }
+  else if (a === 'ptag-x') { PTAGS.splice(+b.dataset.i, 1); pcTagPaint(); }
   else if (a === 'ptag-show') { b.classList.toggle('on'); }
   else if (a === 'vnos') { toastNow(tr('Dieses Video hat keinen Ton.')); }
   else if (a === 'vsnd') { vidSnd(b.closest('div[data-vk]')); }
