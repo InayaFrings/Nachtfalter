@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2145c796b5f8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='19d04cf58f13';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -246,10 +246,18 @@
 .aboplan[data-v=premium] .abopr,.aboplan[data-v=premium] .abon{background:linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}.aboplan[data-v=premium] .abopr small{-webkit-text-fill-color:currentColor;color:var(--p-fg,#eee);opacity:.75}
 .aboplan[data-v=plus] .btn:not(.ghost){background:#b57cf2;border-color:#b57cf2;color:#fff}.aboplan[data-v=premium] .btn:not(.ghost){border-color:transparent;background:linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#007aff,#af52de);color:#fff;text-shadow:0 1px 2px #0006}
 .abofeat.k-plus .abog{border:1.5px solid #b57cf2}.abofeat.k-plus .abofh{color:#c39bff}
-.abofeat.k-premium .abog{border:1.5px solid transparent;background:linear-gradient(var(--p-panel,#141416),var(--p-panel,#141416)) padding-box,linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de) border-box}
+.abofeat.k-premium .abog.aboprem{border:1.5px solid transparent;background:linear-gradient(var(--p-panel,#141416),var(--p-panel,#141416)) padding-box,linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de) border-box}
 .abolinks a,.dslink a,.abobuy .note a{color:color-mix(in srgb,currentColor 78%,#fff);text-decoration:underline;text-underline-offset:2px}
 /* v976: Oldschool-Kacheln im Story-Editor passen in den Kasten */
 .ppsec.stpp .stpats{grid-template-columns:repeat(4,minmax(0,1fr))}.stpats button{min-width:0}.stpats small{overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto;line-height:1.15;font-size:11.5px}
+
+/* v977 (Inaya): Begleiter-Auswahl (Deko Kopf/Hals/Farbe, Füttern, Spielen) wie im Profil: Kacheln einfarbig, das Muster schimmert nur leicht durch */
+.petpg.pthm .psheet .pdi,.petpg.pthm .psheet .pfood,.petpg.pthm .psheet .pgame,.petpg.pthm .psheet .prcols .opt,.petpg.pthm .psheet .pdtabs{background:color-mix(in srgb,var(--p-soft) 94%,transparent)!important;border:1px solid var(--p-line)!important;color:var(--p-fg)!important}
+.petpg.pthm .psheet>b,.petpg.pthm .psheet .pgnote{display:block;justify-self:start;width:fit-content;max-width:100%;padding:6px 12px;border-radius:12px;background:color-mix(in srgb,var(--p-soft) 94%,transparent);border:1px solid var(--p-line);color:var(--p-fg)}
+.petpg.pthm .psheet .pdi.on,.petpg.pthm .psheet .pfood.on{border-color:var(--p-fg)!important;box-shadow:0 0 0 1px var(--p-fg)}.petpg.pthm .psheet .pdi small,.petpg.pthm .psheet .pfood small,.petpg.pthm .psheet .pgame small{color:var(--p-fg)!important}
+.petpg.pthm .psheet .pdtabs{padding:4px;border-radius:12px}.petpg.pthm .psheet .prcols .opt{border-radius:12px;padding:10px!important}
+/* v977 (Inaya): in der Abo-Liste bei Premium nur „Nur bei Premium“ im Regenbogen, alles von Plus lila */
+.abofeat.k-premium .abog:not(.aboprem){border:1.5px solid #b57cf2!important;background:none}
 </style></head><body>
 <title>Noctibat</title>
 <link rel="stylesheet" href="/fonts/fonts.css"><!-- Schriften selbst gehostet, keine Verbindung zu Google (DSGVO, 2026-10-16) -->
