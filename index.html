@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='05dae70ca4c8';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='6557ef599e47';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3635,6 +3635,9 @@ body.lvfon{overflow:hidden}
 .themed .phl{font-weight:500}
 
 /* v984 */ .sgmini .sglk{position:static;display:inline-grid;width:18px;height:18px;margin-right:6px;vertical-align:-4px;border-radius:50%;background:#b57cf2;place-items:center}.sgmini .sglk svg{width:11px;height:11px;fill:none;stroke:#fff;stroke-width:2}
+
+/* v985 (Inaya): Textfeld im Beitrag fast deckend in der Beitragsfarbe (wie im Profil), das Muster schimmert nur leicht durch */
+.post.tp .thought{background:color-mix(in srgb,var(--p-soft,var(--p-bg)) 92%,transparent)!important;border:1px solid var(--p-line)!important;border-left:3px solid var(--p-line)!important;border-radius:6px;color:var(--p-fg)}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -11934,12 +11937,11 @@ function sharePost(pid, aid){
   render(); snack('Gerepostet', 'Rückgängig', () => unsharePost(sh.pid, sh.a), RP_ON_SVG);
 }
 // Beiträge tragen den Kasten vom Profil: Muster nur als Rahmen außen, die Fläche mit der Schrift ist einfarbig, Schrift automatisch hell/dunkel (Inaya, 2026-10-10)
-function postTheme(t){ const box = t.box || '#0e0e10', L = isLight(box), c = L ? '#000000' : '#ffffff', os = typeof t.pattern === 'string' && t.pattern.startsWith('os_') && OSM[t.pattern.slice(3)], band = L ? shade(box, .86) : shade(box, 1.45);
-  /* v978 (Inaya: „alle Beiträge vom Prinzip gleich aufgebaut, Muster und Farbe bei jedem gleich eingesetzt“): JEDER Beitrag = Kastenfarbe innen, Rand in einer Abstufung der Kastenfarbe, das Kasten-Muster zart im Beitrag. Egal ob altes oder Oldschool-Muster. */
-  let tile = 'none', size = '';
-  if (os) { const sc = .6, key = ['ppb', t.pattern, c].join('|'); tile = ANIT[key] || (ANIT[key] = aniSvg(Math.round(os.w * sc), Math.round(os.h * sc), `<g transform="scale(${sc})" opacity=".075">${os.f(c)}</g>`)); size = ` 0 0/${Math.round(os.w * sc)}px auto`; }
-  else if (t.pattern && t.pattern !== 'schlicht') tile = patternURL(t.pattern, L ? 'tag' : 'nacht', .09);
-  return themeStyle(t) + `;--pp-pat:linear-gradient(${band},${band})` + (tile && tile !== 'none' ? `;--pp-body:${tile}${size} padding-box,linear-gradient(var(--p-bg),var(--p-bg))` : ''); }
+function postTheme(t){ /* v985 (Inaya): Beitrag wie das Profil: Rand = Profil-Hintergrund (Seitenfarbe + Hintergrund-Muster), innen = mittlerer Kasten (Kastenfarbe + Kasten-Muster, wie im Profil) */
+  const box = t.box || '#0e0e10', L = isLight(box), pg = isHex(t.page) ? t.page : '#0a0a0b', PL = isLight(pg);
+  const pp = typeof t.pagePattern === 'string' && !t.pagePattern.startsWith('ani_') && t.pagePattern !== 'schlicht' ? patternURL(t.pagePattern, PL ? 'tag' : 'nacht', .12) : 'none';
+  const bp = t.pattern && t.pattern !== 'schlicht' ? patternURL(t.pattern, L ? 'tag' : 'nacht', String(t.pattern).startsWith('os_') ? .05 : .1) : 'none';
+  return themeStyle(t) + `;--pp-pat:${pp !== 'none' ? pp + ' border-box,' : ''}linear-gradient(${pg},${pg})` + (bp !== 'none' ? `;--pp-body:${bp} padding-box,linear-gradient(var(--p-bg),var(--p-bg))` : ''); }
 /* v974 (Inaya: Beiträge sollen mit jedem Muster schön aussehen): Der Rand eines Beitrags zeigt das Kasten-Muster nur 12 px breit. Oldschool-Muster sind dort kleiner (45 %) und nicht ganz deckend, sonst sah man nur riesige Ausschnitte. */
 function ppPat(name, mode){ if (typeof name === 'string' && name.startsWith('os_') && OSM[name.slice(3)]) { const M = OSM[name.slice(3)], c = mode === 'tag' ? '#000000' : '#ffffff', key = ['pp', name, c].join('|'); if (ANIT[key]) return ANIT[key]; const sc = .45; return ANIT[key] = aniSvg(Math.round(M.w * sc), Math.round(M.h * sc), `<g transform="scale(${sc})" opacity=".62">${M.f(c)}</g>`); } return patternURL(name, mode, .28); }
 /* v974 (Inaya): Beitragsrahmen für Plus & Premium (`theme.postFr`, Farbe `theme.postFrC`), um jeden Beitrag im Salon, im Profil und in Storys geteilt. Sichtbar, solange das Abo läuft (`pfrOf`). */
