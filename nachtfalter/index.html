@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b516c296f05b';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e78b59a50900';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3626,6 +3626,13 @@ body.lvfon{overflow:hidden}
 .spadd{flex:none;width:40px;height:40px;border-radius:12px;border:1.5px solid #b57cf2;background:#b57cf2;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.spadd svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4}
 .spcoins{flex:none;display:inline-flex;align-items:center;gap:4px;font:700 13px var(--f-body);color:var(--p-fg,#eee)}.spcoins .ncico{width:18px;height:18px}
 .spmemh{margin:14px 2px 8px}
+
+/* v983 (Inaya: im Profil war Text je nach Muster schlecht lesbar): Oldschool-Muster im Kasten ruhiger (Deckkraft halbiert), Profil-Texte mit weichem Rand in Kastenfarbe, dadurch auf jedem Muster lesbar */
+.themed{--halo:0 0 2px var(--p-bg),0 0 4px var(--p-bg),0 0 8px var(--p-bg),0 0 14px var(--p-bg)}
+.themed :is(.phl,.pstats,.pstats *,.pmeta,.pmeta *,.pname,.pname *,.page,.ponline,.psub,.pmood,.pinfo,.pinfo *),.themed .phead :is(h1,h2,small,p,span,dt,dd,b),.paside .card :is(.card-h,.note,.lbl,.gbh,.gbsub,h2,h3,p.muted,small.muted){text-shadow:var(--halo)}
+.themed .pmeta dt,.themed .phead .lbl{opacity:1!important;color:color-mix(in srgb,var(--p-fg) 80%,transparent)!important}
+.paside .card.fullav,.paside .card.gbcard,.paside .card.petbox{--halo:0 0 2px var(--p-bg),0 0 4px var(--p-bg),0 0 8px var(--p-bg),0 0 14px var(--p-bg)}
+.themed .phl{font-weight:500}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -8591,7 +8598,7 @@ const CF_L = ['#b57cf2', '#cfa8ff', '#9b5cf0', '#ecdcff', '#5b23a8', '#3a1470'];
 function cfCol(box){ const b = isHex(box) ? box : '#0e0e10'; for (const c of CF_L.slice(0, 3)) if (cRatio(c, b) >= 3.6) return c; return cRatio('#ecdcff', b) >= cRatio('#3a1470', b) ? (cRatio('#f6efff', b) > cRatio('#ecdcff', b) + 1 ? '#f6efff' : '#ecdcff') : cRatio('#5b23a8', b) >= 4.5 ? '#5b23a8' : '#2a0d55'; }
 function themeStyle(t){
   const box = isHex(t.box) ? t.box : '#0e0e10', light = isLight(box), F = autoFg(box); const pg = isHex(t.page) ? t.page : '#0a0a0b'; /* v667: Knöpfe im Profil in der Farbe des Seiten-Hintergrunds (Inaya) */ /* v582: Schrift immer automatisch hell oder dunkel, je nachdem, was auf dem Kasten besser lesbar ist (Inaya) */
-  return `--p-cf:${cfCol(box)};--p-bg:${box};--p-panel:${light ? shade(box,1.35) : shade(box,1.12)};--p-fg:${F};--p-muted:${mutedFor(F, box)};--muted:var(--p-muted);--p-line:${light ? shade(box,.78) : shade(box,1.35)};--p-font:var(--f-display);--p-pattern:${patternURL(t.pattern, light ? 'tag' : 'nacht', .1)};--p-field:${light ? shade(box, 1.5) : shade(box, .72)};--p-soft:${light ? shade(box, 1.14) : shade(box, .72)};--p-page:${pg};--p-pagefg:${autoFg(pg)};--p-pageln:${isLight(pg) ? shade(pg, .7) : shade(pg, 1.6)};--p-pagepat:${patternURL(t.pagePattern, isLight(pg) ? 'tag' : 'nacht', .12)}`;
+  return `--p-cf:${cfCol(box)};--p-bg:${box};--p-panel:${light ? shade(box,1.35) : shade(box,1.12)};--p-fg:${F};--p-muted:${mutedFor(F, box)};--muted:var(--p-muted);--p-line:${light ? shade(box,.78) : shade(box,1.35)};--p-font:var(--f-display);--p-pattern:${patternURL(t.pattern, light ? 'tag' : 'nacht', String(t.pattern || '').startsWith('os_') ? .05 : .1)};--p-field:${light ? shade(box, 1.5) : shade(box, .72)};--p-soft:${light ? shade(box, 1.14) : shade(box, .72)};--p-page:${pg};--p-pagefg:${autoFg(pg)};--p-pageln:${isLight(pg) ? shade(pg, .7) : shade(pg, 1.6)};--p-pagepat:${patternURL(t.pagePattern, isLight(pg) ? 'tag' : 'nacht', .12)}`;
 }
 function applyPage(t){
   const bs = document.body.style;
