@@ -5,6 +5,9 @@
    - aboWebhook (Stripe ruft auf): schreibt den Abo-Status nach subs/<uid> = {p, e, ps, src:'stripe', cy, ce, st, sid, cus}.
      Nur dieser Weg (Admin-SDK) darf subs schreiben, die Firestore-Regeln lassen sonst nur Inayas Test-Abo zu.
    - aboCancel / aboResume (aufrufbar): kündigt zum Ende des bezahlten Zeitraums bzw. nimmt die Kündigung zurück.
+   - v1010: Erster Monat gratis (TRIAL_DAYS), einmal je Person: nicht, wenn es schon ein Live-Abo gab (subs/<uid> mit lv) oder aboCus/<uid>.tr gesetzt ist.
+     Stripe verlangt trotzdem eine Zahlungsart; ohne Kündigung startet danach automatisch das bezahlte Abo. handles/<uid>.ab/ap schreibt der Webhook mit,
+     damit andere Abo-Gestaltung sofort richtig sehen (auch bei Verlängerung oder Ablauf, wenn die App der Person zu ist).
    - v936: Abo-Werbebonus (refBonus, 500 Coins) und Sound-Bonus (sndBonus, 5 Coins je Benutzung, höchstens 300 am Tag), beides nur für Abonnenten.
    Einrichten (einmal, braucht ein Stripe-Konto eines Erwachsenen):
      firebase functions:secrets:set STRIPE_SECRET   (Geheimschlüssel sk_live_… bzw. zum Testen sk_test_…)
@@ -22,6 +25,7 @@ const fn = functions.region(REGION).runWith({maxInstances: 5, memory: '256MB', t
 
 /* Preise in Cent, wie in der App (ABO_P). Bei Änderung beide Stellen anpassen. */
 const PLANS = {plus: {n: 'Noctibat Plus', m: 199, y: 1999}, premium: {n: 'Noctibat Premium', m: 1499, y: 14999}};
+const TRIAL_DAYS = 30;
 const MAIL_RX = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
 
 let STRIPE = null;
@@ -45,7 +49,13 @@ function periodOf(sub){ const it = sub.items && sub.items.data && sub.items.data
 async function writeSub(sub){ const md = sub.metadata || {}, uid = md.uid, p = md.p; if (!uid || !PLANS[p]) { console.warn('Abo ohne uid/p', sub.id); return; }
   const per = periodOf(sub), live = ['active', 'trialing', 'past_due'].includes(sub.status);
   const e = live ? per.e : Math.min(per.e || Date.now(), (sub.ended_at || sub.canceled_at || Date.now() / 1000) * 1000);
-  await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || ''), lv: !!sub.livemode});
+  const tri = sub.status === 'trialing' || !!sub.trial_end;
+  /* Gratis-Monat nur einmal je Konto: hat schon ein anderes Abo den Gratis-Monat bekommen (z. B. zwei Bezahlseiten gleichzeitig geöffnet), startet dieses sofort bezahlt */
+  if (sub.status === 'trialing') { const kref = db.doc('aboCus/' + uid), kd = (await kref.get()).data() || {};
+    if (kd.tr && kd.trs && kd.trs !== sub.id) { const S = stripe(); if (S) { console.warn('ABO zweiter Gratis-Monat', uid, sub.id); await S.subscriptions.update(sub.id, {trial_end: 'now'}); return; } }
+    if (!kd.trs) await kref.set({tr: Date.now(), trs: sub.id}, {merge: true}); }
+  await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || ''), lv: !!sub.livemode, tu: tri, te: sub.trial_end ? sub.trial_end * 1000 : 0});
+  await db.doc('handles/' + uid).set({ab: live ? Math.round(e) : 0, ap: live ? p : ''}, {merge: true}).catch(err => console.error('ABO handles', err));
   console.log('ABO', JSON.stringify({uid, p, st: sub.status, e: new Date(e).toISOString(), ce: !!sub.cancel_at_period_end}));
   if (live) await refBonus(uid).catch(err => console.error('ABO refBonus', err)); }
 
@@ -81,18 +91,20 @@ exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
   const bd = await birthOf(uid), adult = ageOf(bd) >= 18, pe = String(data && data.pe || '').trim().toLowerCase();
   if (!adult && !(data.pc === true && MAIL_RX.test(pe))) throw err('failed-precondition', 'Unter 18 braucht es die Zustimmung und E-Mail-Adresse eines Elternteils.');
   const mail = adult ? (ctx.auth.token.email || '') : pe, P = PLANS[p];
-  await db.collection('aboLog').add({uid, p, y, wv: true, adult, pe: adult ? '' : pe, pc: adult ? false : true, ts: Date.now()});
+  await db.collection('aboLog').add({uid, p, y, wv: true, tw: data.tw === true, adult, pe: adult ? '' : pe, pc: adult ? false : true, ts: Date.now()});
   const S = stripe();
   if (!S) { if (EMU) { console.log('ABO DRY checkout', JSON.stringify({uid, p, y, adult, mail})); return {url: SITE + '?abo=dry'}; } throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); }
   /* Kunde je Person merken (server-intern, die Regeln lassen niemanden lesen) */
   const kref = db.doc('aboCus/' + uid), k = await kref.get(); let cus = k.exists && sameMode(k.data()) ? k.data().id : '';
   if (cus && mail && k.data().mail !== mail) { await S.customers.update(cus, {email: mail}); await kref.set({mail}, {merge: true}); }
   if (!cus) { const c = await S.customers.create({email: mail || undefined, metadata: {uid}}); cus = c.id; await kref.set({id: cus, mail, lv: LIVE()}); }
-  const s = await S.checkout.sessions.create({mode: 'subscription', customer: cus, client_reference_id: uid, locale: en ? 'en' : 'de',
+  /* v1010: erster Monat gratis, nur wer noch nie ein Live-Abo hatte und noch keinen Gratis-Monat */
+  const trial = !(k.exists && k.data().tr) && !(cur.exists && cur.data().src === 'stripe' && sameMode(cur.data()));
+  const s = await S.checkout.sessions.create({mode: 'subscription', customer: cus, client_reference_id: uid, locale: en ? 'en' : 'de', payment_method_collection: 'always',
     line_items: [{quantity: 1, price_data: {currency: 'eur', unit_amount: y ? P.y : P.m, recurring: {interval: y ? 'year' : 'month'}, product_data: {name: P.n}}}],
-    subscription_data: {metadata: {uid, p}}, metadata: {uid, p},
+    subscription_data: {metadata: {uid, p}, ...(trial ? {trial_period_days: TRIAL_DAYS, trial_settings: {end_behavior: {missing_payment_method: 'cancel'}}} : {})}, metadata: {uid, p, tr: trial ? '1' : ''},
     success_url: SITE + '?abo=ok', cancel_url: SITE + '?abo=x'});
-  return {url: s.url};
+  return {url: s.url, trial};
 });
 
 exports.aboWebhook = fn.https.onRequest(async (req, res) => {
