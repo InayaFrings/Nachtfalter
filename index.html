@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='65f846a1bd07';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5ae9a4d4f744';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3637,7 +3637,7 @@ body.lvfon{overflow:hidden}
 /* v984 */ .sgmini .sglk{position:static;display:inline-grid;width:18px;height:18px;margin-right:6px;vertical-align:-4px;border-radius:50%;background:#b57cf2;place-items:center}.sgmini .sglk svg{width:11px;height:11px;fill:none;stroke:#fff;stroke-width:2}
 
 /* v985/v988 (Inaya): Textfeld im Beitrag als leicht abgesetzte Fläche im selben Farbton, ohne dicken Strich links und ohne betonten Rahmen */
-.post.tp .thought{background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 96%,transparent)!important;border:0!important;border-left:0!important;border-radius:12px;color:var(--p-fg);padding:12px 14px!important}
+.post.tp .thought{background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent)!important;border:0!important;border-left:0!important;border-radius:0!important;margin-left:0!important;margin-right:0!important;color:var(--p-fg);padding:12px 14px!important} /* v992 (Inaya): Textfeld ohne runde Ecken, bis an den Rand (fließt in den Rahmen), das Muster schimmert leicht durch wie beim Steckbrief */
 
 /* v987 (Inaya: neuer Beitrag war reizüberflutend): Fotofeld, Textfeld, Öffentlich/Freunde/Enge Freunde und die Zeilen GIF, Link, Markieren, Musik, Planen fast deckend wie die Kästen im Profil */
 .pform.pcins.tp{--pcsoft:color-mix(in srgb,var(--p-soft,var(--p-bg)) 93%,transparent)}
@@ -3654,6 +3654,18 @@ body.lvfon{overflow:hidden}
 .peig .ppsec .pstile small{color:var(--pefg)!important}
 .peig .ppsec .pstile[aria-pressed=true]{border:2px solid var(--pefg)!important;box-shadow:0 0 0 1px var(--pefg)!important;background:color-mix(in srgb,var(--pefg) 12%,transparent)!important}
 .peig .ppsec .pphead small,.peig .ppsec .anih2,.peig .ppsec .pehint{color:var(--pefg)!important}
+
+/* v992 (Inaya): Beiträge nicht zu lang; Platzhalter im neuen Beitrag ganz leicht und nicht fett */
+.post .thought.pclamp{display:-webkit-box;-webkit-line-clamp:8;-webkit-box-orient:vertical;overflow:hidden}
+.post .pmore{display:block;margin:-2px 0 6px auto;background:none;border:0;padding:2px 4px;font:600 13px var(--f-body);color:var(--p-muted,var(--muted));cursor:pointer}
+.post .plinkc{margin:8px 0 2px}
+.pcrow.pcrow-off{opacity:.45;cursor:default}
+.ptwrap{position:relative}.ptcnt{display:block;text-align:right;font:500 12px var(--f-body);opacity:.6;margin:4px 2px 0}.ptcnt.hi{color:#ff6b7f;opacity:1}
+#ptext::placeholder{font-weight:400!important;opacity:.38;color:currentColor}
+#ptext{font-weight:400}
+
+.post.tp .thought.pclamp{padding-bottom:0!important;margin-bottom:0!important;max-height:calc(8 * 1.45em + 12px)}
+.post.tp .pmore{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -8405,7 +8417,7 @@ function cropAsk(file, W, H){
 }
 let postCrop = null; // zugeschnittenes Bild für den nächsten Beitrag
 let PTXT = ''; // Beitragstext bleibt beim Hinzufügen von Foto, Video, Musik, GIF oder Link erhalten, egal in welcher Reihenfolge (Inaya, 2026-10-14)
-document.addEventListener('input', e => { if (e.target.id === 'ptext') PTXT = e.target.value; });
+document.addEventListener('input', e => { if (e.target.id === 'ptext' || /^pe-/.test(e.target.id || '')) { const el = e.target, f = postTxtFix(el.value); if (f !== el.value) { const pos = el.selectionStart - (el.value.length - f.length); el.value = f; try { el.setSelectionRange(Math.max(0, pos), Math.max(0, pos)); } catch {} } } if (e.target.id === 'ptext') { PTXT = e.target.value; const c = document.getElementById('ptcnt'); if (c) { const n = [...PTXT].length; c.textContent = n + '/1000'; c.classList.toggle('hi', n >= 900); } } });
 let PTAGS = [], PTAGP = false; // Markierte Leute im nächsten Beitrag {id, n, x, y} (Inaya, 2026-10-11)
 const ptagsClean = l => (Array.isArray(l) ? l : []).filter(t => t && t.id && t.n).slice(0, 20).map(t => ({id:String(t.id), n:String(t.n).slice(0, 40), ...(t.x != null ? {x:Math.max(0, Math.min(100, +t.x || 0)), y:Math.max(0, Math.min(100, +t.y || 0))} : {})}));
 function ptagBubbles(tags, act){ return tags.filter(t => t.x != null).map(t => `<button type="button" class="ptagb" style="left:${+t.x}%;top:${+t.y}%" ${act ? `data-act="profile" data-id="${esc(t.id)}"` : 'tabindex="-1"'}>${esc(t.n)}</button>`).join(''); }
@@ -9172,6 +9184,7 @@ Object.assign(I18N_EN, {"Mach dein Profil zum Hingucker! Mit dem Noctibat-Abo be
 Object.assign(I18N_EN, {"und vieles mehr": "and much more"}); /* v981 */
 Object.assign(I18N_EN, {"Sticker-Pakete suchen …": "Search sticker packs …", "Sticker-Pakete suchen": "Search sticker packs", "Sticker-Paket erstellen": "Create sticker pack", "Pakete von Mitgliedern": "Packs by members", "Nichts gefunden.": "Nothing found.", "Noch keine Sticker-Pakete von Mitgliedern. Mit dem Plus oben erstellst du dein eigenes.": "No member sticker packs yet. Create your own with the plus above."}); /* v982 */
 Object.assign(I18N_EN, {"Nur mit Plus & Premium": "Plus & Premium only"}); /* v984 */
+Object.assign(I18N_EN, {"mehr anzeigen": "show more", "nur ohne Fotos": "only without photos", "Fotos und GIF zusammen geht nicht. Das GIF wurde entfernt.": "Photos and a GIF together aren't possible. The GIF was removed."}); /* v992 */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -11991,6 +12004,10 @@ function ptrGo(k){ const text = PTRT[k]; if (!text) return; if (PTR[k]) { PTR[k]
   const lim = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('zeit')), ms))]); /* v869: nie hängen, sonst Google Übersetzer (Klick gilt nur ein paar Sekunden für neue Fenster) */
   (async () => {
     try { if ((await lim(Translator.availability({sourceLanguage:src, targetLanguage:to}), 1500)) !== 'available') return web(); /* nur, wenn die Sprache schon auf dem Gerät ist, sonst kein langes Warten */ const t = await lim((async () => (await Translator.create({sourceLanguage:src, targetLanguage:to})).translate(text))(), 3000); PTR[k] = {t, on:1}; render(); } catch { web(); } })(); }
+const PMORE = new Set();
+/* v992 (Inaya: nicht „A, Enter, A, Enter …“ 1000 Zeilen lang): höchstens 15 Zeilen und nie mehr als eine Leerzeile hintereinander; weitere Umbrüche werden zu Leerzeichen. Beim Tippen und beim Speichern. */
+const POST_LINES = 15;
+function postTxtFix(t){ t = String(t || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n'); let n = 0; t = t.replace(/\n/g, () => ++n < POST_LINES ? '\n' : ' '); return [...t].slice(0, 1000).join(''); }
 function postHTML(p){
   if (p.type === 'teilen' && !RPIN && !isHidden(p)) { const o = rpOrig(p); if (o) { RPIN = true; let h = ''; try { h = postHTML(o); } finally { RPIN = false; }
     if (h) return h.replace(/^(\s*<article[^>]*>)/, `$1<div class="rphead">${RP_HEAD}<span>${ulinkH(p.author)} <span>hat repostet</span></span></div>`); } }
@@ -12000,7 +12017,8 @@ function postHTML(p){
   let body = '';
   const tags = ptagsClean(p.tags), spT = ''; // Spotify entfernt (Inaya, 2026-10-14)
   const ptk = p.author + '_' + p.id, ptr = !a.helper && p.text && p.author !== S.me && ptrShow(p.text) ? (PTRT[ptk] = p.text, PTR[ptk]?.on ? 1 : 2) : 0; /* v869: Helfer-Texte übersetzt, Beiträge echter Leute mit „Übersetzen“ */
-  const txt = p.text ? `<blockquote class="thought">${ptr === 1 ? etx(PTR[ptk].t) : htHTML(mentionHTML(etx(a.helper ? tr(p.text) : p.text), tags, 'profile'))}</blockquote>${ptr ? `<button type="button" class="ptrans" data-act="ptr" data-k="${esc(ptk)}">${ptr === 1 ? 'Original anzeigen' : 'Übersetzen'}</button>` : ''}` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
+  const lng = p.text && (p.text.length > 380 || (p.text.match(/\n/g) || []).length > 6) && !PMORE.has(p.author + '_' + p.id); /* v992: lange Texte nach 8 Zeilen mit „mehr anzeigen“ */
+  const txt = p.text ? `<blockquote class="thought${lng ? ' pclamp' : ''}">${ptr === 1 ? etx(PTR[ptk].t) : htHTML(mentionHTML(etx(a.helper ? tr(p.text) : p.text), tags, 'profile'))}</blockquote>${lng ? `<button type="button" class="pmore" data-act="pmore" data-k="${esc(p.author + '_' + p.id)}">${esc(tr('mehr anzeigen'))}</button>` : ''}${ptr ? `<button type="button" class="ptrans" data-act="ptr" data-k="${esc(ptk)}">${ptr === 1 ? 'Original anzeigen' : 'Übersetzen'}</button>` : ''}` : ''; // alle Beiträge: Text mit Strich, unter Bild und Anhang (Inaya, 2026-10-12)
   const tpos = tags.some(t => t.x != null), twrap = h => tpos ? `<div class="ptagwrap" data-act="ptag-show" role="button" tabindex="0" aria-label="Markierte Leute zeigen">${h}${ptagBubbles(tags, true)}<i class="ptagi" aria-hidden="true"><svg viewBox="0 0 24 24">${CICO.tag}</svg></i></div>` : h;
   const pmuv = p.mu && stMuPv(p.mu) ? 'pv:' + stMuPv(p.mu) : spT ? 'sp:' + spT : '', volw = h => pmuv ? `<div class="pvolw">${h}${pvolHTML(pmuv, p.mu)}</div>` : h;
   if (p.gal?.length) body += galHTML(p, pmuv ? pvolHTML(pmuv, p.mu) : ''); // Ton-Knopf immer unten rechts auf dem Bild (Inaya, 2026-10-12)
@@ -12008,7 +12026,7 @@ function postHTML(p){
   else if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
   else if (p.bigimg) body += twrap(volw(`<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`));
   if (!p.gal?.length && !p.sgi && sgClean(p.sg)) { STKAV = a?.outfit || null; try { body += volw(`<div class="psg${sgIsGif(sgClean(p.sg)) ? ' gif' : ''}">${sgItemHTML(p.sg, true)}</div>`); } finally { STKAV = null; } } // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
-  if (p.url && !spT) body += linkHTML(p.url, p.lp, false, true, p.author === S.me && !p.remote);
+  if (p.url && !spT) body += (p.gal?.length || p.img || p.bigimg || p.clip || sgClean(p.sg)) ? `<div class="plinkc">${linkPill(p.url, p.lp)}</div>` : linkHTML(p.url, p.lp, false, true, p.author === S.me && !p.remote); /* v992 (Inaya: Beiträge nicht zu lang): mit Foto/GIF nur kleiner Link */
   else if (p.type === 'gedanke' || p.type === 'neu') { const tu = String(p.text || '').match(/https?:\/\/[^\s<>"']+/i)?.[0]; if (tu && (ytId(tu) || embedOf(tu))) body += linkHTML(tu); } // Link im Text: auch gleich ansehen
   if (p.audio && MUSIK) body += audioHTML(p);
   if (p.clip && !p.gal) body += clipHTML(p);
@@ -12156,7 +12174,8 @@ function pcRowsHTML(){
   const row = (k, ic, l, v, at, inner) => `<label class="pcrow${v ? ' on' : ''}" data-v="${k}" ${at || ''}><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg><span class="pcrl">${l}</span>${v ? `<small class="pcrv" data-raw>${esc(v)}</small>` : ''}<i class="pcrc">${PC_CHEV}</i>${inner || ''}</label>`, B = a => `data-act="${a}" role="button" tabindex="0"`;
   const url = document.getElementById('purl')?.value || PURLV || '';
   let host = ''; try { host = url ? new URL(url).hostname.replace(/^www\./, '') : ''; } catch {}
-  return [row('stk', CICO.gif, 'GIF', PSG ? tr(sgIsGif(PSG) ? 'GIF' : 'Sticker') : '', B('psg-open')),
+  const hasPics = !!(PCR?.items?.length || postCrop); /* v992: Fotos/Videos und GIF zusammen gibt es nicht mehr, sonst wird der Beitrag zu lang */
+  return [hasPics && !PSG ? `<div class="pcrow pcrow-off" data-v="stk"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.gif}</svg><span class="pcrl">${esc(tr('GIF'))}</span><small class="pcrv">${esc(tr('nur ohne Fotos'))}</small></div>` : row('stk', CICO.gif, 'GIF', PSG ? tr(sgIsGif(PSG) ? 'GIF' : 'Sticker') : '', B('psg-open')),
     row('video', CICO.video, 'Link', PLINK ? host : '', B('plink')),
     row('tag', CICO.tag, 'Personen markieren', PTAGS.map(t => t.n).join(', '), B('ptag-open')),
     muPickOK() || PMU || PAUDIO ? row('musik', CICO.musik, 'Musik', PMU ? [PMU.a, PMU.t].filter(Boolean).join(' · ') : PAUDIO ? PAUDIO.name : '', B('pmu-open')) : '',
@@ -12185,7 +12204,7 @@ function composeHTML(){
   return `      <form data-form="post" id="pform" class="pform pcins${pt ? ' tp' : ''}" style="display:grid;gap:14px;${pt}">
         ${social ? `<div class="pcaud" id="pcaud">${pcAudHTML()}</div>` : ''}
         <div id="pchero" class="pchero">${pcHeroHTML()}</div>
-        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text">${esc(PTXT)}</textarea></div>
+        <div class="ptwrap"><textarea id="ptext" maxlength="1000" placeholder="Was geht dir gerade durch den Kopf? Mit @ markierst du jemanden, mit # setzt du Hashtags." aria-label="Text">${esc(PTXT)}</textarea><small class="ptcnt" id="ptcnt">${[...(PTXT || '')].length}/1000</small></div>
         <div class="mnlist" id="pmsug" hidden></div>
         <div id="patts" class="patts">${composeAtt()}</div>
         <div id="pcrows" class="pcrows">${pcRowsHTML()}</div>
@@ -12210,7 +12229,7 @@ function galBox(it, R){ const ia = +it.a || 1, w = 100 * (+it.z || 1) * Math.max
 const galPos = (it, R) => { const b = galBox(it, R); return `left:${b.l.toFixed(2)}%;top:${b.t.toFixed(2)}%;width:${b.w.toFixed(2)}%;height:${b.h.toFixed(2)}%`; };
 const PCR_ICO = {x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', l:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>', r:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>', plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>', play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'};
 function pcrThumb(it){ return it.t === 'v' ? (it.poster ? `<img src="${esc(it.poster)}" alt="">` : '<i class="pcrspin" aria-hidden="true"></i>') : `<img src="${esc(it.src)}" alt="">`; }
-async function pcrAddFiles(files){
+async function pcrAddFiles(files){ if (PSG && files?.length) { PSG = null; toastNow(tr('Fotos und GIF zusammen geht nicht. Das GIF wurde entfernt.')); }
   if (!PCR) PCR = {step:1, items:[], cur:0, ar:'45'};
   const list = [...files].slice(0, Math.max(0, pcrMax() - PCR.items.length)); if (files.length > list.length) limFull('pics');
   for (const f of list) {
@@ -21036,6 +21055,7 @@ document.addEventListener('click', async e => {
   else if (a === 'plink') { PLINK = true; paintCompose(); document.getElementById('purl')?.focus(); }
   else if (a === 'patt-x') { const v = b.dataset.v; if (v === 'foto') postCrop = null; else if (v === 'clip') PVIDEO = null; else if (v === 'musik') PAUDIO = null; else if (v === 'pmu') { PMU = null; stAuStop(); } else if (v === 'psg') PSG = null; else PLINK = false; paintCompose(); }
   else if (a === 'ptab') { profTab = b.dataset.t; render(); }
+  else if (a === 'pmore') { PMORE.add(b.dataset.k); const q = b.previousElementSibling; if (q?.classList.contains('thought')) q.classList.remove('pclamp'); b.remove(); }
   else if (a === 'prof-posts') { profTab = b.dataset.v || 'posts'; render(); requestAnimationFrame(() => { const t = document.querySelector('.ptabs'); if (t) scrollTo({top:t.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--railh')) || 64) - 8, behavior:'smooth'}); }); } /* v991 (Inaya): Beiträge antippen zeigt die Beiträge darunter */
   else if (a === 'cat') { shopCat = b.dataset.c; render(); }
   else if (a === 'try' && isMob()) mobWear(id);
@@ -21621,7 +21641,7 @@ document.addEventListener('submit', async e => {
     S.pending.handle = handle; S.pending.name = name; S.pending.step = 'avatar'; obCat = 'body'; save(); render();
   } else if (t === 'ob-finish') { finishOb();
   } else if (t === 'post') {
-    const url = (document.getElementById('purl')?.value || '').trim(), text = val('ptext');
+    const url = (document.getElementById('purl')?.value || '').trim(), text = postTxtFix(val('ptext'));
     if (PVIDEO?.busy) { toast('Das Video wird noch vorbereitet.'); return; }
     const gal = PCR?.items.length ? PCR : null, galV = !!gal?.items.some(x => x.t === 'v');
     if (gal && gal.items.some(x => x.t === 'v' && !x.poster)) { toast('Ein Video wird noch vorbereitet.'); return; }
@@ -21653,7 +21673,7 @@ document.addEventListener('submit', async e => {
     UPL = {job, prog:0, err:''}; if (V.name !== 'home') go('home'); render(); window.scrollTo({top:0, behavior:'smooth'}); upRun();
   } else if (t === 'pedit') {
     const p = S.posts.find(x => x.id === f.dataset.id && x.author === S.me); if (!p) return;
-    const text = val('pe-' + p.id);
+    const text = postTxtFix(val('pe-' + p.id));
     if (p.type === 'video') { const url = val('pe-url-' + p.id); if (!/^https?:\/\//i.test(url)) { toast('Bitte einen Link einfügen, der mit https:// beginnt.'); return; } if (url !== p.url) { p.url = url; delete p.lp; } }
     else if (p.type === 'gedanke' && !text) { toast('Ein Gedanke braucht ein paar Worte.'); return; }
     if (social) { if (val('pe-aud-' + p.id) === 'pub') p.pub = 1; else delete p.pub; } // Sichtbarkeit auch beim Bearbeiten ändern (Inaya, 2026-10-11)
