@@ -124,6 +124,10 @@
     async resetPw(email){ try { await auth.sendPasswordResetEmail(email, {url: back()}); return {ok: true}; } catch (e) { return e && e.code && e.code.includes('user-not-found') ? {ok: true} : {error: de(e)}; } },
     async updatePw(pw){ try { if (RESET) { await auth.confirmPasswordReset(RESET.oob, pw); const r = await auth.signInWithEmailAndPassword(RESET.email, pw); user = r.user; RESET = null; return {ok: true}; } await auth.currentUser.updatePassword(pw); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async updateEmail(email){ try { await auth.currentUser.verifyBeforeUpdateEmail(email, {url: back()}); return {ok: true}; } catch (e) { return {error: de(e)}; } },
+    // v1017: E-Mail-Adresse bestätigen (Vorlage firebase/email-verify*.html in der Firebase-Konsole)
+    verified: () => user ? !!user.emailVerified : null,
+    async sendVerify(name){ await ready; if (!user) return {error: 'unauthenticated'}; try { if (name && user.displayName !== name) { try { await user.updateProfile({displayName: name}); } catch {} } await user.sendEmailVerification({url: back()}); return {ok: true}; } catch (e) { return {error: de(e), code: e && e.code}; } },
+    async reloadUser(){ await ready; if (!user) return null; try { await user.reload(); user = auth.currentUser || user; } catch {} return !!(user && user.emailVerified); },
     async reauth(pw){ try { await auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, pw)); return {ok: true}; } catch (e) { return {error: de(e)}; } },
     async deleteUser(){ try { await auth.currentUser.delete(); user = null; return {ok: true}; } catch (e) { return {error: de(e)}; } },
     // Nutzername → E-Mail fürs Anmelden (geht auch ohne Anmeldung, aber nur einzeln)
