@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='b82a01e044ee';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='13dd28735e43';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3924,6 +3924,9 @@ body.lvfon{overflow:hidden}
 .abowrap .abog.aboprem .abogh,.abowrap .abofeat.k-premium .abofh,.abowrap .abog.aboprem .abolist li::before{background:linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;opacity:1}
 .abowrap .abofeat .abopick{text-align:center;margin:14px 0 0}
 .abowrap .abolinks{margin-top:10px}
+
+/* v1015: Vorschau des Video-Links im neuen Beitrag */
+.pclkpv:empty{display:none}.pclkpv{margin-top:10px}.pclkpv .lvid{border-radius:12px;overflow:hidden}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -12294,7 +12297,7 @@ function postHTML(p){
   else if (p.img) body += twrap(volw(`<img class="photo" src="${esc(p.img)}" alt="Bild von ${esc(a.name)}">`));
   else if (p.bigimg) body += twrap(volw(`<img class="photo" data-pimg="${esc(p.author + '/' + p.id)}" alt="Bild von ${esc(a.name)}">`));
   if (!p.gal?.length && !p.sgi && sgClean(p.sg)) { STKAV = a?.outfit || null; try { body += volw(`<div class="psg${sgIsGif(sgClean(p.sg)) ? ' gif' : ''}">${sgItemHTML(p.sg, true)}</div>`); } finally { STKAV = null; } } // Sticker oder GIF im Beitrag (Inaya, 2026-10-12)
-  if (p.url && !spT) body += (p.gal?.length || p.img || p.bigimg || p.clip || sgClean(p.sg)) ? `<div class="plinkc">${linkPill(p.url, p.lp)}</div>` : linkHTML(p.url, p.lp, false, true, p.author === S.me && !p.remote); /* v992 (Inaya: Beiträge nicht zu lang): mit Foto/GIF nur kleiner Link */
+  if (p.url && !spT) body += (p.gal?.length || p.img || p.bigimg || p.clip || sgClean(p.sg)) && !lvLink(p.lp?.u || p.url) /* v1015 (Inaya): Video-Links immer mit Vorschau */ ? `<div class="plinkc">${linkPill(p.url, p.lp)}</div>` : linkHTML(p.url, p.lp, false, true, p.author === S.me && !p.remote); /* v992 (Inaya: Beiträge nicht zu lang): mit Foto/GIF nur kleiner Link */
   else if (p.type === 'gedanke' || p.type === 'neu') { const tu = String(p.text || '').match(/https?:\/\/[^\s<>"']+/i)?.[0]; if (tu && (ytId(tu) || embedOf(tu))) body += linkHTML(tu); } // Link im Text: auch gleich ansehen
   if (p.audio && MUSIK) body += audioHTML(p);
   if (p.clip && !p.gal) body += clipHTML(p);
@@ -12401,7 +12404,7 @@ function pcTagPaint(clr){ const q = document.getElementById('ptagq'), g = docume
   if (document.activeElement !== q) q.focus({preventScroll:true}); }
 function pcPanel(k){
   if (k === 'stk' && PSGP && !PSG) return `<div class="pcpn pcpn-gif"><div id="sgp" class="sgp pcsgp" role="dialog" aria-label="GIFs">${sgPanelHTML()}</div></div>`;
-  if (k === 'video' && PLINK) { const url = document.getElementById('purl')?.value || PURLV || ''; return `<div class="pcpn"><label class="pcfld"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.video}</svg><input id="purl" type="url" inputmode="url" autocapitalize="none" spellcheck="false" placeholder="${esc(tr('Link einfügen'))}" aria-label="Link" value="${esc(url)}"></label><small class="pcpnh">${esc(tr('YouTube, TikTok, Instagram oder jede andere Seite'))}</small></div>`; }
+  if (k === 'video' && PLINK) { const url = document.getElementById('purl')?.value || PURLV || ''; return `<div class="pcpn"><label class="pcfld"><svg viewBox="0 0 24 24" aria-hidden="true">${CICO.video}</svg><input id="purl" type="url" inputmode="url" autocapitalize="none" spellcheck="false" placeholder="${esc(tr('Link einfügen'))}" aria-label="Link" value="${esc(url)}"></label><small class="pcpnh">${esc(tr('YouTube, TikTok, Instagram oder jede andere Seite'))}</small><div class="pclkpv" id="pclkpv">${pcLinkPv(url)}</div></div>`; }
   if (k === 'tag') { const ch = PTAGS.length ? `<div class="pcchips">${PTAGS.map((t, i) => { const u = S.users[t.id] || profUser(t.id); return `<span class="pcchip${i === PTAGS.length - 1 && postCrop ? ' cur' : ''}"><span class="cameo">${u ? headPic(u, '', true) : ''}</span><b data-raw>${esc(t.n)}</b><button type="button" data-act="ptag-x" data-i="${i}" aria-label="${esc(t.n)} ${esc(tr('entfernen'))}">${PC_X}</button></span>`; }).join('')}</div>` : '';
     if (!PTAGP) return ch ? `<div class="pcpn pcpn-c">${ch}</div>` : '';
     return `<div class="pcpn">${ch}<label class="pcfld"><svg viewBox="0 0 24 24" aria-hidden="true">${PC_AT}</svg><input id="ptagq" type="text" enterkeyhint="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="${esc(tr('Name oder Nutzername'))}" aria-label="${esc(tr('Wen markieren?'))}"></label><div class="mnlist pcml" id="ptagres">${pcTagRes('')}</div></div>`; }
@@ -12451,6 +12454,9 @@ function pcHeroHTML(){
   if (PVIDEO) return PVIDEO.busy ? `<div class="pchadd"><i class="pcrspin" aria-hidden="true"></i><span>${esc(PVIDEO.busy)}</span></div>` : `<div class="pchtrack"><div class="pchit pchfree"><img src="${esc(PVIDEO.poster)}" alt="Video-Vorschau"><i class="pchplay" aria-hidden="true">${PCR_ICO.play}</i></div></div>${bar('', x('clip', 'Video entfernen'))}`;
   if (PSG) return `<div class="pchtrack"><div class="pchit pchfree pchsg"><div class="psg${sgIsGif(PSG) ? ' gif' : ''}">${sgItemHTML(PSG, true)}</div></div></div>${bar('', x('psg', sgIsGif(PSG) ? 'GIF entfernen' : 'Sticker entfernen'))}`;
   return `<label class="pchadd" role="button" tabindex="0"><input id="pvideo" type="file" accept="image/*,video/*" multiple hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg><span>Fotos oder Videos hinzufügen</span></label>`; }
+/* v1015 (Inaya: „da soll das richtige Showcase sein“): Video-Links zeigen im neuen Beitrag gleich die Vorschau unter dem Feld */
+const pcLinkPv = url => { url = String(url || '').trim(); return /^https?:\/\//i.test(url) && lvLink(url) ? lvHTML(url, true) : ''; };
+document.addEventListener('input', e => { if (e.target.id !== 'purl') return; clearTimeout(pcLinkPv.t); pcLinkPv.t = setTimeout(() => { const b = document.getElementById('pclkpv'); if (!b) return; const h = pcLinkPv(e.target.value); if (b.dataset.u !== e.target.value.trim()) { b.dataset.u = e.target.value.trim(); b.innerHTML = h; } }, 350); });
 document.addEventListener('input', e => { if (e.target.id !== 'purl') return; const v = document.querySelector('.pcrow[data-v=video]'); if (!v) return; let h = ''; try { h = new URL(e.target.value.trim()).hostname.replace(/^www\./, ''); } catch {} let el = v.querySelector('.pcrv'); if (!h) { el?.remove(); return; } if (!el) { el = document.createElement('small'); el.className = 'pcrv'; el.dataset.raw = ''; v.querySelector('.pcoptx,.pcrc')?.before(el); } el.textContent = h; });
 function pcRowsHTML(){
   const OPEN = {stk: PSGP && !PSG, video: PLINK, tag: PTAGP, musik: PMUP && !PMU && !PAUDIO}, XV = {stk: PSG && 'psg', video: PLINK && 'video', musik: PMU ? 'pmu' : PAUDIO ? 'musik' : ''};
