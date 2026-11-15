@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='18276fbeefac';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='b607e07e3248';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -506,7 +506,7 @@ ul.zlist small{display:block;font:14px var(--f-ital);color:var(--muted)}
 .fullfig.mv-spin svg,.ritem.mv-spin>svg{animation:avspin 2.4s ease-in-out infinite}
 .fullfig.mv-wink svg,.ritem.mv-wink>svg{animation:avwink 1.6s ease-in-out infinite}
 @keyframes avjump{0%,100%{transform:translateY(0) scale(1,1)}12%{transform:translateY(0) scale(1.04,.95)}45%{transform:translateY(-14%) scale(.98,1.03)}70%{transform:translateY(0) scale(1.03,.96)}}
-@keyframes avspin{0%{transform:scaleX(1)}25%{transform:scaleX(0)}50%{transform:scaleX(-1)}75%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@property --avs{syntax:'<number>';inherits:false;initial-value:1}@keyframes avspin{0%{--avs:1}25%{--avs:.02}50%{--avs:-1}75%{--avs:-.02}100%{--avs:1}}.fullfig.mv-spin svg,.ritem.mv-spin>svg,.stav.mv-spin svg{transform:scaleX(var(--avs))} /* v1002 (Inaya: Störstreifen beim Drehen am iPhone): Safari legte die animierte transform als eigene Ebene an und rasterte sie unscharf in Streifen. Jetzt wird nur die Variable --avs animiert, das SVG wird jedes Bild scharf gezeichnet. Nie wieder transform direkt animieren. */
 @keyframes avwink{0%,100%{transform:rotate(0)}25%{transform:rotate(1.5deg)}75%{transform:rotate(-1.5deg)}}
 @media (prefers-reduced-motion:reduce){.fullfig svg,.ritem>svg{animation:none!important}}
 .fullfig{max-width:220px;margin:0 auto}.fullfig svg{width:100%;height:auto;display:block}.fullav .chips{justify-content:center}
@@ -13054,7 +13054,7 @@ function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von ob
   draft = draft || normTheme({...u.theme});
   mdraft = mdraft || {songMu:u.songMu ? {...u.songMu} : null, cover:u.cover || null, pic:u.pic || null, picKeep:u.picKeep || null, banner:{...(u.banner || {pattern:'damast',mode:'nacht',font:'fell',text:''})}};
   const f = (id, label, val, area, ph = '', max = 120) => `<label class="perow" for="e-${id}"><span class="lbl">${label}${area ? ` <small class="pecnt" data-for="e-${id}">${[...String(val || '')].length}/${max}</small>` : ''}</span>${area
-    ? `<textarea id="e-${id}" class="pegrow" maxlength="${max}" rows="1" placeholder="${esc(ph)}">${esc(val || '')}</textarea>`
+    ? `<textarea id="e-${id}" class="pegrow" maxlength="${max}" rows="${+area > 1 ? +area : 1}" placeholder="${esc(ph)}">${esc(val || '')}</textarea>`
     : `<input id="e-${id}" type="text" maxlength="${max}" value="${esc(val || '')}" placeholder="${esc(ph)}">`}</label>`;
   const sec = (k, t, body) => `<details class="pesec" data-sec="${k}"${PEOPEN[k] ? ' open' : ''}><summary><span>${t}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary><div class="pesecin">${body}</div></details>`;
   return `<div class="design peig">
@@ -13065,10 +13065,10 @@ function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von ob
       <form data-form="design" id="designform" class="peform">
         ${f('name', 'Name', u.name, false, 'Dein Name', 40)}
         <label class="perow" for="e-handle"><span class="lbl">Nutzername</span><span class="handle-in"><b>@</b><input id="e-handle" type="text" maxlength="20" autocapitalize="none" spellcheck="false" value="${esc(u.handle || '')}"></span></label><span id="e-handle-err" class="err" hidden></span>
-        ${f('headline', 'Bio', u.headline, true, 'Ein kleiner Spruch über dich', BIO_MAX)}
+        ${f('headline', 'Bio', u.headline, 3, 'Ein kleiner Spruch über dich', BIO_MAX)}
         <label class="perow" for="e-mood"><span class="lbl">Gemüt</span><span class="ptwrap pemood"><input id="e-mood" type="text" maxlength="120" value="${esc(u.mood || '')}" placeholder="${esc(tr('Wie geht’s dir? Schreib es oder nimm einen Totenkopf'))}"><button type="button" class="emobtn" data-for="e-mood" aria-label="Totenkopf-Emoji einfügen" title="Emojis">${emoSVG('lachen')}</button></span></label>
         <h3 class="pesub">Steckbrief</h3>
-        ${f('about', 'Über mich', u.about, true, '', ABOUT_MAX)}${f('music', 'Musik', u.music)}${f('films', 'Filme', u.films)}${f('hobbies', 'Hobbys', u.hobbies)}${f('games2', 'Spiele', u.games2)}
+        ${f('about', 'Über mich', u.about, 5, '', ABOUT_MAX)}${f('music', 'Musik', u.music)}${f('films', 'Filme', u.films)}${f('hobbies', 'Hobbys', u.hobbies)}${f('games2', 'Spiele', u.games2)}
         <h3 class="pesub">Links</h3>
         <fieldset class="opt pelinks"><legend class="lbl" hidden>Links</legend><div style="display:grid;gap:10px">${PLINKS.filter(([k]) => !PL_MUS[k]).map(([k, l, ph]) => `<label class="f" for="e-l-${k}"><span class="lbl">${l}</span><input id="e-l-${k}" type="text" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="${ph}" value="${esc((u.links || {})[k] || '')}"></label>`).join('')}${social ? `<p class="note">${muIs(social.uid) ? 'Deine Links zu Spotify, Apple Music und SoundCloud trägst du unter „Deine Musik“ ein, sie stehen im Reiter „Musik“.' : 'Links zu Spotify, Apple Music und SoundCloud gibt es für Musiker-Konten. Beantragen kannst du das in den Einstellungen.'}</p>` : ''}</div></fieldset>
         ${MUSIK ? `<fieldset class="opt emus"><legend class="lbl">♪ Musik auf deinem Profil (freiwillig)</legend>
