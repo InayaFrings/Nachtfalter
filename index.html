@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2b2a4f4fcaba';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f7c9bcc6cf8d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3637,7 +3637,7 @@ body.lvfon{overflow:hidden}
 /* v984 */ .sgmini .sglk{position:static;display:inline-grid;width:18px;height:18px;margin-right:6px;vertical-align:-4px;border-radius:50%;background:#b57cf2;place-items:center}.sgmini .sglk svg{width:11px;height:11px;fill:none;stroke:#fff;stroke-width:2}
 
 /* v985/v988 (Inaya): Textfeld im Beitrag als leicht abgesetzte Fläche im selben Farbton, ohne dicken Strich links und ohne betonten Rahmen */
-.post.tp .thought{background:color-mix(in srgb,var(--p-soft,var(--p-bg)) 88%,transparent)!important;border:0!important;border-left:0!important;border-radius:12px;color:var(--p-fg);padding:12px 14px!important}
+.post.tp .thought{background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 96%,transparent)!important;border:0!important;border-left:0!important;border-radius:12px;color:var(--p-fg);padding:12px 14px!important}
 
 /* v987 (Inaya: neuer Beitrag war reizüberflutend): Fotofeld, Textfeld, Öffentlich/Freunde/Enge Freunde und die Zeilen GIF, Link, Markieren, Musik, Planen fast deckend wie die Kästen im Profil */
 .pform.pcins.tp{--pcsoft:color-mix(in srgb,var(--p-soft,var(--p-bg)) 93%,transparent)}
@@ -11954,9 +11954,9 @@ function sharePost(pid, aid){
 }
 // Beiträge tragen den Kasten vom Profil: Muster nur als Rahmen außen, die Fläche mit der Schrift ist einfarbig, Schrift automatisch hell/dunkel (Inaya, 2026-10-10)
 /* v988 (Inaya: „zwei Farben pro Beitrag sind beim Scrollen reizüberflutend“): Beiträge Ton in Ton: alles in der Kastenfarbe, der Rand eine Stufe dunkler bzw. heller mit dem Kasten-Muster etwas deutlicher, innen das Muster ganz zart. „Neuer Beitrag“ behält den Rahmen im Profil-Hintergrund (`composeTheme`, Inaya: „sieht sehr schön aus“). */
-function postTheme(t){ const box = t.box || '#0e0e10', L = isLight(box), band = L ? shade(box, .88) : shade(box, 1.32), os = String(t.pattern || '').startsWith('os_');
+function postTheme(t){ const box = t.box || '#0e0e10', L = isLight(box), band = L ? shade(box, .84) : shade(box, .6), os = String(t.pattern || '').startsWith('os_'); /* v990 (Inaya): Rand immer dunkler als der Kasten, Textfeld genauso dunkel wie der Rand */
   const rp = t.pattern && t.pattern !== 'schlicht' ? patternURL(t.pattern, L ? 'tag' : 'nacht', os ? .06 : .16) : 'none', bp = t.pattern && t.pattern !== 'schlicht' ? patternURL(t.pattern, L ? 'tag' : 'nacht', os ? .018 : .035) : 'none';
-  return themeStyle(t) + `;--pp-pat:${rp !== 'none' ? rp + ' border-box,' : ''}linear-gradient(${band},${band})` + (bp !== 'none' ? `;--pp-body:${bp} padding-box,linear-gradient(var(--p-bg),var(--p-bg))` : ''); }
+  return themeStyle(t) + `;--pp-band:${band};--pp-pat:${rp !== 'none' ? rp + ' border-box,' : ''}linear-gradient(${band},${band})` + (bp !== 'none' ? `;--pp-body:${bp} padding-box,linear-gradient(var(--p-bg),var(--p-bg))` : ''); }
 function composeTheme(t){ /* v985 (Inaya): Rand = Profil-Hintergrund (Seitenfarbe + Hintergrund-Muster), innen = mittlerer Kasten */
   const box = t.box || '#0e0e10', L = isLight(box), pg = isHex(t.page) ? t.page : '#0a0a0b', PL = isLight(pg);
   const pp = typeof t.pagePattern === 'string' && !t.pagePattern.startsWith('ani_') && t.pagePattern !== 'schlicht' ? patternURL(t.pagePattern, PL ? 'tag' : 'nacht', .12) : 'none';
