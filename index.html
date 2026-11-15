@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='4aa4ebb56fee';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3dfe12f97ffb';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -202,7 +202,7 @@
 .drhd .drx svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* v973 (Inaya): Avatar in Garderobe und Mall größer, Auswahl in Garderobe, Mall, Zimmer und Möbelhaus als EINE Reihe zum seitlichen Wischen, mit Regler darunter (hslFit) */
-.wardrobe:not(.obwear .wardrobe) .mirror-card{height:clamp(150px,calc(100dvh - 344px - min(150px,(100vw - 40px) / 2.75)),520px)!important} /* v999: Avatar oben größer, Kacheln kleiner */ /* v998: Teile so groß wie im Möbelhaus, Spiegel passt sich an */ /* v993: passt ohne Scrollen */ /* v974: Avatar so groß wie möglich, Reiter, Teile-Reihe und Regler bleiben ohne Scrollen sichtbar */
+.wardrobe:not(.obwear .wardrobe) .mirror-card{height:clamp(110px,calc(100dvh - 344px - min(150px,(100vw - 40px) / 2.75) - var(--fixsh,0px)),520px)!important} /* v999: Avatar oben größer, Kacheln kleiner */ /* v998: Teile so groß wie im Möbelhaus, Spiegel passt sich an */ /* v993: passt ohne Scrollen */ /* v974: Avatar so groß wie möglich, Reiter, Teile-Reihe und Regler bleiben ohne Scrollen sichtbar */
 .wardrobe .ctabs{width:100%;max-width:100%;padding-left:0!important;padding-right:0!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}.wardrobe .ctabs>.tabs{width:100%!important;max-width:none!important;box-sizing:border-box}.wardrobe .ctabs>.hslbar,.wardrobe .shopgrid+.hslbar{margin-left:2px!important;margin-right:2px!important}.shopgrid.hsl>.item .thumb,.shopgrid.hsl>.item>.ncthumb{max-height:150px}
 .shopgrid.hsl{gap:8px!important;padding:2px 2px 6px!important;scroll-snap-type:x proximity;overscroll-behavior-x:contain;align-items:stretch}
 .shopgrid.hsl>.item{flex:0 0 calc((100% - 16px) / 3.25)!important;width:auto!important;max-width:150px;min-width:92px;scroll-snap-align:start}
@@ -3744,7 +3744,7 @@ body.lvfon{overflow:hidden}
 .post.tp .pmoretx-old{display:block;width:100%;margin:-12px 0 8px;padding:6px 14px 10px;text-align:right;background:color-mix(in srgb,var(--pp-band,var(--p-soft,var(--p-bg))) 84%,transparent);color:var(--p-fg);opacity:1;font-weight:700}
 
 /* v993: Möbelhaus und Zimmer einrichten passen ohne Scrollen auf den Bildschirm */
-/* v995: Zimmer in Möbelhaus und Zimmer einrichten genau gleich groß */.rcard .rstick .rscroll{width:100%!important;max-width:min(100%,calc((100dvh - 500px) / .82))!important;margin-left:auto!important;margin-right:auto!important}
+/* v995: Zimmer in Möbelhaus und Zimmer einrichten genau gleich groß */.rcard .rstick .rscroll{width:100%!important;max-width:min(100%,calc((100dvh - 500px - var(--fixsh,0px)) / .82))!important;margin-left:auto!important;margin-right:auto!important}
 /* v994 (Inaya): Möbelhaus wie Zimmer einrichten: eine randlose Karte, Zimmer über die ganze Breite, Reiter darunter, Möbel in derselben Karte */
 .ncpage.moebel>.nchead,.ncpage.mallpg>.nchead{display:none}.ncpage.mallpg,.ncpage.moebel{gap:0}.moebel .ncroom.mh1{position:static;z-index:auto}.moebel .ncroom.mh1>.card-in{padding:12px 14px 16px}
 .moebel .ncroom.mh1 .room.iso{max-width:none}.moebel .ncroom.mh1 .rstick>.ncfloat{top:8px;left:8px;right:8px}
@@ -4003,6 +4003,8 @@ body.lvfon{overflow:hidden}
 .mhcap{height:30px!important;border-width:2px!important}.mhcap small{font-size:12.5px!important}.mhcoin.mhcap2 b{font-size:15px!important}
 .mhlv .mhcap{width:146px!important;padding:0 10px 0 46px!important}.mhlv .lvem{width:66px!important;left:-20px!important}.mhlv{margin-left:20px!important}
 .mhcoin.mhcap2 .mhcap{padding:0 12px 0 32px!important}.mhcoin.mhcap2>svg{width:36px!important;height:36px!important;left:-6px!important}.rail>.mhcoin.mhcap2{margin-left:14px!important}
+/* v1027 (Inaya): „Zum Shop“ so groß wie die anderen Kacheln (die haben unten Platz für Preis bzw. Farbpunkt) */
+.wardrobe:not(.obwear .wardrobe) .shopgrid.hsl>.item.shopgo,.rcard:not(.mh1) .shopgrid.hsl>.item.shopgo{padding-bottom:4px!important}.shopgrid>.item.shopgo{align-self:stretch}.item.shopgo .shopgob.thumb{height:100%;min-height:100%}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -21202,7 +21204,17 @@ const FIXPG = () => ['wardrobe', 'mall', 'moebel'].includes(V.name) || (V.name =
 function fitChk(){ const de = document.documentElement; let on = FIXPG();
   if ((document.body.dataset.pg === 'find' || document.body.classList.contains('chlist')) && !fpOpen) { const nav = document.querySelector('.mobnav'), cs = [...document.querySelectorAll('.main > *, .main .card')].filter(x => x.getClientRects().length);
     if (nav && cs.length) { const bot = Math.max(...cs.map(x => x.getBoundingClientRect().bottom)) + scrollY; on = bot <= nav.getBoundingClientRect().top + 1; } }
-  if (on !== de.classList.contains('fitpg')) { de.classList.toggle('fitpg', on); if (on) scrollTo(0, 0); } }
+  if (on !== de.classList.contains('fitpg')) { de.classList.toggle('fitpg', on); if (on) scrollTo(0, 0); } fixFit(); }
+/* v1027 (Inaya: in der Mall verdeckte die Leiste unten die Teile): Auf den festen Seiten wird gemessen, ob die Teile-Reihe über die untere Leiste ragt
+   (Safe Area, Statusleiste, längere Reiter …). Dann wird der Spiegel bzw. das Zimmer um genau so viel kleiner (--fixsh, je Seite gemerkt in FIXSH). */
+const FIXSH = {};
+function fixFit(){ const de = document.documentElement, k = V.name + (V.name === 'room' ? roomMode : ''); if (!FIXPG()) { if (de.style.getPropertyValue('--fixsh')) de.style.removeProperty('--fixsh'); return; }
+  const cur = FIXSH[k] || 0; if (de.style.getPropertyValue('--fixsh') !== cur + 'px') de.style.setProperty('--fixsh', cur + 'px');
+  const nav = document.querySelector('.mobnav'); if (!nav || !nav.getClientRects().length) return; const top = nav.getBoundingClientRect().top;
+  const els = [...document.querySelectorAll('.main .shopgrid, .main .shopgrid + .hslbar')].filter(x => x.getClientRects().length && !x.hidden); if (!els.length) return;
+  const over = Math.ceil(Math.max(...els.map(x => x.getBoundingClientRect().bottom)) + 8 - top);
+  let nx = cur; if (over > 0) nx = cur + over; else if (over < -24 && cur > 0) nx = Math.max(0, cur + over + 12);
+  if (nx !== cur) { FIXSH[k] = Math.min(nx, 400); de.style.setProperty('--fixsh', FIXSH[k] + 'px'); } }
 addEventListener('resize', () => setTimeout(fitChk, 50)); setInterval(() => { if (document.body.dataset.pg === 'find' || document.body.classList.contains('chlist') || document.documentElement.classList.contains('fitpg') || FIXPG()) fitChk(); }, 700);
 document.addEventListener('touchmove', e => { if ((document.documentElement.classList.contains('fitpg') && !e.target.closest?.('.fpanel,dialog,[role=dialog],.shpk,#cmv,.mview,.storyov,.emopop,textarea,.hsl,.hslbar,.room,.rscroll,.cgrid-bg,.cpanel,.modal,#ncnewpop,.lbmodal')) || (document.body.dataset.pg === 'pet' && !e.target.closest?.('.psheet')) || (document.querySelector('.ppick') && !document.getElementById('phatch'))) e.preventDefault(); }, {passive:false}); /* v647: Begleiter-Auswahl lässt sich auch nicht scrollen (Inaya) */ /* v581: Seite wackelt nicht beim Wischen */
 /* Raum des Begleiters = eigenes Zimmer (seit v572, Inaya): dieselbe Tapete und derselbe Boden */
