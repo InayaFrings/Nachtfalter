@@ -34,7 +34,9 @@ const COINS = {c1: {n: 1000, ct: 99}, c3: {n: 3000, ct: 399}, c6: {n: 6000, ct: 
 const MAIL_RX = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
 
 let STRIPE = null;
-function stripe(){ const k = process.env.STRIPE_SECRET; if (!k) return null; if (!STRIPE) STRIPE = require('stripe')(k); return STRIPE; }
+function stripe(){ const k = process.env.STRIPE_SECRET; if (!k) return null; if (!STRIPE) STRIPE = require('stripe')(k, {httpAgent: new (require('https').Agent)({keepAlive: true}), timeout: 20000, maxNetworkRetries: 1}); return STRIPE; } /* v1021: Verbindung offen halten */
+/* v1021 (Inaya: Bezahlseite lädt ewig): Aufwecken öffnet schon die Verbindungen zu Firestore und Stripe (vorher dauerte der erste echte Aufruf trotzdem über 5 s) */
+async function warmUp(uid){ const S = stripe(), t = Date.now(); await Promise.all([uid ? db.doc('aboCus/' + uid).get().catch(() => null) : db.doc('site/owner').get().catch(() => null), S ? S.customers.list({limit: 1}).catch(() => null) : null]); console.log('WARM', Date.now() - t, 'ms'); return {ok: true}; }
 const err = (code, msg) => new functions.https.HttpsError(code, msg);
 /* Live- oder Testschlüssel? Kunden und Abos aus der Sandbox gelten im Live-Betrieb nicht (und umgekehrt). Alte Einträge ohne lv stammen aus der Sandbox. */
 const LIVE = () => /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET || '');
@@ -92,7 +94,8 @@ async function customerOf(S, uid, mail, k){ const kref = db.doc('aboCus/' + uid)
   if (!cus) { const c = await S.customers.create({email: mail || undefined, metadata: {uid}}); cus = c.id; await kref.set({id: cus, mail, lv: LIVE()}); }
   return cus; }
 exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
-  if (data && data.warm) { stripe(); return {ok: true}; } /* v1018: nur aufwecken */
+  if (data && data.warm) return warmUp(ctx.auth && ctx.auth.uid); /* v1018: nur aufwecken */
+  const T0 = Date.now();
   const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
   const p = data && data.p, y = !!(data && data.y), en = data && data.lang === 'en';
   if (!PLANS[p]) throw err('invalid-argument', 'Unbekanntes Abo.');
@@ -112,13 +115,14 @@ exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
     line_items: [{quantity: 1, price_data: {currency: 'eur', unit_amount: y ? P.y : P.m, recurring: {interval: y ? 'year' : 'month'}, product_data: {name: P.n}}}],
     subscription_data: {metadata: {uid, p}, ...(trial ? {trial_period_days: TRIAL_DAYS, trial_settings: {end_behavior: {missing_payment_method: 'cancel'}}} : {})}, metadata: {uid, p, tr: trial ? '1' : ''},
     success_url: SITE + '?abo=ok', cancel_url: SITE + '?abo=x'});
-  await log;
+  await log; console.log('ABO checkout', Date.now() - T0, 'ms');
   return {url: s.url, trial};
 });
 
 /* v1018: Nocti-Coins kaufen (einmalige Zahlung). Gleiche Regeln wie beim Abo: unter 18 nur mit Elternteil, Zustimmung zur sofortigen Lieferung (Widerrufsrecht erlischt). */
 exports.coinCheckout = fn.https.onCall(async (data, ctx) => {
-  if (data && data.warm) { stripe(); return {ok: true}; }
+  if (data && data.warm) return warmUp(ctx.auth && ctx.auth.uid);
+  const T0 = Date.now();
   const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
   const ck = data && data.k, C = COINS[ck], en = data && data.lang === 'en'; if (!C) throw err('invalid-argument', 'Unbekanntes Paket.');
   if (!(data && data.wv === true)) throw err('failed-precondition', 'Bitte bestätige die sofortige Lieferung.');
@@ -135,7 +139,7 @@ exports.coinCheckout = fn.https.onCall(async (data, ctx) => {
     line_items: [{quantity: 1, price_data: {currency: 'eur', unit_amount: C.ct, product_data: {name: C.n.toLocaleString('de-DE') + ' Nocti-Coins'}}}],
     metadata: {uid, coins: ck}, payment_intent_data: {metadata: {uid, coins: ck}},
     success_url: SITE + '?coins=ok', cancel_url: SITE + '?coins=x'});
-  await log;
+  await log; console.log('COIN checkout', Date.now() - T0, 'ms');
   return {url: s.url};
 });
 /* Coins gutschreiben, einmal je Bezahlung */
