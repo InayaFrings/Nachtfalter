@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0dadf293ed17';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='1ac906b51583';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3979,6 +3979,10 @@ body.lvfon{overflow:hidden}
 /* v1022 (Inaya: schlichter): Coins ohne Rahmen, Level nur als großes Abzeichen */
 .mhcoin{border:0!important;background:none!important;padding:0 4px!important;height:auto!important;gap:5px!important}.mhcoin svg{width:20px!important;height:20px!important}.mhcoin b{font-size:14px!important}
 .mhlv{padding:0!important;gap:0!important}.mhlv .lvem{width:74px!important}.mhlv[data-td]::after{left:auto!important;right:2px!important;top:2px!important}
+/* v1023 (Inaya): Level = Abzeichen mit Balken darunter, Coins links an der Stelle des Plus */
+.mhlv{flex-direction:column!important;align-items:center!important;gap:3px!important;padding:2px 6px!important}.mhlv .lvem{width:58px!important}
+.mhlv .mhlvbar{width:58px;height:4px;margin:0}.mhlv[data-td]::after{right:0!important;top:0!important}
+.rail>.mhcoin:first-child,.rail>.mhcoin{margin-left:8px!important}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9774,7 +9778,7 @@ function rail(){
   const cur = ['design', 'room', 'wardrobe', 'pet', 'friends', 'settings', 'archive'].includes(V.name) ? 'profile' : V.name === 'mall' || V.name === 'moebel' ? 'shopping' : V.name === 'browse' ? 'find' : V.name === 'profile' && V.arg && V.arg !== S.me ? '' : V.name;
   return `<header class="rail ${mobMore ? 'more' : ''}${obDesign ? ' obrail' : ''}">${obDesign ? obSteps(3) : ''}
     ${V.name === 'chats' && !chSubPg() ? '<span class="mfab mfsp" aria-hidden="true"></span>' /* v788: Chatliste ohne Pfeil zurück (Inaya: „bringt gar nichts“), Platzhalter hält den Titel mittig */ : !mhRoot() ? `<button type="button" class="mfab mback2" ${V.name === 'design' && !obDesign ? 'data-act="pe-cancel"' : V.name === 'room' && roomMode === 'edit' ? 'data-act="rcancel"' : V.name === 'wardrobe' ? 'data-act="ward-cancel"' : chSubPg() ? chSubBack() : `data-act="${NAVH.length ? 'nav-back' : 'nav'}" data-v="${MH_UP[V.name] || 'home'}"`} aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>` /* Mitteilungen: Pfeil zurück wie bei Insta */
-      : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>${mhOwnProf() && WAL.d ? `<button type="button" class="mhcoin" data-act="mh-coins" aria-label="${esc(tr('Deine Nocti-Coins'))}: ${WAL.d.c}">${NC_ICO}<b data-ncc>${mhCoinN(WAL.d.c)}</b></button>` : ''}`}
+      : `${mhOwnProf() ? '' /* v1023 (Inaya): im eigenen Profil kein Plus */ : `<button type="button" class="mfab" data-act="fab-post" aria-label="Beitrag erstellen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`}${mhOwnProf() && WAL.d ? `<button type="button" class="mhcoin" data-act="mh-coins" aria-label="${esc(tr('Deine Nocti-Coins'))}: ${WAL.d.c}">${NC_ICO}<b data-ncc>${mhCoinN(WAL.d.c)}</b></button>` : ''}`}
     ${mobHead()}
     ${logoSVG()}<p class="logo"><small>ein Ort für Freunde</small></p>
     ${mobTop(nNew, ntN)}
@@ -9836,7 +9840,7 @@ const mhCoinN = c => { c = +c || 0; return c >= 100000 ? new Intl.NumberFormat(L
 const mhOwnProf = () => V.name === 'profile' && (!V.arg || V.arg === S.me) && !!social;
 function mhLevelHTML(){ const w = WAL.d; if (!w) return ''; const l = Math.max(1, w.l || 1), top = l >= LV_MAX, a = lvT(l), b = top ? a : lvT(l + 1), pct = top ? 100 : Math.max(3, Math.min(100, Math.round((w.x - a) / (b - a) * 100)));
   const td = typeof taskReady === 'function' && (taskReady() || dailyOpen());
-  return `<div class="mhead"><button type="button" class="mhlv" data-act="lv-open" aria-label="${esc(tr('Level {0}: Fortschritt und tägliche Belohnung').replace('{0}', l))}"${td ? ' data-td="1"' : ''}>${lvEmblem(l)}</button></div>`; } /* v1022 (Inaya: schlichter): nur das Abzeichen, ohne Text und Balken */
+  return `<div class="mhead"><button type="button" class="mhlv" data-act="lv-open" aria-label="${esc(tr('Level {0}: Fortschritt und tägliche Belohnung').replace('{0}', l))}"${td ? ' data-td="1"' : ''}>${lvEmblem(l)}<i class="mhlvbar"><i style="width:${pct}%"></i></i></button></div>`; } /* v1023 (Inaya): Abzeichen mit Balken darunter */
 document.addEventListener('click', e => { if (!e.target.closest?.('[data-act="mh-coins"]')) return; e.preventDefault(); go('settings'); setTimeout(() => { const el = document.querySelector('.coinset') || document.querySelector('.aboset'); if (el) { scrollTo(0, el.getBoundingClientRect().top + scrollY - 76); el.classList.add('refhi'); setTimeout(() => el.classList.remove('refhi'), 1800); } }, 400); });
 function mobHead(){
   if (mhOwnProf() && WAL.d && !MH_PAGES[V.name]) return mhLevelHTML();
