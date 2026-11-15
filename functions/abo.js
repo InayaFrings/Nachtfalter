@@ -13,6 +13,9 @@
      firebase functions:secrets:set STRIPE_SECRET   (Geheimschlüssel sk_live_… bzw. zum Testen sk_test_…)
      firebase functions:secrets:set STRIPE_WHSEC    (Signatur-Geheimnis des Webhooks whsec_…)
      Webhook in Stripe: https://europe-west3-<projekt>.cloudfunctions.net/aboWebhook, Ereignisse customer.subscription.created/updated/deleted
+   - v1018: Nocti-Coins kaufen (coinCheckout, einmalige Zahlung, COINS). Der Webhook schreibt die Coins bei checkout.session.completed bzw.
+     checkout.session.async_payment_succeeded gut (einmal je Bezahlung, gemerkt in coinBuy/<session>). Diese zwei Ereignisse im Stripe-Webhook zusätzlich auswählen.
+     Schneller zur Bezahlseite: {warm:1} weckt die Funktion schon beim Öffnen der Abo-Karte (kein Kaltstart beim Antippen), Abfragen laufen parallel.
    Lokal im Emulator ohne STRIPE_SECRET: aboCheckout gibt nur eine Test-Adresse zurück (DRY). */
 const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
@@ -26,6 +29,8 @@ const fn = functions.region(REGION).runWith({maxInstances: 5, memory: '256MB', t
 /* Preise in Cent, wie in der App (ABO_P). Bei Änderung beide Stellen anpassen. */
 const PLANS = {plus: {n: 'Noctibat Plus', m: 199, y: 1999}, premium: {n: 'Noctibat Premium', m: 1499, y: 14999}};
 const TRIAL_DAYS = 30;
+/* v1018: Coin-Pakete (wie COIN_P in der App) */
+const COINS = {c1: {n: 1000, ct: 99}, c3: {n: 3000, ct: 399}, c6: {n: 6000, ct: 699}};
 const MAIL_RX = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
 
 let STRIPE = null;
@@ -38,7 +43,7 @@ const sameMode = d => !!(d && d.lv) === LIVE();
 /* Alter aus dem Geburtsdatum im Profil (bd = JJJJ-MM-TT); ohne Datum gilt die Person als minderjährig */
 function ageOf(bd){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(bd || '')); if (!m) return 0;
   const now = new Date(), a = now.getFullYear() - +m[1]; return now.getMonth() + 1 < +m[2] || (now.getMonth() + 1 === +m[2] && now.getDate() < +m[3]) ? a - 1 : a; }
-async function birthOf(uid){ try { const p = await db.doc('profiles/' + uid).get(); return p.exists ? p.data().bd || '' : ''; } catch { return ''; } }
+async function birthOf(uid){ try { const q = await db.collection('profiles').where(admin.firestore.FieldPath.documentId(), '==', uid).select('bd').get(); return q.empty ? '' : q.docs[0].get('bd') || ''; } catch { return ''; } } /* v1018: nur bd lesen, Profile sind bis 240 KB groß */
 
 /* Laufzeit aus dem Stripe-Abo (neuere API-Versionen haben sie an den Positionen) */
 function periodOf(sub){ const it = sub.items && sub.items.data && sub.items.data[0] || {};
@@ -81,38 +86,73 @@ exports.sndBonus = fn.firestore.document('chats/{cid}/m/{mid}').onCreate(async (
   await db.runTransaction(async t => { const w = await t.get(wref); if (!w.exists) return; const sb = w.data().sb && w.data().sb.d === day ? w.data().sb.n || 0 : 0; if (sb + 5 > 300) return;
     t.update(wref, {c: (w.data().c || 0) + 5, sb: {d: day, n: sb + 5}, op: {t: 'snd', n: 5}}); }); });
 
+/* Kunde je Person (server-intern, die Regeln lassen niemanden lesen) */
+async function customerOf(S, uid, mail, k){ const kref = db.doc('aboCus/' + uid); let cus = k.exists && sameMode(k.data()) ? k.data().id : '';
+  if (cus && mail && k.data().mail !== mail) { await S.customers.update(cus, {email: mail}); await kref.set({mail}, {merge: true}); }
+  if (!cus) { const c = await S.customers.create({email: mail || undefined, metadata: {uid}}); cus = c.id; await kref.set({id: cus, mail, lv: LIVE()}); }
+  return cus; }
 exports.aboCheckout = fn.https.onCall(async (data, ctx) => {
+  if (data && data.warm) { stripe(); return {ok: true}; } /* v1018: nur aufwecken */
   const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
   const p = data && data.p, y = !!(data && data.y), en = data && data.lang === 'en';
   if (!PLANS[p]) throw err('invalid-argument', 'Unbekanntes Abo.');
   if (!(data && data.wv === true)) throw err('failed-precondition', 'Bitte bestätige den sofortigen Start.');
-  const cur = await db.doc('subs/' + uid).get();
+  const [cur, bd, k] = await Promise.all([db.doc('subs/' + uid).get(), birthOf(uid), db.doc('aboCus/' + uid).get()]); /* v1018: parallel */
   if (cur.exists && cur.data().src === 'stripe' && cur.data().e > Date.now() && sameMode(cur.data())) throw err('already-exists', 'Du hast schon ein Abo.');
-  const bd = await birthOf(uid), adult = ageOf(bd) >= 18, pe = String(data && data.pe || '').trim().toLowerCase();
+  const adult = ageOf(bd) >= 18, pe = String(data && data.pe || '').trim().toLowerCase();
   if (!adult && !(data.pc === true && MAIL_RX.test(pe))) throw err('failed-precondition', 'Unter 18 braucht es die Zustimmung und E-Mail-Adresse eines Elternteils.');
   const mail = adult ? (ctx.auth.token.email || '') : pe, P = PLANS[p];
-  await db.collection('aboLog').add({uid, p, y, wv: true, tw: data.tw === true, adult, pe: adult ? '' : pe, pc: adult ? false : true, ts: Date.now()});
+  const log = db.collection('aboLog').add({uid, p, y, wv: true, tw: data.tw === true, adult, pe: adult ? '' : pe, pc: adult ? false : true, ts: Date.now()});
   const S = stripe();
-  if (!S) { if (EMU) { console.log('ABO DRY checkout', JSON.stringify({uid, p, y, adult, mail})); return {url: SITE + '?abo=dry'}; } throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); }
-  /* Kunde je Person merken (server-intern, die Regeln lassen niemanden lesen) */
-  const kref = db.doc('aboCus/' + uid), k = await kref.get(); let cus = k.exists && sameMode(k.data()) ? k.data().id : '';
-  if (cus && mail && k.data().mail !== mail) { await S.customers.update(cus, {email: mail}); await kref.set({mail}, {merge: true}); }
-  if (!cus) { const c = await S.customers.create({email: mail || undefined, metadata: {uid}}); cus = c.id; await kref.set({id: cus, mail, lv: LIVE()}); }
+  if (!S) { await log; if (EMU) { console.log('ABO DRY checkout', JSON.stringify({uid, p, y, adult, mail})); return {url: SITE + '?abo=dry'}; } throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); }
+  const cus = await customerOf(S, uid, mail, k);
   /* v1010: erster Monat gratis, nur wer noch nie ein Live-Abo hatte und noch keinen Gratis-Monat */
   const trial = !(k.exists && k.data().tr) && !(cur.exists && cur.data().src === 'stripe' && sameMode(cur.data()));
   const s = await S.checkout.sessions.create({mode: 'subscription', customer: cus, client_reference_id: uid, locale: en ? 'en' : 'de', payment_method_collection: 'always',
     line_items: [{quantity: 1, price_data: {currency: 'eur', unit_amount: y ? P.y : P.m, recurring: {interval: y ? 'year' : 'month'}, product_data: {name: P.n}}}],
     subscription_data: {metadata: {uid, p}, ...(trial ? {trial_period_days: TRIAL_DAYS, trial_settings: {end_behavior: {missing_payment_method: 'cancel'}}} : {})}, metadata: {uid, p, tr: trial ? '1' : ''},
     success_url: SITE + '?abo=ok', cancel_url: SITE + '?abo=x'});
+  await log;
   return {url: s.url, trial};
 });
+
+/* v1018: Nocti-Coins kaufen (einmalige Zahlung). Gleiche Regeln wie beim Abo: unter 18 nur mit Elternteil, Zustimmung zur sofortigen Lieferung (Widerrufsrecht erlischt). */
+exports.coinCheckout = fn.https.onCall(async (data, ctx) => {
+  if (data && data.warm) { stripe(); return {ok: true}; }
+  const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
+  const ck = data && data.k, C = COINS[ck], en = data && data.lang === 'en'; if (!C) throw err('invalid-argument', 'Unbekanntes Paket.');
+  if (!(data && data.wv === true)) throw err('failed-precondition', 'Bitte bestätige die sofortige Lieferung.');
+  const [bd, k, w] = await Promise.all([birthOf(uid), db.doc('aboCus/' + uid).get(), db.doc('wallet/' + uid).get()]);
+  if (!w.exists) throw err('failed-precondition', 'Öffne einmal den Shop, dann geht es.');
+  const adult = ageOf(bd) >= 18, pe = String(data && data.pe || '').trim().toLowerCase();
+  if (!adult && !(data.pc === true && MAIL_RX.test(pe))) throw err('failed-precondition', 'Unter 18 braucht es die Zustimmung und E-Mail-Adresse eines Elternteils.');
+  const mail = adult ? (ctx.auth.token.email || '') : pe;
+  const log = db.collection('aboLog').add({uid, coins: ck, wv: true, adult, pe: adult ? '' : pe, pc: adult ? false : true, ts: Date.now()});
+  const S = stripe();
+  if (!S) { await log; if (EMU) { console.log('COIN DRY checkout', JSON.stringify({uid, ck, adult})); return {url: SITE + '?coins=dry'}; } throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); }
+  const cus = await customerOf(S, uid, mail, k);
+  const s = await S.checkout.sessions.create({mode: 'payment', customer: cus, client_reference_id: uid, locale: en ? 'en' : 'de',
+    line_items: [{quantity: 1, price_data: {currency: 'eur', unit_amount: C.ct, product_data: {name: C.n.toLocaleString('de-DE') + ' Nocti-Coins'}}}],
+    metadata: {uid, coins: ck}, payment_intent_data: {metadata: {uid, coins: ck}},
+    success_url: SITE + '?coins=ok', cancel_url: SITE + '?coins=x'});
+  await log;
+  return {url: s.url};
+});
+/* Coins gutschreiben, einmal je Bezahlung */
+async function coinCredit(cs){ const md = cs.metadata || {}, uid = md.uid, C = COINS[md.coins]; if (!uid || !C || cs.payment_status !== 'paid') return;
+  const mark = db.doc('coinBuy/' + cs.id), wref = db.doc('wallet/' + uid);
+  await db.runTransaction(async t => { const [m, w] = await Promise.all([t.get(mark), t.get(wref)]); if (m.exists) return; if (!w.exists) throw new Error('kein Wallet ' + uid);
+    t.update(wref, {c: (w.data().c || 0) + C.n, op: {t: 'coinbuy', n: C.n, k: md.coins}}); t.set(mark, {uid, k: md.coins, n: C.n, ct: cs.amount_total || C.ct, lv: LIVE(), ts: Date.now()}); });
+  console.log('COIN credit', JSON.stringify({uid, k: md.coins, s: cs.id})); }
 
 exports.aboWebhook = fn.https.onRequest(async (req, res) => {
   if (req.method !== 'POST') { res.status(405).send('POST'); return; }
   const wh = process.env.STRIPE_WHSEC, S = stripe() || (EMU ? require('stripe')('sk_test_emulator') : null);
   if (!wh || !S) { res.status(503).send('nicht eingerichtet'); return; }
   let ev; try { ev = S.webhooks.constructEvent(req.rawBody, req.get('stripe-signature'), wh); } catch (e) { res.status(400).send('Signatur'); return; }
-  try { if (/^customer\.subscription\.(created|updated|deleted)$/.test(ev.type)) await writeSub(ev.data.object); res.json({ok: true}); }
+  try { if (/^customer\.subscription\.(created|updated|deleted)$/.test(ev.type)) await writeSub(ev.data.object);
+    else if (/^checkout\.session\.(completed|async_payment_succeeded)$/.test(ev.type) && ev.data.object.mode === 'payment') await coinCredit(ev.data.object);
+    res.json({ok: true}); }
   catch (e) { console.error('ABO webhook', e); res.status(500).send('Fehler'); }
 });
 
