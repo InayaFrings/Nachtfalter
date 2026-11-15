@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='1ac906b51583';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='d4d8c18e458a';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3982,7 +3982,12 @@ body.lvfon{overflow:hidden}
 /* v1023 (Inaya): Level = Abzeichen mit Balken darunter, Coins links an der Stelle des Plus */
 .mhlv{flex-direction:column!important;align-items:center!important;gap:3px!important;padding:2px 6px!important}.mhlv .lvem{width:58px!important}
 .mhlv .mhlvbar{width:58px;height:4px;margin:0}.mhlv[data-td]::after{right:0!important;top:0!important}
-.rail>.mhcoin:first-child,.rail>.mhcoin{margin-left:8px!important}
+.rail>.mhcoin:first-child,.rail>.mhcoin{margin-left:4px!important}
+/* v1024 (Inaya): Level = Abzeichen links, rechts „Level N“, darunter Balken mit XP */
+.mhlv{flex-direction:row!important;align-items:center!important;gap:6px!important;padding:2px 4px!important}.mhlv .lvem{width:42px!important}
+.mhlv .mhlvt{display:grid;gap:3px;justify-items:start;line-height:1}.mhlv .mhlvt b{font:800 14.5px var(--f-display);white-space:nowrap}
+.mhlv .mhlvr{display:flex;align-items:center;gap:5px}.mhlv .mhlvbar{width:44px;height:5px}.mhlv .mhlvr small{font-size:10.5px;opacity:.75;white-space:nowrap;font-variant-numeric:tabular-nums}
+.mhlv[data-td]::after{left:34px!important;right:auto!important;top:2px!important}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9840,7 +9845,7 @@ const mhCoinN = c => { c = +c || 0; return c >= 100000 ? new Intl.NumberFormat(L
 const mhOwnProf = () => V.name === 'profile' && (!V.arg || V.arg === S.me) && !!social;
 function mhLevelHTML(){ const w = WAL.d; if (!w) return ''; const l = Math.max(1, w.l || 1), top = l >= LV_MAX, a = lvT(l), b = top ? a : lvT(l + 1), pct = top ? 100 : Math.max(3, Math.min(100, Math.round((w.x - a) / (b - a) * 100)));
   const td = typeof taskReady === 'function' && (taskReady() || dailyOpen());
-  return `<div class="mhead"><button type="button" class="mhlv" data-act="lv-open" aria-label="${esc(tr('Level {0}: Fortschritt und tägliche Belohnung').replace('{0}', l))}"${td ? ' data-td="1"' : ''}>${lvEmblem(l)}<i class="mhlvbar"><i style="width:${pct}%"></i></i></button></div>`; } /* v1023 (Inaya): Abzeichen mit Balken darunter */
+  return `<div class="mhead"><button type="button" class="mhlv" data-act="lv-open" aria-label="${esc(tr('Level {0}: Fortschritt und tägliche Belohnung').replace('{0}', l))}"${td ? ' data-td="1"' : ''}>${lvEmblem(l)}<span class="mhlvt"><b>${esc(tr('Level {0}').replace('{0}', l))}</b><span class="mhlvr"><i class="mhlvbar"><i style="width:${pct}%"></i></i><small>${top ? 'MAX' : `${Math.max(0, w.x - a)}/${b - a} XP`}</small></span></span></button></div>`; } /* v1024 (Inaya): Abzeichen links, rechts „Level N“ und darunter Balken mit XP */
 document.addEventListener('click', e => { if (!e.target.closest?.('[data-act="mh-coins"]')) return; e.preventDefault(); go('settings'); setTimeout(() => { const el = document.querySelector('.coinset') || document.querySelector('.aboset'); if (el) { scrollTo(0, el.getBoundingClientRect().top + scrollY - 76); el.classList.add('refhi'); setTimeout(() => el.classList.remove('refhi'), 1800); } }, 400); });
 function mobHead(){
   if (mhOwnProf() && WAL.d && !MH_PAGES[V.name]) return mhLevelHTML();
