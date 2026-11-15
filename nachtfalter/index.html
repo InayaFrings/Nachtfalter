@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='59b6fe329c87';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='3014d28a1bb7';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -3964,6 +3964,11 @@ body.lvfon{overflow:hidden}
 .abocmp[data-sel=plus] .c-plus,.abocmp[data-sel=premium] .c-premium{background-color:color-mix(in srgb,currentColor 7%,transparent)}
 .abocmp[data-sel=premium] thead th.c-premium{background:linear-gradient(90deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de);-webkit-background-clip:text;background-clip:text}
 .abocmp .abokeep{margin-top:10px}
+/* v1019: Stöbern im Design der Profile */
+.brcard.thm{padding:7px;background-color:var(--p-page);background-image:var(--p-pagepat);border:1px solid var(--p-pageln);display:flex}
+.brcard.thm .brin{flex:1;display:grid;justify-items:center;align-content:start;gap:2px;min-width:0;padding:8px 6px 12px;background-color:var(--p-bg);background-image:var(--p-pattern);color:var(--p-fg);border:1px solid var(--p-line);--halo:0 0 2px var(--p-bg),0 0 4px var(--p-bg),0 0 8px var(--p-bg)}
+.brcard.thm .brin b{color:var(--p-fg);text-shadow:var(--halo);overflow-wrap:anywhere}.brcard.thm .brin .muted{color:var(--p-muted);text-shadow:var(--halo)}
+.brcard.thm .brtag{color:var(--p-fg);border-color:var(--p-line);background:color-mix(in srgb,var(--p-soft) 92%,transparent)}.brcard.thm:hover .brin{border-color:var(--p-fg)}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -20236,7 +20241,9 @@ const browseBtn = () => `<button class="btn ghost brbtn" data-act="browse"><svg 
 function browseView(){
   if (social && !BR.ids && !BR.busy) loadBrowse();
   const card = id => { const p = PROF[id] || {}, u = S.users[id] || remoteUser(id, p), on = onlineState(u);
-    return `<button type="button" class="brcard" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="brfig">${avatar(u.outfit, 'bust')}</span><b>${esc(u.name)}${hmark(u)}</b><span class="muted">@${esc(u.handle)}</span>${isFriend(id) ? '<span class="brtag">Befreundet</span>' : FR.mine.includes(id) ? '<span class="brtag">Angefragt</span>' : FR.inc.includes(id) ? '<span class="brtag on">Möchte befreundet sein</span>' : on[0] ? '<span class="brtag on">online</span>' : ''}</button>`; };
+    /* v1019 (Inaya): jede Karte im Design des Profils: außen Seiten-Hintergrund mit Muster, innen Kastenfarbe mit Kasten-Muster */
+    let ts = ''; try { ts = themeStyle(u.theme || {}); } catch {}
+    return `<button type="button" class="brcard thm" style="${esc(ts)}" data-act="profile" data-id="${esc(id)}" aria-label="Profil von ${esc(u.name)} ansehen"><span class="brin"><span class="brfig">${avatar(u.outfit, 'bust')}</span><b data-raw>${esc(u.name)}${hmark(u)}</b><span class="muted" data-raw>@${esc(u.handle)}</span>${isFriend(id) ? '<span class="brtag">Befreundet</span>' : FR.mine.includes(id) ? '<span class="brtag">Angefragt</span>' : FR.inc.includes(id) ? '<span class="brtag on">Möchte befreundet sein</span>' : on[0] ? '<span class="brtag on">online</span>' : ''}</span></button>`; };
   return `<div class="card"><h2 class="card-h">Stöbern</h2><div class="card-in">
     ${!social ? '<p class="note">Stöbern geht, sobald du angemeldet bist.</p>' : !BR.ids ? '<p class="muted">Profile werden geladen …</p>' : BR.ids.length ? `<div class="brgrid">${BR.ids.map(card).join('')}</div>${BR.more ? '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="browse-more">Mehr anzeigen</button></div>' : ''}` : '<p class="note">Noch keine anderen Profile.</p>'}
   </div></div>`;
