@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='660ea35299a6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='355f90b8cf01';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -2975,24 +2975,20 @@ img[data-pimg]:not([src]){content:url("data:image/svg+xml,%3Csvg xmlns='http://w
 /* v838 (Inaya): am PC springt die Seite nicht mehr zur Seite, wenn die Scrollleiste kommt oder geht (z. B. beim Wechsel zwischen Chat-Reitern) */
 @media (min-width:762px){html{scrollbar-gutter:stable}}
 @media (min-width:1200px) and (hover:hover) and (pointer:fine){
-  body[data-pg="profile"] .shell{max-width:1320px;display:grid;grid-template-columns:300px minmax(0,1fr) 360px;column-gap:22px;align-items:start}
-  body[data-pg="profile"] .shell > .rail{grid-column:1/-1;grid-row:1}
-  body[data-pg="profile"] .shell > .main{grid-column:2;grid-row:2;min-width:0}
-  body[data-pg="profile"] .shell > .aside{display:contents}
-  /* v1052: „Sticker kleben“ am PC in genau derselben Breite wie das Profil (mittlere Spalte), sonst lagen die Sticker danach woanders */
-  body[data-pg="pstk"] .shell{max-width:1320px;display:grid;grid-template-columns:300px minmax(0,1fr) 360px;column-gap:22px;align-items:start}
-  body[data-pg="pstk"] .shell > .rail{grid-column:1/-1;grid-row:1}
-  body[data-pg="pstk"] .shell > .main{grid-column:2;grid-row:2;min-width:0}
-  body[data-pg="profile"] .pcleft{grid-column:1;grid-row:2;display:grid;gap:16px;position:sticky;top:76px;align-self:start}
-  body[data-pg="profile"] .pcright{grid-column:3;grid-row:2;display:grid;gap:16px;position:sticky;top:76px;align-self:start;max-height:calc(100vh - 160px);overflow:auto}
-  body[data-pg="profile"] .pcleft .fullhints{flex-wrap:wrap;justify-content:center}body[data-pg="profile"] .pcleft .fullhint{font-size:13px!important;padding:7px 12px!important}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .shell{max-width:1320px;display:grid;grid-template-columns:300px minmax(0,1fr) 360px;column-gap:22px;align-items:start}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .shell > .rail{grid-column:1/-1;grid-row:1}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .shell > .main{grid-column:2;grid-row:2;min-width:0}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .shell > .aside{display:contents}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft{grid-column:1;grid-row:2;display:grid;gap:16px;position:sticky;top:76px;align-self:start}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcright{grid-column:3;grid-row:2;display:grid;gap:16px;position:sticky;top:76px;align-self:start;max-height:calc(100vh - 160px);overflow:auto}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft .fullhints{flex-wrap:wrap;justify-content:center}:is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft .fullhint{font-size:13px!important;padding:7px 12px!important}
   /* v837 (Inaya): Avatar und Begleiter passen immer ganz zwischen Kopfzeile und Leiste unten; der Avatar wird dafür kleiner, statt unter der Leiste zu verschwinden */
-  body[data-pg="profile"] .pcleft{display:flex;flex-direction:column;height:calc(100vh - 76px - 79px - env(safe-area-inset-bottom,0px));min-height:420px}
-  body[data-pg="profile"] .pcleft>.fullav:not(.petbox){flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
-  body[data-pg="profile"] .pcleft>.fullav:not(.petbox)>.card-in{flex:1 1 auto;min-height:0;grid-template-rows:minmax(0,1fr) auto}
-  body[data-pg="profile"] .pcleft>.fullav:not(.petbox) .fullfig{min-height:0;height:100%;max-width:none;width:100%;display:flex;justify-content:center;align-items:flex-end}
-  body[data-pg="profile"] .pcleft>.fullav:not(.petbox) .fullfig svg{height:100%;width:auto;max-width:220px}
-  body[data-pg="profile"] .pcleft>.petbox{flex:0 0 auto}body[data-pg="profile"] .pcleft .pbfig{width:auto;height:min(150px,18vh)}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft{display:flex;flex-direction:column;height:calc(100vh - 76px - 79px - env(safe-area-inset-bottom,0px));min-height:420px}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft>.fullav:not(.petbox){flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft>.fullav:not(.petbox)>.card-in{flex:1 1 auto;min-height:0;grid-template-rows:minmax(0,1fr) auto}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft>.fullav:not(.petbox) .fullfig{min-height:0;height:100%;max-width:none;width:100%;display:flex;justify-content:center;align-items:flex-end}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft>.fullav:not(.petbox) .fullfig svg{height:100%;width:auto;max-width:220px}
+  :is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft>.petbox{flex:0 0 auto}:is(body[data-pg="profile"],body[data-pg="pstk"]) .pcleft .pbfig{width:auto;height:min(150px,18vh)}
 }
 /* Startbildschirm wie bei Insta (seit v563): Logo in der Mitte, nur solange die Seite lädt */
 #splash{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;background:var(--bg,#0a0a0b);transition:opacity .35s ease,visibility .35s}
@@ -3138,7 +3134,7 @@ html:has(.ppick),body:has(.ppick){overflow:hidden;overscroll-behavior:none}
 .phead .plink.pic,.psteck{background:color-mix(in srgb,var(--p-soft,#0c0b0e) 92%,transparent)!important}.psteck{border:1px solid var(--p-line,var(--line))!important} /* v670: leicht durchscheinend wie die Felder in „Profil bearbeiten“ (Inaya) */
 .psteck>h3.lbl{font:700 18px var(--f-display)!important;letter-spacing:.02em;color:var(--p-fg,var(--fg))!important;opacity:1;margin:0 0 12px!important}.psteck .steck2{row-gap:26px!important} /* v688: Steckbrief-Überschrift dicker, eine Zeile frei zwischen „Über mich“ und den Interessen (Inaya) */
 .proom .proom-hint,.proom-hint.fullhint,body .proom-hint.fullhint{border-radius:0!important;background:color-mix(in srgb,var(--p-soft,#0c0b0e) 92%,transparent)!important;color:var(--p-fg,var(--fg))!important;border:1px solid var(--p-line,var(--line))!important;font:400 15px var(--f-display)!important;letter-spacing:.04em!important;box-shadow:none!important} /* v671: eckig wie die anderen Profil-Knöpfe (Inaya) */
-body[data-pg=profile] #app{min-height:0}body[data-pg=profile] .aside:not(:has(.card)){display:none} /* v683: auch kurze (private) Profile enden 16 px über der Leiste (Inaya) */body[data-pg=profile] .aside{gap:16px}body[data-pg=profile] .shell{padding-bottom:calc(79px + env(safe-area-inset-bottom,0px))!important} /* v676: unten nur 16 px Luft bis zur Leiste, wie zwischen den Kästen (Inaya) */body[data-pg=profile] .pcleft,body[data-pg=profile] .pcright{display:grid;gap:16px;align-content:start}body[data-pg=profile] .pcleft>.card,body[data-pg=profile] .pcright>.card{margin:0!important} /* v675: überall 16 px zwischen den Kästen, auch Avatar und Begleiter (Inaya) */
+body[data-pg=profile] #app{min-height:0}body[data-pg=profile] .aside:not(:has(.card)){display:none} /* v683: auch kurze (private) Profile enden 16 px über der Leiste (Inaya) */body[data-pg=profile] .aside,body[data-pg=pstk] .aside{gap:16px}body[data-pg=profile] .shell{padding-bottom:calc(79px + env(safe-area-inset-bottom,0px))!important} /* v676: unten nur 16 px Luft bis zur Leiste, wie zwischen den Kästen (Inaya) */body[data-pg=profile] .pcleft,body[data-pg=profile] .pcright{display:grid;gap:16px;align-content:start}body[data-pg=profile] .pcleft>.card,body[data-pg=profile] .pcright>.card{margin:0!important} /* v675: überall 16 px zwischen den Kästen, auch Avatar und Begleiter (Inaya) */
 html.fitpg,html.fitpg body{overflow:hidden;overscroll-behavior:none}body[data-pg=find] #app{min-height:0}body[data-pg=find] .aside:not(:has(.card)){display:none}body[data-pg=find] .shell{padding-bottom:calc(79px + env(safe-area-inset-bottom,0px))!important}body.chlist #app{min-height:0}body.chlist .aside:not(:has(.card)){display:none}body.chlist .shell{padding-bottom:calc(79px + env(safe-area-inset-bottom,0px))!important} /* v689: Suche endet wie das Profil 16 px über der Leiste (Inaya) */
 .phead .pmorebtn{width:48px;height:auto;align-self:stretch;min-height:44px}
 .phead .pactw{align-items:stretch}.phead .pactw .frsentrow{align-items:stretch}.phead .pactw .frsentrow>.frsent,.phead .pactw .frsentrow>.btn{flex:1 1 0!important;min-width:0;margin:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 8px!important;font-size:14px!important;font-weight:600!important;line-height:1.2;white-space:normal} /* v687: Angefragt und Zurückziehen gleich groß */
@@ -4098,12 +4094,15 @@ body.lvfon{overflow:hidden}
 /* v1041: Profil-Sticker */
 section.themed{position:relative}
 .pstkl{position:absolute;inset:0;container-type:inline-size;pointer-events:none;z-index:6;overflow:hidden}
-.pstkl.ed{pointer-events:auto;touch-action:pan-y;outline:1.5px dashed color-mix(in srgb,var(--p-fg,#fff) 45%,transparent);outline-offset:-6px}
+.pstkl.ed{pointer-events:none;outline:1.5px dashed color-mix(in srgb,var(--p-fg,#fff) 45%,transparent);outline-offset:-6px}
 .pstkl{--u:min(1cqw,4.2px)}.pstk{position:absolute;left:calc(var(--x) * 1cqw);top:calc(var(--y) * var(--u));width:calc(var(--s) * var(--u));height:calc(var(--s) * var(--u));transform:translate(-50%,-50%) rotate(var(--r,0deg))}
 .pstkf{width:100%;height:100%;display:grid;place-items:center;filter:drop-shadow(1.5px 2px 0 rgba(0,0,0,.45))}
 .pstkf svg{width:100%;height:100%;display:block;overflow:visible}
 .pstkf img,.pstkf video{width:100%;height:100%;object-fit:contain;display:block}
-.pstkl.ed .pstk{touch-action:none;cursor:grab}
+.pstkl.ed .pstk{touch-action:none;cursor:grab;pointer-events:auto}
+.card.fullav,.card.gbcard{position:relative}.pstk.zp{top:calc(var(--yp) * 1%)}.pstkl.pstkz.ed{outline-offset:-4px}
+.pstkl.ed.drg{overflow:visible;z-index:60} /* v1055: beim Ziehen in einen anderen Kasten nicht abschneiden */
+body[data-pg="pstk"] :is(.pstkpg section.themed,.aside) :is(input,textarea,select){pointer-events:none}
 .pstk.sel::before{content:'';position:absolute;inset:-6px;border:1.5px dashed var(--p-fg,#fff);pointer-events:none}
 .pstkx,.pstkr,.pstkh,.pstkm{position:absolute;width:30px;height:30px;border-radius:50%;background:#fff;color:#000;border:0;display:grid;place-items:center;padding:0;box-shadow:0 0 0 1.5px #0006,0 2px 6px #0009;cursor:pointer;z-index:2;touch-action:none;-webkit-tap-highlight-color:transparent}
 .pstkx{left:-17px;top:-17px}.pstkr{right:-17px;top:-17px;cursor:grab}.pstkh{right:-17px;bottom:-17px;cursor:nwse-resize}.pstkm{left:-17px;bottom:-17px}
@@ -4123,7 +4122,7 @@ body[data-pg="pstk"] input,body[data-pg="pstk"] textarea{-webkit-user-select:tex
 .pxreel{transform-box:fill-box;transform-origin:center;animation:pxsp 1.2s steps(4) infinite}
 @media (prefers-reduced-motion:reduce){.pstkf,.pstkf *{animation:none!important}}
 body[data-pg="pstk"] .mobnav,body[data-pg="pstk"] .upmini{display:none!important}
-.pstkpg{padding-bottom:200px}
+body:not([data-pg=home]):not([data-pg=pet])[data-pg="pstk"] .shell{padding-bottom:calc(250px + env(safe-area-inset-bottom,0px))!important} /* v1055: unten Platz für die Auswahl, auch unter Avatar, Begleiter und Gästebuch */
 .pstkpk{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,var(--colw,720px));z-index:1002;background:#0d0c10;color:#eceaee;border-top:1px solid #34323a;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 20px #0008}
 .pstkhd{display:flex;align-items:baseline;justify-content:space-between;padding:0 14px 6px;font:700 14px var(--f-display)}.pstkhd small{font:500 12px var(--f-body);color:#a19ca7}
 .pstkrow{display:flex;gap:10px;overflow-x:auto;padding:0 14px 6px;scrollbar-width:thin;min-width:0}
@@ -10309,7 +10308,7 @@ function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
   const pid = V.name === 'profile' ? (V.arg || S.me) : S.me, u = S.users[pid];
   if (!u?.outfit) return '';
   const edit = pid === S.me && V.name === 'profile' && profEdit;
-  return `<div class="card fullav"><h2 class="card-h">${pid === S.me ? 'Dein Avatar' : esc(u.name)}</h2><div class="card-in" style="position:relative">
+  return `<div class="card fullav">${pstkZoneHTML('av', u)}<h2 class="card-h">${pid === S.me ? 'Dein Avatar' : esc(u.name)}</h2><div class="card-in" style="position:relative">
     ${pid === S.me && !edit ? `<button type="button" class="fullfig fullgo mv-${poseMove(u.pose)}" data-act="nav" data-v="wardrobe" aria-label="Garderobe betreten">${auraOf(u)}${avatar(u.outfit, 'full', u.pose)}</button><div class="fullhints solo"><button type="button" class="proom-hint fullhint" data-act="nav" data-v="wardrobe">Garderobe betreten →</button></div>` : `<div class="fullfig mv-${poseMove(u.pose)}">${auraOf(u)}${avatar(u.outfit, 'full', u.pose)}</div>`}
     ${edit ? `<fieldset class="opt"><legend class="lbl">Pose</legend><div class="chips">${POSES.map(([k,l]) => `<button type="button" data-act="pose" data-v="${k}" aria-pressed="${(POSES.some(x => x[0] === u.pose) ? u.pose : 'gerade') === k}">${l}</button>`).join('')}</div></fieldset>` : ''}
   </div></div>${edit ? '' : petBox(u)}`;
@@ -10317,7 +10316,7 @@ function fullCard(){ // ganzer Avatar unter dem Zirkel, mit eigener Pose
 /* v648: Begleiter im eigenen kleinen Kasten unter dem Avatar, Pfeil darunter (Inaya) */
 function petBox(u){ if (!u || u.helper) return ''; const own = u.id === S.me, p = own ? petMe() : (PROF[u.id]?.pet || u.pet); if (!p?.k || !PET_KINDS[p.k]) return '';
   const svg = petSVG(p.k, own ? petMood(p) : 'happy', own ? petDecoOf(p) : p.d || {}), name = `<span class="pbname" data-raw>${esc(p.n)}</span>`;
-  return `<div class="card fullav petbox"><h2 class="card-h">${own ? esc(tr('Dein Begleiter')) : name}</h2><div class="card-in">${own ? `<button type="button" class="pbfig fullgo" data-act="nav" data-v="pet" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</button><div class="fullhints solo"><button type="button" class="proom-hint fullhint" data-act="nav" data-v="pet">${esc(tr('Begleiter'))} →</button></div>` : social && isFriend(u.id) ? `<button type="button" class="pbfig fullgo" data-act="pvv-open" data-id="${esc(u.id)}" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</button><div class="fullhints solo"><button type="button" class="proom-hint fullhint" data-act="pvv-open" data-id="${esc(u.id)}">${esc(tr('Begleiter'))} →</button></div>` : `<div class="pbfig">${svg}</div>`}</div></div>`; } /* v852: Freunde öffnen die Besuchs-Seite (petvView) statt der Knöpfe pvHTML */
+  return `<div class="card fullav petbox">${pstkZoneHTML('pet', u)}<h2 class="card-h">${own ? esc(tr('Dein Begleiter')) : name}</h2><div class="card-in">${own ? `<button type="button" class="pbfig fullgo" data-act="nav" data-v="pet" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</button><div class="fullhints solo"><button type="button" class="proom-hint fullhint" data-act="nav" data-v="pet">${esc(tr('Begleiter'))} →</button></div>` : social && isFriend(u.id) ? `<button type="button" class="pbfig fullgo" data-act="pvv-open" data-id="${esc(u.id)}" aria-label="${esc(tr('Zu {0}').replace('{0}', p.n))}">${svg}</button><div class="fullhints solo"><button type="button" class="proom-hint fullhint" data-act="pvv-open" data-id="${esc(u.id)}">${esc(tr('Begleiter'))} →</button></div>` : `<div class="pbfig">${svg}</div>`}</div></div>`; } /* v852: Freunde öffnen die Besuchs-Seite (petvView) statt der Knöpfe pvHTML */
 function salonEnd(){ // Handy und PC: ganz unten im Salon der eigene Avatar mit kleinem Hinweis (Inaya)
   const u = me(); if (!u?.outfit) return '';
   return `<div class="salonend"><div class="sefig">${avatar(u.outfit, 'full', u.pose)}</div><p>Du bist am Ende angelangt.</p></div>`;
@@ -10325,14 +10324,14 @@ function salonEnd(){ // Handy und PC: ganz unten im Salon der eigene Avatar mit 
 function asideHTML(){
   const u = me(), others = ['juliet', 'andy'].map(id => S.users[id]).filter(Boolean); // nur die Helfer, Freunde stehen auf dem Profil
   // Handy (Inaya): unten kein eigenes Profilbild und kein eigener Avatar mehr, Helfer nur in den Einstellungen; auf dem eigenen Profil steht der Avatar mit Pose aber wieder da (Inaya, 2026-10-10)
-  const mob = isMob(), pid = V.name === 'profile' ? (V.arg || S.me) : S.me, pu = V.name === 'profile' ? S.users[pid] : null;
+  const mob = isMob(), isP = V.name === 'profile' || V.name === 'pstk' /* v1055: „Sticker kleben“ zeigt auch Avatar, Begleiter und Gästebuch */, pid = V.name === 'profile' ? (V.arg || S.me) : S.me, pu = isP ? S.users[pid] : null;
   return `<aside class="aside${pu ? ' paside' + winC(pu.theme, pu) : ''}"${pu ? ` style="${themeStyle(pu.theme || {})}"` : ''}>
-    ${mob || V.name === 'profile' && (V.arg || S.me) === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
-    ${V.name === 'profile' ? '<div class="pcleft">' : ''}${mob && pid === S.me && V.name !== 'profile' ? '' : fullCard()}${V.name === 'profile' ? '</div><div class="pcright">' : ''}
+    ${mob || isP && pid === S.me ? '' : `<div class="card me-card">${portrait(u)}<div><div class="sname">${esc(u.name)}</div></div></div>`}
+    ${isP ? '<div class="pcleft">' : ''}${mob && pid === S.me && !isP ? '' : fullCard()}${isP ? '</div><div class="pcright">' : ''}
     ${mob && V.name !== 'settings' && !(V.name === 'profile' && matchMedia('(min-width:1200px) and (hover:hover) and (pointer:fine)').matches) ? '' : `<div class="card helpcard"><h2 class="card-h">Helfer</h2><div class="card-in"><ul class="zlist">
       ${others.map(f => `<li>${cameo(f)}<span>${ulink(f.id)}<small>${etx(f.mood) || '&nbsp;'}</small></span></li>`).join('')}
     </ul></div></div>`}
-    ${V.name === 'profile' && PROF_WALL ? `<div class="card gbcard"><h2 class="card-h">Gästebuch</h2><div class="card-in">${PROF_WALL}</div></div>` : ''}${V.name === 'profile' ? '</div>' : ''}
+    ${isP && PROF_WALL ? `<div class="card gbcard">${pstkZoneHTML('gb', pu)}<h2 class="card-h">Gästebuch</h2><div class="card-in">${PROF_WALL}</div></div>` : ''}${isP ? '</div>' : ''}
   </aside>`;
 }
 /* ---------- Beiträge: Reaktionen und Kommentare von Freunden (geteilt über die Datenbank) ---------- */
@@ -13520,7 +13519,7 @@ function pstkClean(L){ if (!Array.isArray(L)) return []; let own = 0; const out 
     const okA = typeof it.a === 'string' && /^\d{1,2}\.\d{1,3}$/.test(it.a), fr = v => { v = +v; return Number.isFinite(v) ? Math.max(0, Math.min(1, Math.round(v * 1e4) / 1e4)) : 0; }, rf = v => v === 0 || v === .5 || v === 1 ? v : null;
     const an = okA && rf(it.rx) !== null && rf(it.ry) !== null && +it.sp > 0 ? {a:it.a, rx:it.rx, ry:it.ry, ox:pstkNum(it.ox, -3000, 3000, 0), oy:pstkNum(it.oy, -3000, 3000, 0), ix:it.ix ? 1 : 0, iy:it.iy ? 1 : 0, sp:pstkNum(it.sp, 4, 400, 60), ...(it.gx != null && Number.isFinite(+it.gx) ? {gx:fr(it.gx)} : {}), ...(it.nt ? {nt:1} : {}), ...(it.to != null && Number.isFinite(+it.to) ? {to:Math.min(1, Math.max(0, Math.round(+it.to * 100) / 100))} : {}), ...(+it.sw >= 100 && +it.sw <= 5000 ? {sw:Math.round(+it.sw)} : {}), ...(it.qx != null && it.qy != null && Number.isFinite(+it.qx) && Number.isFinite(+it.qy) ? {qx:fr(Math.min(1, Math.max(0, +it.qx))), qy:fr(Math.min(1, Math.max(0, +it.qy)))} : {}), ...(+it.qw >= 10 && +it.qw <= 5000 && +it.qh >= 10 && +it.qh <= 20000 ? {qw:Math.round(+it.qw), qh:Math.round(+it.qh)} : {})} /* v1048, v1049, v1050 */
       : okA ? {a:it.a, ax:fr(it.ax), ay:fr(it.ay), dx:pstkNum(it.dx, -600, 600, 0), dy:pstkNum(it.dy, -600, 600, 0), ...(+it.aw > 0 ? {aw:pstkNum(it.aw, 1, 600, 1)} : {})} : {};
-    out.push({...(k ? {k} : {o}), x:pstkNum(it.x, 0, 100, 50), y:pstkNum(it.y, 0, 2000, 20), s:pstkNum(it.s, 6, 70, 16), r:pstkNum(it.r, -180, 180, 0), ...(it.f ? {f:1} : {}), ...an}); if (out.length >= PSTK_MAX) break; }
+    out.push({...(k ? {k} : {o}), x:pstkNum(it.x, 0, 100, 50), y:pstkNum(it.y, 0, 2000, 20), s:pstkNum(it.s, 6, 70, 16), r:pstkNum(it.r, -180, 180, 0), ...(it.f ? {f:1} : {}), ...(PSTK_Z.includes(it.z) ? {z:it.z, yp:pstkNum(it.yp, 0, 100, 50)} : {...(typeof it.t === 'string' && /^[a-z]{2,10}$/.test(it.t) ? {t:it.t} : {}), ...an})}); if (out.length >= PSTK_MAX) break; }
   return out; }
 /* Abo-Sticker: eigene mit aboFx, bei anderen nur, solange ihr Abo läuft (wie die übrige Abo-Gestaltung). Gespeichertes bleibt. */
 const pstkProOk = (u, own) => own ? aboFx() : aboKeepU(u);
@@ -13533,7 +13532,7 @@ function pstkFill(key){ document.querySelectorAll(`.pstk[data-ok="${CSS.escape(k
 function pstkItemHTML(it, i, uid, edit){
   const own = !!it.o, key = own ? uid + '/' + it.o : '', body = own ? pstkOwnHTML(pstkOwnImg(uid, it.o)) : pxSVG(it.k), anim = own ? '' : (PSTK_A[it.k] || '');
   const sel = edit && i === PSTK.sel;
-  return `<div class="pstk${own ? ' own' : ''}${sel ? ' sel' : ''}${it.f ? ' flp' : ''}" data-i="${i}"${own ? ` data-ok="${esc(key)}"` : ` data-k="${esc(it.k)}"`}${it.a ? ` data-an="${esc((it.sp ? ['n', it.a, it.rx, it.ry, it.ox, it.oy, it.ix, it.iy, it.sp, it.gx ?? '', it.nt ? 1 : 0, it.to ?? '', it.sw ?? '', it.qx ?? '', it.qy ?? '', it.qw ?? '', it.qh ?? ''] : [it.a, it.ax, it.ay, it.dx, it.dy, it.aw || 0, it.s]).join('|'))}"` : ''} style="--x:${it.x};--y:${it.y};--s:${it.s};--r:${it.r}deg"><div class="pstkf ${anim}">${body}</div>${sel ? `<button type="button" class="pstkx" data-act="pstk-rm" aria-label="Sticker entfernen">${SG_ICO.x}</button><span class="pstkr" role="button" aria-label="${esc(tr('Drehen'))}" title="${esc(tr('Drehen'))}"></span><span class="pstkh" role="button" aria-label="${esc(tr('Größer oder kleiner ziehen'))}" title="${esc(tr('Größer oder kleiner ziehen'))}"></span><button type="button" class="pstkm" data-act="pstk-flip" aria-label="${esc(tr('Spiegeln'))}" title="${esc(tr('Spiegeln'))}"></button>` : ''}</div>`; }
+  return `<div class="pstk${own ? ' own' : ''}${sel ? ' sel' : ''}${it.f ? ' flp' : ''}${it.z ? ' zp' : ''}" data-i="${i}"${own ? ` data-ok="${esc(key)}"` : ` data-k="${esc(it.k)}"`}${it.a && !it.z ? ` data-an="${esc((it.sp ? ['n', it.a, it.rx, it.ry, it.ox, it.oy, it.ix, it.iy, it.sp, it.gx ?? '', it.nt ? 1 : 0, it.to ?? '', it.sw ?? '', it.qx ?? '', it.qy ?? '', it.qw ?? '', it.qh ?? ''] : [it.a, it.ax, it.ay, it.dx, it.dy, it.aw || 0, it.s]).join('|'))}"` : ''} style="--x:${it.x};${it.z ? `--yp:${it.yp ?? 50}` : `--y:${it.y}`};--s:${it.s};--r:${it.r}deg"><div class="pstkf ${anim}">${body}</div>${sel ? `<button type="button" class="pstkx" data-act="pstk-rm" aria-label="Sticker entfernen">${SG_ICO.x}</button><span class="pstkr" role="button" aria-label="${esc(tr('Drehen'))}" title="${esc(tr('Drehen'))}"></span><span class="pstkh" role="button" aria-label="${esc(tr('Größer oder kleiner ziehen'))}" title="${esc(tr('Größer oder kleiner ziehen'))}"></span><button type="button" class="pstkm" data-act="pstk-flip" aria-label="${esc(tr('Spiegeln'))}" title="${esc(tr('Spiegeln'))}"></button>` : ''}</div>`; }
 /* v1044 (Inaya: „Sticker liegen bei PC, iPad und Handy unterschiedlich, rutscht immer etwas weg“): Sticker hängen an dem Teil des Profils, auf dem bzw. neben dem sie liegen
    (Namens-Kasten, Profilbild, Name, Bio, Steckbrief, Freunde, Reiter, Beiträge …). Gespeichert: a = '<Nr. in PSA>.<wievielter>', ax/ay = Stelle im Teil (0–1), dx/dy = Abstand außerhalb in --u.
    pstkPlace setzt --x/--y nach jedem Zeichnen, bei Größenänderung und wenn Bilder fertig laden. x/y bleiben als Notlösung (Teil gerade nicht da). Beim Kleben werden Anker in x/y umgerechnet, „Speichern“ rechnet sie neu aus. */
@@ -13605,11 +13604,15 @@ function pstkSoon(){ if (PSTKQ) return; PSTKQ = requestAnimationFrame(() => { PS
 new MutationObserver(() => { if (document.querySelector('.pstk[data-an]')) pstkSoon(); }).observe(document.documentElement, {childList:true, subtree:true});
 addEventListener('resize', pstkSoon); document.addEventListener('load', e => { if (e.target?.tagName === 'IMG' && document.querySelector('.pstkl')) pstkSoon(); }, true);
 document.fonts?.ready?.then(pstkSoon).catch(() => {});
-function pstkLayerHTML(u, own, edit){ const uid = own ? social?.uid : u.id; let L = edit ? PSTK.d : (u.pstk || []);
-  if (!edit) { const ok = pstkProOk(u, own); L = L.filter(it => !(it.o || PSTK_A.hasOwnProperty(it.k)) || ok); }
+/* v1055 (Inaya): Sticker auch auf Avatar, Begleiter und Gästebuch (eigene Ebenen in diesen Kästen, Feld z = av/pet/gb, Höhe yp in % des Kastens),
+   und Sticker im Bereich der Reiter gehören zu dem Reiter, auf dem sie geklebt wurden (Feld t = profTab), auf anderen Reitern sind sie nicht zu sehen. */
+const PSTK_Z = ['av', 'pet', 'gb'], pstkIn = (it, z) => z ? it.z === z : !it.z && (!it.t || it.t === profTab);
+function pstkLayerHTML(u, own, edit, z){ const uid = own ? social?.uid : u.id; let L = edit ? PSTK.d : (u.pstk || []);
+  if (!edit) { const ok = pstkProOk(u, own); L = L.filter(it => (!(it.o || PSTK_A.hasOwnProperty(it.k)) || ok) && pstkIn(it, z)); }
   if (!L.length && !edit) return '';
-  return `<div class="pstkl${edit ? ' ed' : ''}"${edit ? '' : ' aria-hidden="true"'}>${L.map((it, i) => pstkItemHTML(it, i, uid, edit)).join('')}</div>`; }
-function pstkPaint(){ const l = document.querySelector('.pstkl.ed'); if (!l) return; l.innerHTML = PSTK.d.map((it, i) => pstkItemHTML(it, i, social?.uid, true)).join(''); const p = document.querySelector('.pstkpk'); if (p) p.outerHTML = pstkPickHTML(); }
+  return `<div class="pstkl${z ? ' pstkz' : ''}${edit ? ' ed' : ''}"${z ? ` data-z="${z}"` : ''}${edit ? '' : ' aria-hidden="true"'}>${L.map((it, i) => !edit || pstkIn(it, z) ? pstkItemHTML(it, i, uid, edit) : '').join('')}</div>`; }
+function pstkZoneHTML(z, u){ if (!u || u.helper) return ''; const own = u.id === S.me, edit = V.name === 'pstk' && own; if (V.name !== 'profile' && !edit) return ''; return pstkLayerHTML(u, own, edit, z); }
+function pstkPaint(){ const ls = document.querySelectorAll('.pstkl.ed'); if (!ls.length || !PSTK.d) return; ls.forEach(l => { const z = l.dataset.z || ''; l.innerHTML = PSTK.d.map((it, i) => pstkIn(it, z) ? pstkItemHTML(it, i, social?.uid, true) : '').join(''); }); const p = document.querySelector('.pstkpk'); if (p) p.outerHTML = pstkPickHTML(); }
 function pstkPickHTML(){ const pro = aboFx(), n = (PSTK.d || []).length, full = n >= PSTK_MAX, ownN = (PSTK.d || []).filter(x => x.o).length;
   const t = (k, l, a, lock) => `<button type="button" class="pstkt${lock ? ' lock' : ''}" data-act="pstk-add" data-k="${k}" aria-label="${esc(tr(l))}" title="${esc(tr(l))}"${full ? ' disabled' : ''}><span class="pstkf ${a || ''}">${pxSVG(k)}</span>${lock ? `<i class="pstklk">${PSTK_LOCK}</i>` : ''}</button>`;
   const own = (SG.own || []).filter(x => sgOkImg(x.img)).slice(0, 60), ot = own.map(x => `<button type="button" class="pstkt${pro ? '' : ' lock'}" data-act="pstk-add" data-o="${esc(x.id)}" aria-label="${esc(tr('Eigener Sticker'))}"${full || ownN >= PSTK_OWN_MAX ? ' disabled' : ''}><span class="pstkf">${pstkOwnHTML({img:x.img})}</span>${pro ? '' : `<i class="pstklk">${PSTK_LOCK}</i>`}</button>`).join('');
@@ -13627,11 +13630,17 @@ function pstkAdd(k, o){ if (!PSTK.d) return; if (PSTK.d.length >= PSTK_MAX) retu
   if (((k && PSTK_A.hasOwnProperty(k)) || o) && !aboFx()) return aboAsk(false);
   if (o) { if (PSTK.d.filter(x => x.o).length >= PSTK_OWN_MAX) return toastNow(tr('Höchstens {0} eigene Sticker.').replace('{0}', PSTK_OWN_MAX)); const x = (SG.own || []).find(s => s.id === o); if (!x) return;
     PSTK.img[social?.uid + '/' + o] = {img:x.img, ...(sgOkVid(x.vid) ? {vid:x.vid, sh:x.sh || 'orig'} : {})}; }
-  const sec = document.querySelector('.pstkpg section.themed'); let y = 30;
-  if (sec) { const r = sec.getBoundingClientRect(), pk = document.querySelector('.pstkpk')?.getBoundingClientRect(), mid = ((document.querySelector('.rail')?.getBoundingClientRect().bottom || 60) + (pk ? pk.top : innerHeight)) / 2; y = Math.max(5, (mid - r.top) / Math.min(r.width / 100, 4.2)); }
-  const n = PSTK.d.length; PSTK.d.push({...(k ? {k} : {o}), x:pstkNum(22 + ((n * 37) % 57), 8, 92, 50), y:Math.round((y + ((n * 23) % 17) - 8) * 10) / 10, s:o ? 18 : 15, r:((n * 37) % 25) - 12}); PSTK.sel = PSTK.d.length - 1; pstkPaint(); }
+  const sec = document.querySelector('.pstkpg section.themed'); let y = 30, zn = null;
+  const pk = document.querySelector('.pstkpk')?.getBoundingClientRect(), mid = ((document.querySelector('.rail')?.getBoundingClientRect().bottom || 60) + (pk ? pk.top : innerHeight)) / 2;
+  for (const l of document.querySelectorAll('.pstkl.ed.pstkz')) { const r = l.getBoundingClientRect(); if (r.height && mid >= r.top && mid <= r.bottom) { zn = {z:l.dataset.z, yp:Math.round(Math.min(85, Math.max(15, (mid - r.top) / r.height * 100)) * 10) / 10}; break; } } /* v1055: liegt die Mitte des Bildschirms auf Avatar, Begleiter oder Gästebuch, kommt der Sticker dorthin */
+  if (sec) { const r = sec.getBoundingClientRect(); y = Math.max(5, (mid - r.top) / Math.min(r.width / 100, 4.2)); }
+  const n = PSTK.d.length, it = {...(k ? {k} : {o}), x:pstkNum(22 + ((n * 37) % 57), 8, 92, 50), y:Math.round((y + ((n * 23) % 17) - 8) * 10) / 10, s:o ? 18 : 15, r:((n * 37) % 25) - 12, ...(zn || {})};
+  if (!zn) pstkTag(it); PSTK.d.push(it); PSTK.sel = PSTK.d.length - 1; pstkPaint(); }
+/* v1055: Sticker unterhalb der Reiterleiste gehört zum offenen Reiter */
+function pstkTag(it){ if (it.z) { delete it.t; return; } const l = document.querySelector('.pstkl.ed:not(.pstkz)'), tb = l?.parentElement?.querySelector('.ptabs'); if (!l || !tb) return; const L = l.getBoundingClientRect(), u = Math.min(l.offsetWidth / 100, 4.2) || 1, B = tb.getBoundingClientRect();
+  if (it.y * u > B.bottom - L.top && profTab) it.t = profTab; else delete it.t; }
 async function pstkSave(){ const u = me(); if (!u || !PSTK.d) return go('profile', S.me);
-  { const l = document.querySelector('.pstkl.ed'); if (l) { const g = pstkGeo(l); PSTK.d.forEach(it => { for (const f of PSTK_AF) delete it[f]; if (g) Object.assign(it, pstkAnchor(g, it.x / 100 * g.W, it.y * g.u, it.s, pstkFlipM(pstkMask(it.k, it.o ? social?.uid + '/' + it.o : ''), it.f) || PSTK_SQ, it.r)); }); } } /* v1044 */
+  { const l = document.querySelector('.pstkl.ed:not(.pstkz)'); if (l) { const g = pstkGeo(l); PSTK.d.forEach((it, i) => { if (it.z) { for (const f of PSTK_AF) delete it[f]; return; } if (!l.querySelector(`.pstk[data-i="${i}"]`)) return; /* v1055: Sticker anderer Reiter bleiben, wie sie sind */ pstkTag(it); for (const f of PSTK_AF) delete it[f]; if (g) Object.assign(it, pstkAnchor(g, it.x / 100 * g.W, it.y * g.u, it.s, pstkFlipM(pstkMask(it.k, it.o ? social?.uid + '/' + it.o : ''), it.f) || PSTK_SQ, it.r)); }); } } /* v1044 */
   const L = pstkClean(PSTK.d); u.pstk = L; PSTK.d = null; PSTK.sel = -1;
   if (social) for (const it of L) { if (!it.o || PSTK.put.has(it.o)) continue; const p = PSTK.img[social.uid + '/' + it.o]; if (!p?.img) continue; PSTK.put.add(it.o);
     social.db.doc('chats/pimg_' + social.uid + '/m/ps_' + it.o).set({img:p.img, ...(p.vid ? {vid:p.vid, sh:p.sh} : {}), by:social.uid, ts:Date.now()}).catch(() => { PSTK.put.delete(it.o); }); }
@@ -13639,23 +13648,32 @@ async function pstkSave(){ const u = me(); if (!u || !PSTK.d) return go('profile
 /* v1041 (Inaya): eigene Sticker erstellen nur mit Plus oder Premium (Owner immer). Schon erstellte bleiben nutzbar. */
 document.addEventListener('click', e => { const l = e.target.closest?.('label'); if (!l || !l.querySelector('#sg-file, #st-sgfile, #pstk-file') || aboFx()) return; e.preventDefault(); e.stopPropagation(); aboAsk(false); }, true);
 /* Ziehen, Drehen und Größe ändern */
-document.addEventListener('pointerdown', e => { const l = e.target.closest?.('.pstkl.ed'); if (!l || !PSTK.d) return;
+document.addEventListener('pointerdown', e => { if (!PSTK.d || V.name !== 'pstk') return; const l = e.target.closest?.('.pstkl.ed');
+  if (!l) { if (PSTK.sel >= 0 && !e.target.closest?.('.pstkpk, .rail, .ptabs, .cgrid-bg')) { PSTK.sel = -1; pstkPaint(); } return; } /* v1055: Ebene lässt Tippen durch (Reiter wechseln), daneben tippen wählt ab */
   if (e.target.closest('.pstkx, .pstkm')) return;
-  const el = e.target.closest('.pstk'); if (!el) { if (PSTK.sel >= 0) { PSTK.sel = -1; pstkPaint(); } return; }
+  const el = e.target.closest('.pstk'); if (!el) return;
   const i = +el.dataset.i, it = PSTK.d[i]; if (!it) return; e.preventDefault();
   if (PSTK.sel !== i) { PSTK.sel = i; pstkPaint(); }
-  const nel = l.querySelector(`.pstk[data-i="${i}"]`), W = l.getBoundingClientRect().width / 100, U = Math.min(W, 4.2), box = nel.getBoundingClientRect(), cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+  const nel = document.querySelector(`.pstkl.ed .pstk[data-i="${i}"]`), l2 = nel.closest('.pstkl'), H = l2.getBoundingClientRect().height || 1, W = l.getBoundingClientRect().width / 100, U = Math.min(W, 4.2), box = nel.getBoundingClientRect(), cx = box.left + box.width / 2, cy = box.top + box.height / 2;
   const rot = !!e.target.closest('.pstkr'), siz = !!e.target.closest('.pstkh'), a0 = Math.atan2(e.clientY - cy, e.clientX - cx), d0 = Math.hypot(e.clientX - cx, e.clientY - cy) || 1;
-  PSTK.drag = {i, el:nel, rot, siz, x0:e.clientX, y0:e.clientY, it0:{...it}, cx, cy, a0, d0, W, U, id:e.pointerId}; try { nel.setPointerCapture(e.pointerId); } catch {} });
+  PSTK.drag = {i, el:nel, l:l2, H, rot, siz, x0:e.clientX, y0:e.clientY, it0:{...it}, cx, cy, a0, d0, W, U, id:e.pointerId}; try { nel.setPointerCapture(e.pointerId); } catch {} });
 document.addEventListener('pointermove', e => { const D = PSTK.drag; if (!D || e.pointerId !== D.id) return; e.preventDefault(); const it = PSTK.d[D.i]; if (!it) return;
   /* v1054 (Inaya): Drehen oben rechts, Größe unten rechts, getrennt */
   if (D.rot) { const a = Math.atan2(e.clientY - D.cy, e.clientX - D.cx); let r = D.it0.r + (a - D.a0) * 180 / Math.PI; r = ((r + 540) % 360) - 180; if (Math.abs(r) < 4) r = 0; it.r = Math.round(r); D.el.style.setProperty('--r', it.r + 'deg'); }
   else if (D.siz) { const d = Math.hypot(e.clientX - D.cx, e.clientY - D.cy); it.s = pstkNum(Math.round(D.it0.s * d / D.d0 * 10) / 10, 6, 70, D.it0.s); D.el.style.setProperty('--s', it.s); }
-  else { it.x = pstkNum(D.it0.x + (e.clientX - D.x0) / D.W, 0, 100, it.x); it.y = pstkNum(D.it0.y + (e.clientY - D.y0) / D.U, 0, 2000, it.y); D.el.style.setProperty('--x', it.x); D.el.style.setProperty('--y', it.y); } }, {passive:false});
+  else { D.mv = 1; D.l.classList.add('drg'); it.x = pstkNum(D.it0.x + (e.clientX - D.x0) / D.W, -150, 250, it.x); D.el.style.setProperty('--x', it.x);
+    if (it.z) { it.yp = pstkNum(D.it0.yp + (e.clientY - D.y0) / D.H * 100, -400, 500, it.yp); D.el.style.setProperty('--yp', it.yp); } else { it.y = pstkNum(D.it0.y + (e.clientY - D.y0) / D.U, -400, 4000, it.y); D.el.style.setProperty('--y', it.y); } } }, {passive:false});
+/* v1055: losgelassen über einem anderen Kasten (Profil, Avatar, Begleiter, Gästebuch) = Sticker wandert dorthin */
+function pstkDrop(D){ const it = PSTK.d?.[D.i]; D.l.classList.remove('drg'); if (!it || !D.mv) return; const b = D.el.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2;
+  let to = null; for (const l of document.querySelectorAll('.pstkl.ed')) { const r = l.getBoundingClientRect(); if (r.width && cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) { to = l; if (l.dataset.z) break; } }
+  if (to && to !== D.l) { const r = to.getBoundingClientRect(), z = to.dataset.z || '', u = Math.min(to.offsetWidth / 100, 4.2) || 1; it.x = pstkNum((cx - r.left) / r.width * 100, 0, 100, 50);
+    if (z) { it.z = z; it.yp = pstkNum((cy - r.top) / r.height * 100, 0, 100, 50); delete it.t; for (const f of PSTK_AF) delete it[f]; } else { delete it.z; delete it.yp; it.y = pstkNum((cy - r.top) / u, 0, 2000, 20); } }
+  const x0 = it.x, y0 = it.z ? it.yp : it.y; it.x = pstkNum(it.x, 0, 100, 50); if (it.z) it.yp = pstkNum(it.yp, 0, 100, 50); else it.y = pstkNum(it.y, 0, 2000, 20); /* beim Ziehen darf er über den Rand, danach wieder hinein */
+  if (!it.z) pstkTag(it); if (to !== D.l || x0 !== it.x || y0 !== (it.z ? it.yp : it.y)) pstkPaint(); }
 ['contextmenu', 'selectstart'].forEach(t => document.addEventListener(t, e => { if (document.body.dataset.pg === 'pstk' && !e.target.closest?.('input, textarea')) e.preventDefault(); }, true));
-const pstkUp = e => { if (PSTK.drag && e.pointerId === PSTK.drag.id) PSTK.drag = null; };
+const pstkUp = e => { const D = PSTK.drag; if (D && e.pointerId === D.id) { PSTK.drag = null; try { pstkDrop(D); } catch {} } };
 document.addEventListener('pointerup', pstkUp); document.addEventListener('pointercancel', pstkUp);
-document.addEventListener('click', e => { if (e.target.closest?.('.pstkl.ed') && !e.target.closest('.pstkx, .pstkm')) { e.preventDefault(); e.stopPropagation(); } }, true);
+document.addEventListener('click', e => { if (V.name !== 'pstk' || !e.target.closest?.('.pstkpg, .aside') || e.target.closest('.pstkx, .pstkm, .ptabs')) return; e.preventDefault(); e.stopPropagation(); }, true); /* v1055: auf „Sticker kleben“ führt nur das Wechseln der Reiter etwas aus */
 
 function profileView(id){
   const u = profUser(id); if (!u) { /* v664: beim Neuladen ist ein fremdes Profil noch nicht da: warten statt kurz den Salon zu zeigen (Inaya) */
