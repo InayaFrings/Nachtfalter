@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9880b08010a2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='eaca0e01f182';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4010,6 +4010,52 @@ body.lvfon{overflow:hidden}
 @media (min-width:762px){.mhead .mhcoin.mhpc{display:inline-flex!important}.rail>.mhcoin.mhcap2{display:none!important}.rail>.mhead:has(.mhlv){gap:34px!important;align-items:center!important;justify-content:flex-start!important;position:static!important;left:auto!important;transform:none!important;flex:1 1 auto!important;width:auto!important;margin:0!important} /* v1029 (Inaya): am PC links, nicht mittig */.mhead .mhcoin.mhpc{margin-left:6px!important}}
 .ablks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:8px}.ablk{border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center;display:grid;gap:2px}.ablk b{font-size:20px;font-family:var(--f-display)}.ablk span{font-size:11px;opacity:.75;line-height:1.2}
 .ablist{display:grid;gap:6px}.ablr{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:1px solid var(--line);border-radius:10px;padding:6px 10px;color:inherit;cursor:pointer;font:inherit}.ablr.off{opacity:.55}.ablp{width:38px;height:38px;flex:none;border-radius:50%;overflow:hidden;display:block}.ablp img,.ablp svg{width:100%;height:100%;object-fit:cover;display:block}.abln,.ablm{display:grid;min-width:0}.abln{flex:1}.abln b,.abln small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ablm{text-align:right;flex:none}.ablr small{font-size:11.5px;opacity:.7}
+
+/* v1039: Leiste oben blickdicht bis über die Statusleiste (iPad/Safari zeigt dort sonst den Inhalt darunter) */
+.shell > .rail::before{content:'';position:absolute;left:0;right:0;bottom:100%;height:400px;background:inherit;pointer-events:none}
+/* v1039: Speichern sichtbar */
+.ltools.lside .ltool{position:relative;overflow:visible}
+.ltcnt{position:absolute;top:-5px;right:-6px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--fg,#f2f0ec);color:var(--bg,#0a0a0b);font:700 10.5px/17px var(--f-body);font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--paper-2,#1b1a1f);pointer-events:none}
+.ltool.ltsaved{animation:ltSv .5s cubic-bezier(.3,1.6,.5,1) var(--svd,0ms) both;background:var(--fg,#f2f0ec)!important;border-color:var(--fg,#f2f0ec)!important;color:var(--bg,#0a0a0b)!important}
+.ltool.ltsaved > svg:not(.x){opacity:0}
+.ltok{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;pointer-events:none}
+.ltok svg{width:62%!important;height:62%!important;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;animation:ltTick .42s ease-out calc(var(--svd,0ms) + .12s) forwards}
+.ltsvd{position:absolute;left:0;top:calc(100% + 8px);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;padding:5px 11px 5px 8px;border-radius:999px;background:var(--fg,#f2f0ec);color:var(--bg,#0a0a0b);font:600 12.5px/1 var(--f-body);box-shadow:0 4px 14px #000a;pointer-events:none;animation:ltPill 2.4s ease var(--svd,0ms) both}
+.ltsvd svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.ltool.ltbump{animation:ltBump .55s cubic-bezier(.3,1.7,.5,1) calc(var(--svd,0ms) + .62s) both}
+.ltool.ltbump .ltcnt{animation:ltCnt .6s ease calc(var(--svd,0ms) + .62s) both}
+.svfly{position:fixed;z-index:99999;pointer-events:none;transform-origin:50% 50%;filter:drop-shadow(0 8px 18px #000c)}
+@keyframes ltSv{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes ltTick{to{stroke-dashoffset:0}}
+@keyframes ltPill{0%{opacity:0;transform:translateY(-6px) scale(.9)}10%,82%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px)}}
+@keyframes ltBump{0%{transform:scale(1)}35%{transform:scale(1.3) rotate(-8deg)}65%{transform:scale(.94) rotate(4deg)}100%{transform:none}}
+@keyframes ltCnt{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.ltool.ltsaved,.ltool.ltbump,.ltool.ltbump .ltcnt{animation:none}.ltok svg{animation:none;stroke-dashoffset:0}}
+/* v1039 (Inaya: „Lookbuch und Zimmerbuch cooler“): wie ein altes Buch mit Spitzbogen-Seiten */
+.lbmodal .lbcard{position:relative;padding:20px 18px 22px;border-radius:18px;background:radial-gradient(120% 70% at 50% -10%,#2a2730 0%,#141317 55%,#0d0c0f 100%);border:1px solid #3a3740;box-shadow:0 30px 80px #000e,inset 0 0 0 5px #0d0c0f,inset 0 0 0 6px #2c2a31;color:#f2f0ec;--fg:#f2f0ec;--line:#3a3740;--line-soft:#2a2830}
+.lbmodal .lbcard::before{content:'✦';position:absolute;left:50%;top:9px;transform:translateX(-50%);font-size:10px;letter-spacing:10px;opacity:.35}
+.lbmodal .lbhead{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px;padding:6px 0 12px;margin-bottom:6px;border-bottom:1px solid #2c2a31;position:relative}
+.lbmodal .lbhead::after{content:'';position:absolute;left:22%;right:22%;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,#f2f0ec88,transparent)}
+.lbmodal .lbico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid #3a3740;background:#1c1b20}
+.lbmodal .lbico svg{width:21px;height:21px;fill:none;stroke:#f2f0ec;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.lbmodal .lbhead .ch-h{text-align:center;font-family:var(--f-display);font-size:21px;letter-spacing:.02em;margin:0}
+.lbmodal .lbx{width:40px!important;height:40px!important;min-height:0!important;padding:0!important;border-radius:50%!important;border:1px solid #3a3740!important;background:#1c1b20!important;font-size:15px}
+.lbmodal .albumh{display:table;margin:6px auto 4px!important;padding:5px 13px;border:1px solid #3a3740;border-radius:999px;background:#18171b;font-size:11.5px;letter-spacing:.14em}
+.lbmodal .limnote{text-align:center;margin:0 0 4px}
+.lbmodal .looks{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px;margin-top:6px}
+.lbmodal .look{position:relative;border:1px solid #3d3a44;border-radius:999px 999px 12px 12px;padding:14px 6px 2px;box-shadow:inset 0 0 0 3px #0005,inset 0 -30px 40px -20px #0009,0 6px 16px #0007;transition:transform .2s ease,box-shadow .2s ease;background-image:radial-gradient(70% 45% at 50% 30%,#ffffff1c,transparent 70%)!important}
+.lbmodal .look:hover{transform:translateY(-3px)}
+.lbmodal .look.on{border-color:#f2f0ec;box-shadow:0 0 0 2px #f2f0ec,0 10px 24px #000a;transform:translateY(-3px)}
+.lbmodal .lbno{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font:600 10px/1 var(--f-body);font-style:normal;letter-spacing:.12em;padding:3px 7px;border-radius:999px;background:#0d0c0fcc;border:1px solid #3a3740;color:#f2f0ec;pointer-events:none}
+.lbmodal .rbooks{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:6px}
+.lbmodal .rbitem{position:relative;padding:8px 8px 26px;border-radius:14px;border:1px solid #3d3a44;background:radial-gradient(80% 60% at 50% 35%,#ffffff12,transparent 70%),#151418;box-shadow:0 6px 16px #0007;transition:transform .2s ease}
+.lbmodal .rbitem:hover{transform:translateY(-3px)}
+.lbmodal .rbitem.on{border-color:#f2f0ec;box-shadow:0 0 0 2px #f2f0ec,0 10px 24px #000a}
+.lbmodal .lookctl{margin-top:14px;padding-top:14px;border-top:1px solid #2c2a31}
+.lbmodal .lookctl .btn{border-radius:12px}
+.lbmodal .lookctl,.lbmodal .lookctl .row{justify-content:center;text-align:center}.lbmodal .lookctl .swatches{justify-content:center}
+.lbmodal .rbitem{overflow:hidden}
+.lbmodal .note{text-align:center;opacity:.75}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -8249,14 +8295,14 @@ const rbRoom = (u, r) => { const room = {...JSON.parse(JSON.stringify(u.room || 
 function rbModal(u, own){
   const L = u.roomsBook || [], sel = own && rbSel != null && L[rbSel] ? L[rbSel] : null;
   return `<div class="modal lbmodal" role="dialog" aria-modal="true" aria-label="Zimmerbuch"><div class="card modal-card lbcard rbcard">
-    <div class="lbhead"><h2 class="ch-h">${own ? 'Dein Zimmerbuch' : 'Zimmerbuch von ' + esc(u.name)}</h2><button type="button" class="btn ghost" data-act="rb-close" aria-label="Schließen">✕</button></div>
+    <div class="lbhead"><span class="lbico">${RB_ICO}</span><h2 class="ch-h">${own ? 'Dein Zimmerbuch' : 'Zimmerbuch von ' + esc(u.name)}</h2><button type="button" class="btn ghost lbx" data-act="rb-close" aria-label="Schließen">✕</button></div>
     ${own ? limHead('rooms', L.length, 'Zimmern', 'Zimmer') : ''}
-    ${L.length ? `<div class="rbooks">${L.map((r, i) => own ? `<button type="button" class="rbitem ${i === rbSel ? 'on' : ''}" data-act="rb-sel" data-i="${i}" aria-label="Zimmer ${i + 1}">${rbRoom(u, r)}</button>` : `<div class="rbitem">${rbRoom(u, r)}</div>`).join('')}</div>`
+    ${L.length ? `<div class="rbooks">${L.map((r, i) => own ? `<button type="button" class="rbitem ${i === rbSel ? 'on' : ''}" data-act="rb-sel" data-i="${i}" aria-label="Zimmer ${i + 1}">${rbRoom(u, r)}<em class="lbno">${i + 1}</em></button>` : `<div class="rbitem">${rbRoom(u, r)}</div>`).join('')}</div>`
       : `<p class="note" style="margin:0">${own ? 'Noch leer. Wenn dir dein Zimmer gefällt, tipp im Zimmer auf „Zimmer speichern“.' : 'Noch keine Zimmer gespeichert.'}</p>`}
     ${sel ? `<div class="row lookctl"><button type="button" class="btn" data-act="rb-use">Dieses Zimmer einrichten</button><button type="button" class="btn ghost" data-act="rb-del">Aus dem Zimmerbuch löschen</button></div>` : ''}
   </div></div>`;
 }
-const roomTools = () => `<div class="ltools rtools lside"><button type="button" class="ltool" data-act="rb-open" data-id="${esc(S.me)}">${RB_ICO}<span>Zimmerbuch</span></button><button type="button" class="ltool" data-act="rb-save">${LT_SAVE}<span>Zimmer speichern</span></button><button type="button" class="ltool" data-act="rb-clear">${LT_CLEAR}<span>Komplett ausräumen</span></button></div>`; /* gleiche Reihenfolge wie in der Garderobe: Buch, Speichern, Leeren (Inaya, 2026-10-18) */
+const roomTools = () => `<div class="ltools rtools lside"><button type="button" class="ltool" data-act="rb-open" data-id="${esc(S.me)}">${ltCnt((me()?.roomsBook || []).length)}${RB_ICO}<span>Zimmerbuch</span></button><button type="button" class="ltool" data-act="rb-save">${LT_SAVE}<span>Zimmer speichern</span></button><button type="button" class="ltool" data-act="rb-clear">${LT_CLEAR}<span>Komplett ausräumen</span></button></div>`; /* gleiche Reihenfolge wie in der Garderobe: Buch, Speichern, Leeren (Inaya, 2026-10-18) */
 function rbUse(){ const u = me(), r = u.roomsBook?.[rbSel]; if (!r) return; const room = u.room, skipped = (r.items || []).filter(x => !FURN[x.k] || !ncOwns(ncF(x.k))).length;
   room.items = (r.items || []).filter(x => FURN[x.k] && ncOwns(ncF(x.k))).map(x => ({...x}));
   const surfOk = (key, s) => surfAvail(s).includes(key);
@@ -9544,6 +9590,7 @@ Object.assign(I18N_EN, {"mehr": "more", "weniger": "less",
 Object.assign(I18N_EN, {"Abo prüfen":"Check subscription","Zeigt, ob ein Mitglied ein Abo oder einen Gratis-Monat hat, und holt den Stand frisch von Stripe. Fehlt ein Abo, wird es dabei wieder eingetragen.":"Shows whether a member has a subscription or free month and fetches the current state from Stripe. A missing subscription is restored.","Prüfen":"Check","Wird geprüft …":"Checking …","Frage Stripe …":"Asking Stripe …","Eingetragen: {0}, {1}, bis {2}":"Stored: {0}, {1}, until {2}","Eingetragen: kein Abo":"Stored: no subscription","Eintrag nicht lesbar.":"Entry not readable.","Stripe: {0}, {1}, bis {2}":"Stripe: {0}, {1}, until {2}"," (gekündigt zum Ende)":" (cancelled at period end)","✓ Wieder eingetragen. @{0} muss Noctibat einmal ganz schließen und neu öffnen.":"✓ Restored. @{0} needs to fully close and reopen Noctibat once.","Stripe: kein Kunde zu diesem Konto gefunden. Hat @{0} wirklich über Noctibat bezahlt?":"Stripe: no customer found for this account. Did @{0} really pay through Noctibat?","Stripe: Kunde gefunden, aber kein Abo.":"Stripe: customer found, but no subscription.","Stripe: keine Antwort.":"Stripe: no answer.","Stripe-Abfrage fehlt: bitte die Functions neu einspielen (firebase deploy --only functions).":"Stripe check missing: please redeploy the functions (firebase deploy --only functions).","Stripe-Abfrage ging nicht: ":"Stripe check failed: "," gibt es nicht.":" doesn't exist.","aktiv":"active","Gratis-Monat":"Free month","Zahlung offen (läuft weiter)":"Payment due (still running)","beendet":"ended","Bezahlung nicht abgeschlossen":"Payment not completed","Bezahlung abgebrochen":"Payment abandoned","unbezahlt":"unpaid","pausiert":"paused"}); /* v1035 */
 Object.assign(I18N_EN, {'Abos':'Subscriptions','Abos konnten nicht geladen werden.':'Could not load subscriptions.','gekündigt, läuft bis {0}':'cancelled, runs until {0}','seit {0}':'since {0}','laufende Abos':'active subscriptions','im Gratis-Monat':'in free month','Insgesamt jemals abgeschlossen: {0}':'Taken out in total: {0}','Neueste Abos':'Newest subscriptions','Noch keine Abos.':'No subscriptions yet.','Aktualisieren':'Refresh','beendet':'ended','aktiv':'active','Gratis-Monat':'Free month','Mehr anzeigen':'Show more','Einführung nach dem Abschluss ansehen':'Preview the welcome after subscribing'}); /* v1036 */
 Object.assign(I18N_EN, {'Einführung für neue Konten':'Onboarding for new accounts','Zeigt die Einführung, die neue Mitglieder nach der Anmeldung sehen. Nur eine Vorschau, es wird nichts gespeichert.':'Shows the onboarding new members see after signing up. Preview only, nothing is saved.','Einführung ansehen':'View onboarding'}); /* v1038 */
+Object.assign(I18N_EN, {'Look gespeichert':'Look saved','Zimmer gespeichert':'Room saved'}); /* v1039 */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -13398,13 +13445,29 @@ function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von ob
     <div class="preview" id="preview">${previewHTML()}</div>
   </div>`;
 }
+/* v1039 (Inaya: „man merkt gar nicht, dass gespeichert wurde“): kein Toast, sondern Rückmeldung am Knopf. Speichern-Knopf wird zum Häkchen mit „Gespeichert“, eine Kopie von Avatar bzw. Zimmer fliegt ins Buch, das Buch hüpft und zeigt die neue Zahl (ltCnt). Läuft über Neuzeichnen hinweg weiter (negativer animation-delay). */
+let SVFX = null;
+const LT_OK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const ltCnt = n => n ? `<em class="ltcnt">${n > 99 ? '99+' : n}</em>` : '';
+function svfxGo(k){ SVFX = {k, t:Date.now(), fly:1}; }
+function svfxApply(){ const F = SVFX; if (!F) return; const age = Date.now() - F.t; if (age > 2400) { SVFX = null; return; }
+  const lk = F.k === 'look', sb = document.querySelector(`.ltool[data-act="${lk ? 'look-save' : 'rb-save'}"]`), bb = document.querySelector(`.ltool[data-act="${lk ? 'lb-open' : 'rb-open'}"]`), d = -age + 'ms';
+  if (sb && !sb.querySelector('.ltok')) { sb.classList.add('ltsaved'); sb.style.setProperty('--svd', d); sb.insertAdjacentHTML('beforeend', `<i class="ltok">${LT_OK}</i>`); const box = sb.parentElement; if (box && !box.querySelector('.ltsvd')) box.insertAdjacentHTML('beforeend', `<span class="ltsvd" style="--svd:${d}">${LT_OK}${tr(lk ? 'Look gespeichert' : 'Zimmer gespeichert')}</span>`); }
+  if (bb) { bb.classList.add('ltbump'); bb.style.setProperty('--svd', d); }
+  setTimeout(() => { if (SVFX === F) { SVFX = null; document.querySelectorAll('.ltsaved,.ltbump').forEach(x => x.classList.remove('ltsaved', 'ltbump')); document.querySelectorAll('.ltok,.ltsvd').forEach(x => x.remove()); } }, 2400 - age);
+  if (!F.fly || !bb) return; F.fly = 0; const src = lk ? document.querySelector('.wardrobe .mirror .pic > svg') : document.querySelector('.rstick .room'); if (!src || !src.animate) return;
+  const a = src.getBoundingClientRect(), z = bb.getBoundingClientRect(); if (!a.width || !z.width) return; const c = src.cloneNode(true), w = document.createElement('div');
+  w.className = 'svfly'; w.style.cssText = `left:${a.left}px;top:${a.top}px;width:${a.width}px;height:${a.height}px`; c.style.width = c.style.height = '100%'; w.appendChild(c); document.body.appendChild(w);
+  const dx = z.left + z.width / 2 - (a.left + a.width / 2), dy = z.top + z.height / 2 - (a.top + a.height / 2), sc = Math.max(.06, z.width / Math.max(a.width, a.height));
+  const an = w.animate([{transform:'translate(0,0) scale(1)', opacity:.95}, {transform:`translate(${dx * .35}px,${dy * .35 - 30}px) scale(.62) rotate(-6deg)`, opacity:.9, offset:.4}, {transform:`translate(${dx}px,${dy}px) scale(${sc}) rotate(-12deg)`, opacity:.15}], {duration:matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 720, easing:'cubic-bezier(.5,0,.3,1)'});
+  an.onfinish = an.oncancel = () => w.remove(); }
 // Sammelalbum (Lookbuch): fertige Looks speichern, mit eigener Hintergrundfarbe; andere sehen es auf dem Profil
 let lookSel = null, LB = null;
 const lookBtn = u => `<button type="button" class="lbbtn" data-act="lb-open" data-id="${esc(u.id)}" title="Lookbuch" aria-label="Lookbuch von ${esc(u.name)} öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button>`;
 function lookModal(u, own){
   const L = u.looks || [];
   return `<div class="modal lbmodal" role="dialog" aria-modal="true" aria-label="Lookbuch"><div class="card modal-card lbcard">
-    <div class="lbhead"><h2 class="ch-h">${own ? 'Dein Lookbuch' : 'Lookbuch von ' + esc(u.name)}</h2><button type="button" class="btn ghost" data-act="lb-close" aria-label="Schließen">✕</button></div>
+    <div class="lbhead"><span class="lbico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg></span><h2 class="ch-h">${own ? 'Dein Lookbuch' : 'Lookbuch von ' + esc(u.name)}</h2><button type="button" class="btn ghost lbx" data-act="lb-close" aria-label="Schließen">✕</button></div>
     ${own ? albumHTML(u) : L.length ? `<div class="looks">${L.map(l => `<div class="look" style="background:${esc(l.bg || '#26262b')}">${avatar(l.outfit, 'full', '', true)}</div>`).join('')}</div>` : '<p class="note">Noch keine Looks gespeichert.</p>'}
   </div></div>`;
 }
@@ -13413,7 +13476,7 @@ function albumHTML(u){
   const L = u.looks || [];
   const sel = lookSel != null && L[lookSel] ? L[lookSel] : null;
   return `<div class="album" id="album">${limHead('looks', L.length, 'Looks')}
-    ${L.length ? `<div class="looks">${L.map((l, i) => `<button type="button" class="look ${i === lookSel ? 'on' : ''}" data-act="look-sel" data-i="${i}" style="background:${esc(l.bg || '#26262b')}" aria-label="Look ${i + 1}">${avatar(l.outfit, 'full', '', true)}</button>`).join('')}</div>`
+    ${L.length ? `<div class="looks">${L.map((l, i) => `<button type="button" class="look ${i === lookSel ? 'on' : ''}" data-act="look-sel" data-i="${i}" style="background:${esc(l.bg || '#26262b')}" aria-label="Look ${i + 1}">${avatar(l.outfit, 'full', '', true)}<em class="lbno">${i + 1}</em></button>`).join('')}</div>`
       : '<p class="note" style="margin:0">Noch leer. Wenn dir ein Look gefällt, tipp in der Garderobe auf „Look speichern“.</p>'}
     ${sel ? `<div class="lookctl"><fieldset class="opt"><legend class="lbl">Hintergrund</legend><div class="swatches">${BG_COLORS.map(([c, l]) => `<button type="button" class="sw" style="background:${c}" data-act="look-bg" data-v="${c}" aria-pressed="${sel.bg === c}" title="${l}" aria-label="Hintergrund ${l}"></button>`).join('')}<input type="button" data-ctype="color" class="cpick lookpick" value="${/^#[0-9a-f]{6}$/i.test(sel.bg || '') ? sel.bg : '#26262b'}" title="Eigene Farbe" aria-label="Eigene Hintergrundfarbe"></div></fieldset>
       <div class="row"><button type="button" class="btn" data-act="look-wear">Diesen Look anziehen</button><button type="button" class="btn ghost" data-act="look-del">Aus dem Album löschen</button></div></div>` : ''}
@@ -13444,7 +13507,7 @@ function shopView(isShop){
   }).join('');
   const empty = shopCat === 'body' ? '' : !isShop ? `<p class="note">Hier hast du noch nichts. <button class="lnk" data-act="nav" data-v="mall">Zur Mall</button></p>` : isShop ? `<p class="note">In dieser Abteilung hast du schon alles. Schau in deine <button class="lnk" data-act="nav" data-v="wardrobe">Garderobe</button> oder in eine andere Abteilung.</p>` : '';
   return `<div class="wardrobe">
-    <div class="card mirror-card">${isShop ? '' : `<div class="ltools lside"><button type="button" class="ltool" data-act="lb-open" data-id="${u.id}" aria-label="Lookbuch öffnen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="ltool" data-act="look-save">${LT_SAVE}<span>Look speichern</span></button><button type="button" class="ltool" data-act="undress">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>`}
+    <div class="card mirror-card">${isShop ? '' : `<div class="ltools lside"><button type="button" class="ltool" data-act="lb-open" data-id="${u.id}" aria-label="Lookbuch öffnen">${ltCnt((u.looks || []).length)}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5Q8 4 12 6Q16 4 20 5.5V19Q16 17.6 12 19.4Q8 17.6 4 19Z"/><path d="M12 6V19.4"/><path d="M7 9H9.6M7 12H9.6M14.4 9H17M14.4 12H17"/></svg><span>Lookbuch</span></button><button type="button" class="ltool" data-act="look-save">${LT_SAVE}<span>Look speichern</span></button><button type="button" class="ltool" data-act="undress">${LT_UNDRESS}<span>Komplett ausziehen</span></button></div>`}
       ${portrait({outfit:shown}, {frame:'ornament',shape:'bogen'}, 'mirror')}
       ${trial ? `<p class="note">Du probierst gerade etwas an.</p><button class="btn ghost" data-act="untry">Anprobe beenden</button>` : `<p class="note">Klick auf ein Teil, um es anzuprobieren.</p>`}
     </div>
@@ -20791,7 +20854,7 @@ function renderInner(){
   setTimeout(fitChk, 0); setTimeout(fitChk, 600); document.body.dataset.pg = V.name === 'petv' ? 'pet' : V.name; railFit(); /* v852: Besuchs-Seite wie die eigene Begleiter-Seite */ document.body.classList.toggle('obopen', !!me()?.obOpen); document.body.classList.toggle('chlist', V.name === 'chats' && (!CH.open || ['info', 'media', 'gadd'].includes(CH.mode)) && innerWidth < 762); /* v813: Kontaktinfo/Medien wie die Chatliste, kein Scrollen ins Leere */ /* v699: Chatliste endet wie Suche und Profil 16 px über der Leiste */ /* für Seiten-Layouts am PC (v577) */
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : V.name === 'pet' || V.name === 'petv' ? petTheme(V.name === 'petv' ? V.arg : S.me) : null); /* v852: Begleiter-Seite im Profil-Design */
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
-  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs(); lvLoad(); rzApply(); zmApply();
+  syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs(); lvLoad(); rzApply(); zmApply(); svfxApply();
   restoreX();
   const mb = document.getElementById('msgs'); if (mb) { mb.dataset.h = '1'; MSGH = {cid:CH.open, h:''}; msgRest(mb, msgA); msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
@@ -21747,10 +21810,10 @@ document.addEventListener('click', async e => {
   else if (a === 'rb-use') rbUse();
   else if (a === 'rb-del') { const u = me(); if (u.roomsBook?.[rbSel]) { u.roomsBook.splice(rbSel, 1); rbSel = null; save(); publishProfile(); render(); toast('Zimmer gelöscht'); } }
   else if (a === 'rb-save') { const u = me(), r = u.room; u.roomsBook = u.roomsBook || []; if (u.roomsBook.length >= limOf('rooms')) { limFull('rooms'); return; }
-    u.roomsBook.push({wall:r.wall, floor:r.floor, wallC:r.wallC || null, floorC:r.floorC || null, items:JSON.parse(JSON.stringify(r.items || [])), ts:Date.now()}); save(); publishProfile(); render(); toast('Zimmer im Zimmerbuch gespeichert'); }
+    u.roomsBook.push({wall:r.wall, floor:r.floor, wallC:r.wallC || null, floorC:r.floorC || null, items:JSON.parse(JSON.stringify(r.items || [])), ts:Date.now()}); save(); publishProfile(); svfxGo('room'); render(); }
   else if (a === 'rb-clear') { if (!me().room.items.length) return toast('Dein Zimmer ist schon leer.'); if (!(await askYesNo('Alles aus dem Zimmer räumen?', 'Ja, ausräumen', 'Nein'))) return; me().room.items = []; roomSel = null; save(); publishProfile(); render(); toast('Zimmer ausgeräumt. Speicher es vorher im Zimmerbuch, wenn du es wieder einrichten willst.'); }
   else if (a === 'undress') { undressAll(me().outfit); trial = null; save(); render(); toast('Komplett ausgezogen'); }
-  else if (a === 'look-save') { const u = me(); u.looks = u.looks || []; if (u.looks.length >= limOf('looks')) { limFull('looks'); return; } u.looks.push({outfit:JSON.parse(JSON.stringify(u.outfit)), bg:'#26262b', ts:Date.now()}); lookSel = u.looks.length - 1; save(); render(); toast('Look im Lookbuch gespeichert'); }
+  else if (a === 'look-save') { const u = me(); u.looks = u.looks || []; if (u.looks.length >= limOf('looks')) { limFull('looks'); return; } u.looks.push({outfit:JSON.parse(JSON.stringify(u.outfit)), bg:'#26262b', ts:Date.now()}); lookSel = u.looks.length - 1; save(); svfxGo('look'); render(); }
   else if (a === 'look-sel') { const i = +b.dataset.i; lookSel = lookSel === i ? null : i; render(); }
   else if (a === 'look-bg') { const l = me().looks?.[lookSel]; if (l) { l.bg = b.dataset.v; save(); render(); } }
   else if (a === 'look-wear') { const l = me().looks?.[lookSel]; if (l) { me().outfit = ncStrip(normOutfit(JSON.parse(JSON.stringify(l.outfit)))); trial = null; save(); render(); toast('Look angezogen'); } }
