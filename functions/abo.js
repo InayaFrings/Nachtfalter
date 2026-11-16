@@ -72,7 +72,7 @@ async function writeSub(sub0, best = true){ const md0 = sub0.metadata || {}; if 
   if (sub.status === 'trialing') { const kref = db.doc('aboCus/' + uid), kd = (await kref.get()).data() || {};
     if (kd.tr && kd.trs && kd.trs !== sub.id) { const S = stripe(); if (S) { console.warn('ABO zweiter Gratis-Monat', uid, sub.id); return writeSub(await S.subscriptions.update(sub.id, {trial_end: 'now'}), false); } }
     if (!kd.trs) await kref.set({tr: Date.now(), trs: sub.id}, {merge: true}); }
-  await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || ''), lv: !!sub.livemode, tu: tri, te: sub.trial_end ? sub.trial_end * 1000 : 0});
+  await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || ''), lv: !!sub.livemode, tu: tri, te: sub.trial_end ? sub.trial_end * 1000 : 0, cr: (sub.created || 0) * 1000});
   await db.doc('handles/' + uid).set({ab: live ? Math.round(e) : 0, ap: live ? p : ''}, {merge: true}).catch(err => console.error('ABO handles', err));
   console.log('ABO', JSON.stringify({uid, p, st: sub.status, e: new Date(e).toISOString(), ce: !!sub.cancel_at_period_end}));
   if (live) await refBonus(uid).catch(err => console.error('ABO refBonus', err)); }
