@@ -53,13 +53,24 @@ function periodOf(sub){ const it = sub.items && sub.items.data && sub.items.data
     cy: (it.price && it.price.recurring && it.price.recurring.interval) === 'year' ? 'y' : 'm'}; }
 
 /* Status nach subs/<uid>. Nur aktive bzw. zahlende Abos haben ein Ablaufdatum in der Zukunft. */
-async function writeSub(sub){ const md = sub.metadata || {}, uid = md.uid, p = md.p; if (!uid || !PLANS[p]) { console.warn('Abo ohne uid/p', sub.id); return; }
+/* v1034: Bestes Abo einer Person. Stripe-Ereignisse kommen nicht immer der Reihe nach, und eine Person kann mehrere Abos haben (z. B. abgebrochene Bezahlseite = incomplete,
+   altes gekündigtes Abo). Vorher schrieb jedes Ereignis blind sein eigenes Abo nach subs/<uid>, ein spätes oder fremdes Ereignis setzte ein laufendes Abo auf abgelaufen (Abzeichen und Funktionen weg).
+   Jetzt fragt der Server Stripe nach allen Abos des Kunden mit dieser uid: ein laufendes (active, trialing, past_due) mit dem spätesten Ende gewinnt, sonst das neueste. */
+const LIVE_ST = ['active', 'trialing', 'past_due'];
+async function bestSub(S, cus, uid, fb){ if (!S || !cus) return fb; try { const r = await S.subscriptions.list({customer: cus, status: 'all', limit: 20});
+    const all = (r.data || []).filter(x => (x.metadata || {}).uid === uid && PLANS[(x.metadata || {}).p]); if (!all.length) return fb;
+    const lv = all.filter(x => LIVE_ST.includes(x.status)).sort((a, b) => periodOf(b).e - periodOf(a).e);
+    return lv[0] || all.sort((a, b) => (b.created || 0) - (a.created || 0))[0]; } catch (e) { console.error('ABO bestSub', e && e.message); return fb; } }
+async function writeSub(sub0, best = true){ const md0 = sub0.metadata || {}; if (!md0.uid || !PLANS[md0.p]) { console.warn('Abo ohne uid/p', sub0.id); return; }
+  const sub = best ? await bestSub(stripe(), String(sub0.customer || ''), md0.uid, sub0) : sub0;
+  if (sub.id !== sub0.id) console.log('ABO best', JSON.stringify({ev: sub0.id, st: sub0.status, best: sub.id, bst: sub.status}));
+  const md = sub.metadata || {}, uid = md.uid, p = md.p;
   const per = periodOf(sub), live = ['active', 'trialing', 'past_due'].includes(sub.status);
   const e = live ? per.e : Math.min(per.e || Date.now(), (sub.ended_at || sub.canceled_at || Date.now() / 1000) * 1000);
   const tri = sub.status === 'trialing' || !!sub.trial_end;
   /* Gratis-Monat nur einmal je Konto: hat schon ein anderes Abo den Gratis-Monat bekommen (z. B. zwei Bezahlseiten gleichzeitig geöffnet), startet dieses sofort bezahlt */
   if (sub.status === 'trialing') { const kref = db.doc('aboCus/' + uid), kd = (await kref.get()).data() || {};
-    if (kd.tr && kd.trs && kd.trs !== sub.id) { const S = stripe(); if (S) { console.warn('ABO zweiter Gratis-Monat', uid, sub.id); await S.subscriptions.update(sub.id, {trial_end: 'now'}); return; } }
+    if (kd.tr && kd.trs && kd.trs !== sub.id) { const S = stripe(); if (S) { console.warn('ABO zweiter Gratis-Monat', uid, sub.id); return writeSub(await S.subscriptions.update(sub.id, {trial_end: 'now'}), false); } }
     if (!kd.trs) await kref.set({tr: Date.now(), trs: sub.id}, {merge: true}); }
   await db.doc('subs/' + uid).set({p, e: Math.round(e), ps: Math.round(per.s), src: 'stripe', cy: per.cy, ce: !!sub.cancel_at_period_end, st: sub.status, sid: sub.id, cus: String(sub.customer || ''), lv: !!sub.livemode, tu: tri, te: sub.trial_end ? sub.trial_end * 1000 : 0});
   await db.doc('handles/' + uid).set({ab: live ? Math.round(e) : 0, ap: live ? p : ''}, {merge: true}).catch(err => console.error('ABO handles', err));
@@ -162,7 +173,16 @@ exports.aboWebhook = fn.https.onRequest(async (req, res) => {
 
 async function mySub(ctx){ const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
   const d = await db.doc('subs/' + uid).get(); if (!d.exists || d.data().src !== 'stripe' || !d.data().sid || !sameMode(d.data())) throw err('not-found', 'Kein Abo gefunden.');
-  const S = stripe(); if (!S) throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); return {S, sid: d.data().sid}; }
+  const S = stripe(); if (!S) throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); const b = await bestSub(S, d.data().cus, uid, null); return {S, sid: b && LIVE_ST.includes(b.status) ? b.id : d.data().sid}; } /* v1034: das laufende Abo kündigen, nicht ein altes */
+/* v1034: Abo-Stand neu von Stripe holen (die App ruft das einmal je Sitzung, wenn ein Stripe-Abo abgelaufen aussieht oder nach der Rückkehr von der Bezahlseite) */
+exports.aboRefresh = fn.https.onCall(async (data, ctx) => { const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
+  const S = stripe(); if (!S) return {ok: false};
+  const [k, d] = await Promise.all([db.doc('aboCus/' + uid).get(), db.doc('subs/' + uid).get()]);
+  const cus = (k.exists && sameMode(k.data()) && k.data().id) || (d.exists && d.data().src === 'stripe' && sameMode(d.data()) && d.data().cus) || '';
+  if (!cus) return {ok: true, none: true};
+  const b = await bestSub(S, cus, uid, null); if (!b) return {ok: true, none: true};
+  await writeSub(b, false); return {ok: true, st: b.status}; });
+
 exports.aboCancel = fn.https.onCall(async (data, ctx) => { const {S, sid} = await mySub(ctx); await writeSub(await S.subscriptions.update(sid, {cancel_at_period_end: true})); return {ok: true}; });
 exports.aboResume = fn.https.onCall(async (data, ctx) => { const {S, sid} = await mySub(ctx); await writeSub(await S.subscriptions.update(sid, {cancel_at_period_end: false})); return {ok: true}; });
 

@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='2881103f8302';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='a73f190520e1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -18177,7 +18177,10 @@ function aobChk(){ const u = me(); if (!u || !aboOn() || !SUB.d?.p || u.aboOnb =
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-act^="aob-"]'); if (!b) return; const a = b.dataset.act, n = aobSteps().length;
   if (a === 'aob-next') { if (AOB.i >= n - 1) return aobDone(); AOB.i++; AOB.dir = 1; aobPaint(); } else if (a === 'aob-back') { AOB.i = Math.max(0, AOB.i - 1); AOB.dir = -1; aobPaint(); }
   else if (a === 'aob-skip') aobDone(); else if (a === 'aob-look') { aobDone(); go('design'); } });
-function aboSync(){ earnStart(); aboHandle(); aboGestalt(); setTimeout(aobChk, 1500); aboMonthly(); aboShirt(); aboDrop(); aboDropP(); aboDropSync(); if (['settings', 'profile', 'home'].includes(V.name)) softRender(); }
+/* v1034: Sieht ein Stripe-Abo abgelaufen aus (oder kommt man von der Bezahlseite zurück), holt der Server den Stand einmal je Sitzung frisch von Stripe (aboRefresh). */
+function aboHeal(force){ if (!social || !SUB.srv || SUB.old || SUB.heal) return; const d = SUB.d; if (!force && !(d && d.src === 'stripe' && !aboOn())) return; SUB.heal = 1;
+  NF_AUTH.call('aboRefresh', {}).catch(() => {}); }
+function aboSync(){ aboHeal(SUB.back); earnStart(); aboHandle(); aboGestalt(); setTimeout(aobChk, 1500); aboMonthly(); aboShirt(); aboDrop(); aboDropP(); aboDropSync(); if (['settings', 'profile', 'home'].includes(V.name)) softRender(); }
 /* v1010 (Inaya): erster Monat gratis, einmal je Person (der Server entscheidet, die App zeigt es nur an). Kein Gratis-Monat mehr, wenn es schon ein echtes Abo gab (lv) oder einen Gratis-Monat (tu). */
 const ABO_TRIAL = 30;
 const aboTrial = () => !(SUB.d && ((SUB.d.src === 'stripe' && SUB.d.lv) || SUB.d.tu));
@@ -18203,7 +18206,7 @@ function aboGestalt(){ const u = me(); if (!u || !social || SUB.old || !SUB.srv 
   if (K.b?.pattern && b.pattern === 'schlicht' && aboPatOn(K.b.pattern)) b.pattern = K.b.pattern;
   u.theme = t; u.banner = b; delete u.aboKeep; save(); softRender(); }
 /* Abzeichen für andere: Ablauf des Abos nach handles/<uid>.ab (0 = kein Abo) */
-function aboHandle(){ if (!social || !aboSee() || SUB.old || !NM[social.uid]) return; const want = aboOn() ? +SUB.d.e : 0, ap = aboOn() ? SUB.d.p : '', key = want + ap;
+function aboHandle(){ if (!social || !aboSee() || SUB.old || !SUB.srv || !NM[social.uid]) return; /* v1034: nie mit dem Stand aus dem Zwischenspeicher schreiben (setzte das Abzeichen auf 0) */ const want = aboOn() ? +SUB.d.e : 0, ap = aboOn() ? SUB.d.p : '', key = want + ap;
   if (((+NM[social.uid].ab || 0) === want && (NM[social.uid].ap || '') === ap) || SUB.hb === key) return; SUB.hb = key;
   social.db.doc('handles/' + social.uid).set({ab:want, ap}, {merge:true}).catch(() => { SUB.hb = null; }); } /* v930: ap = Abo-Art (Regenbogen-Kreis bei Premium) */
 /* Monats-Coins: je bezahltem Zeitraum (ps) einmal */
@@ -18721,10 +18724,10 @@ function aboWarm(now){ if (!PUB || !NF_AUTH?.call || !(ABO_PAY || aboPay())) ret
   NF_AUTH.call('aboCheckout', {warm:1}); NF_AUTH.call('coinCheckout', {warm:1}); }
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-act="coin-buy"],[data-act="coin-go"]'); if (!b) return; if (b.dataset.act === 'coin-buy') coinBuyOpen(b.dataset.v); else coinBuyGo(); });
 try { const q = new URLSearchParams(location.search), a = q.get('coins'); if (a) { q.delete('coins'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
-  setTimeout(() => toastNow(a === 'ok' ? 'Danke! Deine Coins kommen gleich.' : a === 'dry' ? 'Test: Hier hätte sich die Bezahlseite geöffnet.' : 'Abgebrochen. Es wurde nichts bezahlt.'), 1800); } } catch {}
+  if (a === 'ok') SUB.back = 1; setTimeout(() => toastNow(a === 'ok' ? 'Danke! Deine Coins kommen gleich.' : a === 'dry' ? 'Test: Hier hätte sich die Bezahlseite geöffnet.' : 'Abgebrochen. Es wurde nichts bezahlt.'), 1800); } } catch {}
 /* Rückkehr von der Bezahlseite (?abo=ok|x|dry) */
 try { const q = new URLSearchParams(location.search), a = q.get('abo'); if (a) { q.delete('abo'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
-  setTimeout(() => toastNow(a === 'ok' ? 'Danke! Dein Abo wird gleich freigeschaltet.' : a === 'dry' ? 'Test: Hier hätte sich die Bezahlseite geöffnet.' : 'Abgebrochen. Es wurde nichts bezahlt.'), 1800); } } catch {}
+  if (a === 'ok') SUB.back = 1; setTimeout(() => toastNow(a === 'ok' ? 'Danke! Dein Abo wird gleich freigeschaltet.' : a === 'dry' ? 'Test: Hier hätte sich die Bezahlseite geöffnet.' : 'Abgebrochen. Es wurde nichts bezahlt.'), 1800); } } catch {}
 function aboPick(k, tog){ if (k != null && !ABO_P[k]) return; SUB.sel = k == null ? 0 : (tog && k === aboSel()) ? 0 : k; /* v1016 (Inaya): nochmal antippen klappt die Liste wieder zu */ const b = document.querySelector('.aboset .abobox'); if (!b) return softRender(); const t = document.createElement('div'); t.innerHTML = aboSetHTML(); const n = t.firstElementChild; b.replaceWith(n); if (typeof i18nNode === 'function') i18nNode(n); n.querySelector(`.aboplan[data-v=${k}]`)?.focus({preventScroll:true}); }
 document.addEventListener('keydown', e => { const c = e.target.closest?.('.aboplan[data-v]'); if (c && e.target === c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); aboPick(c.dataset.v, true); } });
 async function aboTest(p){ if (!amOwner || !social) return; const ref = social.db.doc('subs/' + social.uid), now = Math.round(srvNow());
