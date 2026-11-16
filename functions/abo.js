@@ -175,13 +175,25 @@ async function mySub(ctx){ const uid = ctx.auth && ctx.auth.uid; if (!uid) throw
   const d = await db.doc('subs/' + uid).get(); if (!d.exists || d.data().src !== 'stripe' || !d.data().sid || !sameMode(d.data())) throw err('not-found', 'Kein Abo gefunden.');
   const S = stripe(); if (!S) throw err('unavailable', 'Die Bezahlung ist noch nicht eingerichtet.'); const b = await bestSub(S, d.data().cus, uid, null); return {S, sid: b && LIVE_ST.includes(b.status) ? b.id : d.data().sid}; } /* v1034: das laufende Abo kündigen, nicht ein altes */
 /* v1034: Abo-Stand neu von Stripe holen (die App ruft das einmal je Sitzung, wenn ein Stripe-Abo abgelaufen aussieht oder nach der Rückkehr von der Bezahlseite) */
-exports.aboRefresh = fn.https.onCall(async (data, ctx) => { const uid = ctx.auth && ctx.auth.uid; if (!uid) throw err('unauthenticated', 'Bitte melde dich an.');
-  const S = stripe(); if (!S) return {ok: false};
+/* v1035: Kunden einer Person: aboCus, subs und zur Sicherheit die Stripe-Suche nach metadata.uid (falls aboCus/subs fehlen oder auf einen anderen Kunden zeigen) */
+async function cusOf(S, uid, k, d){ const set = new Set(); if (k && k.exists && sameMode(k.data()) && k.data().id) set.add(k.data().id);
+  if (d && d.exists && d.data().src === 'stripe' && sameMode(d.data()) && d.data().cus) set.add(d.data().cus);
+  try { const r = await S.customers.search({query: `metadata['uid']:'${String(uid).replace(/'/g, '')}'`, limit: 10}); (r.data || []).forEach(c => set.add(c.id)); } catch (e) { console.error('ABO cus search', e && e.message); }
+  return [...set]; }
+/* v1035 (Inaya: Abo von @fynn.frings war weg): Abo frisch aus Stripe holen. Die Owner darf das für jedes Konto (data.uid) und bekommt den Stand zurück. */
+exports.aboRefresh = fn.https.onCall(async (data, ctx) => { const me = ctx.auth && ctx.auth.uid; if (!me) throw err('unauthenticated', 'Bitte melde dich an.');
+  let uid = me, own = false; if (data && data.uid && data.uid !== me) { const o = await db.doc('site/owner').get(); if (!(o.exists && o.data().uid === me)) throw err('permission-denied', 'Nur die Owner.'); uid = String(data.uid); own = true; }
+  const S = stripe(); if (!S) return {ok: false, why: 'stripe'};
   const [k, d] = await Promise.all([db.doc('aboCus/' + uid).get(), db.doc('subs/' + uid).get()]);
-  const cus = (k.exists && sameMode(k.data()) && k.data().id) || (d.exists && d.data().src === 'stripe' && sameMode(d.data()) && d.data().cus) || '';
-  if (!cus) return {ok: true, none: true};
-  const b = await bestSub(S, cus, uid, null); if (!b) return {ok: true, none: true};
-  await writeSub(b, false); return {ok: true, st: b.status}; });
+  const cus = await cusOf(S, uid, k, d); if (!cus.length) { console.log('ABO refresh', JSON.stringify({uid, own, none: 'cus'})); return {ok: true, none: true, why: 'cus'}; }
+  let best = null, n = 0; for (const c of cus) { const b = await bestSub(S, c, uid, null); if (!b) continue; n++;
+    const bl = LIVE_ST.includes(b.status), cl = best && LIVE_ST.includes(best.status);
+    if (!best || (bl && !cl) || (bl === cl && (bl ? periodOf(b).e > periodOf(best).e : (b.created || 0) > (best.created || 0)))) best = b; }
+  if (!best) { console.log('ABO refresh', JSON.stringify({uid, own, cus, none: 'sub'})); return {ok: true, none: true, why: 'sub', cus: cus.length}; }
+  if (!(k.exists && sameMode(k.data()) && k.data().id)) await db.doc('aboCus/' + uid).set({id: String(best.customer), lv: LIVE()}, {merge: true});
+  await writeSub(best, false); const per = periodOf(best);
+  console.log('ABO refresh', JSON.stringify({uid, own, st: best.status, sub: best.id}));
+  return {ok: true, st: best.status, p: (best.metadata || {}).p, e: per.e, ce: !!best.cancel_at_period_end, tr: best.trial_end ? best.trial_end * 1000 : 0, n}; });
 
 exports.aboCancel = fn.https.onCall(async (data, ctx) => { const {S, sid} = await mySub(ctx); await writeSub(await S.subscriptions.update(sid, {cancel_at_period_end: true})); return {ok: true}; });
 exports.aboResume = fn.https.onCall(async (data, ctx) => { const {S, sid} = await mySub(ctx); await writeSub(await S.subscriptions.update(sid, {cancel_at_period_end: false})); return {ok: true}; });
