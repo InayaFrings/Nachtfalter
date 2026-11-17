@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e806c4c56d22';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f64b8180f9c1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -7562,7 +7562,8 @@ function avatarI(o0, view='full', pose='', lite=false){
   // Zusammensetzen
   const sk = o.skin && o.skin !== '#f7f6f3' ? (() => { const n = parseInt(o.skin.slice(1), 16), r = (n >> 16) / 255 / .9, g = ((n >> 8) & 255) / 255 / .9, b = (n & 255) / 255 / .9; return `<filter id="${u}sk" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${[r, g, b].map(k => `${f1(k * .3 * 1000) / 1000} ${f1(k * .59 * 1000) / 1000} ${f1(k * .11 * 1000) / 1000} 0 0`).join(' ')} 0 0 0 1 0"/></filter>`; })() : '';
   const PT = {laessig:`rotate(2 ${B.cx} ${B.fy})`, schuechtern:`translate(0 8) rotate(1.5 ${B.cx} ${B.fy})`, liegen:`translate(${f1(B.cx - (B.fy - 60) / 2)} ${B.cx + 1380}) rotate(-90)`}[pose] || '';
-  const wob = lite ? '' : ` filter="url(#${u}wb)"`;
+  const nowb = lite || view === 'head'; /* v1087: kleine Profilbilder ohne Wackel-Filter (feTurbulence ist beim Malen am Handy sehr teuer, bei 40 px sieht man ihn nicht) */
+  const wob = nowb ? '' : ` filter="url(#${u}wb)"`;
   // Posen wie früher: Arme und Kopf werden aus der fertigen Figur ausgeschnitten und gedreht (Schulter bzw. Hals als Gelenk)
   const PZ = typeof POSES !== 'undefined' ? POSES.find(x => x[0] === pose) : null;
   const AR = PZ ? PZ[4] : [0, 0], HR = PZ && PZ[3] ? parseFloat(PZ[3].replace('rotate(', '')) || 0 : 0;
@@ -7612,7 +7613,7 @@ function avatarI(o0, view='full', pose='', lite=false){
     <linearGradient id="${u}sh" x1="0" y1="0" x2="1" y2=".3"><stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
     <pattern id="${u}hx" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><path d="M0 0V7" stroke="#000" stroke-width="1" opacity=".22"/></pattern>
     <filter id="${u}bl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter><filter id="${u}blf" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="${u}ibl" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.1"/></filter>
-    ${lite ? '' : `<filter id="${u}wb" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>`}
+    ${nowb ? '' : `<filter id="${u}wb" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>`}
     <clipPath id="${u}ac"><path d="${IARMCLIP[B.k]}"/></clipPath>${sk}${defs.join('')}
   </defs><g transform="${PT}">${inner}</g></svg>`;
 }
@@ -14665,7 +14666,7 @@ function drawMsgs(bottom){
   if (MSGD.t) { clearTimeout(MSGD.t); MSGD = {t:0, b:0}; }
   const h = msgsHTML();
   if (h === MSGH.h && MSGH.cid === CH.open && box.dataset.h === '1' && bottom !== 'end') return; /* nichts geändert: nicht neu zeichnen (z. B. nur Server-Bestätigung) */
-  const a = bottom === 'end' ? null : msgAnc(box); box.innerHTML = h; box.dataset.h = '1'; MSGH = {cid:CH.open, h}; msgRest(box, a); msgImgs(box); voicePend(); vmPrefetch(); msgsStick();
+  const a = bottom === 'end' ? null : msgAnc(box); box.innerHTML = imgAsync(h); box.dataset.h = '1'; MSGH = {cid:CH.open, h}; msgRest(box, a); msgImgs(box); voicePend(); vmPrefetch(); msgsStick();
 }
 /* v1076 (Inaya): Wer im Chat hochscrollt, sieht unten rechts einen runden Pfeil; Antippen scrollt wieder ganz nach unten. */
 function mdownWire(m){ const pan = m.parentElement; if (!pan || pan.closest('.gprev')) return () => {}; let b = pan.querySelector(':scope > .mdown');
@@ -21608,7 +21609,8 @@ function morphKids(op, np, d){ const ok = [...op.childNodes], nk = [...np.childN
     const nt = postNorm(n.cloneNode(false).outerHTML);
     if (d < MORPH_D && o._h != null && o._t === nt && o.id !== 'msgs' && !o.matches('iframe, video, textarea, select, svg, canvas')) { o._h = nh; morphKids(o, n, d + 1); }
     else { n._h = nh; n._t = nt; if (d < MORPH_D) morphAnn(n, d + 1); o.replaceWith(n); } } }
-function appMorph(app, html){ const t = document.createElement('template'); t.innerHTML = html;
+const imgAsync = h => h.replace(/<img (?![^>]*\bdecoding=)/g, '<img decoding="async" '); /* v1087: Fotos werden neben dem Scrollen entpackt, nicht mittendrin */
+function appMorph(app, html){ const t = document.createElement('template'); t.innerHTML = imgAsync(html);
   const sh = app.firstElementChild; if (app.childNodes.length === 1 && sh?.classList.contains('shell') && sh._t != null) { morphKids(app, t.content, 0); return; }
   morphAnn(t.content, 0); app.replaceChildren(t.content); }
 const RK_SEL = '.main article.post[data-pid], .storybar, header.phead, .clrow[data-pid], .card.fullav'; /* v1085: auch der Avatar-Kasten */ /* v1080: auch Story-Leiste, Profilkopf und Zeilen der Chatliste */
