@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='5e31dab26e71';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='dcfda14d3906';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -13023,7 +13023,9 @@ let PCKT = 0; function pcKeep(){ clearTimeout(PCKT); PCKT = setTimeout(() => { c
 document.addEventListener('focusin', e => { if (!e.target.closest?.('.pcfull')) return; pcFit(); pcKeep(); });
 document.addEventListener('focusout', e => { if (!e.target.closest?.('.pcfull')) return; setTimeout(pcFit, 0); });
 window.visualViewport?.addEventListener('resize', () => { if (document.querySelector('.pcfull')) pcKeep(); });
-new MutationObserver(() => { if (document.querySelector('.pcfull:not([data-fit])')) { document.querySelectorAll('.pcfull').forEach(x => x.dataset.fit = 1); pcFit(); } }).observe(document.documentElement, {childList:true, subtree:true});
+/* v1078 (Inaya: „die Seite stockt“): Beobachter auf die ganze Seite laufen höchstens einmal je Bild statt nach jeder einzelnen Änderung (vorher liefen sieben davon bei jedem Neuzeichnen, jeder Tipp-Anzeige und jedem nachgeladenen Bild sofort, einer davon mit Layout-Messung). */
+function moRaf(f){ let q = 0; return () => { if (!q) q = requestAnimationFrame(() => { q = 0; f(); }); }; }
+new MutationObserver(moRaf(() => { if (document.querySelector('.pcfull:not([data-fit])')) { document.querySelectorAll('.pcfull').forEach(x => x.dataset.fit = 1); pcFit(); } })).observe(document.documentElement, {childList:true, subtree:true});
 /* v896 (Inaya: „wie bei Insta, wenn man einen Beitrag postet“): oben groß Foto/Video, darunter der Text, dann die Optionen als Zeilen mit Pfeil, „Teilen“ fest unten (pcFull). */
 const PC_CHEV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>', PC_AUD = {cf:'<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.4 6.9 19.1l1-5.6-4.1-4 5.7-.8z"/>', pub:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/>', fr:'<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/>'};
 function pcHeroHTML(){
@@ -13865,7 +13867,7 @@ function pstkPlace(l){ const its = l.querySelectorAll('.pstk[data-an]'); if (!it
     if (ed) { const it = PSTK.d?.[+el.dataset.i]; if (it) { it.x = pstkNum(x, 0, 100, it.x); it.y = pstkNum(y, 0, 2000, it.y); it.s = pstkNum(sz, 6, 70, it.s); for (const f of PSTK_AF) delete it[f]; } el.removeAttribute('data-an'); } }); }
 const PSTKRO = typeof ResizeObserver === 'function' ? new ResizeObserver(() => pstkSoon()) : null, PSTKSEEN = new WeakSet(); let PSTKQ = 0;
 function pstkSoon(){ if (PSTKQ) return; PSTKQ = requestAnimationFrame(() => { PSTKQ = 0; if (PSTK.drag) return; try { const b = document.getElementById('pstkbg'); if (b) pstkBgPos(b, V.name === 'pstk' && PSTK.d ? PSTK.d : (V.name === 'profile' ? profUser(V.arg || S.me)?.pstk : null) || []); } catch {} document.querySelectorAll('.pstkl').forEach(l => { if (PSTKRO && l.parentElement && !PSTKSEEN.has(l.parentElement)) { PSTKSEEN.add(l.parentElement); PSTKRO.observe(l.parentElement); } try { pstkPlace(l); } catch {} }); }); }
-new MutationObserver(() => { if (document.querySelector('.pstk[data-an]')) pstkSoon(); }).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(moRaf(() => { if (document.querySelector('.pstk[data-an]')) pstkSoon(); })).observe(document.documentElement, {childList:true, subtree:true});
 addEventListener('resize', pstkSoon); document.addEventListener('load', e => { if (e.target?.tagName === 'IMG' && document.querySelector('.pstkl')) pstkSoon(); }, true);
 document.fonts?.ready?.then(pstkSoon).catch(() => {});
 /* v1055 (Inaya): Sticker auch auf Avatar, Begleiter und Gästebuch (eigene Ebenen in diesen Kästen, Feld z = av/pet/gb, Höhe yp in % des Kastens),
@@ -14101,7 +14103,7 @@ const PEOPEN = {}; document.addEventListener('toggle', e => { if (!e.target.clas
 const BIO_MAX = 150, ABOUT_MAX = 500;
 function peGrow(t){ if (!t?.classList?.contains('pegrow')) return; t.style.height = 'auto'; t.style.height = (t.scrollHeight + (t.offsetHeight - t.clientHeight)) + 'px'; const c = document.querySelector(`.pecnt[data-for="${t.id}"]`); if (c) { const n = [...t.value].length, mx = +t.maxLength || 0; c.textContent = n + '/' + mx; c.classList.toggle('hi', mx && n >= mx * .9); } }
 document.addEventListener('input', e => peGrow(e.target));
-new MutationObserver(() => document.querySelectorAll('textarea.pegrow:not([data-g])').forEach(t => { t.dataset.g = '1'; requestAnimationFrame(() => peGrow(t)); })).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(moRaf(() => document.querySelectorAll('textarea.pegrow:not([data-g])').forEach(t => { t.dataset.g = '1'; requestAnimationFrame(() => peGrow(t)); }))).observe(document.documentElement, {childList:true, subtree:true});
 addEventListener('resize', () => document.querySelectorAll('textarea.pegrow').forEach(peGrow));
 document.addEventListener('input', e => { const l = e.target?.closest?.('.mulnk'); if (l) l.classList.toggle('on', !!e.target.value.trim()); }); /* v1004: Link-Felder hell, sobald etwas drinsteht */
 function designView(){ /* seit v569 wie bei Instagram (Inaya): eine Seite von oben nach unten: Profilbild, Name, Nutzername, Bio, Steckbrief, Links, dann Gestaltung und Pose */
@@ -14595,9 +14597,9 @@ document.addEventListener('input', e => mlFit(e.target));
 // Enter: am Rechner absenden (Umschalt+Enter = neue Zeile), am Handy neue Zeile wie bei WhatsApp, Senden über den Knopf
 document.addEventListener('keydown', e => { const t = e.target; if (e.key !== 'Enter' || !t.classList?.contains('mlin') || e.isComposing) return;
   if (e.shiftKey || matchMedia('(pointer:coarse)').matches) return; e.preventDefault(); const f = t.closest('form'); if (f) f.requestSubmit ? f.requestSubmit() : f.querySelector('[type=submit]')?.click(); });
-new MutationObserver(() => document.querySelectorAll('textarea.mlin').forEach(t => { if (t.value && !t.style.height) mlFit(t); })).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(moRaf(() => document.querySelectorAll('textarea.mlin').forEach(t => { if (t.value && !t.style.height) mlFit(t); }))).observe(document.documentElement, {childList:true, subtree:true});
 const cmTyped = () => { const i = document.getElementById('cm-in'), f = i?.closest('form'); f?.classList.toggle('typed', !!i.value.trim() || f.classList.contains('gstf')); }; // wie bei WhatsApp: Mikrofon oder, sobald man tippt, der Pfeil
-new MutationObserver(cmTyped).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(moRaf(cmTyped)).observe(document.documentElement, {childList:true, subtree:true});
 document.addEventListener('input', e => { if (e.target.id === 'cm-in') { cmTyped(); typingNow(!!e.target.value.trim()); } if (e.target.id === 'rm-in') rmLeft(); });
 function rmLeft(){ const i = document.getElementById('rm-in'), l = document.getElementById('rmleft'); if (!i || !l) return; const n = RMAX - [...i.value].length; l.textContent = n; l.classList.toggle('low', n <= 10); }
 function openChat(id){
@@ -15838,7 +15840,7 @@ document.addEventListener('click', e => {
   e.preventDefault(); const inp = b.parentElement.querySelector('input'); const show = inp.type === 'password';
   inp.type = show ? 'text' : 'password'; b.innerHTML = EYE_SVG(show); b.setAttribute('aria-label', show ? 'Passwort verstecken' : 'Passwort zeigen');
 });
-new MutationObserver(addEyes).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(moRaf(addEyes)).observe(document.documentElement, {childList:true, subtree:true});
 function addEmoButtons(){
   document.querySelectorAll(EMO_FORMS).forEach(f => {
     if (f.querySelector('.emobtn')) return;
@@ -15855,7 +15857,7 @@ function sgReattach(){ // nach dem Neuzeichnen bleibt das Sticker-Menü offen
   if (!nf) { SG.form = null; SG.el = null; return; }
   SG.form = nf; nf.classList.add('sgopen'); nf.querySelector('.sgbtn')?.setAttribute('aria-expanded', 'true'); nf.insertAdjacentElement('afterend', el);
 }
-new MutationObserver(() => { addEmoButtons(); sgReattach(); emoKeep(); if (document.querySelector('.ncpage.moebel')) { const r = document.querySelector('.rail'), v = r && true && /sticky|fixed/.test(getComputedStyle(r).position) ? /* v926: seit v869 ist die Leiste fixed */ Math.max(0, Math.round(r.getBoundingClientRect().bottom)) + 'px' : '0px'; if (document.documentElement.style.getPropertyValue('--railb') !== v) document.documentElement.style.setProperty('--railb', v); } if (GST || document.querySelector('.gst')) gstPaint(); if (CH.re || document.querySelector('.chre')) chRePaint(); }).observe(document.documentElement, {childList:true, subtree:true});
+new MutationObserver(moRaf(() => { addEmoButtons(); sgReattach(); emoKeep(); if (document.querySelector('.ncpage.moebel')) { const r = document.querySelector('.rail'), v = r && true && /sticky|fixed/.test(getComputedStyle(r).position) ? /* v926: seit v869 ist die Leiste fixed */ Math.max(0, Math.round(r.getBoundingClientRect().bottom)) + 'px' : '0px'; if (document.documentElement.style.getPropertyValue('--railb') !== v) document.documentElement.style.setProperty('--railb', v); } if (GST || document.querySelector('.gst')) gstPaint(); if (CH.re || document.querySelector('.chre')) chRePaint(); })).observe(document.documentElement, {childList:true, subtree:true});
 /* ---------- Kommentare auf Profilen (geteilt, in chats/wall_<uid>/m) ---------- */
 const WL = {uid:null, unsub:null, list:[]};
 function wallSync(){
@@ -16426,15 +16428,22 @@ async function pushOn(){ if (PUSH.busy) return; PUSH.err = ''; let perm;
   if (perm !== 'granted') { PUSH.err = 'Ohne deine Erlaubnis kann Noctibat keine Mitteilungen schicken.'; pushPaint(); return; }
   PUSH.busy = true; pushPaint();
   try { const {m, reg} = await pushMessaging(); const t = await m.getToken({vapidKey:PUSH.vapid, serviceWorkerRegistration:reg}); if (!t) throw new Error('kein Schlüssel');
-    const id = hstr(t); await pushRef().set({tokens:{[id]:{t, ts:Date.now(), dev:(isIOS() ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + (pushStandalone() ? ' (App)' : '')}}, prefs:{...(PUSH.doc?.prefs || {})}, lang:LANG}, {merge:true}); // lang: Mitteilungen vom Server in der eigenen Sprache
+    const id = hstr(t), dv = pushDev(), dels = {}; for (const [k, v] of Object.entries(PUSH.doc?.tokens || {})) if (k !== id && (v?.t === t || (dv && v?.d === dv))) dels[`tokens.${k}`] = firebase.firestore.FieldValue.delete(); /* v1078: alte Schlüssel dieses Geräts weg */
+    await pushRef().set({tokens:{[id]:{t, ts:Date.now(), s:Date.now(), d:dv, dev:(isIOS() ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + (pushStandalone() ? ' (App)' : '')}}, prefs:{...(PUSH.doc?.prefs || {})}, lang:LANG}, {merge:true}); if (Object.keys(dels).length) await pushRef().update(dels).catch(() => {}); // lang: Mitteilungen vom Server in der eigenen Sprache
     try { localStorage.setItem('nf-push-id', id); localStorage.setItem('nf-push-t', String(Date.now())); } catch {} await pushLoad(); toast('Mitteilungen sind an'); }
   catch (e) { PUSH.err = 'Einschalten hat nicht geklappt (' + (e?.code || e?.message || e) + ').'; }
   PUSH.busy = false; pushPaint(); }
 async function pushOff(){ const id = pushMine(); try { const {m} = await pushMessaging(); await m.deleteToken().catch(() => {}); } catch {} if (id) await pushRef().update({[`tokens.${id}`]:firebase.firestore.FieldValue.delete()}).catch(() => {}); try { localStorage.removeItem('nf-push-id'); } catch {} await pushLoad(); pushPaint(); toast('Mitteilungen auf diesem Gerät aus'); }
 // Schlüssel erneuern sich manchmal: einmal am Tag still auffrischen
-async function pushRefresh(){ try { if (!pushOk() || Notification.permission !== 'granted' || !pushMine()) return; const last = +localStorage.getItem('nf-push-t') || 0; if (Date.now() - last < 86400000) return; await pushLoad(); if (!PUSH.vapid) return;
-    const {m, reg} = await pushMessaging(); const t = await m.getToken({vapidKey:PUSH.vapid, serviceWorkerRegistration:reg}); const id = hstr(t); localStorage.setItem('nf-push-t', String(Date.now()));
-    if (id !== pushMine() || !PUSH.doc?.tokens?.[id]) { const up = {[`tokens.${id}`]:{t, ts:Date.now(), dev:PUSH.doc?.tokens?.[pushMine()]?.dev || ''}}; if (pushMine() && pushMine() !== id) up[`tokens.${pushMine()}`] = firebase.firestore.FieldValue.delete(); await pushRef().set({}, {merge:true}); await pushRef().update(up); localStorage.setItem('nf-push-id', id); } } catch {} }
+/* v1078 (Inaya: Gästebuch-Eintrag kam 4-mal): jedes Gerät hat eine feste Kennung (d) an seinem Schlüssel und meldet sich einmal am Tag (s).
+   Alte Schlüssel desselben Geräts werden gelöscht, der Server schickt je Gerät nur an den neuesten und nicht mehr an Geräte, die seit 30 Tagen nicht da waren. */
+const pushDev = () => { try { let d = localStorage.getItem('nf-push-dev'); if (!d) { d = 'd' + Math.random().toString(36).slice(2, 12); localStorage.setItem('nf-push-dev', d); } return d; } catch { return ''; } };
+async function pushRefresh(){ try { if (!pushOk() || Notification.permission !== 'granted' || !pushMine()) return; try { navigator.serviceWorker.getRegistration('/').then(r => r && r.update()).catch(() => {}); } catch {} /* neue Fassung des Mitteilungs-Helfers holen */
+    const last = +localStorage.getItem('nf-push-t') || 0; if (Date.now() - last < 86400000) return; await pushLoad(); if (!PUSH.vapid) return;
+    const {m, reg} = await pushMessaging(); const t = await m.getToken({vapidKey:PUSH.vapid, serviceWorkerRegistration:reg}); if (!t) return; const id = hstr(t), dv = pushDev(), old = PUSH.doc?.tokens || {}; localStorage.setItem('nf-push-t', String(Date.now()));
+    const up = {[`tokens.${id}`]:{t, ts:old[id]?.ts || Date.now(), s:Date.now(), d:dv, dev:old[id]?.dev || old[pushMine()]?.dev || ''}};
+    for (const [k, v] of Object.entries(old)) if (k !== id && (k === pushMine() || v?.t === t || (dv && v?.d === dv))) up[`tokens.${k}`] = firebase.firestore.FieldValue.delete();
+    await pushRef().set({}, {merge:true}); await pushRef().update(up); localStorage.setItem('nf-push-id', id); } catch {} }
 // Beim Öffnen fragen, ob Mitteilungen an sollen (Inaya, 2026-10-14): Ja = einschalten, Nein = nicht mehr fragen, wegklicken (×) = beim nächsten Öffnen wieder fragen
 const PA_NO = () => 'nf-pushask-no:' + (social?.uid || ''), PA_SES = 'nf-pushask-ses';
 const paGet = (st, k) => { try { return st.getItem(k); } catch { return null; } }, paSet = (st, k) => { try { st.setItem(k, '1'); } catch {} };
@@ -19852,14 +19861,21 @@ document.addEventListener('click', e => { const b = e.target.closest?.('[data-ac
   else if (a === 'fr-list') { const fid = id && id !== S.me ? id : null; if (fid) { fpUid = fid; fpOpen = true; FRQ = ''; if (!FRL[fid]?.busy) loadFriendsOf(fid); render(); } else if (isMob()) { fpUid = null; fpOpen = true; fpTab = 'friends'; render(); } else go('friends'); } /* v683: auch die Freunde anderer (Inaya) */
 });
 
-function pushOpen(href){ let u; try { u = new URL(href, location.href); } catch { return; } const c = u.searchParams.get('c'), pr = u.searchParams.get('p'), hu = u.searchParams.get('u'); if (!c && !pr && !hu) return;
+/* v1078 (Inaya: Antippen einer Gästebuch-Mitteilung führte nicht dorthin): Link mit der eigenen Konto-UID (Gästebuch: ?p=<eigene uid>&gb=…) öffnet das EIGENE Profil (S.me ist die Geräte-ID, nicht social.uid) und scrollt zum Gästebuch.
+   Nur ein Öffnen gleichzeitig (PUSHO): mehrere Mitteilungen nacheinander antippen startet nicht mehrere Versuche, die sich gegenseitig umleiten. */
+let PUSHO = 0;
+let PUSHGB = 0; ['touchstart', 'wheel'].forEach(k => addEventListener(k, () => { PUSHGB++; }, {passive:true})); /* selbst wischen = nicht mehr nachscrollen */
+function pushGb(n = 0, g = PUSHGB){ if (g !== PUSHGB) return; const el = document.querySelector('.card.gbcard'); if (el && V.name === 'profile') { el.scrollIntoView({block:'start', behavior:n ? 'smooth' : 'auto'}); if (n < 6) setTimeout(() => pushGb(n + 1, g), 450); return; } if (n < 16) setTimeout(() => pushGb(n + 1, g), 250); }
+function pushOpen(href){ let u; try { u = new URL(href, location.href); } catch { return; } const c = u.searchParams.get('c'), pr = u.searchParams.get('p'), hu = u.searchParams.get('u'), gb = u.searchParams.has('gb'); if (!c && !pr && !hu) return;
   try { sessionStorage.setItem('nf-open', href); } catch {} // bleibt bis nach dem Anmelden gemerkt
+  clearInterval(PUSHO);
   let uid = pr || null, asked = false, busy = false; const done = () => { try { sessionStorage.removeItem('nf-open'); } catch {} return true; };
-  const go2 = () => { if (!social || busy) return false; if (c) { if (!CH.list.some(x => x.id === c)) return false; openChat(c); render(); return done(); }
+  const go2 = () => { if (!social || busy) return false; if (c) { if (!CH.list.some(x => x.id === c)) return false; if (CH.open !== c || CH.mode !== 'chat') openChat(c); else if (V.name !== 'chats') go('chats'); render(); return done(); }
     if (!uid && hu) { if (!asked) { asked = true; pshFind(hu).then(id => { uid = id; if (!id) { toast('Dieses Profil gibt es nicht (mehr).'); done(); } }); } return false; }
-    if (!uid) return false; if (uid === S.me || S.users[uid]) { go('profile', uid); render(); return done(); }
+    if (!uid) return false; if (uid === social.uid) uid = S.me;
+    if (uid === S.me || S.users[uid]) { go('profile', uid); render(); if (gb || uid === S.me) pushGb(); return done(); }
     busy = true; loadProf(uid).then(() => { busy = false; if (PROF[uid]) { go('profile', uid); render(); } else toast('Dieses Profil gibt es nicht (mehr).'); }); return done(); };
-  let n = 0; const t = setInterval(() => { if (go2() || ++n > 40) clearInterval(t); }, 500);
+  if (go2()) return; let n = 0; PUSHO = setInterval(() => { if (go2() || ++n > 40) clearInterval(PUSHO); }, 300);
   try { if (location.search) history.replaceState(null, '', location.pathname + location.hash); } catch {} }
 if (/[?&](c|p|u)=/.test(location.search)) pushOpen(location.href);
 navigator.serviceWorker?.addEventListener?.('message', e => { if (e.data?.nfOpen) pushOpen(e.data.nfOpen); });

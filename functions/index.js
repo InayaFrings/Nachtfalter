@@ -36,12 +36,29 @@ const TXT = {
   en: {calls: w => `${w} is calling`, video: 'Video call', call: 'Call', inGrp: n => ` in “${n}”`, tapAnswer: ' · tap to answer', group: 'Group', gb: w => `${w} wrote in your guestbook`,
     newMsg: 'New message', voice: '🎤 Voice message', music: '🎵 Music', photo: '📷 Photo', clip: '🎬 Video', sticker: 'Sticker', gif: 'GIF', post: '🖼 Post', story: '📖 Story',
     accepted: w => `${w} accepted your friend request`, request: w => `${w} wants to be friends with you`, someone: 'Someone'}};
-async function sendTo(uid, pref, msg){
+/* v1078 (Inaya: ein Gästebuch-Eintrag kam 4-mal): jede Sache nur EINMAL je Person melden.
+   1) Merker pushSent/<sache>~<uid> (create schlägt fehl, wenn es ihn schon gibt): hilft gegen Wiederholungen der Function und doppelt eingespielte Functions.
+   2) Geräte-Schlüssel entdoppeln: gleicher Schlüssel nur einmal, je Gerät (d = Geräte-Kennung aus der App) nur der neueste,
+      Schlüssel, deren Gerät seit 30 Tagen nicht mehr in Noctibat war (s bzw. ts), bekommen nichts mehr. */
+const STALE = 30 * 86400000;
+async function onceFor(key, uid){ if (!key) return true;
+  const id = (String(key) + '~' + uid).replace(/[\/]/g, '_').slice(0, 900);
+  try { await db.doc('pushSent/' + id).create({ts: Date.now()}); } catch (e) { if (e.code === 6 || /already exists/i.test(e.message || '')) return false; }
+  if (Math.random() < 0.02) db.collection('pushSent').where('ts', '<', Date.now() - 3 * 86400000).limit(200).get().then(q => Promise.all(q.docs.map(x => x.ref.delete()))).catch(() => {}); // aufräumen
+  return true; }
+function pickToks(tokens){ const now = Date.now(), byT = new Map();
+  for (const [id, v] of Object.entries(tokens || {})) { if (!v || !v.t) continue; const seen = +v.s || +v.ts || 0; if (seen && now - seen > STALE) continue;
+    const o = byT.get(v.t); if (!o || seen > o.seen) byT.set(v.t, {id, v, seen}); }
+  const byD = new Map(), out = [];
+  for (const e of byT.values()) { if (!e.v.d) { out.push(e); continue; } const o = byD.get(e.v.d); if (!o || e.seen > o.seen) byD.set(e.v.d, e); }
+  return out.concat([...byD.values()]).map(e => [e.id, e.v]); }
+async function sendTo(uid, pref, msg, key){
   const ref = db.doc(`data/users/${uid}/nf-push`), d = await ref.get(); if (!d.exists) return;
   const x = d.data() || {}, prefs = x.prefs || {}; if (prefs[pref] === false) return;
   if (typeof msg === 'function') msg = msg(TXT[x.lang] || TXT.de);
-  const toks = Object.entries(x.tokens || {}).filter(([, v]) => v && v.t); if (!toks.length) return;
-  const data = {title: String(msg.title || 'Noctibat').slice(0, 120), body: String(msg.body || '').slice(0, 240), link: msg.link || SITE, tag: msg.tag || '', kind: msg.kind || ''};
+  const toks = pickToks(x.tokens); if (!toks.length) return;
+  if (!(await onceFor(key, uid))) { console.log('PUSH doppelt, übersprungen', key, uid); return; }
+  const data = {title: String(msg.title || 'Noctibat').slice(0, 120), body: String(msg.body || '').slice(0, 240), link: msg.link || SITE, tag: msg.tag || '', kind: msg.kind || '', eid: String(key || '').slice(0, 200)};
   if (DRY) { console.log('PUSH', JSON.stringify({to: uid, pref, n: toks.length, ...data})); return; }
   const r = await admin.messaging().sendEachForMulticast({tokens: toks.map(([, v]) => v.t), data,
     webpush: {headers: {Urgency: msg.kind === 'call' ? 'high' : 'normal', TTL: String(msg.ttl || 86400)}, fcmOptions: {link: data.link}}});
@@ -56,7 +73,7 @@ exports.pushCall = fn.firestore.document('rings/{uid}/r/{rid}').onCreate(async (
   const c = chat.exists ? chat.data() : {};
   await sendTo(ctx.params.uid, 'calls', T => ({kind: 'call', ttl: 45, tag: 'call-' + ctx.params.rid,
     title: T.calls(who), body: (r.kind === 'video' ? T.video : T.call) + (c.group ? T.inGrp(c.name || T.group) : '') + T.tapAnswer,
-    link: SITE + '?c=' + encodeURIComponent(r.cid)}));
+    link: SITE + '?c=' + encodeURIComponent(r.cid)}), 'r_' + ctx.params.uid + '_' + ctx.params.rid);
 });
 
 exports.pushMsg = fn.firestore.document('chats/{cid}/m/{mid}').onCreate(async (snap, ctx) => {
@@ -65,14 +82,15 @@ exports.pushMsg = fn.firestore.document('chats/{cid}/m/{mid}').onCreate(async (s
   if (Date.now() - (+m.ts || Date.now()) > 600000) return; // alte Nachrichten (z. B. Verlauf übertragen) nicht melden
   const who = await nameOf(m.from);
   if (cid.startsWith('wall_')) { const owner = cid.slice(5); if (owner === m.from) return;
-    return sendTo(owner, 'gb', T => ({tag: 'gb-' + owner, title: T.gb(who), body: String(m.text || '').slice(0, 140), link: SITE + '?p=' + encodeURIComponent(owner)})); }
+    if ((await onlineOf([owner])).has(owner)) return; // App offen: steht schon in der Glocke (v1078)
+    return sendTo(owner, 'gb', T => ({tag: 'gb-' + owner, title: T.gb(who), body: String(m.text || '').slice(0, 140), link: SITE + '?p=' + encodeURIComponent(owner) + '&gb=' + encodeURIComponent(mid)}), 'm_' + cid + '_' + mid); }
   const chat = await db.doc('chats/' + cid).get(); if (!chat.exists) return;
   const c = chat.data(), to = (c.members || []).filter(u => u && u !== m.from); if (!to.length) return;
   const on = await onlineOf(to);
   const what = T => m.e2e ? T.newMsg // verschlüsselt: der Server kennt den Inhalt nicht
     : m.text ? String(m.text).slice(0, 140) : m.audio?.voice ? T.voice : m.audio ? T.music : m.img ? T.photo : m.clip ? T.clip : m.stk ? T.sticker : m.gif ? T.gif : m.post ? T.post : m.story ? T.story : T.newMsg;
   const title = T => c.group ? who + T.inGrp(c.name || T.group) : who;
-  await Promise.all(to.filter(u => !on.has(u)).map(u => sendTo(u, 'msgs', T => ({tag: 'chat-' + cid, title: title(T), body: what(T), link: SITE + '?c=' + encodeURIComponent(cid)})).catch(e => console.error('push', u, e.message))));
+  await Promise.all(to.filter(u => !on.has(u)).map(u => sendTo(u, 'msgs', T => ({tag: 'chat-' + cid, title: title(T), body: what(T), link: SITE + '?c=' + encodeURIComponent(cid)}), 'm_' + cid + '_' + mid).catch(e => console.error('push', u, e.message))));
 });
 
 exports.pushFriend = fn.firestore.document('friends/{uid}').onWrite(async (ch, ctx) => {
@@ -81,7 +99,7 @@ exports.pushFriend = fn.firestore.document('friends/{uid}').onWrite(async (ch, c
   const who = await nameOf(ctx.params.uid);
   for (const u of added.slice(0, 10)) {
     const theirs = await db.doc('friends/' + u).get(); const mutual = theirs.exists && (theirs.data().list || []).includes(ctx.params.uid);
-    await sendTo(u, 'friends', T => ({tag: 'fr-' + ctx.params.uid, title: mutual ? T.accepted(who) : T.request(who), body: '', link: SITE + '?p=' + encodeURIComponent(ctx.params.uid)})).catch(() => {});
+    await sendTo(u, 'friends', T => ({tag: 'fr-' + ctx.params.uid, title: mutual ? T.accepted(who) : T.request(who), body: '', link: SITE + '?p=' + encodeURIComponent(ctx.params.uid)}), 'f_' + ctx.params.uid + '_' + u + '_' + (mutual ? 'a' : 'q') + '_' + new Date().toISOString().slice(0, 10)).catch(() => {});
   }
 });
 
