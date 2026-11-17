@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='7669641f5a41';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='366d03a249f2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -21560,10 +21560,12 @@ const mvKey = b => (b.dataset.u || '') + '|' + (b.dataset.id || '') + '|' + (b.d
    Jeder Beitrag merkt das HTML, aus dem er entstand (_h, ohne die hochzählenden Avatar-IDs). Ist das neue HTML gleich, kommt genau der alte Knoten zurück: Fotos, Avatare, Videos und alles, was nachgeladen wurde, bleiben, nichts wird neu dekodiert.
    Nicht wiederverwendet: der gerade angetippte Beitrag, einer mit Fokus in einem Feld und einer mit laufendem Video-Link (iframe würde neu laden). */
 const postNorm = h => h.replace(/\bai\d+/g, 'ai');
+const RK_SEL = '.main article.post[data-pid], .storybar, header.phead, .clrow[data-pid]'; /* v1080: auch Story-Leiste, Profilkopf und Zeilen der Chatliste */
+const rkOf = n => n.classList.contains('post') ? 'p' + n.dataset.pid : n.classList.contains('clrow') ? 'c' + (n.dataset.pk || '') + n.dataset.pid : n.classList.contains('storybar') ? 'sb' : 'ph';
 function postTake(root){ const m = new Map(), et = window.event?.target, ae = document.activeElement;
-  root.querySelectorAll('.main article.post[data-pid]').forEach(o => { if (!o._h || (et && o.contains?.(et)) || (ae && ae !== document.body && o.contains(ae)) || o.querySelector('iframe, .lvid.on')) return; const k = o.dataset.pid; if (m.has(k)) { m.set(k, null); return; } m.set(k, o); o._play = [...o.querySelectorAll('video')].filter(v => !v.paused); });
+  root.querySelectorAll(RK_SEL).forEach(o => { if (!o._h || (et && o.contains?.(et)) || (ae && ae !== document.body && o.contains(ae)) || o.querySelector('iframe, .lvid.on')) return; const k = rkOf(o); if (m.has(k)) { m.set(k, null); return; } m.set(k, o); o._play = [...o.querySelectorAll('video')].filter(v => !v.paused); });
   return m; }
-function postPut(root, m){ const seen = new Set(); root.querySelectorAll('.main article.post[data-pid]').forEach(n => { const k = n.dataset.pid, h = postNorm(n.outerHTML), o = m.get(k);
+function postPut(root, m){ const seen = new Set(); root.querySelectorAll(RK_SEL).forEach(n => { if (!n.isConnected) return; const k = rkOf(n), h = postNorm(n.outerHTML), o = m.get(k);
     if (o && o._h === h && !seen.has(k)) { seen.add(k); n.replaceWith(o); (o._play || []).forEach(v => { const go = () => { if (v.isConnected && v.paused) v.play().catch(() => {}); }; go(); setTimeout(go, 0); setTimeout(go, 120); }); }
     else n._h = h; }); }
 function mediaTake(root){ const im = new Map(), vd = new Map();
