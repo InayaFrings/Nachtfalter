@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='483a147f3126';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='baf4fdb56988';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -13486,7 +13486,7 @@ async function loadFriendsOf(uid){
   if (!social || FRL[uid]?.busy) return;
   FRL[uid] = {...(FRL[uid] || {}), busy:true};
   try {
-    const [d, back] = await Promise.all([social.db.doc('friends/' + uid).get(), social.db.collection('friends').where('list', 'array-contains', uid).get()]);
+    const [d, back] = await Promise.all([srvGet(social.db.doc('friends/' + uid)), srvGet(social.db.collection('friends').where('list', 'array-contains', uid))]);
     const both = new Set(back.docs.map(x => x.id)), ids = (d.exists ? d.data().list || [] : []).filter(id => id !== uid && both.has(id)); // nur gegenseitige Freunde
     await Promise.all(ids.filter(id => id !== social.uid && !PROF[id]).map(loadProf));
     FRL[uid] = {ids:ids.filter(id => id === social.uid || (PROF[id] && !isTestHandle(PROF[id].handle))), ts:Date.now()};
@@ -14259,12 +14259,19 @@ const LPS = {}; // laufende Server-Abfragen je Profil
 const LPT = (() => { try { return JSON.parse(localStorage.getItem('nf-lpt') || '{}') || {}; } catch { return {}; } })(), LPT_MS = 900000;
 const lptMark = id => { LPT[id] = Date.now(); clearTimeout(LPT.t); LPT.t = setTimeout(() => { try { const o = {}; Object.entries(LPT).filter(([k, v]) => k !== 't' && Date.now() - v < LPT_MS).forEach(([k, v]) => { o[k] = v; }); localStorage.setItem('nf-lpt', JSON.stringify(o)); } catch {} }, 2000); };
 const PQ = {n:0, q:[]};
-const pqRun = () => { while (PQ.n < 3 && PQ.q.length && !chBusy()) { const [f, res] = PQ.q.shift(); PQ.n++; f().then(res, () => res(null)).finally(() => { PQ.n--; pqRun(); }); } if (PQ.q.length && chBusy()) { clearTimeout(PQ.t); PQ.t = setTimeout(pqRun, 300); } };
+/* v1067 (Inaya: Musik und Freunde im Profil hingen auf „Lädt …“): Server-Abfragen bekommen ein Zeitlimit. Hängt die Verbindung, wird sie einmal neu aufgebaut (höchstens jede Minute), danach gilt der Gerätestand. Ein hängender Abruf blockiert die Warteschlange nicht mehr. */
+const SRVG = {rc:0};
+const srvTo = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('srvzeit')), ms))]);
+async function srvGet(ref, ms = 9000){ try { return await srvTo(ref.get(), ms); } catch (e) { if (e?.message !== 'srvzeit') throw e; }
+  if (social?.db?.reconnect && Date.now() - SRVG.rc > 60000) { SRVG.rc = Date.now(); try { await srvTo(social.db.reconnect(), 5000); } catch {} }
+  try { return await srvTo(ref.get(), ms); } catch (e) { if (e?.message !== 'srvzeit') throw e; }
+  const c = await ref.get({source:'cache'}); if (c && (c.exists || c.docs)) return c; throw new Error('srvzeit'); }
+const pqRun = () => { while (PQ.n < 3 && PQ.q.length && !chBusy()) { const [f, res] = PQ.q.shift(); PQ.n++; srvTo(f(), 20000).then(res, () => res(null)).finally(() => { PQ.n--; pqRun(); }); } if (PQ.q.length && chBusy()) { clearTimeout(PQ.t); PQ.t = setTimeout(pqRun, 300); } };
 const pqGet = f => new Promise(res => { PQ.q.push([f, res]); pqRun(); });
 const chBusy = () => !!(CH.open && CH.mode === 'chat' && CH.mraw == null && V.name === 'chats' && Date.now() - (CH.t0 || 0) < 8000);
 async function loadProf(id){ const ref = social.db.doc('profiles/' + id);
-  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy && (Date.now() - (LPT[id] || 0) > LPT_MS || (NM[id]?.at || 0) > (LPT[id] || 0))) { /* v680: Avatar seit dem letzten Abruf geändert (handles.at) → sofort neu */ const pr = LPS[id] = pqGet(() => ref.get()).then(d => { if (d) lptMark(id); return d; }).then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
-  try { const d = await pqGet(() => ref.get()); if (profPut(id, d)) lptMark(id); } catch {} }
+  try { if (profPut(id, await ref.get({source:'cache'}))) { if (!LPS[id]?.busy && (Date.now() - (LPT[id] || 0) > LPT_MS || (NM[id]?.at || 0) > (LPT[id] || 0))) { /* v680: Avatar seit dem letzten Abruf geändert (handles.at) → sofort neu */ const pr = LPS[id] = pqGet(() => srvGet(ref)).then(d => { if (d) lptMark(id); return d; }).then(d => { if (profPut(id, d)) { if (S.users[id]?.remote && isFriend(id)) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); } return; } } catch {} // nicht im Zwischenspeicher
+  try { const d = await pqGet(() => srvGet(ref)); if (profPut(id, d)) lptMark(id); } catch {} }
 /* v680 (Inaya): neue Klamotten von anderen sofort sehen. publishProfile schreibt nach dem Speichern handles/<uid>.at (Zeit) und .av (Prüfsumme von Outfit, Pose, Begleiter);
    nmWatch sieht das live und holt das Profil neu, aber nur, wenn man es schon geladen hatte. */
 function profFresh(id){ if (!social || !PROF[id] || LPS[id]?.busy) return; const pr = LPS[id] = pqGet(() => social.db.doc('profiles/' + id).get()).then(d => { if (d) lptMark(id); if (profPut(id, d)) { if (S.users[id]?.remote) S.users[id] = remoteUser(id, PROF[id]); softRender(); } }).catch(() => {}); pr.busy = true; pr.then(() => { pr.busy = false; }); }
@@ -20565,7 +20572,7 @@ function muEmbed(u){ u = safeHref(u); const p = muPlatOf(u); let m;
 function muInfo(uid){ if (!uid) return null; const d = MUI[uid];
   if (social && !MUIP[uid] && (d === undefined || Date.now() - (MUIT[uid] || 0) > 600000)) { MUIP[uid] = 1; const ref = social.db.doc(`profiles/${uid}/mus/info`), put = (x, srv) => { const o = x.exists ? x.data() || {} : null; if (!o && !srv) return false; MUI[uid] = muClean(o); if (srv) MUIT[uid] = Date.now(); return true; };
     (async () => { let ch = false; if (d === undefined) try { ch = put(await ref.get({source:'cache'}), false); } catch {} if (ch) { softRender(); nbRefreshPick(); }
-      try { const old = JSON.stringify(MUI[uid] || null); put(await ref.get(), true); if (JSON.stringify(MUI[uid]) !== old) { softRender(); nbRefreshPick(); } } catch { if (MUI[uid] === undefined) MUI[uid] = muClean(null); MUIT[uid] = Date.now() - 540000; softRender(); }
+      try { const old = JSON.stringify(MUI[uid] || null); put(await srvGet(ref), true); if (JSON.stringify(MUI[uid]) !== old) { softRender(); nbRefreshPick(); } } catch { if (MUI[uid] === undefined) MUI[uid] = muClean(null); MUIT[uid] = Date.now() - 540000; softRender(); }
       delete MUIP[uid]; })(); }
   return MUI[uid] === undefined ? null : MUI[uid]; }
 const MU_SND_MAX = 20; /* v859: Songs je Musiker */
