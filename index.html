@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='3f56b2d291a6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='381dcd658908';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -11237,8 +11237,14 @@ function stVidUnlock(){ if (stMute) return; try { if (!STVEL.isConnected) { STVE
 /* Story-Video vorladen (v848): Video-Stücke zusammensetzen, bevor die Story dran ist */
 function stVidGet(uid, st){ if (!social || !st?.vid?.n) return; const k = uid + '/' + st.id; if (STVID[k] !== undefined) return; STVID[k] = '';
   const cur = () => STV && stCur()?.id === st.id;
-  songURL(uid === S.me ? social.uid : uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; if (cur()) storyPaint(); }).catch(() => { STVID[k] = null; if (cur()) storyPaint(); }); }
-function stPre(uid, st){ if (!st) return; if (st.vid?.n) stVidGet(uid, st); else if (!st.img) stImgGet(uid, st.id, st.thumb); }
+  songURL(uid === S.me ? social.uid : uid, st.vid, 'sv_' + st.id).then(r => { STVID[k] = r.url; if (cur()) storyPaint(); }).catch(() => { STVID[k] = null; if (cur()) storyPaint(); setTimeout(() => { if (STVID[k] === null) { delete STVID[k]; if (cur()) storyPaint(); } }, 3000); /* v1074: nochmal versuchen */ }); }
+function stPre(uid, st){ if (!st) return; if (st.vid?.n) stVidGet(uid, st); else if (!st.img) stImgGet(uid, st.id, st.thumb); stMuPre(st.mu); }
+/* v1074 (Inaya: Album-Bild, Fotos und Videos kamen erst beim zweiten Öffnen): Song-Infos und Cover werden mit der Story vorgeladen, Bilder vorab dekodiert; kommt etwas nach, zeichnet sich die offene Story neu. */
+const STWARM = new Set();
+function stWarm(u){ if (!u || STWARM.has(u) || STWARM.size > 200) return; STWARM.add(u); try { const i = new Image(); i.decoding = 'async'; i.src = u; i.decode?.().catch(() => {}); } catch {} }
+function stMuPre(mu){ if (!mu || !mu.t) return; if (mu.nb && mu.u) muInfo(mu.u); try { stWarm(stMuArt(mu)); } catch {} }
+function stMuRe(uid){ if (!STV || STV.hold || STV.delAsk || STV.cOpen || !document.getElementById('stvfr')) return; const mu = stCur()?.mu; if (mu?.nb && mu.u === uid) storyPaint(); }
+document.addEventListener('pointerdown', e => { const b = e.target.closest?.('[data-act="story-view"]'); if (!b || !social) return; const id = b.dataset.id, l = storiesOf(id); if (!l.length) return; const i = Math.max(0, l.findIndex(st => !(S.stSeen || {})[id + '_' + st.id])); stPre(id, l[i]); stPre(id, l[i + 1]); }, true);
 let stNew = null, STV = null, stTimer = null;
 function storySweep(){ // abgelaufene eigene Storys ins Story-Archiv
   S.stories = S.stories || []; S.storyArch = S.storyArch || []; let moved = 0;
@@ -11288,14 +11294,14 @@ function storyImg(uid, id, local, thumb){
 /* Story-Bild: erst vom Gerät (Firestore-Zwischenspeicher), dann vom Server; bei Fehler nach kurzer Zeit nochmal statt ewig „lädt“ (Inaya, v694). */
 function stImgGet(uid, id, thumb){ if (!social) return; const k = uid + '/' + id; if (STIMG[k] !== undefined) return; STIMG[k] = 0;
   const ref = social.db.doc('profiles/' + (uid === S.me ? social.uid : uid) + '/story/' + id), cur = () => STV && stCur()?.id === id;
-  const got = d => { if (!d.exists || !d.data().img) return false; STIMG[k] = d.data().img; if (d.data().ph) SPH[k] = {...(SPH[k] || {}), ...d.data().ph}; if (d.data().phx) stPhxGet(uid, id, +d.data().phx); if (cur()) storyPaint(); return true; };
-  ref.get({source:'cache'}).then(d => got(d) || Promise.reject()).catch(() => ref.get().then(d => { if (!got(d)) { STIMG[k] = thumb || ''; if (cur()) storyPaint(); } })
+  const got = d => { if (!d.exists || !d.data().img) return false; STIMG[k] = d.data().img; if (!cur()) stWarm(STIMG[k]); if (d.data().ph) SPH[k] = {...(SPH[k] || {}), ...d.data().ph}; if (d.data().phx) stPhxGet(uid, id, +d.data().phx); if (cur()) storyPaint(); return true; };
+  ref.get({source:'cache'}).then(d => got(d) || Promise.reject()).catch(() => srvGet(ref).then(d => { if (!got(d)) { STIMG[k] = thumb || ''; if (cur()) storyPaint(); } })
     .catch(() => setTimeout(() => { if (!STIMG[k]) { delete STIMG[k]; if (cur()) storyPaint(); } }, 2000))); }
 /* v894: weitere Bildsticker aus profiles/<uid>/stph_<id>/c<j> (erst Gerät, dann Server) */
 const STPHX = {};
 function stPhxGet(uid, id, m){ const k = uid + '/' + id; if (STPHX[k]) return; STPHX[k] = 1; const o = uid === S.me ? social.uid : uid;
   for (let j = 0; j < Math.min(m, 40); j++) { const r = social.db.doc(`profiles/${o}/stph_${id}/c${j}`), put = d => { if (!d.exists || !d.data().ph) return false; SPH[k] = {...(SPH[k] || {}), ...d.data().ph}; if (STV && stCur()?.id === id) storyPaint(); return true; };
-    r.get({source:'cache'}).then(d => put(d) || Promise.reject()).catch(() => r.get().then(put).catch(() => { delete STPHX[k]; })); } }
+    r.get({source:'cache'}).then(d => put(d) || Promise.reject()).catch(() => srvGet(r).then(put).catch(() => { delete STPHX[k]; })); } }
 /* Vorladen: sobald die Story-Ringe zu sehen sind, die jeweils nächste Story jeder Person holen. */
 let STPRE = 0;
 function stPrefetch(){ if (!social || Date.now() - STPRE < 20000) return; STPRE = Date.now();
@@ -11485,6 +11491,7 @@ function storyPaint(){
     ${STV.arch && STV.hl ? '' : STV.arch ? `<div class="starchbar"><button class="btn" data-act="st-m-hl">Highlight</button><button class="btn" data-act="st-restore" data-id="${esc(st.id)}">Posten</button><button class="btn ghost" data-act="st-m-del">Löschen</button></div>` : !social || st.upl ? '' : stcSheetHTML(g, st, own, u)}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
     </div></div>`;
+  try { loadPimgs(); } catch {}
   const mu = st.mu || null;
   const skey = g.uid + '/' + st.id, fresh = STV.key !== skey; if (fresh) { STV.key = skey; STV.t0 = Date.now(); }
   { const ng = STV.list[STV.ui + 1]; stPre(g.uid, g.items[STV.ii + 1]); stPre(g.uid, g.items[STV.ii + 2]); if (ng) { const f = stFirst(ng); stPre(ng.uid, ng.items[f]); stPre(ng.uid, ng.items[f + 1]); } } /* die nächsten Storys schon holen (v848: auch Videos) */
@@ -20365,7 +20372,7 @@ async function songURL(uid, f, base='song'){
     /* v703: erst der Zwischenspeicher im Browser (nach dem Neuladen sofort da), sonst der Server */
     const rd = o => Promise.all(Array.from({length:f.n}, (_, i) => social.db.doc(`profiles/${uid}/${base}/c${i}`).get(o)));
     const bad = ds => !ds || ds.some(d => !d.exists || d.data().v !== f.v);
-    let docs = await rd({source:'cache'}).catch(() => null); if (bad(docs)) docs = await rd();
+    let docs = await rd({source:'cache'}).catch(() => null); if (bad(docs)) docs = await Promise.all(Array.from({length:f.n}, (_, i) => srvGet(social.db.doc(`profiles/${uid}/${base}/c${i}`)))); /* v1074: mit Zeitlimit */
     if (bad(docs)) throw new Error('unvollständig');
     let b64 = docs.map(d => d.data().d).join(''), arr = b64d(b64);
     if (f.mk && f.miv) { arr = await e2MediaOpen(arr, f); b64 = b64e(arr); } // verschlüsselte Medien aus privaten Chats
@@ -20596,8 +20603,8 @@ function muEmbed(u){ u = safeHref(u); const p = muPlatOf(u); let m;
 /* Infos eines Musikers: erst Gerät, dann Server (höchstens alle 10 Minuten) */
 function muInfo(uid){ if (!uid) return null; const d = MUI[uid];
   if (social && !MUIP[uid] && (d === undefined || Date.now() - (MUIT[uid] || 0) > 600000)) { MUIP[uid] = 1; const ref = social.db.doc(`profiles/${uid}/mus/info`), put = (x, srv) => { const o = x.exists ? x.data() || {} : null; if (!o && !srv) return false; MUI[uid] = muClean(o); if (srv) MUIT[uid] = Date.now(); return true; };
-    (async () => { let ch = false; if (d === undefined) try { ch = put(await ref.get({source:'cache'}), false); } catch {} if (ch) { softRender(); nbRefreshPick(); }
-      try { const old = JSON.stringify(MUI[uid] || null); put(await srvGet(ref), true); if (JSON.stringify(MUI[uid]) !== old) { softRender(); nbRefreshPick(); } } catch { if (MUI[uid] === undefined) MUI[uid] = muClean(null); MUIT[uid] = Date.now() - 540000; softRender(); }
+    (async () => { let ch = false; if (d === undefined) try { ch = put(await ref.get({source:'cache'}), false); } catch {} if (ch) { softRender(); nbRefreshPick(); stMuRe(uid); }
+      try { const old = JSON.stringify(MUI[uid] || null); put(await srvGet(ref), true); if (JSON.stringify(MUI[uid]) !== old) { softRender(); nbRefreshPick(); stMuRe(uid); } } catch { if (MUI[uid] === undefined) MUI[uid] = muClean(null); MUIT[uid] = Date.now() - 540000; softRender(); }
       delete MUIP[uid]; })(); }
   return MUI[uid] === undefined ? null : MUI[uid]; }
 const MU_SND_MAX = 20; /* v859: Songs je Musiker */
