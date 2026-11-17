@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='88c4c24c0aa5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='9c79c68e95cf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4427,6 +4427,15 @@ html[lang=en] .w98 .psteck::before{content:'about_me.txt'}html[lang=en] .w98 .pf
 .brgrid>.zcard.brz .onl{white-space:normal!important;display:block;overflow-wrap:anywhere;text-align:center;margin:4px 0 0}
 .brgrid>.zcard.brz .pname{width:100%;overflow-wrap:anywhere;hyphens:auto}
 .brgrid>.zcard.brz .onl>i{display:inline-block;vertical-align:middle;margin:0 6px 0 0}
+/* v1083: Gästebuch für Nicht-Freunde: Leiste statt Schreibfeld */
+.gblock{display:flex;align-items:center;gap:12px;margin-top:14px;padding:10px 10px 10px 12px;border:1px solid var(--p-line,var(--line));border-radius:22px;background:color-mix(in srgb,var(--p-soft,var(--paper-2)) 92%,transparent);color:var(--p-fg,var(--fg))}
+.gblki{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--p-line,var(--line))}
+.gblki svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.gblkt{flex:1;min-width:0;display:grid;gap:1px;line-height:1.25}
+.gblkt b{font:600 14.5px var(--f-display)}
+.gblkt small{font-size:12.5px;color:var(--p-muted,var(--muted))}
+.gblkb{flex:none;font:600 13px var(--f-body);padding:9px 14px;border-radius:18px;border:0;background:var(--p-fg,var(--fg));color:var(--p-bg,var(--paper));cursor:pointer;white-space:nowrap}
+.gblkb.off{background:transparent;color:var(--p-fg,var(--fg));border:1px solid var(--p-line,var(--line));cursor:default}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9976,6 +9985,7 @@ Object.assign(I18N_EN, {'Länge: {0} Sekunden':'Length: {0} seconds','Abspielen'
 Object.assign(I18N_EN, {'Hier liegt später die Leiste':'The bar will sit here later'}); /* v1066 */
 Object.assign(I18N_EN, {'Farbe des Musters':'Pattern color'}); /* v1068 */
 Object.assign(I18N_EN, {'Nach unten zu den neuesten Nachrichten':'Scroll down to the latest messages'}); /* v1076 */
+Object.assign(I18N_EN, {"Nur für Freunde":"Friends only","Nimm die Anfrage an, dann kannst du hier schreiben.":"Accept the request to write here.","Sobald ihr befreundet seid, kannst du hier schreiben.":"Once you're friends, you can write here.","Werdet Freunde, dann kannst du hier schreiben.":"Become friends to write here.","Anfrage senden":"Send request"}); /* v1083 */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -14013,7 +14023,7 @@ function profileView(id){
   let wallP = '';
   if (!u.helper && u.remote) wallP = `<div class="gb"><div id="rwall"><p class="muted" style="margin:0">Kommentare werden geladen …</p></div>
       ${isFriend(u.id) ? rwFormHTML('Kommentieren …')
-        : '<p class="note" style="margin:0">Kommentieren können nur Freunde. Schick oben auf dem Profil eine Freundschaftsanfrage.</p>'}</div>`;
+        : gbLockHTML(u.id)}</div>`;
   else if (!u.helper) { // eigene Kommentare und die von Juliet und Andy scrollen zusammen in einem Kasten (Inaya, 2026-10-11)
     const local = u.wall.map((c, i) => [c, i]).reverse().map(([c, i]) => `<div class="entry wentry${wTheme(c.author) ? ' tp' : ''}" style="${wTheme(c.author)}">${ulink(c.author)} <span data-raw>${etx(c.text)}</span> <span class="meta" style="display:inline">· ${ago(c.ts)}</span>${own ? `<button class="cdel" data-act="wall-del" data-i="${i}">löschen</button>` : ''}</div>`).join('');
     wallP = `<div class="gb">${own && social ? '<h3 class="lbl" style="margin:0 0 6px">Kommentare von deinen Freunden</h3>' : ''}<div class="wscroll">${own && social ? '<div id="rwall"></div>' : ''}${local || (own && social || PUB && !social ? '' : '<p class="muted" style="margin:0">Noch keine Einträge.</p>')}</div>
@@ -15875,8 +15885,8 @@ new MutationObserver(moRaf(() => { addEmoButtons(); sgReattach(); emoKeep(); if 
 /* ---------- Kommentare auf Profilen (geteilt, in chats/wall_<uid>/m) ---------- */
 const WL = {uid:null, unsub:null, list:[]};
 function wallSync(){
-  const pid = V.name === 'profile' ? (V.arg || S.me) : null, u = pid ? S.users[pid] : null;
-  const target = !social || !u || u.helper ? null : pid === S.me ? social.uid : u.remote ? pid : null;
+  const pid = V.name === 'profile' ? (V.arg || S.me) : null, u = pid ? (S.users[pid] || profUser(pid)) : null; /* v1083: auch Profile von Nicht-Freunden, damit sie das Gästebuch lesen können */
+  const target = !social || !u || u.helper ? null : pid === S.me ? social.uid : u.remote && !(u.priv && !isFriend(pid)) ? pid : null;
   if (target === WL.uid) { drawWall(); return; }
   if (WL.unsub) { WL.unsub(); WL.unsub = null; }
   WL.uid = target; WL.list = []; WL.ready = false;
@@ -15905,6 +15915,12 @@ function gbOpen(w, mid, cm, did){ // zum Eintrag im Gästebuch springen, bei Kom
     const k = el.querySelector('[data-pi]')?.dataset.pi; if (cm && k) setTimeout(() => { if (PI[k]) { cmvOpen(k); cmvShow(k, did); } }, 500); };
   setTimeout(find, 150); }
 /* Gästebuch-Feld wie die Kommentarleiste im Salon (Inaya, 2026-10-18): Plus = Foto, Ketten-Symbol = Video-Link (klappt ein Feld auf), Textfeld, Pfeil. IDs rw-in/rw-img/rw-url/rw-file bleiben für den Absenden-Code */
+/* v1083 (Inaya): Nicht-Freunde sehen das Gästebuch mit allen Einträgen, nur statt der Schreibleiste diese Leiste im selben Stil */
+function gbLockHTML(id){
+  const inc = FR.inc.includes(id) && !(S.ignoredReq || []).includes(id), sent = FR.mine.includes(id);
+  const btn = !social ? '' : inc ? `<button type="button" class="gblkb" data-act="fr-add" data-id="${esc(id)}">Annehmen</button>` : sent ? '<span class="gblkb off">Angefragt</span>' : `<button type="button" class="gblkb" data-act="fr-add" data-id="${esc(id)}">Anfrage senden</button>`;
+  return `<div class="gblock" role="note"><span class="gblki" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/></svg></span><span class="gblkt"><b>Nur für Freunde</b><small>${inc ? 'Nimm die Anfrage an, dann kannst du hier schreiben.' : sent ? 'Sobald ihr befreundet seid, kannst du hier schreiben.' : 'Werdet Freunde, dann kannst du hier schreiben.'}</small></span>${btn}</div>`;
+}
 function rwFormHTML(ph){ return `<form class="cform rwform" data-form="rwall">${attSheetHTML('<input type="file" id="rw-img" accept="image/*" hidden>', '<input type="file" id="rw-vid" accept="video/*" hidden>')}${attMenuHTML()}`
   + `<span class="cinw"><textarea class="pcin mlin" id="rw-in" rows="1" placeholder="${esc(ph)}" maxlength="500" aria-label="Gästebuch-Eintrag" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>`
   + `<button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachkommentar aufnehmen" title="Sprachkommentar: gedrückt halten"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button>`
