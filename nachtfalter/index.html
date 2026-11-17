@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='8fd3b2ae5ebc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='c010d20e04b9';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4311,6 +4311,10 @@ html[lang=en] .w98 .psteck::before{content:'about_me.txt'}html[lang=en] .w98 .pf
 .staudat{grid-template-columns:40px minmax(0,1fr);border:1px solid #ffffff1f;border-radius:12px}
 .staudat input{margin-top:8px;width:100%;min-height:40px;background:#1d1d20;border:1px solid #ffffff2e;border-radius:10px;color:#eeedf2;padding:6px 10px;font:14px var(--f-body);color-scheme:dark}
 .staud .staudx{width:100%;min-height:46px;border-radius:12px;text-decoration:none}
+/* v1063: Story lädt hoch: Ring füllt sich mit dem Fortschritt */
+.sring.upl .sava{background:linear-gradient(#1a1a1d,#1a1a1d) padding-box,conic-gradient(#eeedf2 calc(var(--upp,0) * 360deg),#ffffff2e 0) border-box!important;animation:none;box-shadow:0 0 0 2px #0a0a0b inset!important;transition:background .3s}
+.sring.upl>small{font-variant-numeric:tabular-nums}
+.sthead .stupt{white-space:nowrap;font-variant-numeric:tabular-nums}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9853,6 +9857,7 @@ Object.assign(I18N_EN, {'Hintergrund der Schrift':'Text background'}); /* v1060 
 Object.assign(I18N_EN, {'Quiz, neue Schriften und Muster in Storys':'Quizzes, new fonts and patterns in stories'}); /* v1061 */
 Object.assign(I18N_EN, {'Farbe des Musters':'Pattern colour'}); /* v1062 */
 Object.assign(I18N_EN, {'Alle auf Noctibat':'Everyone on Noctibat','Nur deine Freunde':'Only your friends','1 Person':'1 person','{0} Personen':'{0} people','Später posten':'Post later','Freiwillig: erst Zeit wählen, dann unten wer':'Optional: pick a time first, then who below'}); /* v1062 */
+Object.assign(I18N_EN, {'Wird hochgeladen … {0} %':'Uploading … {0} %','noch etwa {0} s':'about {0} s left','noch etwa {0} Min.':'about {0} min left'}); /* v1063 */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -11082,7 +11087,7 @@ async function stBake(n){ // Foto (oder Standbild vom Video) genau so, wie es im
   const W = 720, H = 1280, im = await stLoadImg(n.vid ? n.frame : n.src);
   const cv = await stBgCanvas(n.bg || 'blur', W, H, im), x = cv.getContext('2d'), v = stMVf(n), w = v.w / 100 * W, h = v.h / 100 * H;
   x.save(); x.translate((v.x + v.w / 2) / 100 * W, (v.y + v.h / 2) / 100 * H); x.rotate(v.r * Math.PI / 180); x.drawImage(im, -w / 2, -h / 2, w, h); x.restore();
-  let d = cv.toDataURL('image/jpeg', .85); if (d.length > 700000) d = cv.toDataURL('image/jpeg', .7); return d;
+  let d = cv.toDataURL('image/jpeg', .8); if (d.length > 420000) d = cv.toDataURL('image/jpeg', .68); return d; /* v1063: kleiner = schneller hochgeladen */
 }
 // Texte frei platzierbar: {t, x, y in %, s = Größe, c = Farbe, st = Schrift, bg = 0 ohne, 1 Kasten, 2 halbdurchsichtig}
 const STXT = [['klassisch','Klassisch'],['modern','Modern'],['neon','Neon'],['schreib','Schreibmaschine'],['fett','Fett'],['gotisch','Gotisch']];
@@ -11143,7 +11148,7 @@ function storySweep(){ // abgelaufene eigene Storys ins Story-Archiv
 const stBorn = st => { const t = parseInt(String(st.id || '').slice(1), 36); return t > 1.6e12 && t < st.ts + 6e4 ? t : st.ts; };
 const stLive = st => Date.now() - st.ts < STORY_H && Date.now() - stBorn(st) < STORY_H;
 const stShown = st => stLive(st) && st.ts <= Date.now() + 60000; /* v934: geplante Storys erst ab ihrer Zeit zeigen */
-const myStories = () => (S.stories || []).filter(stShown).sort((a, b) => a.ts - b.ts);
+const myStories = () => [...(S.stories || []), ...STUPL].filter(stShown).sort((a, b) => a.ts - b.ts);
 function storiesOf(id){
   if (id === S.me) return myStories();
   const u = S.users[id] || (PROF[id] ? profUser(id) : null); if (!u || !u.remote) return []; const fr = isFriend(id); if (!fr && PROF[id]?.priv) return [];
@@ -11164,7 +11169,7 @@ function storyBar(){
   if (!S.me) return ''; storySweep();
   const mine = myStories(); let fr = storyUsers().sort((a, b) => stSeen(a.id, storiesOf(a.id)) - stSeen(b.id, storiesOf(b.id)) || Math.max(...storiesOf(b.id).map(x => x.ts)) - Math.max(...storiesOf(a.id).map(x => x.ts)));
   const sn = SNAP.d?.st; if (sn?.length && !snapLive() && fr.length < sn.length) fr = sn.map(x => { const u = uidUser(x.id) || snapUser(x.id); return u && {...u, _st:(x.s || []).filter(stLive)}; }).filter(u => u?._st.length); // beim Neuladen: Ringe vom letzten Besuch
-  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' + (STUP ? ' upl' : '') : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}${aboRing(u) ? ' abo' + (aboPrem(u) || isSiteOwner(u) ? ' prem' : '') : ''}${ringLila(u) ? ' lila' : ''}" data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${u.id === S.me ? '' : ' data-raw'}>${esc(label)}</small></button>`; /* bei anderen steht der Nutzername (Inaya, 2026-10-16) */
+  const ring = (u, l, label) => `<button class="sring${l.length ? '' : ' none'}${u.id === S.me ? ' own' + (STUP ? ' upl' : '') : ''}${l.length && stSeen(u.id, l) ? ' seen' : ''}${aboRing(u) ? ' abo' + (aboPrem(u) || isSiteOwner(u) ? ' prem' : '') : ''}${ringLila(u) ? ' lila' : ''}"${u.id === S.me && STUP ? ` style="--upp:${(Object.values(STUPP).reduce((a, x) => a + x.p, 0) / (Object.keys(STUPP).length || 1)).toFixed(3)}"` : ''} data-act="${l.length ? 'story-view' : 'story-new'}" data-id="${esc(u.id)}" aria-label="${esc(l.length || u.id !== S.me ? label : 'Story hinzufügen')}"><span class="sava">${headPic(u, '', true)}</span>${u.id === S.me ? (l.length ? '<i class="sadd" data-act="story-new" role="button" aria-label="Neue Story">+</i>' : '<i class="sadd" aria-hidden="true">+</i>') : ''}<small${u.id === S.me ? '' : ' data-raw'}>${u.id === S.me && STUP ? Math.round(Object.values(STUPP).reduce((a, x) => a + x.p, 0) / (Object.keys(STUPP).length || 1) * 100) + ' %' : esc(label)}</small></button>`; /* bei anderen steht der Nutzername (Inaya, 2026-10-16) */
   stPrefetch(); /* Storys vorladen (v694) */
   return `<div class="storybar" role="list">${ring(me(), mine, 'Deine Story')}${fr.map(u => ring(u, u._st || storiesOf(u.id), u.handle || u.name)).join('')}</div>`;
 }
@@ -11359,11 +11364,11 @@ function storyPaint(){
   let vc = ov.querySelector(':scope > .stviewc'); if (!vc) { ov.innerHTML = '<div class="stviewc"></div><div id="stspw" class="stspw"></div><div id="stsh"></div>'; vc = ov.firstChild; }
   vc.innerHTML = `<div class="stbox view"><div class="stframe${st.v === 2 ? ' v2' : ''}" id="stvfr">
     <div class="stbars">${g.items.map((x, i) => `<i class="${i < STV.ii ? 'done' : i === STV.ii ? 'now' : ''}"></i>`).join('')}</div>
-    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)} data-raw>${esc(u.name || '')}${hmark(u)}</b><small>${STV.arch ? new Date(st.ts).toLocaleDateString(LOC()) : ago(st.ts)}</small></span>${u.handle ? `<small class="stwh" data-raw>@${esc(u.handle)}</small>` : ''}${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? `<button class="stx sthlm" data-act="hl-more" aria-label="Highlight-Optionen">${HL_MORE}</button>` : '') : ''}${stSndKnown(st) ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute || stBlk ? 'Ton an' : 'Ton aus'}">${stMute || stBlk ? NFI.mute : NFI.snd}</button>` : stNosBtn()}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>${st.mu?.nb && safeHref(st.mu.lk) ? `<a class="stnbl" href="${esc(safeHref(st.mu.lk))}" target="_blank" rel="noopener">${MU_ICO(MU_EXT)}<span>${esc(tr('Auf {0} anhören').replace('{0}', muSrc(st.mu).n))}</span></a>` : ''}
+    <header class="sthead"><button class="stwho" data-act="st-prof" data-id="${esc(g.uid)}" aria-label="Profil von ${esc(u.name)} öffnen"><span class=\"cameo\">${headPic(u, '', true)}</span><span class="stwcol"><span class="stwrow"><b${nameFont(u)} data-raw>${esc(u.name || '')}${hmark(u)}</b><small${st.upl ? ` class="stupt" data-upid="${esc(st.id)}"` : ''}>${st.upl ? esc(stUpTxt(st.id)) : STV.arch ? new Date(st.ts).toLocaleDateString(LOC()) : ago(st.ts)}</small></span>${u.handle ? `<small class="stwh" data-raw>@${esc(u.handle)}</small>` : ''}${stHeadMu(st.mu || (st.song && spOe(st.song)))}</span></button><span class="sp"></span>${STV.hl ? (own ? `<button class="stx sthlm" data-act="hl-more" aria-label="Highlight-Optionen">${HL_MORE}</button>` : '') : ''}${stSndKnown(st) ? `<button class="stx stsnd" data-act="st-snd" aria-label="${stMute || stBlk ? 'Ton an' : 'Ton aus'}">${stMute || stBlk ? NFI.mute : NFI.snd}</button>` : stNosBtn()}<button class="stx" data-act="st-close" aria-label="Story schließen">✕</button></header>${st.mu?.nb && safeHref(st.mu.lk) ? `<a class="stnbl" href="${esc(safeHref(st.mu.lk))}" target="_blank" rel="noopener">${MU_ICO(MU_EXT)}<span>${esc(tr('Auf {0} anhören').replace('{0}', muSrc(st.mu).n))}</span></a>` : ''}
     ${st.v === 2 ? '<div class="stcv">' : ''}${vsrc ? stImgHTML(vsrc, st.f, '', true, st.vf) : src ? stImgHTML(src, st.f, 'Story von ' + u.name) : st.thumb ? `<img class="stthph" src="${esc(st.thumb)}" alt="">` : ''}
     ${st.v === 2 ? stStkHTML(st.stk, false, stICtx()) : ''}${stTextsHTML(stTexts(st))}${st.v === 2 ? '</div>' : ''}${stFrHTML(st.fr)}
     <button class="stnav prev" data-act="st-prev" aria-label="Vorherige Story"></button><button class="stnav next" data-act="st-next" aria-label="Nächste Story"></button>
-    ${STV.arch && STV.hl ? '' : STV.arch ? `<div class="starchbar"><button class="btn" data-act="st-m-hl">Highlight</button><button class="btn" data-act="st-restore" data-id="${esc(st.id)}">Posten</button><button class="btn ghost" data-act="st-m-del">Löschen</button></div>` : !social ? '' : stcSheetHTML(g, st, own, u)}
+    ${STV.arch && STV.hl ? '' : STV.arch ? `<div class="starchbar"><button class="btn" data-act="st-m-hl">Highlight</button><button class="btn" data-act="st-restore" data-id="${esc(st.id)}">Posten</button><button class="btn ghost" data-act="st-m-del">Löschen</button></div>` : !social || st.upl ? '' : stcSheetHTML(g, st, own, u)}
     ${STV.delAsk ? `<div class="stdelask" role="alertdialog" aria-label="Story löschen"><div><b>Willst du die Story wirklich löschen?</b><span class="row"><button class="btn ghost" data-act="st-delno">Nein</button><button class="btn" data-act="st-delyes">Ja, löschen</button></span></div></div>` : ''}
     </div></div>`;
   const mu = st.mu || null;
@@ -11911,7 +11916,16 @@ function stStep(d){ if (!STV) return; const g = STV.list[STV.ui]; STV.ii += d;
   storyPaint(); }
 function stClose(){ STVEL.pause(); stSpStop(); stAuStop(); stCamStop(); stCam = null; STV = null; stNew = null; storyPaint(); save(); render(); }
 let STUP = 0; // Storys, die gerade hochladen: Ring dreht sich (Inaya, 2026-10-12)
-async function stShare(){ STUP++; try { await stShare0(); taskHit('po'); } finally { STUP = Math.max(0, STUP - 1); if (!stNew && !STV) render(); else document.querySelectorAll(".sring.upl").forEach(x => STUP || x.classList.remove("upl")); } }
+/* v1063 (Inaya: „wie bei Insta drauf klicken, obwohl sie noch hochlädt, und sehen, wie lange sie noch braucht“): Die Story steht sofort in „Deine Story“ (STUPL, nur auf dem Gerät, st.upl),
+   Ring um das eigene Profilbild füllt sich mit dem Fortschritt (--upp), darunter „N %“, in der Story oben „Wird hochgeladen … N % · noch etwa N s“ (stUpSet, Schätzung aus der bisherigen Geschwindigkeit). */
+let STUPL = []; const STUPP = {};
+function stUpTxt(id){ const u = STUPP[id]; if (!u) return ''; const pc = Math.round(u.p * 100); let t = tr('Wird hochgeladen … {0} %').replace('{0}', pc);
+  if (u.p > .04 && u.p < 1) { const el = (Date.now() - u.t0) / 1000, rest = Math.max(1, Math.round(el / u.p * (1 - u.p))); t += ' · ' + (rest < 60 ? tr('noch etwa {0} s').replace('{0}', rest) : tr('noch etwa {0} Min.').replace('{0}', Math.ceil(rest / 60))); }
+  return t; }
+function stUpSet(id, p){ const u = STUPP[id] = STUPP[id] || {t0:Date.now(), p:0}; u.p = Math.max(u.p, Math.min(1, p)); const all = Object.values(STUPP), avg = all.reduce((a, x) => a + x.p, 0) / (all.length || 1);
+  document.querySelectorAll('.sring.own').forEach(r => { r.style.setProperty('--upp', avg); const sm = r.querySelector(':scope > small'); if (sm && STUP) sm.textContent = Math.round(avg * 100) + ' %'; });
+  document.querySelectorAll(`[data-upid="${id}"]`).forEach(x => x.textContent = stUpTxt(id)); }
+async function stShare(){ const n0 = stNew; STUP++; try { await stShare0(); taskHit('po'); } finally { STUP = Math.max(0, STUP - 1); if (n0?._st) { STUPL = STUPL.filter(x => x !== n0._st); delete STUPP[n0._st.id]; } if (!stNew && !STV) render(); else document.querySelectorAll(".sring.upl").forEach(x => STUP || x.classList.remove("upl")); } }
 async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochgeladen wird im Hintergrund (Inaya, 2026-10-11)
   const n = stNew; if (!n || n.posting) return; n.posting = true;
   for (const x of n.stk || []) if (x.k === 'post' && x.a && x.id) shMark(x.a, x.id, 'st'); // in die Story geteilt: zählt beim Beitrag mit
@@ -11932,22 +11946,24 @@ async function stShare0(){ // nur einmal posten, Fenster schließt sofort, hochg
   const ph = {}, phx = []; { const M = 850000; let room = M - (n.img || '').length, cur = null, cs = 0;
     (st.stk || []).forEach((x, i) => { if (!((x.k === 'pho' || x.k === 'sg') && x.p)) return; const L = x.p.length + 24; if (L <= room) { ph[i] = x.p; room -= L; } else { if (!cur || cs + L > M) { cur = {}; cs = 0; phx.push(cur); } cur[i] = x.p; cs += L; } }); }
   if (social) { (st.stk || []).forEach(x => { delete x.p; }); if (phx.length) st.phx = phx.length; SPH[S.me + '/' + st.id] = Object.assign({}, ph, ...phx); }
+  if (social) { st.upl = 1; n._st = st; STUPL.push(st); STIMG[S.me + '/' + st.id] = n.img; stUpSet(st.id, .02); }
   if (stNew === n) { stNew = null; stAuStop(); storyPaint(); render(); } sdrDone(n);
-  if (n.vid || social) toast('Deine Story wird gepostet …');
+  if (n.vid && !social) toast('Deine Story wird gepostet …');
   if (n.vid) {
-    if (n.vid.job) { const j = n.vid.job, tick = setInterval(() => toastKeep(`Video wird verkleinert … ${Math.round(j.q * 100)} %`), 400);
+    if (n.vid.job) { const j = n.vid.job, tick = setInterval(() => stUpSet(st.id, .02 + (j.q || 0) * .38), 400);
       try { const r = await j.p; n.vid = {...n.vid, blob:r.blob, type:r.type, url:URL.createObjectURL(r.blob), s:0, l:0, job:null}; }
       catch (err) { if (n.vid.file && n.vid.file.size <= VID_HARD) { n.vid = {...n.vid, blob:n.vid.file, type:n.vid.file.type || 'video/mp4', job:null}; } else {
-        clearInterval(tick); toastKeep(''); toast(err?.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : 'Das Video ließ sich nicht verkleinern. Versuch es nochmal oder nimm einen kürzeren Teil.'); return; } }
-      clearInterval(tick); toastKeep(''); toast('Deine Story wird gepostet …'); }
+        clearInterval(tick); toast(err?.message === 'gross' ? 'Das Video ist zu groß. Wähl einen kürzeren Teil.' : 'Das Video ließ sich nicht verkleinern. Versuch es nochmal oder nimm einen kürzeren Teil.'); return; } }
+      clearInterval(tick); }
     if (n.m) { const f = stMVf(n), r1 = x => Math.round(x * 100) / 100; st.vf = {x:r1(f.x), y:r1(f.y), w:r1(f.w), h:r1(f.h), r:Math.round(f.r), s:r1(n.vid.s || 0), l:r1(n.vid.l || 0), bg:n.bg && n.bg !== 'blur' ? {c:n.bg.c, p:n.bg.p || '', ...(n.bg.pc ? {pc:n.bg.pc} : {})} : null}; }
     { const ha = await vidHasAud(n.vid.blob || n.vid.file); if (ha != null) st.na = ha ? 0 : 1; } /* v920: merkt, ob das Video Ton hat */
-    try { const {poster, ...m} = await uploadPostVideo(n.vid, st.id, null, 'sv_' + st.id); st.vid = m; }
+    try { const p0 = Math.max(.05, STUPP[st.id]?.p || 0); const {poster, ...m} = await uploadPostVideo(n.vid, st.id, (d, t) => stUpSet(st.id, p0 + (.95 - p0) * d / t), 'sv_' + st.id); st.vid = m; }
     catch { toast('Das Video ging nicht hoch. Versuch es nochmal.'); return; }
     STVID[S.me + '/' + st.id] = n.vid.url;
   }
-  if (social) { try { await Promise.all(phx.map((c, j) => social.db.doc(`profiles/${social.uid}/stph_${st.id}/c${j}`).set({ph:c}))); await social.db.doc('profiles/' + social.uid + '/story/' + st.id).set({img:n.img, ts:st.ts, ...(Object.keys(ph).length ? {ph} : {}), ...(phx.length ? {phx:phx.length} : {})}); } catch { toast('Die Story ließ sich gerade nicht hochladen.'); return; } }
-  STIMG[S.me + '/' + st.id] = n.img; S.stories = [...(S.stories || []), st].slice(-12); save(); render(); toast('Deine Story ist 24 Stunden für deine Freunde sichtbar.');
+  let upT = null; if (social) { const a = STUPP[st.id]?.p || .05; upT = setInterval(() => { const u = STUPP[st.id]; if (u) stUpSet(st.id, u.p + (.97 - u.p) * .12); }, 300); stUpSet(st.id, Math.max(a, .1)); }
+  if (social) { try { await Promise.all(phx.map((c, j) => social.db.doc(`profiles/${social.uid}/stph_${st.id}/c${j}`).set({ph:c}))); await social.db.doc('profiles/' + social.uid + '/story/' + st.id).set({img:n.img, ts:st.ts, ...(Object.keys(ph).length ? {ph} : {}), ...(phx.length ? {phx:phx.length} : {})}); } catch { clearInterval(upT); toast('Die Story ließ sich gerade nicht hochladen.'); return; } clearInterval(upT); }
+  STIMG[S.me + '/' + st.id] = n.img; delete st.upl; STUPL = STUPL.filter(x => x !== st); delete STUPP[st.id]; S.stories = [...(S.stories || []), st].slice(-12); save(); render(); if (STV) storyPaint();
 }
 /* ---------- Story erstellen wie bei Insta (Inaya, 2026-10-11): erst Kamera (aufnehmen oder aus der Galerie hochladen), dann im selben Feld zuschneiden, dann der Editor ---------- */
 let stCam = null;
