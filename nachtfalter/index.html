@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f64b8180f9c1';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='0ff64193f2bf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -10694,7 +10694,7 @@ const V7_PAW_B = '<path d="M12 13.5c-2.6 0-5 2.2-5 4.3 0 1.3 1 1.9 2.2 1.9 1 0 1
    seinen älteren Stand zurück, und schon Gelesenes erschien wieder als neu. */
 let SEENW = null;
 /* v965 (Inaya: beim Neustart standen im Ladebildschirm Mitteilungen, die es gar nicht gibt, nach dem Laden waren sie weg): Der Gelesen-Stand kommt erst mit `nf-seen` vom Server, vorher galt der ältere Stand des Geräts. Zahlen und Punkte an Glocke, Anfragen und Chats erst, wenn er da ist (`seenOk`, spätestens nach 8 s oder ohne Verbindung). */
-let SEENOK = false, SEEN_T0 = Date.now(); const seenOk = () => { if (SEENOK) return true; try { if (!social) return true; } catch { return true; } return Date.now() - SEEN_T0 > 8000; };
+let SEENOK = false, SEEN_T0 = Date.now(); const seenOk = () => { if (SEENOK) return true; try { if (!social) return false; } catch { return false; } /* v1088: vor der Verbindung keine Zahlen aus dem alten Gerätestand */ return Date.now() - SEEN_T0 > 8000; };
 const seenGo = () => { if (SEENOK) return; SEENOK = true; try { softRender(); } catch {} };
 const seenRef = () => cloud?.col ? cloud.col.doc('nf-seen') : null;
 /* v702: gelöschte eigene Beiträge und zurückgenommene Reposts (Feld d: {<post-id>:ts}) gelten auf allen Geräten; vorher holte ein anderes Gerät bzw. die Kontosicherung sie zurück */
@@ -14285,7 +14285,7 @@ function socialStart(){
   const db = social.db;
   db.collection('friends').where('list', 'array-contains', social.uid).onSnapshot(snap => { FR.inc = snap.docs.map(d => d.id).filter(id => id !== social.uid); FR.incReady = true; FR.incTs = {}; snap.docs.forEach(d => { FR.incTs[d.id] = +(d.data().rq || {})[social.uid] || 0; }); frReqFresh(); syncFriends(); }, () => {});
   db.collection('chats').where('members', 'array-contains', social.uid).onSnapshot(snap => {
-    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (CH.open && CH.unsub) markSeen(); unrSoon(); /* v955 */ if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue();
+    CH.raw = snap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.last || b.ts || 0) - (a.last || a.ts || 0)); CH.list = CH.raw.filter(chVis); CH.snap = false; snapSave(); if (CH.open && CH.unsub) markSeen(); unrSoon(); /* v955 */ if (RING.raw.length) ringFilter(); e2pvCache(); e2pvQueue(); setTimeout(() => chPre(), document.readyState === 'complete' ? 1500 : 3000); /* v1088 */
     Promise.all([...new Set(CH.list.filter(c => !c.group).flatMap(c => c.members))].filter(id => id !== social.uid && !PROF[id]).map(loadProf)).then(softRender); /* v655: Gruppenmitglieder erst, wenn ihr Bild gebraucht wird */
   }, () => {});
   { const fd = db.doc('friends/' + social.uid), frPut = d => { FR.mine = d.exists ? (d.data().list || []) : []; FR.rq = d.exists && d.data().rq && typeof d.data().rq === 'object' ? d.data().rq : {}; FR.ready = true; };
@@ -14546,7 +14546,7 @@ const chatWho = id => id === social?.uid ? tr('Du') : nmOf(id) || tr('Jemand'); 
 // Name mit Fledermaus/Owner-Zeichen, überall gleich (Inaya, 2026-10-13)
 const markOf = id => !id ? '' : id === social?.uid ? hmark(me()) : hmark(S.users[id] || (PROF[id] ? profUser(id) : {id, remote:true}));
 const whoH = id => esc(chatWho(id)) + markOf(id);
-const unread = c => c.last && c.lastFrom && c.lastFrom !== social?.uid && c.last > ((S.seen || {})[c.id] || 0);
+const unread = c => !!(social?.uid && c.last && c.lastFrom && c.lastFrom !== social.uid && c.last > ((S.seen || {})[c.id] || 0)); /* v1088: vor der Verbindung (social fehlt) zählten eigene letzte Nachrichten aus dem Gerätestand als ungelesen */
 /* v955 (Inaya): Zahl ungelesener Nachrichten je Chat (wie bei WhatsApp). Nur für Chats mit Neuem: Nachrichten nach dem eigenen Gelesen-Stand, von anderen, ohne Reaktionen, höchstens 99 */
 const UNR = {}; let UNRT = null;
 const unrKey = c => c.last + ':' + ((S.seen || {})[c.id] || 0);
@@ -14627,14 +14627,22 @@ const cmTyped = () => { const i = document.getElementById('cm-in'), f = i?.close
 new MutationObserver(moRaf(cmTyped)).observe(document.documentElement, {childList:true, subtree:true});
 document.addEventListener('input', e => { if (e.target.id === 'cm-in') { cmTyped(); typingNow(!!e.target.value.trim()); } if (e.target.id === 'rm-in') rmLeft(); });
 function rmLeft(){ const i = document.getElementById('rm-in'), l = document.getElementById('rmleft'); if (!i || !l) return; const n = RMAX - [...i.value].length; l.textContent = n; l.classList.toggle('low', n <= 10); }
+/* v1088 (Inaya: „Chats sollen sofort da sein wie bei WhatsApp“): Die neuesten Chats werden still vom Gerät vorgeladen (Firestore-Zwischenspeicher, keine Lesevorgänge
+   beim Server) und entschlüsselt (`chPre`, `CHPRE`). Beim Öffnen steht der Chat dann sofort da, die Live-Verbindung (`chSub`) kommt dahinter. Auch zuletzt offene Chats bleiben so. */
+const CHPRE = {}; let CHPRE_T = 0;
+const chPreMap = (id, docs) => docs.filter(d => !isDel(d.id) && !(chHidAt(id) && (+d.data().ts || 0) <= chHidAt(id))).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse();
+function chPre(force){ if (!social || !CH.list?.length) return; if (!force && Date.now() - CHPRE_T < 60000) return; CHPRE_T = Date.now();
+  for (const c of CH.list.slice(0, 8)) { const id = c.id; if (id === CH.open || (CHPRE[id] && CHPRE[id].last === (+c.last || 0))) continue;
+    social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(60).get({source:'cache'}).then(q => { if (!q.docs.length) return; CHPRE[id] = {raw:chPreMap(id, q.docs), last:+c.last || 0}; if (e2Chat(id)) { e2mLoad(id).then(() => { const r = CHPRE[id]?.raw; if (r) e2ViewIn(id, r); }); } }).catch(() => {}); } }
 function openChat(id){
   if (CH.unsub) CH.unsub();
   if (CH.tunsub) CH.tunsub(); CH.typing = {};
   CH.tunsub = social.db.collection('chats/' + id + '/t').onSnapshot(snap => { CH.typing = {}; snap.docs.forEach(d => { const x = d.data(); CH.typing[d.id] = {ts:+x.ts || 0, k:x.k || 't'}; }); paintTyping(); }, () => {});
   if (/^dm_/.test(id)) lsFetch(id.slice(3).split('_').find(u => u !== social.uid));
   CH.open = id; CH.mode = 'chat'; CH.msgs = []; CH.mraw = null; CH.t0 = Date.now(); CH.lim = 60; CH.rx = {}; if (CH.re?.cid !== id) CH.re = null; if (e2Chat(id)) e2Init().then(ok => ok && e2WatchDevs(e2Members(id))); { const c = CH.list.find(x => x.id === id); chatTab = c ? ctabOf(c) : id.startsWith('g') ? 'group' : 'priv'; }
+  const pre = CHPRE[id]; if (pre && pre.raw.length) { CH.mraw = pre.raw; CH.msgs = e2View(id, CH.mraw); chSplit(); }
   chSub(id); rdWatch(id); tkWatch(id);
-  go('chats');
+  go('chats'); if (pre && CH.open === id) drawMsgs('end');
 }
 // Lesebestätigungen (Inaya, 2026-10-13): jedes Mitglied schreibt seinen Lesestand nach chats/<cid>/rd/<uid> = {ts}
 function rdWatch(id){ CH.rdunsub?.(); CH.rd = {}; CH.rdMine = 0; CH.rdunsub = social.db.collection('chats/' + id + '/rd').onSnapshot(q => { const r = {}; q.docs.forEach(d => { r[d.id] = +d.data().ts || 0; }); const ch = JSON.stringify(r) !== JSON.stringify(CH.rd); CH.rd = r; CH.rdMine = Math.max(CH.rdMine || 0, r[social.uid] || 0); if (ch && CH.open === id) drawMsgs(true); }, () => {}); }
@@ -14648,7 +14656,7 @@ function readHTML(m, c){ const mem = (c?.members || e2Members(CH.open, c) || [])
   return `<div class="mread" title="Gelesen von ${esc(names)}" aria-label="Gelesen von ${esc(names)}"><span>Gelesen</span><span class="mreadav">${show.map(u => { const p = uidUser(u); if (!p && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => drawMsgs(true)); } return `<span class="cameo">${p ? headPic(p) : ''}</span>`; }).join('')}${more > 0 ? `<b>+${more}</b>` : ''}</span></div>`; }
 function chSub(id, keep){ if (CH.unsub) CH.unsub(); let first = true;
   return new Promise(res => { CH.unsub = social.db.collection('chats/' + id + '/m').orderBy('ts', 'desc').limit(CH.lim || 60).onSnapshot({includeMetadataChanges:true}, snap => {
-    CH.mraw = snap.docs.filter(d => !isDel(d.id) && !(chHidAt(id) && (+d.data().ts || 0) <= chHidAt(id))).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); { const nl = CH.mraw.filter(x => !isRx(x.id)).pop(); /* v1076 (Inaya): eigene Reaktionen (r_…) zählen nicht als neue eigene Nachricht, sonst sprang der Chat nach unten */ const mineNew = nl && nl.id !== CH.lastMid && CH.lastMid && nl.d?.from === social.uid; CH.lastMid = nl?.id; drawMsgs(first && !keep || mineNew ? 'end' : 0); } e2Prev(id); rdMark();
+    CH.mraw = snap.docs.filter(d => !isDel(d.id) && !(chHidAt(id) && (+d.data().ts || 0) <= chHidAt(id))).map(d => ({id:d.id, d:d.data(), pend:!!d.metadata?.hasPendingWrites})).reverse(); if ((CH.lim || 60) <= 60 && CH.mraw.length) CHPRE[id] = {raw:CH.mraw, last:Math.max(0, ...CH.mraw.map(x => +x.d?.ts || 0))}; /* v1088 */ CH.msgs = e2View(id, CH.mraw); chSplit(); markSeen(); { const nl = CH.mraw.filter(x => !isRx(x.id)).pop(); /* v1076 (Inaya): eigene Reaktionen (r_…) zählen nicht als neue eigene Nachricht, sonst sprang der Chat nach unten */ const mineNew = nl && nl.id !== CH.lastMid && CH.lastMid && nl.d?.from === social.uid; CH.lastMid = nl?.id; drawMsgs(first && !keep || mineNew ? 'end' : 0); } e2Prev(id); rdMark();
     if (first) { first = false; res(true); } }, () => { if (first) { first = false; res(false); } }); }); }
 function markSeen(){ const c = CH.list.find(x => x.id === CH.open); if (!c) return; let t = +c.last || 0; for (const m of (CH.mraw || [])) if (!m.pend && +m.d?.ts > t) t = +m.d.ts; /* v697: auch die neueste Nachricht zählt, die Chatliste kommt oft erst nach den Nachrichten */ if (t && ((S.seen || {})[c.id] || 0) < t) { S.seen = {...(S.seen || {}), [c.id]:t}; saveSoft(); seenPush(0, {[c.id]:t}); } }
 /* v699 (Inaya: Hochscrollen im Chat flüssig): Die Stelle hängt an der obersten sichtbaren Nachricht (msgAnc/msgRest), nicht mehr an scrollTop.
@@ -15275,7 +15283,7 @@ async function e2mPut(cid, ck, m){ try { if (!social) return; const k = await e2
 function e2mLoad(cid){ if (!social) return Promise.resolve(); const lk = social.uid + '|' + cid; if (E2M.load[lk]) return E2M.load[lk];
   return E2M.load[lk] = (async () => { try { const k = await e2mKey(), db = await e2mDb();
       const rows = await new Promise((ok, no) => { const out = [], r = db.transaction('m').objectStore('m').openCursor(IDBKeyRange.bound(lk + '|', lk + '|\uffff')); r.onsuccess = () => { const c = r.result; if (!c) return ok(out); out.push([c.key, c.value]); c.continue(); }; r.onerror = () => no(r.error); });
-      for (const [key, v] of rows) { const ck = key.slice(lk.length + 1); if (E2E.dec[ck]) continue; try { E2E.dec[ck] = JSON.parse(E2_RX.decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:v.iv}, k, v.ct))); } catch {} }
+      const one = async ([key, v]) => { const ck = key.slice(lk.length + 1); if (E2E.dec[ck]) return; try { E2E.dec[ck] = JSON.parse(E2_RX.decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:v.iv}, k, v.ct))); } catch {} }; rows.sort((a, b) => (+(b[0].split('@').pop()) || 0) - (+(a[0].split('@').pop()) || 0)); for (let i = 0; i < rows.length; i += 64) await Promise.all(rows.slice(i, i + 64).map(one)); /* v1088: neueste zuerst und 64 gleichzeitig statt eine nach der anderen */
     } catch {} })(); }
 // Nachrichten für die Anzeige: verschlüsselte im Hintergrund entschlüsseln
 function e2View(cid, raw){ const lk = social ? social.uid + '|' + cid : '';
@@ -21600,8 +21608,9 @@ function morphAnn(el, d){ for (const c of el.children) { c._h = postNorm(c.outer
 const FLD_SEL = ['INPUT', 'TEXTAREA', 'SELECT'];
 const fldDirty = f => f === document.activeElement ? false : f.tagName === 'SELECT' ? [...f.options].some(x => x.selected !== x.defaultSelected) : f.type === 'checkbox' || f.type === 'radio' ? f.checked !== f.defaultChecked : f.type === 'file' ? !!f.files?.length : f.value !== f.defaultValue;
 const morphDirty = o => FLD_SEL.includes(o.tagName) ? fldDirty(o) : [...o.querySelectorAll('input, textarea, select')].some(fldDirty); /* Eingaben, die render() sonst zurückgesetzt hätte */
-function morphKids(op, np, d){ const ok = [...op.childNodes], nk = [...np.childNodes];
+function morphKids(op, np, d){ const ok = [...op.childNodes].filter(o => !(o.nodeType === 1 && o._t == null && o.classList.contains('hslbar'))), nk = [...np.childNodes]; /* v1088: Schieberegler von hslFit gehören nicht zum HTML, sonst wurde beim Reiterwechsel der ganze Kasten samt Zimmer neu gebaut */
   if (ok.length !== nk.length || ok.some((o, i) => o.nodeType !== nk[i].nodeType || (o.nodeType === 1 && o.tagName !== nk[i].tagName))) { nk.forEach(n => { if (n.nodeType === 1) { n._h = postNorm(n.outerHTML); n._t = postNorm(n.cloneNode(false).outerHTML); if (d < MORPH_D) morphAnn(n, d + 1); } }); op.replaceChildren(...nk); return; }
+  
   for (let i = 0; i < ok.length; i++) { const o = ok[i], n = nk[i];
     if (o.nodeType !== 1) { if (o.nodeValue !== n.nodeValue) o.nodeValue = n.nodeValue; continue; }
     const nh = postNorm(n.outerHTML); if (o._h === nh && !morphDirty(o)) continue;
@@ -21610,7 +21619,7 @@ function morphKids(op, np, d){ const ok = [...op.childNodes], nk = [...np.childN
     if (d < MORPH_D && o._h != null && o._t === nt && o.id !== 'msgs' && !o.matches('iframe, video, textarea, select, svg, canvas')) { o._h = nh; morphKids(o, n, d + 1); }
     else { n._h = nh; n._t = nt; if (d < MORPH_D) morphAnn(n, d + 1); o.replaceWith(n); } } }
 const imgAsync = h => h.replace(/<img (?![^>]*\bdecoding=)/g, '<img decoding="async" '); /* v1087: Fotos werden neben dem Scrollen entpackt, nicht mittendrin */
-function appMorph(app, html){ const t = document.createElement('template'); t.innerHTML = imgAsync(html);
+function appMorph(app, html){ const t = document.createElement('template'); t.innerHTML = imgAsync(html); t.content.querySelectorAll(HSL_SEL).forEach(e => e.classList.add('hsl')); /* v1088: Reihen gleich waagerecht, nicht erst ein Bild lang als hohes Raster */
   const sh = app.firstElementChild; if (app.childNodes.length === 1 && sh?.classList.contains('shell') && sh._t != null) { morphKids(app, t.content, 0); return; }
   morphAnn(t.content, 0); app.replaceChildren(t.content); }
 const RK_SEL = '.main article.post[data-pid], .storybar, header.phead, .clrow[data-pid], .card.fullav'; /* v1085: auch der Avatar-Kasten */ /* v1080: auch Story-Leiste, Profilkopf und Zeilen der Chatliste */
