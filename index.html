@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='381dcd658908';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='e88a21e16dd2';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -11405,8 +11405,9 @@ function phMuOpen(k){ const mu = PHMUR[k]; if (!mu) return; document.getElementB
   m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-act=profile]')) m.remove(); }); document.body.appendChild(m); if (typeof i18nNode === 'function') try { i18nNode(m); } catch {} if (social) sndPaint(mu); }
 const phMuHTML = mu => `<button type="button" class="phmu${stAuSrc === stMuPv(mu) && !stAu.paused ? ' on' : ''}" data-act="phmu-play" data-pv="${esc(stMuPv(mu))}" aria-label="Song anhören: ${esc(mu.t)}">${STEQ}<span class="sthmt"><b>${esc(mu.a || '')}</b>${mu.a ? ' · ' : ''}${esc(mu.t)}</span></button>`;
 const VOL_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>', VOL_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></svg>';
-const pvolOn = v => v.startsWith('pv:') ? stAuSrc === v.slice(3) && !stAu.paused && !stAu.muted : !!(PSP && PSP.url === v.slice(3) && PSP.playing);
-const pvolHTML = (v, mu) => `<button type="button" class="pvol" data-act="pvol" data-v="${esc(v)}"${mu && mu.l ? ` data-s="${+mu.s || 0}" data-l="${+mu.l}"` : ''} aria-label="${pvolOn(v) ? 'Ton aus' : 'Ton an'}">${pvolOn(v) ? VOL_ON : VOL_OFF}</button>`;
+const pvolOn = v => v.startsWith('pv:') ? (stAuSrc === v.slice(3) || (PVOLMU[v] && stAuSrc && stAuSrc === stMuPv(PVOLMU[v]))) && !stAu.paused && !stAu.muted : !!(PSP && PSP.url === v.slice(3) && PSP.playing);
+const PVOLMU = {}; /* v1075: Ton-Knopf merkt sich den ganzen Sound (Apple-/Deezer-Hörproben brauchen nb/ap, sonst spielt nichts) */
+const pvolHTML = (v, mu) => { if (mu && v.startsWith('pv:')) PVOLMU[v] = mu; return `<button type="button" class="pvol" data-act="pvol" data-v="${esc(v)}"${mu && mu.l ? ` data-s="${+mu.s || 0}" data-l="${+mu.l}"` : ''} aria-label="${pvolOn(v) ? 'Ton aus' : 'Ton an'}">${pvolOn(v) ? VOL_ON : VOL_OFF}</button>`; };
 function pvolMark(){ document.querySelectorAll('.pvol').forEach(b => { const on = pvolOn(b.dataset.v); b.innerHTML = on ? VOL_ON : VOL_OFF; b.setAttribute('aria-label', on ? 'Ton aus' : 'Ton an'); }); }
 function muMarkPrev(){ pvolMark(); document.querySelectorAll('.phmu').forEach(b => b.classList.toggle('on', stAuSrc === b.dataset.pv && !stAu.paused)); document.querySelectorAll('.muprev').forEach(b => { const r = STMRES[+b.dataset.i]; b.innerHTML = r && stAuSrc === stMuPv(r) && !stAu.paused ? MU_PAUSE : MU_PLAY; });
   document.querySelectorAll('[data-act=pmu-play]').forEach(b => { b.innerHTML = stAuSrc === b.dataset.pv && !stAu.paused ? MU_PAUSE : MU_PLAY; }); }
@@ -22633,8 +22634,9 @@ document.addEventListener('click', async e => {
   else if (a === 'mu-prev') { const r = STMRES[+b.dataset.i]; if (!r) return; if (stAuSrc === stMuPv(r) && !stAu.paused) stAu.pause(); else { stAu.loop = false; stMute = false; stAuPlay(r, true); } muMarkPrev(); }
   else if (a === 'pvol') { const v = b.dataset.v, x = v.slice(3);
     if (v.startsWith('sp:')) pspToggle(x);
-    else if (stAuSrc === x && !stAu.paused) { stAu.muted = !stAu.muted; }
-    else { const w = !!b.dataset.l; stAu.muted = false; stAu.loop = w; stMute = false; stAuPlay({pv:x, s:+b.dataset.s || 0, l:+b.dataset.l || 0}, stAuSrc !== x || stAu.ended, w); }
+    else { const mu0 = PVOLMU[v], cur = !!stAuSrc && (stAuSrc === x || (!!mu0 && stAuSrc === stMuPv(mu0)));
+      if (cur && !stAu.paused) { stAu.muted = !stAu.muted; }
+      else { const w = !!b.dataset.l; stAuUnlock(); stAu.muted = false; stAu.loop = w; stMute = false; stAuPlay(mu0 ? {...mu0, s:+b.dataset.s || 0, l:+b.dataset.l || 0} : {pv:x, s:+b.dataset.s || 0, l:+b.dataset.l || 0}, !cur || stAu.ended, w); } }
     setTimeout(muMarkPrev, 30); }
   else if (a === 'phmu-info') phMuOpen(b.dataset.k);
   else if (a === 'phmu-pl') { const mu = PHMUR[b.dataset.k]; if (!mu) return; const pv = stMuPv(mu); if (pv && stAuSrc === pv && !stAu.paused) stAu.pause(); else { stAuUnlock?.(); stAu.muted = false; stAu.loop = false; stMute = false; stAuPlay(mu, true, true); } setTimeout(() => { if (document.getElementById('musheet')) phMuOpen(b.dataset.k); }, 400); }
