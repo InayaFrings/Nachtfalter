@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='0ff64193f2bf';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='ce97ebc43620';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4436,6 +4436,34 @@ html[lang=en] .w98 .psteck::before{content:'about_me.txt'}html[lang=en] .w98 .pf
 .gblkt small{font-size:12.5px;color:var(--p-muted,var(--muted))}
 .gblkb{flex:none;font:600 13px var(--f-body);padding:9px 14px;border-radius:18px;border:0;background:var(--p-fg,var(--fg));color:var(--p-bg,var(--paper));cursor:pointer;white-space:nowrap}
 .gblkb.off{background:transparent;color:var(--p-fg,var(--fg));border:1px solid var(--p-line,var(--line));cursor:default}
+
+/* v1089: Mitglied-Fenster (#gmsh) wie bei WhatsApp im Noctibat-Stil, Liste mit Pfeil */
+.cinfo .cimemb>svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;color:var(--dim)}
+.cinfo .cimemb .cigo0{width:18px;flex:none}
+.cinfo .cimem{padding-right:0}
+.cinfo .citag{border-color:var(--fg)!important;color:var(--fg)!important;font-weight:600}
+.gmsh{position:fixed;inset:0;z-index:4000;display:flex;align-items:flex-end;justify-content:center}
+.gmshbg{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .22s ease}
+.gmsh.on .gmshbg{opacity:.55}
+.gmsh .gmsheet{position:relative;width:min(100%,560px);max-height:88dvh;overflow:auto;overscroll-behavior:contain;border-radius:22px 22px 0 0!important;padding:22px 16px calc(18px + env(safe-area-inset-bottom))!important;display:grid;justify-items:center;gap:4px;transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1);will-change:transform;box-shadow:0 -10px 40px #0009}
+.gmsh.on .gmsheet{transform:none}
+.gmsh .gmx{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--p-soft) 92%,transparent);border:1px solid var(--p-line);color:var(--p-fg)}
+.gmsh .gmx svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.gmsh .gmav{width:96px;height:96px;border-radius:50%;overflow:hidden;display:block;margin-top:6px;border:2px solid var(--p-line)}
+.gmsh .gmn{margin:8px 0 0;font:700 22px/1.2 var(--f-display);text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.gmsh .cisub{text-align:center}
+.gmsh .gmtiles{margin:14px 0 10px}
+.gmsh .citile{max-width:none}
+.gmsh .gmrows{width:100%;background:color-mix(in srgb,var(--p-soft) 92%,transparent);border-radius:14px!important;border:1px solid var(--p-line)!important;overflow:hidden}
+.gmsh .gmask{gap:10px}
+.gmsh .gmask button{flex:none;border-radius:999px;padding:7px 12px;font:600 13.5px/1 var(--f-body);border:1px solid #ff8a98}
+.gmsh .gmno{background:none;color:#ff8a98}
+.gmsh .gmyes{background:#ff8a98;color:#1a0b0f}
+/* v1089 (Inaya: rote Schrift auf farbigen Chats kaum lesbar): rote Aktionen (Gruppe verlassen, blockieren, Chat löschen, entfernen) immer auf dunklem Grund, kräftiges helles Rot */
+.cinfo .cired,.cinfo.cithm .cired{color:#ff8a98!important;background:#141116!important;font-weight:600}
+.cinfo .cibox:not(.gmrows):has(>.cired){background:#141116!important;border-color:#2c2228!important}
+.cinfo .gmrows .cired{background:#141116!important;border-top-color:#2c2228!important}
+.cinfo .gmrows .cired+.cirow{border-top-color:#2c2228!important}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9987,6 +10015,7 @@ Object.assign(I18N_EN, {'Hier liegt später die Leiste':'The bar will sit here l
 Object.assign(I18N_EN, {'Farbe des Musters':'Pattern color'}); /* v1068 */
 Object.assign(I18N_EN, {'Nach unten zu den neuesten Nachrichten':'Scroll down to the latest messages'}); /* v1076 */
 Object.assign(I18N_EN, {"Nur für Freunde":"Friends only","Nimm die Anfrage an, dann kannst du hier schreiben.":"Accept the request to write here.","Sobald ihr befreundet seid, kannst du hier schreiben.":"Once you're friends, you can write here.","Werdet Freunde, dann kannst du hier schreiben.":"Become friends to write here.","Anfrage senden":"Send request"}); /* v1083 */
+Object.assign(I18N_EN,{'Zum Admin machen':'Make admin','Adminstatus entfernen':'Dismiss as admin','Aus Gruppe entfernen':'Remove from group','{0} entfernen?':'Remove {0}?','Entfernen':'Remove','Nein':'No','Info':'Info','Nachricht':'Message','Anrufen':'Call','Video':'Video','Schließen':'Close'}); /* v1089 */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -14806,13 +14835,74 @@ const ciThumb = x => x.k === 'img'
   ? `<button type="button" class="mimg cith" data-act="mimg-open" data-id="${esc(x.m.id || '')}" aria-label="Foto groß ansehen"><img src="${esc(x.m.img)}" alt="Foto"></button>`
   : `<button type="button" class="vframe vclip mvclip cith" data-act="mvplay" data-id="${esc(x.m.id || '')}" aria-label="Video abspielen"><img src="${esc(/^data:image\//.test(x.m.clip.poster || '') ? x.m.clip.poster : '')}" alt=""><span class="play" aria-hidden="true">▶</span></button>`;
 function ciMemsHTML(c){
-  const me0 = social?.uid, others = c.members.filter(m => m !== me0), ad = c.pub ? c.createdBy : null;
-  const sorted = [...others].sort((a, b) => (b === ad) - (a === ad) || (ONLINE.has(b) - ONLINE.has(a)) || String(chatWho(a)).localeCompare(String(chatWho(b))));
+  const me0 = social?.uid, others = c.members.filter(m => m !== me0), ads = gAdIds(c), isA = id => ads.includes(id);
+  const sorted = [...others].sort((a, b) => isA(b) - isA(a) || (ONLINE.has(b) - ONLINE.has(a)) || String(chatWho(a)).localeCompare(String(chatWho(b))));
   const all = [me0, ...sorted], max = 12, list = CI_ALL ? all : all.slice(0, max);
   const row = id => { const self = id === me0, u = self ? me() : null, on = !self && ONLINE.has(id);
-    return `<div class="cimem"><button type="button" class="cimemb" ${self ? 'data-act="nav" data-v="profile"' : `data-act="${id === social?.uid ? 'profile' : 'ci-person'}" data-id="${esc(id)}"`}><span class="cameo">${self ? headPic(me()) : gmPic(id)}</span><span class="cimn"><b data-raw>${self ? (ciEn() ? 'You' : 'Du') : esc(chatWho(id))}${self ? '' : markOf(id)}</b><small class="muted">${on ? 'online' : PROF[id]?.handle ? '@' + esc(PROF[id].handle) : self && u?.handle ? '@' + esc(u.handle) : ''}</small></span>${id === ad ? `<span class="citag">Admin</span>` : ''}</button>${!self && gAdmin(c) && id !== ad ? (gRmAsk === id ? `<span class="row cirm" style="gap:6px"><button class="btn ghost" type="button" data-act="grm-no">Nein</button><button class="btn" type="button" data-act="grm-yes" data-id="${esc(id)}">Entfernen</button></span>` : `<button class="ciminus" type="button" data-act="grm" data-id="${esc(id)}" aria-label="${esc(chatWho(id))} entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`) : ''}</div>`; };
+    return `<div class="cimem"><button type="button" class="cimemb" ${self ? 'data-act="nav" data-v="profile"' : `data-act="gm-open" data-id="${esc(id)}"`}><span class="cameo">${self ? headPic(me()) : gmPic(id)}</span><span class="cimn"><b data-raw>${self ? (ciEn() ? 'You' : 'Du') : esc(chatWho(id))}${self ? '' : markOf(id)}</b><small class="muted">${on ? 'online' : PROF[id]?.handle ? '@' + esc(PROF[id].handle) : self && u?.handle ? '@' + esc(u.handle) : ''}</small></span>${isA(id) ? `<span class="citag">Admin</span>` : ''}${self ? '<i class="cigo0"></i>' : CI_ICO.go}</button></div>`; };
   return list.map(row).join('') + (!CI_ALL && all.length > max ? `<button type="button" class="cirow cimore" data-act="ci-all"><span>${ciEn() ? 'Show all' : 'Alle anzeigen'} (${all.length})</span>${CI_ICO.go}</button>` : '');
 }
+/* v1089 (Inaya, nach WhatsApp): Mitglied antippen öffnet unten ein Fenster im Design der Gruppe: Nachricht, Anrufen, Video, „Zum Admin machen“ bzw. „Adminstatus entfernen“, „Aus Gruppe entfernen“ (nur Admins, mit Rückfrage), Info (Kontaktinfo).
+   Liegt außerhalb von #app (#gmsh), damit Neuzeichnen es nicht stört; schließen über × oder Tippen daneben. */
+const GMS = {id:null, ask:false, busy:false};
+const GM_ICO = {msg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></svg>',
+  ad:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 21c.7-4 3.4-6.5 7-6.5"/><path d="M17.5 13.5l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z"/></svg>',
+  unad:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 21c.7-4 3.4-6.5 7-6.5 1.6 0 3 .5 4.1 1.4"/><circle cx="18" cy="18" r="4"/><path d="M16 18h4"/></svg>',
+  rm:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 12h8"/></svg>',
+  info:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6"/></svg>',
+  x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'};
+const gmChat = () => CH.list.find(x => x.id === CH.open && x.group);
+function gmInner(c, id){
+  const mod = gMod(c), isA = gAdIds(c).includes(id), creator = id === c.createdBy, on = ONLINE.has(id), h = PROF[id]?.handle;
+  const calls = !c.pub;
+  const tiles = `<button type="button" class="citile" data-act="gm-dm">${GM_ICO.msg}<span>Nachricht</span></button>${calls ? `<button type="button" class="citile" data-act="gm-call" data-k="audio">${CI.ph}<span>Anrufen</span></button><button type="button" class="citile" data-act="gm-call" data-k="video">${CI.vid}<span>Video</span></button>` : ''}`;
+  const rows = [
+    mod && !creator ? (isA ? `<button type="button" class="cirow cired" data-act="gm-unad">${GM_ICO.unad}<span>Adminstatus entfernen</span></button>` : `<button type="button" class="cirow" data-act="gm-ad">${GM_ICO.ad}<span>Zum Admin machen</span></button>`) : '',
+    mod && !creator ? (GMS.ask ? `<div class="cirow cired gmask">${GM_ICO.rm}<span>${esc(chatWho(id))} entfernen?</span><button type="button" class="gmno" data-act="gm-rmno">Nein</button><button type="button" class="gmyes" data-act="gm-rmyes">Entfernen</button></div>` : `<button type="button" class="cirow cired" data-act="gm-rm">${GM_ICO.rm}<span>Aus Gruppe entfernen</span></button>`) : '',
+    `<button type="button" class="cirow" data-act="gm-info">${GM_ICO.info}<span>Info</span>${CI_ICO.go}</button>`
+  ].filter(Boolean).join('');
+  return `<button type="button" class="gmx" data-act="gm-x" aria-label="Schließen">${GM_ICO.x}</button>
+    <span class="gmav cameo">${gmPic(id)}</span><h3 class="gmn" data-raw>${esc(chatWho(id))}${markOf(id)}</h3><p class="cisub" data-raw>${h ? '@' + esc(h) : ''}${on ? `${h ? ' · ' : ''}online` : ''}${isA ? `${h || on ? ' · ' : ''}Admin` : ''}</p>
+    <div class="citiles gmtiles">${tiles}</div><section class="cibox gmrows">${rows}</section>`;
+}
+function gmPaint(){ const el = document.querySelector('#gmsh .gmsheet'), c = gmChat(); if (!el || !c || !GMS.id) return; el.innerHTML = gmInner(c, GMS.id); try { i18nNode(el); } catch {} }
+function gmOpen(id){
+  const c = gmChat(); if (!c || !id || id === social?.uid) return; GMS.id = id; GMS.ask = false; document.getElementById('gmsh')?.remove();
+  const w = document.createElement('div'); w.id = 'gmsh'; w.className = 'gmsh';
+  w.innerHTML = `<div class="gmshbg" data-act="gm-x"></div><div class="gmsheet cinfo${ciThemeAttr(c)}" role="dialog" aria-modal="true"></div>`;
+  document.body.appendChild(w); gmPaint(); requestAnimationFrame(() => requestAnimationFrame(() => w.classList.add('on')));
+}
+function gmClose(now){ const w = document.getElementById('gmsh'); GMS.id = null; GMS.ask = false; if (!w) return; if (now) return w.remove(); w.classList.remove('on'); setTimeout(() => w.remove(), 260); }
+async function gmAdSet(on){
+  const c = gmChat(), id = GMS.id; if (!c || !id || !gMod(c) || GMS.busy) return; GMS.busy = true;
+  const prev = Array.isArray(c.admins) ? c.admins : [], nx = on ? [...new Set([...prev, id])] : prev.filter(x => x !== id);
+  c.admins = nx.filter(x => c.members.includes(x)); gmPaint(); render();
+  try { await social.db.doc('chats/' + c.id).update({admins:c.admins}); }
+  catch { c.admins = prev; gmPaint(); render(); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); }
+  GMS.busy = false;
+}
+async function gmRemove(){
+  const c = gmChat(), id = GMS.id; if (!c || !id || !gMod(c) || id === c.createdBy || GMS.busy) return; GMS.busy = true;
+  const mem = c.members.filter(m => m !== id), ads = (c.admins || []).filter(x => x !== id); gmClose();
+  try { await social.db.doc('chats/' + c.id).update({members:mem, admins:ads}); c.members = mem; c.admins = ads; render();
+    sendMsg(c.id, `${me().name} hat ${PROF[id]?.name || S.users[id]?.name || 'jemanden'} entfernt.`).catch(() => {}); }
+  catch (e) { console.warn('gmRemove', e); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); render(); }
+  GMS.busy = false;
+}
+document.addEventListener('click', async e => { const b = e.target.closest?.('[data-act^="gm-"]'); if (!b) return; const a = b.dataset.act; e.preventDefault(); e.stopPropagation();
+  if (a === 'gm-open') return gmOpen(b.dataset.id);
+  const id = GMS.id;
+  if (a === 'gm-x') return gmClose();
+  if (a === 'gm-ad') return gmAdSet(true);
+  if (a === 'gm-unad') return gmAdSet(false);
+  if (a === 'gm-rm') { GMS.ask = true; return gmPaint(); }
+  if (a === 'gm-rmno') { GMS.ask = false; return gmPaint(); }
+  if (a === 'gm-rmyes') return gmRemove();
+  if (a === 'gm-info') { gmClose(true); if (!CH.open || !id) return; typingNow(false); CI_ED = null; CH.ciBack = CH.mode === 'info' ? 'info' : 'chat'; CH.ciUid = id; CH.mode = 'info'; render(); scrollTo(0, 0); return; }
+  if (a === 'gm-dm') { gmClose(true); if (social && id) openDM(id); return; }
+  if (a === 'gm-call') { const k = b.dataset.k === 'video' ? 'video' : 'audio'; gmClose(true); if (!social || !id) return; await openDM(id); const cid = 'dm_' + [social.uid, id].sort().join('_'); if (CH.open === cid) callJoin(cid, k, {ring:true}); }
+}, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && GMS.id) gmClose(); });
 /* v813 (Inaya): Name oder Bild einer Person im Chat antippen = ihre Kontaktinfo, von dort geht es ins Profil. In Gruppen: Kontaktinfo der Person mit Nachricht/Profil, ohne Medien des Gruppenchats */
 const ciPerson = uid => { const me0 = social?.uid, id = 'dm_' + [me0, uid].sort().join('_'); return CH.list.find(x => x.id === id) || {id, members:[me0, uid], group:false}; };
 /* v845 (Inaya): Kontaktinfo, Gruppeninfo und „Medien und Links“ im Design des jeweiligen Chats (Farbe, Muster, Hintergrundbild aus „Chat gestalten“) */
@@ -14905,7 +14995,12 @@ function chatsView(){
 }
 document.addEventListener('input', e => { if (e.target.id !== 'g-name') return; const n = document.getElementById('g-prevname'); if (n) n.textContent = e.target.value || 'Eure Gruppe'; });
 // Öffentliche Gruppen: jeder kann beitreten; Name, Farbe und Entfernen nur für den Admin (Ersteller) (Inaya, 2026-10-11)
-const gAdmin = c => !c?.pub || !c.createdBy || c.createdBy === social?.uid;
+/* v1089 (Inaya: „Mitglied antippen, zum Admin machen“): Admins = createdBy + Feld admins (nur, wer noch Mitglied ist). Ohne Admin unter den Mitgliedern dürfen in privaten Gruppen alle wie bisher.
+   gAdmin = Gruppe bearbeiten (privat: alle, öffentlich: Admins), gMod = Leute entfernen und Admins ernennen. Nur in der App geprüft (wie bisher bei öffentlichen Gruppen), keine neuen Regeln. */
+const gAdIds = c => { if (!c?.group) return []; const m = c.members || []; return [...new Set([c.createdBy, ...(Array.isArray(c.admins) ? c.admins : [])])].filter(x => x && m.includes(x)); };
+const gIsAd = (c, uid) => { const a = gAdIds(c); return a.length ? a.includes(uid) : !c?.pub || !c?.createdBy; };
+const gAdmin = c => !c?.pub || gIsAd(c, social?.uid);
+const gMod = c => !!c?.group && gIsAd(c, social?.uid);
 let PUBG = [], pubgAt = 0;
 async function loadPubGroups(force){
   if (!social || (!force && Date.now() - pubgAt < 20000)) return; pubgAt = Date.now();
@@ -21501,7 +21596,7 @@ document.addEventListener('click', async e => {
   else if (a === 'grm') { gRmAsk = b.dataset.id; render(); }
   else if (a === 'grm-no') { gRmAsk = null; render(); }
   else if (a === 'grm-yes') {
-    const id = b.dataset.id, cid = CH.open, c = CH.list.find(x => x.id === cid); gRmAsk = null; if (!c || !gAdmin(c)) return;
+    const id = b.dataset.id, cid = CH.open, c = CH.list.find(x => x.id === cid); gRmAsk = null; if (!c || !gMod(c)) return;
     try { await sendMsg(cid, `${me().name} hat ${PROF[id]?.name || S.users[id]?.name || 'jemanden'} entfernt.`);
       await social.db.doc('chats/' + cid).update({members:c.members.filter(m => m !== id)});
       c.members = c.members.filter(m => m !== id); render(); toast('Entfernt'); }
@@ -21624,7 +21719,7 @@ function appMorph(app, html){ const t = document.createElement('template'); t.in
   morphAnn(t.content, 0); app.replaceChildren(t.content); }
 const RK_SEL = '.main article.post[data-pid], .storybar, header.phead, .clrow[data-pid], .card.fullav'; /* v1085: auch der Avatar-Kasten */ /* v1080: auch Story-Leiste, Profilkopf und Zeilen der Chatliste */
 const rkOf = n => n.classList.contains('post') ? 'p' + n.dataset.pid : n.classList.contains('clrow') ? 'c' + (n.dataset.pk || '') + n.dataset.pid : n.classList.contains('storybar') ? 'sb' : n.classList.contains('fullav') ? 'fa' : 'ph';
-function postTake(root){ const m = new Map(), et = window.event?.target, ae = document.activeElement;
+function postTake(root){ const m = new Map(), et0 = window.event?.target, et = et0 instanceof Node ? et0 : null /* v1089: Ereignisse von Netz/Fenster haben kein DOM-Ziel, contains() warf dann und render() brach ab */, ae = document.activeElement;
   m._all = new Set([...root.querySelectorAll(RK_SEL), ...root.querySelectorAll(HK_SEL)]);
   root.querySelectorAll(RK_SEL).forEach(o => { if (!o._h || (et && o.contains?.(et)) || (ae && ae !== document.body && o.contains(ae)) || o.querySelector('iframe, .lvid.on')) return; const k = rkOf(o); if (m.has(k)) { m.set(k, null); return; } m.set(k, o); o._play = [...o.querySelectorAll('video')].filter(v => !v.paused); });
   /* v1086: ohne festen Schlüssel: Kacheln in Garderobe/Mall/Zimmer/Möbelhaus, Freunde- und Stöbern-Karten, Gästebuch, untere Leiste. Gleiches HTML = alter Knoten */
@@ -21636,7 +21731,7 @@ function postPut(root, m){ const seen = new Set(); root.querySelectorAll(RK_SEL)
   const hm = m._hm || new Map(); root.querySelectorAll(HK_SEL).forEach(n => { if (!n.isConnected || m._all?.has(n)) return; const h = postNorm(n.outerHTML), l = hm.get(h); let o; while (l?.length && (o = l.shift()).isConnected) o = null; if (o) n.replaceWith(o); else n._h = h; }); }
 const HK_SEL = '.shopgrid > .item, .zgrid > *, .brgrid > *, .mobnav, .card.gbcard, .plist > *, .cwall .entry';
 function mediaTake(root){ const im = new Map(), vd = new Map();
-  const et = window.event?.target; /* v899: das gerade angetippte Bild nie umhängen, sonst landet der Klick im neuen Knopf (Profilbild im Chat-Kopf öffnete über die Kontaktinfo hinweg das Profil) */
+  const et0 = window.event?.target, et = et0 instanceof Node ? et0 : null; /* v899: das gerade angetippte Bild nie umhängen, sonst landet der Klick im neuen Knopf (Profilbild im Chat-Kopf öffnete über die Kontaktinfo hinweg das Profil) */
   root.querySelectorAll('.main img').forEach(o => { if (!o.complete || !o.naturalWidth || (et && (o === et || o.contains?.(et)))) return; const k = o.dataset.pimg ? 'p:' + o.dataset.pimg : o.getAttribute('src'); if (!k) return; (im.get(k) || im.set(k, []).get(k)).push(o); });
   root.querySelectorAll('.main [data-bk]').forEach(w => { const v = w.querySelector('video'); if (v) { w._play = !v.paused; vd.set(w.dataset.bk, w); } });
   const lv = new Map(); if (Element.prototype.moveBefore) root.querySelectorAll('.lvid.on[data-lk]').forEach(w => { let pk = document.getElementById('lvpark'); if (!pk) { pk = document.createElement('div'); pk.id = 'lvpark'; pk.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden'; document.body.appendChild(pk); } try { pk.moveBefore(w, null); lv.set(w.dataset.lk, w); } catch {} }); /* v851: laufender Video-Link bleibt (moveBefore lädt den Player nicht neu) */
