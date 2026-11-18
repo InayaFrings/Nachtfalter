@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='e5959ab91863';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='f2d4de34ccbc';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4465,6 +4465,7 @@ html[lang=en] .w98 .psteck::before{content:'about_me.txt'}html[lang=en] .w98 .pf
 .cinfo .gmrows .cired{background:#141116!important;border-top-color:#2c2228!important}
 .cinfo .gmrows .cired+.cirow{border-top-color:#2c2228!important}
 .stmued .stmudel{display:grid;place-items:center;width:40px;height:40px;padding:0;border-radius:50%;background:#0006}.stmued .stmudel svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px #000a)}.stemu[data-act]{cursor:pointer;z-index:7} /* v1091 */
+.mobnav .mb svg,.mfab svg{transition:transform .12s ease-out}.mobnav .mb.tapd svg,.mfab.tapd svg{transform:scale(.84)}.mfab.tapd{opacity:.7} /* v1092: sofort sichtbar gedrückt */
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -10413,7 +10414,7 @@ const MOB_ICONS = {
   shopping:'<path d="M4.6 7.6h14.8l-1 12.1a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.8 11V6.8a3.2 3.2 0 0 1 6.4 0V11"/><circle cx="8.8" cy="11" r=".9" fill="currentColor" stroke="none"/><circle cx="15.2" cy="11" r=".9" fill="currentColor" stroke="none"/>', /* Shopping-Tasche schlicht mit Henkel durch zwei Ösen (Inaya, 2026-10-16) */
   more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'
 };
-let roomMode = ''; // '' = nur ansehen, 'edit' = einrichten, 'chat' = Raumchat
+let FABT = -1e9; let roomMode = ''; // '' = nur ansehen, 'edit' = einrichten, 'chat' = Raumchat
 function mobNav(cur, nNew){
   const it = (k, l, act='nav') => `<button aria-label="${l}" class="mb ${(k === 'more' ? mobMore : cur === k && !mobMore) ? 'on' : ''}" data-act="${k === 'more' ? 'mob-more' : act}" data-v="${k}" ${k === 'more' ? `aria-expanded="${mobMore}"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${MOB_ICONS[RAIL_ICO[k] || k]}</svg><span>${l}</span>${k === 'chats' && nNew ? `<i class="cbadge mbb" aria-label="${esc(tr('{0} ungelesen').replace('{0}', nNew))}">${unrFmt(nNew)}</i>` : ''}</button>`; /* v955: Zahl statt Punkt */
   // „Mehr“ ersetzt durch Minigames (Inaya): alles andere ist oben (Freunde, Chats, Zahnrad für Einstellungen) oder in dieser Leiste
@@ -21700,24 +21701,37 @@ const postNorm = h => h.replace(/\bai\d+/g, 'ai');
    gleiches HTML (_h = Entstehungs-HTML ohne Avatar-IDs) bleibt unberührt im DOM (kein neues Layout, keine neuen Bilder), bei gleichem Anfangs-Tag (_t) wird innen weiter verglichen,
    sonst wird genau dieses Stück ersetzt. #msgs wird nie innen verglichen (das macht drawMsgs). Neue Stücke merken sich _h/_t bis MORPH_D Ebenen tief. */
 const MORPH_D = 9;
-function morphAnn(el, d){ for (const c of el.children) { c._h = postNorm(c.outerHTML); c._t = postNorm(c.cloneNode(false).outerHTML); if (d < MORPH_D) morphAnn(c, d + 1); } }
+/* v1092 (Inaya: Tabs, Plus und Storys sollen sofort reagieren): Schlüssel statt outerHTML. outerHTML wurde auf jeder der 9 Ebenen neu erzeugt (9-mal die ganze Seite als Text), jetzt einmal von unten nach oben (hOf, gemerkt in _k), _t = nur der Anfangs-Tag (tOf) */
+const hHash = s => { let a = 0xdeadbeef ^ s.length, b = 0x41c6ce57 ^ s.length; for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); a = Math.imul(a ^ c, 2654435761); b = Math.imul(b ^ c, 1597334677); } a = Math.imul(a ^ (a >>> 16), 2246822507) ^ Math.imul(b ^ (b >>> 13), 3266489909); b = Math.imul(b ^ (b >>> 16), 2246822507) ^ Math.imul(a ^ (a >>> 13), 3266489909); return (b >>> 0).toString(36) + (a >>> 0).toString(36) + s.length.toString(36); };
+const tOf = n => { let t = n.tagName; for (const a of n.attributes) t += ' ' + a.name + '="' + a.value + '"'; return postNorm(t); };
+function hOf(n){ if (n._k !== undefined) return n._k; let t = tOf(n) + '>'; for (const c of n.childNodes) t += c.nodeType === 1 ? '<' + hOf(c) : c.nodeType === 3 ? '"' + postNorm(c.nodeValue) : ''; return n._k = hHash(t); }
+function morphAnn(el, d){ for (const c of el.children) { c._h = hOf(c); c._t = tOf(c); if (d < MORPH_D) morphAnn(c, d + 1); } }
 const FLD_SEL = ['INPUT', 'TEXTAREA', 'SELECT'];
 const fldDirty = f => f === document.activeElement ? false : f.tagName === 'SELECT' ? [...f.options].some(x => x.selected !== x.defaultSelected) : f.type === 'checkbox' || f.type === 'radio' ? f.checked !== f.defaultChecked : f.type === 'file' ? !!f.files?.length : f.value !== f.defaultValue;
-const morphDirty = o => FLD_SEL.includes(o.tagName) ? fldDirty(o) : [...o.querySelectorAll('input, textarea, select')].some(fldDirty); /* Eingaben, die render() sonst zurückgesetzt hätte */
+let MORPHD = []; const morphDirty = o => MORPHD.length > 0 && MORPHD.some(f => o === f || o.contains(f)); /* v1092: geänderte Felder einmal je Neuzeichnen gesucht, nicht in jedem Stück */ /* Eingaben, die render() sonst zurückgesetzt hätte */
 function morphKids(op, np, d){ const ok = [...op.childNodes].filter(o => !(o.nodeType === 1 && o._t == null && o.classList.contains('hslbar'))), nk = [...np.childNodes]; /* v1088: Schieberegler von hslFit gehören nicht zum HTML, sonst wurde beim Reiterwechsel der ganze Kasten samt Zimmer neu gebaut */
-  if (ok.length !== nk.length || ok.some((o, i) => o.nodeType !== nk[i].nodeType || (o.nodeType === 1 && o.tagName !== nk[i].tagName))) { nk.forEach(n => { if (n.nodeType === 1) { n._h = postNorm(n.outerHTML); n._t = postNorm(n.cloneNode(false).outerHTML); if (d < MORPH_D) morphAnn(n, d + 1); } }); op.replaceChildren(...nk); return; }
+  if (ok.length !== nk.length || ok.some((o, i) => o.nodeType !== nk[i].nodeType || (o.nodeType === 1 && o.tagName !== nk[i].tagName))) { nk.forEach(n => { if (n.nodeType === 1) { n._h = hOf(n); n._t = tOf(n); if (d < MORPH_D) morphAnn(n, d + 1); } }); op.replaceChildren(...nk); return; }
   
   for (let i = 0; i < ok.length; i++) { const o = ok[i], n = nk[i];
     if (o.nodeType !== 1) { if (o.nodeValue !== n.nodeValue) o.nodeValue = n.nodeValue; continue; }
-    const nh = postNorm(n.outerHTML); if (o._h === nh && !morphDirty(o)) continue;
-    if (o._h === nh && FLD_SEL.includes(o.tagName) && o !== document.activeElement) { n._h = nh; n._t = postNorm(n.cloneNode(false).outerHTML); o.replaceWith(n); continue; } /* geändertes Feld wie früher zurücksetzen */
-    const nt = postNorm(n.cloneNode(false).outerHTML);
+    const nh = hOf(n); if (o._h === nh && !morphDirty(o)) continue;
+    if (o._h === nh && FLD_SEL.includes(o.tagName) && o !== document.activeElement) { n._h = nh; n._t = tOf(n); o.replaceWith(n); continue; } /* geändertes Feld wie früher zurücksetzen */
+    const nt = tOf(n);
     if (d < MORPH_D && o._h != null && o._t === nt && o.id !== 'msgs' && !o.matches('iframe, video, textarea, select, svg, canvas')) { o._h = nh; morphKids(o, n, d + 1); }
     else { n._h = nh; n._t = nt; if (d < MORPH_D) morphAnn(n, d + 1); o.replaceWith(n); } } }
 const imgAsync = h => h.replace(/<img (?![^>]*\bdecoding=)/g, '<img decoding="async" '); /* v1087: Fotos werden neben dem Scrollen entpackt, nicht mittendrin */
 function appMorph(app, html){ const t = document.createElement('template'); t.innerHTML = imgAsync(html); t.content.querySelectorAll(HSL_SEL).forEach(e => e.classList.add('hsl')); /* v1088: Reihen gleich waagerecht, nicht erst ein Bild lang als hohes Raster */
-  const sh = app.firstElementChild; if (app.childNodes.length === 1 && sh?.classList.contains('shell') && sh._t != null) { morphKids(app, t.content, 0); return; }
+  const sh = app.firstElementChild; if (app.childNodes.length === 1 && sh?.classList.contains('shell') && sh._t != null) { MORPHD = [...app.querySelectorAll('input, textarea, select')].filter(fldDirty); try { morphKids(app, t.content, 0); } finally { MORPHD = []; } return; }
   morphAnn(t.content, 0); app.replaceChildren(t.content); }
+/* v1092 (Inaya: „vom Profil auf den Salon dauert, das Plus öffnet spät, dann tippt man nochmal und es schließt sich“): Leiste unten und Plus reagieren beim Aufsetzen (pointerdown), nicht erst beim Loslassen.
+   Der Knopf zeigt sofort, dass er gedrückt ist, ein Bild später wird gewechselt. Der Klick danach (und ein zweites Tippen kurz danach an derselben Stelle) wird geschluckt */
+const TAPNOW = {t:-1e9, x:0, y:0, go:false};
+document.addEventListener('pointerdown', e => { if (e.button || !e.isPrimary) return; const b = e.target.closest?.('.mobnav .mb[data-act="nav"], [data-act="fab-post"]'); if (!b || b.disabled) return;
+  if (performance.now() - TAPNOW.t < 450 && Math.hypot(e.clientX - TAPNOW.x, e.clientY - TAPNOW.y) < 44) return; /* zweites Tippen gleich danach: nichts tun */
+  Object.assign(TAPNOW, {t:performance.now(), x:e.clientX, y:e.clientY}); const act = b.dataset.act, v = b.dataset.v;
+  b.classList.add('tapd'); if (act === 'nav') { b.closest('.mobnav')?.querySelectorAll('.mb.on').forEach(x => x.classList.remove('on')); b.classList.add('on'); } setTimeout(() => b.classList.remove('tapd'), 260);
+  requestAnimationFrame(() => setTimeout(() => { const q = b.isConnected ? b : [...document.querySelectorAll(act === 'nav' ? `.mobnav .mb[data-act="nav"][data-v="${v}"]` : '[data-act="fab-post"]')].find(x => x.getClientRects().length); if (!q) return; TAPNOW.go = true; try { q.click(); } finally { TAPNOW.go = false; } TAPNOW.t = performance.now(); }, 0)); }, true);
+addEventListener('click', e => { if (TAPNOW.go || !e.isTrusted) return; if (performance.now() - TAPNOW.t < 700 && Math.hypot(e.clientX - TAPNOW.x, e.clientY - TAPNOW.y) < 44) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
 const RK_SEL = '.main article.post[data-pid], .storybar, header.phead, .clrow[data-pid], .card.fullav'; /* v1085: auch der Avatar-Kasten */ /* v1080: auch Story-Leiste, Profilkopf und Zeilen der Chatliste */
 const rkOf = n => n.classList.contains('post') ? 'p' + n.dataset.pid : n.classList.contains('clrow') ? 'c' + (n.dataset.pk || '') + n.dataset.pid : n.classList.contains('storybar') ? 'sb' : n.classList.contains('fullav') ? 'fa' : 'ph';
 function postTake(root){ const m = new Map(), et0 = window.event?.target, et = et0 instanceof Node ? et0 : null /* v1089: Ereignisse von Netz/Fenster haben kein DOM-Ziel, contains() warf dann und render() brach ab */, ae = document.activeElement;
@@ -21726,10 +21740,10 @@ function postTake(root){ const m = new Map(), et0 = window.event?.target, et = e
   /* v1086: ohne festen Schlüssel: Kacheln in Garderobe/Mall/Zimmer/Möbelhaus, Freunde- und Stöbern-Karten, Gästebuch, untere Leiste. Gleiches HTML = alter Knoten */
   const hm = new Map(); root.querySelectorAll(HK_SEL).forEach(o => { if (!o._h || (et && o.contains?.(et)) || (ae && ae !== document.body && o.contains(ae)) || o.querySelector('iframe, .lvid.on, video')) return; let l = hm.get(o._h); if (!l) hm.set(o._h, l = []); l.push(o); }); m._hm = hm;
   return m; }
-function postPut(root, m){ const seen = new Set(); root.querySelectorAll(RK_SEL).forEach(n => { if (!n.isConnected || m._all?.has(n)) return; const k = rkOf(n), h = postNorm(n.outerHTML), o = m.get(k);
+function postPut(root, m){ const seen = new Set(); root.querySelectorAll(RK_SEL).forEach(n => { if (!n.isConnected || m._all?.has(n)) return; const k = rkOf(n), h = hOf(n), o = m.get(k);
     if (o && !o.isConnected && o._h === h && !seen.has(k)) { seen.add(k); n.replaceWith(o); (o._play || []).forEach(v => { const go = () => { if (v.isConnected && v.paused) v.play().catch(() => {}); }; go(); setTimeout(go, 0); setTimeout(go, 120); }); }
     else n._h = h; });
-  const hm = m._hm || new Map(); root.querySelectorAll(HK_SEL).forEach(n => { if (!n.isConnected || m._all?.has(n)) return; const h = postNorm(n.outerHTML), l = hm.get(h); let o; while (l?.length && (o = l.shift()).isConnected) o = null; if (o) n.replaceWith(o); else n._h = h; }); }
+  const hm = m._hm || new Map(); root.querySelectorAll(HK_SEL).forEach(n => { if (!n.isConnected || m._all?.has(n)) return; const h = hOf(n), l = hm.get(h); let o; while (l?.length && (o = l.shift()).isConnected) o = null; if (o) n.replaceWith(o); else n._h = h; }); }
 const HK_SEL = '.shopgrid > .item, .zgrid > *, .brgrid > *, .mobnav, .card.gbcard, .plist > *, .cwall .entry';
 function mediaTake(root){ const im = new Map(), vd = new Map();
   const et0 = window.event?.target, et = et0 instanceof Node ? et0 : null; /* v899: das gerade angetippte Bild nie umhängen, sonst landet der Klick im neuen Knopf (Profilbild im Chat-Kopf öffnete über die Kontaktinfo hinweg das Profil) */
@@ -21766,6 +21780,7 @@ function editGuard(){ const u = me(); if (!u) return; if (V.name !== 'pstk' && P
   if (V.name === 'wardrobe' && !WARD_UNDO) WARD_UNDO = JSON.stringify({outfit:u.outfit, pose:u.pose ?? null});
   if (V.name !== 'wardrobe' && WARD_UNDO) { const x = JSON.parse(WARD_UNDO); WARD_UNDO = null; if (JSON.stringify({outfit:u.outfit, pose:u.pose ?? null}) !== JSON.stringify(x)) { u.outfit = x.outfit; if (x.pose == null) delete u.pose; else u.pose = x.pose; trial = null; save(); } }
   if (V.name !== 'room' && roomMode === 'edit') { if (ROOM_UNDO) { const x = JSON.parse(ROOM_UNDO); u.room = x.room; u.deko = x.deko || u.deko; save(); } ROOM_UNDO = null; roomMode = ''; roomSel = null; } }
+const VC = new Map(); let VCK = ''; const VC_OK = k => /^[^|]*\|(home|profile|find|shopping|notifs)\|/.test(k);
 function renderInner(){
   if (softT) { clearTimeout(softT); softT = null; } editGuard();
   const msgA = CH.open && MSGH.cid === CH.open ? msgAnc(document.getElementById('msgs')) : null;
@@ -21797,6 +21812,11 @@ function renderInner(){
   </div>`;
   const hcmp = html.replace(/\bai\d+/g, 'ai'); /* Avatar-IDs zählen bei jedem Zeichnen hoch */ if (RBG && hcmp === LASTH && app.firstElementChild?.classList.contains('shell')) return; /* v998: nichts geändert, Seite bleibt stehen (kein Ruckeln, keine neu geladenen Bilder) */ LASTH = hcmp;
   /* v1085: der offene Chat (#msgs) bleibt beim Neuzeichnen derselbe Knoten (Blasen, Bilder, Sprachnachrichten, Scrollstelle); geändert wird nur über drawMsgs, wenn sich die Nachrichten wirklich geändert haben */
+  /* v1092: Hauptseiten (Salon, Profil, Suche, Shop, Mitteilungen) bleiben beim Wechsel als fertige Seite liegen. Kommt man zurück, wird gegen genau diese Seite verglichen: Beiträge, Fotos und Avatare stehen sofort da, nichts wird neu gebaut oder neu geladen */
+  { const ck = S.me + '|' + viewKey, sh = app.firstElementChild; if (VCK && VCK !== ck && sh?.classList.contains('shell') && sh._t != null && app.childNodes.length === 1) { const c = VC.get(ck);
+      if (VC_OK(VCK) && !sh.querySelector('.pcfull, iframe, .lvid.on, #msgs')) { sh.querySelectorAll('video').forEach(v => { try { v.pause(); } catch {} }); VC.delete(VCK); VC.set(VCK, sh); while (VC.size > 5) VC.delete(VC.keys().next().value); sh.remove(); }
+      if (c && VC_OK(ck)) { VC.delete(ck); app.replaceChildren(c); } }
+    VCK = ck; }
   const mo = document.getElementById('msgs'), mkp = mo && app.contains(mo) && mo.dataset.h === '1' && MSGH.cid === CH.open && CH.open ? {n:mo, cid:CH.open, st:mo.getAttribute('style') || '', cls:mo.className, y:mo.scrollTop, bot:mo.scrollHeight - mo.scrollTop - mo.clientHeight < 40, dn:mo.parentElement?.querySelector(':scope > .mdown')} : null;
   let mReuse = false;
   const pkeep = postTake(app), mkeep = mediaTake(app), fkeep = focusTake(app), cmOld = document.getElementById('cm-in'), cmDraft = cmOld?.value ? {cid:CH.open, v:cmOld.value} : null;
@@ -22829,7 +22849,7 @@ document.addEventListener('click', async e => {
   else if (a === 'stc-text') stTextStory();
   else if (a === 'stc-pick') { const p = stPickPhotos().find(x => x.id === b.dataset.id); if (p) stPhotoEdit(p.img); }
   else if (a === 'stc-next') stCropDone();
-  else if (a === 'story-view') { if (!social || !storiesOf(id).length && id !== S.me) { const t0 = Date.now(), iv = setInterval(() => { if (social && (storiesOf(id).length || Date.now() - t0 > 4000)) { clearInterval(iv); if (storiesOf(id).length) stOpen(id); } else if (Date.now() - t0 > 8000) clearInterval(iv); }, 120); return; } stOpen(id); } // direkt nach dem Neuladen: öffnen, sobald die Story da ist
+  else if (a === 'story-view') { if (!storiesOf(id).length && (!social || id !== S.me)) { /* v1092: schon vorhandene Storys öffnen sofort, auch vor der Verbindung */ const t0 = Date.now(), iv = setInterval(() => { if (social && (storiesOf(id).length || Date.now() - t0 > 4000)) { clearInterval(iv); if (storiesOf(id).length) stOpen(id); } else if (Date.now() - t0 > 8000) clearInterval(iv); }, 120); return; } stOpen(id); } // direkt nach dem Neuladen: öffnen, sobald die Story da ist
   else if (a === 'st-fstep') stFStep(+b.dataset.v);
   else if (a === 'st-aa') stNewText(40);
   else if (a === 'st-edsave') stEdSave();
@@ -23168,8 +23188,8 @@ document.addEventListener('click', async e => {
   else if (a === 'ftap') { if (!isMob()) return; const r = me().room, k = b.dataset.k;
     if (r.items.some(i => i.k === k)) { r.items = r.items.filter(i => i.k !== k); roomSel = null; } else { const f = FURN[k]; r.items.push({k, x:44, y:f.wall ? 10 : 46}); { const nit = r.items[r.items.length - 1], fr = rSpawn(r.items, nit); if (fr) Object.assign(nit, fr); } roomSel = r.items.length - 1; }
     save(); render(); }
-  else if (a === 'fab-post') { if (social || PUB && S.me) postAud = S.salonMode === 'pub' ? 'pub' : 'fr'; homeCompose = true; FABBACK = V.name !== 'home'; if (V.name !== 'home') go('home'); render(); }
-  else if (a === 'hcompose') { if (homeCompose) pdrLeave(() => { homeCompose = false; if (FABBACK) { FABBACK = false; if (!navBack()) render(); } else render(); }); else { homeCompose = true; render(); } } /* v946 (Inaya): Zurück führt dahin, wo man vorher war */
+  else if (a === 'fab-post') { FABT = performance.now(); if (homeCompose && V.name === 'home') return; if (social || PUB && S.me) postAud = S.salonMode === 'pub' ? 'pub' : 'fr'; homeCompose = true; FABBACK = V.name !== 'home'; if (V.name !== 'home') go('home'); render(); }
+  else if (a === 'hcompose') { if (homeCompose && performance.now() - FABT < 700) return; /* v1092: zweites Tippen aufs Plus landete auf dem Pfeil zurück */ if (homeCompose) pdrLeave(() => { homeCompose = false; if (FABBACK) { FABBACK = false; if (!navBack()) render(); } else render(); }); else { homeCompose = true; render(); } } /* v946 (Inaya): Zurück führt dahin, wo man vorher war */
   else if (a === 'pdr-list') pdrList();
   else if (a === 'pdr-open') pdrOpen(b.dataset.id);
   else if (a === 'pdr-del') pdrDel(b.dataset.id);
