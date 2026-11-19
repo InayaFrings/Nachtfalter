@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f800bf674693';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='5ec38f7f7f6d';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4493,6 +4493,101 @@ form.vhold>.vrhold{position:relative;z-index:1}
 .lvgri .lvit small{font-size:11.5px;line-height:1.2;text-align:center;opacity:.85}
 .lvupc .lvbtn{width:100%;min-height:48px;border-radius:14px;font-weight:700}
 .lvupc .note{margin:0}
+/* v1095: Spiele im Chat (Karte in der Blase, Fenster #cgmov im Design des Chats) */
+.bubble .cgmc{display:grid;gap:9px;width:min(260px,66vw);padding:12px;border-radius:14px;border:1px solid var(--p-line,var(--line));background:color-mix(in srgb,var(--p-soft,#1a181d) 92%,transparent);color:var(--p-fg,var(--fg));cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent}
+.cgmc:active{transform:scale(.985)}
+.cgmhd,.cgmh{display:flex;align-items:center;gap:10px;min-width:0}
+.cgmic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--p-line,var(--line));flex:none}
+.cgmic svg,.cgmbig svg,.cgmx svg,.atti .cgmpad,#cgmov .gmx svg,.cgmarr{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cgmic svg{width:21px;height:21px}
+.cgmtt{display:grid;line-height:1.2;min-width:0}
+.cgmtt small{font:600 10.5px/1.3 var(--f-body);letter-spacing:.1em;text-transform:uppercase;opacity:.72}
+.cgmtt b{font:700 16px/1.2 var(--f-display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cgmmini{display:flex;justify-content:center;align-items:center;gap:12px;min-height:40px}
+.cgmgrid{display:grid;grid-template-columns:repeat(var(--gw),minmax(0,1fr));gap:3px}
+.cgmcell{aspect-ratio:1;display:grid;place-items:center;border:1px solid #2c2a30;background:#141416;color:#ecebe7;padding:0;margin:0;border-radius:6px;min-width:0;font:inherit}
+.cgmcell .tttic{width:64%;height:64%;display:block;color:#ecebe7}
+.cgmmini .cgmgrid.ttt{width:102px}
+.cgmmini .cgmgrid.c4{width:168px;gap:2px}
+.cgmgrid.c4{background:#141416;padding:5px;border-radius:10px;border:1px solid #2c2a30}
+.cgmgrid.c4 .cgmcell{border-radius:50%;background:#050506;border-color:#28262c}
+.cgmdisc{width:86%;height:86%;border-radius:50%;display:block}
+.cgmdisc.d0{background:#ecebe7;box-shadow:inset 0 0 0 2px #b9b5be}
+.cgmdisc.d1{background:#7d7884;box-shadow:inset 0 0 0 2px #55505c}
+.cgmcell.wl{border-color:#ecebe7;box-shadow:0 0 0 1px #ecebe7}
+.cgmgrid.ttt .cgmcell.wl{background:#2a272e}
+.cgmgrid.c4 .cgmcell.wl .cgmdisc{box-shadow:inset 0 0 0 2px #fff,0 0 0 2px #fff}
+.cgmst{font:600 13.5px/1.35 var(--f-body);display:flex;align-items:center;gap:7px}
+.cgmc.turn .cgmst::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none;animation:cgmpulse 1.4s ease-in-out infinite}
+@keyframes cgmpulse{50%{opacity:.25}}
+.cgmgo{text-align:center;padding:9px 10px;border-radius:999px;background:var(--p-fg,var(--fg));color:var(--p-bg,var(--paper));font:700 13.5px/1 var(--f-body)}
+.cgmc.end .cgmgo{background:none;color:inherit;border:1px solid var(--p-line,var(--line))}
+.cgmhg .hang{width:42px;height:50px;color:currentColor;display:block}
+.cgmword{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin:0;min-width:0}
+.cgmword span{width:min(24px,calc((min(100vw,560px) - 170px) / var(--hn,8)));min-height:30px;border-bottom:2px solid currentColor;text-align:center;font:700 21px/1.4 var(--f-display)}
+.cgmword span.miss{opacity:.5}
+.cgmmini .cgmword{gap:3px;max-width:170px}
+.cgmmini .cgmword span{width:13px;min-height:20px;font-size:14px;border-bottom-width:1.5px}
+#cgmov .cgmsheet{display:flex;flex-direction:column;align-items:center;gap:10px}
+#cgmov .cgmsheet>*{flex:none}
+#cgmov .gmx{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--p-soft) 92%,transparent);border:1px solid var(--p-line);color:var(--p-fg)}
+#cgmov .gmx svg{width:18px;height:18px}
+#cgmov .cgmh{margin-top:4px;padding-right:44px;padding-left:44px}
+#cgmov .gmn{margin:0;font:700 22px/1.2 var(--f-display)}
+.cgmbig{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--p-line);margin-top:6px}
+.cgmbig svg{width:32px;height:32px}
+#cgmov .cisub{text-align:center;max-width:420px;margin:0}
+.cgmvs{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.cgmpl{display:grid;justify-items:center;gap:4px;padding:9px 10px;border-radius:16px;border:1px solid transparent;min-width:0;flex:0 1 40%;position:relative}
+.cgmpl .cameo{width:54px;height:54px;border-radius:50%;overflow:hidden;display:block;border:2px solid var(--p-line);background:color-mix(in srgb,var(--p-soft) 92%,transparent)}
+.cgmpl .cameo>*{width:100%;height:100%;display:block;object-fit:cover}
+.cgmpl b{font:600 13.5px/1.2 var(--f-body);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cgmpl.on{border-color:var(--p-fg);background:color-mix(in srgb,var(--p-soft) 92%,transparent)}
+.cgmpl.win .cameo{border-color:var(--p-fg);box-shadow:0 0 0 3px color-mix(in srgb,var(--p-fg) 30%,transparent)}
+.cgmpl.empty{opacity:.55}
+.cgmsym{width:24px;height:24px;display:grid;place-items:center;border-radius:6px;background:#141416;border:1px solid #2c2a30}
+.cgmsym .tttic{width:72%;height:72%;color:#ecebe7}
+.cgmsym .cgmdisc{width:16px;height:16px}
+.cgmvsx{font:600 11px/1 var(--f-body);opacity:.6;text-transform:uppercase;letter-spacing:.12em}
+.cgmbox{width:100%;display:grid;justify-items:center;margin:4px 0}
+.cgmbox .cgmgrid.ttt{width:min(276px,76vw);gap:7px}
+.cgmbox .cgmgrid.ttt .cgmcell{border-radius:12px}
+.cgmbox .cgmgrid.c4{width:min(350px,90vw);gap:5px;padding:8px;border-radius:14px}
+.cgmbox button.cgmcell{cursor:pointer;touch-action:manipulation}
+.cgmbox button.cgmcell:disabled{cursor:default}
+.cgmbox .cgmgrid.my.ttt button.cgmcell:not(:disabled):hover{background:#211f25}
+.cgmbox .cgmgrid.my{box-shadow:0 0 0 2px var(--p-fg)}
+.cgmbox .cgmgrid.my.ttt{box-shadow:none}
+.cgmbox .cgmcell.drop .cgmdisc{animation:cgmdrop .38s cubic-bezier(.4,0,1,1)}
+@keyframes cgmdrop{from{transform:translateY(calc(var(--dr,4) * -112%))}}
+.cgmbox .cgmgrid.ttt .cgmcell.drop .tttic{animation:cgmpop .25s ease-out}
+@keyframes cgmpop{from{transform:scale(.3);opacity:0}}
+.cgmstat{font:700 17px/1.3 var(--f-display);text-align:center;margin:2px 0}
+.cgmstat.my::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:2px;animation:cgmpulse 1.4s ease-in-out infinite}
+.cgmstat.won{letter-spacing:.02em}
+.cgmacts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%;margin-top:4px}
+.cgmacts .btn{flex:1 1 140px;border-radius:999px;min-height:44px}
+.cgmhang{display:flex;align-items:center;justify-content:center;gap:14px;width:100%}
+.cgmhang .hang{width:92px;height:110px;color:var(--p-fg);flex:none}
+.cgmkeys{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-auto-rows:40px;gap:5px;width:100%;margin-top:8px}
+.cgmkeys button{height:40px;border-radius:10px;border:1px solid var(--p-line);background:color-mix(in srgb,var(--p-soft) 92%,transparent);color:var(--p-fg);font:700 16px/1 var(--f-display);padding:0;cursor:pointer;touch-action:manipulation}
+.cgmkeys button.hit{background:var(--p-fg);color:var(--p-bg);border-color:var(--p-fg)}
+.cgmkeys button.no{opacity:.28}
+.cgmkeys button:disabled{cursor:default}
+.cgmsc{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;width:100%}
+.cgmsc .cgmpl{flex:0 0 auto;max-width:31%;padding:6px 8px}
+.cgmsc .cgmpl .cameo{width:42px;height:42px}
+.cgmpt{position:absolute;top:2px;right:2px;min-width:22px;height:22px;border-radius:11px;padding:0 6px;background:var(--p-fg);color:var(--p-bg);font:700 12px/22px var(--f-body);font-style:normal;text-align:center}
+#cgmov .cisub{font-style:normal}
+.chatpanel .bubble.them.shcard{border:0;background:none}
+.cgmhint{font:500 13px/1.4 var(--f-body);opacity:.78;text-align:center;margin:2px 0;max-width:420px}
+.cgmlist{width:100%;border-radius:14px!important;border:1px solid var(--p-line)!important;background:color-mix(in srgb,var(--p-soft) 92%,transparent);overflow:hidden;margin-top:8px}
+.cgmrow{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;background:none;border:0;border-bottom:1px solid var(--p-line);color:inherit;text-align:left;font:inherit;cursor:pointer}
+.cgmrow:last-child{border-bottom:0}
+.cgmrow .cgmtt b{font-size:16px}
+.cgmrow .cgmtt small{text-transform:none;letter-spacing:0;font-size:12.5px}
+.cgmarr{width:18px;height:18px;margin-left:auto;flex:none;opacity:.7}
+@media (prefers-reduced-motion:reduce){.cgmbox .cgmcell.drop .cgmdisc,.cgmbox .cgmcell.drop .tttic,.cgmc.turn .cgmst::before,.cgmstat.my::before{animation:none}}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -10046,6 +10141,7 @@ Object.assign(I18N_EN, {'Nach unten zu den neuesten Nachrichten':'Scroll down to
 Object.assign(I18N_EN, {"Nur für Freunde":"Friends only","Nimm die Anfrage an, dann kannst du hier schreiben.":"Accept the request to write here.","Sobald ihr befreundet seid, kannst du hier schreiben.":"Once you're friends, you can write here.","Werdet Freunde, dann kannst du hier schreiben.":"Become friends to write here.","Anfrage senden":"Send request"}); /* v1083 */
 Object.assign(I18N_EN,{'Zum Admin machen':'Make admin','Adminstatus entfernen':'Dismiss as admin','Aus Gruppe entfernen':'Remove from group','{0} entfernen?':'Remove {0}?','Entfernen':'Remove','Nein':'No','Info':'Info','Nachricht':'Message','Anrufen':'Call','Video':'Video','Schließen':'Close'}); /* v1089 */
 Object.assign(I18N_EN, {'Level-Aufstieg':'Level up','Du bist ein Level aufgestiegen.':'You went up a level.','Du bist {0} Level aufgestiegen.':'You went up {0} levels.','Das hast du bekommen':'Here is what you got','Schon in deinem Wallet':'Already in your wallet','Neues Teil freigeschaltet':'New item unlocked','{0} neue Teile freigeschaltet':'{0} new items unlocked','Liegt jetzt in deinem Inventar':'Now in your inventory','Nächstes Ziel: Level {0} · +{1} Nocti-Coins':'Next goal: level {0} · +{1} Nocti-Coins','Höchstes Level erreicht.':'Highest level reached.','Weiter':'Continue','+{0} Nocti-Coins':'+{0} Nocti-Coins'});
+Object.assign(I18N_EN, {"Spiel": "Game", "Vier gewinnt": "Connect Four", "Zu zweit · drei in einer Reihe": "Two players · three in a row", "Zu zweit · vier in einer Reihe": "Two players · four in a row", "Alle zusammen · errate das Wort": "Everyone together · guess the word", "Tritt der Gruppe bei, um mitzuspielen.": "Join the group to play along.", "Spiel nicht mehr verfügbar": "Game no longer available", "Erraten: {0}": "Guessed: {0}", "Nicht erraten. Das Wort war {0}.": "Not guessed. The word was {0}.", "Alle raten mit · {0} von 6 Fehlern": "Everyone guesses · {0} of 6 mistakes", "Wartet auf Mitspieler …": "Waiting for a player …", "{0} sucht Mitspieler": "{0} is looking for a player", "Abgebrochen": "Cancelled", "Unentschieden": "Draw", "Du hast aufgegeben": "You gave up", "{0} hat aufgegeben": "{0} gave up", "Du hast gewonnen!": "You won!", "{0} hat gewonnen": "{0} won", "{0} ist dran": "{0}'s turn", "Mitraten": "Guess along", "Mitspielen": "Play", "Jetzt spielen": "Play now", "Feld {0}": "Square {0}", "Spalte {0}": "Column {0}", "Tippe Buchstaben an. Jeder richtige Buchstabe ist ein Punkt für dich.": "Tap letters. Every correct letter is a point for you.", "Platz frei": "Open seat", "gegen": "vs", "Aufgeben": "Give up", "Zur Revanche": "Go to rematch", "Neues Wort": "New word", "Revanche": "Rematch", "Zum Chat": "To chat", "Such dir ein Spiel aus. {0} spielt automatisch mit.": "Pick a game. {0} plays along automatically.", "Wer zuerst „Mitspielen“ antippt, spielt mit. Beim Galgenmännchen raten alle.": "Whoever taps “Play” first joins. In Hangman everyone guesses.", "✓ Tagesbelohnung für heute abgeholt.": "✓ Daily reward collected for today.", "Dein erster Sieg am Tag: +{0} Coins · +{1} XP": "Your first win of the day: +{0} coins · +{1} XP", "Das Spiel konnte nicht starten. Versuch es nochmal.": "The game couldn't start. Please try again.", "Jemand anderes war schneller.": "Someone else was faster.", "Wirklich aufgeben?": "Really give up?", "Weiterspielen": "Keep playing", "Tic-Tac-Toe": "Tic-Tac-Toe"}); /* v1095: Spiele im Chat */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -15004,7 +15100,7 @@ function chatsView(){
         <span class="row chbtns" style="gap:6px">${callBtnsHTML(c)}${c.group ? tkBtnHTML(c) : ''}</span></header> <!-- v980 (Inaya): kein Drei-Punkte-Menü mehr, alles über Profilbild/Name (Kontakt- bzw. Gruppeninfo) -->
       <div class="chbars">${tkHintHTML(c)}${callBarHTML(c)}</div>
       <div class="chat msgs" id="msgs"${bgImgStyle(chBg(c))}>${msgsHTML()}</div>
-      ${chatAttach ? `<div class="attsheet"><label class="attopt" aria-label="Fotos und Videos" title="Fotos und Videos"><input type="file" id="cm-img" accept="image/*,video/*" data-vmix="cm-vid" hidden><span class="atti">${ATT_FOTO}</span></label>${chPubNow() || !MUSIK ? '' : `<label class="attopt" aria-label="MP3" title="MP3"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span></label>`}${/^dm_/.test(CH.open || '') ? `<button type="button" class="attopt" data-act="gift-chat" aria-label="Geschenk" title="Geschenk"><span class="atti">${NC_GIFT}</span></button>` : ''}<button type="button" class="attopt" data-act="prof-share" aria-label="Profil teilen" title="Profil teilen"><span class="atti">${PSHR_ICO}</span></button><button type="button" class="attopt" data-act="att-link" aria-label="Link" title="Link"><span class="atti">${ATT_LINK}</span></button></div>` : ''}
+      ${chatAttach ? `<div class="attsheet"><label class="attopt" aria-label="Fotos und Videos" title="Fotos und Videos"><input type="file" id="cm-img" accept="image/*,video/*" data-vmix="cm-vid" hidden><span class="atti">${ATT_FOTO}</span></label>${chPubNow() || !MUSIK ? '' : `<label class="attopt" aria-label="MP3" title="MP3"><input type="file" id="cm-aud" accept="audio/*,.mp3" hidden><span class="atti"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span></label>`}${/^dm_/.test(CH.open || '') ? `<button type="button" class="attopt" data-act="gift-chat" aria-label="Geschenk" title="Geschenk"><span class="atti">${NC_GIFT}</span></button>` : ''}<button type="button" class="attopt" data-act="prof-share" aria-label="Profil teilen" title="Profil teilen"><span class="atti">${PSHR_ICO}</span></button><button type="button" class="attopt" data-act="cgm-menu" aria-label="Spiele" title="Spiele"><span class="atti">${CGM_ICO.pad}</span></button><button type="button" class="attopt" data-act="att-link" aria-label="Link" title="Link"><span class="atti">${ATT_LINK}</span></button></div>` : ''}
       <form class="cform" data-form="cmsg"><button type="button" class="attbtn" data-act="att-toggle" aria-expanded="${chatAttach}" aria-label="Foto, MP3 oder Link teilen" title="Teilen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><span class="cinw"><textarea id="cm-in" class="mlin" rows="1" maxlength="1000" placeholder="Nachricht schreiben …" aria-label="Nachricht" autocomplete="off" enterkeyhint="enter"></textarea></span><button class="csend" type="submit" aria-label="Senden" title="Senden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button><button type="button" class="micbtn" data-act="voice-rec" aria-label="Sprachnachricht aufnehmen" title="Sprachnachricht"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button></form>
     </section>`;
   }
@@ -15360,6 +15456,7 @@ function e2Clean(o){ const r = {}; if (!o || typeof o !== 'object') return r; //
   for (const f of ['post', 'story', 'audio', 'clip']) if (o[f] && typeof o[f] === 'object' && !Array.isArray(o[f])) r[f] = o[f];
   if (o.gift && typeof o.gift.g === 'string' && /^[\w-]{10,220}$/.test(o.gift.g)) r.gift = {g:o.gift.g, i:String(o.gift.i || '').replace(/[^\w-]/g, '').slice(0, 60)}; /* Geschenk-Nachricht */
   if (o.prof && typeof o.prof.u === 'string' && /^[\w-]{6,64}$/.test(o.prof.u)) r.prof = {u:o.prof.u};
+  if (o.game && typeof o.game.id === 'string' && /^[\w-]{4,40}$/.test(o.game.id) && /^(ttt|c4|hang)$/.test(o.game.k || '')) r.game = {id:o.game.id, k:o.game.k}; /* v1095: Spiel im Chat */
   if (o.kind === 'invite') r.kind = 'invite';
   if (o.kind === 'ginv' && o.g && typeof o.g.id === 'string' && /^g[0-9a-z]+$/.test(o.g.id)) { r.kind = 'ginv'; r.g = {id:o.g.id, n:String(o.g.n || '').slice(0, 40), pub:o.g.pub ? 1 : 0, box:/^#[0-9a-f]{3,8}$/i.test(o.g.box || '') ? o.g.box : '', cnt:Math.max(0, Math.min(9999, +o.g.cnt || 0))}; } // Gruppen-Einladung
   if (o.kind === 'react' && typeof o.to === 'string' && EMOS[o.e]) { r.kind = 'react'; r.to = o.to.slice(0, 60); r.e = o.e; }
@@ -15421,9 +15518,9 @@ function e2ViewIn(cid, raw){
 let e2RT = null;
 function e2Redraw(cid){ clearTimeout(e2RT); e2RT = setTimeout(() => { if (CH.open !== cid || !CH.mraw) return; const box = document.getElementById('msgs'), atEnd = !box || box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   CH.msgs = e2View(cid, CH.mraw); chSplit(); e2Prev(cid); drawMsgs(!atEnd); }, 40); }
-const e2PrevText = m => m._lock ? '' : m.text || (m.gift ? '🎁 Geschenk' : m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.prof ? '👤 Profil' : m.story ? '📖 Story' : '');
+const e2PrevText = m => m._lock ? '' : m.text || (m.gift ? '🎁 Geschenk' : m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.prof ? '👤 Profil' : m.game ? 'Spiel: ' + (CGM_G[m.game.k]?.n || '') : m.story ? '📖 Story' : '');
 function e2Prev(cid){ const l = CH.msgs.filter(m => m._e2e || !m.e2e), m = l[l.length - 1]; if (m && m._e2e && !m._lock) { const t0 = e2PrevText(m); if (!t0) return; const t = (m.from === social?.uid ? tr('Du') + ': ' : '') + t0.slice(0, 60); if (E2E.prev[cid] !== t) { E2E.prev[cid] = t; const c = CH.list.find(x => x.id === cid), cache = e2pvCache(); if (c?.last) { cache[cid] = {t, at:c.last}; try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} } softRender(); } } }
-const PREV_EN = [[/^Du: /, 'You: '], [/♪ Sprachnachricht/, '♪ Voice message'], [/🎁 Geschenk/, '🎁 Gift'], [/📷 Foto/, '📷 Photo'], [/🖼 Beitrag/, '🖼 Post'], [/👤 Profil/, '👤 Profile'], [/♪ Lied$/, '♪ Song'], [/📞 Verpasster Anruf/, '📞 Missed call'], [/📹 Verpasster Videoanruf/, '📹 Missed video call']]; /* v690: gespeicherte Vorschau-Texte auf Englisch zeigen */
+const PREV_EN = [[/^Du: /, 'You: '], [/♪ Sprachnachricht/, '♪ Voice message'], [/🎁 Geschenk/, '🎁 Gift'], [/📷 Foto/, '📷 Photo'], [/🖼 Beitrag/, '🖼 Post'], [/👤 Profil/, '👤 Profile'], [/♪ Lied$/, '♪ Song'], [/📞 Verpasster Anruf/, '📞 Missed call'], [/📹 Verpasster Videoanruf/, '📹 Missed video call'], [/Spiel: Vier gewinnt/, 'Game: Connect Four'], [/Spiel: Galgenmännchen/, 'Game: Hangman'], [/Spiel: /, 'Game: ']]; /* v690: gespeicherte Vorschau-Texte auf Englisch zeigen */
 const prevTr = t => LANG === 'en' && t ? PREV_EN.reduce((r, [x, y]) => r.replace(x, y), String(t)) : t;
 const chatPrevText = c => prevTr(c.lastText === '🔒' ? (E2E.prev[c.id] || '…') : c.lastText); // Chatliste: Vorschau nur aus dem eigenen Speicher
 // Vorschau verschlüsselter Chats (Inaya, 2026-10-14): die letzte Nachricht wird auf dem eigenen Gerät entschlüsselt, der Server sieht weiter nur 🔒.
@@ -15589,7 +15686,7 @@ async function sendMsg(cid, text, extra={}){
       const doc = await e2Seal(cid, mid, ts, {text, ...extra}, e2Members(cid)); E2E.dec[mid + '@' + ts] = e2Clean({text, ...extra});
       await social.db.doc('chats/' + cid + '/m/' + mid).set(doc); await social.db.doc('chats/' + cid).update({last:ts, lastText:'🔒', lastFrom:social.uid}); taskHit('ch'); return mid; } /* v769: Aufgabe zählt auch in verschlüsselten Chats */
     await social.db.doc('chats/' + cid + '/m/' + mid).set({from:social.uid, text, ts, ...extra});
-    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.gift ? '🎁 Geschenk' : extra.stk ? 'Sticker' : extra.gif ? 'GIF' : extra.post ? '🖼 Beitrag' : extra.prof ? '👤 Profil' : extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
+    if (!cid.startsWith('zimmer_') && !cid.startsWith('wall_')) await social.db.doc('chats/' + cid).update({last:ts, lastText:(text || (extra.gift ? '🎁 Geschenk' : extra.stk ? 'Sticker' : extra.gif ? 'GIF' : extra.post ? '🖼 Beitrag' : extra.prof ? '👤 Profil' : extra.game ? 'Spiel: ' + (CGM_G[extra.game.k]?.n || '') : extra.story ? '📖 Story' : extra.img ? '📷 Foto' : extra.clip ? '🎬 Video' : extra.audio ? '♪ ' + (extra.audio.name || 'Lied') : '')).slice(0, 60), lastFrom:social.uid});
     if (/^g[0-9a-z]+$/.test(cid) && CH.list.find(c => c.id === cid)?.pub) xpGain('m', cid, mid); /* XP fürs Mitreden in öffentlichen Gruppen */
     taskHit(cid.startsWith('wall_') ? 'gb' : 'ch'); return mid; // Nachrichten-ID (wahr wie vorher)
   } catch (e) { if (e?.message === 'nokey') toast(`${chatWho(e.uid)} hat Noctibat seit dem Update noch nicht geöffnet. Sobald das passiert ist, könnt ihr hier verschlüsselt schreiben.`); else if (e2Chat(cid) && !E2E.on) toast(E2E.err || 'Die Verschlüsselung ist auf diesem Gerät nicht verfügbar.'); else toast('Die Nachricht ging nicht raus. Hast du Schreibrechte für Noctibat?'); return false; }
@@ -16124,6 +16221,7 @@ function msgMedia(m){
   if (m.kind === 'ginv' && m.g?.id) { const g = m.g, inside = CH.list.some(c => c.id === g.id && (c.members || []).includes(social?.uid)), bx = /^#[0-9a-f]{3,8}$/i.test(g.box || '') ? g.box : '';
     return `<div class="ginv"${bx ? ` style="--gb:${bx};--gf:${autoFg(bx)}"` : ''}><span class="ginvic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15 14.2c2.6-.4 4.8 1.2 5.5 4.3"/></svg></span><span class="ginvt"><small>❦ Einladung in die Gruppe</small><b>${esc(g.n || 'Gruppe')}</b><small>${g.pub ? 'Öffentlich' : 'Privat'}${g.cnt ? ' · ' + g.cnt + (g.cnt === 1 ? ' Mitglied' : ' Mitglieder') : ''}</small></span><button type="button" class="btn ginvgo" data-act="ginv-open" data-id="${esc(g.id)}" data-n="${esc(g.n || 'Gruppe')}" data-pub="${g.pub ? 1 : 0}">${inside ? 'Öffnen' : 'Ansehen'}</button></div>`; }
   if (m.prof && typeof m.prof.u === 'string') return profCardHTML(m);
+  if (m.game && m.game.id) return cgmCardHTML(m);
   if (m.stk || m.gif) { STKAV = m.from === social?.uid ? me()?.outfit : (uidUser(m.from) || profUser(m.from))?.outfit || null; let h = ''; try { h = sgMsgHTML(m.stk || m.gif); } finally { STKAV = null; } if (h) return h; } /* v982: Avatar-Sticker mit dem Avatar der Person, die ihn geschickt hat */
   if (m.story && m.story.sh) { const x = m.story, ou = x.u === social?.uid ? me() : profUser(x.u), nm = ou?.name || x.n || 'Jemand', gone = x.ts && Date.now() - x.ts > STORY_H; if (!ou && x.u && social && !NT.asked[x.u]) { NT.asked[x.u] = 1; loadProf(x.u).then(softRender); }
     return `<button type="button" class="mshst" data-act="st-opensh" data-u="${esc(x.u || '')}" data-id="${esc(x.id || '')}" aria-label="Story von ${esc(nm)} ansehen"><span class="mshh"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b>${esc(nm)}</b></span>${!gone && x.th ? `<img src="${esc(x.th)}" alt="">` : `<span class="mshna">Story nicht mehr verfügbar</span>`}</button>`; }
@@ -20151,6 +20249,175 @@ function rtcCard(){ if (!amOwner || !social) return ''; rtcTurn().then(() => { c
   rulesCheck().then(t => { const el = document.getElementById('rules-st'); if (el) el.innerHTML = t; });
   return `<div class="card"><h2 class="card-h">Anrufe</h2><div class="card-in"><p class="note" id="rules-st" role="status">Prüfe die Firestore-Regeln …</p><p class="note">Anrufe laufen direkt zwischen den Geräten und kosten nichts. In manchen Mobilfunk- oder Firmennetzen klappt das nur über einen TURN-Server. Wenn du einen einrichtest, trag ihn hier ein (sonst leer lassen).</p><form data-form="rtcturn" class="grid" style="gap:8px"><input id="rtc-u" type="text" autocomplete="off" spellcheck="false" placeholder="turn:… (mehrere mit Leerzeichen)" aria-label="TURN-Adressen"><input id="rtc-n" type="text" autocomplete="off" spellcheck="false" placeholder="Benutzername" aria-label="TURN-Benutzername"><input id="rtc-c" type="text" autocomplete="off" spellcheck="false" placeholder="Passwort" aria-label="TURN-Passwort"><div class="row"><span class="sp"></span><button class="btn" type="submit">Speichern</button></div></form></div></div>`; }
 
+/* ---------- v1095 (Inaya: „Bau Games für Chats, Gruppenchats und öffentliche Gruppenchats“): Spiele im Chat ----------
+   Spiel = chats/<cid>/gm/<id> (Unterordner: lesen und schreiben dürfen die Mitglieder schon, braucht keine neuen Regeln), im Chat steht eine Nachricht mit game:{id, k}.
+   k: ttt = Tic-Tac-Toe, c4 = Vier gewinnt (beide zu zweit), hang = Galgenmännchen (alle im Chat raten zusammen).
+   Felder: by, ts, lt (letzter Zug), n (Züge), p:[uid …] (Spieler, Index = Stein), st: w (wartet auf Mitspieler) | p (läuft) | e (vorbei), t (wer dran ist),
+   b (Brett als Text, '.' leer, '0'/'1' = Stein), w ('0'/'1' Sieger, 'd' unentschieden, 'x' abgebrochen; hang: 'ok' erraten, 'no' nicht), wl (Gewinnreihe), ln (letzter Stein), why ('r' = aufgegeben), re (ID der Revanche).
+   Galgenmännchen: wd (Wort), g (geratene Buchstaben), mi (Fehler, bei 6 vorbei), sc:{uid: Treffer}, lb (wer zuletzt geraten hat), l (Sprache der Wörter).
+   Züge laufen über eine Transaktion, auf dem eigenen Gerät stehen sie sofort. Im privaten Chat spielt die andere Person automatisch mit, in Gruppen setzt sich die erste Person dazu, die „Mitspielen“ antippt.
+   Belohnung: der erste Sieg am Tag gibt wie früher bei den Minigames 15 Coins + 10 XP (Tic-Tac-Toe und Vier gewinnt über ncGame('ttt'), Galgenmännchen für die meisten Treffer über ncGame('hang')). */
+const CGM_G = {
+  ttt:{n:'Tic-Tac-Toe', d:'Zu zweit · drei in einer Reihe'},
+  c4:{n:'Vier gewinnt', d:'Zu zweit · vier in einer Reihe'},
+  hang:{n:'Galgenmännchen', d:'Alle zusammen · errate das Wort'}};
+const CGM_ICO = {
+  ttt:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3.5v17M15 3.5v17M3.5 9h17M3.5 15h17"/></svg>',
+  c4:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14.5" rx="2.2"/><circle cx="8" cy="9" r="1.5"/><circle cx="12" cy="9" r="1.5"/><circle cx="16" cy="9" r="1.5"/><circle cx="8" cy="13.5" r="1.5"/><circle cx="12" cy="13.5" r="1.5"/><circle cx="16" cy="13.5" r="1.5"/><path d="M5.5 18.5V21M18.5 18.5V21"/></svg>',
+  hang:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 21h9M6.5 21V3h8.5v3.2"/><circle cx="15" cy="8.6" r="2.2"/><path d="M15 10.8v4.4M15 12.2l-2.2 2M15 12.2l2.2 2M15 15.2l-1.8 3.3M15 15.2l1.8 3.3"/></svg>',
+  pad:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 7.5h9.6a4.6 4.6 0 0 1 4.4 5.9l-1 3.4a2.4 2.4 0 0 1-4.1 1L14.4 16H9.6l-1.7 1.8a2.4 2.4 0 0 1-4.1-1l-1-3.4a4.6 4.6 0 0 1 4.4-5.9Z"/><path d="M8 10v3.6M6.2 11.8h3.6"/><path d="M15.3 10.6h.01M17.6 12.9h.01" stroke-width="2.6"/></svg>',
+  x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'};
+const HANG_EN = ['CAT','DOG','MOUSE','RAVEN','OWL','SPIDER','WITCH','GHOST','ZOMBIE','VAMPIRE','MUMMY','MONSTER','DRAGON','PUMPKIN','CANDLE','COFFIN','GRAVE','CROSS','FOG','NIGHT','MOON','STARS','CLOUD','RAIN','STORM','THUNDER','SNOW','AUTUMN','WINTER','FLOWER','ROSE','TREE','FOREST','APPLE','CHERRY','CAKE','PIZZA','COOKIE','CANDY','TEA','COFFEE','BREAD','HOUSE','DOOR','WINDOW','CASTLE','TOWER','CELLAR','MIRROR','LAMP','BED','SOFA','CHAIR','TABLE','BOOK','LETTER','PHONE','MUSIC','GUITAR','PIANO','DRUM','SONG','DANCE','PARTY','FRIEND','HEART','LOVE','DREAM','SLEEP','EYE','HAND','DRESS','SKIRT','JACKET','BOOTS','SHOES','COAT','NECKLACE','RING','CROWN','MASK','LIPS','BONES','SKULL','SHADOW','BAT','MOTH','POTION','MAGIC','SPELL','BROOM','CAULDRON','TOMB','CHAPEL','ORGAN','VELVET','LACE','SILVER','CHAIN','KEY','CLOCK','CANDY'];
+const CGM_ABC = {de:[...'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ'], en:[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']};
+const CGM = {s:{}, sub:{}, ov:null, busy:{}, rw:{}, dr:{}, dropNow:false};
+try { CGM.rw = JSON.parse(localStorage.getItem('nf-cgmrw') || '{}') || {}; } catch {}
+const cgmK = (cid, id) => cid + '|' + id;
+const cgmOk = k => typeof k === 'string' && /^[\w-]{2,80}\|[\w-]{4,40}$/.test(k);
+const cgmRef = k => { const i = k.indexOf('|'); return social.db.doc('chats/' + k.slice(0, i) + '/gm/' + k.slice(i + 1)); };
+const cgmMe = g => (g?.p || []).indexOf(social?.uid);
+const cgmName = k => tr(CGM_G[k]?.n || 'Spiel');
+const cgmUser = u => u === social?.uid ? me() : uidUser(u) || profUser(u);
+const cgmMy = g => !!g?._ok && g.st === 'p' && g.k !== 'hang' && cgmMe(g) === g.t; /* ich bin dran */
+function cgmWatch(k){ if (!social || !cgmOk(k)) return; const o = CGM.sub[k]; if (o) { o.t = Date.now(); return; }
+  const s = CGM.sub[k] = {t:Date.now(), u:null};
+  try { s.u = cgmRef(k).onSnapshot(d => { if (CGM.busy[k]) return; CGM.s[k] = d.exists ? {...d.data(), _ok:1} : (CGM.s[k]?._new ? CGM.s[k] : {gone:1}); cgmUpd(k); }, () => { CGM.s[k] = {err:1}; cgmUpd(k); }); }
+  catch { CGM.s[k] = {err:1}; } }
+/* Beobachter abmelden, wenn die Karte nicht mehr zu sehen ist (spart Lesevorgänge) */
+setInterval(() => { for (const k in CGM.sub) { const s = CGM.sub[k]; if (CGM.ov === k || [...document.querySelectorAll('[data-cgm]')].some(e => e.dataset.cgm === k)) { s.t = Date.now(); continue; } if (Date.now() - s.t > 30000) { try { s.u?.(); } catch {} delete CGM.sub[k]; } } }, 15000);
+function cgmStatus(g){
+  if (!g) return tr('Lädt …'); if (g.err) return tr('Tritt der Gruppe bei, um mitzuspielen.'); if (g.gone) return tr('Spiel nicht mehr verfügbar');
+  const i = cgmMe(g), nm = u => chatWho(u);
+  if (g.k === 'hang') { if (g.st === 'e') return g.w === 'ok' ? tr('Erraten: {0}').replace('{0}', g.wd) : tr('Nicht erraten. Das Wort war {0}.').replace('{0}', g.wd); return tr('Alle raten mit · {0} von 6 Fehlern').replace('{0}', g.mi || 0); }
+  if (g.st === 'w') return g.p?.[0] === social?.uid ? tr('Wartet auf Mitspieler …') : tr('{0} sucht Mitspieler').replace('{0}', nm(g.p?.[0]));
+  if (g.st === 'e') { if (g.w === 'x') return tr('Abgebrochen'); if (g.w === 'd') return tr('Unentschieden'); const wi = +g.w;
+    if (g.why === 'r') { const lo = g.p?.[1 - wi]; return lo === social?.uid ? tr('Du hast aufgegeben') : tr('{0} hat aufgegeben').replace('{0}', nm(lo)); }
+    return wi === i ? tr('Du hast gewonnen!') : tr('{0} hat gewonnen').replace('{0}', nm(g.p?.[wi])); }
+  return g.t === i ? tr('Du bist dran') : tr('{0} ist dran').replace('{0}', nm(g.p?.[g.t])); }
+function cgmGoTxt(g){ if (!g?._ok) return tr('Öffnen'); if (g.k === 'hang') return tr(g.st === 'e' ? 'Ansehen' : 'Mitraten');
+  if (g.st === 'w') return tr(g.p?.includes(social?.uid) ? 'Ansehen' : 'Mitspielen'); if (cgmMy(g)) return tr('Jetzt spielen'); return tr('Ansehen'); }
+/* Steine: Spieler 1 = Kreuz bzw. heller Stein, Spieler 2 = Totenkopf bzw. dunkler Stein */
+const cgmPiece = (k, v) => k === 'ttt' ? (v === '0' ? TTT_X : v === '1' ? TTT_O : '') : v === '0' || v === '1' ? `<span class="cgmdisc d${v}"></span>` : '';
+function cgmBoard(g, big){
+  if (g.k === 'hang') { const L = CGM_ABC[g.l === 'en' ? 'en' : 'de'], gs = g.g || '', end = g.st === 'e';
+    const word = `<p class="cgmword" data-raw style="--hn:${(g.wd || '').length}">${[...(g.wd || '')].map(c => `<span class="${gs.includes(c) ? 'on' : end ? 'miss' : ''}">${gs.includes(c) || end || !/[A-ZÄÖÜ]/.test(c) ? esc(c) : ''}</span>`).join('')}</p>`;
+    if (!big) return `<span class="cgmhg">${hangSVG(Math.min(6, g.mi || 0))}</span>${word}`;
+    return `<div class="cgmhang">${hangSVG(Math.min(6, g.mi || 0))}${word}</div><div class="cgmkeys" data-raw>${L.map(c => { const u = gs.includes(c); return `<button type="button" data-act="cgm-key" data-c="${c}" class="${u ? ((g.wd || '').includes(c) ? 'hit' : 'no') : ''}"${u || end ? ' disabled' : ''}>${c}</button>`; }).join('')}</div>`; }
+  const w = g.k === 'ttt' ? 3 : 7, b = g.b || '', wl = new Set(g.wl || []), my = big && cgmMy(g);
+  const cells = [...b].map((v, i) => { const dr = big && CGM.dropNow && g.ln === i, cl = `cgmcell${v !== '.' ? ' f' : ''}${wl.has(i) ? ' wl' : ''}${dr ? ' drop' : ''}`, pc = cgmPiece(g.k, v);
+    if (!big) return `<span class="${cl}">${pc}</span>`;
+    const can = my && (g.k === 'ttt' ? v === '.' : b[i % 7] === '.');
+    return `<button type="button" class="${cl}"${dr && g.k === 'c4' ? ` style="--dr:${Math.floor(i / 7) + 1}"` : ''} data-act="cgm-mv" data-i="${i}"${can ? '' : ' disabled'} aria-label="${esc(tr(g.k === 'ttt' ? 'Feld {0}' : 'Spalte {0}').replace('{0}', g.k === 'ttt' ? i + 1 : i % 7 + 1))}">${pc}</button>`; }).join('');
+  return `<span class="cgmgrid ${g.k}${my ? ' my' : ''}" style="--gw:${w}">${cells}</span>`; }
+function cgmCardIn(k, k0){ const g = CGM.s[k], ok = !!g?._ok, kind = ok && CGM_G[g.k] ? g.k : k0;
+  return `<div class="cgmc${ok && g.st === 'e' ? ' end' : ''}${cgmMy(g) ? ' turn' : ''}" data-cgm="${esc(k)}" data-k0="${esc(kind)}" role="button" tabindex="0" data-act="cgm-open"><span class="cgmhd"><span class="cgmic">${CGM_ICO[kind] || CGM_ICO.pad}</span><span class="cgmtt"><small>${esc(tr('Spiel'))}</small><b>${esc(cgmName(kind))}</b></span></span>${ok ? `<span class="cgmmini">${cgmBoard(g, false)}</span>` : ''}<span class="cgmst">${esc(cgmStatus(g))}</span><span class="cgmgo">${esc(cgmGoTxt(g))}</span></div>`; }
+function cgmCardHTML(m){ const x = m.game, cid = m._cid || CH.open; if (!cid || !CGM_G[x?.k] || !/^[\w-]{4,40}$/.test(x.id || '')) return ''; const k = cgmK(cid, x.id); cgmWatch(k); return cgmCardIn(k, x.k); }
+function cgmUpd(k){ document.querySelectorAll('.cgmc[data-cgm]').forEach(el => { if (el.dataset.cgm === k) el.outerHTML = cgmCardIn(k, el.dataset.k0); });
+  if (CGM.ov === k) cgmPaint(); cgmReward(k); }
+/* ---------- Fenster (außerhalb von #app, im Design des Chats) ---------- */
+function cgmPlayers(g){
+  if (g.k === 'hang') { const sc = g.sc || {}, ids = Object.keys(sc).sort((a, b) => sc[b] - sc[a]), top = ids.length ? sc[ids[0]] : 0;
+    if (!ids.length) return `<p class="cgmhint">${esc(tr('Tippe Buchstaben an. Jeder richtige Buchstabe ist ein Punkt für dich.'))}</p>`;
+    return `<div class="cgmsc">${ids.slice(0, 12).map(u => { const ou = cgmUser(u); return `<span class="cgmpl${g.st === 'e' && g.w === 'ok' && sc[u] === top ? ' win' : ''}"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b data-raw>${esc(chatWho(u))}</b><i class="cgmpt">${sc[u]}</i></span>`; }).join('')}</div>`; }
+  const pl = j => { const u = g.p?.[j]; if (!u) return `<span class="cgmpl empty"><span class="cameo"></span><b>${esc(tr('Platz frei'))}</b><span class="cgmsym">${cgmPiece(g.k, String(j))}</span></span>`;
+    const ou = cgmUser(u); if (!ou && social && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => cgmPaint()).catch(() => {}); }
+    const on = g.st === 'p' && g.t === j, win = g.st === 'e' && g.w === String(j);
+    return `<span class="cgmpl${on ? ' on' : ''}${win ? ' win' : ''}"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b data-raw>${esc(chatWho(u))}</b><span class="cgmsym">${cgmPiece(g.k, String(j))}</span></span>`; };
+  return `<div class="cgmvs">${pl(0)}<span class="cgmvsx">${esc(tr('gegen'))}</span>${pl(1)}</div>`; }
+function cgmActs(g, c){ const i = cgmMe(g), a = [];
+  if (g.st === 'w') { if (i < 0) a.push(['cgm-join', 'Mitspielen', 1]); else a.push(['cgm-stop', 'Abbrechen']); }
+  else if (g.st === 'p' && g.k !== 'hang' && i >= 0) a.push(['cgm-give', 'Aufgeben']);
+  else if (g.st === 'e' && (g.k === 'hang' || i >= 0 || !g.p?.[1])) a.push(['cgm-again', g.re ? 'Zur Revanche' : g.k === 'hang' ? 'Neues Wort' : 'Revanche', 1]);
+  a.push(['cgm-chat', 'Zum Chat']);
+  return `<div class="cgmacts">${a.map(([x, l, p]) => `<button type="button" class="btn${p ? '' : ' ghost'}" data-act="${x}">${esc(tr(l))}</button>`).join('')}</div>`; }
+function cgmInner(k){
+  if (k === 'menu') { const c = CH.list.find(x => x.id === CH.open), two = c && !c.group;
+    return `<button type="button" class="gmx" data-act="cgm-x" aria-label="Schließen">${CGM_ICO.x}</button><span class="cgmbig">${CGM_ICO.pad}</span><h3 class="gmn">Spiele</h3><p class="cisub">${two ? `<span>${esc(tr('Such dir ein Spiel aus. {0} spielt automatisch mit.').replace('{0}', chatWho((c.members || []).find(m => m !== social?.uid))))}</span>` : esc(tr('Wer zuerst „Mitspielen“ antippt, spielt mit. Beim Galgenmännchen raten alle.'))}</p>
+      <section class="cibox cgmlist">${Object.keys(CGM_G).map(g => `<button type="button" class="cgmrow" data-act="cgm-start" data-k="${g}"><span class="cgmic">${CGM_ICO[g]}</span><span class="cgmtt"><b>${esc(CGM_G[g].n)}</b><small>${esc(CGM_G[g].d)}</small></span><svg class="cgmarr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>`).join('')}</section>
+      <p class="cgmhint">${esc(ncGameDone('ttt') && ncGameDone('hang') ? '✓ Tagesbelohnung für heute abgeholt.' : 'Dein erster Sieg am Tag: +{0} Coins · +{1} XP'.replace('{0}', XPC.g * aboM()).replace('{1}', XPV.g * aboM()))}</p>`; }
+  const g = CGM.s[k], c = CH.list.find(x => x.id === k.split('|')[0]);
+  const head = `<button type="button" class="gmx" data-act="cgm-x" aria-label="Schließen">${CGM_ICO.x}</button>`;
+  if (!g?._ok) return `${head}<span class="cgmbig">${CGM_ICO.pad}</span><p class="cgmstat">${esc(cgmStatus(g))}</p>`;
+  return `${head}<div class="cgmh"><span class="cgmic">${CGM_ICO[g.k]}</span><h3 class="gmn">${esc(CGM_G[g.k].n)}</h3></div>${cgmPlayers(g)}
+    <div class="cgmbox cgb-${g.k}">${cgmBoard(g, true)}</div>
+    <p class="cgmstat${cgmMy(g) ? ' my' : ''}${g.st === 'e' && (g.w === String(cgmMe(g)) || (g.k === 'hang' && g.w === 'ok')) ? ' won' : ''}" data-raw>${esc(cgmStatus(g))}</p>${cgmActs(g, c)}`; }
+function cgmPaint(){ const el = document.querySelector('#cgmov .gmsheet'), k = CGM.ov; if (!el || !k) return; const y = el.scrollTop, g = CGM.s[k], dk = k + ':' + (g?.n || 0); CGM.dropNow = !!g?._ok && g.n > 0 && !CGM.dr[dk]; CGM.dr[dk] = 1; el.innerHTML = cgmInner(k); CGM.dropNow = false; el.scrollTop = y; try { i18nNode(el); } catch {} }
+function cgmOpen(k){ if (k !== 'menu' && !cgmOk(k)) return; if (k !== 'menu') { cgmWatch(k); const g = CGM.s[k]; if (g?._ok && !g._new) CGM.dr[k + ':' + (g.n || 0)] = 1; } const old = document.getElementById('cgmov'); CGM.ov = k;
+  if (old) { cgmPaint(); return; }
+  const c = CH.list.find(x => x.id === (k === 'menu' ? CH.open : k.split('|')[0]));
+  const w = document.createElement('div'); w.id = 'cgmov'; w.className = 'gmsh cgmov';
+  w.innerHTML = `<div class="gmshbg" data-act="cgm-x"></div><div class="gmsheet cinfo cgmsheet${ciThemeAttr(c)}" role="dialog" aria-modal="true"></div>`;
+  document.body.appendChild(w); cgmPaint(); requestAnimationFrame(() => requestAnimationFrame(() => w.classList.add('on'))); }
+function cgmClose(){ const w = document.getElementById('cgmov'); CGM.ov = null; if (!w) return; w.classList.remove('on'); setTimeout(() => { if (!CGM.ov) w.remove(); }, 260); }
+/* ---------- Spielzüge ---------- */
+const cgmNid = () => 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function cgmNew(k0, opt={}){ const cid = opt.cid || CH.open, c = CH.list.find(x => x.id === cid); if (!social || !c || !CGM_G[k0]) return null;
+  const id = opt.id || cgmNid(), other = !c.group ? (c.members || []).find(m => m !== social.uid) : null, now = Date.now(), d = {k:k0, by:social.uid, ts:now, lt:now, n:0};
+  if (k0 === 'hang') { const en = LANG === 'en', L = en ? HANG_EN : HANG_WORDS; let last = []; try { last = JSON.parse(localStorage.getItem('nf-hang') || '[]'); } catch {}
+    const pool = L.filter(x => !last.includes(x)), wd = pool[Math.floor(Math.random() * pool.length)] || L[0]; try { localStorage.setItem('nf-hang', JSON.stringify([wd, ...last].slice(0, 40))); } catch {}
+    Object.assign(d, {p:[social.uid], st:'p', wd, g:'', mi:0, sc:{}, l:en ? 'en' : 'de'}); }
+  else { const p = opt.p || (other ? [social.uid, other] : [social.uid]); Object.assign(d, {p, st:p.length > 1 ? 'p' : 'w', t:0, b:'.'.repeat(k0 === 'ttt' ? 9 : 42), w:''}); }
+  const k = cgmK(cid, id); CGM.s[k] = {...d, _ok:1, _new:1}; cgmWatch(k);
+  cgmRef(k).set(d).then(() => { if (CGM.s[k]?._new) delete CGM.s[k]._new; }).catch(e => { console.warn('cgmNew', e); CGM.s[k] = {err:1}; cgmUpd(k); toastNow('Das Spiel konnte nicht starten. Versuch es nochmal.'); });
+  sendMsg(cid, '', {game:{id, k:k0}}); return k; }
+/* Zug auf dem Gerät sofort zeigen, dann über eine Transaktion speichern; passt der Stand auf dem Server nicht mehr, gilt der Server */
+async function cgmTx(k, up, ok){ const prev = CGM.s[k]; if (!prev?._ok || CGM.busy[k]) return false; CGM.busy[k] = 1; CGM.s[k] = {...prev, ...up}; cgmUpd(k); let fine = true;
+  try { await social.db.runTransaction(async tx => { const r = cgmRef(k), s = await tx.get(r), d = s.data(); if (!d || !ok(d)) throw new Error('stale'); tx.update(r, typeof up === 'function' ? up(d) : up); }); }
+  catch (e) { fine = false; if (e?.message !== 'stale') { console.warn('cgmTx', e); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); } }
+  delete CGM.busy[k]; try { const s = await cgmRef(k).get(); CGM.s[k] = s.exists ? {...s.data(), _ok:1} : {gone:1}; } catch { if (!fine) CGM.s[k] = prev; } cgmUpd(k); return fine; }
+function cgmJudge(k, b, i){ const w = k === 'ttt' ? 3 : 7, h = k === 'ttt' ? 3 : 6, need = k === 'ttt' ? 3 : 4, v = b[i], x = i % w, y = Math.floor(i / w);
+  for (const [dx, dy] of [[1, 0], [0, 1], [1, 1], [1, -1]]) { const l = [i]; for (const s of [1, -1]) { let cx = x + dx * s, cy = y + dy * s; while (cx >= 0 && cx < w && cy >= 0 && cy < h && b[cy * w + cx] === v) { l.push(cy * w + cx); cx += dx * s; cy += dy * s; } } if (l.length >= need) return {w:v, wl:l}; }
+  return b.includes('.') ? null : {w:'d', wl:[]}; }
+function cgmMove(k, i){ const g = CGM.s[k]; if (!cgmMy(g)) return; const me0 = g.t; let b = g.b || '';
+  if (g.k === 'ttt') { if (b[i] !== '.') return; }
+  else { const col = i % 7; let r = 5; while (r >= 0 && b[r * 7 + col] !== '.') r--; if (r < 0) return; i = r * 7 + col; }
+  b = b.slice(0, i) + String(me0) + b.slice(i + 1); const res = cgmJudge(g.k, b, i), b0 = g.b;
+  const up = {b, n:(g.n || 0) + 1, lt:Date.now(), ln:i, t:1 - me0, ...(res ? {st:'e', w:res.w, wl:res.wl} : {})};
+  cgmTx(k, up, d => d.st === 'p' && d.t === me0 && d.b === b0 && d.p?.[me0] === social.uid); }
+function cgmKey(k, ch){ const g = CGM.s[k]; if (!g?._ok || g.k !== 'hang' || g.st !== 'p' || (g.g || '').includes(ch)) return;
+  const calc = d => { const gg = (d.g || '') + ch, hit = [...(d.wd || '')].filter(c => c === ch).length, sc = {...(d.sc || {})}; let mi = d.mi || 0; if (hit) sc[social.uid] = (sc[social.uid] || 0) + hit; else mi++;
+    const done = [...(d.wd || '')].every(c => gg.includes(c) || !/[A-ZÄÖÜ]/.test(c)); return {g:gg, sc, mi, lt:Date.now(), lb:social.uid, n:(d.n || 0) + 1, ...(done ? {st:'e', w:'ok'} : mi >= 6 ? {st:'e', w:'no'} : {})}; };
+  const prev = CGM.s[k]; if (CGM.busy[k]) return; CGM.busy[k] = 1; CGM.s[k] = {...prev, ...calc(prev)}; cgmUpd(k);
+  (async () => { let fine = true; try { await social.db.runTransaction(async tx => { const r = cgmRef(k), d = (await tx.get(r)).data(); if (!d || d.st !== 'p' || (d.g || '').includes(ch)) throw new Error('stale'); tx.update(r, calc(d)); }); }
+    catch (e) { fine = false; if (e?.message !== 'stale') { console.warn('cgmKey', e); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); } }
+    delete CGM.busy[k]; try { const s = await cgmRef(k).get(); CGM.s[k] = s.exists ? {...s.data(), _ok:1} : {gone:1}; } catch { if (!fine) CGM.s[k] = prev; } cgmUpd(k); taskHit('ch'); })(); }
+async function cgmJoin(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'w' || g.p?.includes(social.uid)) return;
+  const ok = await cgmTx(k, {p:[g.p[0], social.uid], st:'p', t:0, lt:Date.now()}, d => d.st === 'w' && (d.p || []).length === 1 && d.p[0] !== social.uid);
+  if (!ok && CGM.s[k]?.st !== 'w') toastNow('Jemand anderes war schneller.'); }
+async function cgmGive(k){ const g = CGM.s[k], i = cgmMe(g); if (!g?._ok || g.st !== 'p' || i < 0 || g.k === 'hang') return;
+  if (!(await askYesNo('Wirklich aufgeben?', 'Aufgeben', 'Weiterspielen'))) return; cgmTx(k, {st:'e', w:String(1 - i), why:'r', lt:Date.now()}, d => d.st === 'p' && d.p?.[i] === social.uid); }
+function cgmStop(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'w' || g.p?.[0] !== social.uid) return; cgmTx(k, {st:'e', w:'x', lt:Date.now()}, d => d.st === 'w'); }
+async function cgmAgain(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'e') return; const cid = k.slice(0, k.indexOf('|'));
+  if (g.re) return cgmOpen(cgmK(cid, g.re));
+  const two = g.k !== 'hang', i = cgmMe(g); if (two && i < 0 && g.p?.[1]) return;
+  const id = cgmNid(); let taken = null;
+  try { await social.db.runTransaction(async tx => { const r = cgmRef(k), d = (await tx.get(r)).data(); if (d?.re) { taken = d.re; return; } tx.update(r, {re:id}); }); }
+  catch (e) { console.warn('cgmAgain', e); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); return; }
+  if (taken) return cgmOpen(cgmK(cid, taken));
+  CGM.s[k] = {...g, re:id}; const nk = await cgmNew(g.k, {cid, id, p:two && g.p?.length === 2 ? [g.p[1], g.p[0]] : null}); if (nk) cgmOpen(nk); }
+/* Belohnung wie bei den alten Minigames: der erste Sieg am Tag, nur für frisch beendete Spiele */
+function cgmReward(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'e' || g._new || CGM.rw[k] || Date.now() - (+g.lt || 0) > 15 * 60000 || !social) return;
+  let ok = false; const ref = g.k === 'hang' ? 'hang' : 'ttt';
+  if (g.k === 'hang') { const sc = g.sc || {}, top = Math.max(0, ...Object.values(sc)); ok = g.w === 'ok' && top > 0 && sc[social.uid] === top; }
+  else ok = g.why !== 'r' && (g.p || []).length === 2 && g.p[0] !== g.p[1] && g.w === String(cgmMe(g));
+  CGM.rw[k] = Date.now(); try { const e = Object.entries(CGM.rw).sort((a, b) => b[1] - a[1]).slice(0, 150); CGM.rw = Object.fromEntries(e); localStorage.setItem('nf-cgmrw', JSON.stringify(CGM.rw)); } catch {}
+  if (ok && WAL.d && !ncGameDone(ref)) ncGame(ref); }
+document.addEventListener('click', e => { const b = e.target.closest?.('[data-act^="cgm-"]'); if (!b) return; const a = b.dataset.act; e.preventDefault(); e.stopPropagation();
+  if (!social) return; const k = CGM.ov;
+  if (a === 'cgm-menu') { if (typeof chatAttach !== 'undefined' && chatAttach) { chatAttach = false; render(); } return cgmOpen('menu'); }
+  if (a === 'cgm-open') return cgmOpen(b.closest('[data-cgm]')?.dataset.cgm || b.dataset.cgm);
+  if (a === 'cgm-x' || a === 'cgm-chat') return cgmClose();
+  if (a === 'cgm-start') { const nk = cgmNew(b.dataset.k); nk ? cgmOpen(nk) : cgmClose(); return; }
+  if (!k || k === 'menu') return;
+  if (a === 'cgm-mv') return cgmMove(k, +b.dataset.i);
+  if (a === 'cgm-key') return cgmKey(k, b.dataset.c);
+  if (a === 'cgm-join') return cgmJoin(k);
+  if (a === 'cgm-give') return cgmGive(k);
+  if (a === 'cgm-stop') return cgmStop(k);
+  if (a === 'cgm-again') return cgmAgain(k);
+}, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && CGM.ov) cgmClose(); if ((e.key === 'Enter' || e.key === ' ') && e.target?.classList?.contains('cgmc')) { e.preventDefault(); cgmOpen(e.target.dataset.cgm); } });
+/* Galgenmännchen am PC auch mit der Tastatur */
+document.addEventListener('keydown', e => { const k = CGM.ov, g = k && CGM.s[k]; if (!g?._ok || g.k !== 'hang' || g.st !== 'p' || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) return; const c = (e.key || '').toUpperCase(); if (c.length === 1 && CGM_ABC[g.l === 'en' ? 'en' : 'de'].includes(c)) { e.preventDefault(); cgmKey(k, c); } });
 function bubbleHTML(m, group){
   const mine = m.from === social?.uid; if (m._lock) return e2LockHTML(m);
   if (!mine && m.from && !m._r && group) { // kleine Profilbilder an fremden Nachrichten, nur in Gruppen (Inaya, 2026-10-16); antippen öffnet das Profil
@@ -20159,7 +20426,7 @@ function bubbleHTML(m, group){
     return `<div class="cmrow"><button type="button" class="mav mavp" data-act="${V.name === 'chats' && CH.open ? 'ci-person' : 'profile'}" data-id="${esc(m.from)}" aria-label="Profil von ${esc(chatWho(m.from))}">${u?.outfit || u?.pic ? headPic(u) : ''}</button>${bubbleHTML({...m, _r:1}, group)}</div>`;
   }
   /* eigenes Profilbild an eigenen Nachrichten gibt es nicht mehr (Inaya, 2026-10-16) */
-  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.prof || m.story?.sh || m.stk || m.gift ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="${V.name === 'chats' && CH.open ? 'ci-person' : 'profile'}" data-id="${esc(m.from)}">${whoH(m.from)}</button>` : ''}${quoteHTML(m.re)}${m.gift ? giftMsgHTML(m) : ''}${msgMedia(m)}${m.text && m.kind !== 'ginv' ? chMenHL(etx(sysTr(m.text))) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${msgClock(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
+  return `<div class="bubble ${mine ? 'me' : 'them'}${m.img || m.audio || m.clip ? ' media' : ''}${m.post || m.prof || m.game || m.story?.sh || m.stk || m.gift ? ' shcard' : ''}${m.gif ? ' media' : ''}">${group && !mine ? `<button type="button" class="who" data-act="${V.name === 'chats' && CH.open ? 'ci-person' : 'profile'}" data-id="${esc(m.from)}">${whoH(m.from)}</button>` : ''}${quoteHTML(m.re)}${m.gift ? giftMsgHTML(m) : ''}${msgMedia(m)}${m.text && m.kind !== 'ginv' ? chMenHL(etx(sysTr(m.text))) : ''}${m._e2e ? msgLinkPlain(m.text) : msgLink(m.text)}${m.kind === 'invite' && !mine ? `<button class="btn ghost inv" data-act="room-visit" data-id="${esc(m.from)}">Zimmer betreten</button>` : ''}<small class="meta"><span class="mt">${msgClock(m.ts)}</span>${mine && m.id && !CH.open?.startsWith('wall_') ? (msgDelAsk === m.id ? `<span class="mdel"><button type="button" class="mdyes" data-act="msg-del-yes" data-id="${esc(m.id)}">Löschen? Ja, für alle löschen</button><button type="button" class="mdno" data-act="msg-del-no" aria-label="Nicht löschen">✕</button></span>` : `<button type="button" class="mdelb" data-act="msg-del" data-id="${esc(m.id)}" aria-label="Nachricht löschen">${TRASH_SVG}</button>`) : ''}</small></div>`;
 }
 // Gelöscht bleibt gelöscht (Inaya, 2026-10-12): gelöschte Nachrichten, Kommentare und Gästebuch-Einträge merken, damit sie nicht wieder auftauchen
 const isDel = id => !!(S.nfDel && S.nfDel[id]);
@@ -22470,7 +22737,7 @@ const GM = {mem:null, ttt:null, hang:null, bat:null};
 const MEM_SYM = ['☾','✝','☠','✦','❦','♠','♥','✧'];
 /* Kreuz und Totenkopf als Icons wie bei Tic-Tac-Toe, nicht als Emoji (Inaya, 2026-10-17) */
 const memSym = v => v === '✝' ? TTT_X : v === '☠' ? TTT_O : v, MEM_NAME = {'✝':'Kreuz', '☠':'Totenkopf'};
-const HANG_WORDS = ['KATZE','HUND','MAUS','VOGEL','RABE','EULE','SPINNE','HEXE','GEIST','ZOMBIE','VAMPIR','MUMIE','MONSTER','DRACHE','KÜRBIS','KERZE','SARG','GRAB','KREUZ','NEBEL','NACHT','MOND','STERNE','SONNE','WOLKE','REGEN','BLITZ','DONNER','SCHNEE','HERBST','WINTER','SOMMER','BLUME','ROSE','BAUM','WALD','BLATT','APFEL','BIRNE','KIRSCHE','BANANE','ZITRONE','KUCHEN','TORTE','PIZZA','NUDELN','KEKS','BONBON','TEE','KAFFEE','MILCH','BROT','KÄSE','HAUS','TÜR','FENSTER','SCHLOSS','TURM','BURG','KELLER','DACH','TREPPE','SPIEGEL','LAMPE','BETT','SOFA','STUHL','TISCH','SCHRANK','BUCH','BRIEF','STIFT','HANDY','MUSIK','GITARRE','KLAVIER','TROMMEL','LIED','TANZ','PARTY','FREUND','HERZ','LIEBE','KUSS','TRAUM','SCHLAF','AUGE','HAND','HAARE','KLEID','ROCK','HOSE','JACKE','STIEFEL','SCHUHE','MANTEL','MÜTZE','KETTE','RING','KRONE','MASKE','LIPPEN','BLUT','KNOCHEN','SCHÄDEL','FRIEDHOF','SCHATTEN','ANGST','SCHREI','ZAUBER','BESEN','KATER','PFERD','FUCHS','WOLF','HASE','IGEL','FROSCH','SCHLANGE','PANDA','TIGER','LÖWE','AFFE','ELEFANT','EINHORN','PRINZ','KÖNIG','PIRAT','RITTER','ENGEL','TEUFEL','HIMMEL','STADT','STRAND','MEER','INSEL','BERG','FLUSS','SCHULE','PAUSE','FERIEN','URLAUB','GESCHENK','KAMERA','FOTO','VIDEO','SPIEL','PUZZLE','BALL','FLEDERMAUS','TOTENKOPF']; /* bekannte, kürzere Wörter (Inaya, 2026-10-17) */ // 160 düstere Wörter (Inaya, 2026-10-14)
+const HANG_WORDS = ['KATZE','HUND','MAUS','VOGEL','RABE','EULE','SPINNE','HEXE','GEIST','ZOMBIE','VAMPIR','MUMIE','MONSTER','DRACHE','KÜRBIS','KERZE','SARG','GRAB','KREUZ','NEBEL','NACHT','MOND','STERNE','SONNE','WOLKE','REGEN','BLITZ','DONNER','SCHNEE','HERBST','WINTER','SOMMER','BLUME','ROSE','BAUM','WALD','BLATT','APFEL','BIRNE','KIRSCHE','BANANE','ZITRONE','KUCHEN','TORTE','PIZZA','NUDELN','KEKS','BONBON','TEE','KAFFEE','MILCH','BROT','KÄSE','HAUS','TÜR','FENSTER','SCHLOSS','TURM','BURG','KELLER','DACH','TREPPE','SPIEGEL','LAMPE','BETT','SOFA','STUHL','TISCH','SCHRANK','BUCH','BRIEF','STIFT','HANDY','MUSIK','GITARRE','KLAVIER','TROMMEL','LIED','TANZ','PARTY','FREUND','HERZ','LIEBE','KUSS','TRAUM','SCHLAF','AUGE','HAND','HAARE','KLEID','ROCK','HOSE','JACKE','STIEFEL','SCHUHE','MANTEL','MÜTZE','KETTE','RING','KRONE','MASKE','LIPPEN','BLUT','KNOCHEN','SCHÄDEL','FRIEDHOF','SCHATTEN','ANGST','SCHREI','ZAUBER','BESEN','KATER','PFERD','WOLF','HASE','IGEL','FROSCH','SCHLANGE','PANDA','TIGER','LÖWE','AFFE','ELEFANT','EINHORN','PRINZ','KÖNIG','PIRAT','RITTER','ENGEL','TEUFEL','HIMMEL','STADT','STRAND','MEER','INSEL','BERG','FLUSS','SCHULE','PAUSE','FERIEN','URLAUB','GESCHENK','KAMERA','FOTO','VIDEO','SPIEL','PUZZLE','BALL','FLEDERMAUS','TOTENKOPF']; /* bekannte, kürzere Wörter (Inaya, 2026-10-17) */ // 160 düstere Wörter (Inaya, 2026-10-14)
 function setBest(k, v, higher){ S.games = S.games || {}; const b = S.games[k]; if (b == null || (higher ? v > b : v < b)) { S.games[k] = v; save(); return true; } return false; }
 function memNew(){ const d = [...MEM_SYM, ...MEM_SYM].map(v => ({v, open:false, done:false})); for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; } GM.mem = {d, pick:[], moves:0, lock:false}; }
 const TTT_X = '<svg class="tttic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5v19M6 8h12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M12 2.5v19M6 8h12" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" opacity=".6"/></svg>';
