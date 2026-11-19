@@ -4639,10 +4639,10 @@ form.vhold>.vrhold{position:relative;z-index:1}
 .cgmbr{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;width:min(330px,88vw);padding:7px;border-radius:14px;background:#141416;border:1px solid #2c2a30}
 .cgmbrc{position:relative;aspect-ratio:1;border-radius:10px;background:#050506;border:1px solid #28262c;color:#ecebe7;display:grid;place-items:center;overflow:visible}
 .cgmbrc>small{position:absolute;left:5px;top:3px;font:600 10px/1 var(--f-body);opacity:.55}
-.cgmbrc.s0>small{left:50%;transform:translateX(-50%);opacity:.8}
-.cgmbrc.sf{background:#ecebe7;color:#141416}.cgmbrc.sf>small{opacity:.8}
+.cgmbrc.bq0>small{left:50%;transform:translateX(-50%);opacity:.8}
+.cgmbrc.bqf{background:#ecebe7;color:#141416}.cgmbrc.bqf>small{opacity:.8}
 .cgmbri{width:46%;height:46%;display:block;opacity:.5}.cgmbri svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.cgmbrc.sb .cgmbri svg{stroke:none}
+.cgmbrc.bqb .cgmbri svg{stroke:none}
 .cgmbrc.has .cgmbri{opacity:.18}
 .cgmbrp{position:absolute;inset:6%;display:grid;place-items:center;z-index:1}
 .cgmbrp.two.p0{inset:2% 30% 30% 2%}.cgmbrp.two.p1{inset:30% 2% 2% 30%}
@@ -20502,7 +20502,7 @@ function cgmBoard2(g, big){ const me0 = social?.uid;
     if (!big) return `<span class="cgmbrm">${[0, 1].map(j => `<span class="cgmbrl"><i style="--bp:${Math.min(1, (ps[j] || 0) / BR_END)}">${brPet(g.p?.[j], j)}</i></span>`).join('')}</span>`;
     const cells = []; for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) { const rb = 4 - r, f = rb * 5 + (rb % 2 ? 4 - c : c), sp = BR_BAT[f] ? 'b' : BR_WEB[f] ? 'w' : f === BR_END ? 'f' : '';
       const here = [0, 1].filter(j => (ps[j] || 0) === f && g.p?.[j]), hop = CGM.dropNow && here.includes(g.ln);
-      cells.push(`<span class="cgmbrc${sp ? ' s' + sp : ''}${f === 0 ? ' s0' : ''}${here.length ? ' has' : ''}${hop ? ' hop' : ''}"><small>${f === 0 ? esc(tr('Start')) : f}</small>${sp ? `<span class="cgmbri">${BR_ICO[sp]}</span>` : ''}${here.map(j => `<span class="cgmbrp p${j}${here.length > 1 ? ' two' : ''}">${brPet(g.p[j], j)}</span>`).join('')}</span>`); }
+      cells.push(`<span class="cgmbrc${sp ? ' bq' + sp : ''}${f === 0 ? ' bq0' : ''}${here.length ? ' has' : ''}${hop ? ' hop' : ''}"><small>${f === 0 ? esc(tr('Start')) : f}</small>${sp ? `<span class="cgmbri">${BR_ICO[sp]}</span>` : ''}${here.map(j => `<span class="cgmbrp p${j}${here.length > 1 ? ' two' : ''}">${brPet(g.p[j], j)}</span>`).join('')}</span>`); }
     const my = cgmMy(g), ev = g.dz && g.n ? `<p class="cgmhint cgmbre">${esc((g.dz === 'b' ? tr('{0} reitet auf einer Fledermaus 3 Felder vor!') : tr('{0} bleibt im Spinnennetz hängen: 3 Felder zurück.')).replace('{0}', g.p?.[g.ln] === me0 ? tr('Du') : chatWho(g.p?.[g.ln])))}</p>` : '';
     return `<div class="cgmbr">${cells.join('')}</div><div class="cgmbrd"><button type="button" class="cgmdice${CGM.dropNow && g.dc ? ' roll' : ''}" data-act="cgm-roll"${my ? '' : ' disabled'} aria-label="${esc(tr('Würfeln'))}">${cgmDice(g.dc || 1)}</button><span>${esc(my ? tr('Tippe auf den Würfel') : g.dc ? tr('Zuletzt gewürfelt: {0}').replace('{0}', g.dc) : tr('Wer zuerst im Ziel ist, gewinnt.'))}</span></div>${ev}`; }
   return ''; }
