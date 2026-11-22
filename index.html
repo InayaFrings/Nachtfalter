@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='01c60226d8c6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='72f96053f857';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4924,6 +4924,14 @@ form.vhold>.vrhold{position:relative;z-index:1}
 .cgmmrl li.ok{animation:qok .6s ease-out}
 .cgmstat.won{animation:cgmbump .6s ease-out}
 @media (prefers-reduced-motion:reduce){.fxo{display:none}.mnring g,.mntm circle,.mncall,.mnkb,.d3,.nsdeed,.nslv i,.cgmwl line,.cgmbox .cgmcell .tttic,.cgmbox .cgmcell .cgmdisc,.hang .nw,.hang .hfig,.cgmkeys button,.cgmword span,.cgmqz .cgmqq,.cgmqz .cgmqa button,.cgmcv path,.cgmmrl li,.cgmstat{animation:none!important;stroke-dashoffset:0}}
+/* v1100 (Inaya: „Avatar-Gestaltung bei der Anmeldung genau wie danach“): Schritt Avatar sieht aus wie die Garderobe: Spiegel füllt den freien Platz, Teile als eine Reihe mit gleich großen Kacheln, Farbpunkt unten rechts */
+.obwear .wardrobe .shopgrid.hsl>.item{flex-basis:calc((100% - 16px) / 2.75)!important;max-width:170px;padding-bottom:36px!important;position:relative}
+.obwear .wardrobe .shopgrid.hsl>.item>.cdot{top:auto!important;bottom:3px!important;right:5px!important}
+@media (max-width:760px){
+  .obwear .wardrobe .mirror-card{flex:1 1 auto!important;height:auto!important;min-height:150px}
+  .obwear .wardrobe>.card:not(.mirror-card){flex:none!important;overflow:visible!important}
+  .obwear .wardrobe .mirror-card .mirror{height:100%;max-height:520px}
+}
 /* v1097 (flüssig): Regenbogen-Rand der Pille im Abo-Beitrag. Vorher drehte sich der Farbverlauf über die Eigenschaft --aba: der Browser musste in jedem Bild Stil und Farbe neu rechnen und große Teile des Salons neu malen (am Handy etwa 80 % der Rechenzeit, solange der Beitrag zu sehen war).
    Jetzt dreht sich derselbe Farbkreis als eigene Ebene per transform (rechnet die Grafikkarte), die Füllung liegt als ::after darüber. Aussehen gleich: Rand 1,5 px, Innenfarbe #1b1424, gleiche Farben, 5 s je Runde */
 .aboadtri{position:relative;isolation:isolate;clip-path:inset(0 round 999px);background:none;animation:none}
@@ -5348,12 +5356,13 @@ const ITEMS = [
   {id:'l_kuss',cat:'lips',name:'Kussmund',nc:25},
   {id:'l_frech',cat:'lips',name:'Frech',nc:40},
   {id:'b_kein',cat:'beard',name:'Kein Bart'},
-  {id:'b_stoppeln',cat:'beard',name:'Dreitagebart',g:'m'},
-  {id:'b_schnurr',cat:'beard',name:'Schnurrbart',g:'m'},
-  {id:'b_kinn',cat:'beard',name:'Kinnbart',g:'m'},
-  {id:'b_ziege',cat:'beard',name:'Spitzbart mit Schnurrbart',g:'m'},
-  {id:'b_voll',cat:'beard',name:'Vollbart',g:'m'},
-  {id:'b_kotel',cat:'beard',name:'Koteletten',g:'m'},
+  /* v1100: Bärte neu gezeichnet, Preise bleiben wie vorher (nc fest, sonst rechnet die Staffel nach Zeichnungslänge neu) */
+  {id:'b_stoppeln',cat:'beard',name:'Dreitagebart',g:'m',nc:65},
+  {id:'b_schnurr',cat:'beard',name:'Schnurrbart',g:'m',nc:30},
+  {id:'b_kinn',cat:'beard',name:'Kinnbart',g:'m',nc:20},
+  {id:'b_ziege',cat:'beard',name:'Spitzbart mit Schnurrbart',g:'m',nc:30},
+  {id:'b_voll',cat:'beard',name:'Vollbart',g:'m',nc:45},
+  {id:'b_kotel',cat:'beard',name:'Koteletten',g:'m',nc:20},
   {id:'natur',cat:'face',name:'Kein Make-up'},
   {id:'mk_tradgoth',cat:'face',name:'Tradgoth',st:'Goth',nc:90},
   {id:'smokey',cat:'face',name:'Smokey Eye',st:'Goth',nc:60},
@@ -5563,6 +5572,7 @@ const NONE_ITEM = {beard:'b_kein', jacket:'j_kein', front:'p_kein', top:'t_kein'
 function undressAll(o){ Object.assign(o, {back:'h_kein', front:'p_kein', top:'t_kein', bottom:'u_kein', shoes:'s_kein', jacket:'j_kein', acc:{}, hacc:{}, legw:{}, jewel:{}}); }
 /* v768 (Inaya): Getragenes nochmal antippen = ausziehen; Augen und Mund gehen dann auf Normal zurück */
 const WEAR_OFF = {...NONE_ITEM, eyeform:'e_rund', lips:'l_neutral'};
+const ncTryKeep = k => [...NCCART.keys()].some(id => item(id)?.cat === k); /* v1100: in der Tasche liegt ein Teil dieser Abteilung (Augen, Mund) = in der Anprobe behalten */
 function wearItem(o, i){ const k = i.cat; if (i.none) { const keep = {...asObj(o[k])}; noneKeys(o, i).forEach(x => delete keep[x]); o[k] = keep; return; } if (MULTI.includes(k)) { o[k] = {...asObj(o[k])}; if (o[k][i.id]) delete o[k][i.id]; else o[k][i.id] = HACC_C[i.id] || '#141218'; } else { const nv = o[k] === i.id && WEAR_OFF[k] && WEAR_OFF[k] !== i.id ? WEAR_OFF[k] : i.id; if (ICF[k] && nv !== o[k]) icolSwap(o, k, nv); o[k] = nv; } }
 // Farben gelten nur für das Teil, das man gerade umgefärbt hat: jedes Kleidungsstück merkt sich seine eigene Farbe, alle anderen bleiben im Originaldesign (Inaya, 2026-10-10)
 const ICF = {top:['topC', 'motifC'], bottom:['bottomC'], shoes:['shoesC'], jacket:['jacketC'], face:['makeC']};
@@ -6068,13 +6078,56 @@ const IHACC = {
 const IHACC_BACK = ['schleier'];
 // Make-up (makeC), zwei Augen: links gezeichnet, rechts gespiegelt
 // Bart (nur Jungs-Figur sinnvoll)
-const IBEARD = { // Koordinaten am Jungen-Gesicht: Nase 168/224, Mund 175/249, Kinn 285 (Inaya, 2026-10-10: Bärte waren versetzt)
-  b_stoppeln:(c, X) => { const P = 'M86 196Q92 226 104 240L160 283Q178 291 196 283L244 240Q258 226 264 196Q252 236 216 250Q200 242 178 242Q154 242 138 250Q100 236 86 196Z', D = []; for (let k = 0; k < 260; k++) { const r = n => { const v = Math.sin(k * n) * 43758.5453; return v - Math.floor(v); }; D.push(`<circle cx="${f1(84 + r(12.9898) * 182)}" cy="${f1(194 + r(78.233) * 98)}" r="1.2"/>`); } return `<clipPath id="bstopc"><path d="${P}"/></clipPath><path d="${P}" fill="${c}" opacity=".16"/><g clip-path="url(#bstopc)" fill="${c}" opacity=".6">${D.join('')}</g>`; },
-  b_schnurr:(c, X) => X.P('M148 240Q158 232 175 237Q192 232 202 240Q192 246 175 242Q158 246 148 240Z', c),
-  b_kinn:(c, X) => X.P('M160 260Q175 256 190 260L186 284Q175 290 164 284Z', c),
-  b_ziege:(c, X) => IBEARD.b_schnurr(c, X) + X.P('M164 260Q175 256 186 260L182 288Q175 294 168 288Z', c),
-  b_voll:(c, X) => X.P('M88 196Q92 220 108 238L160 284Q175 295 192 284L242 238Q256 220 260 196L250 200Q250 234 216 256Q196 266 175 266Q154 266 134 256Q98 234 98 200Z', c) + IBEARD.b_schnurr(c, X),
-  b_kotel:(c, X) => iboF(X.P('M72 160L88 160L96 222L84 226Z', c)),
+/* v1100 (Inaya: „Bärte sehen sehr komisch aus“): Bärte neu, wie Haare gezeichnet: Haarfarbe, viele feine dunkle und helle Strähnen, weicher Rand zur Haut, gezackte Spitzen.
+   Lage am Jungen-Gesicht (Gesichts-Koordinaten wie IFACE_OUT_M): Kiefer-Mitte x 177, Kinn 177/287, Mund 174/247, Augen bis y 195. Der Mund bleibt frei (Maske nach FMA des getragenen Munds). */
+const BRDM = x => f1(354 - x);
+const brdMix = (c, d, t) => { const h = s => { s = (ihex(s) || '#1c1b20').slice(1); return [0, 2, 4].map(i => parseInt(s.slice(i, i + 2), 16)); }, a = h(c), b = h(d); return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+const brdRnd = (k, n) => { const v = Math.sin(k * n) * 43758.5453; return v - Math.floor(v); };
+const brdMouth = o => { const a = FMA[o.lips] || FMA.l_neutral, cx = FMC[0] + FIMG_MM[0], cy = FMC[1] + FIMG_MM[1], x0 = cx + a.L[0], x1 = cx + a.R[0], y0 = cy + Math.min(a.u, a.L[1], a.R[1]), y1 = cy + a.lo;
+  return {cx:f1((x0 + x1) / 2), cy:f1((y0 + y1) / 2), rx:f1((x1 - x0) / 2 + 2.4), ry:f1((y1 - y0) / 2 + 2.2), top:y0, bot:y1}; };
+/* Punkt auf einem Linienzug bei Anteil u (0..1) */
+const brdAt = (P, u) => { const L = [0]; for (let i = 1; i < P.length; i++) L.push(L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1])); const t = u * L[L.length - 1]; let i = 1; while (i < L.length - 1 && L[i] < t) i++; const k = (t - L[i - 1]) / ((L[i] - L[i - 1]) || 1); return [P[i - 1][0] + (P[i][0] - P[i - 1][0]) * k, P[i - 1][1] + (P[i][1] - P[i - 1][1]) * k]; };
+/* gezackte Haarspitzen entlang eines Linienzugs (nach links von der Laufrichtung = außen) */
+const brdTips = (P, dep, step = 5.4) => { const L = P.reduce((s, p, i) => i ? s + Math.hypot(p[0] - P[i - 1][0], p[1] - P[i - 1][1]) : 0, 0), n = Math.max(2, Math.round(L / step)); let d = '';
+  for (let i = 0; i < n; i++) { const a = brdAt(P, i / n), b = brdAt(P, (i + 1) / n), m = brdAt(P, (i + .5) / n), dx = b[1] - a[1], dy = -(b[0] - a[0]), l = Math.hypot(dx, dy) || 1, k = dep * (.35 + brdRnd(i + 1, 7.3) * 1.1);
+    const tx = m[0] + dx / l * k + (b[0] - a[0]) * (brdRnd(i + 1, 2.9) - .5) * .5, ty = m[1] + dy / l * k + (b[1] - a[1]) * (brdRnd(i + 1, 2.9) - .5) * .5;
+    d += `Q${f1((a[0] + m[0]) / 2 + dx / l * k * .25)} ${f1((a[1] + m[1]) / 2 + dy / l * k * .25)} ${f1(tx)} ${f1(ty)}Q${f1((b[0] + m[0]) / 2 + dx / l * k * .15)} ${f1((b[1] + m[1]) / 2 + dy / l * k * .15)} ${f1(b[0])} ${f1(b[1])}`; } return d; };
+/* Strähnen zwischen oberer Kante T und unterer Kante U (beide von links nach rechts), zur Mitte cx hin gebogen */
+const brdStrands = (T, U, n, cx, seed) => { const D = [], H = []; for (let k = 0; k < n; k++) { const u = (k + .3 + brdRnd(k + seed, 3.7) * .4) / n, p = brdAt(T, u), q = brdAt(U, Math.min(1, Math.max(0, u + (brdRnd(k + seed, 9.1) - .5) * .04))), s = .08 + brdRnd(k + seed, 5.3) * .12;
+  const a = [p[0] + (q[0] - p[0]) * s, p[1] + (q[1] - p[1]) * s], b = [q[0] + (p[0] - q[0]) * .06, q[1] + (p[1] - q[1]) * .06], c = [(a[0] + b[0]) / 2 + (cx - (a[0] + b[0]) / 2) * .12, (a[1] + b[1]) / 2];
+  (k % 3 === 1 ? H : D).push(`M${f1(a[0])} ${f1(a[1])}Q${f1(c[0])} ${f1(c[1])} ${f1(b[0])} ${f1(b[1])}`); } return [D, H]; };
+let BRDN = 0;
+/* Bart zeichnen: Fläche mit weichem Rand, Strähnen, Mund ausgespart */
+const brdDraw = (X, o, c, d, T, U, n, cx, soft = 1.1) => { const id = X.u + 'bd' + (++BRDN), m = brdMouth(o), dk = brdMix(c, '#000', .42), ln = brdMix(c, '#000', .28), hl = brdMix(c, '#fff', .3), [D, H] = brdStrands(T, U, n, cx, BRDN * 17);
+  return `<filter id="${id}s" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${soft}"/></filter><mask id="${id}m" maskUnits="userSpaceOnUse" x="30" y="100" width="300" height="240"><path d="${d}" fill="#fff" filter="url(#${id}s)"/><ellipse cx="${m.cx}" cy="${m.cy}" rx="${m.rx}" ry="${m.ry}" fill="#000" filter="url(#${X.u}ibl)"/></mask><clipPath id="${id}c"><path d="${d}"/></clipPath>`
+    + `<g mask="url(#${id}m)"><path d="${d}" fill="${c}"/><g clip-path="url(#${id}c)"><path d="${d}" fill="none" stroke="${dk}" stroke-width="3" opacity=".35" filter="url(#${id}s)"/>`
+    + `<path d="${D.join('')}" stroke="${ln}" stroke-width=".7" fill="none" stroke-linecap="round" opacity=".9"/><path d="${H.join('')}" stroke="${hl}" stroke-width=".6" fill="none" stroke-linecap="round" opacity=".55"/></g></g>`; };
+/* Vollbart: Kanten (linke Hälfte, gespiegelt um 177) */
+const BRD_VT = [[66, 196], [72, 199], [80, 204], [92, 222], [112, 234], [136, 241], [152, 242], [164, 238], [174, 239]], BRD_VB = [[64, 196], [66, 208], [74, 222], [90, 238], [110, 254], [130, 268], [148, 281], [164, 291], [177, 296]];
+const brdSym = P => P.concat(P.slice(0, -1).reverse().map(([x, y]) => [BRDM(x), y]));
+const BRD_FULL = (() => { const B = brdSym(BRD_VB), T = brdSym(BRD_VT); return `M${B[0][0]} ${B[0][1]}${brdTips(B, 3.6)}` + T.slice().reverse().map(([x, y]) => `L${x} ${y}`).join('') + 'Z'; })();
+const brdStache = (o, w = 1) => { const m = brdMouth(o), y = f1(Math.min(244.4, m.top + .6)), cx = 174, W = 23 * w, e = W * .2;
+  const T = [[cx - W, y + 1], [cx - W * .7, y - 4.6], [cx - W * .3, y - 7.4], [cx, y - 6.6], [cx + W * .3, y - 7.4], [cx + W * .7, y - 4.6], [cx + W, y + 1]], U = [[cx - W, y + 1], [cx - W * .6, y - .4], [cx, y - .6], [cx + W * .6, y - .4], [cx + W, y + 1]];
+  const d = `M${f1(cx - W)} ${f1(y + 1.4)}Q${f1(cx - W * .82)} ${f1(y - 3.8)} ${f1(cx - W * .45)} ${f1(y - 6.8)}Q${f1(cx - e)} ${f1(y - 8.4)} ${cx} ${f1(y - 6.4)}Q${f1(cx + e)} ${f1(y - 8.4)} ${f1(cx + W * .45)} ${f1(y - 6.8)}Q${f1(cx + W * .82)} ${f1(y - 3.8)} ${f1(cx + W)} ${f1(y + 1.4)}`
+    + `Q${f1(cx + W * .7)} ${f1(y - .6)} ${f1(cx + W * .4)} ${f1(y + .2)}Q${f1(cx + W * .15)} ${f1(y - .6)} ${cx} ${f1(y + .4)}Q${f1(cx - W * .15)} ${f1(y - .6)} ${f1(cx - W * .4)} ${f1(y + .2)}Q${f1(cx - W * .7)} ${f1(y - .6)} ${f1(cx - W)} ${f1(y + 1.4)}Z`;
+  return {d, T, U, cx}; };
+const IBEARD = {
+  b_stoppeln:(c, X, o) => { const id = X.u + 'bst', m = brdMouth(o), D = []; for (let k = 1; k < 900; k++) { const x = 62 + brdRnd(k, 12.9898) * 230, y = 192 + brdRnd(k, 78.233) * 104, a = brdRnd(k, 3.17) * 1.2 + .9; D.push(`M${f1(x)} ${f1(y)}l${f1(Math.cos(a) * 1.3)} ${f1(Math.sin(a) * 1.3)}`); }
+    const reg = brdSym(BRD_VB.map(([x, y]) => [x + 3, y - 3])).concat(brdSym(BRD_VT.map(([x, y]) => [x + 2, y + 2])).reverse()).map(([x, y], i) => (i ? 'L' : 'M') + f1(x) + ' ' + f1(y)).join('') + 'Z';
+    return `<filter id="${id}s" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4"/></filter><mask id="${id}m" maskUnits="userSpaceOnUse" x="30" y="100" width="300" height="240"><path d="${reg}" fill="#fff" filter="url(#${id}s)"/><ellipse cx="${m.cx}" cy="${m.cy}" rx="${m.rx}" ry="${m.ry}" fill="#000" filter="url(#${X.u}ibl)"/></mask>`
+      + `<clipPath id="${id}f"><path d="M66 120L68 160Q72 208 103 236L160 280Q178 288 195 280L243 237Q274 211 278 160L281 120Z"/></clipPath><g mask="url(#${id}m)" clip-path="url(#${id}f)"><path d="${reg}" fill="${c}" opacity=".2"/><path d="${D.join('')}" stroke="${c}" stroke-width=".5" stroke-linecap="round" opacity=".55"/></g>`; },
+  b_schnurr:(c, X, o) => { const s = brdStache(o); return brdDraw(X, o, c, s.d, s.T, s.U, 16, s.cx, .5); },
+  b_kinn:(c, X, o) => { const m = brdMouth(o), t = f1(Math.max(255, m.bot + 2.4)); /* Kinnbart: unter der Unterlippe bis über die Kinnspitze */
+    const T = [[166, t + 1], [176, t - 1.5], [186, t + 1]], U = [[166, t + 1], [167, 284], [177, 297], [187, 284], [186, t + 1]];
+    const d = `M166 ${f1(t + 1)}Q176 ${f1(t - 2.6)} 186 ${f1(t + 1)}Q189 ${f1(t + 13)} 187 284` + brdTips([[187, 284], [177, 297], [167, 284]], 2.6, 5) + `Q163 ${f1(t + 13)} 166 ${f1(t + 1)}Z`;
+    return brdDraw(X, o, c, d, T.slice(0, 2).concat([[186, t + 1]]), [[167, 284], [177, 297], [187, 284]], 9, 177, .6); },
+  b_ziege:(c, X, o) => { const m = brdMouth(o), t = f1(Math.max(254, m.bot + 1.6)), s = brdStache(o, .92); /* Spitzbart mit Schnurrbart: um den Mund, unten spitz */
+    const d = `M${f1(s.cx - 21)} ${f1(m.top + 2)}Q158 ${f1(t + 6)} 162 ${f1(t + 17)}Q167 285 172 293` + brdTips([[172, 293], [177, 303], [182, 293]], 2.2, 4) + `Q187 285 191 ${f1(t + 17)}Q195 ${f1(t + 6)} ${f1(s.cx + 19)} ${f1(m.top + 2)}Q186 ${f1(t - 1)} 183 ${t}Q175 ${f1(t - 2.4)} 166 ${t}Q162 ${f1(t - 1)} ${f1(s.cx - 21)} ${f1(m.top + 2)}Z`;
+    return brdDraw(X, o, c, d, [[160, t], [176, t - 1], [192, t]], [[162, t + 17], [177, 302], [191, t + 17]], 12, 177, .6) + brdDraw(X, o, c, s.d, s.T, s.U, 14, s.cx, .5); },
+  b_voll:(c, X, o) => { const s = brdStache(o, 1.05); return brdDraw(X, o, c, BRD_FULL, brdSym(BRD_VT), brdSym(BRD_VB), 64, 177, 1.1) + brdDraw(X, o, c, s.d, s.T, s.U, 16, s.cx, .5); },
+  b_kotel:(c, X, o) => { /* Koteletten vor den Ohren am Gesichtsrand, von unter dem Haar bis zur Höhe der Nase */
+    const L = 'M61 148Q66 146 70 148L70 186Q72 204 80 218Q78 224 74 221Q66 210 63 196Q61 176 61 158Z', R = 'M285 148Q280 146 276 148L277 184Q275 202 268 216Q270 222 274 219Q281 208 284 194Q285 174 285 158Z';
+    return brdDraw(X, o, c, L, [[61, 148], [70, 148]], [[66, 208], [78, 220]], 6, 68, .9) + brdDraw(X, o, c, R, [[276, 148], [285, 148]], [[270, 218], [281, 206]], 6, 280, .9); },
 };
 // Piercings und Ohrringe im Gesicht (Farbe c)
 // Piercings: kleine Metallkugeln mit Glanzpunkt und dünne Ringe, die oben in der Haut verschwinden
@@ -6134,7 +6187,9 @@ const IFACE_OUT_M = 'M64 108L66 160Q70 210 102 238L160 282Q178 290 196 282L244 2
 const IFACE_OUT = 'M64 108L66 160Q70 210 102 237L178 270L243 238Q275 212 279 160L283 108Q178 50 64 108Z'; // an Kinn und Kiefer ihrer Zeichnung angepasst
 const ISKIN = (o, B) => o.skin && o.skin !== '#f7f6f3' ? o.skin : B === IB.m ? '#e6e0db' : '#ece7e3';
 // Haut über Inayas Augen, damit neue Augenformen darauf gezeichnet werden können
-const IEYE_COVER = (X, sk) => IEYES(() => `<ellipse cx="2" cy="-2" rx="44" ry="31" fill="${sk}" filter="url(#${X.u}bl)"/><ellipse cx="2" cy="-2" rx="39" ry="26" fill="${sk}"/>`);
+const IEYE_COVER = (X, sk) => X.B === IB.m ? IEYE_COVER_M(X, sk) : IEYES(() => `<ellipse cx="2" cy="-2" rx="44" ry="31" fill="${sk}" filter="url(#${X.u}bl)"/><ellipse cx="2" cy="-2" rx="39" ry="26" fill="${sk}"/>`);
+/* v1100: Jungs-Augen ganz abdecken (auch die unteren Wimpern und den Lidstrich außen), aber nur innerhalb seines Gesichts, damit der Gesichtsrand bleibt */
+const IEYE_COVER_M = (X, sk) => `<clipPath id="${X.u}ecm"><path d="${FIMG_MF}"/></clipPath><g clip-path="url(#${X.u}ecm)">` + [[111, 181, 43, 28, -8], [240, 175.5, 45, 27, -9]].map(([x, y, rx, ry, r]) => `<g transform="translate(${x} ${y}) rotate(${r})"><ellipse rx="${rx + 4}" ry="${ry + 4}" fill="${sk}" filter="url(#${X.u}ibl)"/><ellipse rx="${rx}" ry="${ry}" fill="${sk}"/></g>`).join('') + '</g>';
 const IEYE_LEER = (X, c) => { const f = c && c !== 'hohl' ? c : '#fcfcfc', sh = f === '#fcfcfc' ? '#d9d2d5' : shade(f, .72); // große leere Augen in der gewählten Augenfarbe (Puppenschwarz = weiß)
   return IEYES(() => `<ellipse cx="0" cy="0" rx="36" ry="38" fill="#bfb2b6" opacity=".55" filter="url(#${X.u}bl)"/><ellipse cx="0" cy="0" rx="29" ry="32" fill="${f}" stroke="${IOL}" stroke-width="3"/><path d="M-26 -12Q0 -40 26 -12Q0 -26 -26 -12Z" fill="${sh}" opacity=".8"/><ellipse cx="-11" cy="-12" rx="6" ry="4" fill="#fff" opacity="${f === '#fcfcfc' ? 0 : .55}"/>` + X.LN('M-22 14Q-14 30 0 34', f === '#fcfcfc' ? '#a08890' : shade(f, 1.5), 1.6, .6)); };
 const IEYE_TINT = (c, X) => c && c !== 'hohl' ? IEYE.map(([x, y]) => `<circle cx="${x}" cy="${y + 1}" r="14" fill="${c}" opacity=".5" style="mix-blend-mode:multiply"/>`).join('') : '';
@@ -6376,8 +6431,14 @@ const FACE_IMG = new Set(['e_knopf', 'e_x', 'e_alien', 'e_blut', 'e_hetero', 'e_
 const FIMG = {e:[60, 132, 236, 148], k:[52, 52, 244, 226], m:[121.1, 214.1, 111.37, 88.72]}, FMC = [177.5, 239.3];
 const FIMG_MM = [-3.6, 6.8];
 /* Jungs: jedes Auge einzeln von der Augenöffnung des Mädchens auf seine (IRISP: schmaler und flacher), links und rechts getrennt */
-const FIMG_ME = [['M-200 -200H173V600H-200Z', 'translate(113.75 181.5) scale(.9035 .825) translate(-114.5 -187.75)'], ['M173 -200H600V600H173Z', 'translate(230.5 176.75) scale(.879 .753) translate(-232 -178.25)']];
-const fimgM = (id, r, u, inner) => FIMG_ME.map(([c, t], i) => `<clipPath id="${u}fe${i}"><path d="${c}"/></clipPath><g clip-path="url(#${u}fe${i})"><g transform="${t}">${inner ? inner(u + i) : fimg(id, r)}</g></g>`).join('');
+/* Jungs: jedes Auge einzeln von der Augenöffnung des Mädchens auf seine, links und rechts getrennt.
+   FIMG_MEK = genau auf seine Augenöffnung (für Make-up auf seinen eigenen Augen).
+   v1100 (Inaya: „sieht komisch aus“): Bild-Augen (FIMG_ME) kleiner und weniger flachgedrückt (vorher ragten Augen und Wimpern über seinen Gesichtsrand bis ans Ohr), Make-up zu Bild-Augen folgt ihnen,
+   alles bleibt innerhalb seines Gesichts (FIMG_MF), seine eigenen Augen deckt IEYE_COVER_M ganz ab. */
+const FIMG_MEK = [['M-200 -200H173V600H-200Z', 'translate(113.75 181.5) scale(.9035 .825) translate(-114.5 -187.75)'], ['M173 -200H600V600H173Z', 'translate(230.5 176.75) scale(.879 .753) translate(-232 -178.25)']];
+const FIMG_ME = [['M-200 -200H173V600H-200Z', 'translate(116 181.5) scale(.83 .8) translate(-114.5 -187.75)'], ['M173 -200H600V600H173Z', 'translate(229 176.5) scale(.81 .75) translate(-232 -178.25)']];
+const FIMG_MF = 'M40 40L68 120L69.5 160Q73.5 207 104 234.5L160 278.5Q178 286.5 195 278.5L242 235.5Q272.5 210 276.5 160L279.5 120L310 40Z';
+const fimgM = (id, r, u, inner, ME = FIMG_ME) => `<clipPath id="${u}fin"><path d="${FIMG_MF}"/></clipPath><g clip-path="url(#${u}fin)">` + ME.map(([c, t], i) => `<clipPath id="${u}fe${i}"><path d="${c}"/></clipPath><g clip-path="url(#${u}fe${i})"><g transform="${t}">${inner ? inner(u + i) : fimg(id, r)}</g></g>`).join('') + '</g>';
 /* Make-up symmetrisch (Inaya): das rechte Auge (vom Betrachter) aus dem Blatt, gespiegelt und auf die Augenöffnung des linken gestreckt */
 const FMK_MIR = 'translate(114.5 187.75) scale(-.983 .863) translate(-232 -178.25)';
 const fmkSym = (id, u, noC) => `<clipPath id="${u}mr"><path d="M190 -200H600V600H190Z"/></clipPath><clipPath id="${u}mc"><path d="M156 -200H190V600H156Z"/></clipPath><clipPath id="${u}ml"><path d="M-200 -200H156V600H-200Z"/></clipPath>`
@@ -7995,11 +8056,11 @@ function avatarI(o0, view='full', pose='', lite=false){
   if (!MK2 && !MKI && IMAKE[o.face] && (under || !drawn)) face += o.face === 'smokey' && drawn ? IEYESM(() => `<ellipse cx="2" cy="-2" rx="40" ry="30" fill="${mc}" opacity=".5" filter="url(#${X.u}bl)"/>`) : IMAKE[o.face](mc, X);
   if (drawn) face += B === IB.m ? fimgM(o.eyeform, FIMG.e, X.u + 'e') : fimg(o.eyeform, FIMG.e);
   if (MK2?.o) face += MK2.o(mc2, X);
-  if (MKI) face += B === IB.m ? fimgM(o.face, FIMG.k, X.u + 'k', v => fmkSym(o.face, X.u + 'ks' + v, 1)) + `<clipPath id="${X.u}kmc"><path d="M156 -200H190V600H156Z"/></clipPath><g transform="translate(-1.1 -3.9)"><g clip-path="url(#${X.u}kmc)">${fimg(o.face, FIMG.k)}</g></g>` : fmkSym(o.face, X.u + 'ks'); /* nur die Augenpartie, Lippen bleiben, beide Seiten gleich (Inaya) */
+  if (MKI) face += B === IB.m ? fimgM(o.face, FIMG.k, X.u + 'k', v => fmkSym(o.face, X.u + 'ks' + v, 1), drawn ? FIMG_ME : FIMG_MEK) + `<clipPath id="${X.u}kmc"><path d="M156 -200H190V600H156Z"/></clipPath><g transform="translate(-1.1 -3.9)"><g clip-path="url(#${X.u}kmc)">${fimg(o.face, FIMG.k)}</g></g>` : fmkSym(o.face, X.u + 'ks'); /* nur die Augenpartie, Lippen bleiben, beide Seiten gleich (Inaya) */
   { const mkl = o.face === 'zombiepop' ? '#121014' : MKI ? '' : MK2?.l || ''; face += imouthDraw(o, X, mkl); if (MK2?.mx) { const P = IMPOS[B === IB.m ? 'm' : 'w']; face += `<g transform="translate(${P.x} ${P.y}) scale(${f1(P.k * ((IMOUTH[o.lips] || {}).k || 1) * 100) / 100})">${MK2.mx(mc2, X, imouthA(o))}</g>`; } } /* v755: Mund nach Inayas Blatt, Make-up gibt nur die Lippenfarbe */
   if (!MK2 && !MKI && IMAKE[o.face] && drawn && (!under || o.face === 'smokey')) face += o.face === 'smokey' ? IMAKE.liner(mc, X) : IMAKE[o.face](mc, X);
   if (o.face === 'zombiepop') face += IZOMBIE_EYE();
-  if (B === IB.m && IBEARD[o.beard]) face += IBEARD[o.beard](o.beardC || o.hairC || '#1c1b20', X);
+  if (B === IB.m && IBEARD[o.beard]) face += IBEARD[o.beard](o.beardC || o.hairC || '#1c1b20', X, o);
   const IEARP = ['p_helix', 'p_industrial', 'p_tragus', 'p_daith', 'p_conch', 'p_tunnel', 'p_braue', 'p_augenbraue', 'p_bridge', 'p_dermal'];
   let ears = ''; // Ohrschmuck liegt über den Haaren, sonst verschwindet er unter fast jeder Frisur
   // Jungs-Gesicht: Nase etwas weiter links, Mund, Kinn und Brauen tiefer als beim Mädchen (Inaya, 2026-10-10)
@@ -9495,7 +9556,7 @@ function creatorView(){ // Anmeldung: Ankleiden genau wie in der Garderobe der A
   const p = S.pending, o = p.outfit;
   /* v965 (Inaya: „bei der Anmeldung funktioniert Avatar bearbeiten nicht wie danach“, „Männer-Körpern werden nicht alle Klamotten angezeigt, die Kleider“): alle Teile für jeden Körper (`fits(…, true)` wie in der Mall), keine „Keine …“/„Normal“-Karten (nochmal antippen zieht aus, `WEAR_OFF`), Vorschaubilder nur mit dem einen Teil auf der Figur in den eigenen Farben wie in der Garderobe (schneller), Zoom aufs Gesicht wie dort (`zmPg`). */
   const ok = i => fits(i, o, true);
-  const tb = obCat === 'body' ? null : ncThumbBase(ncBare(), o);
+  const tb = obCat === 'body' ? null : ncThumbBase(ncBare(o), o);
   const items = obCat === 'body' ? '' : ITEMS.filter(i => i.cat === obCat && inSub(i) && !i.gone && !i.ex && !i.lv && !i.abo && !i.none && WEAR_OFF[i.cat] !== i.id && ok(i)).sort(noneFirst).map(i => {
     const on = isOn(o, i), off = on;
     const t = previewOutfit(MULTI.includes(i.cat) && on ? {...tb, [i.cat]:{[i.id]:asObj(o[i.cat])[i.id]}} : tb, i), [dot, pan] = itemColUI(i, o, 'ob-color');
@@ -20420,7 +20481,7 @@ function ncCard(id, thumb, tryAct, dot = '', on = false){ const p = NCPRICE?.[id
   const ev = evOn(i) ? EVENTS[i.ev] : null, early = !own && !!ncEarly(id) && premFx();
   return `<div class="item ncitem${own ? ' own' : ''}${inBag ? ' bag' : ''}${on ? ' on' : ''}${ev || early ? ' evitem' : ''}">${ev ? `<span class="evtag">${esc(ev.badge)}</span>` : early ? `<span class="evtag">${esc(tr('PREMIUM FRÜHER'))}</span>` : ''}${dot}${inBag && !own ? `<span class="ncbagb" title="In der Einkaufstasche">${NC_BAG}</span>` : ''}<button type="button" class="thumb${i.furn ? ' fthumb' : ''}" data-act="${tryAct}" data-id="${esc(id)}" aria-label="${esc(ncName(id))}">${thumb}</button><div class="ncfoot">${foot}</div></div>`; }
 /* Mall: Anprobe auf der nackten Figur (nur Körper und Haut, seit v766 normale Augen und normaler Mund), man sieht nur, was man auswählt (Inaya, 2026-10-16) */
-function ncBare(){ const o = JSON.parse(JSON.stringify(me().outfit)); undressAll(o); Object.assign(o, {back:'h_kein', front:'p_kein', beard:'b_kein', face:'natur', eyeform:'e_rund', lips:'l_neutral'}); delete o.lipC; delete o.makeC; delete o.eyes; return o; } /* v766 (Inaya): immer der normale Avatar mit normalen Augen und normalem Mund, nicht die eigenen */
+function ncBare(src){ const o = JSON.parse(JSON.stringify(src || me()?.outfit || S.pending?.outfit || DEFAULT_OUTFIT)); /* v1100: bei der Anmeldung gibt es noch kein me() (die Avatar-Gestaltung brach dort bei jedem Reiter ab) */ undressAll(o); Object.assign(o, {back:'h_kein', front:'p_kein', beard:'b_kein', face:'natur', eyeform:'e_rund', lips:'l_neutral'}); delete o.lipC; delete o.makeC; delete o.eyes; return o; } /* v766 (Inaya): immer der normale Avatar mit normalen Augen und normalem Mund, nicht die eigenen */
 /* v716 (Inaya): Vorschaubilder der Mall zeigen die gewählten Farben der Anprobe (Haarfarbe für alle Frisuren, Kleidung je Teil wie in icol) */
 function ncThumbBase(bare, shown){ if (shown === bare) return bare; const b = JSON.parse(JSON.stringify(bare));
   Object.entries(COLOR_KEYS).forEach(([cat, [k]]) => { if (ICF[cat]) return; if (shown[k] != null) b[k] = shown[k]; else delete b[k]; });
@@ -20482,7 +20543,7 @@ document.addEventListener('click', e => { const b = e.target.closest?.('[data-ac
   else if (a === 'nc-cat') { mallCat = b.dataset.c; render(); } /* Event-Filter bleibt beim Reiterwechsel an (Inaya, v702) */
   else if (a === 'nc-ftab') { furnShop = b.dataset.v; render(); }
   else if (a === 'ev-f' || a === 'ev-x') { const sh = b.dataset.s; if (!(sh in MEV)) return; MEV[sh] = a === 'ev-x' || MEV[sh] === b.dataset.v ? null : b.dataset.v; render(); } /* Event-Filter an/aus, nochmal antippen = aus */
-  else if (a === 'nc-try') { const i = item(id); if (!i) return; ZM.nav = id; const base = MTRY || ncBare(), was = isOn(base, i), t = JSON.parse(JSON.stringify(base)); wearItem(t, i); if (was && !i.none && !MULTI.includes(i.cat) && !NONE_ITEM[i.cat]) t[i.cat] = ncBare()[i.cat]; if (i.cat === 'face' && isOn(t, i) && !i.none) t.eyeform = 'e_rund'; if (i.sub === 'pierc' && isOn(t, i)) t.lips = 'l_neutral'; MTRY = t; /* v764 (Inaya): Piercings am normalen Mund zeigen */ /* v759 (Inaya): Make-up auf den normalen Augen zeigen */ /* Augen/Mund ohne „Keine“: abwählen = wieder die eigenen */
+  else if (a === 'nc-try') { const i = item(id); if (!i) return; ZM.nav = id; const base = MTRY || ncBare(), was = isOn(base, i), t = JSON.parse(JSON.stringify(base)); wearItem(t, i); if (was && !i.none && !MULTI.includes(i.cat) && !NONE_ITEM[i.cat]) t[i.cat] = ncBare()[i.cat]; if (i.cat === 'face' && isOn(t, i) && !i.none && !ncTryKeep('eyeform')) t.eyeform = 'e_rund'; if (i.sub === 'pierc' && isOn(t, i) && !ncTryKeep('lips')) t.lips = 'l_neutral'; MTRY = t; /* v1100 (Inaya): Augen und Make-up zusammen anprobieren; nur ohne gewählte Augen bzw. Mund kommen die normalen */ /* v764 (Inaya): Piercings am normalen Mund zeigen */ /* v759 (Inaya): Make-up auf den normalen Augen zeigen */ /* Augen/Mund ohne „Keine“: abwählen = wieder die eigenen */
     if (!MULTI.includes(i.cat)) for (const k of [...NCCART.keys()]) { const j = item(k); if (j && j.cat === i.cat && k !== i.id) NCCART.delete(k); } /* eine Frisur, ein Oberteil … in der Tasche */
     ncCartTog(i.id, !(was && NCCART.has(i.id))); render(); }
   else if (a === 'nc-color') { const t = JSON.parse(JSON.stringify(MTRY || ncBare())); setColor(t, b.dataset.k, b.dataset.v); MTRY = t; render(); }
@@ -22996,7 +23057,7 @@ function renderInner(){
   const restoreX = () => keepX.forEach(([cls, i, x]) => { const el = app.querySelectorAll(`[class="${CSS.escape(cls)}"]`)[i]; if (el) el.scrollLeft = x; });
   if (BANNED) { applyPage(null); app.innerHTML = `<div class="gate"><div class="card gate-card">${logoSVG('big')}<p style="margin:0">Dieses Konto wurde entfernt. Du wirst abgemeldet.</p></div></div>`; return; }
   if (!S.unlocked) { applyPage(null); app.innerHTML = gateView(); return; }
-  if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); restoreX(); return; }
+  if (!S.me || !S.users[S.me]) { applyPage(null); app.innerHTML = onboardView(); restoreX(); zmApply(); /* v1100: Zoom aufs Gesicht auch bei der Anmeldung (lief dort nie) */ return; }
   { const u = S.users[S.me]; if (!u.lang) { u.lang = LANG; save(); } else if (u.lang !== LANG && LANGS[u.lang] && !I18N.re) { I18N.re = true; try { localStorage.setItem('nf-lang', u.lang); } catch {} location.reload(); return; } } // Sprache aus dem Konto (Inaya, 2026-10-15)
   if (birthProblem(S.users[S.me].birth)) { const rb = regBirth(); if (rb) { S.users[S.me].birth = rb; save(); } }
   if (tooYoung()) { applyPage(null); app.innerHTML = youngView(); return; }

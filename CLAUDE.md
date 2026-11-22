@@ -907,7 +907,14 @@ Mit dem Firebase-Emulator (Auth + Firestore, Projekt `demo-noctibat`). Dazu eine
 - Tic-Tac-Toe: Kreuz wird gezeichnet (zwei Pfade mit `pathLength`), Gewinnlinie `svg.cgmwl`. Vier gewinnt: Scheibe fällt mit Abprallen, Gewinnlinie. Galgenmännchen: neues Teil wird gezeichnet (`.nw`), verloren = Figur schwingt, Tasten hüpfen/wackeln, Buchstaben klappen auf. Quiz: Fragen gleiten ein (`qa`/`qb` je Frage), Punkte-Leiste `.cgmqdots`. Mal & Rate: neuer Strich wird gezeichnet.
 - CSS-Block „v1099“ am Ende des Haupt-Style-Blocks. Neue Animationen bitte in die `prefers-reduced-motion`-Liste dort aufnehmen.
 
-## Flüssiger ohne Designänderung (seit v1100)
+## Jungs-Gesicht, Bärte, Anmeldung (seit v1100)
+
+- Inaya: „bei männlichen Avataren sehen Augen, Make-up und Münder komisch aus, Augen und Make-up lassen sich nicht zusammen wählen, Bärte sehen sehr komisch aus“. Bild-Augen am Jungen (`FIMG_ME`) kleiner und weniger flach, alles im Gesicht gehalten (Clip `FIMG_MF`), seine gemalten Augen deckt `IEYE_COVER_M` ganz ab. Make-up auf seinen eigenen Augen nimmt weiter die genaue Augenöffnung (`FIMG_MEK`).
+- Mall: Make-up anprobieren setzte die Augen immer auf normal (v759), Piercings den Mund. Jetzt nur, wenn keine Augen bzw. kein Mund in der Einkaufstasche liegen (`ncTryKeep`), so lassen sich Augen und Make-up zusammen anprobieren.
+- Bärte neu gezeichnet (`IBEARD` mit `brdDraw`, `brdTips`, `brdStrands`, `brdMouth`, `brdStache`): weiche Kanten, spitze Haarspitzen, Strähnen in der Bartfarbe, Mund bleibt frei (folgt dem getragenen Bild-Mund über `FMA`), alles liegt unter den Augen; Koteletten schmal am Gesichtsrand. Farbe `beardC`, sonst Haarfarbe. Preise fest am Teil (`nc`), damit die Staffel nach Zeichnungslänge sie nicht ändert.
+- Anmeldung, Schritt Avatar: `ncBare` brauchte `me()`, das es bei der Anmeldung noch nicht gibt; jeder Reiter außer Körper brach ab. Jetzt `ncBare(o)`. Der Schritt sieht aus wie die Garderobe (Spiegel füllt den freien Platz, Kacheln 2,75 je Breite mit Farbpunkt unten rechts, CSS-Block „v1100“), Zoom aufs Gesicht läuft auch dort (`zmApply` nach `onboardView`). Schritt 4 ist schon „Profil bearbeiten“ mit „Aussehen gestalten“ (geprüft).
+
+## Flüssiger ohne Designänderung (seit v1101)
 
 - Inaya: „überall flüssig wie eine professionelle App, nichts am Design ändern“. Gemessen mit 4-facher CPU-Drosselung (Handy-Nachbau) im Emulator.
 - Möbel-Zeichnungen im Sticker-Stil (`SKF`, Poster über `skPosterWrap`) werden erst gebaut, wenn ein Möbel wirklich gebraucht wird (`furnLazy`: Getter auf `svg`, `vb`, `w`, `iso`, `fp`, `psvg`, `FMAIN`), ebenso die Staffelpreise der Möbel (Getter auf `nc`, `ncPricesAll()` für den Abgleich von `site/prices`). Ergebnis gleich wie vorher (alle 229 Möbel verglichen), Start-Skript 1095 → 497 ms. Neue Möbel bleiben wie bisher in `SKF`.
