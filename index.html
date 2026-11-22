@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='9f5324c1719f';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='01c60226d8c6';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4663,7 +4663,267 @@ form.vhold>.vrhold{position:relative;z-index:1}
 .cgmbrl i{position:absolute;top:50%;left:calc(var(--bp) * (100% - 26px));width:26px;height:26px;margin-top:-13px;display:grid;place-items:center}
 .cgmbrp::after,.cgmsym.pet::after{content:"";position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;border:1.5px solid #141416;background:#ecebe7}.cgmbrp.p1::after{background:#7d7884}.cgmsym.pet{position:relative}.cgmpl:last-child .cgmsym.pet::after{background:#7d7884}.cgmbrp>.cgmtok::after,.cgmbrp:has(.cgmtok)::after,.cgmsym.pet:has(.cgmtok)::after{display:none}
 @media (prefers-reduced-motion:reduce){.cgmdice,.cgmdice.roll svg,.cgmbrc.hop .cgmbrp,.cgmpop{animation:none}}
+/* v1098: Mitternacht (Kartenspiel) und Nachtstadt (Brettspiel) */
+.cgmpl.out{opacity:.42}.cgmpl.out b{text-decoration:line-through}
+.xpl .cgmpl{max-width:31%}
+.xpl .nstk.pl{position:absolute;left:6px;top:6px;width:13px;height:13px}
+.mnun{position:absolute;left:4px;top:2px;min-width:20px;height:20px;border-radius:10px;background:#e0566b;color:#fff;font:800 11px/20px var(--f-body);font-style:normal;text-align:center;animation:cgmpulse 1.2s ease-in-out infinite}
+.xlob{display:grid;justify-items:center;gap:8px}
+.xlobm{font:600 13px/1.3 var(--f-body);opacity:.85}
+.xrules{width:100%;margin:2px 0 0;padding:10px 12px 10px 28px;border-radius:14px;border:1px solid var(--p-line);background:color-mix(in srgb,var(--p-soft) 92%,transparent);font:500 13px/1.45 var(--f-body);display:grid;gap:5px;text-align:left}
+.xbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
+.xbtns .btn{flex:1 1 130px;border-radius:999px;min-height:44px}
+.xbtns .btn.on{background:var(--p-fg);color:var(--p-bg)}
+.cgb-mn,.cgb-ns{gap:10px}
+/* Karten */
+.mncd{--cw:56px;--sc:#ecebe7;position:relative;display:grid;place-items:center;width:var(--cw);height:calc(var(--cw) * 1.44);border-radius:calc(var(--cw) * .15);background:#141416;border:2px solid var(--sc);color:var(--sc);box-shadow:0 2px 0 #050506,inset 0 0 0 3px #141416,inset 0 0 0 4px color-mix(in srgb,var(--sc) 32%,transparent);flex:none;user-select:none;-webkit-user-select:none;box-sizing:border-box}
+.mncd.s-m{--sc:#d9d6e3}.mncd.s-f{--sc:#a78bfa}.mncd.s-t{--sc:#e0566b}.mncd.s-s{--sc:#7fd18b}
+.mncd.wild{--sc:#ecebe7;background:radial-gradient(circle at 50% 45%,#232028,#0b0a0d 80%)}
+.mncd i{font-style:normal}
+.mncd .mnv{font:800 calc(var(--cw) * .5)/1 var(--f-display);letter-spacing:-.03em;display:grid;place-items:center}
+.mncd .mnv svg{width:calc(var(--cw) * .56);height:calc(var(--cw) * .56);display:block;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.mncd .mnv .mnq{stroke:none;width:calc(var(--cw) * .62);height:calc(var(--cw) * .62)}
+.mncd .mnk{position:absolute;left:calc(var(--cw) * .08);top:calc(var(--cw) * .08);width:calc(var(--cw) * .25);height:calc(var(--cw) * .25);display:block}
+.mncd .mnk.b{left:auto;top:auto;right:calc(var(--cw) * .08);bottom:calc(var(--cw) * .08);transform:rotate(180deg)}
+.mncd .mnk svg{width:100%;height:100%;display:block}
+.mnsym path,.mnsym circle,.mnsym ellipse{fill:currentColor}
+.mnsym .mnh{fill:#141416}
+.mnsym .mnl{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mncd.back{--sc:#4a4650;background:repeating-linear-gradient(45deg,#141416 0 5px,#1c1a20 5px 10px);color:#8a8590}
+.mncd.back>.mnsym{width:44%;height:44%}
+.mncd.sm{--cw:36px}.mncd.xs{--cw:20px;border-width:1.5px;box-shadow:none;display:inline-grid;vertical-align:middle;margin:0 2px}
+.mncd.xs .mnk{display:none}
+.mncd.big{--cw:76px}
+.mnmini{display:flex;align-items:center;gap:10px}
+.mnmc{font:600 13px/1.3 var(--f-body)}
+.mnsd{--sc:#ecebe7;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--sc);color:var(--sc);background:#141416;vertical-align:middle}
+.mnsd svg{width:14px;height:14px}
+.mntable{display:flex;align-items:center;justify-content:center;gap:18px;width:100%;padding:14px 10px;border-radius:18px;background:radial-gradient(circle at 50% 40%,#25222a,#0b0a0d 78%);border:1px solid #2c2a30;color:#ecebe7;box-sizing:border-box}
+.mndeck{position:relative;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
+.mndeck::before{content:"";position:absolute;inset:0;transform:translate(3px,3px);border-radius:9px;background:#1c1a20;border:2px solid #3a3740}
+.mndeck .mncd{position:relative}
+.mndeck small{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);padding:2px 7px;border-radius:9px;background:#141416;border:1px solid #3a3740;font:700 11px/1.2 var(--f-body)}
+.mndeck:not(:disabled) .mncd{box-shadow:0 0 0 2px #ecebe7,0 0 16px rgba(236,235,231,.35);animation:cgmwob 1.6s ease-in-out infinite}
+.mndeck:disabled{cursor:default}
+.mnpile.drop .mncd{animation:mndrop .34s cubic-bezier(.3,1.4,.5,1)}
+@keyframes mndrop{from{transform:translateY(-40%) rotate(-14deg) scale(.7);opacity:.3}}
+.mncs{--sc:#ecebe7;display:grid;justify-items:center;gap:6px;color:var(--sc)}
+.mncs>.mnsym{width:30px;height:30px}
+.mndir{width:26px;height:26px;fill:none;stroke:#8a8590;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mndir.rev{transform:scaleX(-1)}
+.mnev{margin:0;min-height:20px;text-align:center;font:500 13.5px/1.6 var(--f-body);max-width:100%}
+.mnpick{display:grid;justify-items:center;gap:8px;width:100%;padding:10px;border-radius:16px;border:1px solid var(--p-line);background:color-mix(in srgb,var(--p-soft) 92%,transparent);box-sizing:border-box}
+.mnpick>span{font:700 14px/1.3 var(--f-body)}
+.mnpick>div{display:flex;gap:10px}
+.mnpick button{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--sc,#ecebe7);background:#141416;color:var(--sc,#ecebe7);padding:0;cursor:pointer}
+.mnpick button svg{width:28px;height:28px}
+.mnpick .mnpx svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.mnpick .mnpx{border-color:#4a4650;color:#ecebe7}
+.mnhand{display:flex;justify-content:center;width:100%;padding:26px 4px 6px;box-sizing:border-box;overflow-x:auto;scrollbar-width:none}
+.mnhand::-webkit-scrollbar{display:none}
+.mnhand button{padding:0;margin:0;border:0;background:none;color:inherit;flex:none;transition:transform .15s ease;cursor:pointer;touch-action:manipulation;position:relative}
+.mnhand button+button{margin-left:6px}
+.mnhand.many button+button{margin-left:clamp(-34px,calc((100% - var(--hn) * 56px) / (var(--hn) - 1)),6px)}
+.mnhand button.ok{transform:translateY(-12px)}
+.mnhand button.ok .mncd{box-shadow:0 0 0 2px #050506,0 0 14px color-mix(in srgb,var(--sc) 70%,transparent)}
+.mnhand button.no{opacity:.42}
+.mnhand button.sel{transform:translateY(-18px)}
+.mnhand button:disabled{cursor:default}
+/* Brett */
+.nsb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:2px;width:min(380px,94vw);aspect-ratio:1;padding:3px;border-radius:14px;background:#0b0a0d;border:1px solid #2c2a30;box-sizing:border-box}
+.nsc{position:relative;min-width:0;min-height:0;padding:0;margin:0;border:1px solid #2a282e;border-radius:6px;background:#141416;color:#ecebe7;display:flex;flex-direction:column;align-items:stretch;overflow:hidden;font:inherit;cursor:pointer;text-align:center;touch-action:manipulation}
+.nsc .nsst{height:17%;min-height:7px;background:var(--dc);flex:none;display:flex;align-items:center;justify-content:center}
+.nsc small{font:600 7.8px/1.14 var(--f-body);padding:2px 2px 0;overflow-wrap:break-word;hyphens:manual;-webkit-hyphens:manual;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nsc .nspr{font:700 9px/1 var(--f-body);opacity:.6;margin-top:auto;padding-bottom:3px}
+.nsc.own{box-shadow:inset 0 0 0 2px var(--oc)}
+.nsc.sel{border-color:#ecebe7;box-shadow:0 0 0 2px #ecebe7}
+.nsc.sp{background:#1a181d;justify-content:center;align-items:center}
+.nsc.cn{background:#201d24}
+.nsc .nsi{width:42%;height:42%;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-top:-6px}
+.nsc.sp small{padding-top:1px}
+.nslv{display:flex;gap:2px}.nslv i{width:5px;height:5px;border-radius:1.5px 1.5px 0 0;background:#0b0a0d}.nslv i.g{width:12px;height:6px;border-radius:5px 5px 0 0}
+.nstoks{position:absolute;left:1px;right:1px;bottom:1px;display:flex;flex-wrap:wrap;justify-content:center;gap:1px;pointer-events:none}
+.nstk{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--pc,#ecebe7);border:1.5px solid #050506;box-shadow:0 1px 2px #000;box-sizing:border-box;font-style:normal}
+.nsc.hop .nstk{animation:cgmhop .45s cubic-bezier(.3,1.6,.5,1)}
+.nsmid{grid-area:2/2/6/6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;text-align:center;color:#ecebe7;overflow:hidden;border-radius:10px;background:radial-gradient(circle at 84% 9%,#141217 0 7%,transparent 7.5%),radial-gradient(circle at 81% 11%,rgba(244,230,168,.2) 0 7%,transparent 7.5%),radial-gradient(circle at 50% 50%,#1f1c23,#0b0a0d 80%);position:relative;min-height:0}
+.nstt{font:700 18px/1 var(--f-display);letter-spacing:.06em;opacity:.9}
+.nsdc{display:flex;gap:8px}.nsdc svg{width:36px;height:36px;display:block}.nsdc .dbg{fill:#ecebe7;stroke:#141416;stroke-width:.8}.nsdc .dpp{fill:#141416}
+.nsdc.roll svg{animation:cgmroll .55s cubic-bezier(.2,.8,.3,1)}
+.nsev{display:grid;gap:3px;font:500 11.5px/1.35 var(--f-body);max-width:100%}
+.nsrd{font:600 10.5px/1 var(--f-body);opacity:.6;letter-spacing:.06em;text-transform:uppercase}
+.nsinfo{display:grid;justify-items:center;gap:5px;width:100%}
+.nsix{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:1px solid #3a3740;background:#141416;color:#ecebe7;display:grid;place-items:center;padding:0;cursor:pointer}
+.nsix svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.nsin{font:700 15px/1.2 var(--f-display);padding:0 22px;border-bottom:3px solid var(--dc,transparent)}
+.nsit{font:500 11.5px/1.35 var(--f-body);opacity:.9}
+.nsrt{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;width:100%;font:500 10.5px/1.3 var(--f-body)}
+.nsrt span{display:flex;justify-content:space-between;gap:4px;opacity:.65}.nsrt span.on{opacity:1;font-weight:700}.nsrt i{font-style:normal}
+.nsbd{min-height:34px;border-radius:999px;font-size:12.5px;padding:6px 12px}
+.nsmini{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px}
+.nsmm{display:flex;align-items:center;gap:4px;font:700 13px/1 var(--f-body);padding:3px 7px 3px 3px;border-radius:999px;border:1px solid transparent}.nsmm.on{border-color:currentColor}
+.nsmini small{width:100%;text-align:center;font:600 11px/1 var(--f-body);opacity:.7}
+@media (prefers-reduced-motion:reduce){.mnpile.drop .mncd,.mndeck .mncd,.nsc.hop .nstk,.nsdc.roll svg,.mnun{animation:none}}
 @media (prefers-reduced-motion:reduce){.cgmbox .cgmcell.drop .cgmdisc,.cgmbox .cgmcell.drop .tttic,.cgmc.turn .cgmst::before,.cgmstat.my::before{animation:none}}
+/* v1099: Spiele mit Animationen (Mitternacht wie in der App, Nachtstadt mit 3D-Würfeln, gezeichnete Züge) */
+@property --mnsc{syntax:'<color>';inherits:true;initial-value:#ecebe7}
+@keyframes cgmdraw{to{stroke-dashoffset:0}}
+@keyframes cgmshake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@keyframes cgmbump{40%{transform:scale(1.16)}}
+@keyframes cgmglow{to{filter:drop-shadow(0 0 7px #fff) brightness(1.25)}}
+.cgb-mn{width:100%;gap:8px}
+.mnseats{display:flex;justify-content:center;gap:4px;width:100%;flex-wrap:wrap}
+.mnseat{position:relative;display:grid;justify-items:center;gap:1px;padding:7px 4px 4px;min-width:0;flex:0 1 92px;border-radius:16px;border:1px solid transparent;transition:background .25s,border-color .25s,opacity .25s}
+.mnseat.on{border-color:var(--p-fg);background:color-mix(in srgb,var(--p-soft) 92%,transparent)}
+.mnseat.out{opacity:.38}.mnseat.out b{text-decoration:line-through}
+.mnseat>b{font:600 12px/1.25 var(--f-body);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mnav{position:relative;width:44px;height:44px;display:block;flex:none}
+.mnav .cameo{width:100%;height:100%;border-radius:50%;overflow:hidden;display:block;border:2px solid var(--p-line);background:color-mix(in srgb,var(--p-soft) 92%,transparent);box-sizing:border-box}
+.mnav .cameo>*{width:100%;height:100%;display:block;object-fit:cover}
+.mnseat.win .cameo,.mnme .mnav .cameo:has(+.mntm){border-color:var(--p-fg)}
+.mnseat.win .cameo{box-shadow:0 0 0 3px color-mix(in srgb,var(--p-fg) 35%,transparent),0 0 18px color-mix(in srgb,var(--p-fg) 40%,transparent)}
+.mntm{position:absolute;left:-5px;top:-5px;width:54px;height:54px;transform:rotate(-90deg);overflow:visible;pointer-events:none}
+.mntm circle{fill:none;stroke:var(--p-fg);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0;animation:mntime 120s linear forwards}
+@keyframes mntime{80%{stroke:var(--p-fg)}to{stroke-dashoffset:100;stroke:#ff8a98}}
+.mnav .mnun{left:auto;right:-6px;top:-4px;z-index:2}
+.mnfan{position:relative;display:block;width:64px;height:30px;margin-top:2px}
+.mnfan i{position:absolute;left:50%;bottom:1px;width:17px;height:25px;margin-left:-8.5px;border-radius:3.5px;border:1.5px solid #5a5560;background:repeating-linear-gradient(45deg,#141416 0 3px,#1f1c23 3px 6px);box-sizing:border-box;transform-origin:50% 160%;transform:rotate(calc((var(--j) - (var(--fn) - 1) / 2) * 11deg));box-shadow:0 1px 3px #000}
+.mnfan em{position:absolute;right:-6px;bottom:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--p-fg);color:var(--p-bg);font:800 11.5px/20px var(--f-body);font-style:normal;text-align:center;box-sizing:border-box;z-index:2}
+.mntable{--mnsc:#ecebe7;position:relative;display:flex;align-items:center;justify-content:center;gap:30px;width:100%;min-height:178px;padding:22px 12px;border-radius:24px;box-sizing:border-box;color:#ecebe7;border:1px solid color-mix(in srgb,var(--mnsc) 38%,#2c2a30);background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--mnsc) 26%,#18161c) 0,#0e0d11 62%,#08070a 100%);box-shadow:inset 0 0 42px #000c,inset 0 0 0 6px #0b0a0d,inset 0 0 0 7px color-mix(in srgb,var(--mnsc) 18%,transparent);transition:--mnsc .7s ease}
+.mnring{position:absolute;left:50%;top:50%;width:min(214px,64%);height:auto;aspect-ratio:1;translate:-50% -50%;pointer-events:none;overflow:visible}
+.mnring.rev{scale:-1 1}
+.mnring circle{fill:none;stroke:color-mix(in srgb,var(--mnsc) 42%,transparent);stroke-width:1.4;stroke-dasharray:2 6}
+.mnring g{transform-origin:100px 100px;animation:mnspin 16s linear infinite}
+.mnring path{fill:none;stroke:color-mix(in srgb,var(--mnsc) 85%,transparent);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+@keyframes mnspin{to{transform:rotate(360deg)}}
+.mndeck{z-index:2}
+.mndeck::after{content:"";position:absolute;inset:0;transform:translate(6px,6px);border-radius:12px;background:#141416;border:2px solid #2c2a30;z-index:-1}
+.mndeck::before{border-radius:12px;z-index:-1}
+.mndeck small{bottom:-12px;z-index:3}
+.mnpile{position:relative;z-index:3;display:grid;place-items:center;width:84px;height:118px}
+.mnpile>span{grid-area:1/1;transform:rotate(var(--rot,0deg));display:block}
+.mnpile .mnund .mncd{filter:brightness(.62)}
+.mnpile .mntop{z-index:2;filter:drop-shadow(0 8px 12px #000d)}
+.mncs{position:absolute;right:12px;bottom:12px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--mnsc);color:var(--mnsc);background:#141416;z-index:3;box-shadow:0 0 14px color-mix(in srgb,var(--mnsc) 45%,transparent)}
+.mncs>.mnsym{width:20px;height:20px}
+.mnme{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border-radius:18px;border:1px solid transparent;box-sizing:border-box;transition:background .25s,border-color .25s}
+.mnme.on{border-color:var(--p-fg);background:color-mix(in srgb,var(--p-soft) 92%,transparent)}
+.mnmet{display:grid;flex:1;min-width:0;line-height:1.25}.mnmet b{font:700 14.5px/1.25 var(--f-display)}.mnmet small{font:500 12px/1.3 var(--f-body);opacity:.72}
+.mncall{flex:none;height:46px;padding:0 16px;border-radius:999px;border:2px solid #e0566b;background:#141416;color:#ecebe7;font:800 13px/1 var(--f-display);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;touch-action:manipulation;transition:transform .15s,background .2s}
+.mncall:disabled{border-color:#3a3740;color:#6d6873;cursor:default;opacity:.75}
+.mncall.arm:not(.on){animation:cgmwob 1.6s ease-in-out infinite}
+.mncall.on{background:#ecebe7;color:#141416;border-color:#ecebe7}
+.mncall.urg{background:#e0566b;color:#fff;animation:mnurg .6s ease-in-out infinite alternate}
+@keyframes mnurg{to{transform:scale(1.08);box-shadow:0 0 22px #e0566bcc}}
+.mncall:active:not(:disabled){transform:scale(.94)}
+.mnhand{position:relative;display:block;width:100%;height:140px;padding:0;overflow:visible}
+.mnhand button,.mnhand button+button,.mnhand.many button+button{position:absolute;left:50%;bottom:30px;margin:0 0 0 -29px;transform-origin:50% calc(100% + 430px);transform:rotate(var(--r,0deg)) translateY(var(--ly,0px));transition:transform .2s ease,opacity .2s,filter .2s}
+.mnhand button .mncd{--cw:58px}
+.mnhand button.ok{--ly:-18px;transform:rotate(var(--r,0deg)) translateY(var(--ly))}
+.mnhand button.ok:hover,.mnhand button.ok:focus-visible{--ly:-30px}
+.mnhand button.sel{--ly:-34px;transform:rotate(var(--r,0deg)) translateY(var(--ly))}
+.mnhand button.no{opacity:1;filter:brightness(.5) saturate(.6)}
+.mnhand.my button.ok .mncd{box-shadow:0 0 0 2px #050506,0 0 16px color-mix(in srgb,var(--sc) 75%,transparent)}
+.mnkb{background:#e0566b!important;color:#fff!important;border-color:#e0566b!important;animation:mnurg .6s ease-in-out infinite alternate}
+.mncd{background:linear-gradient(162deg,color-mix(in srgb,var(--sc) 34%,#1d1a21) 0,#131116 52%,color-mix(in srgb,var(--sc) 20%,#0b0a0d) 100%);overflow:hidden}
+.mncd::before{content:"";position:absolute;left:17%;right:17%;top:17%;bottom:13%;border-radius:50% 50% 9% 9%/30% 30% 6% 6%;border:1.5px solid color-mix(in srgb,var(--sc) 62%,transparent);background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--sc) 30%,transparent),transparent 72%)}
+.mncd::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(128deg,rgba(255,255,255,.17),transparent 36%,transparent 70%,rgba(255,255,255,.05));pointer-events:none}
+.mncd .mnv,.mncd .mnk{position:relative;z-index:1}.mncd .mnk{position:absolute}
+.mncd .mnv{text-shadow:0 2px 0 #050506,0 0 12px color-mix(in srgb,var(--sc) 55%,transparent)}
+.mncd.wild::before{background:conic-gradient(from 45deg,#d9d6e340 0 25%,#a78bfa40 0 50%,#e0566b40 0 75%,#7fd18b40 0);border-color:#ecebe799}
+.mncd.back{background:repeating-linear-gradient(45deg,#141416 0 5px,#1c1a20 5px 10px)}
+.mncd.back::before{border-color:#5a5560;background:radial-gradient(circle at 50% 42%,#2a2730,transparent 70%)}
+.mncd.back>.mnsym{position:relative;z-index:1;color:#a7a2ad}
+.mncd.xs::before,.mncd.xs::after{display:none}
+.fxo{position:fixed;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;z-index:30}
+.fxfly .mncd{--cw:38px}
+.fxburst{animation:fxpop 1.1s cubic-bezier(.2,.9,.3,1) forwards}
+@keyframes fxpop{0%{opacity:0;scale:.3}18%{opacity:1;scale:1.18}30%{scale:1}72%{opacity:1;scale:1}100%{opacity:0;scale:1.2;translate:0 -16px}}
+.mnfx svg{display:block;width:88px;height:88px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px #000) drop-shadow(0 0 18px rgba(255,255,255,.35))}
+.mnfx.sm svg{width:42px;height:42px;stroke:#ff8a98}
+.mnfx.suit svg{width:86px;height:86px;stroke:none}
+.mnfx b{display:block;font:800 66px/1 var(--f-display);color:#fff;-webkit-text-stroke:2px #141416;text-shadow:0 5px 0 #000,0 0 26px rgba(255,255,255,.45);white-space:nowrap}
+.mnfx.txt b{font-size:40px}
+.fxtxt b{display:block;white-space:nowrap;font:800 24px/1 var(--f-display);letter-spacing:.03em;color:#fff;padding:11px 20px;border-radius:999px;background:#141416;border:2px solid #ecebe7;box-shadow:0 10px 30px #000c}
+.fxtxt.mncallfx b{background:#e0566b;border-color:#ffb3bd;text-transform:uppercase}
+.fxtxt.win b{font-size:30px;background:#ecebe7;color:#141416}
+.mnwash{transform:translate(-50%,-50%);border-radius:24px;overflow:hidden;z-index:2}
+.mnwash i{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:var(--sc);opacity:.5;animation:mnwash 1s ease-out forwards}
+@keyframes mnwash{to{transform:scale(13);opacity:0}}
+.fxbat svg{display:block;width:28px;height:28px;fill:#ecebe7;filter:drop-shadow(0 2px 3px #000)}
+.fxmoney{animation:fxrise 1.3s ease-out forwards}
+.fxmoney b{display:block;font:800 21px/1 var(--f-display);color:#fff;text-shadow:0 2px 0 #000,0 0 10px #000;white-space:nowrap}.fxmoney.dn b{color:#ff8a98}
+@keyframes fxrise{0%{opacity:0;translate:0 6px}15%{opacity:1}100%{opacity:0;translate:0 -46px}}
+.fxtok .nstk{width:15px;height:15px;box-shadow:0 4px 6px #000a}
+.nscardfx{perspective:700px}
+.nscard{width:190px;padding:14px 14px 16px;border-radius:14px;background:#ecebe7;color:#141416;text-align:center;box-shadow:0 14px 34px #000d;border:3px solid #141416;outline:1.5px solid #ecebe7;display:grid;gap:8px;animation:nsflip 2.3s cubic-bezier(.2,.8,.3,1) forwards}
+.nsck{display:grid;justify-items:center;gap:4px}.nsck svg{width:30px;height:30px;fill:#141416}.nsck small{font:700 10.5px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase}
+.nscard p{margin:0;font:600 15px/1.35 var(--f-body)}
+.nscardfx{animation:none}
+@keyframes nsflip{0%{transform:rotateY(90deg) scale(.6);opacity:0}16%{transform:rotateY(0) scale(1.04);opacity:1}24%{transform:scale(1)}84%{transform:scale(1);opacity:1}100%{transform:scale(.85) translateY(-10px);opacity:0}}
+.nsring{animation:none}.nsring i{display:block;width:56px;height:56px;border-radius:50%;border:3px solid #ecebe7;animation:nsring .8s ease-out forwards}
+@keyframes nsring{from{transform:scale(.3);opacity:1}to{transform:scale(1.7);opacity:0}}
+.nsdc{display:flex;gap:16px;perspective:420px;padding:4px 0 6px}
+.d3{--s:32px;position:relative;display:block;width:var(--s);height:var(--s);transform-style:preserve-3d;transform:translateY(0) rotateX(-20deg) rotateY(26deg) rotateX(0deg) rotateY(0deg) var(--fr)}
+.d3c{position:absolute;inset:0;transform-style:preserve-3d}
+.d3f{position:absolute;inset:0;border-radius:7px;background:radial-gradient(circle at 30% 25%,#fff,#e4e1e8 60%,#c9c5cf);border:1px solid #b5b0ba;box-sizing:border-box;backface-visibility:hidden}
+.d3f b{position:absolute;width:19%;height:19%;margin:-9.5% 0 0 -9.5%;border-radius:50%;background:#141416;box-shadow:inset 0 1px 1px #000}
+.d3f.f1 b{width:26%;height:26%;margin:-13% 0 0 -13%}
+.d3 .f1{transform:translateZ(calc(var(--s) / 2))}.d3 .f6{transform:rotateY(180deg) translateZ(calc(var(--s) / 2))}.d3 .f2{transform:rotateY(90deg) translateZ(calc(var(--s) / 2))}.d3 .f5{transform:rotateY(-90deg) translateZ(calc(var(--s) / 2))}.d3 .f3{transform:rotateX(90deg) translateZ(calc(var(--s) / 2))}.d3 .f4{transform:rotateX(-90deg) translateZ(calc(var(--s) / 2))}
+.nsdc.roll0 .d3{animation:d3r0 .8s linear}.nsdc.roll1 .d3{animation:d3r1 .8s linear}
+@keyframes d3r0{0%{transform:translateY(-52px) rotateX(-20deg) rotateY(26deg) rotateX(calc(var(--sp) * 720deg)) rotateY(calc(var(--sp) * 540deg)) var(--fr);animation-timing-function:cubic-bezier(.4,0,1,1)}55%{transform:translateY(0) rotateX(-20deg) rotateY(26deg) rotateX(calc(var(--sp) * 90deg)) rotateY(calc(var(--sp) * 60deg)) var(--fr);animation-timing-function:ease-out}72%{transform:translateY(-12px) rotateX(-20deg) rotateY(26deg) rotateX(calc(var(--sp) * 24deg)) rotateY(calc(var(--sp) * 14deg)) var(--fr);animation-timing-function:ease-in}100%{transform:translateY(0) rotateX(-20deg) rotateY(26deg) rotateX(0deg) rotateY(0deg) var(--fr)}}
+@keyframes d3r1{0%{transform:translateY(-52px) rotateX(-20deg) rotateY(26deg) rotateX(calc(var(--sp) * 720deg)) rotateY(calc(var(--sp) * 540deg)) var(--fr);animation-timing-function:cubic-bezier(.4,0,1,1)}55%{transform:translateY(0) rotateX(-20deg) rotateY(26deg) rotateX(calc(var(--sp) * 90deg)) rotateY(calc(var(--sp) * 60deg)) var(--fr);animation-timing-function:ease-out}72%{transform:translateY(-12px) rotateX(-20deg) rotateY(26deg) rotateX(calc(var(--sp) * 24deg)) rotateY(calc(var(--sp) * 14deg)) var(--fr);animation-timing-function:ease-in}100%{transform:translateY(0) rotateX(-20deg) rotateY(26deg) rotateX(0deg) rotateY(0deg) var(--fr)}}
+.nsdeed{width:min(152px,88%);border-radius:10px;background:#ecebe7;color:#141416;overflow:hidden;box-shadow:0 10px 26px #000c;display:grid;text-align:center;animation:nsdin .55s cubic-bezier(.2,.9,.3,1.15) backwards}
+.nsdeed.late{animation-delay:1.5s}
+@keyframes nsdin{from{transform:perspective(500px) rotateY(-90deg) scale(.7);opacity:0}}
+.nsdh{display:grid;gap:1px;padding:6px 6px 7px;background:var(--dc);color:#fff;text-shadow:0 1px 2px #0009}
+.nsdh small{font:700 8px/1.1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;opacity:.9}.nsdh b{font:700 13.5px/1.15 var(--f-display)}
+.nsdr{display:grid;gap:1px;padding:6px 10px 2px;font:500 10.5px/1.35 var(--f-body)}.nsdr span{display:flex;justify-content:space-between;gap:6px}.nsdr i{font-style:normal}
+.nsdp{font:700 11.5px/1.2 var(--f-body);margin:3px 10px 0;padding:5px 0 7px;border-top:1px dashed #14141640}
+.nslv i{animation:nsbuild .5s cubic-bezier(.3,1.6,.5,1) backwards}
+@keyframes nsbuild{from{transform:translateY(-9px) scale(.2);opacity:0}}
+.nstk{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.75) 0 16%,transparent 24%),var(--pc,#ecebe7)}
+.nsc .nsst{height:20%}
+.nsc.cn .nsi{width:50%;height:50%}
+.cgmgrid{position:relative}
+.cgmwl{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}
+.cgmgrid.ttt .cgmwl line{stroke-width:.6}
+.cgmbox .cgmgrid.c4 .cgmwl{left:8px;top:8px;width:calc(100% - 16px);height:calc(100% - 16px)}
+.cgmwl line{stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:cgmdraw .5s .2s ease-out forwards;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px rgba(255,255,255,.6))}
+.cgmgrid:has(.wl) .cgmcell:not(.wl){opacity:.42;transition:opacity .5s}
+.cgmbox .cgmcell.wl .tttic,.cgmbox .cgmgrid.c4 .cgmcell.wl .cgmdisc{animation:cgmglow .8s .5s ease-in-out infinite alternate}
+.cgmbox .cgmgrid.ttt .cgmcell.drop .tttic:has(path[pathLength]){animation:none}
+.cgmbox .cgmgrid.ttt .cgmcell.drop .tttic path[pathLength]{stroke-dasharray:1;stroke-dashoffset:1;animation:cgmdraw .22s ease-out forwards}
+.cgmbox .cgmgrid.ttt .cgmcell.drop .tttic path[pathLength]+path{animation-delay:.18s}
+.cgmbox .cgmgrid.ttt .cgmcell.drop .tttic:not(:has(path[pathLength])){animation:cgmghost .5s cubic-bezier(.3,1.4,.5,1)}
+@keyframes cgmghost{0%{transform:scale(.2) rotate(-30deg);opacity:0;filter:blur(4px)}60%{transform:scale(1.14) rotate(6deg);opacity:1;filter:blur(0)}100%{transform:none}}
+.cgmdisc.d0{background:radial-gradient(circle at 34% 30%,#fff 0 12%,#ecebe7 32%,#aaa6b0 100%)}
+.cgmdisc.d1{background:radial-gradient(circle at 34% 30%,#b9b4c1 0 12%,#7d7884 36%,#46424c 100%)}
+.cgmbox .cgmcell.drop .cgmdisc{animation:cgmdrop .62s linear}
+@keyframes cgmdrop{0%{transform:translateY(calc(var(--dr,4) * -112%));animation-timing-function:cubic-bezier(.5,0,1,1)}58%{transform:translateY(0);animation-timing-function:ease-out}72%{transform:translateY(-16%);animation-timing-function:ease-in}86%{transform:translateY(0);animation-timing-function:ease-out}93%{transform:translateY(-4%);animation-timing-function:ease-in}100%{transform:none}}
+.hang .nw{stroke-dasharray:1;stroke-dashoffset:1;animation:cgmdraw .5s ease-out forwards}
+.hang.lost .hfig{transform-origin:65px 22px;animation:hswing 1.7s ease-in-out infinite alternate}
+@keyframes hswing{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+.cgmkeys button.hit{animation:cgmbump .35s ease-out}
+.cgmkeys button.no{animation:cgmshake .4s ease-out}
+.cgmkeys button:not(:disabled):active{transform:scale(.9)}
+.cgmword span.on{animation:lflip .45s ease-out}
+@keyframes lflip{from{transform:rotateX(90deg) translateY(-6px);opacity:0}}
+.cgmqdots{display:flex;justify-content:center;gap:6px;margin-bottom:2px}
+.cgmqdots i{width:30px;height:6px;border-radius:3px;background:currentColor;opacity:.18}
+.cgmqdots i.ok{opacity:1}.cgmqdots i.no{opacity:.75;background:repeating-linear-gradient(45deg,currentColor 0 2px,transparent 2px 4px)}.cgmqdots i.cur{opacity:.5;animation:cgmpulse 1.2s ease-in-out infinite}
+.cgmqz.qa .cgmqq,.cgmqz.qa .cgmqa button{animation:qin1 .45s cubic-bezier(.2,.8,.3,1) backwards}
+.cgmqz.qb .cgmqq,.cgmqz.qb .cgmqa button{animation:qin2 .45s cubic-bezier(.2,.8,.3,1) backwards}
+.cgmqz .cgmqa button:nth-child(2){animation-delay:.06s}.cgmqz .cgmqa button:nth-child(3){animation-delay:.12s}.cgmqz .cgmqa button:nth-child(4){animation-delay:.18s}
+@keyframes qin1{from{opacity:0;transform:translateX(34px)}}
+@keyframes qin2{from{opacity:0;transform:translateX(34px)}}
+.cgmqz.qa .cgmqa button.ok,.cgmqz.qb .cgmqa button.ok{animation:qok .55s ease-out;animation-delay:0s}
+.cgmqz.qa .cgmqa button.no,.cgmqz.qb .cgmqa button.no{animation:cgmshake .4s ease-out;animation-delay:0s}
+@keyframes qok{35%{transform:scale(1.05);box-shadow:0 0 0 7px color-mix(in srgb,var(--p-fg) 22%,transparent)}}
+.cgmcv path.nw{stroke-dasharray:1;stroke-dashoffset:1;animation:cgmdraw .7s ease-out forwards}
+.cgmmrl li:first-child{animation:qin1 .35s ease-out}
+.cgmmrl li.ok{animation:qok .6s ease-out}
+.cgmstat.won{animation:cgmbump .6s ease-out}
+@media (prefers-reduced-motion:reduce){.fxo{display:none}.mnring g,.mntm circle,.mncall,.mnkb,.d3,.nsdeed,.nslv i,.cgmwl line,.cgmbox .cgmcell .tttic,.cgmbox .cgmcell .cgmdisc,.hang .nw,.hang .hfig,.cgmkeys button,.cgmword span,.cgmqz .cgmqq,.cgmqz .cgmqa button,.cgmcv path,.cgmmrl li,.cgmstat{animation:none!important;stroke-dashoffset:0}}
 /* v1097 (flüssig): Regenbogen-Rand der Pille im Abo-Beitrag. Vorher drehte sich der Farbverlauf über die Eigenschaft --aba: der Browser musste in jedem Bild Stil und Farbe neu rechnen und große Teile des Salons neu malen (am Handy etwa 80 % der Rechenzeit, solange der Beitrag zu sehen war).
    Jetzt dreht sich derselbe Farbkreis als eigene Ebene per transform (rechnet die Grafikkarte), die Füllung liegt als ::after darüber. Aussehen gleich: Rand 1,5 px, Innenfarbe #1b1424, gleiche Farben, 5 s je Runde */
 .aboadtri{position:relative;isolation:isolate;clip-path:inset(0 round 999px);background:none;animation:none}
@@ -10233,6 +10493,8 @@ Object.assign(I18N_EN,{'Zum Admin machen':'Make admin','Adminstatus entfernen':'
 Object.assign(I18N_EN, {'Level-Aufstieg':'Level up','Du bist ein Level aufgestiegen.':'You went up a level.','Du bist {0} Level aufgestiegen.':'You went up {0} levels.','Das hast du bekommen':'Here is what you got','Schon in deinem Wallet':'Already in your wallet','Neues Teil freigeschaltet':'New item unlocked','{0} neue Teile freigeschaltet':'{0} new items unlocked','Liegt jetzt in deinem Inventar':'Now in your inventory','Nächstes Ziel: Level {0} · +{1} Nocti-Coins':'Next goal: level {0} · +{1} Nocti-Coins','Höchstes Level erreicht.':'Highest level reached.','Weiter':'Continue','+{0} Nocti-Coins':'+{0} Nocti-Coins'});
 Object.assign(I18N_EN, {"Spiel": "Game", "Vier gewinnt": "Connect Four", "Zu zweit · drei in einer Reihe": "Two players · three in a row", "Zu zweit · vier in einer Reihe": "Two players · four in a row", "Alle zusammen · errate das Wort": "Everyone together · guess the word", "Tritt der Gruppe bei, um mitzuspielen.": "Join the group to play along.", "Spiel nicht mehr verfügbar": "Game no longer available", "Erraten: {0}": "Guessed: {0}", "Nicht erraten. Das Wort war {0}.": "Not guessed. The word was {0}.", "Alle raten mit · {0} von 6 Fehlern": "Everyone guesses · {0} of 6 mistakes", "Wartet auf Mitspieler …": "Waiting for a player …", "{0} sucht Mitspieler": "{0} is looking for a player", "Abgebrochen": "Cancelled", "Unentschieden": "Draw", "Du hast aufgegeben": "You gave up", "{0} hat aufgegeben": "{0} gave up", "Du hast gewonnen!": "You won!", "{0} hat gewonnen": "{0} won", "{0} ist dran": "{0}'s turn", "Mitraten": "Guess along", "Mitspielen": "Play", "Jetzt spielen": "Play now", "Feld {0}": "Square {0}", "Spalte {0}": "Column {0}", "Tippe Buchstaben an. Jeder richtige Buchstabe ist ein Punkt für dich.": "Tap letters. Every correct letter is a point for you.", "Platz frei": "Open seat", "gegen": "vs", "Aufgeben": "Give up", "Zur Revanche": "Go to rematch", "Neues Wort": "New word", "Revanche": "Rematch", "Zum Chat": "To chat", "Such dir ein Spiel aus. {0} spielt automatisch mit.": "Pick a game. {0} plays along automatically.", "Wer zuerst „Mitspielen“ antippt, spielt mit. Beim Galgenmännchen raten alle.": "Whoever taps “Play” first joins. In Hangman everyone guesses.", "✓ Tagesbelohnung für heute abgeholt.": "✓ Daily reward collected for today.", "Dein erster Sieg am Tag: +{0} Coins · +{1} XP": "Your first win of the day: +{0} coins · +{1} XP", "Das Spiel konnte nicht starten. Versuch es nochmal.": "The game couldn't start. Please try again.", "Jemand anderes war schneller.": "Someone else was faster.", "Wirklich aufgeben?": "Really give up?", "Weiterspielen": "Keep playing", "Tic-Tac-Toe": "Tic-Tac-Toe"}); /* v1095: Spiele im Chat */
 Object.assign(I18N_EN, {"Gruselquiz": "Spooky Quiz", "Alle zusammen · 5 Gruselfragen": "Everyone together · 5 spooky questions", "Mal & Rate": "Draw & Guess", "Eine Person malt, alle raten": "One person draws, everyone guesses", "Begleiter-Rennen": "Companion Race", "Zu zweit · würfelt mit euren Begleitern": "Two players · roll the dice with your companions", "Nachtfalter-Duell": "Moth Duel", "Alle zusammen · fang die meisten Falter": "Everyone together · catch the most moths", "Aufgelöst: {0}": "Revealed: {0}", "Erraten! Das Wort war {0}.": "Got it! The word was {0}.", "{0} hat {1} erraten": "{0} guessed {1}", "Du malst · die anderen raten": "You draw · the others guess", "{0} malt · rate mit": "{0} is drawing · guess along", "{0} Gruselfragen · alle spielen mit": "{0} spooky questions · everyone plays", "Fang in {0} Sekunden so viele Falter wie möglich": "Catch as many moths as you can in {0} seconds", "Du: {0} von {1} richtig": "You: {0} of {1} right", "Du: {0} Falter": "You: {0} moths", "{0} ist noch dran": "{0} is still playing", "Weitermalen": "Keep drawing", "Wer am meisten weiß, gewinnt.": "Whoever knows the most wins.", "Wer am meisten fängt, gewinnt.": "Whoever catches the most wins.", "Frage {0} von {1}": "Question {0} of {1}", "Bestwert: {0}": "Best: {0}", "Du hast {0} Falter gefangen.": "You caught {0} moths.", "Los, fangen!": "Start catching!", "Tippe die Falter an. Goldene zählen 3.": "Tap the moths. Golden ones count 3.", "Male:": "Draw:", "Gesucht: ein Wort mit {0} Buchstaben": "Wanted: a word with {0} letters", "Rückgängig": "Undo", "Alles löschen": "Clear all", "Anderes Wort": "Other word", "Dein Tipp …": "Your guess …", "Raten": "Guess", "Start": "Start", "{0} reitet auf einer Fledermaus 3 Felder vor!": "{0} rides a bat 3 squares ahead!", "{0} bleibt im Spinnennetz hängen: 3 Felder zurück.": "{0} got stuck in a spider web: 3 squares back.", "Du": "You", "Würfeln": "Roll the dice", "Tippe auf den Würfel": "Tap the dice", "Zuletzt gewürfelt: {0}": "Last roll: {0}", "Wer zuerst im Ziel ist, gewinnt.": "First to the finish wins.", "Zeichnung": "Drawing", "Nachtfalter fangen": "Catch moths", "Das Bild ist voll. Lösch etwas weg.": "The picture is full. Erase something.", "Jetzt auswerten? Danach kann niemand mehr mitspielen.": "Score it now? After that nobody can join anymore.", "Auswerten": "Score", "Abbrechen": "Cancel", "Auflösen": "Reveal", "Neues Quiz": "New quiz", "Neue Runde": "New round", "Selbst malen": "Draw yourself", "Bei Spielen zu zweit spielt mit, wer zuerst „Mitspielen“ antippt. Bei den anderen machen alle mit.": "In two-player games, whoever taps “Play” first joins. In the others everyone plays."}); /* v1096: weitere Spiele im Chat */
+Object.assign(I18N_EN, {"Gewonnen!": "You won!", "Erwischt!": "Caught!", "Deine Karten": "Your cards", "{0} Karten": "{0} cards", "Du bist dran": "Your turn", "Zu verkaufen": "For sale", "{0} ist pleite!": "{0} is broke!"}); /* v1099 */
+Object.assign(I18N_EN, {"Mitternacht": "Midnight", "Nachtstadt": "Night Town", "2 bis 6 Leute · Kartenspiel, wer zuerst alle Karten los ist, gewinnt": "2 to 6 players · card game, first to get rid of all cards wins", "2 bis 6 Leute · kauf die Stadt und kassiere Miete": "2 to 6 players · buy the town and collect rent", "{0} von {1} dabei · du kannst loslegen": "{0} of {1} joined · you can start", "{0} sucht Mitspieler · {1} von {2} dabei": "{0} is looking for players · {1} of {2} joined", "Ruf „Mitternacht!“, bevor dich jemand erwischt!": "Call “Midnight!” before someone catches you!", "Kaufen oder nicht?": "Buy or not?", "Loslegen": "Start", "Los geht’s": "Let’s go", "Nicht mitspielen": "Leave", "Aussteigen": "Leave game", "{0} überspringen": "Skip {0}", "Spielregeln": "Rules", "Regeln ausblenden": "Hide rules", "{0} von {1} dabei": "{0} of {1} joined", "2 bis 6 Leute. Wer mitmachen will, tippt auf „Mitspielen“. Wer das Spiel gestartet hat, legt dann los.": "2 to 6 players. Anyone who wants to join taps “Play”. Whoever started the game then kicks it off.", "Das Spiel ist schon voll oder hat schon angefangen.": "The game is already full or has already started.", "Wirklich aussteigen? Danach kannst du in dieser Runde nicht mehr mitspielen.": "Really leave? You can’t rejoin this round afterwards.", "Leg eine Karte mit demselben Symbol oder demselben Wert wie die oberste Karte.": "Play a card with the same symbol or the same value as the top card.", "Passt nichts, tipp auf den Stapel und zieh eine Karte. Passt sie, darfst du sie gleich legen.": "If nothing fits, tap the pile and draw a card. If it fits, you can play it right away.", "Aussetzen: Die nächste Person ist nicht dran. Pfeile: Die Richtung dreht sich.": "Skip: the next player misses their turn. Arrows: the direction turns around.", "+2 und +4: Die nächste Person zieht so viele Karten und ist nicht dran.": "+2 and +4: the next player draws that many cards and misses their turn.", "Wunschsymbol und +4 passen immer. Du wählst, welches Symbol danach gilt.": "Wish symbol and +4 always fit. You choose which symbol counts next.", "Hast du nur noch eine Karte, ruf „Mitternacht!“. Sonst kann dich jemand erwischen, und du ziehst 2 Karten.": "When you have only one card left, call “Midnight!”. Otherwise someone can catch you and you draw 2 cards.", "Wer zuerst keine Karten mehr hat, gewinnt.": "The first to run out of cards wins.", "Würfel und lauf im Kreis durch die Stadt. Über Start gibt es 200.": "Roll the dice and walk around the town. Passing Start gives you 200.", "Freie Orte kannst du kaufen. Landet jemand auf deinem Ort, zahlt er dir Miete.": "You can buy free places. If someone lands on your place, they pay you rent.", "Gehört dir ein ganzes Viertel (gleiche Farbe), ist die Miete doppelt so hoch. Dann kannst du vor dem Würfeln Grabsteine und eine Gruft bauen: Tipp den Ort an.": "If you own a whole district (same colour), the rent doubles. Then you can build gravestones and a crypt before rolling: tap the place.", "Mondkarten bringen Glück oder Pech. Wer in den Sarg muss, kommt mit einem Pasch raus oder setzt eine Runde aus.": "Moon cards bring good or bad luck. Whoever has to go into the coffin gets out with a double or misses a turn.", "Wer pleite ist, scheidet aus. Nach 15 Runden gewinnt, wer am meisten besitzt: Geld, Orte und Gebäude.": "Whoever goes broke is out. After 15 rounds, whoever owns the most wins: money, places and buildings.", "Gespielt wird mit Spielgeld, nicht mit Nocti-Coins.": "You play with play money, not with Nocti-Coins.", "Mond": "Moon", "Fledermaus": "Bat", "Totenkopf": "Skull", "Spinne": "Spider", "+4 Wunschsymbol": "+4 wish symbol", "Wunschsymbol": "Wish symbol", "Aussetzen": "Skip", "Richtungswechsel": "Reverse", "{0} fängt an.": "{0} starts.", "{0} legt {1}": "{0} plays {1}", "{0} muss aussetzen.": "{0} misses a turn.", "{0} zieht {1} Karten.": "{0} draws {1} cards.", "Die Richtung dreht sich.": "The direction turns around.", "Gewünscht: {0}": "Wished: {0}", "{0} zieht eine Karte, sie passt nicht.": "{0} draws a card, it doesn’t fit.", "{0} hat eine Karte gezogen.": "{0} drew a card.", "{0} legt nichts.": "{0} plays nothing.", "{0} ruft „Mitternacht!“": "{0} calls “Midnight!”", "{0} hat {1} erwischt: 2 Karten!": "{0} caught {1}: 2 cards!", "{0} hat {1} übersprungen.": "{0} skipped {1}.", "{0} ist ausgestiegen.": "{0} left the game.", "Du: {0} Karten": "You: {0} cards", "Karte ziehen": "Draw a card", "Welches Symbol soll gelten?": "Which symbol should count?", "Du bist ausgestiegen und schaust zu.": "You left and are watching.", "Du schaust zu.": "You are watching.", "Mitternacht!": "Midnight!", "{0} erwischen!": "Catch {0}!", "Start": "Start", "Kerzengasse": "Candle Lane", "Mondkarte": "Moon card", "Hexenhütte": "Witch’s Hut", "Nebelsteuer": "Fog tax", "Sarg": "Coffin", "Rabenturm": "Raven Tower", "Glockenturm": "Bell Tower", "Spukvilla": "Haunted Villa", "Friedhofsruhe": "Graveyard Rest", "Gruftkapelle": "Crypt Chapel", "Mondsee": "Moon Lake", "Irrlichtwald": "Wisp Woods", "Ab in den Sarg": "Into the coffin", "Schattenmarkt": "Shadow Market", "Nebelbrücke": "Fog Bridge", "Vampirschloss": "Vampire Castle", "Mitternachtspalast": "Midnight Palace", "Eine Fledermaus bringt dir 50.": "A bat brings you 50.", "Du findest einen alten Schatz: +100.": "You find an old treasure: +100.", "Zurück zum Start: Kassiere 200.": "Back to Start: collect 200.", "Der Nebel verwirrt dich: 3 Felder zurück.": "The fog confuses you: 3 squares back.", "Ab in den Sarg!": "Into the coffin!", "Der Wind nimmt deinen Hut mit: −50.": "The wind takes your hat: −50.", "Party in der Gruft: Alle zahlen dir je 20.": "Party in the crypt: everyone pays you 20.", "Du gibst Kürbissaft aus: Du zahlst allen je 20.": "You buy pumpkin juice: you pay everyone 20.", "Renovierung: Zahl 25 je Grabstein.": "Renovation: pay 25 per gravestone.", "Ein Rabe trägt dich 2 Felder weiter.": "A raven carries you 2 squares ahead.", "Du gewinnst den Kürbis-Wettbewerb: +150.": "You win the pumpkin contest: +150.", "Strafe fürs Besenparken: −100.": "Fine for broom parking: −100.", "Wer hier vorbeikommt, bekommt 200.": "Whoever passes here gets 200.", "Nur zu Besuch. Wer im Sarg liegt, kommt mit einem Pasch raus oder setzt eine Runde aus.": "Just visiting. Whoever lies in the coffin gets out with a double or misses a turn.", "Hier ist es ruhig. Nichts passiert.": "It’s quiet here. Nothing happens.", "Wer hier landet, muss in den Sarg.": "Whoever lands here goes into the coffin.", "Hier ziehst du eine Mondkarte.": "Here you draw a moon card.", "Hier zahlst du 100 Nebelsteuer.": "Here you pay 100 fog tax.", "{0} würfelt {1} und landet auf {2}.": "{0} rolls {1} and lands on {2}.", "{0} würfelt einen Pasch und kommt aus dem Sarg!": "{0} rolls a double and gets out of the coffin!", "{0} liegt im Sarg und setzt aus.": "{0} lies in the coffin and misses a turn.", "{0} kommt über Start: +200": "{0} passes Start: +200", "{0} zahlt {1} Miete an {2}.": "{0} pays {1} rent to {2}.", "{0} kann {1} für {2} kaufen.": "{0} can buy {1} for {2}.", "{0} hat nicht genug Geld für {1}.": "{0} doesn’t have enough money for {1}.", "Mondkarte: {0}": "Moon card: {0}", "{0} zahlt {1} Nebelsteuer.": "{0} pays {1} fog tax.", "{0} muss in den Sarg!": "{0} has to go into the coffin!", "{0} kauft {1}.": "{0} buys {1}.", "{0} kauft {1} nicht.": "{0} doesn’t buy {1}.", "{0} baut eine Gruft auf {1}.": "{0} builds a crypt on {1}.", "{0} baut einen Grabstein auf {1}.": "{0} builds a gravestone on {1}.", "{0} ist pleite und scheidet aus.": "{0} is broke and out of the game.", "Alle Runden sind gespielt.": "All rounds have been played.", "Am meisten wert: {0} mit {1} (Geld und Orte).": "Worth the most: {0} with {1} (money and places).", "Miete": "Rent", "Ganzes Viertel": "Whole district", "1 Grabstein": "1 gravestone", "2 Grabsteine": "2 gravestones", "3 Grabsteine": "3 gravestones", "Gruft": "Crypt", "Preis: {0}": "Price: {0}", "Gehört:": "Owner:", "Bauen geht, sobald dir das ganze Viertel gehört.": "You can build once you own the whole district.", "Gruft bauen · {0}": "Build crypt · {0}", "Grabstein bauen · {0}": "Build gravestone · {0}", "Runde {0} von {1}": "Round {0} of {1}", "{0} kaufen · {1}": "Buy {0} · {1}", "Nicht kaufen": "Don’t buy", "Tipp einen deiner Orte an, um vor dem Würfeln zu bauen.": "Tap one of your places to build before rolling."}); /* v1098: Mitternacht und Nachtstadt */
 // I18N_EN_END
 const I18N_SKIP = 'script,style,svg,textarea,code,[contenteditable],[data-raw],.thought,.btx,.mshtx,.mqtx,.nt-q,.phl,.caption,.say,.bubble,.vname,.rsname,.iname,.sname,.pname,.ch-name,.uname,.steck dd,.stxt,.sttx,.mlink,.lpill span,.rules,.nt-tx';
 const I18N_ATTR = ['placeholder', 'title', 'aria-label', 'alt'];
@@ -15547,7 +15809,7 @@ function e2Clean(o){ const r = {}; if (!o || typeof o !== 'object') return r; //
   for (const f of ['post', 'story', 'audio', 'clip']) if (o[f] && typeof o[f] === 'object' && !Array.isArray(o[f])) r[f] = o[f];
   if (o.gift && typeof o.gift.g === 'string' && /^[\w-]{10,220}$/.test(o.gift.g)) r.gift = {g:o.gift.g, i:String(o.gift.i || '').replace(/[^\w-]/g, '').slice(0, 60)}; /* Geschenk-Nachricht */
   if (o.prof && typeof o.prof.u === 'string' && /^[\w-]{6,64}$/.test(o.prof.u)) r.prof = {u:o.prof.u};
-  if (o.game && typeof o.game.id === 'string' && /^[\w-]{4,40}$/.test(o.game.id) && /^(ttt|c4|hang|qz|mr|br|nd)$/.test(o.game.k || '')) r.game = {id:o.game.id, k:o.game.k}; /* v1095: Spiel im Chat */
+  if (o.game && typeof o.game.id === 'string' && /^[\w-]{4,40}$/.test(o.game.id) && /^(ttt|c4|hang|qz|mr|br|nd|mn|ns)$/.test(o.game.k || '')) r.game = {id:o.game.id, k:o.game.k}; /* v1095: Spiel im Chat */
   if (o.kind === 'invite') r.kind = 'invite';
   if (o.kind === 'ginv' && o.g && typeof o.g.id === 'string' && /^g[0-9a-z]+$/.test(o.g.id)) { r.kind = 'ginv'; r.g = {id:o.g.id, n:String(o.g.n || '').slice(0, 40), pub:o.g.pub ? 1 : 0, box:/^#[0-9a-f]{3,8}$/i.test(o.g.box || '') ? o.g.box : '', cnt:Math.max(0, Math.min(9999, +o.g.cnt || 0))}; } // Gruppen-Einladung
   if (o.kind === 'react' && typeof o.to === 'string' && EMOS[o.e]) { r.kind = 'react'; r.to = o.to.slice(0, 60); r.e = o.e; }
@@ -15611,7 +15873,7 @@ function e2Redraw(cid){ clearTimeout(e2RT); e2RT = setTimeout(() => { if (CH.ope
   CH.msgs = e2View(cid, CH.mraw); chSplit(); e2Prev(cid); drawMsgs(!atEnd); }, 40); }
 const e2PrevText = m => m._lock ? '' : m.text || (m.gift ? '🎁 Geschenk' : m.img ? '📷 Foto' : m.clip ? '🎬 Video' : m.audio ? (m.audio.voice ? '♪ Sprachnachricht' : '♪ ' + (m.audio.name || 'Lied')) : m.stk ? 'Sticker' : m.gif ? 'GIF' : m.post ? '🖼 Beitrag' : m.prof ? '👤 Profil' : m.game ? 'Spiel: ' + (CGM_G[m.game.k]?.n || '') : m.story ? '📖 Story' : '');
 function e2Prev(cid){ const l = CH.msgs.filter(m => m._e2e || !m.e2e), m = l[l.length - 1]; if (m && m._e2e && !m._lock) { const t0 = e2PrevText(m); if (!t0) return; const t = (m.from === social?.uid ? tr('Du') + ': ' : '') + t0.slice(0, 60); if (E2E.prev[cid] !== t) { E2E.prev[cid] = t; const c = CH.list.find(x => x.id === cid), cache = e2pvCache(); if (c?.last) { cache[cid] = {t, at:c.last}; try { localStorage.setItem(e2pvKey(), JSON.stringify(cache)); } catch {} } softRender(); } } }
-const PREV_EN = [[/^Du: /, 'You: '], [/♪ Sprachnachricht/, '♪ Voice message'], [/🎁 Geschenk/, '🎁 Gift'], [/📷 Foto/, '📷 Photo'], [/🖼 Beitrag/, '🖼 Post'], [/👤 Profil/, '👤 Profile'], [/♪ Lied$/, '♪ Song'], [/📞 Verpasster Anruf/, '📞 Missed call'], [/📹 Verpasster Videoanruf/, '📹 Missed video call'], [/Spiel: Vier gewinnt/, 'Game: Connect Four'], [/Spiel: Galgenmännchen/, 'Game: Hangman'], [/Spiel: Gruselquiz/, 'Game: Spooky Quiz'], [/Spiel: Mal & Rate/, 'Game: Draw & Guess'], [/Spiel: Begleiter-Rennen/, 'Game: Companion Race'], [/Spiel: Nachtfalter-Duell/, 'Game: Moth Duel'], [/Spiel: /, 'Game: ']]; /* v690: gespeicherte Vorschau-Texte auf Englisch zeigen */
+const PREV_EN = [[/^Du: /, 'You: '], [/♪ Sprachnachricht/, '♪ Voice message'], [/🎁 Geschenk/, '🎁 Gift'], [/📷 Foto/, '📷 Photo'], [/🖼 Beitrag/, '🖼 Post'], [/👤 Profil/, '👤 Profile'], [/♪ Lied$/, '♪ Song'], [/📞 Verpasster Anruf/, '📞 Missed call'], [/📹 Verpasster Videoanruf/, '📹 Missed video call'], [/Spiel: Vier gewinnt/, 'Game: Connect Four'], [/Spiel: Galgenmännchen/, 'Game: Hangman'], [/Spiel: Gruselquiz/, 'Game: Spooky Quiz'], [/Spiel: Mal & Rate/, 'Game: Draw & Guess'], [/Spiel: Begleiter-Rennen/, 'Game: Companion Race'], [/Spiel: Nachtfalter-Duell/, 'Game: Moth Duel'], [/Spiel: Mitternacht/, 'Game: Midnight'], [/Spiel: Nachtstadt/, 'Game: Night Town'], [/Spiel: /, 'Game: ']]; /* v690: gespeicherte Vorschau-Texte auf Englisch zeigen */
 const prevTr = t => LANG === 'en' && t ? PREV_EN.reduce((r, [x, y]) => r.replace(x, y), String(t)) : t;
 const chatPrevText = c => prevTr(c.lastText === '🔒' ? (E2E.prev[c.id] || '…') : c.lastText); // Chatliste: Vorschau nur aus dem eigenen Speicher
 // Vorschau verschlüsselter Chats (Inaya, 2026-10-14): die letzte Nachricht wird auf dem eigenen Gerät entschlüsselt, der Server sieht weiter nur 🔒.
@@ -20362,6 +20624,8 @@ function rtcCard(){ if (!amOwner || !social) return ''; rtcTurn().then(() => { c
    Galgenmännchen: wd (Wort), g (geratene Buchstaben), mi (Fehler, bei 6 vorbei), sc:{uid: Treffer}, lb (wer zuletzt geraten hat), l (Sprache der Wörter).
    Züge laufen über eine Transaktion, auf dem eigenen Gerät stehen sie sofort. Im privaten Chat spielt die andere Person automatisch mit, in Gruppen setzt sich die erste Person dazu, die „Mitspielen“ antippt.
    Belohnung: der erste Sieg am Tag gibt wie früher bei den Minigames 15 Coins + 10 XP (Tic-Tac-Toe und Vier gewinnt über ncGame('ttt'), Galgenmännchen für die meisten Treffer über ncGame('hang')). */
+/* v1097: Begleiter-Rennen und Nachtfalter-Duell nicht mehr startbar (Inaya), alte Karten bleiben spielbar */
+const CGM_OFF = new Set(['br', 'nd']);
 const CGM_G = {
   ttt:{n:'Tic-Tac-Toe', d:'Zu zweit · drei in einer Reihe'},
   c4:{n:'Vier gewinnt', d:'Zu zweit · vier in einer Reihe'},
@@ -20369,7 +20633,9 @@ const CGM_G = {
   qz:{n:'Gruselquiz', d:'Alle zusammen · 5 Gruselfragen'},
   mr:{n:'Mal & Rate', d:'Eine Person malt, alle raten'},
   br:{n:'Begleiter-Rennen', d:'Zu zweit · würfelt mit euren Begleitern'},
-  nd:{n:'Nachtfalter-Duell', d:'Alle zusammen · fang die meisten Falter'}};
+  nd:{n:'Nachtfalter-Duell', d:'Alle zusammen · fang die meisten Falter'},
+  mn:{n:'Mitternacht', d:'2 bis 6 Leute · Kartenspiel, wer zuerst alle Karten los ist, gewinnt'},
+  ns:{n:'Nachtstadt', d:'2 bis 6 Leute · kauf die Stadt und kassiere Miete'}};
 const CGM_ICO = {
   ttt:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3.5v17M15 3.5v17M3.5 9h17M3.5 15h17"/></svg>',
   c4:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14.5" rx="2.2"/><circle cx="8" cy="9" r="1.5"/><circle cx="12" cy="9" r="1.5"/><circle cx="16" cy="9" r="1.5"/><circle cx="8" cy="13.5" r="1.5"/><circle cx="12" cy="13.5" r="1.5"/><circle cx="16" cy="13.5" r="1.5"/><path d="M5.5 18.5V21M18.5 18.5V21"/></svg>',
@@ -20378,11 +20644,13 @@ const CGM_ICO = {
   mr:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.2l4.8 4.8L9.6 19.2 4 20l.8-5.6z"/><path d="M13 6.2l4.8 4.8"/></svg>',
   br:'<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="15.6" rx="4.3" ry="3.6"/><circle cx="6.2" cy="10.4" r="1.8"/><circle cx="9.5" cy="6.6" r="1.8"/><circle cx="14.5" cy="6.6" r="1.8"/><circle cx="17.8" cy="10.4" r="1.8"/></svg>',
   nd:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12C9 5 4 4.5 3 8c1 3.5 5 4.6 9 4zM12 12c3-7 8-7.5 9-4-1 3.5-5 4.6-9 4zM12 12c-2.5 3-6 5.5-8 4.2.5-3 4.5-4.2 8-4.2zM12 12c2.5 3 6 5.5 8 4.2-.5-3-4.5-4.2-8-4.2z"/><path d="M12 8.6v8"/></svg>',
+  mn:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="5.6" width="10" height="14.4" rx="2" transform="rotate(-11 8.2 12.8)"/><rect x="10.6" y="4" width="10" height="14.4" rx="2" transform="rotate(9 15.6 11.2)"/><path d="M16.4 8.6a2.7 2.7 0 1 0 1.8 4.7 2.2 2.2 0 0 1-1.8-4.7z"/></svg>',
+  ns:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20.5h18M4.5 20.5V11l4-3.4 4 3.4v9.5M12.5 20.5V7.6L16 3.5l3.5 4.1v12.9M7.3 20.5v-3.8h2.4v3.8M15 10.3h2M15 13.8h2"/></svg>',
   pad:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 7.5h9.6a4.6 4.6 0 0 1 4.4 5.9l-1 3.4a2.4 2.4 0 0 1-4.1 1L14.4 16H9.6l-1.7 1.8a2.4 2.4 0 0 1-4.1-1l-1-3.4a4.6 4.6 0 0 1 4.4-5.9Z"/><path d="M8 10v3.6M6.2 11.8h3.6"/><path d="M15.3 10.6h.01M17.6 12.9h.01" stroke-width="2.6"/></svg>',
   x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'};
 const HANG_EN = ['CAT','DOG','MOUSE','RAVEN','OWL','SPIDER','WITCH','GHOST','ZOMBIE','VAMPIRE','MUMMY','MONSTER','DRAGON','PUMPKIN','CANDLE','COFFIN','GRAVE','CROSS','FOG','NIGHT','MOON','STARS','CLOUD','RAIN','STORM','THUNDER','SNOW','AUTUMN','WINTER','FLOWER','ROSE','TREE','FOREST','APPLE','CHERRY','CAKE','PIZZA','COOKIE','CANDY','TEA','COFFEE','BREAD','HOUSE','DOOR','WINDOW','CASTLE','TOWER','CELLAR','MIRROR','LAMP','BED','SOFA','CHAIR','TABLE','BOOK','LETTER','PHONE','MUSIC','GUITAR','PIANO','DRUM','SONG','DANCE','PARTY','FRIEND','HEART','LOVE','DREAM','SLEEP','EYE','HAND','DRESS','SKIRT','JACKET','BOOTS','SHOES','COAT','NECKLACE','RING','CROWN','MASK','LIPS','BONES','SKULL','SHADOW','BAT','MOTH','POTION','MAGIC','SPELL','BROOM','CAULDRON','TOMB','CHAPEL','ORGAN','VELVET','LACE','SILVER','CHAIN','KEY','CLOCK','CANDY'];
 const CGM_ABC = {de:[...'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ'], en:[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']};
-const CGM = {s:{}, sub:{}, ov:null, busy:{}, rw:{}, dr:{}, dropNow:false};
+const CGM = {s:{}, sub:{}, ov:null, busy:{}, rw:{}, dr:{}, dropNow:false, pg:{}, pv:null, an:{}};
 try { CGM.rw = JSON.parse(localStorage.getItem('nf-cgmrw') || '{}') || {}; } catch {}
 const cgmK = (cid, id) => cid + '|' + id;
 const cgmOk = k => typeof k === 'string' && /^[\w-]{2,80}\|[\w-]{4,40}$/.test(k);
@@ -20399,6 +20667,7 @@ function cgmWatch(k){ if (!social || !cgmOk(k)) return; const o = CGM.sub[k]; if
 setInterval(() => { for (const k in CGM.sub) { const s = CGM.sub[k]; if (CGM.ov === k || [...document.querySelectorAll('[data-cgm]')].some(e => e.dataset.cgm === k)) { s.t = Date.now(); continue; } if (Date.now() - s.t > 30000) { try { s.u?.(); } catch {} delete CGM.sub[k]; } } }, 15000);
 function cgmStatus(g){
   if (!g) return tr('Lädt …'); if (g.err) return tr('Tritt der Gruppe bei, um mitzuspielen.'); if (g.gone) return tr('Spiel nicht mehr verfügbar');
+  if (CGM_X[g.k]) return xStatus(g);
   const i = cgmMe(g), nm = u => chatWho(u);
   if (CGM_NEW[g.k]) { const s2 = cgmStatus2(g); if (s2 != null) return s2; }
   if (g.k === 'hang') { if (g.st === 'e') return g.w === 'ok' ? tr('Erraten: {0}').replace('{0}', g.wd) : tr('Nicht erraten. Das Wort war {0}.').replace('{0}', g.wd); return tr('Alle raten mit · {0} von 6 Fehlern').replace('{0}', g.mi || 0); }
@@ -20407,7 +20676,7 @@ function cgmStatus(g){
     if (g.why === 'r') { const lo = g.p?.[1 - wi]; return lo === social?.uid ? tr('Du hast aufgegeben') : tr('{0} hat aufgegeben').replace('{0}', nm(lo)); }
     return wi === i ? tr('Du hast gewonnen!') : tr('{0} hat gewonnen').replace('{0}', nm(g.p?.[wi])); }
   return g.t === i ? tr('Du bist dran') : tr('{0} ist dran').replace('{0}', nm(g.p?.[g.t])); }
-function cgmGoTxt(g){ if (!g?._ok) return tr('Öffnen'); if (CGM_NEW[g.k] && g.k !== 'br') return cgmGoTxt2(g); if (g.k === 'hang') return tr(g.st === 'e' ? 'Ansehen' : 'Mitraten');
+function cgmGoTxt(g){ if (!g?._ok) return tr('Öffnen'); if (CGM_X[g.k]) return xGoTxt(g); if (CGM_NEW[g.k] && g.k !== 'br') return cgmGoTxt2(g); if (g.k === 'hang') return tr(g.st === 'e' ? 'Ansehen' : 'Mitraten');
   if (g.st === 'w') return tr(g.p?.includes(social?.uid) ? 'Ansehen' : 'Mitspielen'); if (cgmMy(g)) return tr('Jetzt spielen'); return tr('Ansehen'); }
 /* Steine: Spieler 1 = Kreuz bzw. heller Stein, Spieler 2 = Totenkopf bzw. dunkler Stein */
 const cgmPiece = (k, v) => k === 'br' ? `<span class="cgmtok t${v}"></span>` : k === 'ttt' ? (v === '0' ? TTT_X : v === '1' ? TTT_O : '') : v === '0' || v === '1' ? `<span class="cgmdisc d${v}"></span>` : '';
@@ -20481,12 +20750,12 @@ const mrWord = g => MR_W[mrIdx(g)][LANG === 'en' ? 1 : 0];
 const mrNorm = s => String(s || '').toUpperCase().replace(/Ä/g, 'AE').replace(/Ö/g, 'OE').replace(/Ü/g, 'UE').replace(/ß/g, 'SS').replace(/[^A-Z]/g, '');
 const mrHit = (g, t) => { const n = mrNorm(t); return !!n && MR_W[mrIdx(g)].some(w => mrNorm(w) === n); };
 const mrPath = s => { const p = String(s).split(' ').map(x => x.split(',').map(Number)).filter(x => x.length === 2 && x.every(v => Number.isFinite(v) && v >= 0 && v <= 1000)); return p.length ? 'M' + p.map(x => x.join(' ')).join(' L') + (p.length === 1 ? ' l0.1 0' : '') : ''; };
-const mrSVG = (g, big) => `<svg class="cgmcv${big && g.st === 'p' && g.by === social?.uid ? ' can' : ''}" viewBox="0 0 1000 750" aria-label="${esc(tr('Zeichnung'))}"><rect width="1000" height="750" class="cgmcvbg"/>${(g.s || []).map(s => `<path d="${mrPath(s)}"/>`).join('')}</svg>`;
+const mrSVG = (g, big) => `<svg class="cgmcv${big && g.st === 'p' && g.by === social?.uid ? ' can' : ''}" viewBox="0 0 1000 750" aria-label="${esc(tr('Zeichnung'))}"><rect width="1000" height="750" class="cgmcvbg"/>${(g.s || []).map((s, i, a) => `<path d="${mrPath(s)}"${big && CGM.dropNow && i === a.length - 1 && (CGM.pv?.s || []).length < a.length && g.by !== social?.uid ? ' class="nw" pathLength="1"' : ''}/>`).join('')}</svg>`;
 const mrPick = old => { let last = []; try { last = JSON.parse(localStorage.getItem('nf-mrw') || '[]'); } catch {} const pool = MR_W.map((_, i) => i).filter(i => i !== old && !last.includes(i)), i = pool.length ? pool[Math.floor(Math.random() * pool.length)] : (old + 1) % MR_W.length; try { localStorage.setItem('nf-mrw', JSON.stringify([i, ...last].slice(0, 30))); } catch {} return i * 97 + Math.floor(Math.random() * 97); };
 const qzPick = () => { let last = []; try { last = JSON.parse(localStorage.getItem('nf-qz') || '[]'); } catch {} let pool = QZ.map((_, i) => i).filter(i => !last.includes(i)); if (pool.length < QZ_N) pool = QZ.map((_, i) => i); const q = []; while (q.length < QZ_N) { const i = pool.splice(Math.floor(Math.random() * pool.length), 1)[0]; q.push(i); } try { localStorage.setItem('nf-qz', JSON.stringify([...q, ...last].slice(0, 25))); } catch {} return q; };
 function brPet(u, j){ const k = !u ? '' : u === social?.uid ? me()?.pet?.k : PROF[u]?.pet?.k || S.users[u]?.pet?.k, im = PET_IMG[k]; if (u && !k && u !== social?.uid && social && !PROF[u] && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => { cgmPaint(); if (CGM.ov) cgmUpd(CGM.ov); }).catch(() => {}); } return im ? `<img class="cgmpet" src="${esc(im.src)}" alt="" draggable="false">` : `<span class="cgmtok t${j}"></span>`; }
 const cgmDice = n => { const P = {1:[[12, 12]], 2:[[7.5, 7.5], [16.5, 16.5]], 3:[[7, 7], [12, 12], [17, 17]], 4:[[7.5, 7.5], [16.5, 7.5], [7.5, 16.5], [16.5, 16.5]], 5:[[7, 7], [17, 7], [12, 12], [7, 17], [17, 17]], 6:[[7.5, 6.5], [16.5, 6.5], [7.5, 12], [16.5, 12], [7.5, 17.5], [16.5, 17.5]]}; return `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4.5" class="dbg"/>${(P[n] || []).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.9" class="dpp"/>`).join('')}</svg>`; };
-const cgmTodo = g => !!g?._ok && g.st === 'p' && (CGM_TWO[g.k] ? cgmMy(g) : g.k === 'qz' || g.k === 'nd' ? !cgmDone(g, social?.uid) : g.k === 'mr' ? g.by !== social?.uid : false);
+const cgmTodo = g => CGM_X[g?.k] ? xTodo(g) : !!g?._ok && g.st === 'p' && (CGM_TWO[g.k] ? cgmMy(g) : g.k === 'qz' || g.k === 'nd' ? !cgmDone(g, social?.uid) : g.k === 'mr' ? g.by !== social?.uid : false);
 const cgmWonMe = g => !!g?._ok && g.st === 'e' && (CGM_TWO[g.k] ? g.w === String(cgmMe(g)) : g.k === 'hang' ? g.w === 'ok' : g.w === social?.uid);
 function cgmStatus2(g){ const me0 = social?.uid, nm = u => chatWho(u);
   if (g.k === 'br') return null;
@@ -20512,7 +20781,7 @@ function cgmBoard2(g, big){ const me0 = social?.uid;
     if (!big) return `<span class="cgmqm">${(g.q || []).map((_, i) => `<i class="${i < mine.length ? (mine[i] === '0' ? 'ok' : 'no') : ''}"></i>`).join('')}</span>`;
     const i = qr ? qr.i : mine.length;
     if (g.st === 'p' && i < n) { const q = g.q[i], t = qzTxt(q);
-      return `<div class="cgmqz" data-raw><p class="cgmqn">${esc(tr('Frage {0} von {1}').replace('{0}', i + 1).replace('{1}', n))}</p><p class="cgmqq">${esc(t.q)}</p><div class="cgmqa">${qzOrder(g, q).map(o => `<button type="button" data-act="cgm-qa" data-o="${o}" class="${qr ? (o === 0 ? 'ok' : o === qr.o ? 'no' : 'off') : ''}"${qr ? ' disabled' : ''}>${esc(t.a[o])}</button>`).join('')}</div></div>`; }
+      return `<div class="cgmqz q${i % 2 ? 'b' : 'a'}" data-raw><span class="cgmqdots">${(g.q || []).map((_, j) => `<i class="${j < mine.length ? (mine[j] === '0' ? 'ok' : 'no') : j === i ? 'cur' : ''}"></i>`).join('')}</span><p class="cgmqn">${esc(tr('Frage {0} von {1}').replace('{0}', i + 1).replace('{1}', n))}</p><p class="cgmqq">${esc(t.q)}</p><div class="cgmqa">${qzOrder(g, q).map(o => `<button type="button" data-act="cgm-qa" data-o="${o}" class="${qr ? (o === 0 ? 'ok' : o === qr.o ? 'no' : 'off') : ''}"${qr ? ' disabled' : ''}>${esc(t.a[o])}</button>`).join('')}</div></div>`; }
     return `<div class="cgmqz done" data-raw>${(g.q || []).map((q, j) => { const t = qzTxt(q), my = mine[j]; return `<p class="cgmqr${my === '0' ? ' ok' : my != null ? ' no' : ''}"><span>${esc(t.q)}</span><b>${esc(t.a[0])}</b></p>`; }).join('')}</div>`; }
   if (g.k === 'nd') { const best = Math.max(0, ...cgmWho(g).map(u => cgmPts(g, u)));
     if (!big) return `<span class="cgmndi">${CGM_MOTH}</span>${cgmWho(g).some(u => cgmDone(g, u)) ? `<b class="cgmndb">${esc(tr('Bestwert: {0}').replace('{0}', best))}</b>` : ''}`;
@@ -20582,17 +20851,18 @@ document.addEventListener('pointermove', e => { const D = CGM.drw; if (!D || e.p
 const mrUp = e => { const D = CGM.drw; if (!D || e.pointerId !== D.id) return; CGM.drw = null; D.el.remove(); if (CGM.ov === D.k) mrPush(D.k, D.pts.map(x => x.join(',')).join(' ')); };
 document.addEventListener('pointerup', mrUp); document.addEventListener('pointercancel', mrUp);
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target?.id === 'cgmgi' && CGM.ov) { e.preventDefault(); mrGuess(CGM.ov); } });
-function cgmBoard(g, big){ if (CGM_NEW[g.k]) return cgmBoard2(g, big);
+function cgmBoard(g, big){ if (CGM_X[g.k]) return xBoard(g, big); if (CGM_NEW[g.k]) return cgmBoard2(g, big);
   if (g.k === 'hang') { const L = CGM_ABC[g.l === 'en' ? 'en' : 'de'], gs = g.g || '', end = g.st === 'e';
     const word = `<p class="cgmword" data-raw style="--hn:${(g.wd || '').length}">${[...(g.wd || '')].map(c => `<span class="${gs.includes(c) ? 'on' : end ? 'miss' : ''}">${gs.includes(c) || end || !/[A-ZÄÖÜ]/.test(c) ? esc(c) : ''}</span>`).join('')}</p>`;
     if (!big) return `<span class="cgmhg">${hangSVG(Math.min(6, g.mi || 0))}</span>${word}`;
-    return `<div class="cgmhang">${hangSVG(Math.min(6, g.mi || 0))}${word}</div><div class="cgmkeys" data-raw>${L.map(c => { const u = gs.includes(c); return `<button type="button" data-act="cgm-key" data-c="${c}" class="${u ? ((g.wd || '').includes(c) ? 'hit' : 'no') : ''}"${u || end ? ' disabled' : ''}>${c}</button>`; }).join('')}</div>`; }
+    return `<div class="cgmhang">${hangSVG(Math.min(6, g.mi || 0), CGM.dropNow && (+CGM.pv?.mi || 0) < (+g.mi || 0), end && g.w !== 'ok')}${word}</div><div class="cgmkeys" data-raw>${L.map(c => { const u = gs.includes(c); return `<button type="button" data-act="cgm-key" data-c="${c}" class="${u ? ((g.wd || '').includes(c) ? 'hit' : 'no') : ''}"${u || end ? ' disabled' : ''}>${c}</button>`; }).join('')}</div>`; }
   const w = g.k === 'ttt' ? 3 : 7, b = g.b || '', wl = new Set(g.wl || []), my = big && cgmMy(g);
   const cells = [...b].map((v, i) => { const dr = big && CGM.dropNow && g.ln === i, cl = `cgmcell${v !== '.' ? ' f' : ''}${wl.has(i) ? ' wl' : ''}${dr ? ' drop' : ''}`, pc = cgmPiece(g.k, v);
     if (!big) return `<span class="${cl}">${pc}</span>`;
     const can = my && (g.k === 'ttt' ? v === '.' : b[i % 7] === '.');
     return `<button type="button" class="${cl}"${dr && g.k === 'c4' ? ` style="--dr:${Math.floor(i / 7) + 1}"` : ''} data-act="cgm-mv" data-i="${i}"${can ? '' : ' disabled'} aria-label="${esc(tr(g.k === 'ttt' ? 'Feld {0}' : 'Spalte {0}').replace('{0}', g.k === 'ttt' ? i + 1 : i % 7 + 1))}">${pc}</button>`; }).join('');
-  return `<span class="cgmgrid ${g.k}${my ? ' my' : ''}" style="--gw:${w}">${cells}</span>`; }
+  const W = [...wl].sort((a, b) => a - b), cw = g.k === 'ttt' ? 3 : 7, ch = g.k === 'ttt' ? 3 : 6, ln = big && W.length >= 3 ? `<svg class="cgmwl" viewBox="0 0 ${cw * 10} ${ch * 10}" aria-hidden="true"><line pathLength="1" x1="${W[0] % cw * 10 + 5}" y1="${Math.floor(W[0] / cw) * 10 + 5}" x2="${W[W.length - 1] % cw * 10 + 5}" y2="${Math.floor(W[W.length - 1] / cw) * 10 + 5}"/></svg>` : ''; /* v1099: Gewinnlinie */
+  return `<span class="cgmgrid ${g.k}${my ? ' my' : ''}" style="--gw:${w}">${cells}${ln}</span>`; }
 function cgmCardIn(k, k0){ const g = CGM.s[k], ok = !!g?._ok, kind = ok && CGM_G[g.k] ? g.k : k0;
   return `<div class="cgmc${ok && g.st === 'e' ? ' end' : ''}${cgmTodo(g) ? ' turn' : ''}" data-cgm="${esc(k)}" data-k0="${esc(kind)}" role="button" tabindex="0" data-act="cgm-open"><span class="cgmhd"><span class="cgmic">${CGM_ICO[kind] || CGM_ICO.pad}</span><span class="cgmtt"><small>${esc(tr('Spiel'))}</small><b>${esc(cgmName(kind))}</b></span></span>${ok ? `<span class="cgmmini">${cgmBoard(g, false)}</span>` : ''}<span class="cgmst">${esc(cgmStatus(g))}</span><span class="cgmgo">${esc(cgmGoTxt(g))}</span></div>`; }
 function cgmCardHTML(m){ const x = m.game, cid = m._cid || CH.open; if (!cid || !CGM_G[x?.k] || !/^[\w-]{4,40}$/.test(x.id || '')) return ''; const k = cgmK(cid, x.id); cgmWatch(k); return cgmCardIn(k, x.k); }
@@ -20608,7 +20878,7 @@ function cgmMorphKids(op, np){ const ok = [...op.childNodes], nk = [...np.childN
 function cgmUpd(k){ document.querySelectorAll('.cgmc[data-cgm]').forEach(el => { if (el.dataset.cgm !== k) return; const t = document.createElement('template'); t.innerHTML = cgmCardIn(k, el.dataset.k0); const n = t.content.firstElementChild; try { i18nNode(t.content); } catch {} if (n) cgmMorph(el, n); });
   if (CGM.ov === k) cgmPaint(); cgmReward(k); }
 /* ---------- Fenster (außerhalb von #app, im Design des Chats) ---------- */
-function cgmPlayers(g){ if (CGM_NEW[g.k] && g.k !== 'br') return cgmPlayers2(g);
+function cgmPlayers(g){ if (CGM_X[g.k]) return xPlayers(g); if (CGM_NEW[g.k] && g.k !== 'br') return cgmPlayers2(g);
   if (g.k === 'hang') { const sc = g.sc || {}, ids = Object.keys(sc).sort((a, b) => sc[b] - sc[a]), top = ids.length ? sc[ids[0]] : 0;
     if (!ids.length) return `<p class="cgmhint">${esc(tr('Tippe Buchstaben an. Jeder richtige Buchstabe ist ein Punkt für dich.'))}</p>`;
     return `<div class="cgmsc">${ids.slice(0, 12).map(u => { const ou = cgmUser(u); return `<span class="cgmpl${g.st === 'e' && g.w === 'ok' && sc[u] === top ? ' win' : ''}"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b data-raw>${esc(chatWho(u))}</b><i class="cgmpt">${sc[u]}</i></span>`; }).join('')}</div>`; }
@@ -20617,18 +20887,18 @@ function cgmPlayers(g){ if (CGM_NEW[g.k] && g.k !== 'br') return cgmPlayers2(g);
     const on = g.st === 'p' && g.t === j, win = g.st === 'e' && g.w === String(j);
     return `<span class="cgmpl${on ? ' on' : ''}${win ? ' win' : ''}"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b data-raw>${esc(chatWho(u))}</b><span class="cgmsym${g.k === 'br' ? ' pet' : ''}">${g.k === 'br' ? brPet(u, j) : cgmPiece(g.k, String(j))}</span></span>`; };
   return `<div class="cgmvs">${pl(0)}<span class="cgmvsx">${esc(tr('gegen'))}</span>${pl(1)}</div>`; }
-function cgmActs(g, c){ const i = cgmMe(g), a = [];
+function cgmActs(g, c){ if (CGM_X[g.k]) return xActs(g); const i = cgmMe(g), a = [];
   if (g.st === 'w') { if (i < 0) a.push(['cgm-join', 'Mitspielen', 1]); else a.push(['cgm-stop', 'Abbrechen']); }
   else if (g.st === 'p' && CGM_TWO[g.k] && i >= 0) a.push(['cgm-give', 'Aufgeben']);
   else if (g.st === 'p' && (g.k === 'qz' || g.k === 'nd') && !g.dm && g.by === social?.uid && cgmWho(g).some(u => cgmDone(g, u))) a.push(['cgm-end', 'Auswerten']);
   else if (g.st === 'p' && g.k === 'mr' && g.by === social?.uid) a.push(['cgm-reveal', 'Auflösen']);
-  else if (g.st === 'e' && (CGM_ALL[g.k] || i >= 0 || !g.p?.[1])) a.push(['cgm-again', g.re ? 'Zur Revanche' : {hang:'Neues Wort', qz:'Neues Quiz', nd:'Neue Runde', mr:'Selbst malen'}[g.k] || 'Revanche', 1]);
+  else if (g.st === 'e' && !CGM_OFF.has(g.k) && (CGM_ALL[g.k] || i >= 0 || !g.p?.[1])) a.push(['cgm-again', g.re ? 'Zur Revanche' : {hang:'Neues Wort', qz:'Neues Quiz', nd:'Neue Runde', mr:'Selbst malen'}[g.k] || 'Revanche', 1]);
   a.push(['cgm-chat', 'Zum Chat']);
   return `<div class="cgmacts">${a.map(([x, l, p]) => `<button type="button" class="btn${p ? '' : ' ghost'}" data-act="${x}">${esc(tr(l))}</button>`).join('')}</div>`; }
 function cgmInner(k){
   if (k === 'menu') { const c = CH.list.find(x => x.id === CH.open), two = c && !c.group;
     return `<button type="button" class="gmx" data-act="cgm-x" aria-label="Schließen">${CGM_ICO.x}</button><span class="cgmbig">${CGM_ICO.pad}</span><h3 class="gmn">Spiele</h3><p class="cisub">${two ? `<span>${esc(tr('Such dir ein Spiel aus. {0} spielt automatisch mit.').replace('{0}', chatWho((c.members || []).find(m => m !== social?.uid))))}</span>` : esc(tr('Bei Spielen zu zweit spielt mit, wer zuerst „Mitspielen“ antippt. Bei den anderen machen alle mit.'))}</p>
-      <section class="cibox cgmlist">${Object.keys(CGM_G).map(g => `<button type="button" class="cgmrow" data-act="cgm-start" data-k="${g}"><span class="cgmic">${CGM_ICO[g]}</span><span class="cgmtt"><b>${esc(CGM_G[g].n)}</b><small>${esc(CGM_G[g].d)}</small></span><svg class="cgmarr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>`).join('')}</section>
+      <section class="cibox cgmlist">${Object.keys(CGM_G).filter(g => !CGM_OFF.has(g)).map(g => `<button type="button" class="cgmrow" data-act="cgm-start" data-k="${g}"><span class="cgmic">${CGM_ICO[g]}</span><span class="cgmtt"><b>${esc(CGM_G[g].n)}</b><small>${esc(CGM_G[g].d)}</small></span><svg class="cgmarr" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>`).join('')}</section>
       <p class="cgmhint">${esc(ncGameDone('ttt') && ncGameDone('hang') ? '✓ Tagesbelohnung für heute abgeholt.' : 'Dein erster Sieg am Tag: +{0} Coins · +{1} XP'.replace('{0}', XPC.g * aboM()).replace('{1}', XPV.g * aboM()))}</p>`; }
   const g = CGM.s[k], c = CH.list.find(x => x.id === k.split('|')[0]);
   const head = `<button type="button" class="gmx" data-act="cgm-x" aria-label="Schließen">${CGM_ICO.x}</button>`;
@@ -20636,14 +20906,14 @@ function cgmInner(k){
   return `${head}<div class="cgmh"><span class="cgmic">${CGM_ICO[g.k]}</span><h3 class="gmn">${esc(CGM_G[g.k].n)}</h3></div>${cgmPlayers(g)}
     <div class="cgmbox cgb-${g.k}">${cgmBoard(g, true)}</div>
     <p class="cgmstat${cgmTodo(g) && g.k !== 'mr' ? ' my' : ''}${cgmWonMe(g) ? ' won' : ''}" data-raw>${esc(cgmStatus(g))}</p>${cgmActs(g, c)}`; }
-function cgmPaint(force){ const el = document.querySelector('#cgmov .gmsheet'), k = CGM.ov; if (!el || !k || (CGM.play?.k === k && !force)) return; const y = el.scrollTop, g = CGM.s[k], dk = k + ':' + (g?.n || 0); CGM.dropNow = !!g?._ok && g.n > 0 && !CGM.dr[dk]; CGM.dr[dk] = 1; const t = document.createElement('template'); t.innerHTML = cgmInner(k); CGM.dropNow = false; try { i18nNode(t.content); } catch {} cgmMorphKids(el, t.content); el.scrollTop = y; const D = CGM.drw; if (D?.k === k) { const sv = el.querySelector('svg.cgmcv'); if (sv && !sv.contains(D.el)) sv.appendChild(D.el); } }
+function cgmPaint(force){ const el = document.querySelector('#cgmov .gmsheet'), k = CGM.ov; if (!el || !k || (CGM.play?.k === k && !force)) return; const y = el.scrollTop, g = CGM.s[k], dk = k + ':' + (g?.n || 0); CGM.dropNow = !!g?._ok && g.n > 0 && !CGM.dr[dk]; CGM.dr[dk] = 1; const fresh = CGM.dropNow, pg = CGM.pg[k]; if (fresh) CGM.an[k] = {n:g.n, t:Date.now(), pv:pg?._ok ? pg : null}; const A = CGM.an[k], keep = !!A && A.n === g?.n && Date.now() - A.t < 4000; /* v1099: Animations-Klassen bleiben bei weiteren Zeichnungen desselben Zugs stehen */ CGM.dropNow = keep; CGM.pv = keep ? A.pv : null; const B = fresh ? fxRects(el) : null; const t = document.createElement('template'); t.innerHTML = cgmInner(k); CGM.dropNow = false; CGM.pv = null; try { i18nNode(t.content); } catch {} cgmMorphKids(el, t.content); el.scrollTop = y; if (g?._ok) CGM.pg[k] = g; if (fresh) try { cgmFx(k, g, pg?._ok ? pg : null, B, el); } catch (e) { console.warn('cgmFx', e); } const D = CGM.drw; if (D?.k === k) { const sv = el.querySelector('svg.cgmcv'); if (sv && !sv.contains(D.el)) sv.appendChild(D.el); } }
 function cgmOpen(k){ if (k !== 'menu' && !cgmOk(k)) return; if (k !== 'menu') { cgmWatch(k); const g = CGM.s[k]; if (g?._ok && !g._new) CGM.dr[k + ':' + (g.n || 0)] = 1; } const old = document.getElementById('cgmov'); CGM.ov = k;
   if (old) { cgmPaint(); return; }
   const c = CH.list.find(x => x.id === (k === 'menu' ? CH.open : k.split('|')[0]));
   const w = document.createElement('div'); w.id = 'cgmov'; w.className = 'gmsh cgmov';
   w.innerHTML = `<div class="gmshbg" data-act="cgm-x"></div><div class="gmsheet cinfo cgmsheet${ciThemeAttr(c)}" role="dialog" aria-modal="true"></div>`;
   document.body.appendChild(w); cgmPaint(); requestAnimationFrame(() => requestAnimationFrame(() => w.classList.add('on'))); }
-function cgmClose(){ const w = document.getElementById('cgmov'); if (CGM.play && !CGM.play.done) { cancelAnimationFrame(CGM.play.raf); CGM.play = null; } CGM.qr = null; CGM.drw = null; CGM.ov = null; if (!w) return; w.classList.remove('on'); setTimeout(() => { if (!CGM.ov) w.remove(); }, 260); }
+function cgmClose(){ CGM.mnW = null; CGM.nsSel = null; const w = document.getElementById('cgmov'); if (CGM.play && !CGM.play.done) { cancelAnimationFrame(CGM.play.raf); CGM.play = null; } CGM.qr = null; CGM.drw = null; CGM.ov = null; if (!w) return; w.classList.remove('on'); setTimeout(() => { if (!CGM.ov) w.remove(); }, 260); }
 /* ---------- Spielzüge ---------- */
 const cgmNid = () => 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 function cgmNew(k0, opt={}){ const cid = opt.cid || CH.open, c = CH.list.find(x => x.id === cid); if (!social || !c || !CGM_G[k0]) return null;
@@ -20653,6 +20923,7 @@ function cgmNew(k0, opt={}){ const cid = opt.cid || CH.open, c = CH.list.find(x 
     Object.assign(d, {p:[social.uid], st:'p', wd, g:'', mi:0, sc:{}, l:en ? 'en' : 'de'}); }
   else if (k0 === 'qz' || k0 === 'nd') Object.assign(d, {p:other ? [social.uid, other] : [social.uid], st:'p', dm:other ? 1 : 0, w:''}, k0 === 'qz' ? {q:qzPick(), a:{}} : {sc:{}});
   else if (k0 === 'mr') Object.assign(d, {p:[social.uid], st:'p', wc:mrPick(-1), s:[], gs:[], w:''});
+  else if (CGM_X[k0]) { const p = opt.p || (other ? [social.uid, other] : [social.uid]); Object.assign(d, {p, st:'w', out:[], w:''}); if (p.length > 1) Object.assign(d, {st:'p'}, xInit(k0, d)); } /* v1098 */
   else { const p = opt.p || (other ? [social.uid, other] : [social.uid]); Object.assign(d, {p, st:p.length > 1 ? 'p' : 'w', t:0, w:''}, k0 === 'br' ? {ps:[0, 0], dc:0, dz:''} : {b:'.'.repeat(k0 === 'ttt' ? 9 : 42)}); }
   const k = cgmK(cid, id); CGM.s[k] = {...d, _ok:1, _new:1}; cgmWatch(k);
   cgmRef(k).set(d).then(() => { if (CGM.s[k]?._new) delete CGM.s[k]._new; }).catch(e => { console.warn('cgmNew', e); CGM.s[k] = {err:1}; cgmUpd(k); toastNow('Das Spiel konnte nicht starten. Versuch es nochmal.'); });
@@ -20678,29 +20949,338 @@ function cgmKey(k, ch){ const g = CGM.s[k]; if (!g?._ok || g.k !== 'hang' || g.s
   (async () => { let fine = true; try { await social.db.runTransaction(async tx => { const r = cgmRef(k), d = (await tx.get(r)).data(); if (!d || d.st !== 'p' || (d.g || '').includes(ch)) throw new Error('stale'); tx.update(r, calc(d)); }); }
     catch (e) { fine = false; if (e?.message !== 'stale') { console.warn('cgmKey', e); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); } }
     delete CGM.busy[k]; try { const s = await cgmRef(k).get(), sd = s.data(); if (!(sd && CGM.s[k]?._ok && fine && (+sd.n || 0) < (+CGM.s[k].n || 0))) CGM.s[k] = s.exists ? {...sd, _ok:1} : {gone:1}; } catch { if (!fine) CGM.s[k] = prev; } cgmUpd(k); taskHit('ch'); })(); }
-async function cgmJoin(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'w' || g.p?.includes(social.uid)) return;
+async function cgmJoin(k){ const g = CGM.s[k]; if (CGM_X[g?.k]) return xJoin(k); if (!g?._ok || g.st !== 'w' || g.p?.includes(social.uid)) return;
   const ok = await cgmTx(k, {p:[g.p[0], social.uid], st:'p', t:0, lt:Date.now()}, d => d.st === 'w' && (d.p || []).length === 1 && d.p[0] !== social.uid);
   if (!ok && CGM.s[k]?.st !== 'w') toastNow('Jemand anderes war schneller.'); }
 async function cgmGive(k){ const g = CGM.s[k], i = cgmMe(g); if (!g?._ok || g.st !== 'p' || i < 0 || !CGM_TWO[g.k]) return;
   if (!(await askYesNo('Wirklich aufgeben?', 'Aufgeben', 'Weiterspielen'))) return; cgmTx(k, {st:'e', w:String(1 - i), why:'r', lt:Date.now()}, d => d.st === 'p' && d.p?.[i] === social.uid); }
 function cgmStop(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'w' || g.p?.[0] !== social.uid) return; cgmTx(k, {st:'e', w:'x', lt:Date.now()}, d => d.st === 'w'); }
-async function cgmAgain(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'e') return; const cid = k.slice(0, k.indexOf('|'));
+async function cgmAgain(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'e' || CGM_OFF.has(g.k)) return; const cid = k.slice(0, k.indexOf('|'));
   if (g.re) return cgmOpen(cgmK(cid, g.re));
   const two = !!CGM_TWO[g.k], i = cgmMe(g); if (two && i < 0 && g.p?.[1]) return;
   const id = cgmNid(); let taken = null;
   try { await social.db.runTransaction(async tx => { const r = cgmRef(k), d = (await tx.get(r)).data(); if (d?.re) { taken = d.re; return; } tx.update(r, {re:id}); }); }
   catch (e) { console.warn('cgmAgain', e); toastNow('Das hat nicht geklappt. Versuch es nochmal.'); return; }
   if (taken) return cgmOpen(cgmK(cid, taken));
-  CGM.s[k] = {...g, re:id}; const nk = await cgmNew(g.k, {cid, id, p:two && g.p?.length === 2 ? [g.p[1], g.p[0]] : null}); if (nk) cgmOpen(nk); }
+  CGM.s[k] = {...g, re:id}; const nk = await cgmNew(g.k, {cid, id, p:CGM_X[g.k] ? (i >= 0 ? [social.uid, ...g.p.filter(u => u !== social.uid)] : null) : two && g.p?.length === 2 ? [g.p[1], g.p[0]] : null}); if (nk) cgmOpen(nk); }
 /* Belohnung wie bei den alten Minigames: der erste Sieg am Tag, nur für frisch beendete Spiele */
 function cgmReward(k){ const g = CGM.s[k]; if (!g?._ok || g.st !== 'e' || g._new || CGM.rw[k] || Date.now() - (+g.lt || 0) > 15 * 60000 || !social) return;
   let ok = false; const ref = g.k === 'hang' || g.k === 'qz' || g.k === 'mr' ? 'hang' : 'ttt';
   if (g.k === 'qz' || g.k === 'nd') ok = g.w === social.uid && cgmWho(g).filter(u => cgmDone(g, u)).length >= 2;
   else if (g.k === 'mr') ok = g.w === social.uid;
+  else if (CGM_X[g.k]) ok = g.w === social.uid && (g.p || []).length >= 2;
   else if (g.k === 'hang') { const sc = g.sc || {}, top = Math.max(0, ...Object.values(sc)); ok = g.w === 'ok' && top > 0 && sc[social.uid] === top; }
   else ok = g.why !== 'r' && (g.p || []).length === 2 && g.p[0] !== g.p[1] && g.w === String(cgmMe(g));
   CGM.rw[k] = Date.now(); try { const e = Object.entries(CGM.rw).sort((a, b) => b[1] - a[1]).slice(0, 150); CGM.rw = Object.fromEntries(e); localStorage.setItem('nf-cgmrw', JSON.stringify(CGM.rw)); } catch {}
   if (ok && WAL.d && !ncGameDone(ref)) ncGame(ref); }
+/* ---------- v1098 (Inaya: „Bau das Monopoly und Uno ein“): Mitternacht (Kartenspiel) und Nachtstadt (Brettspiel), eigene Spiele für 2 bis 6 Leute ----------
+   Beide unter chats/<cid>/gm/<id>, keine neuen Regeln. Lobby: st 'w', p = [wer gestartet hat, …], „Mitspielen“ bis X_MAX, wer gestartet hat, tippt „Los geht’s“ (ab 2). Im Privatchat geht es sofort los.
+   Jeder Zug gilt nur, wenn auf dem Server noch dieselbe Version n liegt (xDo); Zufall kommt aus xRng(ts:n), damit Gerät und Server genau dasselbe rechnen.
+   out:[uid] = ausgestiegen bzw. pleite, lt = srvNow() des letzten Zugs; nach X_AFK darf jede andere Person die Runde überspringen.
+   mn Mitternacht: dk (Stapel), dp (Ablage, letzte = oben), h:{uid:[Karten]}, cs (Symbol, das gilt), dir (1/-1), t (Index in p), dw (1 = hat gezogen und darf die Karte legen), un (uid mit einer Karte, die nicht „Mitternacht!“ gerufen hat), ev (letztes Ereignis als flache Liste).
+     Karte = Symbol + Wert: m Mond, f Fledermaus, t Totenkopf, s Spinne; 0–9, a Aussetzen, r Richtungswechsel, p +2; xw Wunschsymbol, xv +4.
+   ns Nachtstadt: mo:{uid: Spielgeld}, po:{uid: Feld}, ow:{Feld: uid}, lv:{Feld: 1–3 Grabsteine, 4 Gruft}, sg:{uid:1} (im Sarg), ph 'r' würfeln | 'b' kaufen, dc [Würfel], rd (Runde), ev ['art|…']. Nach NS_RD Runden gewinnt das meiste Vermögen. */
+const CGM_X = {mn:1, ns:1}, X_MAX = 6, X_AFK = 120000, NS_RD = 15, NS_START = 1500;
+const xRng = s => { let a = cgmHash(s) || 1; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+const xShuf = (a, r) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const xIn = g => (g.p || []).filter(u => !(g.out || []).includes(u));
+const xNext = (g, from, step = 1, dir = 1) => { const n = (g.p || []).length; let i = from; for (let s = 0; s < step; s++) for (let j = 0; j < n; j++) { i = ((i + dir) % n + n) % n; if (!(g.out || []).includes(g.p[i])) break; } return i; };
+const xTodo = g => { const u = social?.uid; return !!g?._ok && ((g.st === 'p' && xIn(g).includes(u) && (g.p[g.t] === u || (g.k === 'mn' && g.un === u))) || (g.st === 'w' && g.p?.[0] === u && g.p.length >= 2)); };
+const xT = (s, ...v) => v.reduce((r, y, i) => r.split('{' + i + '}').join(y), esc(tr(s)));
+const xNm = u => `<b>${esc(u === social?.uid ? (nmOf(u) || me()?.name || chatWho(u)) : chatWho(u))}</b>`; /* v1098: im Ereignis immer der Name (sonst „Du legt“) */
+function xInit(k, d){ return k === 'mn' ? mnInit(d) : nsInit(d); }
+function xDo(k, fn){ const g = CGM.s[k]; if (!g?._ok || CGM.busy[k] || !fn(g)) return false; const n0 = +g.n || 0; return cgmTx(k, d => fn(d) || {}, d => (+d.n || 0) === n0 && !!fn(d)); }
+function xStatus(g){ const me0 = social?.uid, nm = u => chatWho(u);
+  if (g.st === 'w') return g.p?.[0] === me0 ? (g.p.length < 2 ? tr('Wartet auf Mitspieler …') : tr('{0} von {1} dabei · du kannst loslegen').replace('{0}', g.p.length).replace('{1}', X_MAX)) : tr('{0} sucht Mitspieler · {1} von {2} dabei').replace('{0}', nm(g.p?.[0])).replace('{1}', (g.p || []).length).replace('{2}', X_MAX);
+  if (g.st === 'e') return g.w === 'x' ? tr('Abgebrochen') : g.w === me0 ? tr('Du hast gewonnen!') : g.w === 'd' || !g.w ? tr('Unentschieden') : tr('{0} hat gewonnen').replace('{0}', nm(g.w));
+  if (g.k === 'mn' && g.un === me0) return tr('Ruf „Mitternacht!“, bevor dich jemand erwischt!');
+  const cur = g.p?.[g.t]; if (cur === me0) return g.k === 'ns' && g.ph === 'b' ? tr('Kaufen oder nicht?') : tr('Du bist dran');
+  return tr('{0} ist dran').replace('{0}', nm(cur)); }
+function xGoTxt(g){ const me0 = social?.uid; if (g.st === 'w') return tr((g.p || []).includes(me0) ? (g.p[0] === me0 && g.p.length >= 2 ? 'Loslegen' : 'Ansehen') : g.p.length < X_MAX ? 'Mitspielen' : 'Ansehen'); return tr(g.st === 'p' && xTodo(g) ? 'Jetzt spielen' : 'Ansehen'); }
+function xPlayers(g){ const end = g.st === 'e', out = g.out || []; if (g.k === 'mn' && g.st !== 'w') return ''; /* v1099: bei Mitternacht sitzen alle am Tisch */
+  const tile = (u, j) => { const ou = cgmUser(u); if (!ou && social && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => cgmPaint()).catch(() => {}); }
+    const on = g.st === 'p' && g.p[g.t] === u, win = end && g.w === u, o = out.includes(u);
+    const bd = g.st === 'w' ? '' : g.k === 'mn' ? `<i class="cgmpt">${(g.h?.[u] || []).length}</i>` : `<i class="cgmpt">${Math.max(0, +g.mo?.[u] || 0)}</i>`;
+    return `<span class="cgmpl${on ? ' on' : ''}${win ? ' win' : ''}${o ? ' out' : ''}" data-fx="s-${esc(u)}"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span><b data-raw>${esc(chatWho(u))}</b>${bd}${g.k === 'ns' ? `<i class="nstk pl" style="--pc:${NS_PC[j % 6]}"></i>` : ''}${g.k === 'mn' && g.un === u && !end ? '<i class="mnun">1</i>' : ''}</span>`; };
+  const free = g.st === 'w' && (g.p || []).length < X_MAX ? `<span class="cgmpl empty"><span class="cameo"></span><b>${esc(tr('Platz frei'))}</b></span>` : '';
+  return `<div class="cgmsc xpl">${(g.p || []).map(tile).join('')}${free}</div>`; }
+const X_RULES = {
+  mn:['Leg eine Karte mit demselben Symbol oder demselben Wert wie die oberste Karte.', 'Passt nichts, tipp auf den Stapel und zieh eine Karte. Passt sie, darfst du sie gleich legen.', 'Aussetzen: Die nächste Person ist nicht dran. Pfeile: Die Richtung dreht sich.', '+2 und +4: Die nächste Person zieht so viele Karten und ist nicht dran.', 'Wunschsymbol und +4 passen immer. Du wählst, welches Symbol danach gilt.', 'Hast du nur noch eine Karte, ruf „Mitternacht!“. Sonst kann dich jemand erwischen, und du ziehst 2 Karten.', 'Wer zuerst keine Karten mehr hat, gewinnt.'],
+  ns:['Würfel und lauf im Kreis durch die Stadt. Über Start gibt es 200.', 'Freie Orte kannst du kaufen. Landet jemand auf deinem Ort, zahlt er dir Miete.', 'Gehört dir ein ganzes Viertel (gleiche Farbe), ist die Miete doppelt so hoch. Dann kannst du vor dem Würfeln Grabsteine und eine Gruft bauen: Tipp den Ort an.', 'Mondkarten bringen Glück oder Pech. Wer in den Sarg muss, kommt mit einem Pasch raus oder setzt eine Runde aus.', 'Wer pleite ist, scheidet aus. Nach 15 Runden gewinnt, wer am meisten besitzt: Geld, Orte und Gebäude.', 'Gespielt wird mit Spielgeld, nicht mit Nocti-Coins.']};
+function xActs(g){ const me0 = social?.uid, i = cgmMe(g), live = xIn(g), a = [];
+  if (g.st === 'w') { if (i < 0) { if (g.p.length < X_MAX) a.push(['cgm-join', 'Mitspielen', 1]); } else if (i === 0) { if (g.p.length >= 2) a.push(['cgm-xgo', 'Los geht’s', 1]); a.push(['cgm-stop', 'Abbrechen']); } else a.push(['cgm-xleave', 'Nicht mitspielen']); }
+  else if (g.st === 'p') { const cur = g.p[g.t]; if (live.includes(me0) && cur !== me0 && srvNow() - (+g.lt || 0) > X_AFK) a.push(['cgm-xskip', tr('{0} überspringen').replace('{0}', chatWho(cur))]); if (live.includes(me0)) a.push(['cgm-xleave', 'Aussteigen']); }
+  else if (g.re || (g.w !== 'x' && i >= 0)) a.push(['cgm-again', g.re ? 'Zur Revanche' : 'Revanche', 1]);
+  a.push(['cgm-xr', CGM.xr ? 'Regeln ausblenden' : 'Spielregeln']); a.push(['cgm-chat', 'Zum Chat']);
+  return `${CGM.xr ? `<ul class="xrules">${X_RULES[g.k].map(x => `<li>${esc(tr(x))}</li>`).join('')}</ul>` : ''}<div class="cgmacts">${a.map(([x, l, p]) => `<button type="button" class="btn${p ? '' : ' ghost'}" data-act="${x}">${esc(tr(l))}</button>`).join('')}</div>`; }
+function xBoard(g, big){
+  if (g.st === 'w') return big ? `<div class="xlob"><span class="cgmbig">${CGM_ICO[g.k]}</span><p class="cgmhint">${esc(tr('2 bis 6 Leute. Wer mitmachen will, tippt auf „Mitspielen“. Wer das Spiel gestartet hat, legt dann los.'))}</p></div>` : `<span class="xlobm">${esc(tr('{0} von {1} dabei').replace('{0}', (g.p || []).length).replace('{1}', X_MAX))}</span>`;
+  return g.k === 'mn' ? mnBoard(g, big) : nsBoard(g, big); }
+function xStartCalc(d, u){ if (d.st !== 'w' || d.p?.[0] !== u || (d.p || []).length < 2) return null; return {st:'p', n:(+d.n || 0) + 1, lt:srvNow(), ...xInit(d.k, d)}; }
+async function xJoin(k){ const g = CGM.s[k], u = social.uid; if (!g?._ok || g.st !== 'w' || g.p?.includes(u)) return;
+  const ok = await cgmTx(k, d => ({p:[...(d.p || []), u], n:(+d.n || 0) + 1, lt:srvNow()}), d => d.st === 'w' && !(d.p || []).includes(u) && (d.p || []).length < X_MAX);
+  if (!ok) toastNow('Das Spiel ist schon voll oder hat schon angefangen.'); }
+async function xLeave(k){ const g = CGM.s[k]; if (!g?._ok) return; if (g.st === 'p' && !(await askYesNo('Wirklich aussteigen? Danach kannst du in dieser Runde nicht mehr mitspielen.', 'Aussteigen', 'Weiterspielen'))) return; xDo(k, d => xLeaveCalc(d, social.uid)); }
+function xLeaveCalc(d, u){
+  if (d.st === 'w') return d.p?.[0] === u || !(d.p || []).includes(u) ? null : {p:d.p.filter(x => x !== u), n:(+d.n || 0) + 1, lt:srvNow()};
+  if (d.st !== 'p' || !xIn(d).includes(u)) return null; const cur = d.p[d.t] === u, base = {n:(+d.n || 0) + 1, lt:srvNow()};
+  if (d.k === 'mn') { const w = mnCopy(d); w.dk = [...(w.h[u] || []), ...w.dk]; w.h[u] = []; w.out.push(u); const g2 = {p:d.p, out:w.out}, live = xIn(g2);
+    const up = {...base, dk:w.dk, dp:w.dp, h:w.h, out:w.out, un:d.un === u ? '' : d.un || '', ev:['l', u]};
+    if (live.length < 2) return {...up, st:'e', w:live[0] || 'd'}; if (cur) Object.assign(up, {t:xNext(g2, d.t, 1, d.dir || 1), dw:0}); return up; }
+  const w = nsW(d); w.out.push(u); for (const f in w.ow) if (w.ow[f] === u) { delete w.ow[f]; delete w.lv[f]; } delete w.sg[u]; const ev = ['l|' + u];
+  if (cur) return {...base, ...nsEnd(d, w, ev), ev};
+  const live = xIn({p:d.p, out:w.out}), up = {...base, mo:w.mo, ow:w.ow, lv:w.lv, sg:w.sg, out:w.out, ev}; return live.length < 2 ? {...up, st:'e', w:live[0] || 'd'} : up; }
+function xSkipCalc(d, u){ if (d.st !== 'p' || !xIn(d).includes(u) || d.p[d.t] === u || srvNow() - (+d.lt || 0) < X_AFK) return null; const cur = d.p[d.t], base = {n:(+d.n || 0) + 1, lt:srvNow()};
+  if (d.k === 'mn') { const w = mnCopy(d); if (!d.dw) mnTake(w, cur, 1, xRng(d.ts + ':' + d.n)); return {...base, dk:w.dk, dp:w.dp, h:w.h, dw:0, un:'', t:xNext(d, d.t, 1, d.dir || 1), ev:['z', u, cur]}; }
+  const w = nsW(d), ev = ['z|' + u + '|' + cur]; return {...base, ...nsEnd(d, w, ev), ev}; }
+/* Offene Fenster alle 15 s auffrischen, damit „… überspringen“ auch ohne neuen Zug erscheint */
+setInterval(() => { const g = CGM.ov && CGM.s[CGM.ov]; if (g?._ok && CGM_X[g.k] && g.st === 'p' && !CGM.busy[CGM.ov]) cgmPaint(); }, 15000);
+
+/* ---------- Mitternacht ---------- */
+const MN_S = ['m', 'f', 't', 's'], MN_C = {m:'#d9d6e3', f:'#a78bfa', t:'#e0566b', s:'#7fd18b'}, MN_N = {m:'Mond', f:'Fledermaus', t:'Totenkopf', s:'Spinne'}, MN_VO = '0123456789arpwv';
+const MN_ICO = {m:'<path d="M15.6 3.2A9 9 0 1 0 20.8 18 7.4 7.4 0 0 1 15.6 3.2z"/>',
+  f:'<path transform="translate(-1.2 .6) scale(1.1)" d="M12 9.5c-1.2-2-3-2.3-3-2.3l.6 2.4C6.4 9 3.2 10.8 2 14c2-.8 3.5-.6 4.6.4.9-1 2.4-1.2 3.4-.2.5-.9 1.2-1.4 2-1.4s1.5.5 2 1.4c1-1 2.5-.8 3.4.2 1.1-1 2.6-1.2 4.6-.4-1.2-3.2-4.4-5-7.6-4.4l.6-2.4s-1.8.3-3 2.3z"/>',
+  t:'<path d="M12 2.6a7.7 7.7 0 0 0-7.7 7.7c0 2.7 1.4 4.4 3 5.4v3.9h2.4v-1.9h1.1v1.9h2.4v-1.9h1.1v1.9h2.4v-3.9c1.6-1 3-2.7 3-5.4A7.7 7.7 0 0 0 12 2.6z"/><circle class="mnh" cx="8.9" cy="10.4" r="2"/><circle class="mnh" cx="15.1" cy="10.4" r="2"/><path class="mnh" d="M12 12.8l-1.2 2.2h2.4z"/>',
+  s:'<path class="mnl" d="M9.2 11.4L4.6 8.6 3 4.4M9 13.6l-5.6-.4L1.8 16.4M9.4 15.9l-3.8 3-1 3.4M14.8 11.4l4.6-2.8L21 4.4M15 13.6l5.6-.4 1.6 3.2M14.6 15.9l3.8 3 1 3.4"/><ellipse cx="12" cy="14.4" rx="3.5" ry="4.4"/><circle cx="12" cy="8.6" r="2.5"/>'};
+const MN_Q = `<svg class="mnsym mnq" viewBox="0 0 24 24" aria-hidden="true">${[['m', 0, 0], ['f', 12, 0], ['t', 0, 12], ['s', 12, 12]].map(([s, x, y]) => `<g style="color:${MN_C[s]}" transform="translate(${x + .4} ${y + .4}) scale(.47)">${MN_ICO[s]}</g>`).join('')}</svg>`;
+const MN_SKIP = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M6.3 17.7L17.7 6.3"/></svg>';
+const MN_REV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9h13l-3.4-3.4M19.5 15h-13l3.4 3.4"/></svg>';
+const mnSym = s => `<svg class="mnsym" viewBox="0 0 24 24" aria-hidden="true">${MN_ICO[s] || ''}</svg>`;
+const mnSuitDot = s => `<span class="mnsd" style="--sc:${MN_C[s] || '#ecebe7'}">${mnSym(s)}</span>`;
+function mnCard(c, cls = ''){ if (c === 'back') return `<span class="mncd back${cls}">${mnSym('m')}</span>`;
+  const s = c[0], v = c.slice(1), w = s === 'x', sym = w ? MN_Q : mnSym(s);
+  const mid = v === 'a' ? MN_SKIP : v === 'r' ? MN_REV : v === 'p' ? '+2' : v === 'v' ? '+4' : v === 'w' ? MN_Q : esc(v);
+  return `<span class="mncd ${w ? 'wild' : 's-' + s}${v === 'w' ? ' ww' : ''}${cls}"><i class="mnk">${sym}</i><i class="mnv">${mid}</i><i class="mnk b">${sym}</i></span>`; }
+const mnName = c => c[0] === 'x' ? tr(c[1] === 'v' ? '+4 Wunschsymbol' : 'Wunschsymbol') : tr(MN_N[c[0]]) + ' ' + ({a:tr('Aussetzen'), r:tr('Richtungswechsel'), p:'+2'}[c.slice(1)] || c.slice(1));
+const mnSort = (a, b) => (MN_S.indexOf(a[0]) + 1 || 9) - (MN_S.indexOf(b[0]) + 1 || 9) || MN_VO.indexOf(a.slice(1)) - MN_VO.indexOf(b.slice(1));
+const mnTop = g => (g.dp || []).slice(-1)[0] || '';
+const mnFits = (g, c) => { const t = mnTop(g); return c[0] === 'x' || c[0] === g.cs || (t[0] !== 'x' && c.slice(1) === t.slice(1)); };
+const mnCopy = d => ({dk:[...(d.dk || [])], dp:[...(d.dp || [])], h:Object.fromEntries(Object.entries(d.h || {}).map(([u, a]) => [u, [...(a || [])]])), out:[...(d.out || [])]});
+function mnTake(w, u, n, r){ let got = 0; for (let i = 0; i < n; i++) { if (!w.dk.length && w.dp.length > 1) { const top = w.dp.pop(); w.dk = xShuf(w.dp, r); w.dp = [top]; } if (!w.dk.length) break; (w.h[u] = w.h[u] || []).push(w.dk.pop()); got++; } return got; }
+function mnInit(d){ const r = xRng(d.ts + ':deal'), all = [];
+  MN_S.forEach(s => { all.push(s + '0'); for (const v of '123456789arp') all.push(s + v, s + v); }); for (let i = 0; i < 4; i++) all.push('xw', 'xv');
+  const dk = xShuf(all, r), h = {}; d.p.forEach(u => { h[u] = dk.splice(dk.length - 7, 7); });
+  const i = dk.findIndex(c => /^[mfts]\d$/.test(c)), top = dk.splice(i, 1)[0];
+  return {dk, dp:[top], h, cs:top[0], dir:1, t:0, dw:0, un:'', out:[], ev:['s', d.p[0]], w:''}; }
+function mnPlayCalc(d, u, c, pick, call){ if (d.st !== 'p' || d.p[d.t] !== u) return null; const hand = d.h?.[u] || [], i = hand.indexOf(c); if (i < 0 || !mnFits(d, c) || (c[0] === 'x' && !MN_S.includes(pick))) return null;
+  const w = mnCopy(d), r = xRng(d.ts + ':' + d.n), v = c.slice(1), g2 = {p:d.p, out:w.out}, act = xIn(g2).length; w.h[u].splice(i, 1); w.dp.push(c);
+  let dir = d.dir || 1, t; const ev = ['p', u, c], nx = s => xNext(g2, d.t, s, dir);
+  if (v === 'a') { ev.push(d.p[nx(1)]); t = nx(2); }
+  else if (v === 'r') { if (act === 2) t = nx(2); else { dir = -dir; t = nx(1); } }
+  else if (v === 'p' || v === 'v') { const vi = nx(1); mnTake(w, d.p[vi], v === 'p' ? 2 : 4, r); ev.push(d.p[vi]); t = nx(2); }
+  else t = nx(1);
+  const left = w.h[u].length, up = {dk:w.dk, dp:w.dp, h:w.h, cs:c[0] === 'x' ? pick : c[0], dir, t, dw:0, un:left === 1 && !call ? u : '', ev, n:(+d.n || 0) + 1, lt:srvNow()};
+  return left ? up : {...up, st:'e', w:u, un:''}; }
+function mnDrawCalc(d, u){ if (d.st !== 'p' || d.p[d.t] !== u || d.dw) return null; const w = mnCopy(d), got = mnTake(w, u, 1, xRng(d.ts + ':' + d.n)), c = got ? w.h[u][w.h[u].length - 1] : '';
+  const base = {dk:w.dk, dp:w.dp, h:w.h, un:'', n:(+d.n || 0) + 1, lt:srvNow()};
+  return c && mnFits(d, c) ? {...base, dw:1, ev:['d', u]} : {...base, dw:0, t:xNext(d, d.t, 1, d.dir || 1), ev:['d', u, 'x']}; }
+function mnPassCalc(d, u){ if (d.st !== 'p' || d.p[d.t] !== u || !d.dw) return null; return {dw:0, un:'', t:xNext(d, d.t, 1, d.dir || 1), ev:['n', u], n:(+d.n || 0) + 1, lt:srvNow()}; }
+function mnCallCalc(d, u){ if (d.st !== 'p' || d.un !== u) return null; return {un:'', ev:['c', u], n:(+d.n || 0) + 1, lt:srvNow()}; }
+function mnCatchCalc(d, u){ if (d.st !== 'p' || !d.un || d.un === u || !xIn(d).includes(u) || !xIn(d).includes(d.un)) return null; const w = mnCopy(d); mnTake(w, d.un, 2, xRng(d.ts + ':' + d.n));
+  return {dk:w.dk, dp:w.dp, h:w.h, un:'', ev:['k', u, d.un], n:(+d.n || 0) + 1, lt:srvNow()}; }
+function mnPlay(k, c, pick){ const g = CGM.s[k]; if (!g?._ok) return; if (c[0] === 'x' && !pick) { CGM.mnW = {k, c}; return cgmPaint(); }
+  CGM.mnW = null; const call = CGM.mnCall === k + ':' + g.n; CGM.mnCall = null; if (xDo(k, d => mnPlayCalc(d, social.uid, c, pick, call)) === false) cgmPaint(); }
+function mnCallTap(k){ const g = CGM.s[k]; if (!g?._ok) return; if (g.un === social.uid) return xDo(k, d => mnCallCalc(d, social.uid)); const id = k + ':' + g.n; CGM.mnCall = CGM.mnCall === id ? null : id; cgmPaint(); }
+function mnEvHTML(g){ const e = g.ev || [];
+  switch (e[0]) {
+    case 's': return xT('{0} fängt an.', xNm(e[1]));
+    case 'p': { const c = e[2] || '', v = c.slice(1); let s = xT('{0} legt {1}', xNm(e[1]), mnCard(c, ' xs'));
+      if (v === 'a') s += ' · ' + xT('{0} muss aussetzen.', xNm(e[3])); else if (v === 'p' || v === 'v') s += ' · ' + xT('{0} zieht {1} Karten.', xNm(e[3]), v === 'p' ? 2 : 4); else if (v === 'r') s += ' · ' + xT('Die Richtung dreht sich.');
+      if (c[0] === 'x' && g.st === 'p') s += ' · ' + xT('Gewünscht: {0}', mnSuitDot(g.cs)); return s; }
+    case 'd': return e[2] ? xT('{0} zieht eine Karte, sie passt nicht.', xNm(e[1])) : xT('{0} hat eine Karte gezogen.', xNm(e[1]));
+    case 'n': return xT('{0} legt nichts.', xNm(e[1]));
+    case 'c': return xT('{0} ruft „Mitternacht!“', xNm(e[1]));
+    case 'k': return xT('{0} hat {1} erwischt: 2 Karten!', xNm(e[1]), xNm(e[2]));
+    case 'z': return xT('{0} hat {1} übersprungen.', xNm(e[1]), xNm(e[2]));
+    case 'l': return xT('{0} ist ausgestiegen.', xNm(e[1])); }
+  return ''; }
+function mnBoard(g, big){ const me0 = social?.uid, top = mnTop(g) || 'm0', mine = g.h?.[me0] || [], inG = xIn(g).includes(me0);
+  if (!big) return `<span class="mnmini">${mnCard(top, ' sm')}${top[0] === 'x' && g.st === 'p' ? mnSuitDot(g.cs) : ''}${inG && g.st === 'p' ? `<span class="mnmc">${esc(tr('Du: {0} Karten').replace('{0}', mine.length))}</span>` : ''}</span>`;
+  /* v1099 (Inaya: „Uno soll wie in der App sein“): Tisch mit Plätzen rundherum, Fächer in der Hand, Richtungsring, Züge fliegen über mnFx */
+  const my = g.st === 'p' && inG && g.p[g.t] === me0, W = CGM.mnW?.k === CGM.ov ? CGM.mnW : null, end = g.st === 'e', P = g.p || [], mi = P.indexOf(me0), out = g.out || [];
+  const others = mi < 0 ? P : [...P.slice(mi + 1), ...P.slice(0, mi)];
+  const tm = u => g.st === 'p' && P[g.t] === u ? `<svg class="mntm" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" pathLength="100" style="animation-delay:-${Math.max(0, Math.round((srvNow() - (+g.lt || 0)) / 1000))}s"/></svg>` : '';
+  const cam = u => { const ou = cgmUser(u); if (!ou && social && !NT.asked[u]) { NT.asked[u] = 1; loadProf(u).then(() => cgmPaint()).catch(() => {}); } return `<span class="mnav"><span class="cameo">${ou ? headPic(ou, '', true) : ''}</span>${tm(u)}${g.un === u && !end ? '<i class="mnun">1</i>' : ''}</span>`; };
+  const seat = u => { const n = (g.h?.[u] || []).length, f = Math.min(n, 7);
+    return `<div class="mnseat${g.st === 'p' && P[g.t] === u ? ' on' : ''}${out.includes(u) ? ' out' : ''}${end && g.w === u ? ' win' : ''}" data-fx="s-${esc(u)}">${cam(u)}<b data-raw>${esc(chatWho(u))}</b><span class="mnfan" style="--fn:${f}">${Array.from({length:f}, (_, j) => `<i style="--j:${j}"></i>`).join('')}<em>${n}</em></span></div>`; };
+  const dp = g.dp || [], rot = (c, i) => cgmHash(c + ':' + i) % 29 - 14, under = dp.slice(-4, -1);
+  const pile = under.map((c, j) => `<span class="mnund" style="--rot:${rot(c, dp.length - under.length - 1 + j)}deg">${mnCard(c, ' big')}</span>`).join('') + `<span class="mntop" style="--rot:${rot(top, dp.length - 1)}deg">${mnCard(top, ' big')}</span>`;
+  const ring = `<svg class="mnring${(g.dir || 1) < 0 ? ' rev' : ''}" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93"/><g>${[0, 60, 120, 180, 240, 300].map(a => `<path transform="rotate(${a} 100 100)" d="M95 2.5l7 4.5-7 4.5"/>`).join('')}</g></svg>`;
+  let h = `<div class="mnseats" style="--sn:${others.length}">${others.map(seat).join('')}</div>
+    <div class="mntable${my ? ' my' : ''}" style="--mnsc:${MN_C[g.cs] || '#ecebe7'}">${ring}<button type="button" class="mndeck" data-fx="deck" data-act="cgm-mnd"${my && !g.dw ? '' : ' disabled'} aria-label="${esc(tr('Karte ziehen'))}">${mnCard('back', ' big')}<small>${(g.dk || []).length}</small></button><span class="mnpile" data-fx="pile">${pile}</span><span class="mncs">${mnSym(g.cs)}</span></div>
+    <p class="mnev" data-raw>${mnEvHTML(g)}</p>`;
+  if (W && my) h += `<div class="mnpick"><span>${esc(tr('Welches Symbol soll gelten?'))}</span><div>${MN_S.map(s => `<button type="button" data-act="cgm-mns" data-s="${s}" style="--sc:${MN_C[s]}" aria-label="${esc(tr(MN_N[s]))}">${mnSym(s)}</button>`).join('')}<button type="button" class="mnpx" data-act="cgm-mnsx" aria-label="${esc(tr('Abbrechen'))}">${CGM_ICO.x}</button></div></div>`;
+  if (inG || (end && mi >= 0)) { const urg = g.un === me0, arm = my && mine.length === 2 && mine.some(c => mnFits(g, c)), on = CGM.mnCall === CGM.ov + ':' + g.n;
+    h += `<div class="mnme${my ? ' on' : ''}" data-fx="s-${esc(me0)}">${cam(me0)}<span class="mnmet"><b>${esc(my ? tr('Du bist dran') : tr('Deine Karten'))}</b><small>${esc(tr('{0} Karten').replace('{0}', mine.length))}</small></span>${g.st === 'p' && inG ? `<button type="button" class="mncall${urg ? ' urg' : arm ? ' arm' : ''}${on ? ' on' : ''}" data-act="cgm-mnc"${urg || arm ? '' : ' disabled'}><span>${esc(tr('Mitternacht!'))}</span></button>` : ''}</div>`; }
+  if (mine.length && (inG || end)) { const srt = [...mine].sort(mnSort), n = srt.length, st = n > 1 ? Math.min(7, 42 / (n - 1), (Math.min(innerWidth, 560) - 92) / (n - 1) / 8.2) : 0, occ = {};
+    h += `<div class="mnhand${my ? ' my' : ''}" style="--hn:${n}">${srt.map((c, i) => { const ok = my && mnFits(g, c), o = occ[c] = (occ[c] ?? -1) + 1; return `<button type="button" class="${my ? (ok ? 'ok' : 'no') : ''}${W && W.c === c ? ' sel' : ''}" style="--r:${((i - (n - 1) / 2) * st).toFixed(2)}deg;z-index:${i + 1}" data-fx="h-${c}-${o}" data-act="cgm-mnp" data-c="${c}"${ok ? '' : ' disabled'} aria-label="${esc(mnName(c))}">${mnCard(c)}</button>`; }).join('')}</div>`; }
+  else if (g.st === 'p') h += `<p class="cgmhint">${esc(tr(out.includes(me0) ? 'Du bist ausgestiegen und schaust zu.' : 'Du schaust zu.'))}</p>`;
+  const b = [];
+  if (g.st === 'p' && inG) { if (g.un && g.un !== me0 && xIn(g).includes(g.un)) b.push(['cgm-mnk', tr('{0} erwischen!').replace('{0}', chatWho(g.un)), 1]);
+    if (my && g.dw) b.push(['cgm-mnn', 'Weiter', 0]); }
+  if (b.length) h += `<div class="xbtns">${b.map(([a, l, p]) => `<button type="button" class="btn${p === 1 ? ' mnkb' : ' ghost'}" data-act="${a}">${esc(tr(l))}</button>`).join('')}</div>`;
+  return h; }
+/* ---------- Nachtstadt ---------- */
+const NS_F = [{t:'go', n:'Start'}, {d:0, n:'Kerzengasse', c:60}, {t:'k', n:'Mondkarte'}, {d:0, n:'Hexenhütte', c:80}, {t:'tax', n:'Nebelsteuer', v:100}, {t:'sg', n:'Sarg'},
+  {d:1, n:'Rabenturm', c:100}, {d:1, n:'Glockenturm', c:120}, {t:'k', n:'Mondkarte'}, {d:2, n:'Spukvilla', c:140}, {t:'fr', n:'Friedhofsruhe'},
+  {d:2, n:'Gruftkapelle', c:160}, {d:3, n:'Mondsee', c:180}, {d:3, n:'Irrlichtwald', c:200}, {t:'k', n:'Mondkarte'}, {t:'go2', n:'Ab in den Sarg'},
+  {d:4, n:'Schattenmarkt', c:220}, {d:4, n:'Nebelbrücke', c:240}, {d:5, n:'Vampirschloss', c:280}, {d:5, n:'Mitternachtspalast', c:320}];
+const NS_D = ['#8b6a52', '#6f8fb3', '#9a7bc4', '#4f9a8a', '#b5566a', '#c9a24a'], NS_PC = ['#ecebe7', '#a78bfa', '#e0566b', '#7fd18b', '#f4c95d', '#6fb7e0'], NS_LM = [5, 15, 30, 50];
+const NS_K = [['Eine Fledermaus bringt dir 50.', 'm', 50], ['Du findest einen alten Schatz: +100.', 'm', 100], ['Zurück zum Start: Kassiere 200.', 'to'], ['Der Nebel verwirrt dich: 3 Felder zurück.', 'mv', -3], ['Ab in den Sarg!', 'sg'], ['Der Wind nimmt deinen Hut mit: −50.', 'm', -50],
+  ['Party in der Gruft: Alle zahlen dir je 20.', 'all', 20], ['Du gibst Kürbissaft aus: Du zahlst allen je 20.', 'all', -20], ['Renovierung: Zahl 25 je Grabstein.', 'lv', 25], ['Ein Rabe trägt dich 2 Felder weiter.', 'mv', 2], ['Du gewinnst den Kürbis-Wettbewerb: +150.', 'm', 150], ['Strafe fürs Besenparken: −100.', 'm', -100]];
+const NS_TXT = {go:'Wer hier vorbeikommt, bekommt 200.', sg:'Nur zu Besuch. Wer im Sarg liegt, kommt mit einem Pasch raus oder setzt eine Runde aus.', fr:'Hier ist es ruhig. Nichts passiert.', go2:'Wer hier landet, muss in den Sarg.', k:'Hier ziehst du eine Mondkarte.', tax:'Hier zahlst du 100 Nebelsteuer.'};
+const NS_I = {go:'<path d="M20 12H5M10.5 6.5 5 12l5.5 5.5"/>', sg:'<path d="M9 2.5h6l3 5-3 14H9L6 7.5z"/><path d="M12 7v6M9.8 9.2h4.4"/>', fr:'<path d="M6.5 20.5V9.5a5.5 5.5 0 0 1 11 0v11zM4 20.5h16M12 8.5v6M9.6 10.8h4.8"/>',
+  go2:'<path d="M9 2.5h6l3 5-3 14H9L6 7.5z"/><path d="M9.6 11.2l2.4 2.4 2.4-2.4M12 6.5v7"/>', k:'<path d="M15.5 3.5A8.5 8.5 0 1 0 20.5 18 7 7 0 0 1 15.5 3.5z"/>', tax:'<path d="M4 8.5h11M7 12.5h13M4 16.5h11"/>'};
+const NS_RC = i => i <= 5 ? [5, 5 - i] : i <= 10 ? [10 - i, 0] : i <= 15 ? [0, i - 10] : [i - 15, 5];
+const nsW = d => ({mo:{...(d.mo || {})}, po:{...(d.po || {})}, ow:{...(d.ow || {})}, lv:{...(d.lv || {})}, sg:{...(d.sg || {})}, out:[...(d.out || [])]});
+const nsFull = (g, f) => { const D = NS_F[f]?.d, o = g.ow?.[f]; return o != null && NS_F.every((F, i) => !F.c || F.d !== D || g.ow?.[i] === o); };
+const nsRent = (g, f) => { const F = NS_F[f], b = F.c / 10, l = +(g.lv?.[f] || 0); return b * (l ? NS_LM[l - 1] : nsFull(g, f) ? 2 : 1); };
+const nsWorth = (g, u) => { let s = +(g.mo?.[u] || 0); for (const f in g.ow || {}) if (g.ow[f] === u) s += NS_F[f].c + (+(g.lv?.[f] || 0)) * NS_F[f].c / 2; return s; };
+function nsInit(d){ const mo = {}, po = {}; d.p.forEach(u => { mo[u] = NS_START; po[u] = 0; }); return {mo, po, ow:{}, lv:{}, sg:{}, out:[], ph:'r', t:0, rd:1, dc:[], ev:['s|' + d.p[0]], w:''}; }
+function nsLand(d, w, u, r, ev, dep){ const f = w.po[u], F = NS_F[f];
+  if (F.c) { const o = w.ow[f]; if (o == null) { if (w.mo[u] >= F.c) { ev.push('b?|' + u + '|' + f); return 'b'; } ev.push('pr|' + u + '|' + f); return ''; }
+    if (o !== u && !w.out.includes(o)) { const a = nsRent(w, f); w.mo[u] -= a; w.mo[o] = (+w.mo[o] || 0) + a; ev.push('r|' + u + '|' + a + '|' + o); } return ''; }
+  if (F.t === 'tax') { w.mo[u] -= F.v; ev.push('tx|' + u + '|' + F.v); }
+  else if (F.t === 'go2') { w.po[u] = 5; w.sg[u] = 1; ev.push('sg|' + u); }
+  else if (F.t === 'k') { const i = Math.floor(r() * NS_K.length), K = NS_K[i]; ev.push('k|' + u + '|' + i);
+    if (K[1] === 'm') w.mo[u] += K[2];
+    else if (K[1] === 'to') { w.po[u] = 0; w.mo[u] += 200; }
+    else if (K[1] === 'sg') { w.po[u] = 5; w.sg[u] = 1; }
+    else if (K[1] === 'all') xIn({p:d.p, out:w.out}).forEach(o => { if (o !== u) { w.mo[o] -= K[2]; w.mo[u] += K[2]; } });
+    else if (K[1] === 'lv') { let n = 0; for (const x in w.ow) if (w.ow[x] === u) n += +w.lv[x] || 0; w.mo[u] -= n * K[2]; }
+    else if (K[1] === 'mv') { let p = f + K[2]; if (p >= 20) { p -= 20; w.mo[u] += 200; ev.push('go|' + u); } if (p < 0) p += 20; w.po[u] = p; if (dep < 1) return nsLand(d, w, u, r, ev, dep + 1); } }
+  return ''; }
+function nsEnd(d, w, ev){ for (const x of xIn({p:d.p, out:w.out})) if ((+w.mo[x] || 0) < 0) { w.out.push(x); for (const f in w.ow) if (w.ow[f] === x) { delete w.ow[f]; delete w.lv[f]; } delete w.sg[x]; ev.push('bk|' + x); }
+  const g2 = {p:d.p, out:w.out}, live = xIn(g2), up = {mo:w.mo, po:w.po, ow:w.ow, lv:w.lv, sg:w.sg, out:w.out, ph:'r'};
+  if (live.length < 2) return {...up, st:'e', w:live[0] || 'd'};
+  const nt = xNext(g2, d.t, 1, 1), rd = (+d.rd || 1) + (nt <= d.t ? 1 : 0);
+  if (rd > NS_RD) { const ws = live.map(x => [x, nsWorth(up, x)]).sort((a, b) => b[1] - a[1]); ev.push('end|' + ws[0][0] + '|' + ws[0][1]); return {...up, st:'e', w:ws[1] && ws[0][1] === ws[1][1] ? 'd' : ws[0][0], rd:NS_RD}; }
+  return {...up, t:nt, rd}; }
+function nsRollCalc(d, u){ if (d.st !== 'p' || d.p[d.t] !== u || d.ph !== 'r') return null;
+  const r = xRng(d.ts + ':' + d.n), a = 1 + Math.floor(r() * 6), b = 1 + Math.floor(r() * 6), w = nsW(d), ev = [], base = {dc:[a, b], n:(+d.n || 0) + 1, lt:srvNow()};
+  if (w.sg[u]) { delete w.sg[u]; if (a !== b) { ev.push('sw|' + u); return {...base, ...nsEnd(d, w, ev), ev}; } ev.push('so|' + u); }
+  let pos = (+w.po[u] || 0) + a + b, go = pos >= 20; if (go) { pos -= 20; w.mo[u] += 200; } w.po[u] = pos; ev.push('mv|' + u + '|' + (a + b) + '|' + pos); if (go) ev.push('go|' + u);
+  if (nsLand(d, w, u, r, ev, 0) === 'b') return {...base, mo:w.mo, po:w.po, ow:w.ow, lv:w.lv, sg:w.sg, out:w.out, ph:'b', ev};
+  return {...base, ...nsEnd(d, w, ev), ev}; }
+function nsBuyCalc(d, u, yes){ if (d.st !== 'p' || d.p[d.t] !== u || d.ph !== 'b') return null; const f = +d.po[u], F = NS_F[f]; if (!F?.c || d.ow?.[f] != null) return null;
+  const w = nsW(d), ev = (d.ev || []).filter(x => !String(x).startsWith('b?')).slice(-3);
+  if (yes) { if (w.mo[u] < F.c) return null; w.mo[u] -= F.c; w.ow[f] = u; ev.push('by|' + u + '|' + f); } else ev.push('nb|' + u + '|' + f);
+  return {n:(+d.n || 0) + 1, lt:srvNow(), ...nsEnd(d, w, ev), ev}; }
+function nsBuildCalc(d, u, f){ const F = NS_F[f]; if (d.st !== 'p' || d.p[d.t] !== u || d.ph !== 'r' || !F?.c || d.ow?.[f] !== u || !nsFull(d, f)) return null; const l = +(d.lv?.[f] || 0), cost = F.c / 2; if (l >= 4 || (+d.mo?.[u] || 0) < cost) return null;
+  return {mo:{...d.mo, [u]:d.mo[u] - cost}, lv:{...(d.lv || {}), [f]:l + 1}, ev:['bd|' + u + '|' + f + '|' + (l + 1)], n:(+d.n || 0) + 1, lt:srvNow()}; }
+function nsEvLine(s){ const a = String(s).split('|'), F = f => `<b>${esc(tr(NS_F[+f]?.n || ''))}</b>`;
+  switch (a[0]) {
+    case 's': return xT('{0} fängt an.', xNm(a[1]));
+    case 'mv': return xT('{0} würfelt {1} und landet auf {2}.', xNm(a[1]), a[2], F(a[3]));
+    case 'so': return xT('{0} würfelt einen Pasch und kommt aus dem Sarg!', xNm(a[1]));
+    case 'sw': return xT('{0} liegt im Sarg und setzt aus.', xNm(a[1]));
+    case 'go': return xT('{0} kommt über Start: +200', xNm(a[1]));
+    case 'r': return xT('{0} zahlt {1} Miete an {2}.', xNm(a[1]), a[2], xNm(a[3]));
+    case 'b?': return xT('{0} kann {1} für {2} kaufen.', xNm(a[1]), F(a[2]), NS_F[+a[2]]?.c || 0);
+    case 'pr': return xT('{0} hat nicht genug Geld für {1}.', xNm(a[1]), F(a[2]));
+    case 'k': return xT('Mondkarte: {0}', esc(tr(NS_K[+a[2]]?.[0] || '')));
+    case 'tx': return xT('{0} zahlt {1} Nebelsteuer.', xNm(a[1]), a[2]);
+    case 'sg': return xT('{0} muss in den Sarg!', xNm(a[1]));
+    case 'by': return xT('{0} kauft {1}.', xNm(a[1]), F(a[2]));
+    case 'nb': return xT('{0} kauft {1} nicht.', xNm(a[1]), F(a[2]));
+    case 'bd': return xT(a[3] === '4' ? '{0} baut eine Gruft auf {1}.' : '{0} baut einen Grabstein auf {1}.', xNm(a[1]), F(a[2]));
+    case 'bk': return xT('{0} ist pleite und scheidet aus.', xNm(a[1]));
+    case 'z': return xT('{0} hat {1} übersprungen.', xNm(a[1]), xNm(a[2]));
+    case 'l': return xT('{0} ist ausgestiegen.', xNm(a[1]));
+    case 'end': return xT('Alle Runden sind gespielt.') + (a[1] ? ' ' + xT('Am meisten wert: {0} mit {1} (Geld und Orte).', xNm(a[1]), +a[2] || 0) : ''); }
+  return ''; }
+function nsInfo(g, f, my){ const F = NS_F[f], o = g.ow?.[f], l = +(g.lv?.[f] || 0), me0 = social?.uid;
+  let h = `<button type="button" class="nsix" data-act="cgm-nssel" data-f="-1" aria-label="${esc(tr('Schließen'))}">${CGM_ICO.x}</button><b class="nsin"${F.c ? ` style="--dc:${NS_D[F.d]}"` : ''}>${esc(tr(F.n))}</b>`;
+  if (!F.c) return h + `<span class="nsit">${esc(tr(NS_TXT[F.t]))}</span>`;
+  const b = F.c / 10, rows = [['Miete', b], ['Ganzes Viertel', b * 2], ['1 Grabstein', b * 5], ['2 Grabsteine', b * 15], ['3 Grabsteine', b * 30], ['Gruft', b * 50]], cur = o == null ? -1 : l ? l + 1 : nsFull(g, f) ? 1 : 0;
+  h += `<span class="nsit">${o == null ? esc(tr('Preis: {0}').replace('{0}', F.c)) : `${esc(tr('Gehört:'))} <b data-raw>${esc(chatWho(o))}</b>`}</span><span class="nsrt">${rows.map(([x, y], i) => `<span${i === cur ? ' class="on"' : ''}><i>${esc(tr(x))}</i><b>${y}</b></span>`).join('')}</span>`;
+  if (my && g.ph === 'r' && o === me0) { if (!nsFull(g, f)) h += `<small class="nsit">${esc(tr('Bauen geht, sobald dir das ganze Viertel gehört.'))}</small>`;
+    else if (l < 4) { const cost = F.c / 2; h += `<button type="button" class="btn nsbd" data-act="cgm-nsbd" data-f="${f}"${(+g.mo?.[me0] || 0) >= cost ? '' : ' disabled'}>${esc(tr(l === 3 ? 'Gruft bauen · {0}' : 'Grabstein bauen · {0}').replace('{0}', cost))}</button>`; } }
+  return h; }
+const NS_SHY = {Vampirschloss:'Vampir&shy;schloss', Mitternachtspalast:'Mitternachts&shy;palast', Friedhofsruhe:'Friedhofs&shy;ruhe', Schattenmarkt:'Schatten&shy;markt', 'Nebelbrücke':'Nebel&shy;brücke', Gruftkapelle:'Gruft&shy;kapelle', Irrlichtwald:'Irrlicht&shy;wald', Glockenturm:'Glocken&shy;turm', Kerzengasse:'Kerzen&shy;gasse', Nebelsteuer:'Nebel&shy;steuer', 'Hexenhütte':'Hexen&shy;hütte', Rabenturm:'Raben&shy;turm', Mondkarte:'Mond&shy;karte'};
+const nsLbl = n => LANG === 'de' && NS_SHY[n] ? NS_SHY[n] : esc(tr(n)); /* v1098: Trennstellen nur an Wortgrenzen */
+/* v1099: Würfel als Würfel (3D, rollt beim Wurf), Besitzkarte in der Mitte beim Kaufen */
+const NS_DR = {1:'rotateX(0deg) rotateY(0deg)', 2:'rotateX(0deg) rotateY(-90deg)', 3:'rotateX(-90deg) rotateY(0deg)', 4:'rotateX(90deg) rotateY(0deg)', 5:'rotateX(0deg) rotateY(90deg)', 6:'rotateX(0deg) rotateY(180deg)'};
+const NS_DP = {1:[[50, 50]], 2:[[28, 28], [72, 72]], 3:[[26, 26], [50, 50], [74, 74]], 4:[[28, 28], [72, 28], [28, 72], [72, 72]], 5:[[27, 27], [73, 27], [50, 50], [27, 73], [73, 73]], 6:[[28, 24], [72, 24], [28, 50], [72, 50], [28, 76], [72, 76]]};
+const nsDie = (n, j) => `<span class="d3" style="--fr:${NS_DR[n] || NS_DR[1]};--sp:${j ? -1 : 1}" aria-label="${n}"><span class="d3c">${[1, 2, 3, 4, 5, 6].map(f => `<i class="d3f f${f}">${NS_DP[f].map(([x, y]) => `<b style="left:${x}%;top:${y}%"></b>`).join('')}</i>`).join('')}</span></span>`;
+function nsDeed(f, g, late){ const F = NS_F[f], b = F.c / 10;
+  return `<div class="nsdeed${late ? ' late' : ''}" style="--dc:${NS_D[F.d]}"><span class="nsdh"><small>${esc(tr('Zu verkaufen'))}</small><b>${esc(tr(F.n))}</b></span><span class="nsdr">${[['Miete', b], ['Ganzes Viertel', b * 2], ['1 Grabstein', b * 5], ['Gruft', b * 50]].map(([x, y]) => `<span><i>${esc(tr(x))}</i><b>${y}</b></span>`).join('')}</span><span class="nsdp">${esc(tr('Preis: {0}').replace('{0}', F.c))}</span></div>`; }
+function nsBoard(g, big){ const me0 = social?.uid, out = g.out || [], rd = esc(tr('Runde {0} von {1}').replace('{0}', Math.min(+g.rd || 1, NS_RD)).replace('{1}', NS_RD));
+  if (!big) return `<span class="nsmini">${(g.p || []).map((u, j) => out.includes(u) ? '' : `<span class="nsmm${g.st === 'p' && g.p[g.t] === u ? ' on' : ''}"><i class="nstk" style="--pc:${NS_PC[j]}"></i>${Math.max(0, +g.mo?.[u] || 0)}</span>`).join('')}<small>${rd}</small></span>`;
+  const sel = CGM.nsSel?.k === CGM.ov ? CGM.nsSel.f : null, my = g.st === 'p' && g.p[g.t] === me0 && xIn(g).includes(me0), toks = {};
+  (g.p || []).forEach((u, j) => { if (out.includes(u)) return; const f = +g.po?.[u] || 0; (toks[f] = toks[f] || []).push(j); });
+  const mv = (g.ev || []).map(String).find(x => x.startsWith('mv|')), hop = CGM.dropNow && mv ? +(g.po?.[mv.split('|')[1]] ?? -1) : -1;
+  const cells = NS_F.map((F, i) => { const [r, c] = NS_RC(i), o = g.ow?.[i], oc = o != null ? NS_PC[(g.p || []).indexOf(o)] || '#888' : '', l = +(g.lv?.[i] || 0);
+    const inner = F.c ? `<span class="nsst" style="--dc:${NS_D[F.d]}">${l ? `<span class="nslv">${l === 4 ? '<i class="g"></i>' : '<i></i>'.repeat(l)}</span>` : ''}</span><small>${nsLbl(F.n)}</small><span class="nspr">${o != null ? '' : F.c}</span>` : `<svg class="nsi" viewBox="0 0 24 24" aria-hidden="true">${NS_I[F.t]}</svg><small>${nsLbl(F.n)}</small>`;
+    return `<button type="button" class="nsc${F.c ? '' : ' sp'}${i % 5 ? '' : ' cn'}${o != null ? ' own' : ''}${sel === i ? ' sel' : ''}" style="grid-area:${r + 1}/${c + 1}${oc ? ';--oc:' + oc : ''}" data-act="cgm-nssel" data-f="${i}" aria-label="${esc(tr(F.n))}">${inner}<span class="nstoks">${(toks[i] || []).map(j => `<i class="nstk" data-u="${esc(g.p[j])}" style="--pc:${NS_PC[j]}"></i>`).join('')}</span></button>`; }).join('');
+  const ev = (g.ev || []).slice(-4).map(nsEvLine).filter(Boolean).map(x => `<span>${x}</span>`).join('');
+  const bf = g.st === 'p' && g.ph === 'b' ? +(g.po?.[g.p[g.t]] ?? -1) : -1, rl = CGM.dropNow && mv && (!CGM.pv || CGM.pv.ph === 'r') ? ' roll' + ((+g.n || 0) % 2) : '', dice = (g.dc || []).length ? `<span class="nsdc${rl}">${g.dc.map((n, j) => nsDie(n, j)).join('')}</span>` : '';
+  const mid = sel != null ? `<div class="nsinfo">${nsInfo(g, sel, my)}</div>` : bf >= 0 && NS_F[bf]?.c ? `${dice}${nsDeed(bf, g, rl)}` : `<span class="nstt">${esc(tr('Nachtstadt'))}</span>${dice}<span class="nsev" data-raw>${ev}</span><small class="nsrd">${rd}</small>`;
+  const b = [];
+  if (my && g.ph === 'r') b.push(['cgm-nsroll', 'Würfeln', 1]);
+  if (my && g.ph === 'b') { const F = NS_F[+g.po?.[me0] || 0]; b.push(['cgm-nsbuy', tr('{0} kaufen · {1}').replace('{0}', tr(F?.n || '')).replace('{1}', F?.c || 0), 1, 1], ['cgm-nsbuy', 'Nicht kaufen', 0, 0]); }
+  return `<div class="nsb">${cells}<div class="nsmid">${mid}</div></div>${b.length ? `<div class="xbtns">${b.map(([a, l, p, y]) => `<button type="button" class="btn${p ? '' : ' ghost'}" data-act="${a}"${y != null ? ` data-y="${y}"` : ''}>${esc(tr(l))}</button>`).join('')}</div>` : ''}${my && g.ph === 'r' && Object.keys(g.ow || {}).some(f => g.ow[f] === me0 && nsFull(g, +f)) ? `<p class="cgmhint">${esc(tr('Tipp einen deiner Orte an, um vor dem Würfeln zu bauen.'))}</p>` : ''}`; }
+
+/* ---------- v1099 (Inaya: „Gestalte alle Games cooler, richtige Animationen“): Effekte nach einem frischen Zug ----------
+   cgmPaint merkt vor dem Neuzeichnen die Lage aller [data-fx] (fxRects), danach spielt cgmFx die Bewegung: Karten fliegen, Figuren hüpfen, Geld schwebt.
+   Fliegende Teile liegen fest in #cgmov (nicht im Fenster selbst), damit das Vergleichen beim Neuzeichnen (cgmMorph) sie nie mitzählt. */
+const FXR = e => { const r = e.getBoundingClientRect(); return {x:r.left + r.width / 2, y:r.top + r.height / 2, w:r.width, h:r.height}; };
+function fxRects(el){ const B = {}; el.querySelectorAll('[data-fx]').forEach(e => { if (!B[e.dataset.fx]) B[e.dataset.fx] = FXR(e); }); return B; }
+const fxQ = (el, s) => el.querySelector(`[data-fx="${CSS.escape(s)}"]`);
+const fxOff = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fxEl(cls, html, r){ const L = document.getElementById('cgmov'); if (!L || !r) return null; const d = document.createElement('div'); d.className = 'fxo ' + cls; d.innerHTML = html; d.style.left = r.x + 'px'; d.style.top = r.y + 'px'; L.appendChild(d); try { i18nNode(d); } catch {} return d; }
+function fxFly(a, b, html, o = {}){ if (!a || !b) return; const d = fxEl('fxfly ' + (o.cls || ''), html, b); if (!d) return;
+  const an = d.animate([{translate:`${a.x - b.x}px ${a.y - b.y}px`, scale:o.s0 ?? 1, rotate:(o.r0 || 0) + 'deg', opacity:1}, {translate:'0px 0px', scale:o.s1 ?? 1, rotate:(o.r1 || 0) + 'deg', opacity:o.o1 ?? 1}], {duration:o.dur || 420, delay:o.delay || 0, easing:o.ease || 'cubic-bezier(.3,.7,.3,1)', fill:'both'});
+  an.onfinish = an.oncancel = () => d.remove(); }
+function fxBurst(r, html, cls, ms = 1100, delay = 0){ if (!r) return; setTimeout(() => { const d = fxEl('fxburst ' + (cls || ''), html, r); if (d) setTimeout(() => d.remove(), ms); }, delay); }
+function fxFrom(el, a, o = {}){ if (!el || !a) return; const b = FXR(el); return el.animate([{translate:`${a.x - b.x}px ${a.y - b.y}px`, scale:o.s0 ?? 1, rotate:(o.r0 || 0) + 'deg', opacity:o.o0 ?? 1}, {translate:'0px 0px', scale:1, rotate:'0deg', opacity:1}], {duration:o.dur || 360, delay:o.delay || 0, easing:o.ease || 'cubic-bezier(.3,.7,.3,1)', fill:'backwards'}); }
+const FX_BAT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9.5c-1.2-2-3-2.3-3-2.3l.6 2.4C6.4 9 3.2 10.8 2 14c2-.8 3.5-.6 4.6.4.9-1 2.4-1.2 3.4-.2.5-.9 1.2-1.4 2-1.4s1.5.5 2 1.4c1-1 2.5-.8 3.4.2 1.1-1 2.6-1.2 4.6-.4-1.2-3.2-4.4-5-7.6-4.4l.6-2.4s-1.8.3-3 2.3z"/></svg>';
+function fxWin(r){ if (!r) return; for (let i = 0; i < 14; i++) { const a = (i / 14) * Math.PI * 2 + Math.random() * .4, d = 90 + Math.random() * 110, b = {x:r.x + Math.cos(a) * d, y:r.y + Math.sin(a) * d * .8 - 40};
+  fxFly(r, b, FX_BAT, {cls:'fxbat', s0:.3, s1:.9 + Math.random() * .6, r1:(Math.random() - .5) * 60, o1:0, dur:1100 + Math.random() * 500, delay:i * 25, ease:'cubic-bezier(.15,.7,.3,1)'}); }
+  fxBurst(r, `<b>${esc(tr('Gewonnen!'))}</b>`, 'fxtxt win', 1500); }
+function cgmFx(k, g, pg, B, el){ if (!g?._ok || fxOff() || CGM.ov !== k) return;
+  if (g.k === 'mn') mnFx(g, pg, B, el); else if (g.k === 'ns') nsFx(g, pg, B, el);
+  if (g.st === 'e' && pg && pg.st !== 'e' && cgmWonMe(g)) { const s = el.querySelector('.cgmstat'); setTimeout(() => fxWin(s && FXR(s)), g.k === 'ns' ? 900 : 450); } }
+/* Mitternacht */
+function mnFx(g, pg, B, el){ const me0 = social?.uid, e = g.ev || [], deck = fxQ(el, 'deck'), dR = deck && FXR(deck), tbl = el.querySelector('.mntable'), tR = tbl && FXR(tbl), BACK = mnCard('back', ' sm');
+  const seatR = u => { const s = fxQ(el, 's-' + u); return s && FXR(s.querySelector('.mnfan, .mnav') || s); };
+  const hand = [...el.querySelectorAll('.mnhand [data-fx]')], newH = hand.filter(h => !B[h.dataset.fx]);
+  hand.forEach(h => { const a = B[h.dataset.fx]; if (a) { const b = FXR(h); if (Math.hypot(a.x - b.x, a.y - b.y) > 1) h.animate([{translate:`${a.x - b.x}px ${a.y - b.y}px`}, {translate:'0px 0px'}], {duration:340, easing:'cubic-bezier(.3,.7,.3,1)'}); } });
+  const toMe = (list, delay = 0, step = 80) => list.forEach((h, i) => fxFrom(h, dR, {s0:.55, r0:-20, o0:.4, dur:430, delay:delay + i * step}));
+  const toSeat = (u, n, delay = 0, step = 90) => { const r = seatR(u); for (let i = 0; i < n; i++) fxFly(dR, r, BACK, {delay:delay + i * step, s1:.45, r0:-6, r1:18, o1:.15, dur:460}); };
+  const deal = (u, n, delay) => u === me0 ? toMe(newH.slice(-n), delay) : toSeat(u, n, delay);
+  const big = (html, cls, d = 0) => fxBurst(tR, html, 'mnfx ' + cls, 1150, d);
+  if (e[0] === 's') { const P = xIn(g); P.forEach((u, j) => u === me0 ? toMe(hand, j * 60, 65) : toSeat(u, 5, j * 60, 110)); const top = el.querySelector('.mntop'); if (top) fxFrom(top, dR, {s0:.8, r0:-160, dur:520, delay:600}); return; }
+  if (e[0] === 'p') { const u = e[1], c = e[2] || '', v = c.slice(1), top = el.querySelector('.mntop');
+    const src = u === me0 ? Object.entries(B).find(([x]) => x.startsWith('h-' + c + '-'))?.[1] : (B['s-' + u] || seatR(u));
+    if (top && src) fxFrom(top, src, {s0:u === me0 ? 1 : .45, r0:u === me0 ? -24 : 30, dur:400, ease:'cubic-bezier(.2,.8,.3,1.12)'});
+    el.querySelectorAll('.mnund').forEach(x => x.animate([{scale:1.04}, {scale:1}], {duration:260, delay:360}));
+    if (v === 'a') { big(MN_SKIP, 'skip', 300); fxBurst(seatR(e[3]), MN_SKIP, 'mnfx sm skip', 900, 420); }
+    else if (v === 'r') { big(MN_REV, 'rev', 300); el.querySelector('.mnring g')?.animate([{rotate:'0deg'}, {rotate:((g.dir || 1) * 360) + 'deg'}], {duration:900, delay:300, easing:'cubic-bezier(.3,.6,.2,1)'}); }
+    else if (v === 'p' || v === 'v') { big(`<b>${v === 'p' ? '+2' : '+4'}</b>`, 'plus', 300); deal(e[3], v === 'p' ? 2 : 4, 700); }
+    if (c[0] === 'x' && tR) { const w = fxEl('mnwash', `<i style="--sc:${MN_C[g.cs] || '#ecebe7'}"></i>`, tR); if (w) { w.style.width = tR.w + 'px'; w.style.height = tR.h + 'px'; setTimeout(() => w.remove(), 1100); } if (v === 'w') big(`<span style="color:${MN_C[g.cs] || '#ecebe7'}">${mnSym(g.cs)}</span>`, 'suit', 380); }
+    if ((g.h?.[u] || []).length === 1 && !g.un && g.st === 'p') fxBurst(seatR(u) || tR, `<b>${esc(tr('Mitternacht!'))}</b>`, 'fxtxt mncallfx', 1300, 350);
+    return; }
+  if (e[0] === 'd') { deal(e[1], 1, 0); return; }
+  if (e[0] === 'c') { fxBurst(seatR(e[1]) || tR, `<b>${esc(tr('Mitternacht!'))}</b>`, 'fxtxt mncallfx', 1300); return; }
+  if (e[0] === 'k') { big(`<b>${esc(tr('Erwischt!'))}</b>`, 'txt'); deal(e[2], 2, 500); return; }
+  if (e[0] === 'z') { fxBurst(seatR(e[2]), MN_SKIP, 'mnfx sm skip', 900); deal(e[2], 1, 200); } }
+/* Nachtstadt */
+function nsFx(g, pg, B, el){ const ev = (g.ev || []).map(String), cell = f => el.querySelector(`.nsc[data-f="${f}"]`), board = el.querySelector('.nsb'), bR = board && FXR(board);
+  const rolled = ev.find(x => x.startsWith('mv|')) && (!pg || pg.ph === 'r'); let t = 0;
+  if (rolled) { t = 760; const [, u, st, pos] = ev.find(x => x.startsWith('mv|')).split('|'), j = (g.p || []).indexOf(u), to = +(g.po?.[u] ?? pos), from = pg?.po?.[u] != null ? +pg.po[u] : (+pos - +st + 40) % 20;
+    const path = []; let f = from; for (let i = 0; i < +st && i < 12; i++) { f = (f + 1) % 20; path.push(f); } if (path[path.length - 1] !== to) path.push(to);
+    const tok = cell(to)?.querySelector(`.nstk[data-u="${CSS.escape(u)}"]`), pts = [from, ...path].map(x => cell(x)).filter(Boolean).map(FXR);
+    if (tok && pts.length > 1) { const b = FXR(tok), d = fxEl('fxtok', `<i class="nstk" style="--pc:${NS_PC[j] || '#ecebe7'}"></i>`, b), K = [], step = Math.min(190, 1900 / (pts.length - 1));
+      if (d) { pts.forEach((p, i) => { if (i) { const q = pts[i - 1]; K.push({translate:`${(p.x + q.x) / 2 - b.x}px ${(p.y + q.y) / 2 - b.y - 16}px`, scale:1.35}); } K.push({translate:`${p.x - b.x}px ${p.y - b.y}px`, scale:1}); }); K[K.length - 1] = {translate:'0px 0px', scale:1};
+        const hs = document.createElement('style'); hs.textContent = `#cgmov .nsb .nstk[data-u="${CSS.escape(u)}"]{visibility:hidden}`; d.parentNode.appendChild(hs); const an = d.animate(K, {duration:step * (pts.length - 1), delay:t, easing:'linear', fill:'both'}); an.onfinish = an.oncancel = () => { d.remove(); hs.remove(); const tk = document.querySelector(`#cgmov .nsb .nstk[data-u="${CSS.escape(u)}"]`) || tok; tk.animate([{scale:1.6}, {scale:1}], {duration:260, easing:'cubic-bezier(.3,1.6,.5,1)'}); }; t += step * (pts.length - 1); } } }
+  if (pg) (g.p || []).forEach(u => { const dlt = (+g.mo?.[u] || 0) - (+pg.mo?.[u] || 0); if (!dlt) return; const s = fxQ(el, 's-' + u); if (s) fxBurst(FXR(s), `<b>${dlt > 0 ? '+' : '−'}${Math.abs(dlt)}</b>`, 'fxmoney ' + (dlt > 0 ? 'up' : 'dn'), 1300, t + 150); });
+  const k = ev.find(x => x.startsWith('k|')); if (k && rolled) { const K = NS_K[+k.split('|')[2]]; if (K) fxBurst(bR, `<div class="nscard"><span class="nsck">${'<svg viewBox="0 0 24 24" aria-hidden="true">' + NS_I.k + '</svg>'}<small>${esc(tr('Mondkarte'))}</small></span><p>${esc(tr(K[0]))}</p></div>`, 'nscardfx', 2300, t + 100); }
+  const by = ev.find(x => x.startsWith('by|')); if (by && !rolled) { const f = +by.split('|')[2], c = cell(f); if (c) { c.animate([{scale:1.25, filter:'brightness(1.8)'}, {scale:1, filter:'brightness(1)'}], {duration:520, easing:'cubic-bezier(.3,1.5,.5,1)'}); fxBurst(FXR(c), '<i></i>', 'nsring', 800); } }
+  const bd = ev.find(x => x.startsWith('bd|')); if (bd) { const c = cell(+bd.split('|')[2]); if (c) fxBurst(FXR(c), '<i></i>', 'nsring', 800); }
+  if (ev.some(x => x.startsWith('sg|')) && rolled) fxBurst(bR, `<b>${esc(tr('Ab in den Sarg!'))}</b>`, 'fxtxt', 1300, t);
+  const bk = ev.find(x => x.startsWith('bk|')); if (bk) fxBurst(bR, `<b>${esc(tr('{0} ist pleite!').replace('{0}', chatWho(bk.split('|')[1])))}</b>`, 'fxtxt', 1500, t + 200); }
+
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-act^="cgm-"]'); if (!b) return; const a = b.dataset.act; e.preventDefault(); e.stopPropagation();
   if (!social) return; const k = CGM.ov;
   if (a === 'cgm-menu') { if (typeof chatAttach !== 'undefined' && chatAttach) { chatAttach = false; render(); } return cgmOpen('menu'); }
@@ -20711,6 +21291,21 @@ document.addEventListener('click', e => { const b = e.target.closest?.('[data-ac
   if (a === 'cgm-mv') return cgmMove(k, +b.dataset.i);
   if (a === 'cgm-key') return cgmKey(k, b.dataset.c);
   if (a === 'cgm-join') return cgmJoin(k);
+  if (a === 'cgm-xgo') return xDo(k, d => xStartCalc(d, social.uid));
+  if (a === 'cgm-xleave') return xLeave(k);
+  if (a === 'cgm-xskip') return xDo(k, d => xSkipCalc(d, social.uid));
+  if (a === 'cgm-xr') { CGM.xr = !CGM.xr; return cgmPaint(); }
+  if (a === 'cgm-mnp') return mnPlay(k, b.dataset.c);
+  if (a === 'cgm-mns') { const W = CGM.mnW; if (W?.k === k) mnPlay(k, W.c, b.dataset.s); return; }
+  if (a === 'cgm-mnsx') { CGM.mnW = null; return cgmPaint(); }
+  if (a === 'cgm-mnd') return xDo(k, d => mnDrawCalc(d, social.uid));
+  if (a === 'cgm-mnn') return xDo(k, d => mnPassCalc(d, social.uid));
+  if (a === 'cgm-mnc') return mnCallTap(k);
+  if (a === 'cgm-mnk') return xDo(k, d => mnCatchCalc(d, social.uid));
+  if (a === 'cgm-nsroll') return xDo(k, d => nsRollCalc(d, social.uid));
+  if (a === 'cgm-nsbuy') return xDo(k, d => nsBuyCalc(d, social.uid, b.dataset.y === '1'));
+  if (a === 'cgm-nssel') { const f = +b.dataset.f; CGM.nsSel = f < 0 || (CGM.nsSel?.k === k && CGM.nsSel.f === f) ? null : {k, f}; return cgmPaint(); }
+  if (a === 'cgm-nsbd') return xDo(k, d => nsBuildCalc(d, social.uid, +b.dataset.f));
   if (a === 'cgm-give') return cgmGive(k);
   if (a === 'cgm-stop') return cgmStop(k);
   if (a === 'cgm-again') return cgmAgain(k);
@@ -23049,7 +23644,7 @@ const memSym = v => v === '✝' ? TTT_X : v === '☠' ? TTT_O : v, MEM_NAME = {'
 const HANG_WORDS = ['KATZE','HUND','MAUS','VOGEL','RABE','EULE','SPINNE','HEXE','GEIST','ZOMBIE','VAMPIR','MUMIE','MONSTER','DRACHE','KÜRBIS','KERZE','SARG','GRAB','KREUZ','NEBEL','NACHT','MOND','STERNE','SONNE','WOLKE','REGEN','BLITZ','DONNER','SCHNEE','HERBST','WINTER','SOMMER','BLUME','ROSE','BAUM','WALD','BLATT','APFEL','BIRNE','KIRSCHE','BANANE','ZITRONE','KUCHEN','TORTE','PIZZA','NUDELN','KEKS','BONBON','TEE','KAFFEE','MILCH','BROT','KÄSE','HAUS','TÜR','FENSTER','SCHLOSS','TURM','BURG','KELLER','DACH','TREPPE','SPIEGEL','LAMPE','BETT','SOFA','STUHL','TISCH','SCHRANK','BUCH','BRIEF','STIFT','HANDY','MUSIK','GITARRE','KLAVIER','TROMMEL','LIED','TANZ','PARTY','FREUND','HERZ','LIEBE','KUSS','TRAUM','SCHLAF','AUGE','HAND','HAARE','KLEID','ROCK','HOSE','JACKE','STIEFEL','SCHUHE','MANTEL','MÜTZE','KETTE','RING','KRONE','MASKE','LIPPEN','BLUT','KNOCHEN','SCHÄDEL','FRIEDHOF','SCHATTEN','ANGST','SCHREI','ZAUBER','BESEN','KATER','PFERD','WOLF','HASE','IGEL','FROSCH','SCHLANGE','PANDA','TIGER','LÖWE','AFFE','ELEFANT','EINHORN','PRINZ','KÖNIG','PIRAT','RITTER','ENGEL','TEUFEL','HIMMEL','STADT','STRAND','MEER','INSEL','BERG','FLUSS','SCHULE','PAUSE','FERIEN','URLAUB','GESCHENK','KAMERA','FOTO','VIDEO','SPIEL','PUZZLE','BALL','FLEDERMAUS','TOTENKOPF']; /* bekannte, kürzere Wörter (Inaya, 2026-10-17) */ // 160 düstere Wörter (Inaya, 2026-10-14)
 function setBest(k, v, higher){ S.games = S.games || {}; const b = S.games[k]; if (b == null || (higher ? v > b : v < b)) { S.games[k] = v; save(); return true; } return false; }
 function memNew(){ const d = [...MEM_SYM, ...MEM_SYM].map(v => ({v, open:false, done:false})); for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; } GM.mem = {d, pick:[], moves:0, lock:false}; }
-const TTT_X = '<svg class="tttic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5v19M6 8h12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M12 2.5v19M6 8h12" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" opacity=".6"/></svg>';
+const TTT_X = '<svg class="tttic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5v19" pathLength="1" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M6 8h12" pathLength="1" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>';
 const TTT_O = '<svg class="tttic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6c-4.9 0-8.4 3.4-8.4 7.9 0 2.7 1.3 4.6 3.1 5.7v2.9a1.3 1.3 0 0 0 1.3 1.3h8a1.3 1.3 0 0 0 1.3-1.3v-2.9c1.8-1.1 3.1-3 3.1-5.7 0-4.5-3.5-7.9-8.4-7.9Z" fill="currentColor"/><circle cx="8.8" cy="11" r="2.1" fill="#141218"/><circle cx="15.2" cy="11" r="2.1" fill="#141218"/><path d="M11.1 14.6l.9-1.5.9 1.5Z" fill="#141218"/><path d="M9.6 17.6v2.2M12 17.6v2.2M14.4 17.6v2.2" stroke="#141218" stroke-width="1.1"/></svg>';
 /* Wer anfängt, wechselt bei jedem neuen Spiel (Inaya, 2026-10-16); fängt der Computer an, setzt er nach kurzer Pause */
 function tttNew(){ GM.tttFirst = GM.tttFirst === 'X' ? 'O' : 'X'; const t = GM.ttt = {b:Array(9).fill(''), over:'', turn:GM.tttFirst, first:GM.tttFirst}; if (t.first === 'O') tttCpu(t); }
@@ -23070,9 +23665,9 @@ function tttAI(b){
   const corners = [0,2,6,8].filter(i => !b[i]); if (corners.length) return corners[Math.floor(Math.random() * corners.length)];
   return free[Math.floor(Math.random() * free.length)];
 }
-function hangSVG(n){
-  const parts = ['<path d="M10 110H70M25 110V10H65V22"/>','<circle cx="65" cy="30" r="8"/>','<path d="M65 38V70"/>','<path d="M65 46L52 58"/>','<path d="M65 46L78 58"/>','<path d="M65 70L54 90"/>','<path d="M65 70L76 90"/>'];
-  return `<svg class="hang" viewBox="0 0 100 120" aria-label="${n} von 6 Fehlern"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">${parts.slice(0, n + 1).join('')}</g></svg>`;
+function hangSVG(n, nw, lost){ /* v1099: neuer Teil zeichnet sich (nw), verloren = Figur schaukelt */
+  const parts = ['<path d="M10 110H70M25 110V10H65V22"/>','<circle cx="65" cy="30" r="8"/>','<path d="M65 38V70"/>','<path d="M65 46L52 58"/>','<path d="M65 46L78 58"/>','<path d="M65 70L54 90"/>','<path d="M65 70L76 90"/>'].map((x, i) => i === n && nw ? x.replace(/^<(\w+)/, '<$1 class="nw" pathLength="1"') : x);
+  return `<svg class="hang${lost ? ' lost' : ''}" viewBox="0 0 100 120" aria-label="${n} von 6 Fehlern"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">${parts[0]}<g class="hfig">${parts.slice(1, n + 1).join('')}</g></g></svg>`;
 }
 function gamesView(){
   const tabs = [['memory','Memory'],['ttt','Tic-Tac-Toe'],['hang','Galgenmännchen'],['bat','Fledermausjagd']]; /* schlichte Namen (Inaya, 2026-10-17) */
