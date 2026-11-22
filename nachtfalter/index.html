@@ -3,7 +3,7 @@
 <title>Noctibat</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="pwa/icon-180.png"><link rel="icon" type="image/png" href="pwa/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Noctibat"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#000000">
-<script>window.NF_BUILD='f64d0463efc5';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
+<script>window.NF_BUILD='47e118bcbf82';(function(){let busy=false;async function chk(){if(busy||document.visibilityState!=='visible')return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value)return;busy=true;try{const b=await fetch('/build.txt?v='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.text():'').catch(()=>'');if(/^[0-9a-f]{12}$/.test(b.trim())&&b.trim()===window.NF_BUILD){busy=false;return;}const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});const m=(await r.text()).match(/NF_BUILD='([0-9a-f]{12})'/);if(m&&m[1]!==window.NF_BUILD){const k='nf-up-'+m[1];if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');location.reload();}}}catch(e){}busy=false;}document.addEventListener('visibilitychange',chk);setTimeout(chk,2500);})();</script>
 <script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script>
 <script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
@@ -4932,6 +4932,13 @@ form.vhold>.vrhold{position:relative;z-index:1}
   .obwear .wardrobe>.card:not(.mirror-card){flex:none!important;overflow:visible!important}
   .obwear .wardrobe .mirror-card .mirror{height:100%;max-height:520px}
 }
+/* v1097 (flüssig): Regenbogen-Rand der Pille im Abo-Beitrag. Vorher drehte sich der Farbverlauf über die Eigenschaft --aba: der Browser musste in jedem Bild Stil und Farbe neu rechnen und große Teile des Salons neu malen (am Handy etwa 80 % der Rechenzeit, solange der Beitrag zu sehen war).
+   Jetzt dreht sich derselbe Farbkreis als eigene Ebene per transform (rechnet die Grafikkarte), die Füllung liegt als ::after darüber. Aussehen gleich: Rand 1,5 px, Innenfarbe #1b1424, gleiche Farben, 5 s je Runde */
+.aboadtri{position:relative;isolation:isolate;clip-path:inset(0 round 999px);background:none;animation:none}
+.aboadtri::before{content:"";position:absolute;z-index:-2;left:50%;top:50%;width:130%;aspect-ratio:1;translate:-50% -50%;background:conic-gradient(from 0deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de,#ff2d55);animation:abospinT 5s linear infinite;will-change:transform}
+.aboadtri::after{content:"";position:absolute;z-index:-1;inset:0;border-radius:999px;background:#1b1424}
+@keyframes abospinT{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion:reduce){.aboadtri::before{animation:none}}
 </style>
 
 <div id="splash" aria-hidden="true"><span class="logo-mark logo-img"></span><small>ein Ort für Freunde</small></div>
@@ -9196,13 +9203,20 @@ function rzSet(sc, s, x, y){ const r = sc.querySelector('.room'), W = sc.clientW
   Object.assign(RZ, {s, x, y, key:rzKey()}); if (r) r.style.transform = s === 1 ? '' : `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${s.toFixed(3)})`; sc.classList.toggle('rzoomed', s > 1); }
 function rzApply(){ if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); } const sc = rzEls()[0]; if (sc && RZ.s > 1) rzSet(sc, RZ.s, RZ.x, RZ.y); }
 const rzPt = (sc, t) => { const R = sc.getBoundingClientRect(); return {x:t.clientX - R.left, y:t.clientY - R.top}; };
-document.addEventListener('touchstart', e => { const sc = e.target.closest?.('.rscroll'); if (!sc || !rzEls().includes(sc)) return; if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); }
+/* v1097 (flüssig): Wächter, die Wischen abfangen (passive:false), hängen nur am Dokument, solange die Seite sie braucht.
+   Ein solcher Wächter am Dokument lässt den Browser bei JEDEM Wischen auf der ganzen Seite erst auf das Skript warten; war es gerade beschäftigt, ruckelte das Scrollen.
+   `tgAdd(art, fn, need)`: `need()` sagt, ob er gerade gebraucht wird. `tgSync()` läuft nach jedem Zeichnen, bei Klassenwechsel an html/body und nach jeder Berührung. */
+const TGL = []; function tgSync(){ for (const o of TGL) { let n = false; try { n = !!o.need(); } catch {} if (n !== o.on) { o.on = n; if (n) document.addEventListener(o.type, o.fn, {passive:false}); else document.removeEventListener(o.type, o.fn, {passive:false}); } } }
+function tgAdd(type, fn, need){ TGL.push({type, fn, need, on:false}); tgSync(); }
+{ let q = 0; const soon = () => { if (!q) q = requestAnimationFrame(() => { q = 0; tgSync(); }); }; document.addEventListener('touchend', soon, {passive:true}); document.addEventListener('touchcancel', soon, {passive:true}); document.addEventListener('click', soon, {passive:true});
+  const mo = new MutationObserver(soon); const watch = () => { mo.observe(document.documentElement, {attributes:true, attributeFilter:['class']}); if (document.body) mo.observe(document.body, {attributes:true, attributeFilter:['class', 'data-pg']}); }; if (document.body) watch(); else addEventListener('DOMContentLoaded', watch); }
+tgAdd('touchstart', e => { const sc = e.target.closest?.('.rscroll'); if (!sc || !rzEls().includes(sc)) return; if (RZ.key !== rzKey()) { RZ.s = 1; RZ.x = 0; RZ.y = 0; RZ.key = rzKey(); }
   if (e.touches.length >= 2) { rDragCancel(); if (rsz) { rsz = null; render(); } } if (e.touches.length === 2) { const a = rzPt(sc, e.touches[0]), b = rzPt(sc, e.touches[1]); RZ.t = {sc, d0:Math.hypot(a.x - b.x, a.y - b.y) || 1, s0:RZ.s, m0:{x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}, x0:RZ.x, y0:RZ.y}; e.preventDefault(); }
-  else if (e.touches.length === 1 && RZ.s > 1 && !sc.querySelector('.room.edit')) { const a = rzPt(sc, e.touches[0]); RZ.t = {sc, pan:1, p0:a, x0:RZ.x, y0:RZ.y, mv:0}; } }, {passive:false});
-document.addEventListener('touchmove', e => { const t = RZ.t; if (!t) return;
+  else if (e.touches.length === 1 && RZ.s > 1 && !sc.querySelector('.room.edit')) { const a = rzPt(sc, e.touches[0]); RZ.t = {sc, pan:1, p0:a, x0:RZ.x, y0:RZ.y, mv:0}; } }, () => !!document.querySelector('.rscroll'));
+tgAdd('touchmove', e => { const t = RZ.t; if (!t) return;
   if (t.pan) { if (e.touches.length !== 1) return; const a = rzPt(t.sc, e.touches[0]); t.mv = Math.max(t.mv, Math.hypot(a.x - t.p0.x, a.y - t.p0.y)); rzSet(t.sc, RZ.s, t.x0 + a.x - t.p0.x, t.y0 + a.y - t.p0.y); e.preventDefault(); return; }
   if (e.touches.length !== 2) return; const a = rzPt(t.sc, e.touches[0]), b = rzPt(t.sc, e.touches[1]), m = {x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}, s = Math.max(1, Math.min(3, t.s0 * Math.hypot(a.x - b.x, a.y - b.y) / t.d0));
-  rzSet(t.sc, s, m.x - (t.m0.x - t.x0) * s / t.s0, m.y - (t.m0.y - t.y0) * s / t.s0); e.preventDefault(); }, {passive:false});
+  rzSet(t.sc, s, m.x - (t.m0.x - t.x0) * s / t.s0, m.y - (t.m0.y - t.y0) * s / t.s0); e.preventDefault(); }, () => !!document.querySelector('.rscroll'));
 document.addEventListener('touchend', e => { if (RZ.t && (RZ.t.pan ? e.touches.length === 0 : e.touches.length < 2)) RZ.t = null; });
 document.addEventListener('touchcancel', () => { RZ.t = null; });
 ['gesturestart', 'gesturechange'].forEach(n => document.addEventListener(n, e => { if (e.target.closest?.('.rscroll')) e.preventDefault(); }, {passive:false}));
@@ -10898,7 +10912,7 @@ function hslPaint(el){ const bar = el.nextElementSibling; if (!bar?.classList.co
   const t = bar.firstElementChild; t.style.width = (el.clientWidth / el.scrollWidth * 100).toFixed(2) + '%'; t.style.left = (el.scrollLeft / el.scrollWidth * 100).toFixed(2) + '%'; }
 const HSLPOS = {}; /* Schiebe-Stelle je Leiste: bleibt beim Neuzeichnen (z. B. nach Klick auf „Jacken“) erhalten */
 /* v973 (Inaya): Mausrad scrollt die Teile-Reihen seitlich */
-document.addEventListener('wheel', e => { const g = e.target.closest?.('.shopgrid.hsl'); if (!g || Math.abs(e.deltaX) > Math.abs(e.deltaY) || g.scrollWidth <= g.clientWidth + 2) return; const max = g.scrollWidth - g.clientWidth, nx = Math.max(0, Math.min(max, g.scrollLeft + e.deltaY)); if (nx === g.scrollLeft) return; g.scrollLeft = nx; e.preventDefault(); }, {passive:false});
+tgAdd('wheel', e => { const g = e.target.closest?.('.shopgrid.hsl'); if (!g || Math.abs(e.deltaX) > Math.abs(e.deltaY) || g.scrollWidth <= g.clientWidth + 2) return; const max = g.scrollWidth - g.clientWidth, nx = Math.max(0, Math.min(max, g.scrollLeft + e.deltaY)); if (nx === g.scrollLeft) return; g.scrollLeft = nx; e.preventDefault(); }, () => !!document.querySelector('.shopgrid.hsl'));
 function hslFit(){ document.querySelectorAll(HSL_SEL).forEach((el, i) => { el.classList.add('hsl'); let bar = el.nextElementSibling; const key = V.name + ':' + i + ':' + (el.classList.contains('subtabs') ? 's' : 't');
   if (!bar?.classList.contains('hslbar')) { bar = document.createElement('div'); bar.className = 'hslbar'; bar.setAttribute('aria-hidden', 'true'); bar.innerHTML = '<i></i>'; el.after(bar);
     if (HSLPOS[key]) el.scrollLeft = HSLPOS[key];
@@ -12892,7 +12906,7 @@ async function stCamStart(dev){
     if (!navigator.mediaDevices?.getUserMedia) throw 0;
     const dm = CAMPROF[CAMPI] || {}, vc = dev ? {deviceId:{exact:dev}, ...dm} : {facingMode:stCam.facing, ...dm}; /* v913: Safari tauscht Breite/Höhe im Hochformat, dann umgekehrt fragen (CAMSW) */ const st = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); // Mikro erst beim Gedrückthalten: ein offenes Mikro schaltet am iPhone den Ton der ganzen Seite leise/aus (Inaya, 2026-10-12)
     if (!stCam || stCam.mode !== 'cam') { st.getTracks().forEach(t => t.stop()); return; }
-        stCam.stream = st; const v = document.getElementById('stvid'); if (v) { v.srcObject = st; v.play().catch(() => {}); } stFlashBtn(); camInit(dev); camOrient(dev);
+        stCam.stream = st; tgSync(); const v = document.getElementById('stvid'); if (v) { v.srcObject = st; v.play().catch(() => {}); } stFlashBtn(); camInit(dev); camOrient(dev);
   } catch { if (dev) { CAMZ.lens = 'main'; CAMZ.uw = null; return stCamStart(CAMZ.main || ''); } if (stCam?.post) { stCam = null; storyPaint(); toast('Die Kamera ist hier nicht freigegeben. Tipp auf „Foto“, dort kannst du die Handy-Kamera wählen.'); } else if (stCam) { stCam = {facing:stCam.facing, mode:'pick', noCam:true}; storyPaint(); toast('Die Kamera ist hier nicht freigegeben. Tipp nochmal auf Kamera, dann öffnet sich die Handy-Kamera.'); } }
 }
 /* v911 (Inaya: Kamera war immer sehr reingezoomt): Zoom wie in der Handy-Kamera.
@@ -12948,8 +12962,8 @@ async function camZoom(z, live){
 }
 /* Zwei Finger im Sucher: stufenlos zoomen. Loslassen: passendes Objektiv. */
 let CAMP = null; const tdist = e => Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-document.addEventListener('touchstart', e => { if (stCam?.mode !== 'cam' || !stCam.stream || e.touches.length !== 2 || !e.target.closest?.('.stframe.stcam')) return; CAMP = {d0:tdist(e), z0:CAMZ.z}; e.preventDefault(); }, {passive:false});
-document.addEventListener('touchmove', e => { if (!CAMP || e.touches.length !== 2) return; e.preventDefault(); camZoom(CAMP.z0 * tdist(e) / Math.max(20, CAMP.d0), true); }, {passive:false});
+tgAdd('touchstart', e => { if (stCam?.mode !== 'cam' || !stCam.stream || e.touches.length !== 2 || !e.target.closest?.('.stframe.stcam')) return; CAMP = {d0:tdist(e), z0:CAMZ.z}; e.preventDefault(); }, () => stCam?.mode === 'cam');
+tgAdd('touchmove', e => { if (!CAMP || e.touches.length !== 2) return; e.preventDefault(); camZoom(CAMP.z0 * tdist(e) / Math.max(20, CAMP.d0), true); }, () => stCam?.mode === 'cam');
 document.addEventListener('touchend', e => { if (!CAMP || e.touches.length >= 2) return; CAMP = null; camZoom(CAMZ.z, false); });
 ['gesturestart', 'gesturechange'].forEach(n => document.addEventListener(n, e => { if (e.target.closest?.('.stframe.stcam')) e.preventDefault(); }, {passive:false}));
 /* Ausschnitt-Spur fürs Video, wenn ohne Kamera-Zoom vergrößert wird (Zoom geht dann auch während der Aufnahme) */
@@ -19418,17 +19432,28 @@ HANG_IDS.forEach(k => { if (!FURN[k]) return; delete FURN[k].wall; FURN[k].hang 
 /* v795: Sticker-Möbel ersetzen die Zeichnung von vorn (schräg von oben, dicker Umriss) */
 const SKF_ID = {sarg:'sarg', himmel:'himmelbett', schrank:'kleiderschrank', vitrine:'s_vitrine', schmink:'schminktisch', sofa:'sofa', teppich:'teppich'};
 const SKF_W = {spiegel:9, spinnennetz:11, portraet:8, lichterkette:28, kronleuchter:14, kreuz:5, vorhang:15, neon_rawr:14, neon_herz:8, neon_stern:7, l_neonmond:9, nc_neonbat:18, graffiti:20, wandteppich:13, piratenflagge:14, schachflagge:14, rz_lichter:20, rz_wimpel:20, rz_schminklicht:10, l_wandkerze:6, l_haenge:7, nc_zauberspiegel:12, hw_birne:6, hw_schrift:16, hw_darmkette:52, hw_organkette:30, hw_deckenlampe:12, hw_kreuze:30, hw_kreuze_schwarz:30, hw_kreuze_gold:30, hw_kreuze_reihe:30, hw_kreuz_gross:12, hw_kreuz_rosenkranz:10, hw_kreuze_holz:24, hw_roentgen:15, hw_sehtafel:8, girplusch:9.7, teddy:9.7, hw_teddy:10, rz_pluesch:18, so_clubsessel:20, hw_glieder:17, tier_katze_schwarz:9, tier_katze_weiss:9, tier_katze_grau:9, tier_katze_schlafend:9, tier_mops:9, tier_hund_schwarz:9, tier_dackel:11, tier_fledermaus:9, tier_ratte:9, tier_hase:9, tier_schlange:9, tier_spinne:9.5, tier_korb:11, kraehe:6.5, nc_eule:9, hw_leichensack:26}; /* v805: feiner gezeichnet (dünnerer Umriss), Größe im Zimmer wie vorher */
-for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; try { const r = isoMake(SKF[k], {ol:1.3, flat:!!FURN[id].wall}), cnt = r.area; /* v803: Wand-Sachen flach, die Schräge kommt im Zimmer */
-  Object.assign(FURN[id], {svg:r.svg, vb:r.vb, w:SKF_W[id] ?? Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1, fp:r.fp}); FMAIN[id] = Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]; } catch (e) { console.warn('skf', k, e); } }
+/* v1097 (flüssig): Die Sticker-Zeichnungen entstehen erst, wenn ein Möbel wirklich gebraucht wird (vorher alle beim Start, etwa ein Drittel der Startzeit am Handy).
+   `furnLazy` legt Getter auf die Felder, beim ersten Lesen wird gezeichnet und die Getter werden zu normalen Werten. Ergebnis genau wie vorher. */
+function furnLazy(id, keys, make, fm){ const f = FURN[id], old = {}; for (const k of keys) if (Object.prototype.hasOwnProperty.call(f, k)) old[k] = f[k]; const oldM = FMAIN[id]; let done = false;
+  const put = (o, k, v) => Object.defineProperty(o, k, {value:v, writable:true, configurable:true, enumerable:true});
+  const run = () => { if (done) return; done = true; let r = null; try { r = make(); } catch (e) { console.warn('furn', id, e); }
+    for (const k of keys) { if (r && k in r) put(f, k, r[k]); else if (k in old) put(f, k, old[k]); else delete f[k]; }
+    if (fm) { if (r && r.fmain) put(FMAIN, id, r.fmain); else if (oldM !== undefined) put(FMAIN, id, oldM); else delete FMAIN[id]; } };
+  for (const k of keys) Object.defineProperty(f, k, {get(){ run(); return f[k]; }, set(v){ run(); put(f, k, v); }, configurable:true, enumerable:true});
+  if (fm) Object.defineProperty(FMAIN, id, {get(){ run(); return FMAIN[id]; }, set(v){ run(); put(FMAIN, id, v); }, configurable:true, enumerable:true}); }
+for (const k in SKF) { const id = SKF_ID[k] || k; if (!FURN[id]) continue; /* v803: Wand-Sachen flach, die Schräge kommt im Zimmer */
+  furnLazy(id, ['svg', 'vb', 'w', 'iso', 'fp'], () => { const r = isoMake(SKF[k], {ol:1.3, flat:!!FURN[id].wall}), cnt = r.area;
+    return {svg:r.svg, vb:r.vb, w:SKF_W[id] ?? Math.round(r.vb[0] * .7 / 1.6 * 10) / 10, iso:1, fp:r.fp, fmain:Object.keys(cnt).sort((x, y) => cnt[y] - cnt[x])[0]}; }, true); }
 /* v809: Poster im Sticker-Stil. Das Motiv bleibt (Bandnamen, Bilder), es liegt auf Papier mit Kante und dickem Umriss, oben zwei Klebestreifen; die Poster-Collage auf einer Korkwand */
-function skPosterWrap(id){ const f = FURN[id]; if (!f || f.iso) return; const [ow, oh] = f.vb, col = id === 'rz_collage', W = col ? 34 : 16, inner = col ? [0, 0, ow, oh] : [1, 1, ow - 2, oh - 2], H = W * inner[3] / inner[2] + (col ? 3 : 0), D = col ? 1.4 : .5;
+function skPosterWrap(id){ const f = FURN[id]; if (!f || f.iso) return; const ov = f.vb, os = f.svg; furnLazy(id, ['svg', 'vb', 'iso', 'psvg'], () => skPosterMake(id, ov, os)); }
+function skPosterMake(id, vb0, svg0){ const f = {vb:vb0, svg:svg0}; const [ow, oh] = f.vb, col = id === 'rz_collage', W = col ? 34 : 16, inner = col ? [0, 0, ow, oh] : [1, 1, ow - 2, oh - 2], H = W * inner[3] / inner[2] + (col ? 3 : 0), D = col ? 1.4 : .5;
   const r = isoMake(S => { S.box(0, 0, 0, W, D, H, col ? '#a8743e' : '#ece8de'); if (col) { for (let i = 0; i < 14; i++) S.dot([1.4 + (i * 37) % (W - 2), D + .01, 1.2 + (i * 23) % (H - 2)], .35, '#8a5a2a'); } }, {ol:1.3, flat:1});
   const fx = -D * .3 - r.x0, fy = -H + D * .3 - r.y0, pad = col ? 1.5 : 0, k = W / 16;
   const tape = (x, y, rot) => `<rect x="${(x - 2.2 * k).toFixed(2)}" y="${(y - .8 * k).toFixed(2)}" width="${(4.4 * k).toFixed(2)}" height="${(1.6 * k).toFixed(2)}" fill="#e2dccb" opacity=".88" stroke="#0c090d" stroke-opacity=".35" stroke-width=".2" transform="rotate(${rot} ${x.toFixed(2)} ${y.toFixed(2)})"/>`;
   const art = `<svg x="${(fx + pad).toFixed(2)}" y="${(fy + pad).toFixed(2)}" width="${(W - 2 * pad).toFixed(2)}" height="${(H - 2 * pad).toFixed(2)}" viewBox="${inner.join(' ')}" preserveAspectRatio="none" overflow="hidden">${f.svg}</svg>`;
   const shade = col ? '' : `<path d="M${(fx + W * .7).toFixed(2)} ${(fy + H).toFixed(2)}L${(fx + W).toFixed(2)} ${(fy + H * .82).toFixed(2)}L${(fx + W).toFixed(2)} ${(fy + H).toFixed(2)}Z" fill="#0c090d" opacity=".12"/><path d="M${(fx + 1).toFixed(2)} ${(fy + 1).toFixed(2)}L${(fx + W * .45).toFixed(2)} ${(fy + 1).toFixed(2)}L${(fx + 1).toFixed(2)} ${(fy + H * .35).toFixed(2)}Z" fill="#ffffff" opacity=".07"/>`;
   const pins = col ? [[fx + 2.6, fy + 1.8], [fx + W - 2.6, fy + 1.8]].map(([x, y]) => `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".8" fill="#c8202e" stroke="#0c090d" stroke-width=".3"/><circle cx="${(x - .25).toFixed(2)}" cy="${(y - .25).toFixed(2)}" r=".25" fill="#fff"/>`).join('') : tape(fx + 2.4 * k, fy + .5, -14) + tape(fx + W - 2.4 * k, fy + .5, 12);
-  Object.assign(f, {svg:r.svg + art + shade + pins, vb:r.vb, iso:1, psvg:col ? '<rect fill="#a8743e"/>' : f.svg}); } /* Collage: gefärbt wird die Korkwand, die Zettel bleiben bunt */
+  return {svg:r.svg + art + shade + pins, vb:r.vb, iso:1, psvg:col ? '<rect fill="#a8743e"/>' : f.svg}; } /* Collage: gefärbt wird die Korkwand, die Zettel bleiben bunt */
 FURN_IDS.filter(k => /^(po_|rz_po_)/.test(k) || k === 'rz_collage' || k === 'abo_urkunde').forEach(skPosterWrap);
 const SURF_NAMES = {damast:'Damast', streifen:'Streifen', stein:'Stein', schlicht:'Schlicht', dielen:'Dielen', schach:'Schachbrett', teppich:'Teppichboden'};
 const surfAvail = kind => [...(kind === 'wall' ? WALLS : FLOORS).map(([k]) => k), ...FURN_IDS.filter(k => FURN[k].surf === kind && !!WAL.d?.inv?.[ncF(k)]).map(k => FURN[k].key)]; /* gratis + gekauft */
@@ -19497,7 +19522,10 @@ function ncTiers(list, cx, base, set){ const u = [...new Set(list.map(cx))].sort
 { const groups = {}; for (const i of ITEMS) if (!i.nc && !i.lv && !i.abo && !NC_FREE.has(i.id) && NC_CATP[i.cat]) (groups[i.cat + (i.bag ? ':bag' : i.cat === 'top' && isDress(i) ? ':kleid' : '')] ||= []).push(i);
   for (const g of Object.values(groups)) ncTiers(g, i => ncCx(i.id), i => i.bag ? 70 : i.cat === 'top' && isDress(i) ? 120 : NC_CATP[i.cat], (i, v) => { i.nc = v; }); }
 { const groups = {}; for (const k of FURN_IDS) { const f = FURN[k]; if (!f.nc && !f.lv && !f.abo && !NC_FREE.has(k)) (groups[f.r] ||= []).push(k); }
-  for (const g of Object.values(groups)) ncTiers(g, k => String(FURN[k].svg || '').length, k => NC_FURP[FURN[k].r] || 50, (k, v) => { FURN[k].nc = v; }); }
+  /* v1097: Preise je Raum-Gruppe erst beim ersten Lesen von nc (die Staffel braucht die fertigen Zeichnungen, siehe furnLazy) */
+  const put = (k, v) => Object.defineProperty(FURN[k], 'nc', {value:v, writable:true, configurable:true, enumerable:true});
+  for (const g of Object.values(groups)) { let done = false; const run = () => { if (done) return; done = true; ncTiers(g, k => String(FURN[k].svg || '').length, k => NC_FURP[FURN[k].r] || 50, put); };
+    for (const k of g) Object.defineProperty(FURN[k], 'nc', {get(){ run(); return FURN[k].nc; }, set(v){ run(); put(k, v); }, configurable:true, enumerable:true}); } }
 const NC_MIN = {back:250}; /* Mindestpreise je Abteilung (Inaya, 2026-10-17: Haare nie unter 250) */
 for (const i of ITEMS) if (i.nc && NC_MIN[i.cat] && !NC_FREE.has(i.id) && i.nc < NC_MIN[i.cat]) i.nc = NC_MIN[i.cat];
 /* v700 (Inaya): Events im bestehenden Shop (kein eigener Shop). EVENTS: Zeitraum je Jahr als MM-TT in deutscher Zeit (bis einschließlich), Symbol für den Filter-Knopf, Abzeichen an den Karten. Ein Teil gehört über ev zu einem Event. Läuft das Event, stehen seine Teile in Mall/Möbelhaus oben, außerhalb verschwinden sie aus dem Shop und aus site/prices (dann lehnen auch die Regeln den Kauf ab). Gekauftes bleibt im Inventar. Neues Event: Eintrag hier (z. B. weihnachten mit Tannenbaum, valentin mit Herz) und ev:'<schlüssel>' an die Teile */
@@ -19525,7 +19553,7 @@ function evTabPick(has){ const sub = () => mallCat === 'bottom' || mallCat === '
     if (k === 'jewel') { mallCat = 'jewel'; jewelSub = JEWEL_SUB.find(([c]) => has('jewel', null, null, c))[0]; return; } mallCat = k; return; } }
 /* abgelaufene Event-Teile: kein Preis mehr (nicht kaufbar), raus aus der Tasche */
 function evSweep(){ if (NCPRICE) for (const id of Object.keys(NCPRICE)) if (evOut(ncItem(id))) delete NCPRICE[id]; for (const id of [...NCCART.keys()]) if (evOut(ncItem(id))) NCCART.delete(id); }
-const NC_PRICES = Object.fromEntries([...ITEMS.filter(i => i.nc && !i.gone && !evOut(i)).map(i => [i.id, i.nc]), ...FURN_IDS.filter(k => FURN[k].nc && !evOut(FURN[k])).map(k => ['m:' + k, FURN[k].nc])]); /* Möbel als m:<id>, weil es Kleidung und Möbel mit gleicher ID gibt (teddy, kreuz …) */
+const NC_PRICES = Object.fromEntries(ITEMS.filter(i => i.nc && !i.gone && !evOut(i)).map(i => [i.id, i.nc])); let NCPF = false; const ncPricesAll = () => { if (!NCPF) { NCPF = true; Object.assign(NC_PRICES, Object.fromEntries(FURN_IDS.filter(k => FURN[k].nc && !evOut(FURN[k])).map(k => ['m:' + k, FURN[k].nc]))); } return NC_PRICES; }; /* v1097: Möbel erst, wenn gebraucht (nur Inayas Abgleich) */ /* Möbel als m:<id>, weil es Kleidung und Möbel mit gleicher ID gibt (teddy, kreuz …) */
 const ncItem = id => { id = String(id || ''); if (id.startsWith('m:')) { const k = id.slice(2); return FURN[k] ? {...FURN[k], id, k, furn:1} : null; } return item(id) || null; };
 const ncF = k => 'm:' + k;
 /* v714 (Inaya): Neu Gekauftes (auch angenommene Geschenke) in Garderobe und Zimmer markieren. u.invSeen = Teile, die schon gesehen sind; neu = im Wallet, aber nicht darin.
@@ -19591,7 +19619,7 @@ async function refundRun(){ if (REFUND_RUN || !amOwner || !social) return; REFUN
   catch (e) { console.warn('refund', RF.why, e?.code); REFUND_RUN = false; } } }
 async function ncPrices(){ if (!social) return; const ref = social.db.doc('site/prices');
   try { const d = await ref.get(); NCPRICE = d.exists ? d.data().p || {} : {};
-    if (amOwner && JSON.stringify(Object.entries(NCPRICE).sort()) !== JSON.stringify(Object.entries(NC_PRICES).sort())) { await ref.set({p:NC_PRICES, ts:Date.now()}); NCPRICE = {...NC_PRICES}; } }
+    if (amOwner && JSON.stringify(Object.entries(NCPRICE).sort()) !== JSON.stringify(Object.entries(ncPricesAll()).sort())) { await ref.set({p:NC_PRICES, ts:Date.now()}); NCPRICE = {...NC_PRICES}; } }
   catch { NCPRICE = NCPRICE || {}; } evSweep(); ncPaint(); }
 const ncShopOk = () => !!(WAL.d && WAL.d.kp && !WAL.old && NCPRICE && Object.keys(NCPRICE).length);
 const ncHas = id => { const i = ncItem(id); return !!(WAL.d && (WAL.d.inv?.[id] || (i?.lv && WAL.d.l >= i.lv))); }; /* im Shop: wirklich gekauft, geschenkt, übernommen oder freigeschaltet */ /* WAL.old: eingespielte Regeln kennen Bonus/Übernahme noch nicht */
@@ -22748,7 +22776,7 @@ let VVT = []; const vvSoon = () => { VVT.forEach(clearTimeout); vvFit(); VVT = [
 if (window.visualViewport) { visualViewport.addEventListener('resize', vvSoon); visualViewport.addEventListener('scroll', vvSoon); }
 document.addEventListener('focusin', vvSoon); document.addEventListener('focusout', vvSoon); addEventListener('resize', vvSoon); addEventListener('pageshow', vvSoon); addEventListener('orientationchange', vvSoon); document.addEventListener('visibilitychange', () => { if (!document.hidden) vvSoon(); });
 /* v774: Mit offener Tastatur im Chat verschiebt Wischen außerhalb der Nachrichten nicht mehr die ganze Seite (iPhone: der Chat wackelte hin und her) */
-document.addEventListener('touchmove', e => { if (!document.body.classList.contains('chatkb')) return; if (e.target.closest?.('#msgs, textarea, .cmsug, .emopop, .attsheet, [class^=sg], .rxpop, #rxpop')) return; if (e.cancelable) e.preventDefault(); }, {passive:false});
+tgAdd('touchmove', e => { if (!document.body.classList.contains('chatkb')) return; if (e.target.closest?.('#msgs, textarea, .cmsug, .emopop, .attsheet, [class^=sg], .rxpop, #rxpop')) return; if (e.cancelable) e.preventDefault(); }, () => document.body.classList.contains('chatkb'));
 const chatKb = el => isMob() && ['cm-in','hc-in'].includes(el?.id) && !!el.closest('.chatmain');
 // Raumchat und Kommentare: Eingabefeld sitzt direkt über der Tastatur (Inaya, 2026-10-11)
 const KB_FORMS = '[data-form="rmsg"],[data-form="pcomment"],[data-form="comment"],[data-form="wall"],[data-form="rwall"]';
@@ -23065,7 +23093,7 @@ function renderInner(){
   applyPage(V.name === 'design' ? draft : pu ? pu.theme : V.name === 'pet' || V.name === 'petv' ? petTheme(V.name === 'petv' ? V.arg : S.me) : null); /* v852: Begleiter-Seite im Profil-Design */
   if (V.name === 'design' && isMob()) { fitPrev(); const pv = document.getElementById('preview'), col = document.querySelector('.design > div:first-child'); if (pv) pv.scrollTop = keepPv; if (col) col.scrollTop = keepCol; }
   syncSong(); roomSync(); paintRoom(); drawRoomMsgs(); wallSync(); centerRooms(); loadPimgs(); lvLoad(); rzApply(); zmApply(); svfxApply(); try { pstkBgSync(); } catch {}
-  restoreX();
+  restoreX(); tgSync();
   const mb = document.getElementById('msgs'); if (mb && mReuse) drawMsgs(); else if (mb) { mb.dataset.h = '1'; MSGH = {cid:CH.open, h:''}; msgRest(mb, msgA); msgImgs(mb); }
   // Handy: offener Chat füllt den ganzen Bildschirm, oben der Zurück-Pfeil (Inaya, 2026-10-10)
   navSave();
@@ -23555,7 +23583,7 @@ function fixFit(){ const de = document.documentElement, k = V.name + (V.name ===
   let nx = cur; if (over > 0) nx = cur + over; else if (over < -24 && cur > 0) nx = Math.max(0, cur + over + 12);
   if (nx !== cur) { FIXSH[k] = Math.min(nx, 400); de.style.setProperty('--fixsh', FIXSH[k] + 'px'); } }
 addEventListener('resize', () => setTimeout(fitChk, 50)); setInterval(() => { if (document.body.dataset.pg === 'find' || document.body.classList.contains('chlist') || document.documentElement.classList.contains('fitpg') || FIXPG()) fitChk(); }, 700);
-document.addEventListener('touchmove', e => { if ((document.documentElement.classList.contains('fitpg') && !e.target.closest?.('.fpanel,dialog,[role=dialog],.shpk,#cmv,.mview,.storyov,.emopop,textarea,.hsl,.hslbar,.room,.rscroll,.cgrid-bg,.cpanel,.modal,#ncnewpop,.lbmodal')) || (document.body.dataset.pg === 'pet' && !e.target.closest?.('.psheet')) || (document.querySelector('.ppick') && !document.getElementById('phatch'))) e.preventDefault(); }, {passive:false}); /* v647: Begleiter-Auswahl lässt sich auch nicht scrollen (Inaya) */ /* v581: Seite wackelt nicht beim Wischen */
+tgAdd('touchmove', e => { if ((document.documentElement.classList.contains('fitpg') && !e.target.closest?.('.fpanel,dialog,[role=dialog],.shpk,#cmv,.mview,.storyov,.emopop,textarea,.hsl,.hslbar,.room,.rscroll,.cgrid-bg,.cpanel,.modal,#ncnewpop,.lbmodal')) || (document.body.dataset.pg === 'pet' && !e.target.closest?.('.psheet')) || (document.querySelector('.ppick') && !document.getElementById('phatch'))) e.preventDefault(); }, () => document.documentElement.classList.contains('fitpg') || document.body.dataset.pg === 'pet' || !!document.querySelector('.ppick')); /* v647: Begleiter-Auswahl lässt sich auch nicht scrollen (Inaya) */ /* v581: Seite wackelt nicht beim Wischen */
 /* Raum des Begleiters = eigenes Zimmer (seit v572, Inaya): dieselbe Tapete und derselbe Boden */
 /* v654 (Inaya): Wand und Boden einfarbig, Farbe wählbar unter Deko → Raum (p.rw, p.rf) */
 const PET_DTABS = [['hat', 'Kopf'], ['neck', 'Hals'], ['col', 'Farbe']] /* v852: Raum kommt aus dem Profil-Design */, PET_RW = '#d9d5ce', PET_RF = '#8f8a83', hexOk = c => /^#[0-9a-f]{6}$/i.test(c || '');
