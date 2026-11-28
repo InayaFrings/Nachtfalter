@@ -105,3 +105,4 @@ exports.pushFriend = fn.firestore.document('friends/{uid}').onWrite(async (ch, c
 
 /* v932: Abo über Stripe (aboCheckout, aboWebhook, aboCancel, aboResume) */
 Object.assign(exports, require("./abo"));
+Object.assign(exports, require("./avstudio")); // Owner-Avatar-Studio: KI nur für die Owner (2026-11-28)

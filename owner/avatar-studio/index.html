@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; script-src 'self' 'unsafe-inline'">
+<meta name="robots" content="noindex,nofollow">
+<title>Avatar-Studio · Noctibat Owner</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+:root{--bg:#0a0a0b;--paper:#141416;--paper2:#1d1d21;--line:#2e2e34;--fg:#f2f0ec;--mut:#9a98a0;--acc:#b99cff;--f:'Space Grotesk','Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);font:14.5px/1.4 var(--f);-webkit-tap-highlight-color:transparent}
+button,select,textarea,input{font:inherit;color:inherit}
+.top{display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) 16px 10px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20}
+.top h1{font-size:17px;margin:0;white-space:nowrap}.tag{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:var(--mut)}
+.top .r{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--mut);min-width:0}.top .r select{max-width:44vw;font-size:12.5px;padding:6px 8px}
+@media (max-width:600px){#usage{display:none}}
+select,input[type=text],textarea{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+textarea{width:100%;min-height:70px;resize:vertical}
+.grid{display:grid;gap:14px;padding:14px 16px 28px;max-width:1500px;margin:0 auto}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:12px;align-content:start}
+.card h2{margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{background:none;border:0;border-radius:9px;padding:8px;cursor:pointer;font-weight:600}.seg button.on{background:var(--fg);color:var(--bg)}
+.stage{position:relative;height:min(68vh,760px);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:radial-gradient(120% 70% at 50% 100%,#2a2433 0,#121114 55%,#0a0a0b 100%)}
+#cv{position:absolute;transform-origin:var(--zo,50% 15%);transition:transform .35s ease}.stage.zoom #cv{transform:scale(3.3)}.stage.mark #cv{cursor:crosshair}
+.sbtn{position:absolute;top:10px;z-index:2;background:rgba(10,10,11,.75);border:1px solid var(--line);border-radius:99px;padding:6px 11px;font-size:13px;cursor:pointer}
+.busy{position:absolute;left:10px;bottom:10px;z-index:2;display:none;align-items:center;gap:8px;background:rgba(10,10,11,.8);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px}
+.stage.load .busy{display:flex}.busy i{width:12px;height:12px;border-radius:50%;border:2px solid var(--mut);border-top-color:var(--fg);animation:r .8s linear infinite}@keyframes r{to{transform:rotate(1turn)}}
+.hint{position:absolute;left:0;right:0;bottom:0;z-index:3;background:rgba(10,10,11,.85);padding:10px 14px;display:none}.stage.mark .hint{display:block}
+.status{font-size:12.5px;color:var(--mut);min-height:18px}.status.err{color:#ff8a8a}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{background:var(--paper2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:13px}.chip.on{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+.btn{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer}.btn.red{color:#ff9a9a}
+.go{width:100%;background:var(--fg);color:var(--bg);border:0;border-radius:12px;padding:12px;font-weight:700;cursor:pointer}.go:disabled{opacity:.5}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:7px;max-height:520px;overflow:auto}
+.it{position:relative;background:var(--paper2);border:1px solid var(--line);border-radius:11px;padding:5px;cursor:pointer;text-align:left}.it.on{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}.it.sel{outline:2px solid var(--acc);outline-offset:1px}
+.it img{width:100%;aspect-ratio:1;object-fit:contain;display:block;border-radius:7px;background:#121114}.it b{display:block;font-size:11.5px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}.it .fav{position:absolute;top:7px;right:8px;font-size:13px}
+.f{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:8px;font-size:12.5px;color:var(--mut)}.f input[type=range]{width:100%}
+.hist{display:grid;gap:6px;max-height:260px;overflow:auto}.hist div{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--mut);background:var(--paper2);border-radius:9px;padding:6px 8px}.hist img{width:40px;height:40px;object-fit:contain;border-radius:6px;background:#121114}
+.note{font-size:12px;color:var(--mut);margin:0}
+.mtabs{display:none}input[type=file]{display:none}
+.gate{max-width:520px;margin:12vh auto;padding:24px;text-align:center}
+@media (min-width:1100px){.grid{grid-template-columns:300px minmax(0,1fr) 330px;grid-template-areas:"lib stage edit" "lib ai edit"}#p-lib{grid-area:lib}#p-stage{grid-area:stage}#p-edit{grid-area:edit}#p-ai{grid-area:ai}#p-fig{grid-area:edit;align-self:end}}
+@media (max-width:1099px){.mtabs{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.mtabs button{background:var(--paper);border:1px solid var(--line);border-radius:99px;padding:8px 2px;font-size:12.5px;font-weight:600;cursor:pointer}.mtabs button.on{background:var(--fg);color:var(--bg)}
+ .grid>.card.mob{display:none}.grid>.card.mob.show{display:grid}.stage{height:min(58vh,560px)}}
+</style></head>
+<body>
+<div id="gate" class="gate" hidden></div>
+<div id="app" hidden>
+ <div class="top"><h1>Avatar-Studio</h1><span class="tag">Owner</span><div class="r"><select id="model" aria-label="KI-Modell"></select><span id="usage"></span></div></div>
+ <div class="grid">
+  <div class="card" id="p-stage" style="padding:0;border:0;background:none">
+   <div class="seg" id="gender"><button data-g="w">Frau</button><button data-g="m">Mann</button></div>
+   <div class="stage" id="stage"><canvas id="cv" width="900" height="1440"></canvas><button class="sbtn" id="zoom" style="right:10px">Gesicht</button><button class="sbtn" id="undress" style="left:10px">Ausziehen</button><div class="busy"><i></i><span>KI zeichnet …</span></div><div class="hint" id="hint"></div></div>
+   <div class="status" id="status"></div>
+   <div class="mtabs" id="mtabs"><button data-p="p-lib">Bibliothek</button><button data-p="p-edit">Bearbeiten</button><button data-p="p-ai">KI</button><button data-p="p-fig">Figur</button><button data-p="p-out">Export</button></div>
+  </div>
+  <div class="card mob" id="p-lib"></div>
+  <div class="card mob" id="p-edit"></div>
+  <div class="card mob" id="p-ai"></div>
+  <div class="card mob" id="p-fig"></div>
+  <div class="card mob" id="p-out"></div>
+ </div>
+</div>
+<input type="file" id="f-base" accept="image/*"><input type="file" id="f-wigs" accept="image/*"><input type="file" id="f-el" accept="image/*">
+<script src="/vendor/firebase-10.14.1/firebase-app-compat.js"></script><script src="/vendor/firebase-10.14.1/firebase-auth-compat.js"></script><script src="/vendor/firebase-10.14.1/firebase-firestore-compat.js"></script>
+<script src="studio-prep.js"></script><script src="studio-body.js"></script><script src="studio-face.js"></script><script src="studio-core.js"></script><script src="studio-store.js"></script><script src="studio-app.js"></script>
+</body></html>
