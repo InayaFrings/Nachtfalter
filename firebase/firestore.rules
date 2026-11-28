@@ -10,8 +10,6 @@ service cloud.firestore {
     // Von der Owner entfernte Konten (Inaya, 2026-10-19): banned/<uid>; solche Konten legen kein Profil und keinen Namen mehr an
     function notBanned() { return !exists(/databases/$(database)/documents/banned/$(request.auth.uid)); }
     match /banned/{uid} { allow read: if invited(); allow write: if isOwner(); }
-    // Owner-Avatar-Studio (2026-11-28): Bibliothek, Grundfiguren, Einstellungen und KI-Protokoll nur für die Owner
-    match /avstudio/{doc=**} { allow read, write: if isOwner(); }
 
     // Eigene Daten: nur die Person selbst
     match /data/users/{uid}/{rest=**} { allow read, write: if me(uid); }
